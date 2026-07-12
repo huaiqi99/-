@@ -1,0 +1,99 @@
+# Main menu navigation (configurable)
+# --------------------------------------
+menu:
+  首页: / || fas fa-home
+  作品: /archives/ || fas fa-book
+  关于: /about/ || fas fa-user
+
+# Favicon
+# --------------------------------------
+favicon: /img/favicon.ico
+
+# Avatar (logo in nav)
+# --------------------------------------
+avatar:
+  img: 
+  effect: false
+
+# Disable default cover if not set per post
+cover:
+  index_enable: true
+  aside_enable: false
+  archives_enable: true
+
+# Page default background
+background: 
+
+# Footer
+footer:
+  owner:
+    enable: true
+    since: 2026
+  custom_text: <p>用文字构筑世界</p>
+
+# Post Settings
+post_settings:
+  default_cover: 
+
+# Highlight theme
+code:
+  theme: default
+  copy: true
+  lang: true
+
+# Social settings (disable for now)
+social:
+
+# Image lazy load
+lazyload:
+  enable: true
+
+# Comments (disable for now)
+comments:
+  use: 
+
+# Local search
+local_search:
+  enable: true
+  preload: false
+  CDN:
+
+# Math (disable)
+math:
+  enable: false
+
+# Word count (disable)
+wordcount:
+  enable: false
+
+# Analyze (disable)
+analyze:
+  enable: false
+
+# Theme color
+theme_color:
+  enable: true
+  main: "#c44536"
+  paginator: "#c44536"
+  button_hover: "#c44536"
+  text_selection: "#c44536"
+  link_color: "#1a1a1a"
+  meta_color: "#8a8580"
+  hr_color: "#e5e1db"
+  code_foreground: "#1a1a1a"
+  code_background: "#f0eeea"
+  toc_color: "#c44536"
+
+# Font
+font:
+  global-font-size: 16px
+  code-font-size: 14px
+  font-family: 'Noto Sans SC, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Lato, Roboto, "PingFang SC", "Microsoft JhengHei", "Microsoft YaHei", sans-serif'
+  code-font-family: 'JetBrains Mono, consolas, Menlo, "PingFang SC", "Microsoft JhengHei", "Microsoft YaHei", sans-serif'
+
+# Site verification (disable)
+site_verification:
+
+# CDN (use local)
+CDN:
+  use: local
