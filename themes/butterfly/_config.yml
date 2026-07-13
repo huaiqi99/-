@@ -33,9 +33,9 @@ aside:
   card_recent_post:
     enable: true
     limit: 5
-  false:
+  card_categories:
     enable: false
-  false:
+  card_tag:
     enable: false
   card_archives:
     enable: false
