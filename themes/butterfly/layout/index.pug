@@ -5,25 +5,40 @@ block content
   .novel-collection
     .novel-collection-title 墨境小说
     .novel-collection-subtitle 用文字构筑世界，让故事在指尖流转
-
+    
     .novel-collection-grid
       // 我在地府打工那些年
       a.novel-collection-card(href=url_for('/novel/'))
         img.novel-collection-cover(src=url_for('/images/difu-cover.jpg') alt='我在地府打工那些年')
         .novel-collection-info
           .novel-collection-name 我在地府打工那些年
+          .novel-collection-tags
+            span.tag BL
+            span.tag 仙侠
+            span.tag 原创
+          .novel-collection-desc 一场跨越阴阳两界的禁忌之恋，当死神爱上凡人，规则便不再重要。
           .novel-collection-meta 作者：淮子生生 | 121章 | 约64万字
-
+      
       // 这破游戏NPC太能打了
       a.novel-collection-card(href=url_for('/novel2/'))
         img.novel-collection-cover(src=url_for('/images/npc-banner.jpg') alt='这破游戏NPC太能打了')
         .novel-collection-info
           .novel-collection-name 这破游戏NPC太能打了
+          .novel-collection-tags
+            span.tag BL
+            span.tag 游戏
+            span.tag 穿越
+          .novel-collection-desc 穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。
           .novel-collection-meta 作者：淮子生生 | 117章 | 约49万字
-
+      
       // 九州风云录
       a.novel-collection-card(href=url_for('/novel3/'))
         img.novel-collection-cover(src=url_for('/images/jiuzhou-banner.jpg') alt='九州风云录')
         .novel-collection-info
           .novel-collection-name 九州风云录
+          .novel-collection-tags
+            span.tag GB
+            span.tag 仙侠
+            span.tag 轻喜剧
+          .novel-collection-desc 天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？
           .novel-collection-meta 作者：淮子生生 | 12章 | 约6万字
