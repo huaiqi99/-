@@ -1,14 +1,45 @@
-// 小说章节专用上一章/下一章导航
-if page.prev || page.next
+// 小说章节专用上一章/下一章导航（按同一本书分类隔离）
+-
+  // 获取当前文章的分类名称
+  var currentCategories = page.categories && page.categories.length > 0 ? page.categories.map(function(c) { return c.name; }) : [];
+  var currentCategory = currentCategories.length > 0 ? currentCategories[0] : '';
+  
+  // 筛选同一分类下的文章，并按日期排序
+  var categoryPosts = [];
+  if (currentCategory) {
+    site.posts.forEach(function(post) {
+      var postCategories = post.categories && post.categories.length > 0 ? post.categories.map(function(c) { return c.name; }) : [];
+      if (postCategories.indexOf(currentCategory) !== -1) {
+        categoryPosts.push(post);
+      }
+    });
+    // 按日期升序排列
+    categoryPosts.sort(function(a, b) { return a.date - b.date; });
+  }
+  
+  // 找到当前文章在分类列表中的索引
+  var currentIndex = -1;
+  for (var i = 0; i < categoryPosts.length; i++) {
+    if (categoryPosts[i]._id === page._id) {
+      currentIndex = i;
+      break;
+    }
+  }
+  
+  // 获取同分类的上一篇和下一篇
+  var novelPrev = currentIndex > 0 ? categoryPosts[currentIndex - 1] : null;
+  var novelNext = currentIndex < categoryPosts.length - 1 && currentIndex !== -1 ? categoryPosts[currentIndex + 1] : null;
+
+if novelPrev || novelNext
   nav.novel-chapter-nav
     .novel-nav-title 章节导航
     .novel-nav-buttons
-      if page.prev
-        a.novel-nav-btn.novel-nav-prev(href=url_for(page.prev.path))
+      if novelPrev
+        a.novel-nav-btn.novel-nav-prev(href=url_for(novelPrev.path))
           i.fas.fa-chevron-left
           .novel-nav-info
             .novel-nav-label 上一章
-            .novel-nav-chapter= page.prev.title
+            .novel-nav-chapter= novelPrev.title
       else
         .novel-nav-btn.novel-nav-prev.novel-nav-disabled
           i.fas.fa-chevron-left
@@ -16,11 +47,11 @@ if page.prev || page.next
             .novel-nav-label 上一章
             .novel-nav-chapter 没有了
       
-      if page.next
-        a.novel-nav-btn.novel-nav-next(href=url_for(page.next.path))
+      if novelNext
+        a.novel-nav-btn.novel-nav-next(href=url_for(novelNext.path))
           .novel-nav-info
             .novel-nav-label 下一章
-            .novel-nav-chapter= page.next.title
+            .novel-nav-chapter= novelNext.title
           i.fas.fa-chevron-right
       else
         .novel-nav-btn.novel-nav-next.novel-nav-disabled
