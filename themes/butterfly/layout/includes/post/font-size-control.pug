@@ -1,0 +1,60 @@
+// 字体大小调节
+.font-size-control
+  button.font-btn#font-decrease(title="缩小字体") A-
+  span.font-label 字号
+  button.font-btn#font-increase(title="放大字体") A+
+
+script.
+  (function() {
+    // 默认字体大小
+    var defaultSize = 18;
+    var minSize = 14;
+    var maxSize = 28;
+    var step = 2;
+    
+    // 从 localStorage 读取保存的字体大小
+    var savedSize = localStorage.getItem('novel-font-size');
+    var currentSize = savedSize ? parseInt(savedSize) : defaultSize;
+    
+    // 应用字体大小
+    function applyFontSize(size) {
+      var article = document.querySelector('#article-container, .article-container, #post, article');
+      if (article) {
+        article.style.fontSize = size + 'px';
+        article.style.lineHeight = (size + 10) + 'px';
+      }
+      // 同时修改段落
+      var paragraphs = document.querySelectorAll('#article-container p, .article-container p, #post p, article p');
+      paragraphs.forEach(function(p) {
+        p.style.fontSize = size + 'px';
+      });
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      applyFontSize(currentSize);
+      
+      var decreaseBtn = document.getElementById('font-decrease');
+      var increaseBtn = document.getElementById('font-increase');
+      
+      if (decreaseBtn) {
+        decreaseBtn.addEventListener('click', function() {
+          if (currentSize > minSize) {
+            currentSize -= step;
+            applyFontSize(currentSize);
+            localStorage.setItem('novel-font-size', currentSize);
+          }
+        });
+      }
+      
+      if (increaseBtn) {
+        increaseBtn.addEventListener('click', function() {
+          if (currentSize < maxSize) {
+            currentSize += step;
+            applyFontSize(currentSize);
+            localStorage.setItem('novel-font-size', currentSize);
+          }
+        });
+      }
+    });
+  })();
