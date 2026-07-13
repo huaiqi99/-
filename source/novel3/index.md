@@ -24,7 +24,7 @@ type: novel
 
 <div class="novel-header">
   <h1>九州风云录</h1>
-  <p>作者：淮子生生 | 13章 | 约6万字</p>
+  <p>作者：淮子生生 | 12章 | 约6万字</p>
 </div>
 
 <img src="/-/images/jiuzhou-banner.jpg" class="novel-cover" alt="封面">
@@ -91,11 +91,6 @@ type: novel
     <div class="chapter-item">
       <a href="/-/posts/jiuzhou-1-12/">
         <span class="chapter-num">第12章</span>飞机入睡法
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/jiuzhou-1-13/">
-        <span class="chapter-num">第13章</span>安神花茶
       </a>
     </div>
   </div>
