@@ -9,11 +9,38 @@ menu:
 # --------------------------------------
 favicon: /img/favicon.ico
 
-# Avatar (logo in nav)
+# Avatar (右侧栏头像)
 # --------------------------------------
 avatar:
-  img: 
+  img: /images/difu-cover.jpg
   effect: false
+
+# 右侧栏作者信息
+# --------------------------------------
+aside:
+  enable: true
+  card_author:
+    enable: true
+    description: 一个关于奇幻、仙侠与情感的小说世界
+    button:
+      enable: false
+      icon: fab fa-github
+      text: Follow Me
+      link: https://github.com/huaiqi99
+  card_announcement:
+    enable: true
+    content: 欢迎阅读我的小说！<br>《我在地府打工那些年》已完结
+  card_recent_post:
+    enable: true
+    limit: 5
+  card_categories:
+    enable: false
+  card_tags:
+    enable: false
+  card_archives:
+    enable: false
+  card_webinfo:
+    enable: false
 
 # Disable default cover if not set per post
 cover:
