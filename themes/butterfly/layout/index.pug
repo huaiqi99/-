@@ -8,8 +8,8 @@ block content
     
     .novel-collection-grid
       // 我在地府打工那些年
-      a.novel-collection-card(href='/novel/')
-        img.novel-collection-cover(src='/-/images/difu-cover.jpg' alt='我在地府打工那些年')
+      a.novel-collection-card(href=url_for('/novel/'))
+        img.novel-collection-cover(src=url_for('/images/difu-cover.jpg') alt='我在地府打工那些年')
         .novel-collection-info
           .novel-collection-name 我在地府打工那些年
           .novel-collection-meta 作者：淮子生生 | 121章 | 约64万字

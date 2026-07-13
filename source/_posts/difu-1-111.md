@@ -5,7 +5,7 @@ categories:
   - 我在地府打工那些年
 tags:
   - 仙侠
-  - GB
+  - BL
   - 地府
 cover: /images/difu-cover.jpg
 ---
