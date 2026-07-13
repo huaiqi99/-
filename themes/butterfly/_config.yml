@@ -2,7 +2,7 @@
 # --------------------------------------
 menu:
   首页: / || fas fa-home
-  作品: /archives/ || fas fa-book
+  作品: /novel/ || fas fa-book
   关于: /about/ || fas fa-user
 
 # Favicon
