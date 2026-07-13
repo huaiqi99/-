@@ -1,5 +1,22 @@
 extends includes/layout.pug
 
 block content
-  include ./includes/mixins/indexPostUI.pug
-  +indexPostUI
+  // 小说作品合集首页
+  .novel-collection
+    .novel-collection-title 墨境小说
+    .novel-collection-subtitle 用文字构筑世界，让故事在指尖流转
+    
+    .novel-collection-grid
+      // 我在地府打工那些年
+      a.novel-collection-card(href='/novel/')
+        img.novel-collection-cover(src='/-/images/difu-cover.jpg' alt='我在地府打工那些年')
+        .novel-collection-info
+          .novel-collection-name 我在地府打工那些年
+          .novel-collection-meta 作者：淮子生生 | 121章 | 约64万字
+      
+      // 占位：未来添加新作品
+      // a.novel-collection-card(href='/novel2/')
+      //   img.novel-collection-cover(src='/-/images/xxx-cover.jpg' alt='新作品')
+      //   .novel-collection-info
+      //     .novel-collection-name 新作品
+      //     .novel-collection-meta 作者：xxx | xx章 | 约xx万字

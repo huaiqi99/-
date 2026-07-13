@@ -1,0 +1,29 @@
+// 小说章节专用上一章/下一章导航
+if page.prev || page.next
+  nav.novel-chapter-nav
+    .novel-nav-title 章节导航
+    .novel-nav-buttons
+      if page.prev
+        a.novel-nav-btn.novel-nav-prev(href=url_for(page.prev.path))
+          i.fas.fa-chevron-left
+          .novel-nav-info
+            .novel-nav-label 上一章
+            .novel-nav-chapter= page.prev.title
+      else
+        .novel-nav-btn.novel-nav-prev.novel-nav-disabled
+          i.fas.fa-chevron-left
+          .novel-nav-info
+            .novel-nav-label 上一章
+            .novel-nav-chapter 没有了
+      
+      if page.next
+        a.novel-nav-btn.novel-nav-next(href=url_for(page.next.path))
+          .novel-nav-info
+            .novel-nav-label 下一章
+            .novel-nav-chapter= page.next.title
+          i.fas.fa-chevron-right
+      else
+        .novel-nav-btn.novel-nav-next.novel-nav-disabled
+          .novel-nav-info
+            .novel-nav-label 下一章
+            .novel-nav-chapter 没有了

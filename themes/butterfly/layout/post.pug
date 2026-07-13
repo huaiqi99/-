@@ -11,6 +11,7 @@ block content
       else
         !=page.content
     include includes/post/post-copyright.pug
+    include includes/post/novel-pagination.pug
     .tag_share
       if (page.tags.length > 0 && theme.post_meta.post.tags)
         .post-meta__tag-list
