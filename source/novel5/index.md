@@ -22,7 +22,7 @@ type: novel
 
 <div class="novel-header">
   <h1>皇叔何出此言</h1>
-  <p>作者：淮子生生 | 1章 | 约89359字</p>
+  <p>作者：淮子生生 | 8章 | 约8w字</p>
 </div>
 
 <img src="/-/images/huangshu-banner.jpg" class="novel-cover" alt="封面">
