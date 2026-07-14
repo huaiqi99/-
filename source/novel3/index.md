@@ -2,6 +2,9 @@
 title: 九州风云录
 date: 2024-01-01 00:00:00
 type: novel
+password: xichuan99
+encrypt_message: 李姐允许你看了吗你就点
+encrypt_wrong: 你没有得到李姐的许可！
 ---
 
 <style>
@@ -91,18 +94,6 @@ type: novel
     <div class="chapter-item">
       <a href="/-/posts/jiuzhou-1-12/">
         <span class="chapter-num">第12章</span>飞机入睡法
-      </a>
-    </div>
-  </div>
-</div>
-
-  
-<div class="volume-section">
-  <div class="volume-title">第2卷 小番外</div>
-  <div class="chapter-grid">
-    <div class="chapter-item">
-    <a href="/-/posts/jiuzhou-2-1/">
-        <span class="chapter-num">第1章</span>超黄性转开车
       </a>
     </div>
   </div>

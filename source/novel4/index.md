@@ -1,7 +1,10 @@
 ---
-title: 北境玫瑰
+title: 北境玫瑰（程行歌版）
 date: 2024-01-01 00:00:00
 type: novel
+password: xiezhao99
+encrypt_message: 李姐允许你看了吗你就点
+encrypt_wrong: 你没有得到李姐的许可！
 ---
 
 <style>
@@ -23,8 +26,8 @@ type: novel
 <div class="novel-catalog">
 
 <div class="novel-header">
-  <h1>北境玫瑰</h1>
-  <p>作者：淮子生生 | 12章 | 约5万字</p>
+  <h1>北境玫瑰（程行歌版）</h1>
+  <p>作者：程行歌 | 12章 | 约5万字</p>
 </div>
 
 <img src="/-/images/beijing2-banner.jpg" class="novel-cover" alt="封面">

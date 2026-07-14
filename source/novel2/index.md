@@ -2,6 +2,9 @@
 title: 这破游戏NPC太能打了
 date: 2024-01-01 00:00:00
 type: novel
+password: quanyu99
+encrypt_message: 本文版权归作者所有，请输入密码查看
+encrypt_wrong: ❌ 密码错误，请重新输入
 ---
 
 <style>
