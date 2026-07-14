@@ -100,23 +100,76 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: butterfly
 
-# 文章密码加密插件
-## Docs: https://github.com/D0n9X1n/hexo-blog-encrypt
+# =====================================
+# 文章密码加密插件 - 按分类整本书上锁
+# =====================================
 encrypt:
   enable: true
-  default_template: |
-    <div style="text-align:center; padding: 40px 20px;">
-      <h2>🔒 该文章已加密</h2>
-      <p style="color: #8a8580;">本文含有成人内容，请输入密码查看</p>
-    </div>
-  default_wrong_template: |
-    <div style="text-align:center; padding: 20px;">
-      <p style="color: #c44536;">❌ 密码错误，请重新输入</p>
-    </div>
-  default_decryption_fail_template: |
-    <div style="text-align:center; padding: 20px;">
-      <p style="color: #c44536;">❌ 解密失败，文章可能已损坏</p>
-    </div>
+
+  # ===== 第一本书：我在地府打工那些年 =====
+  - category_name: 我在地府打工那些年
+    password: huaiqi99
+    template: |
+      <div style="text-align:center; padding: 50px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; margin: 30px 0;">
+        <h2 style="color: #f7f5f0; margin-bottom: 15px;">🔒 版权保护</h2>
+        <p style="color: #8a8580; font-size: 0.9em;">本文版权归作者所有，请输入密码继续阅读</p>
+      </div>
+    wrong_template: |
+      <div style="text-align:center; padding: 20px; color: #c44536;">
+        <p>❌ 密码错误，请重新输入</p>
+      </div>
+
+  # ===== 第二本书：这破游戏NPC太能打了 =====
+  - category_name: 这破游戏NPC太能打了
+    password: quanyu99
+    template: |
+      <div style="text-align:center; padding: 50px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; margin: 30px 0;">
+        <h2 style="color: #f7f5f0; margin-bottom: 15px;">🔒 版权保护</h2>
+        <p style="color: #8a8580; font-size: 0.9em;">本文版权归作者所有，请输入密码继续阅读</p>
+      </div>
+    wrong_template: |
+      <div style="text-align:center; padding: 20px; color: #c44536;">
+        <p>❌ 密码错误，请重新输入</p>
+      </div>
+
+  # ===== 第三本书：九州风云录 =====
+  - category_name: 九州风云录
+    password: xichuan99
+    template: |
+      <div style="text-align:center; padding: 50px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; margin: 30px 0;">
+        <h2 style="color: #f7f5f0; margin-bottom: 15px;">🔒 站住！</h2>
+        <p style="color: #8a8580; font-size: 0.9em;">李姐允许你看了吗你就点</p>
+      </div>
+    wrong_template: |
+      <div style="text-align:center; padding: 20px; color: #c44536;">
+        <p>❌ 你没有得到李姐的许可！</p>
+      </div>
+
+  # ===== 第四本书：北境玫瑰（程行歌版）=====
+  - category_name: 北境玫瑰（程行歌版）
+    password: xiezhao99
+    template: |
+      <div style="text-align:center; padding: 50px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; margin: 30px 0;">
+        <h2 style="color: #f7f5f0; margin-bottom: 15px;">🔒 站住！</h2>
+        <p style="color: #8a8580; font-size: 0.9em;">李姐允许你看了吗你就点</p>
+      </div>
+    wrong_template: |
+      <div style="text-align:center; padding: 20px; color: #c44536;">
+        <p>❌ 你没有得到李姐的许可！</p>
+      </div>
+
+  # ===== 第五本书：皇叔何出此言 =====
+  - category_name: 皇叔何出此言
+    password: 我是变态
+    template: |
+      <div style="text-align:center; padding: 50px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; margin: 30px 0;">
+        <h2 style="color: #f7f5f0; margin-bottom: 15px;">🔒 站住！</h2>
+        <p style="color: #8a8580; font-size: 0.9em;">李姐允许你看了吗你就点</p>
+      </div>
+    wrong_template: |
+      <div style="text-align:center; padding: 20px; color: #c44536;">
+        <p>❌ 你没有得到李姐的许可！</p>
+      </div>
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
