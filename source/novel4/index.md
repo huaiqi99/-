@@ -1,5 +1,5 @@
 ---
-title: 北境玫瑰（程行歌版）
+title: 北境玫瑰
 date: 2024-01-01 00:00:00
 type: novel
 ---
@@ -23,8 +23,8 @@ type: novel
 <div class="novel-catalog">
 
 <div class="novel-header">
-  <h1>北境玫瑰（程行歌版）</h1>
-  <p>作者：程行歌 | 12章 | 约5万字</p>
+  <h1>北境玫瑰</h1>
+  <p>作者：淮子生生 | 12章 | 约5万字</p>
 </div>
 
 <img src="/-/images/beijing2-banner.jpg" class="novel-cover" alt="封面">
