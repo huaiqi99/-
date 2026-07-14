@@ -4,10 +4,10 @@
 
 # Site
 title: 墨境
-subtitle: 快乐仓库
-description: 你李姐我又想到新点子了
+subtitle: 用文字构筑世界
+description: 一个关于奇幻、仙侠与情感的小说世界
 keywords: 小说, 原创, 奇幻, 仙侠, GB
-author: 淮棋
+author: 淮子生生
 language: zh-CN
 timezone: Asia/Shanghai
 
@@ -99,6 +99,24 @@ ignore:
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 theme: butterfly
+
+# 文章密码加密插件
+## Docs: https://github.com/D0n9X1n/hexo-blog-encrypt
+encrypt:
+  enable: true
+  default_template: |
+    <div style="text-align:center; padding: 40px 20px;">
+      <h2>🔒 该文章已加密</h2>
+      <p style="color: #8a8580;">本文含有成人内容，请输入密码查看</p>
+    </div>
+  default_wrong_template: |
+    <div style="text-align:center; padding: 20px;">
+      <p style="color: #c44536;">❌ 密码错误，请重新输入</p>
+    </div>
+  default_decryption_fail_template: |
+    <div style="text-align:center; padding: 20px;">
+      <p style="color: #c44536;">❌ 解密失败，文章可能已损坏</p>
+    </div>
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
