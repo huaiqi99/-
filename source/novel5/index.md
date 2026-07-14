@@ -9,7 +9,9 @@ type: novel
 .novel-header { text-align: center; margin-bottom: 40px; padding: 30px; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; color: #f7f5f0; }
 .novel-header h1 { font-size: 2em; margin-bottom: 10px; color: #f7f5f0; }
 .novel-header p { color: #8a8580; font-size: 0.9em; }
-.novel-cover { width: 100%; max-width: 400px; border-radius: 8px; margin: 20px auto; display: block; }
+.novel-cover { width: 100%; max-width: 600px; border-radius: 8px; margin: 20px auto; display: block; }
+.volume-section { margin: 30px 0; }
+.volume-title { font-size: 1.4em; font-weight: bold; color: #c44536; padding: 12px 0; border-bottom: 2px solid #e5e1db; margin-bottom: 15px; }
 .chapter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
 .chapter-item { padding: 10px 14px; background: #f0eeea; border-radius: 6px; transition: all 0.2s; }
 .chapter-item:hover { background: #e5e1db; }
