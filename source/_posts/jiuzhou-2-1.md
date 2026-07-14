@@ -7,7 +7,7 @@ tags:
   - GB
   - 仙侠
   - 18+
-cover: /images/jiuzhou-banner.jpg
+cover: /images/shenjianc.jpg
 ---
 
 
