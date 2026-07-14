@@ -120,7 +120,7 @@ encrypt:
     - {name: 我在地府打工那些年, password: huaiqi99}
     - {name: 这破游戏NPC太能打了, password: quanyu99}
     - {name: 九州风云录, password: xichuan99}
-    - {name: 北境玫瑰（程行歌版）, password: xiezhao99}
+    - {name: 北境玫瑰, password: xiezhao99}
     - {name: 皇叔何出此言, password: 我是变态}
 
 # Deployment
