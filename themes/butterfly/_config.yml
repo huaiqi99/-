@@ -12,7 +12,7 @@ favicon: /img/favicon.ico
 # Avatar (右侧栏头像)
 # --------------------------------------
 avatar:
-  img: /images/difu-cover.jpg
+  img: /images/avatar.jpg
   effect: false
 
 # 右侧栏作者信息
