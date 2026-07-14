@@ -27,7 +27,9 @@ type: novel
 
 <img src="/-/images/huangshu-banner.jpg" class="novel-cover" alt="封面">
 
-<div class="chapter-grid">
+<div class="volume-section">
+  <div class="volume-title">第1卷 【淮棋】</div>
+  <div class="chapter-grid">
   <div class="chapter-item">
     <a href="/-/posts/huangshu-1-1/">
       <span class="chapter-num">第1章</span>集各种xp与一体之物
