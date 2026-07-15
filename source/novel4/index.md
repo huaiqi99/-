@@ -39,21 +39,6 @@ type: novel
       </a>
     </div>
     <div class="chapter-item">
-      <a href="/-/posts/beijing2-1-10/">
-        <span class="chapter-num">第10章</span>自我攻略大师
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/beijing2-1-11/">
-        <span class="chapter-num">第11章</span>相亲安排
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/beijing2-1-12/">
-        <span class="chapter-num">第12章</span>相亲失败
-      </a>
-    </div>
-    <div class="chapter-item">
       <a href="/-/posts/beijing2-1-2/">
         <span class="chapter-num">第2章</span>下水道之神
       </a>
@@ -91,6 +76,21 @@ type: novel
     <div class="chapter-item">
       <a href="/-/posts/beijing2-1-9/">
         <span class="chapter-num">第9章</span>依依不舍的戏
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/beijing2-1-10/">
+        <span class="chapter-num">第10章</span>自我攻略大师
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/beijing2-1-11/">
+        <span class="chapter-num">第11章</span>相亲安排
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/beijing2-1-12/">
+        <span class="chapter-num">第12章</span>相亲失败
       </a>
     </div>
   </div>

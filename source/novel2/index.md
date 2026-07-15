@@ -39,6 +39,46 @@ type: novel
       </a>
     </div>
     <div class="chapter-item">
+      <a href="/-/posts/npc-1-2/">
+        <span class="chapter-num">第2章</span>命定的二次相遇2
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-3/">
+        <span class="chapter-num">第3章</span>切勿因小失大2
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-4/">
+        <span class="chapter-num">第4章</span>吊坠2
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-5/">
+        <span class="chapter-num">第5章</span>夜游魂
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-6/">
+        <span class="chapter-num">第6章</span>调查
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-7/">
+        <span class="chapter-num">第7章</span>垂死梦中惊坐起
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-8/">
+        <span class="chapter-num">第8章</span>镜子惊魂
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-1-9/">
+        <span class="chapter-num">第9章</span>遗忘与抛弃
+      </a>
+    </div>
+    <div class="chapter-item">
       <a href="/-/posts/npc-1-10/">
         <span class="chapter-num">第10章</span>神秘大礼包
       </a>
@@ -86,11 +126,6 @@ type: novel
     <div class="chapter-item">
       <a href="/-/posts/npc-1-19/">
         <span class="chapter-num">第19章</span>极致苦难
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-1-2/">
-        <span class="chapter-num">第2章</span>命定的二次相遇2
       </a>
     </div>
     <div class="chapter-item">
@@ -144,11 +179,6 @@ type: novel
       </a>
     </div>
     <div class="chapter-item">
-      <a href="/-/posts/npc-1-3/">
-        <span class="chapter-num">第3章</span>切勿因小失大2
-      </a>
-    </div>
-    <div class="chapter-item">
       <a href="/-/posts/npc-1-30/">
         <span class="chapter-num">第30章</span>高塔之中
       </a>
@@ -196,11 +226,6 @@ type: novel
     <div class="chapter-item">
       <a href="/-/posts/npc-1-39/">
         <span class="chapter-num">第39章</span>致命追击
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-1-4/">
-        <span class="chapter-num">第4章</span>吊坠2
       </a>
     </div>
     <div class="chapter-item">
@@ -254,11 +279,6 @@ type: novel
       </a>
     </div>
     <div class="chapter-item">
-      <a href="/-/posts/npc-1-5/">
-        <span class="chapter-num">第5章</span>夜游魂
-      </a>
-    </div>
-    <div class="chapter-item">
       <a href="/-/posts/npc-1-50/">
         <span class="chapter-num">第50章</span>火之权柄
       </a>
@@ -293,26 +313,6 @@ type: novel
         <span class="chapter-num">第56章</span>不可言说
       </a>
     </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-1-6/">
-        <span class="chapter-num">第6章</span>调查
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-1-7/">
-        <span class="chapter-num">第7章</span>垂死梦中惊坐起
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-1-8/">
-        <span class="chapter-num">第8章</span>镜子惊魂
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-1-9/">
-        <span class="chapter-num">第9章</span>遗忘与抛弃
-      </a>
-    </div>
   </div>
 </div>
 
@@ -320,61 +320,6 @@ type: novel
 <div class="volume-section">
   <div class="volume-title">第2卷 双冕北境</div>
   <div class="chapter-grid">
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-100/">
-        <span class="chapter-num">第100章</span>法伊顿
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-101/">
-        <span class="chapter-num">第101章</span>所谓命运
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-102/">
-        <span class="chapter-num">第102章</span>归墟志异
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-103/">
-        <span class="chapter-num">第103章</span>二次会面
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-104/">
-        <span class="chapter-num">第104章</span>改革之后
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-105/">
-        <span class="chapter-num">第105章</span>过审版起义
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-106/">
-        <span class="chapter-num">第106章</span>双冠坠地
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-107/">
-        <span class="chapter-num">第107章</span>霜庭熄声
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-108/">
-        <span class="chapter-num">第108章</span>记忆抹除
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-109/">
-        <span class="chapter-num">第109章</span>因果循环
-      </a>
-    </div>
-    <div class="chapter-item">
-      <a href="/-/posts/npc-2-110/">
-        <span class="chapter-num">第110章</span>任务完成
-      </a>
-    </div>
     <div class="chapter-item">
       <a href="/-/posts/npc-2-57/">
         <span class="chapter-num">第57章</span>双冕北境
@@ -588,6 +533,61 @@ type: novel
     <div class="chapter-item">
       <a href="/-/posts/npc-2-99/">
         <span class="chapter-num">第99章</span>禁忌仪式
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-100/">
+        <span class="chapter-num">第100章</span>法伊顿
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-101/">
+        <span class="chapter-num">第101章</span>所谓命运
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-102/">
+        <span class="chapter-num">第102章</span>归墟志异
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-103/">
+        <span class="chapter-num">第103章</span>二次会面
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-104/">
+        <span class="chapter-num">第104章</span>改革之后
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-105/">
+        <span class="chapter-num">第105章</span>过审版起义
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-106/">
+        <span class="chapter-num">第106章</span>双冠坠地
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-107/">
+        <span class="chapter-num">第107章</span>霜庭熄声
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-108/">
+        <span class="chapter-num">第108章</span>记忆抹除
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-109/">
+        <span class="chapter-num">第109章</span>因果循环
+      </a>
+    </div>
+    <div class="chapter-item">
+      <a href="/-/posts/npc-2-110/">
+        <span class="chapter-num">第110章</span>任务完成
       </a>
     </div>
   </div>
