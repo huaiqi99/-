@@ -33,23 +33,19 @@ header#page-header(class=`${headerClassName + isFixedClass}` style=bg_img)
       include ./post-info.pug
     else if globalPageType === 'home'
       #site-info
-        .hero-left
-          img.hero-character(src="/-/images/hero-character.png" alt="角色")
-        .hero-right
-          h1#site-title=config.title
-          if theme.subtitle.enable
-            - var loadSubJs = true
-            #site-subtitle
-              span#subtitle
-          if theme.social
-            #site_social_icons
-              !=partial('includes/header/social', {}, {cache: true})
+        h1#site-title=config.title
+        if theme.subtitle.enable
+          - var loadSubJs = true
+          #site-subtitle
+            span#subtitle
+        if theme.social
+          #site_social_icons
+            !=partial('includes/header/social', {}, {cache: true})
       #scroll-down
         i.fas.fa-angle-down.scroll-down-effects
     else
       #page-site-info
         h1#site-title=page.title || page.tag || page.category
   else
-    //- improve seo
     if globalPageType !== 'post'
       h1.title-seo=page.title || page.tag || page.category || config.title
