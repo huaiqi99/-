@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "hexo": "^7.3.0",
-    "hexo-blog-encrypt": "^4.0.2",
     "hexo-cli": "^4.3.2",
     "hexo-generator-archive": "^2.0.0",
     "hexo-generator-category": "^2.0.0",
