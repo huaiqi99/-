@@ -1,11 +1,17 @@
 extends includes/layout.pug
 
 block content
-  // 小说作品合集首页
+  // Hero 区域 - 打字机开场
+  .hero-section
+    .hero-content
+      h1.hero-title
+        span#typewriter
+      p.hero-subtitle#typewriter-sub
+    .hero-scroll
+      span ↓ 向下滚动
+
+  // 小说作品合集
   .novel-collection
-    .novel-collection-title 墨境小说
-    .novel-collection-subtitle 用文字构筑世界，让故事在指尖流转
-    
     .novel-collection-grid
       // 我在地府打工那些年
       a.novel-collection-card(href=url_for('/novel/'))
@@ -66,3 +72,59 @@ block content
             span.tag 短篇
           .novel-collection-desc 栾方棋与林淮的前世今生，两百多岁的他主动提出要做，究竟是何居心？
           .novel-collection-meta 作者：程行歌 | 1章 | 约9万字
+
+  // 打字机效果脚本
+  script.
+    (function() {
+      var titleText = '墨境小说';
+      var subtitleText = '用文字构筑世界，让故事在指尖流转';
+      var titleEl = document.getElementById('typewriter');
+      var subtitleEl = document.getElementById('typewriter-sub');
+      var titleIndex = 0;
+      var subtitleIndex = 0;
+
+      function typeTitle() {
+        if (titleIndex < titleText.length) {
+          titleEl.textContent += titleText.charAt(titleIndex);
+          titleIndex++;
+          setTimeout(typeTitle, 200);
+        } else {
+          setTimeout(typeSubtitle, 500);
+        }
+      }
+
+      function typeSubtitle() {
+        if (subtitleIndex < subtitleText.length) {
+          subtitleEl.textContent += subtitleText.charAt(subtitleIndex);
+          subtitleIndex++;
+          setTimeout(typeSubtitle, 80);
+        }
+      }
+
+      // 页面加载后开始
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(typeTitle, 300);
+        });
+      } else {
+        setTimeout(typeTitle, 300);
+      }
+    })();
+
+  // 滚动淡入效果脚本
+  script.
+    (function() {
+      function fadeInOnScroll() {
+        var elements = document.querySelectorAll('.novel-collection-card');
+        elements.forEach(function(el) {
+          var rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 50) {
+            el.classList.add('fade-in-visible');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', fadeInOnScroll);
+      window.addEventListener('load', fadeInOnScroll);
+      fadeInOnScroll();
+    })();
