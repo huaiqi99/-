@@ -1,3 +1,4 @@
+ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
 // ============================
 // 小说博客自定义样式
 // ============================
@@ -73,7 +74,9 @@
 
 // --- 首页作品合集 ---
 .novel-collection
-  padding: 20px
+  padding: 40px 20px
+  max-width: 1200px
+  margin: 0 auto
 
 .novel-collection-title
   text-align: center
@@ -91,78 +94,6 @@
 
 .novel-collection-grid
   display: grid
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
-  gap: 24px
-  max-width: 1000px
-  margin: 0 auto
-
-.novel-collection-card
-  display: block
-  background: var(--card-bg)
-  border-radius: 12px
-  overflow: hidden
-  text-decoration: none
-  color: var(--font-color)
-  border: 1px solid var(--card-border)
-  transition: all 0.3s
-
-  &:hover
-    transform: translateY(-4px)
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15)
-
-.novel-collection-cover
-  width: 100%
-  height: 180px
-  object-fit: cover
-  display: block
-
-.novel-collection-info
-  padding: 16px
-
-.novel-collection-name
-  font-size: 1.2em
-  font-weight: bold
-  margin-bottom: 6px
-  color: var(--font-color)
-
-.novel-collection-tags
-  display: flex
-  gap: 6px
-  margin-bottom: 8px
-  flex-wrap: wrap
-
-  .tag
-    font-size: 0.75em
-    padding: 3px 10px
-    background: #c44536
-    color: #fff
-    border-radius: 12px
-    font-weight: 500
-
-.novel-collection-desc
-  font-size: 0.85em
-  color: var(--font-color)
-  opacity: 0.7
-  line-height: 1.6
-  margin-bottom: 10px
-  display: -webkit-box
-  -webkit-line-clamp: 2
-  -webkit-box-orient: vertical
-  overflow: hidden
-
-.novel-collection-meta
-  font-size: 0.8em
-  color: var(--font-color)
-  opacity: 0.6
-
-// 首页作品合集
-.novel-collection
-  padding: 40px 20px
-  max-width: 1200px
-  margin: 0 auto
-
-.novel-collection-grid
-  display: grid
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
   gap: 24px
 
@@ -175,10 +106,20 @@
   color: var(--font-color)
   border: 1px solid var(--card-border)
   transition: all 0.3s
+  opacity: 1                    // 修复：原来为0导致卡片不可见
+  transform: translateY(0)      // 修复：原来为30px导致卡片下移
 
   &:hover
-    transform: translateY(-4px)
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15)
+    transform: translateY(-4px) scale(1.02)
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2)
+
+  &:active
+    transform: translateY(-2px) scale(1.01)
+
+  // 滚动淡入动画（JS添加 fade-in-visible 类时触发）
+  &.fade-in-visible
+    opacity: 1
+    transform: translateY(0)
 
 .novel-collection-cover
   width: 100%
@@ -259,17 +200,42 @@
     color: #fff
     border-color: #c44536
 
-// --- Hero 区域 ---
-.hero-section
-  min-height: 100vh
+// --- Hero 全屏背景区域 ---
+// 用于首页顶部全屏背景图（配合 lixi.png）
+.hero-fullscreen
+  position: relative
+  width: 100%
+  height: 100vh
+  min-height: 600px
   display: flex
   flex-direction: column
   align-items: center
   justify-content: center
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)
-  position: relative
+  overflow: hidden
+
+  &::before
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: url('/-/images/lixi.png') center/cover no-repeat
+    z-index: 0
+
+  &::after
+    content: ''
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%)
+    z-index: 1
 
 .hero-content
+  position: relative
+  z-index: 2
   text-align: center
   padding: 40px 20px
 
@@ -280,7 +246,7 @@
   margin-bottom: 20px
   font-family: 'Noto Serif SC', serif
   letter-spacing: 8px
-  min-height: 1.2em
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5)
 
   @media (max-width: 768px)
     font-size: 2.5em
@@ -288,24 +254,30 @@
 
 .hero-subtitle
   font-size: 1.1em
-  color: #8a8580
+  color: rgba(255,255,255,0.85)
   font-family: 'Noto Serif SC', serif
   letter-spacing: 2px
-  min-height: 1.5em
-  opacity: 0.8
+  text-shadow: 0 1px 10px rgba(0,0,0,0.5)
 
   @media (max-width: 768px)
     font-size: 0.9em
 
-.hero-scroll
+.hero-scroll-down
   position: absolute
   bottom: 40px
   left: 50%
   transform: translateX(-50%)
-  color: #8a8580
+  z-index: 2
+  color: rgba(255,255,255,0.7)
   font-size: 0.85em
   animation: bounce 2s infinite
-  opacity: 0.6
+  cursor: pointer
+  text-align: center
+
+  i
+    display: block
+    font-size: 2em
+    margin-top: 5px
 
 @keyframes bounce
   0%, 20%, 50%, 80%, 100%
@@ -315,26 +287,8 @@
   60%
     transform: translateX(-50%) translateY(-5px)
 
-// --- 滚动淡入动画 ---
-.novel-collection-card
-  opacity: 0
-  transform: translateY(30px)
-  transition: all 0.6s ease
-
-  &.fade-in-visible
-    opacity: 1
-    transform: translateY(0)
-
-// --- 卡片悬停效果增强 ---
-.novel-collection-card
-  &:hover
-    transform: translateY(-4px) scale(1.02)
-    box-shadow: 0 12px 32px rgba(0,0,0,0.2)
-
-  &:active
-    transform: translateY(-2px) scale(1.01)
-
-// --- 首页 Hero 左右分栏 ---
+// --- 首页 Hero 区域 ---
+// 当前使用的左右分栏样式（配合现有的 header/index.pug）
 #site-info
   display: flex
   align-items: center
@@ -381,7 +335,6 @@
   @media (max-width: 768px)
     text-align: center
 
-// 调整标题样式
 #site-title
   font-size: 3.5em
   font-family: 'Noto Serif SC', serif
@@ -392,10 +345,10 @@
     font-size: 2.2em
     letter-spacing: 3px
 
-// 副标题打字机样式
 #site-subtitle
   font-size: 1em
   color: #8a8580
   font-family: 'Noto Serif SC', serif
   letter-spacing: 2px
   min-height: 1.5em
+ubuntu@sandbox:~ $
