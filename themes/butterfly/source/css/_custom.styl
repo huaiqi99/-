@@ -1,4 +1,3 @@
-ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
 // ============================
 // 小说博客自定义样式
 // ============================
@@ -106,8 +105,8 @@ ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
   color: var(--font-color)
   border: 1px solid var(--card-border)
   transition: all 0.3s
-  opacity: 1                    // 修复：原来为0导致卡片不可见
-  transform: translateY(0)      // 修复：原来为30px导致卡片下移
+  opacity: 1
+  transform: translateY(0)
 
   &:hover
     transform: translateY(-4px) scale(1.02)
@@ -116,7 +115,6 @@ ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
   &:active
     transform: translateY(-2px) scale(1.01)
 
-  // 滚动淡入动画（JS添加 fade-in-visible 类时触发）
   &.fade-in-visible
     opacity: 1
     transform: translateY(0)
@@ -201,7 +199,6 @@ ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
     border-color: #c44536
 
 // --- Hero 全屏背景区域 ---
-// 用于首页顶部全屏背景图（配合 lixi.png）
 .hero-fullscreen
   position: relative
   width: 100%
@@ -288,7 +285,6 @@ ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
     transform: translateX(-50%) translateY(-5px)
 
 // --- 首页 Hero 区域 ---
-// 当前使用的左右分栏样式（配合现有的 header/index.pug）
 #site-info
   display: flex
   align-items: center
@@ -351,4 +347,3 @@ ubuntu@sandbox:~ $ cat /mnt/agents/output/_custom.styl
   font-family: 'Noto Serif SC', serif
   letter-spacing: 2px
   min-height: 1.5em
-ubuntu@sandbox:~ $
