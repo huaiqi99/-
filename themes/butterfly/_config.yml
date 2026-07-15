@@ -9,10 +9,25 @@ menu:
 # --------------------------------------
 favicon: /img/favicon.ico
 
+# Subtitle (打字机效果)
+# --------------------------------------
+subtitle:
+  enable: true
+  effect: true
+  source: false
+  sub:
+    - '用文字构筑世界'
+    - '让故事在指尖流转'
+  typed_option:
+    typeSpeed: 100
+    backSpeed: 50
+    backDelay: 2000
+    loop: true
+
 # Avatar (右侧栏头像)
 # --------------------------------------
 avatar:
-  img: /images/avatar.jpg
+  img: /images/difu-cover.jpg
   effect: false
 
 # 右侧栏作者信息
@@ -21,7 +36,7 @@ aside:
   enable: true
   card_author:
     enable: true
-    description: 一个关于奇幻、仙侠与情感的小说世界<br>俗称垃圾桶
+    description: 一个关于奇幻、仙侠与情感的小说世界
     button:
       enable: false
       icon: fab fa-github
@@ -29,13 +44,13 @@ aside:
       link: https://github.com/huaiqi99
   card_announcement:
     enable: true
-    content: 刚建立的小网站，bug满天飞<br>正在敲代码修bug中，别骂。
+    content: 欢迎阅读我的小说！<br>《我在地府打工那些年》已完结
   card_recent_post:
     enable: true
     limit: 5
   card_categories:
     enable: false
-  card_tag:
+  card_tags:
     enable: false
   card_archives:
     enable: false
@@ -56,7 +71,7 @@ footer:
   owner:
     enable: true
     since: 2026
-  custom_text: <p>木嘿嘿嘿嘿</p>
+  custom_text: <p>用文字构筑世界</p>
 
 # Post Settings
 post_settings:

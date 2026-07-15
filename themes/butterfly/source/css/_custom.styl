@@ -267,3 +267,69 @@
 
   &:active
     transform: translateY(-2px) scale(1.01)
+
+// --- 首页 Hero 左右分栏 ---
+#site-info
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 60px
+  max-width: 1000px
+  margin: 0 auto
+  padding: 0 40px
+
+  @media (max-width: 768px)
+    flex-direction: column
+    gap: 20px
+    padding: 0 20px
+
+.hero-left
+  flex: 0 0 auto
+  max-width: 350px
+
+  @media (max-width: 768px)
+    max-width: 200px
+
+.hero-character
+  width: 100%
+  height: auto
+  border-radius: 12px
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3)
+  animation: fadeInLeft 1s ease
+
+  @media (max-width: 768px)
+    max-height: 250px
+    object-fit: contain
+
+@keyframes fadeInLeft
+  from
+    opacity: 0
+    transform: translateX(-30px)
+  to
+    opacity: 1
+    transform: translateX(0)
+
+.hero-right
+  text-align: left
+
+  @media (max-width: 768px)
+    text-align: center
+
+// 调整标题样式
+#site-title
+  font-size: 3.5em
+  font-family: 'Noto Serif SC', serif
+  letter-spacing: 6px
+  margin-bottom: 15px
+
+  @media (max-width: 768px)
+    font-size: 2.2em
+    letter-spacing: 3px
+
+// 副标题打字机样式
+#site-subtitle
+  font-size: 1em
+  color: #8a8580
+  font-family: 'Noto Serif SC', serif
+  letter-spacing: 2px
+  min-height: 1.5em
