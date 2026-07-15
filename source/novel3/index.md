@@ -2,6 +2,9 @@
 title: 九州风云录
 date: 2024-01-01 00:00:00
 type: novel
+password: xichuan99
+encrypt_message: '李姐允许你看了吗你就点'
+encrypt_wrong: '❌ 你没有得到李姐的许可！'
 ---
 
 <style>

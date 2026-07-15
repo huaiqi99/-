@@ -2,6 +2,9 @@
 title: 皇叔何出此言
 date: 2024-01-01 00:00:00
 type: novel
+password: 我是变态
+encrypt_message: '李姐允许你看了吗你就点'
+encrypt_wrong: '❌ 你没有得到李姐的许可！'
 ---
 
 <style>

@@ -2,6 +2,9 @@
 title: 我在地府打工那些年
 date: 2024-01-01 00:00:00
 type: novel
+password: huaiqi99
+encrypt_message: '本文版权归作者所有，请输入密码查看'
+encrypt_wrong: '❌ 你没有得到李姐的许可！'
 ---
 
 <style>
