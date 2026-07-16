@@ -2,7 +2,7 @@
 # --------------------------------------
 menu:
   首页: / || fas fa-home
-  作品: /novel/ || fas fa-book
+  人物关系图: /characters/ || fas fa-project-diagram
   关于: /about/ || fas fa-user
 
 # Favicon
@@ -36,14 +36,8 @@ aside:
   enable: true
   card_author:
     enable: true
-    card_recent_post:       
+  card_recent_post:
     enable: false
-    description: 一个关于奇幻、仙侠与情感的小说世界
-    button:
-      enable: false
-      icon: fab fa-github
-      text: Follow Me
-      link: https://github.com/huaiqi99
   card_announcement:
     enable: true
     content: 别骂了，这个简陋的界面<br>其实是李姐拿命敲出来的
@@ -62,7 +56,7 @@ cover:
   aside_enable: false
   archives_enable: true
 
-  # 关闭相关推荐
+# 关闭相关推荐
 related_post:
   enable: false
 
