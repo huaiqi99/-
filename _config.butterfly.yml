@@ -1,4 +1,4 @@
-index_img: /images/lixi.png
+index_img: /images/lixi.jpg
 
 menu:
   首页: / || fas fa-home
@@ -34,7 +34,7 @@ aside:
     enable: true
   card_announcement:
     enable: true
-    content: '<a href="/-/world/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🌏 世界观设定集</a><a href="/-/gallery/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;font-size:0.95em;font-family:inherit;">🖼️ 插图集</a>'
+    content: '别骂了，这个简陋的界面<br>其实是李姐拿命敲出来的<br><br><a href="/-/world/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🌏 世界观设定集</a><a href="/-/gallery/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;font-size:0.95em;font-family:inherit;">🖼️ 插图集</a>'
   card_categories:
     enable: false
   card_tags:
