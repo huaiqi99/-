@@ -73,7 +73,9 @@
 
 // --- 首页作品合集 ---
 .novel-collection
-  padding: 20px
+  padding: 40px 20px
+  max-width: 1200px
+  margin: 0 auto
 
 .novel-collection-title
   text-align: center
@@ -91,78 +93,6 @@
 
 .novel-collection-grid
   display: grid
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
-  gap: 24px
-  max-width: 1000px
-  margin: 0 auto
-
-.novel-collection-card
-  display: block
-  background: var(--card-bg)
-  border-radius: 12px
-  overflow: hidden
-  text-decoration: none
-  color: var(--font-color)
-  border: 1px solid var(--card-border)
-  transition: all 0.3s
-
-  &:hover
-    transform: translateY(-4px)
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15)
-
-.novel-collection-cover
-  width: 100%
-  height: 180px
-  object-fit: cover
-  display: block
-
-.novel-collection-info
-  padding: 16px
-
-.novel-collection-name
-  font-size: 1.2em
-  font-weight: bold
-  margin-bottom: 6px
-  color: var(--font-color)
-
-.novel-collection-tags
-  display: flex
-  gap: 6px
-  margin-bottom: 8px
-  flex-wrap: wrap
-
-  .tag
-    font-size: 0.75em
-    padding: 3px 10px
-    background: #c44536
-    color: #fff
-    border-radius: 12px
-    font-weight: 500
-
-.novel-collection-desc
-  font-size: 0.85em
-  color: var(--font-color)
-  opacity: 0.7
-  line-height: 1.6
-  margin-bottom: 10px
-  display: -webkit-box
-  -webkit-line-clamp: 2
-  -webkit-box-orient: vertical
-  overflow: hidden
-
-.novel-collection-meta
-  font-size: 0.8em
-  color: var(--font-color)
-  opacity: 0.6
-
-// 首页作品合集
-.novel-collection
-  padding: 40px 20px
-  max-width: 1200px
-  margin: 0 auto
-
-.novel-collection-grid
-  display: grid
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
   gap: 24px
 
@@ -175,10 +105,15 @@
   color: var(--font-color)
   border: 1px solid var(--card-border)
   transition: all 0.3s
+  opacity: 1
+  transform: translateY(0)
 
   &:hover
-    transform: translateY(-4px)
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15)
+    transform: translateY(-4px) scale(1.02)
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2)
+
+  &:active
+    transform: translateY(-2px) scale(1.01)
 
 .novel-collection-cover
   width: 100%
@@ -259,152 +194,8 @@
     color: #fff
     border-color: #c44536
 
-// --- Hero 区域 ---
-.hero-section
-  min-height: 100vh
-  display: flex
-  flex-direction: column
-  align-items: center
-  justify-content: center
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)
-  position: relative
-
-.hero-content
-  text-align: center
-  padding: 40px 20px
-
-.hero-title
-  font-size: 4em
-  font-weight: bold
-  color: #f7f5f0
-  margin-bottom: 20px
-  font-family: 'Noto Serif SC', serif
-  letter-spacing: 8px
-  min-height: 1.2em
-
-  @media (max-width: 768px)
-    font-size: 2.5em
-    letter-spacing: 4px
-
-.hero-subtitle
-  font-size: 1.1em
-  color: #8a8580
-  font-family: 'Noto Serif SC', serif
-  letter-spacing: 2px
-  min-height: 1.5em
-  opacity: 0.8
-
-  @media (max-width: 768px)
-    font-size: 0.9em
-
-.hero-scroll
-  position: absolute
-  bottom: 40px
-  left: 50%
-  transform: translateX(-50%)
-  color: #8a8580
-  font-size: 0.85em
-  animation: bounce 2s infinite
-  opacity: 0.6
-
-@keyframes bounce
-  0%, 20%, 50%, 80%, 100%
-    transform: translateX(-50%) translateY(0)
-  40%
-    transform: translateX(-50%) translateY(-10px)
-  60%
-    transform: translateX(-50%) translateY(-5px)
-
-// --- 滚动淡入动画 ---
-.novel-collection-card
-  opacity: 1
-  transform: translateY(0)
-  transition: all 0.6s ease
-
-  &.fade-in-visible
-    opacity: 1
-    transform: translateY(0)
-
-// --- 卡片悬停效果增强 ---
-.novel-collection-card
-  &:hover
-    transform: translateY(-4px) scale(1.02)
-    box-shadow: 0 12px 32px rgba(0,0,0,0.2)
-
-  &:active
-    transform: translateY(-2px) scale(1.01)
-
-// --- 首页 Hero 左右分栏 ---
-#site-info
-  display: flex
-  align-items: center
-  justify-content: center
-  gap: 60px
-  max-width: 1000px
-  margin: 0 auto
-  padding: 0 40px
-
-  @media (max-width: 768px)
-    flex-direction: column
-    gap: 20px
-    padding: 0 20px
-
-.hero-left
-  flex: 0 0 auto
-  max-width: 350px
-
-  @media (max-width: 768px)
-    max-width: 200px
-
-.hero-character
-  width: 100%
-  height: auto
-  border-radius: 12px
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3)
-  animation: fadeInLeft 1s ease
-
-  @media (max-width: 768px)
-    max-height: 250px
-    object-fit: contain
-
-@keyframes fadeInLeft
-  from
-    opacity: 0
-    transform: translateX(-30px)
-  to
-    opacity: 1
-    transform: translateX(0)
-
-.hero-right
-  text-align: left
-
-  @media (max-width: 768px)
-    text-align: center
-
-// 调整标题样式
-#site-title
-  font-size: 3.5em
-  font-family: 'Noto Serif SC', serif
-  letter-spacing: 6px
-  margin-bottom: 15px
-
-  @media (max-width: 768px)
-    font-size: 2.2em
-    letter-spacing: 3px
-
-// 副标题打字机样式
-#site-subtitle
-  font-size: 1em
-  color: #8a8580
-  font-family: 'Noto Serif SC', serif
-  letter-spacing: 2px
-  min-height: 1.5em
-
-// --- 首页全屏背景图 ---
+// --- 首页全屏背景图标题居中 ---
 #page-header.full_page
-  height: 100vh
-  background-attachment: fixed
-
   #site-info
     position: absolute
     top: 50%
@@ -421,3 +212,286 @@
       color: rgba(255,255,255,0.9)
       text-shadow: 0 1px 10px rgba(0,0,0,0.5)
       letter-spacing: 2px
+
+// ============================
+// 世界观设定集样式
+// ============================
+
+// --- 世界观首页卡片网格 ---
+.world-header
+  text-align: center
+  padding: 40px 20px
+  margin-bottom: 20px
+
+  h1
+    font-size: 2.2em
+    color: var(--font-color)
+    margin-bottom: 10px
+
+  p
+    font-size: 1em
+    color: var(--font-color)
+    opacity: 0.6
+
+.world-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
+  gap: 24px
+  max-width: 1200px
+  margin: 0 auto
+  padding: 0 20px 40px
+
+.world-card
+  display: block
+  background: var(--card-bg)
+  border-radius: 12px
+  overflow: hidden
+  text-decoration: none
+  color: var(--font-color)
+  border: 1px solid var(--card-border)
+  transition: all 0.3s
+
+  &:hover
+    transform: translateY(-4px)
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12)
+
+.world-card-cover
+  width: 100%
+  height: 180px
+  object-fit: cover
+  display: block
+
+.world-card-info
+  padding: 16px
+
+.world-card-name
+  font-size: 1.2em
+  font-weight: bold
+  margin-bottom: 8px
+  color: var(--font-color)
+
+.world-card-tags
+  display: flex
+  gap: 6px
+  margin-bottom: 8px
+  flex-wrap: wrap
+
+  .tag
+    font-size: 0.75em
+    padding: 3px 10px
+    background: #c44536
+    color: #fff
+    border-radius: 12px
+    font-weight: 500
+
+.world-card-desc
+  font-size: 0.85em
+  color: var(--font-color)
+  opacity: 0.7
+  line-height: 1.5
+  display: -webkit-box
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  overflow: hidden
+
+// --- 世界观详情页 ---
+.world-detail-header
+  text-align: center
+  padding: 30px 20px
+  margin-bottom: 20px
+
+  .world-back
+    display: inline-block
+    margin-bottom: 15px
+    color: #c44536
+    text-decoration: none
+    font-size: 0.9em
+
+    &:hover
+      text-decoration: underline
+
+  h1
+    font-size: 2em
+    color: var(--font-color)
+    margin-bottom: 8px
+
+  .world-subtitle
+    font-size: 1em
+    color: var(--font-color)
+    opacity: 0.6
+
+// 三界架构三栏布局
+.world-triad
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+  gap: 20px
+  margin: 20px 0
+
+  @media (max-width: 768px)
+    grid-template-columns: 1fr
+
+.world-triad-item
+  padding: 20px
+  background: var(--card-bg)
+  border-radius: 10px
+  border: 1px solid var(--card-border)
+
+  h3
+    font-size: 1.2em
+    color: #c44536
+    margin-bottom: 10px
+    text-align: center
+
+  p
+    font-size: 0.9em
+    line-height: 1.7
+    color: var(--font-color)
+    opacity: 0.85
+
+// 折叠面板样式
+.world-accordion
+  margin: 15px 0
+
+  details
+    margin-bottom: 10px
+    background: var(--card-bg)
+    border-radius: 10px
+    border: 1px solid var(--card-border)
+    overflow: hidden
+
+    summary
+      padding: 15px 20px
+      font-size: 1.1em
+      font-weight: bold
+      color: var(--font-color)
+      cursor: pointer
+      transition: all 0.3s
+      list-style: none
+      position: relative
+      padding-left: 45px
+
+      &:before
+        content: '▶'
+        position: absolute
+        left: 18px
+        top: 50%
+        transform: translateY(-50%)
+        font-size: 0.7em
+        color: #c44536
+        transition: transform 0.3s
+
+      &:hover
+        background: rgba(196, 69, 54, 0.05)
+
+    &[open]
+      summary
+        border-bottom: 1px solid var(--card-border)
+
+        &:before
+          transform: translateY(-50%) rotate(90deg)
+
+.world-accordion-content
+  padding: 20px
+
+  h4
+    font-size: 1.05em
+    color: #c44536
+    margin: 15px 0 8px
+
+    &:first-child
+      margin-top: 0
+
+  p
+    font-size: 0.9em
+    line-height: 1.8
+    color: var(--font-color)
+    opacity: 0.85
+    margin-bottom: 10px
+
+  ul
+    padding-left: 20px
+    margin: 10px 0
+
+    li
+      font-size: 0.9em
+      line-height: 1.8
+      color: var(--font-color)
+      opacity: 0.85
+      margin-bottom: 5px
+
+  blockquote
+    border-left: 3px solid #c44536
+    padding: 10px 15px
+    margin: 15px 0
+    background: rgba(196, 69, 54, 0.05)
+    border-radius: 0 8px 8px 0
+    font-style: italic
+    color: var(--font-color)
+    opacity: 0.8
+
+// 角色列表
+.world-character-list
+  display: grid
+  gap: 15px
+
+.world-character-item
+  padding: 15px
+  background: rgba(196, 69, 54, 0.03)
+  border-radius: 8px
+  border-left: 3px solid #c44536
+
+  h4
+    font-size: 1em
+    color: #c44536
+    margin-bottom: 5px
+
+  p
+    font-size: 0.88em
+    line-height: 1.7
+    color: var(--font-color)
+    opacity: 0.8
+    margin: 0
+
+// 表格样式
+.world-table
+  width: 100%
+  border-collapse: collapse
+  margin: 15px 0
+  font-size: 0.9em
+
+  th, td
+    padding: 12px 15px
+    text-align: left
+    border-bottom: 1px solid var(--card-border)
+
+  th
+    background: rgba(196, 69, 54, 0.08)
+    color: #c44536
+    font-weight: bold
+
+  td
+    color: var(--font-color)
+    opacity: 0.85
+
+  tr:hover
+    background: rgba(196, 69, 54, 0.03)
+
+// 世界观区块
+.world-section
+  max-width: 900px
+  margin: 0 auto 30px
+  padding: 0 20px
+
+  h2
+    font-size: 1.6em
+    color: var(--font-color)
+    margin: 30px 0 15px
+    padding-bottom: 10px
+    border-bottom: 2px solid #c44536
+
+  > p
+    font-size: 0.95em
+    line-height: 1.8
+    color: var(--font-color)
+    opacity: 0.85
+    margin-bottom: 12px
