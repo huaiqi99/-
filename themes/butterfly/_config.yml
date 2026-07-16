@@ -36,6 +36,8 @@ aside:
   enable: true
   card_author:
     enable: true
+    card_recent_post:       
+    enable: false
     description: 一个关于奇幻、仙侠与情感的小说世界
     button:
       enable: false
@@ -44,10 +46,7 @@ aside:
       link: https://github.com/huaiqi99
   card_announcement:
     enable: true
-    content: 欢迎阅读我的小说！<br>《我在地府打工那些年》已完结
-  card_recent_post:
-    enable: true
-    limit: 5
+    content: 别骂了，这个简陋的界面<br>其实是李姐拿命敲出来的
   card_categories:
     enable: false
   card_tags:
@@ -62,6 +61,14 @@ cover:
   index_enable: true
   aside_enable: false
   archives_enable: true
+
+  # 关闭相关推荐
+related_post:
+  enable: false
+
+# 关闭上一篇下一篇
+post_pagination:
+  enable: false
 
 # Page default background
 background: 
