@@ -328,6 +328,118 @@
     </main>
   </div>
 
+  <!-- 返回首页按钮 -->
+  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
+
+  <!-- 字号调节按钮 -->
+  <div class="world-font-control">
+    <button onclick="changeFontSize(-1)" title="减小字号">A-</button>
+    <span id="fontSizeLabel">中</span>
+    <button onclick="changeFontSize(1)" title="增大字号">A+</button>
+  </div>
+
+  <script>
+    var fontLevels = ['small', 'medium', 'large'];
+    var fontLabels = ['小', '中', '大'];
+    var currentLevel = 1;
+    function changeFontSize(delta) {
+      var newLevel = currentLevel + delta;
+      if (newLevel < 0) newLevel = 0;
+      if (newLevel > 2) newLevel = 2;
+      if (newLevel === currentLevel) return;
+      currentLevel = newLevel;
+      document.body.className = document.body.className.replace(/font-size-\w+/g, '').trim();
+      if (fontLevels[newLevel] !== 'medium') {
+        document.body.classList.add('font-size-' + fontLevels[newLevel]);
+      }
+      document.getElementById('fontSizeLabel').textContent = fontLabels[newLevel];
+      localStorage.setItem('worldFontSize', newLevel);
+    }
+    var saved = localStorage.getItem('worldFontSize');
+    if (saved !== null) {
+      currentLevel = parseInt(saved);
+      if (currentLevel !== 1) {
+        document.body.classList.add('font-size-' + fontLevels[currentLevel]);
+      }
+      document.getElementById('fontSizeLabel').textContent = fontLabels[currentLevel];
+    }
+  </script>
+
+  <style>
+    .world-home-btn {
+      position: fixed;
+      bottom: 90px;
+      right: 25px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #c44536;
+      color: #fff;
+      font-size: 1.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
+      z-index: 999;
+      transition: all 0.3s;
+    }
+    .world-home-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
+    }
+    .world-font-control {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 6px 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+      z-index: 999;
+    }
+    .world-font-control button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--card-border);
+      background: var(--btn-bg);
+      color: var(--font-color);
+      font-weight: bold;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .world-font-control button:hover {
+      background: #c44536;
+      color: #fff;
+      border-color: #c44536;
+    }
+    .world-font-control #fontSizeLabel {
+      font-size: 0.8em;
+      color: var(--font-color);
+      opacity: 0.7;
+      min-width: 20px;
+      text-align: center;
+    }
+    body.font-size-small .world-page-container,
+    body.font-size-small .accordion-content p,
+    body.font-size-small .accordion-content li { font-size: 0.85em !important; }
+    body.font-size-large .world-page-container,
+    body.font-size-large .accordion-content p,
+    body.font-size-large .accordion-content li { font-size: 1.15em !important; }
+    body.font-size-large .world-section h2 { font-size: 1.7em !important; }
+    body.font-size-large summary { font-size: 1.15em !important; }
+  </style>
+
   <footer id="footer">
     <div id="footer-wrap">
       <div class="copyright">©2026 By 淮子生生</div>
