@@ -1,3 +1,53 @@
-index_img: /images/lixi.jpg
+index_img: /images/lixi.png
+
 menu:
+  首页: / || fas fa-home
   世界观: /world/ || fas fa-globe-asia
+  关于: /about/ || fas fa-user
+
+# Favicon
+favicon: /img/favicon.ico
+
+# Subtitle (打字机效果)
+subtitle:
+  enable: true
+  effect: true
+  source: false
+  sub:
+    - '用文字构筑世界'
+    - '让故事在指尖流转'
+  typed_option:
+    typeSpeed: 100
+    backSpeed: 50
+    backDelay: 2000
+    loop: true
+
+# Avatar (右侧栏头像)
+avatar:
+  img: /images/avatar.jpg
+  effect: false
+
+# 右侧栏作者信息
+aside:
+  enable: true
+  card_author:
+    enable: true
+  card_announcement:
+    enable: true
+    content: '<a href="/-/world/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🌏 世界观设定集</a><a href="/-/gallery/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;font-size:0.95em;font-family:inherit;">🖼️ 插图集</a>'
+  card_categories:
+    enable: false
+  card_tags:
+    enable: false
+  card_archives:
+    enable: false
+  card_webinfo:
+    enable: false
+
+# 关闭相关推荐
+related_post:
+  enable: false
+
+# 关闭上一篇下一篇
+post_pagination:
+  enable: false

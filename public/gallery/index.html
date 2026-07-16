@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>插图集 - 墨境</title>
+  <link rel="stylesheet" href="/-/css/index.css">
+  <style>
+    .gallery-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    .gallery-header { text-align: center; padding: 30px 20px; margin-bottom: 10px; }
+    .gallery-header h1 { font-size: 2em; color: var(--font-color); margin-bottom: 10px; }
+    .gallery-header p { font-size: 0.95em; color: var(--font-color); opacity: 0.6; }
+    .gallery-section { margin-bottom: 50px; }
+    .gallery-section h2 { font-size: 1.4em; color: var(--font-color); margin: 30px 0 20px; padding-bottom: 8px; border-bottom: 2px solid #c44536; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .gallery-item { display: block; background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--card-border); transition: all 0.3s; text-decoration: none; color: var(--font-color); }
+    .gallery-item:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    .gallery-item img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .gallery-item-info { padding: 12px 14px; }
+    .gallery-item-title { font-size: 0.95em; font-weight: bold; margin-bottom: 4px; color: var(--font-color); }
+    .gallery-item-desc { font-size: 0.8em; color: var(--font-color); opacity: 0.6; }
+    .gallery-empty { text-align: center; padding: 40px 20px; color: var(--font-color); opacity: 0.5; font-size: 0.9em; }
+    .gallery-add-hint { text-align: center; padding: 20px; background: var(--card-bg); border-radius: 10px; border: 1px dashed var(--card-border); margin-top: 20px; color: var(--font-color); opacity: 0.6; font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <div id="page-header" class="not-home-page">
+    <nav id="nav">
+      <span class="nav-title">墨境</span>
+      <div class="menus">
+        <a class="site-page" href="/-/">首页</a>
+        <a class="site-page" href="/-/world/">世界观</a>
+        <a class="site-page" href="/-/about/">关于</a>
+      </div>
+    </nav>
+    <div id="page-site-info"><h1 id="site-title">插图集</h1></div>
+  </div>
+
+  <div id="content-outer">
+    <main class="layout" id="content-inner">
+      <div id="page">
+        <div class="gallery-container">
+
+          <div class="gallery-header">
+            <h1>🖼️ 插图集</h1>
+            <p>用文字构筑世界，用画面留住瞬间</p>
+          </div>
+
+          <!-- 小说封面 -->
+          <div class="gallery-section">
+            <h2>小说封面</h2>
+            <div class="gallery-grid">
+              <div class="gallery-item">
+                <img src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">我在地府打工那些年</div>
+                  <div class="gallery-item-desc">地府 · 仙侠 · BL</div>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">这破游戏NPC太能打了</div>
+                  <div class="gallery-item-desc">游戏 · 穿越 · BL</div>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">九州风云录</div>
+                  <div class="gallery-item-desc">天宫 · 仙侠 · GB</div>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">北境玫瑰</div>
+                  <div class="gallery-item-desc">奇幻 · ABO · BL</div>
+                </div>
+              </div>
+              <div class="gallery-item">
+                <img src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">皇叔何出此言</div>
+                  <div class="gallery-item-desc">古风 · 前世今生 · BL</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 角色插图 -->
+          <div class="gallery-section">
+            <h2>角色插图</h2>
+            <div class="gallery-grid">
+              <!-- 示例：添加更多图片时复制这段
+              <div class="gallery-item">
+                <img src="/-/images/你的图片名.jpg" alt="图片描述">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">图片标题</div>
+                  <div class="gallery-item-desc">图片描述</div>
+                </div>
+              </div>
+              -->
+            </div>
+            <div class="gallery-add-hint">
+              💡 提示：将图片放入 source/images/ 文件夹，然后在这里添加即可显示
+            </div>
+          </div>
+
+          <!-- 场景插图 -->
+          <div class="gallery-section">
+            <h2>场景插图</h2>
+            <div class="gallery-grid">
+              <!-- 示例：添加更多图片时复制这段
+              <div class="gallery-item">
+                <img src="/-/images/你的图片名.jpg" alt="图片描述">
+                <div class="gallery-item-info">
+                  <div class="gallery-item-title">图片标题</div>
+                  <div class="gallery-item-desc">图片描述</div>
+                </div>
+              </div>
+              -->
+            </div>
+            <div class="gallery-add-hint">
+              💡 提示：将图片放入 source/images/ 文件夹，然后在这里添加即可显示
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 返回首页按钮 -->
+  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
+
+  <!-- 字号调节按钮 -->
+  <div class="world-font-control">
+    <button onclick="changeFontSize(-1)" title="减小字号">A-</button>
+    <span id="fontSizeLabel">中</span>
+    <button onclick="changeFontSize(1)" title="增大字号">A+</button>
+  </div>
+
+  <script>
+    var fontLevels = ['small', 'medium', 'large'];
+    var fontLabels = ['小', '中', '大'];
+    var currentLevel = 1;
+    function changeFontSize(delta) {
+      var newLevel = currentLevel + delta;
+      if (newLevel < 0) newLevel = 0;
+      if (newLevel > 2) newLevel = 2;
+      if (newLevel === currentLevel) return;
+      currentLevel = newLevel;
+      document.body.className = document.body.className.replace(/font-size-\w+/g, '').trim();
+      if (fontLevels[newLevel] !== 'medium') {
+        document.body.classList.add('font-size-' + fontLevels[newLevel]);
+      }
+      document.getElementById('fontSizeLabel').textContent = fontLabels[newLevel];
+      localStorage.setItem('worldFontSize', newLevel);
+    }
+    var saved = localStorage.getItem('worldFontSize');
+    if (saved !== null) {
+      currentLevel = parseInt(saved);
+      if (currentLevel !== 1) {
+        document.body.classList.add('font-size-' + fontLevels[currentLevel]);
+      }
+      document.getElementById('fontSizeLabel').textContent = fontLabels[currentLevel];
+    }
+  </script>
+
+  <style>
+    .world-home-btn {
+      position: fixed;
+      bottom: 90px;
+      right: 25px;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #c44536;
+      color: #fff;
+      font-size: 1.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
+      z-index: 999;
+      transition: all 0.3s;
+    }
+    .world-home-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
+    }
+    .world-font-control {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 6px 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+      z-index: 999;
+    }
+    .world-font-control button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--card-border);
+      background: var(--btn-bg);
+      color: var(--font-color);
+      font-weight: bold;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .world-font-control button:hover {
+      background: #c44536;
+      color: #fff;
+      border-color: #c44536;
+    }
+    .world-font-control #fontSizeLabel {
+      font-size: 0.8em;
+      color: var(--font-color);
+      opacity: 0.7;
+      min-width: 20px;
+      text-align: center;
+    }
+    body.font-size-small .gallery-container { font-size: 0.9em; }
+    body.font-size-large .gallery-container { font-size: 1.1em; }
+  </style>
+
+  <footer id="footer">
+    <div id="footer-wrap">
+      <div class="copyright">©2026 By 淮子生生</div>
+      <div class="framework-info"><span>用文字构筑世界</span></div>
+    </div>
+  </footer>
+</body>
+</html>
