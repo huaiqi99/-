@@ -6,11 +6,11 @@
   <title>插图集 - 墨境</title>
   <link rel="stylesheet" href="/-/css/index.css">
   <style>
-    /* 全宽布局，不要侧边栏 */
-    #content-inner { max-width: 100% !important; }
-    #page { width: 100% !important; margin: 0 !important; }
+    /* 隐藏侧边栏 */
     #aside-content { display: none !important; }
     .layout { display: block !important; }
+    #content-inner { max-width: 100% !important; }
+    #page { width: 100% !important; margin: 0 !important; }
 
     .gallery-container { max-width: 1200px; margin: 0 auto; padding: 30px 20px 60px; }
     .gallery-header { text-align: center; padding: 20px 20px 30px; }
@@ -20,7 +20,7 @@
     .gallery-section { margin-bottom: 50px; }
     .gallery-section h2 { font-size: 1.3em; color: var(--font-color); margin: 0 0 20px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); opacity: 0.8; }
 
-    /* 图片墙 - Masonry 风格 */
+    /* 图片墙 */
     .gallery-wall {
       column-count: 3;
       column-gap: 12px;
@@ -36,7 +36,7 @@
       overflow: hidden;
       display: block;
       position: relative;
-      cursor: pointer;
+      cursor: zoom-in;
     }
     .gallery-wall-item img {
       width: 100%;
@@ -46,8 +46,6 @@
     .gallery-wall-item:hover img {
       transform: scale(1.03);
     }
-
-    /* 悬停显示标题 */
     .gallery-wall-item .img-caption {
       position: absolute;
       bottom: 0;
@@ -62,6 +60,63 @@
     }
     .gallery-wall-item:hover .img-caption {
       opacity: 1;
+    }
+
+    /* 灯箱 */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.92);
+      z-index: 10000;
+      cursor: zoom-out;
+      animation: fadeIn 0.3s;
+    }
+    .lightbox.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      border-radius: 4px;
+      animation: zoomIn 0.3s;
+      cursor: default;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 2em;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      z-index: 10001;
+    }
+    .lightbox-close:hover { opacity: 1; }
+    .lightbox-caption {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: 0.95em;
+      opacity: 0.8;
+      text-align: center;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     /* 返回首页按钮 */
@@ -116,23 +171,23 @@
           <div class="gallery-section">
             <h2>小说封面</h2>
             <div class="gallery-wall">
-              <div class="gallery-wall-item">
+              <div class="gallery-wall-item" onclick="openLightbox(this)">
                 <img src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
                 <div class="img-caption">我在地府打工那些年</div>
               </div>
-              <div class="gallery-wall-item">
+              <div class="gallery-wall-item" onclick="openLightbox(this)">
                 <img src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
                 <div class="img-caption">这破游戏NPC太能打了</div>
               </div>
-              <div class="gallery-wall-item">
+              <div class="gallery-wall-item" onclick="openLightbox(this)">
                 <img src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
                 <div class="img-caption">九州风云录</div>
               </div>
-              <div class="gallery-wall-item">
+              <div class="gallery-wall-item" onclick="openLightbox(this)">
                 <img src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
                 <div class="img-caption">北境玫瑰</div>
               </div>
-              <div class="gallery-wall-item">
+              <div class="gallery-wall-item" onclick="openLightbox(this)">
                 <img src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
                 <div class="img-caption">皇叔何出此言</div>
               </div>
@@ -144,7 +199,7 @@
             <h2>角色插图</h2>
             <div class="gallery-wall">
               <!-- 放您自己的角色插图，格式如下：
-              <div class="gallery-wall-item">
+              <div class="gallery-wall-item" onclick="openLightbox(this)">
                 <img src="/-/images/你的图片名.jpg" alt="描述">
                 <div class="img-caption">图片标题</div>
               </div>
@@ -164,6 +219,37 @@
       </div>
     </main>
   </div>
+
+  <!-- 灯箱 -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+  </div>
+
+  <script>
+    function openLightbox(el) {
+      var img = el.querySelector('img');
+      var caption = el.querySelector('.img-caption');
+      var lightbox = document.getElementById('lightbox');
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox-caption').textContent = caption ? caption.textContent : img.alt;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(event) {
+      if (event.target.id === 'lightbox' || event.target.className === 'lightbox-close') {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  </script>
 
   <!-- 返回首页按钮 -->
   <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
