@@ -42,12 +42,12 @@ encrypt_wrong: '❌ 你没有得到李姐的许可！'
       </a>
     </div>
     <div class="chapter-item">
-      <a href="/-/posts/meiyou-1-1/">
+      <a href="/-/posts/meiyou-1-2/">
         <span class="chapter-num">第2章</span>给我未来的第三章留个位置
       </a>
     </div>
     <div class="chapter-item">
-      <a href="/-/posts/meiyou-1-1/">
+      <a href="/-/posts/meiyou-1-3/">
         <span class="chapter-num">第3章</span>给我未来的第四章留个位置
       </a>
     </div>
@@ -59,7 +59,7 @@ encrypt_wrong: '❌ 你没有得到李姐的许可！'
   <div class="volume-title">给我未来的第二卷留个位置</div>
   <div class="chapter-grid">
     <div class="chapter-item">
-      <a href="/-/posts/meiyou-1-1/">
+      <a href="/-/posts/meiyou-2-1/">
         <span class="chapter-num">第1章</span>给我未来的第一章留个位置
       </a>
     </div>
