@@ -48,6 +48,10 @@ aside:
 related_post:
   enable: false
 
+# 夜间模式
+darkmode:
+  enable: true
+
 # 关闭上一篇下一篇
 post_pagination:
   enable: false
