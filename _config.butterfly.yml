@@ -14,8 +14,11 @@ subtitle:
   effect: true
   source: false
   sub:
-    - '用文字构筑世界'
-    - '让故事在指尖流转'
+    - '我蒙上眼'
+    - '仿佛你在身边'
+    - '我来不及道声不安'
+    - '有点混乱有点缓慢'
+    - '才发现承诺是谎话'
   typed_option:
     typeSpeed: 100
     backSpeed: 50
@@ -35,6 +38,9 @@ aside:
   card_announcement:
     enable: true
     content: '别骂了，这个简陋的界面<br>其实是李姐拿命敲出来的<br><br><a href="/-/world/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🌏 世界观设定集</a><a href="/-/gallery/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🖼️ 插图集</a><a href="/-/curtain/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">✨ 文字帘幕</a><a href="/-/yuliu/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;font-size:0.95em;font-family:inherit;">❀ 预留小界面</a>'
+  card_announcement:
+    enable: true
+    content: '还有很多小bug，也许修也许不修'
   card_categories:
     enable: false
   card_tags:
