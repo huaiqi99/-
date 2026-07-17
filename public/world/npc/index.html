@@ -13,6 +13,7 @@
     #page { width: 100% !important; margin: 0 !important; }
     
     .world-page-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    @media (max-width: 768px) { .world-page-container { padding: 12px; } }
     .world-back { display: inline-block; margin-bottom: 15px; color: #c44536; text-decoration: none; font-size: 0.9em; }
     .world-back:hover { text-decoration: underline; }
     .world-detail-header { text-align: center; padding: 20px; margin-bottom: 20px; }
@@ -21,8 +22,17 @@
     .world-section { margin-bottom: 30px; }
     .world-section h2 { font-size: 1.5em; color: var(--font-color); margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #c44536; }
     .world-section > p { font-size: 0.9em; line-height: 1.8; color: var(--font-color); opacity: 0.85; margin-bottom: 12px; }
+    .world-triad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+    @media (max-width: 768px) { .world-triad { grid-template-columns: 1fr; } }
+    .world-triad-item { padding: 15px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--card-border); }
+    .world-triad-item h3 { font-size: 1.1em; color: #c44536; margin-bottom: 8px; text-align: center; }
+    .world-triad-item p { font-size: 0.85em; line-height: 1.6; color: var(--font-color); opacity: 0.8; }
     details { margin-bottom: 10px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--card-border); overflow: hidden; }
     summary { padding: 14px 18px; font-size: 1.05em; font-weight: bold; color: var(--font-color); cursor: pointer; list-style: none; position: relative; padding-left: 42px; }
+    @media (max-width: 768px) {
+      summary { padding: 11px 14px; font-size: 0.98em; padding-left: 36px; }
+      summary::before { left: 14px; }
+    }
     summary::before { content: '▶'; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 0.7em; color: #c44536; transition: transform 0.3s; }
     summary:hover { background: rgba(196, 69, 54, 0.05); }
     details[open] summary { border-bottom: 1px solid var(--card-border); }
@@ -33,17 +43,27 @@
     .accordion-content p { font-size: 0.88em; line-height: 1.8; color: var(--font-color); opacity: 0.85; margin-bottom: 10px; }
     .accordion-content ul { padding-left: 18px; margin: 10px 0; }
     .accordion-content li { font-size: 0.88em; line-height: 1.8; color: var(--font-color); opacity: 0.85; margin-bottom: 4px; }
+    @media (max-width: 768px) {
+      .accordion-content { padding: 12px; }
+      .accordion-content h4 { font-size: 0.95em; margin: 12px 0 4px; }
+      .accordion-content p { font-size: 0.84em; line-height: 1.75; margin-bottom: 8px; }
+      .accordion-content ul { padding-left: 14px; }
+      .accordion-content li { font-size: 0.84em; line-height: 1.75; }
+      .accordion-content blockquote { padding: 8px 12px; margin: 12px 0; }
+    }
     .accordion-content blockquote { border-left: 3px solid #c44536; padding: 10px 15px; margin: 15px 0; background: rgba(196, 69, 54, 0.05); border-radius: 0 8px 8px 0; font-style: italic; color: var(--font-color); opacity: 0.8; }
     .character-item { padding: 12px; background: rgba(196, 69, 54, 0.03); border-radius: 8px; border-left: 3px solid #c44536; margin-bottom: 10px; }
     .character-item h4 { font-size: 0.95em; color: #c44536; margin-bottom: 4px; margin-top: 0; }
     .character-item p { font-size: 0.85em; line-height: 1.7; color: var(--font-color); opacity: 0.8; margin: 0; }
+    @media (max-width: 768px) {
+      .character-item { padding: 8px 10px; border-left-width: 2px; margin-bottom: 8px; }
+      .character-item h4 { font-size: 0.9em; margin-bottom: 2px; }
+      .character-item p { font-size: 0.82em; line-height: 1.65; }
+    }
     .world-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85em; }
     .world-table th, .world-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--card-border); }
     .world-table th { background: rgba(196, 69, 54, 0.08); color: #c44536; font-weight: bold; }
     .world-table td { color: var(--font-color); opacity: 0.85; }
-    .world-epoch { padding: 15px; background: rgba(196, 69, 54, 0.03); border-radius: 8px; margin-bottom: 12px; border-left: 3px solid #c44536; }
-    .world-epoch h4 { margin-top: 0; margin-bottom: 8px; color: #c44536; }
-    .world-epoch p { margin: 0; }
   </style>
 </head>
 <body>
