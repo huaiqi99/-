@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>墨境 - 文字帘幕</title>
+    <link rel="stylesheet" href="/-/css/index.css" />
+    <style>
+      :root {
+        --paper: #e8dfca;
+        --ink: #2e251f;
+        --muted: #70665b;
+        --hairline: rgba(46, 37, 31, 0.36);
+        --panel: rgba(232, 223, 202, 0.93);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      button, input, textarea { font: inherit; }
+
+      /* 博客导航栏 */
+      #page-header { position: relative; z-index: 100; }
+      #nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        height: 50px;
+        background: rgba(232, 223, 202, 0.85);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--hairline);
+      }
+      .nav-title {
+        color: var(--ink);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 16px;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+      .menus { display: flex; gap: 24px; }
+      .menus a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+      }
+      .menus a:hover { color: var(--ink); }
+
+      .artboard {
+        position: relative;
+        min-height: calc(100svh - 50px);
+        overflow: hidden;
+        isolation: isolate;
+        background:
+          repeating-linear-gradient(91deg, rgba(46,37,31,0.022) 0 1px, transparent 1px 11px),
+          repeating-linear-gradient(2deg, rgba(46,37,31,0.017) 0 1px, transparent 1px 14px),
+          radial-gradient(circle at 53% 16%, rgba(255,255,255,0.26), transparent 34%),
+          var(--paper);
+      }
+      .artboard::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        pointer-events: none;
+        opacity: 0.14;
+        background-image:
+          radial-gradient(circle at 24% 31%, currentColor 0 0.5px, transparent 0.65px),
+          radial-gradient(circle at 71% 56%, currentColor 0 0.45px, transparent 0.6px);
+        background-size: 9px 11px, 13px 15px;
+        mix-blend-mode: multiply;
+      }
+
+      #curtain {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        cursor: none;
+        touch-action: none;
+      }
+
+      /* 标题区域 */
+      .headline {
+        position: absolute;
+        z-index: 6;
+        left: clamp(28px, 6vw, 112px);
+        bottom: clamp(38px, 8vh, 92px);
+        width: min(330px, 31vw);
+        pointer-events: none;
+      }
+      .eyebrow {
+        margin: 0 0 16px;
+        font: 12px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: var(--muted);
+      }
+      h1 {
+        margin: 0;
+        font: 500 clamp(48px, 5.5vw, 86px)/0.86 Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+        line-height: 1.2;
+      }
+      .rule {
+        display: inline-block;
+        width: 76px;
+        margin-left: 15px;
+        border-top: 1px solid var(--ink);
+        transform: translateY(-0.35em);
+      }
+
+      /* 背景图 */
+      .temple {
+        position: absolute;
+        z-index: 4;
+        top: clamp(38px, 6vh, 72px);
+        left: 50%;
+        width: min(620px, 62vw);
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+      .temple img {
+        width: 100%;
+        height: auto;
+        display: block;
+        mix-blend-mode: multiply;
+        filter: drop-shadow(34px 38px 18px rgba(46,37,31,0.19)) drop-shadow(70px 64px 34px rgba(46,37,31,0.1));
+      }
+
+      .caption {
+        position: absolute;
+        z-index: 6;
+        right: clamp(28px, 8vw, 152px);
+        bottom: clamp(52px, 11vh, 126px);
+        width: min(220px, 20vw);
+        margin: 0;
+        color: var(--muted);
+        font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+        pointer-events: none;
+      }
+      .progress {
+        position: absolute;
+        z-index: 6;
+        left: 50%;
+        bottom: 22px;
+        width: 140px;
+        height: 2px;
+        transform: translateX(-50%);
+        background: rgba(46,37,31,0.18);
+      }
+      .progress::before {
+        content: "";
+        display: block;
+        width: 42%;
+        height: 100%;
+        background: rgba(46,37,31,0.55);
+      }
+      .cursor {
+        position: absolute;
+        z-index: 12;
+        width: 12px;
+        height: 12px;
+        border: 1px solid rgba(46,37,31,0.72);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .artboard.is-active .cursor { opacity: 1; }
+
+      /* 设置面板 */
+      .settings {
+        position: absolute;
+        z-index: 20;
+        top: 62px;
+        right: clamp(24px, 5vw, 94px);
+        width: 268px;
+        max-height: calc(100svh - 100px);
+        overflow-y: auto;
+        padding: 16px;
+        border: 1px solid var(--hairline);
+        background: var(--panel);
+        box-shadow: 16px 18px 32px rgba(46,37,31,0.12);
+        backdrop-filter: blur(8px);
+      }
+      .settings[hidden] { display: none; }
+      .setting { display: grid; gap: 6px; margin-bottom: 13px; }
+      .setting label {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .setting input[type="range"] { width: 100%; accent-color: var(--ink); }
+      .setting input[type="file"] { width: 100%; font-size: 11px; color: var(--muted); }
+      .setting textarea {
+        width: 100%;
+        resize: vertical;
+        min-height: 56px;
+        padding: 6px 8px;
+        border: 1px solid var(--hairline);
+        background: rgba(255,255,255,0.35);
+        color: var(--ink);
+        font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .setting .hint {
+        color: var(--muted);
+        font: 10px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+        opacity: 0.85;
+      }
+      .divider { margin: 4px 0 13px; border: none; border-top: 1px solid var(--hairline); }
+      .reset {
+        width: 100%;
+        border: 1px solid var(--hairline);
+        padding: 7px 10px;
+        color: var(--ink);
+        background: transparent;
+        cursor: pointer;
+        font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .reset + .reset { margin-top: 8px; }
+      .configure {
+        border: 0;
+        padding: 7px 13px 6px;
+        color: var(--paper);
+        background: var(--ink);
+        font-family: Georgia, "Times New Roman", serif;
+        cursor: pointer;
+        clip-path: polygon(4% 6%, 96% 0, 100% 91%, 2% 100%);
+      }
+
+      /* 返回首页按钮 */
+      .home-btn {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: #c44536;
+        color: #fff;
+        font-size: 1.4em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
+        z-index: 999;
+        transition: all 0.3s;
+      }
+      .home-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
+      }
+
+      @media (max-width: 720px) {
+        .temple { top: 66px; width: min(520px, 96vw); }
+        .headline { left: 24px; bottom: 38px; width: min(285px, 72vw); }
+        h1 { font-size: clamp(42px, 14vw, 66px); }
+        .caption { display: none; }
+        .progress { display: none; }
+        .settings { width: min(268px, 78vw); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 博客导航 -->
+    <div id="page-header">
+      <nav id="nav">
+        <span class="nav-title">墨境</span>
+        <div class="menus">
+          <a href="/-/">首页</a>
+          <a href="/-/world/">世界观</a>
+          <a href="/-/gallery/">插图集</a>
+          <a href="/-/about/">关于</a>
+        </div>
+      </nav>
+    </div>
+
+    <main class="artboard" id="artboard">
+      <canvas id="curtain" aria-label="可交互的文字珠帘"></canvas>
+
+      <div style="position:absolute;top:12px;right:24px;z-index:30;">
+        <button class="configure" id="configure" type="button" aria-expanded="false" aria-controls="settings">配 置</button>
+      </div>
+
+      <div class="temple" id="temple">
+        <picture>
+          <source id="templeSource" srcset="/-/images/lixi.jpg" type="image/png" />
+          <img id="templeImg" src="/-/images/lixi.jpg" width="901" height="730" fetchpriority="high" decoding="async" alt="墨境" />
+        </picture>
+      </div>
+
+      <section class="headline" id="home">
+        <p class="eyebrow">/ 淮子生生</p>
+        <h1>墨境<br /><span>小说</span></h1>
+      </section>
+
+      <p class="caption" id="story">
+        一个关于奇幻、仙侠与情感的小说世界
+      </p>
+      <div class="progress" aria-hidden="true"></div>
+      <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+      <aside class="settings" id="settings" hidden>
+        <div class="setting">
+          <label for="customImage">图片 / Image</label>
+          <input id="customImage" type="file" accept="image/*" />
+          <span class="hint">上传自定义图片替换背景</span>
+        </div>
+        <div class="setting">
+          <label for="customText">珠帘文字 / Curtain Text</label>
+          <textarea id="customText" placeholder="输入任意文字，将替换珠帘上的字符…"></textarea>
+          <span class="hint">留空则使用默认文字</span>
+        </div>
+        <hr class="divider" />
+        <div class="setting">
+          <label for="strength">Strength <output id="strengthValue">72</output></label>
+          <input id="strength" type="range" min="20" max="110" value="72" />
+        </div>
+        <div class="setting">
+          <label for="reach">Reach <output id="reachValue">34</output></label>
+          <input id="reach" type="range" min="18" max="56" value="34" />
+        </div>
+        <div class="setting">
+          <label for="inertia">Inertia <output id="inertiaValue">97</output></label>
+          <input id="inertia" type="range" min="86" max="99" value="97" />
+        </div>
+        <button class="reset" id="reset" type="button">Reset curtain</button>
+        <button class="reset" id="resetAll" type="button">Reset image &amp; text</button>
+      </aside>
+    </main>
+
+    <!-- 返回首页 -->
+    <a href="/-/" class="home-btn" title="返回首页">🏠</a>
+
+    <script>
+      (() => {
+        const artboard = document.getElementById("artboard");
+        const canvas = document.getElementById("curtain");
+        const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
+        const cursor = document.getElementById("cursor");
+        const temple = document.getElementById("temple");
+        const templeImg = document.getElementById("templeImg");
+        const templeSource = document.getElementById("templeSource");
+        const configure = document.getElementById("configure");
+        const settings = document.getElementById("settings");
+        const reset = document.getElementById("reset");
+        const resetAll = document.getElementById("resetAll");
+        const customImage = document.getElementById("customImage");
+        const customText = document.getElementById("customText");
+        const chains = [];
+
+        const defaultGlyphs = `豫章故郡，洪都新府。星分翼轸，地接衡庐。襟三江而带五湖，控蛮荆而引瓯越。物华天宝，龙光射牛斗之墟；人杰地灵，徐孺下陈蕃之榻。雄州雾列，俊采星驰。台隍枕夷夏之交，宾主尽东南之美。都督阎公之雅望，棨戟遥临；宇文新州之懿范，襜帷暂驻。十旬休假，胜友如云；千里逢迎，高朋满座。腾蛟起凤，孟学士之词宗；紫电青霜，王将军之武库。家君作宰，路出名区；童子何知，躬逢胜饯。
+时维九月，序属三秋。潦水尽而寒潭清，烟光凝而暮山紫。俨骖騑于上路，访风景于崇阿；临帝子之长洲，得天人之旧馆。层峦耸翠，上出重霄；飞阁流丹，下临无地。鹤汀凫渚，穷岛屿之萦回；桂殿兰宫，即冈峦之体势。
+披绣闼，俯雕甍；山原旷其盈视，川泽纡其骇瞩。闾阎扑地，钟鸣鼎食之家；舸舰弥津，青雀黄龙之舳。云销雨霁，彩彻区明。落霞与孤鹜齐飞，秋水共长天一色。渔舟唱晚，响穷彭蠡之滨；雁阵惊寒，声断衡阳之浦。
+遥襟甫畅，逸兴遄飞。爽籁发而清风生，纤歌凝而白云遏。睢园绿竹，气凌彭泽之樽；邺水朱华，光照临川之笔。四美具，二难并。穷睇眄于中天，极娱游于暇日。天高地迥，觉宇宙之无穷；兴尽悲来，识盈虚之有数。望长安于日下，目吴会于云间。地势极而南溟深，天柱高而北辰远。关山难越，谁悲失路之人？萍水相逢，尽是他乡之客。怀帝阍而不见，奉宣室以何年？
+呜呼！时运不齐，命途多舛。冯唐易老，李广难封。屈贾谊于长沙，非无圣主；窜梁鸿于海曲，岂乏明时？所赖君子见机，达人知命。老当益壮，宁移白首之心？穷且益坚，不坠青云之志。酌贪泉而觉爽，处涸辙以犹欢。北海虽赊，扶摇可接；东隅已逝，桑榆非晚。孟尝高洁，空余报国之情；阮籍猖狂，岂效穷途之哭！`;
+
+        const defaultImgSrc = templeImg.getAttribute("src");
+        const defaultImgSrcset = templeSource.getAttribute("srcset");
+        let glyphs = defaultGlyphs;
+        const mouse = { x: -999, y: -999, oldX: -999, oldY: -999, active: false };
+        const physics = { strength: 0.82, radius: 34, friction: 0.95, gravity: 0.18 };
+        const RIBBON_COLORS = [
+          "rgba(112, 80, 51, 0.055)",
+          "rgba(142, 47, 35, 0.045)",
+          "rgba(83, 72, 58, 0.05)",
+          "rgba(156, 105, 46, 0.04)",
+        ];
+        let width = 0, height = 0, dpr = 1;
+
+        function build() {
+          chains.length = 0;
+          const source = glyphs.length ? glyphs : defaultGlyphs;
+          const narrow = width < 720;
+          const maxColumns = narrow ? 16 : 26;
+          const minColumns = 2;
+          const MIN_CURTAIN_HEIGHT = narrow ? 260 : 360;
+          const fontSpacingFactor = 17;
+          const absoluteMinRows = Math.ceil(MIN_CURTAIN_HEIGHT / fontSpacingFactor);
+          const rowCapacity = Math.max(1, absoluteMinRows - 1);
+          let columns = Math.max(minColumns, Math.min(maxColumns, Math.ceil(source.length / rowCapacity)));
+
+          const templeRect = temple.getBoundingClientRect();
+          const artboardRect = artboard.getBoundingClientRect();
+          const buildingCenter = templeRect.left - artboardRect.left + templeRect.width * 0.5;
+          const curtainWidth = templeRect.width * 0.84;
+          const left = buildingCenter - curtainWidth / 2;
+          const templeTop = templeRect.top - artboardRect.top;
+          const imageBottom = templeTop + templeRect.height - 2;
+          const requiredTextRows = Math.max(1, Math.ceil(source.length / columns)) + 1;
+          let rows = Math.max(absoluteMinRows, requiredTextRows);
+          const maxAvailableRows = Math.floor((height - 48 - imageBottom) / fontSpacingFactor) + 1;
+          rows = Math.min(maxAvailableRows, rows);
+          const curtainBottom = imageBottom + (rows - 1) * fontSpacingFactor;
+
+          for (let column = 0; column < columns; column += 1) {
+            const x = columns > 1 ? left + (column * curtainWidth) / (columns - 1) : buildingCenter;
+            const top = imageBottom + 16;
+            const segmentLength = Math.max(6.4, (curtainBottom - top) / (rows - 1));
+            const readingColumn = columns - 1 - column;
+            const chain = [];
+
+            for (let row = 0; row < rows; row += 1) {
+              const y = top + (row === 0 ? 0 : 4) + row * segmentLength;
+              let charToShow = "";
+              if (row > 0) {
+                const textRowIndex = row - 1;
+                const textRowsCount = rows - 1;
+                const globalIndex = readingColumn * textRowsCount + textRowIndex;
+                if (globalIndex < source.length) charToShow = source[globalIndex];
+              }
+              chain.push({
+                x, y, oldX: x, oldY: y, anchorX: x, anchorY: y,
+                pinned: row === 0, restLength: segmentLength, char: charToShow, alpha: 0.8,
+              });
+            }
+            chain._ribbon = null;
+            chains.push(chain);
+          }
+        }
+
+        function resize() {
+          const rect = artboard.getBoundingClientRect();
+          width = rect.width;
+          height = rect.height;
+          dpr = Math.min(2, window.devicePixelRatio || 1);
+          canvas.width = Math.round(width * dpr);
+          canvas.height = Math.round(height * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const fontSize = width < 720 ? 9.5 : 10.5;
+          ctx.font = `500 ${fontSize}px "Songti SC", SimSun, Georgia, serif`;
+          build();
+        }
+
+        function injectMouseDelta() {
+          if (!mouse.active) return;
+          const moveX = mouse.x - mouse.oldX;
+          const moveY = mouse.y - mouse.oldY;
+          const speed = Math.hypot(moveX, moveY);
+          if (speed < 0.01 || speed > 80) return;
+          for (let chainIndex = 0; chainIndex < chains.length; chainIndex += 1) {
+            const chain = chains[chainIndex];
+            for (let index = 1; index < chain.length; index += 1) {
+              const point = chain[index];
+              const distance = Math.hypot(point.x - mouse.oldX, point.y - mouse.oldY);
+              if (distance >= physics.radius) continue;
+              const falloff = 1 - distance / physics.radius;
+              point.x += moveX * physics.strength * falloff;
+              point.y += moveY * physics.strength * falloff;
+            }
+          }
+        }
+
+        function integrate() {
+          for (const chain of chains) {
+            for (const point of chain) {
+              if (point.pinned) continue;
+              const velocityX = (point.x - point.oldX) * physics.friction;
+              const velocityY = (point.y - point.oldY) * physics.friction;
+              point.oldX = point.x;
+              point.oldY = point.y;
+              point.x += velocityX;
+              point.y += velocityY + physics.gravity;
+            }
+          }
+        }
+
+        function constrain() {
+          for (let pass = 0; pass < 6; pass += 1) {
+            for (const chain of chains) {
+              const anchor = chain[0];
+              anchor.x = anchor.anchorX;
+              anchor.y = anchor.anchorY;
+              for (let index = 1; index < chain.length; index += 1) {
+                const a = chain[index - 1];
+                const b = chain[index];
+                const dx = b.x - a.x;
+                const dy = b.y - a.y;
+                const distance = Math.max(0.0001, Math.hypot(dx, dy));
+                const difference = (distance - b.restLength) / distance;
+                if (a.pinned) {
+                  b.x -= dx * difference;
+                  b.y -= dy * difference;
+                } else {
+                  const cx = dx * difference * 0.5;
+                  const cy = dy * difference * 0.5;
+                  a.x += cx; a.y += cy;
+                  b.x -= cx; b.y -= cy;
+                }
+              }
+            }
+          }
+        }
+
+        function updateRibbons(widthParam) {
+          for (let c = 0; c < chains.length; c += 1) {
+            const chain = chains[c];
+            const n = chain.length;
+            let ribbon = chain._ribbon;
+            if (!ribbon || ribbon.length !== n) {
+              ribbon = chain._ribbon = new Array(n);
+              for (let i = 0; i < n; i += 1) ribbon[i] = { lx: 0, ly: 0, rx: 0, ry: 0 };
+            }
+            for (let i = 0; i < n; i += 1) {
+              const prev = chain[i === 0 ? 0 : i - 1];
+              const next = chain[i === n - 1 ? n - 1 : i + 1];
+              const dx = next.x - prev.x;
+              const dy = next.y - prev.y;
+              const dist = Math.hypot(dx, dy) || 1;
+              const nx = -dy / dist;
+              const ny = dx / dist;
+              const extraExtend = i === n - 1 ? 6.5 : 0;
+              const point = chain[i];
+              const p = ribbon[i];
+              p.lx = point.x + nx * widthParam;
+              p.ly = point.y + ny * widthParam + extraExtend;
+              p.rx = point.x - nx * widthParam;
+              p.ry = point.y - ny * widthParam + extraExtend;
+            }
+          }
+        }
+
+        function draw() {
+          ctx.clearRect(0, 0, width, height);
+          const columnsCount = chains.length;
+          if (!columnsCount) return;
+          const widthParam = Math.max(4.5, Math.min(6.5, ((width * 0.84) / columnsCount) * 0.34));
+          updateRibbons(widthParam);
+
+          ctx.shadowColor = "rgba(53, 39, 24, 0.08)";
+          ctx.shadowBlur = 3;
+          ctx.shadowOffsetX = 1.2;
+          ctx.shadowOffsetY = 2;
+          ctx.lineWidth = 0.5;
+          ctx.strokeStyle = "rgba(47, 38, 29, 0.06)";
+
+          for (let tone = 0; tone < 4; tone += 1) {
+            ctx.beginPath();
+            for (let c = tone; c < columnsCount; c += 4) {
+              const ribbon = chains[c]._ribbon;
+              const n = ribbon.length;
+              if (n < 2) continue;
+              ctx.moveTo(ribbon[0].lx, ribbon[0].ly);
+              for (let i = 1; i < n; i += 1) ctx.lineTo(ribbon[i].lx, ribbon[i].ly);
+              for (let i = n - 1; i >= 0; i -= 1) ctx.lineTo(ribbon[i].rx, ribbon[i].ry);
+              ctx.closePath();
+            }
+            ctx.fillStyle = RIBBON_COLORS[tone];
+            ctx.fill();
+            ctx.stroke();
+          }
+
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+
+          ctx.beginPath();
+          for (let c = 0; c < columnsCount; c += 1) {
+            const anchor = chains[c][0];
+            ctx.moveTo(anchor.x + 1.8, anchor.y + 2);
+            ctx.arc(anchor.x, anchor.y + 2, 1.8, 0, Math.PI * 2);
+          }
+          ctx.fillStyle = "rgba(156, 108, 46, 0.78)";
+          ctx.fill();
+
+          ctx.fillStyle = "#2e251f";
+          for (let c = 0; c < columnsCount; c += 1) {
+            const chain = chains[c];
+            for (let index = 1; index < chain.length; index += 1) {
+              const point = chain[index];
+              if (!point.char) continue;
+              ctx.fillText(point.char, point.x, point.y);
+            }
+          }
+        }
+
+        function frame() {
+          injectMouseDelta();
+          mouse.oldX = mouse.x;
+          mouse.oldY = mouse.y;
+          integrate();
+          constrain();
+          draw();
+          requestAnimationFrame(frame);
+        }
+
+        function enter(event) {
+          const rect = canvas.getBoundingClientRect();
+          const currentX = event.clientX - rect.left;
+          const currentY = event.clientY - rect.top;
+          mouse.x = mouse.oldX = currentX;
+          mouse.y = mouse.oldY = currentY;
+          mouse.active = true;
+          cursor.style.left = `${mouse.x}px`;
+          cursor.style.top = `${mouse.y}px`;
+          artboard.classList.add("is-active");
+        }
+
+        function move(event) {
+          if (!mouse.active) enter(event);
+          const rect = canvas.getBoundingClientRect();
+          mouse.x = event.clientX - rect.left;
+          mouse.y = event.clientY - rect.top;
+          cursor.style.left = `${mouse.x}px`;
+          cursor.style.top = `${mouse.y}px`;
+        }
+
+        function leave() {
+          mouse.active = false;
+          artboard.classList.remove("is-active");
+        }
+
+        function bindRange(id, outputId, update) {
+          const input = document.getElementById(id);
+          const output = document.getElementById(outputId);
+          input.addEventListener("input", () => {
+            const value = Number(input.value);
+            output.value = String(value);
+            update(value);
+          });
+        }
+
+        function applyCustomText() {
+          const raw = customText.value.replace(/\s+/g, "");
+          glyphs = raw.length ? raw : defaultGlyphs;
+          build();
+        }
+
+        function applyCustomImage(file) {
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = reader.result;
+            templeSource.srcset = dataUrl;
+            templeImg.onload = () => { resize(); };
+            templeImg.src = dataUrl;
+          };
+          reader.readAsDataURL(file);
+        }
+
+        configure.addEventListener("click", () => {
+          const open = settings.hidden;
+          settings.hidden = !open;
+          configure.setAttribute("aria-expanded", String(open));
+        });
+        reset.addEventListener("click", build);
+        resetAll.addEventListener("click", () => {
+          templeSource.srcset = defaultImgSrcset;
+          templeImg.src = defaultImgSrc;
+          customImage.value = "";
+          customText.value = "";
+          templeImg.onload = () => { glyphs = defaultGlyphs; resize(); };
+        });
+        bindRange("strength", "strengthValue", (value) => { physics.strength = value / 100; });
+        bindRange("reach", "reachValue", (value) => { physics.radius = value; });
+        bindRange("inertia", "inertiaValue", (value) => { physics.friction = value / 100; });
+        customImage.addEventListener("change", (event) => { applyCustomImage(event.target.files && event.target.files[0]); });
+        customText.addEventListener("input", applyCustomText);
+        canvas.addEventListener("pointerenter", enter);
+        canvas.addEventListener("pointermove", move);
+        canvas.addEventListener("pointerleave", leave);
+        window.addEventListener("resize", resize);
+
+        if (templeImg.complete) { resize(); } else { resize(); templeImg.addEventListener("load", resize); }
+        frame();
+      })();
+    </script>
+  </body>
+</html>
