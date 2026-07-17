@@ -1,272 +1,356 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>插图集 - 墨境</title>
-  <link rel="stylesheet" href="/-/css/index.css">
-  <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
-  <style>
-    /* 隐藏侧边栏 */
-    #aside-content { display: none !important; }
-    .layout { display: block !important; }
-    #content-inner { max-width: 100% !important; }
-    #page { width: 100% !important; margin: 0 !important; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 超级个人</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@1,400&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+      /* 补全自定义字体关联与核心动画样式 */
+      .font-inter {
+        font-family: "Inter", sans-serif;
+      }
+      .font-playfair {
+        font-family: "Playfair Display", serif;
+      }
 
-    .gallery-container { max-width: 1200px; margin: 0 auto; padding: 30px 20px 60px; }
-    .gallery-header { text-align: center; padding: 20px 20px 30px; }
-    .gallery-header h1 { font-size: 1.8em; color: var(--font-color); margin-bottom: 8px; }
-    .gallery-header p { font-size: 0.9em; color: var(--font-color); opacity: 0.5; }
+      /* 还原原生的淡入及揭示动画 */
+      .hero-anim {
+        opacity: 0;
+        animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .hero-reveal {
+        transform: translateY(30px);
+      }
+      .hero-fade {
+        transform: translateY(15px);
+      }
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    .gallery-section { margin-bottom: 50px; }
-    .gallery-section h2 { font-size: 1.3em; color: var(--font-color); margin: 0 0 20px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); opacity: 0.8; }
+      /* 核心兼容性与性能优化：使用现代 CSS 变量替代 Canvas 动态图片 */
+      #mask-layer {
+        --mask-x: -999px;
+        --mask-y: -999px;
 
-    /* 图片墙 */
-    .gallery-wall {
-      column-count: 3;
-      column-gap: 12px;
-    }
-    @media (max-width: 768px) {
-      .gallery-wall { column-count: 2; column-gap: 8px; }
-    }
+        /* Safari 厂商前缀 */
+        -webkit-mask-image: radial-gradient(
+          circle 260px at var(--mask-x) var(--mask-y),
+          rgba(255, 255, 255, 1) 0%,
+          rgba(255, 255, 255, 1) 40%,
+          rgba(255, 255, 255, 0.75) 60%,
+          rgba(255, 255, 255, 0.4) 75%,
+          rgba(255, 255, 255, 0.12) 88%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        -webkit-mask-size: 100% 100%;
+        -webkit-mask-repeat: no-repeat;
 
-    .gallery-wall-item {
-      break-inside: avoid;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      overflow: hidden;
-      display: block;
-      position: relative;
-      cursor: zoom-in;
-    }
-    .gallery-wall-item img {
-      width: 100%;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-    .gallery-wall-item:hover img {
-      transform: scale(1.03);
-    }
-    .gallery-wall-item .img-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px 12px 12px;
-      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
-      color: #fff;
-      font-size: 0.85em;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .gallery-wall-item:hover .img-caption {
-      opacity: 1;
-    }
+        /* 标准浏览器属性（Firefox / Chrome） */
+        mask-image: radial-gradient(
+          circle 260px at var(--mask-x) var(--mask-y),
+          rgba(255, 255, 255, 1) 0%,
+          rgba(255, 255, 255, 1) 40%,
+          rgba(255, 255, 255, 0.75) 60%,
+          rgba(255, 255, 255, 0.4) 75%,
+          rgba(255, 255, 255, 0.12) 88%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        mask-size: 100% 100%;
+        mask-repeat: no-repeat;
 
-    /* 灯箱 */
-    .lightbox {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.92);
-      z-index: 10000;
-      cursor: zoom-out;
-      animation: fadeIn 0.3s;
-    }
-    .lightbox.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-      border-radius: 4px;
-      animation: zoomIn 0.3s;
-      cursor: default;
-    }
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: #fff;
-      font-size: 2em;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-      z-index: 10001;
-    }
-    .lightbox-close:hover { opacity: 1; }
-    .lightbox-caption {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: 0.95em;
-      opacity: 0.8;
-      text-align: center;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes zoomIn {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    /* 返回首页按钮 */
-    .world-home-btn {
-      position: fixed;
-      bottom: 90px;
-      right: 25px;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: #c44536;
-      color: #fff;
-      font-size: 1.4em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
-      z-index: 999;
-      transition: all 0.3s;
-    }
-    .world-home-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
-    }
-  </style>
-</head>
-<body>
-  <div id="page-header" class="not-home-page">
-    <nav id="nav">
-      <span class="nav-title">墨境</span>
-      <div class="menus">
-        <a class="site-page" href="/-/">首页</a>
-        <a class="site-page" href="/-/world/">世界观</a>
-        <a class="site-page" href="/-/about/">关于</a>
+        /* 硬件加速，确保在移动端 Safari 同样丝滑 */
+        will-change:
+          mask-image,
+          -webkit-mask-image;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-white text-gray-900 overflow-x-hidden font-inter tracking-[-0.02em]"
+  >
+    <nav
+      class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between p-4 sm:p-5"
+    >
+      <div class="flex items-center gap-2 select-none">
+        <span class="text-white text-xl font-playfair italic">AI 超级个人</span>
       </div>
+
+      <div
+        class="hidden md:flex absolute left-1/2 -translate-x-1/2 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-2 py-2 items-center gap-1 mt-4"
+      >
+        <button
+          class="text-white text-sm font-medium px-4 py-1.5 rounded-full hover:bg-white/20 transition-colors cursor-pointer tracking-[0.1rem]"
+        >
+          我们免费分享的
+          <span class="tracking-[0]">VibeCoding</span>
+          特效，足以秒杀全网那些卖课博主
+        </button>
+      </div>
+
+      <button
+        class="hidden md:block bg-white text-gray-900 text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+      >
+        Sign Up
+      </button>
+
+      <button
+        id="menu-toggle"
+        class="md:hidden relative z-[60] w-11 h-11 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 active:scale-95 transition-transform cursor-pointer"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+      >
+        <span
+          id="line1"
+          class="absolute h-[1.5px] w-5 bg-white rounded-full transition-all duration-300 ease-out -translate-y-[5px]"
+        ></span>
+        <span
+          id="line2"
+          class="absolute h-[1.5px] w-5 bg-white rounded-full transition-all duration-300 ease-out opacity-100"
+        ></span>
+        <span
+          id="line3"
+          class="absolute h-[1.5px] w-5 bg-white rounded-full transition-all duration-300 ease-out translate-y-[5px]"
+        ></span>
+      </button>
     </nav>
-    <div id="page-site-info"><h1 id="site-title">插图集</h1></div>
-  </div>
 
-  <div id="content-outer">
-    <main class="layout" id="content-inner">
-      <div id="page">
-        <div class="gallery-container">
-
-          <div class="gallery-header">
-            <h1>🖼️ 插图集</h1>
-            <p>都是ai的，但是我觉得挺好看</p>
-          </div>
-
-          <!-- 小说封面 -->
-          <div class="gallery-section">
-            <h2>小说封面</h2>
-            <div class="gallery-wall">
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
-                <div class="img-caption">我在地府打工那些年</div>
-              </div>
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
-                <div class="img-caption">这破游戏NPC太能打了</div>
-              </div>
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
-                <div class="img-caption">九州风云录</div>
-              </div>
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
-                <div class="img-caption">北境玫瑰</div>
-              </div>
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
-                <div class="img-caption">皇叔何出此言</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 角色插图 -->
-          <div class="gallery-section">
-            <h2>角色插图</h2>
-            <div class="gallery-wall">
-              <!-- 放您自己的角色插图，格式如下：
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/你的图片名.jpg" alt="描述">
-                <div class="img-caption">图片标题</div>
-              </div>
-              -->
-            </div>
-          </div>
-
-          <!-- 场景插图 -->
-          <div class="gallery-section">
-            <h2>场景插图</h2>
-            <div class="gallery-wall">
-            <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/lixi.jpg" alt="李汐">
-                <div class="img-caption">李汐</div>
-               </div>
-              <div class="gallery-wall-item" onclick="openLightbox(this)">
-                <img src="/-/images/shenjianc.jpg" alt="皇叔何出此言">
-                <div class="img-caption">皇叔何出此言</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+    <div
+      id="mobile-menu"
+      class="fixed inset-0 z-[90] md:hidden transition-opacity duration-500 opacity-0 pointer-events-none"
+    >
+      <div
+        id="menu-overlay"
+        class="absolute inset-0 bg-neutral-950/80 backdrop-blur-xl"
+      ></div>
+      <div
+        id="menu-panel"
+        class="absolute top-0 left-0 right-0 bg-gradient-to-b from-neutral-900 to-neutral-950 border-b border-white/10 px-6 pt-24 pb-10 shadow-2xl shadow-black/50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] -translate-y-8 opacity-0"
+      >
+        <div class="flex flex-col" id="mobile-links-container"></div>
+        <button
+          id="mobile-signup-btn"
+          class="mt-8 w-full bg-[#e8702a] hover:bg-[#d2611f] text-white text-sm font-semibold px-5 py-3.5 rounded-full transition-all duration-500 ease-out translate-y-4 opacity-0 cursor-pointer"
+        >
+          Sign Up
+        </button>
       </div>
-    </main>
-  </div>
-
-  <!-- 灯箱 -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-    <span class="lightbox-close">&times;</span>
-    <img id="lightbox-img" src="" alt="">
-    <div class="lightbox-caption" id="lightbox-caption"></div>
-  </div>
-
-  <script>
-    function openLightbox(el) {
-      var img = el.querySelector('img');
-      var caption = el.querySelector('.img-caption');
-      var lightbox = document.getElementById('lightbox');
-      document.getElementById('lightbox-img').src = img.src;
-      document.getElementById('lightbox-caption').textContent = caption ? caption.textContent : img.alt;
-      lightbox.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeLightbox(event) {
-      if (event.target.id === 'lightbox' || event.target.className === 'lightbox-close') {
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-  </script>
-
-  <!-- 返回首页按钮 -->
-  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
-
-  <footer id="footer">
-    <div id="footer-wrap">
-      <div class="copyright">©2026 By 淮子生生</div>
-      <div class="framework-info"><span>用文字构筑世界</span></div>
     </div>
-  </footer>
-</body>
+
+    <section
+      class="relative w-full overflow-hidden h-screen bg-black"
+      style="height: 100dvh"
+    >
+      <div
+        class="absolute inset-0 bg-center bg-cover bg-no-repeat z-10"
+        style="background-image: url(/-/images/image1.png)"
+      ></div>
+
+      <div
+        id="mask-layer"
+        class="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none"
+        style="background-image: url(/-/images/image2.png)"
+      ></div>
+
+      <div
+        class="absolute top-[14%] left-0 right-0 z-50 flex flex-col items-center text-center px-5 pointer-events-none"
+      >
+        <h1 class="text-white leading-[0.95]">
+          <span
+            class="block font-playfair italic font-normal text-5xl sm:text-7xl md:text-8xl hero-anim hero-reveal"
+            style="letter-spacing: -0.05em; animation-delay: 0.25s"
+          >
+            VibeCoding 高级
+          </span>
+          <span
+            class="block font-playfair italic sm:text-7xl md:text-8xl -mt-1 hero-anim hero-reveal"
+            style="letter-spacing: -0.08em; animation-delay: 0.42s"
+          >
+            分享！
+          </span>
+        </h1>
+      </div>
+
+      <div
+        class="hidden sm:block absolute bottom-14 left-10 md:left-14 max-w-[260px] z-50 hero-anim hero-fade"
+        style="animation-delay: 0.7s"
+      >
+        <p class="text-sm text-white/80 leading-relaxed">
+          Keep going! Vibecoding will never stop!
+        </p>
+      </div>
+
+      <div
+        class="absolute bottom-10 sm:bottom-24 left-5 right-5 sm:left-auto sm:right-10 md:right-14 max-w-full sm:max-w-[260px] z-50 flex flex-col items-start gap-4 sm:gap-5 hero-anim hero-fade"
+        style="animation-delay: 0.85s"
+      >
+        <p class="text-xs sm:text-sm text-white/80 leading-relaxed">
+          Our interactive maps let you peel back the crust to trace how stones,
+          fossils, and deep time combine to shape the ground beneath your feet.
+        </p>
+        <button
+          class="bg-[#e8702a] hover:bg-[#d2611f] text-white text-sm font-medium px-7 py-3 rounded-full transition-all hover:scale-[1.03] active:scale-95 hover:shadow-lg hover:shadow-[#e8702a]/30 pointer-events-auto cursor-pointer"
+        >
+          Start Digging
+        </button>
+      </div>
+    </section>
+
+    <script>
+      // ------------------------------------------
+      // 1. 探照灯缓动跟随后端核心 (CSS Variables Smooth Lerp)
+      // ------------------------------------------
+      const layer = document.getElementById("mask-layer");
+
+      // 坐标状态管理
+      let targetMouseX = -999;
+      let targetMouseY = -999;
+      let smoothMouseX = -999;
+      let smoothMouseY = -999;
+
+      // 监听全局鼠标追踪
+      window.addEventListener("mousemove", (e) => {
+        targetMouseX = e.clientX;
+        targetMouseY = e.clientY;
+      });
+
+      // 实时计算与重绘函数
+      function updateMask() {
+        // 首次初始化防止从原点滑入
+        if (smoothMouseX === -999 && targetMouseX !== -999) {
+          smoothMouseX = targetMouseX;
+          smoothMouseY = targetMouseY;
+        } else if (targetMouseX !== -999) {
+          // 真正的线性插值缓动 (Lerp)，0.12 为平滑权重值，数值越小越丝滑迟滞
+          smoothMouseX += (targetMouseX - smoothMouseX) * 0.12;
+          smoothMouseY += (targetMouseY - smoothMouseY) * 0.12;
+        }
+
+        // 以极低的开销直接映射更新 CSS 变量，完美绕过 Canvas 转码瓶颈
+        layer.style.setProperty("--mask-x", `${smoothMouseX}px`);
+        layer.style.setProperty("--mask-y", `${smoothMouseY}px`);
+
+        requestAnimationFrame(updateMask);
+      }
+      // 启动动画刷新队列
+      requestAnimationFrame(updateMask);
+
+      // ------------------------------------------
+      // 2. 移动端全屏折叠菜单逻辑交互
+      // ------------------------------------------
+      const menuToggle = document.getElementById("menu-toggle");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const menuOverlay = document.getElementById("menu-overlay");
+      const menuPanel = document.getElementById("menu-panel");
+      const mobileLinksContainer = document.getElementById(
+        "mobile-links-container",
+      );
+      const mobileSignupBtn = document.getElementById("mobile-signup-btn");
+
+      const navItems = [
+        "Course",
+        "Field Guides",
+        "Geology",
+        "Plans",
+        "Live Tour",
+      ];
+
+      // 动态渲染移动端菜单列表子节点与对应的延迟效果
+      navItems.forEach((item, idx) => {
+        const btn = document.createElement("button");
+        btn.className =
+          "group flex items-center justify-between py-4 border-b border-white/[0.07] text-left transition-all duration-500 ease-out translate-x-4 opacity-0 cursor-pointer";
+        btn.dataset.index = idx;
+        btn.innerHTML = `
+          <span class="text-white/90 text-lg font-medium group-hover:text-white transition-colors">${item}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white/30 group-hover:text-[#e8702a] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
+            <line x1="7" y1="17" x2="17" y2="7"></line>
+            <polyline points="7 7 17 7 17 17"></polyline>
+          </svg>
+        `;
+
+        mobileLinksContainer.appendChild(btn);
+      });
+
+      // 移动端菜单抽屉展开/收起点击事件
+      let isOpen = false;
+      menuToggle.addEventListener("click", () => {
+        isOpen = !isOpen;
+        menuToggle.setAttribute("aria-expanded", isOpen);
+
+        // 按钮汉堡线动画形态切换
+        const line1 = document.getElementById("line1");
+        const line2 = document.getElementById("line2");
+        const line3 = document.getElementById("line3");
+
+        if (isOpen) {
+          mobileMenu.classList.remove("pointer-events-none");
+          mobileMenu.classList.add("opacity-100");
+          menuPanel.classList.remove("-translate-y-8", "opacity-0");
+          menuPanel.classList.add("translate-y-0", "opacity-100");
+
+          line1.style.transform = "rotate(45deg) translateY(0px)";
+          line2.style.opacity = "0";
+          line3.style.transform = "rotate(-45deg) translateY(0px)";
+
+          // 列表子项级联飞入
+          const links = mobileLinksContainer.querySelectorAll("button");
+          links.forEach((link, idx) => {
+            setTimeout(
+              () => {
+                link.classList.remove("translate-x-4", "opacity-0");
+                link.classList.add("translate-x-0", "opacity-100");
+              },
+              100 + idx * 50,
+            );
+          });
+          setTimeout(
+            () => {
+              mobileSignupBtn.classList.remove("translate-y-4", "opacity-0");
+              mobileSignupBtn.classList.add("translate-y-0", "opacity-100");
+            },
+            100 + links.length * 50,
+          );
+        } else {
+          closeMenu();
+        }
+      });
+
+      menuOverlay.addEventListener("click", closeMenu);
+
+      function closeMenu() {
+        isOpen = false;
+        menuToggle.setAttribute("aria-expanded", false);
+        mobileMenu.classList.add("pointer-events-none");
+        mobileMenu.classList.remove("opacity-100");
+        menuPanel.classList.add("-translate-y-8", "opacity-0");
+        menuPanel.classList.remove("translate-y-0", "opacity-100");
+
+        const line1 = document.getElementById("line1");
+        const line2 = document.getElementById("line2");
+        const line3 = document.getElementById("line3");
+        line1.style.transform = "translateY(-5px) rotate(0deg)";
+        line2.style.opacity = "1";
+        line3.style.transform = "translateY(5px) rotate(0deg)";
+
+        const links = mobileLinksContainer.querySelectorAll("button");
+        links.forEach((link) => {
+          link.classList.add("translate-x-4", "opacity-0");
+          link.classList.remove("translate-x-0", "opacity-100");
+        });
+        mobileSignupBtn.classList.add("translate-y-4", "opacity-0");
+        mobileSignupBtn.classList.remove("translate-y-0", "opacity-100");
+      }
+    </script>
+  </body>
 </html>
