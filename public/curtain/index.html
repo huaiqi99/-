@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="/-/css/index.css" />
     <style>
       :root {
-        --paper: #e8dfca;
-        --ink: #2e251f;
-        --muted: #70665b;
-        --hairline: rgba(46, 37, 31, 0.36);
-        --panel: rgba(232, 223, 202, 0.93);
+        --paper: #c44536;
+        --ink: #f7f5f0;
+        --muted: rgba(247, 245, 240, 0.6);
+        --hairline: rgba(247, 245, 240, 0.3);
+        --panel: rgba(139, 38, 28, 0.93);
       }
       * { box-sizing: border-box; }
       html, body { margin: 0; min-height: 100%; }
@@ -56,9 +56,9 @@
         overflow: hidden;
         isolation: isolate;
         background:
-          repeating-linear-gradient(91deg, rgba(46,37,31,0.022) 0 1px, transparent 1px 11px),
-          repeating-linear-gradient(2deg, rgba(46,37,31,0.017) 0 1px, transparent 1px 14px),
-          radial-gradient(circle at 53% 16%, rgba(255,255,255,0.26), transparent 34%),
+          repeating-linear-gradient(91deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 11px),
+          repeating-linear-gradient(2deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 14px),
+          radial-gradient(circle at 53% 16%, rgba(255,255,255,0.12), transparent 34%),
           var(--paper);
       }
       .artboard::after {
@@ -67,12 +67,12 @@
         inset: 0;
         z-index: 10;
         pointer-events: none;
-        opacity: 0.14;
+        opacity: 0.1;
         background-image:
-          radial-gradient(circle at 24% 31%, currentColor 0 0.5px, transparent 0.65px),
-          radial-gradient(circle at 71% 56%, currentColor 0 0.45px, transparent 0.6px);
+          radial-gradient(circle at 24% 31%, rgba(255,255,255,0.8) 0 0.5px, transparent 0.65px),
+          radial-gradient(circle at 71% 56%, rgba(255,255,255,0.8) 0 0.45px, transparent 0.6px);
         background-size: 9px 11px, 13px 15px;
-        mix-blend-mode: multiply;
+        mix-blend-mode: screen;
       }
 
       #curtain {
@@ -127,8 +127,8 @@
         width: 100%;
         height: auto;
         display: block;
-        mix-blend-mode: multiply;
-        filter: drop-shadow(34px 38px 18px rgba(46,37,31,0.19)) drop-shadow(70px 64px 34px rgba(46,37,31,0.1));
+        mix-blend-mode: screen;
+        filter: drop-shadow(34px 38px 18px rgba(0,0,0,0.25)) drop-shadow(70px 64px 34px rgba(0,0,0,0.15));
       }
 
       .caption {
@@ -150,21 +150,21 @@
         width: 140px;
         height: 2px;
         transform: translateX(-50%);
-        background: rgba(46,37,31,0.18);
+        background: rgba(247,245,240,0.18);
       }
       .progress::before {
         content: "";
         display: block;
         width: 42%;
         height: 100%;
-        background: rgba(46,37,31,0.55);
+        background: rgba(247,245,240,0.55);
       }
       .cursor {
         position: absolute;
         z-index: 12;
         width: 12px;
         height: 12px;
-        border: 1px solid rgba(46,37,31,0.72);
+        border: 1px solid rgba(247,245,240,0.72);
         border-radius: 50%;
         transform: translate(-50%, -50%);
         opacity: 0;
@@ -226,8 +226,8 @@
       .configure {
         border: 0;
         padding: 7px 13px 6px;
-        color: var(--paper);
-        background: var(--ink);
+        color: var(--ink);
+        background: rgba(255,255,255,0.15);
         font-family: Georgia, "Times New Roman", serif;
         cursor: pointer;
         clip-path: polygon(4% 6%, 96% 0, 100% 91%, 2% 100%);
@@ -367,10 +367,10 @@
         const mouse = { x: -999, y: -999, oldX: -999, oldY: -999, active: false };
         const physics = { strength: 0.82, radius: 34, friction: 0.95, gravity: 0.18 };
         const RIBBON_COLORS = [
-          "rgba(112, 80, 51, 0.055)",
-          "rgba(142, 47, 35, 0.045)",
-          "rgba(83, 72, 58, 0.05)",
-          "rgba(156, 105, 46, 0.04)",
+          "rgba(255, 255, 255, 0.07)",
+          "rgba(255, 255, 255, 0.06)",
+          "rgba(255, 255, 255, 0.08)",
+          "rgba(255, 255, 255, 0.05)",
         ];
         let width = 0, height = 0, dpr = 1;
 
@@ -535,12 +535,12 @@
           const widthParam = Math.max(4.5, Math.min(6.5, ((width * 0.84) / columnsCount) * 0.34));
           updateRibbons(widthParam);
 
-          ctx.shadowColor = "rgba(53, 39, 24, 0.08)";
+          ctx.shadowColor = "rgba(255, 255, 255, 0.06)";
           ctx.shadowBlur = 3;
           ctx.shadowOffsetX = 1.2;
           ctx.shadowOffsetY = 2;
           ctx.lineWidth = 0.5;
-          ctx.strokeStyle = "rgba(47, 38, 29, 0.06)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
 
           for (let tone = 0; tone < 4; tone += 1) {
             ctx.beginPath();
@@ -569,10 +569,10 @@
             ctx.moveTo(anchor.x + 1.8, anchor.y + 2);
             ctx.arc(anchor.x, anchor.y + 2, 1.8, 0, Math.PI * 2);
           }
-          ctx.fillStyle = "rgba(156, 108, 46, 0.78)";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
           ctx.fill();
 
-          ctx.fillStyle = "#2e251f";
+          ctx.fillStyle = "#f7f5f0";
           for (let c = 0; c < columnsCount; c += 1) {
             const chain = chains[c];
             for (let index = 1; index < chain.length; index += 1) {
