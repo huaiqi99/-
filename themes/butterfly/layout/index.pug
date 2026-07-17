@@ -3,34 +3,36 @@ extends includes/layout.pug
 block content
   // 小说作品合集
   .novel-collection
+    h2.novel-collection-title 作品合集
+    p.novel-collection-subtitle 用文字构筑另一个世界
     .novel-collection-grid
       // 我在地府打工那些年
       a.novel-collection-card(href=url_for('/novel/'))
-        img.novel-collection-cover(src=url_for('/images/difu-cover.jpg') alt='我在地府打工那些年')
+        img.novel-collection-cover(src=url_for('/-/images/difu-cover.jpg') alt='我在地府打工那些年')
         .novel-collection-info
           .novel-collection-name 我在地府打工那些年
           .novel-collection-tags
             span.tag BL
-            span.tag 玄幻
-            span.tag 地府
-          .novel-collection-desc 浮生花开，香承旧魂；地府风起，归路认得一人。
+            span.tag 仙侠
+            span.tag 原创
+          .novel-collection-desc 一场跨越阴阳两界的禁忌之恋，当死神爱上凡人，规则便不再重要。
           .novel-collection-meta 作者：淮子生生 | 121章 | 约64万字
-      
+
       // 这破游戏NPC太能打了
       a.novel-collection-card(href=url_for('/novel2/'))
-        img.novel-collection-cover(src=url_for('/images/npc-banner.jpg') alt='这破游戏NPC太能打了')
+        img.novel-collection-cover(src=url_for('/-/images/npc-banner.jpg') alt='这破游戏NPC太能打了')
         .novel-collection-info
           .novel-collection-name 这破游戏NPC太能打了
           .novel-collection-tags
             span.tag BL
             span.tag 游戏
-            span.tag 西幻
+            span.tag 穿越
           .novel-collection-desc 穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。
           .novel-collection-meta 作者：淮子生生 | 117章 | 约49万字
-      
+
       // 九州风云录
       a.novel-collection-card(href=url_for('/novel3/'))
-        img.novel-collection-cover(src=url_for('/images/jiuzhou-banner.jpg') alt='九州风云录')
+        img.novel-collection-cover(src=url_for('/-/images/jiuzhou-banner.jpg') alt='九州风云录')
         .novel-collection-info
           .novel-collection-name 九州风云录
           .novel-collection-tags
@@ -39,39 +41,106 @@ block content
             span.tag 轻喜剧
           .novel-collection-desc 天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？
           .novel-collection-meta 作者：淮子生生 | 13章 | 约6万字
-      
-      // 北境玫瑰
+
+      // 北境玫瑰（程行歌版）
       a.novel-collection-card(href=url_for('/novel4/'))
-        img.novel-collection-cover(src=url_for('/images/beijing2-banner.jpg') alt='北境玫瑰（程行歌版）')
+        img.novel-collection-cover(src=url_for('/-/images/beijing2-banner.jpg') alt='北境玫瑰（程行歌版）')
         .novel-collection-info
-          .novel-collection-name 北境玫瑰
+          .novel-collection-name 北境玫瑰（程行歌版）
           .novel-collection-tags
             span.tag BL
             span.tag 奇幻
             span.tag 原创
           .novel-collection-desc 准神候选人黎昭，从时衍天宫逃难至北境，被Alpha指挥官按在墙上操。
-          .novel-collection-meta 作者：淮子生生 | 12章 | 约5万字
-      
+          .novel-collection-meta 作者：程行歌 | 12章 | 约5万字
+
       // 皇叔何出此言
       a.novel-collection-card(href=url_for('/novel5/'))
-        img.novel-collection-cover(src=url_for('/images/huangshu-banner.jpg') alt='皇叔何出此言')
+        img.novel-collection-cover(src=url_for('/-/images/huangshu-banner.jpg') alt='皇叔何出此言')
         .novel-collection-info
           .novel-collection-name 皇叔何出此言
           .novel-collection-tags
             span.tag BL
-            span.tag 18+
+            span.tag 古风
             span.tag 短篇
-          .novel-collection-desc 我知道你想看什么
-          .novel-collection-meta 作者：淮子生生 | 很多章 | 不知道多少字
-      
-      // 那些年写过的同人文
+          .novel-collection-desc 栾方棋与林淮的前世今生，两百多岁的他主动提出要做，究竟是何居心？
+          .novel-collection-meta 作者：程行歌 | 1章 | 约9万字
+
+      // 还没有名字
       a.novel-collection-card(href=url_for('/novel6/'))
-        img.novel-collection-cover(src=url_for('/images/微信图片.jpg') alt='那些年写过的同人文')
+        img.novel-collection-cover(src=url_for('/-/images/豆包.png') alt='还没有名字')
         .novel-collection-info
-          .novel-collection-name 这是我的lofter账号，欢迎来看我写的小短文呀。https://fangqi07.lofter.com
+          .novel-collection-name 还没有名字
           .novel-collection-tags
-            span.tag 短篇
+            span.tag BL
+            span.tag 原创
+          .novel-collection-desc 还没想好。等未来。也许。
+          .novel-collection-meta 作者：淮子生生 | 很多章 | 不知道多少字
+
+      // 小短文合集
+      a.novel-collection-card(href=url_for('/novel7/'))
+        img.novel-collection-cover(src=url_for('/-/images/fangqi.jpg') alt='小短文合集')
+        .novel-collection-info
+          .novel-collection-name 小短文合集
+          .novel-collection-tags
             span.tag 同人
             span.tag 原神
-          .novel-collection-desc 这是当年我写大学的时候在lofter上写的原神同人文
+          .novel-collection-desc 这是当年写大学的时候在lofter上写的原神同人文
           .novel-collection-meta 作者：淮子生生 | 9章 | 约23万字
+
+  // 分页导航
+  script.
+    (function() {
+      var cards = document.querySelectorAll('.novel-collection-card');
+      if (cards.length <= 6) return;
+      var perPage = 6;
+      var totalPages = Math.ceil(cards.length / perPage);
+      var currentPage = 1;
+      function showPage(page) {
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        currentPage = page;
+        cards.forEach(function(c, i) {
+          c.style.display = (i >= (page-1)*perPage && i < page*perPage) ? '' : 'none';
+        });
+        document.querySelectorAll('.pg-btn').forEach(function(b) {
+          b.style.background = parseInt(b.getAttribute('data-p')) === page ? '#c44536' : 'var(--card-bg)';
+          b.style.color = parseInt(b.getAttribute('data-p')) === page ? '#fff' : 'var(--font-color)';
+          b.style.borderColor = parseInt(b.getAttribute('data-p')) === page ? '#c44536' : 'var(--card-border)';
+        });
+        var p = document.querySelector('.pg-prev'), n = document.querySelector('.pg-next');
+        if (p) { p.style.opacity = page === 1 ? '0.3' : '1'; p.style.pointerEvents = page === 1 ? 'none' : ''; }
+        if (n) { n.style.opacity = page === totalPages ? '0.3' : '1'; n.style.pointerEvents = page === totalPages ? 'none' : ''; }
+      }
+      var container = document.querySelector('.novel-collection');
+      if (!container) return;
+      var div = document.createElement('div');
+      div.style.cssText = 'display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;padding:20px 0;flex-wrap:wrap;';
+      var prev = document.createElement('button');
+      prev.className = 'pg-prev';
+      prev.innerHTML = '&lt;';
+      prev.style.cssText = 'width:40px;height:40px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--font-color);border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:bold;';
+      prev.onclick = function() { showPage(currentPage - 1); };
+      div.appendChild(prev);
+      for (var i = 1; i <= totalPages; i++) {
+        (function(p) {
+          var b = document.createElement('button');
+          b.className = 'pg-btn';
+          b.setAttribute('data-p', p);
+          b.textContent = p;
+          b.style.cssText = 'min-width:40px;height:40px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--font-color);border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;transition:all 0.2s;';
+          b.onmouseover = function() { if (p !== currentPage) this.style.background = 'rgba(196,69,54,0.1)'; };
+          b.onmouseout = function() { if (p !== currentPage) this.style.background = 'var(--card-bg)'; };
+          b.onclick = function() { showPage(p); };
+          div.appendChild(b);
+        })(i);
+      }
+      var next = document.createElement('button');
+      next.className = 'pg-next';
+      next.innerHTML = '&gt;';
+      next.style.cssText = 'width:40px;height:40px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--font-color);border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-weight:bold;';
+      next.onclick = function() { showPage(currentPage + 1); };
+      div.appendChild(next);
+      container.appendChild(div);
+      showPage(1);
+    })();
