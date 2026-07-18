@@ -1,0 +1,391 @@
+---
+layout: false
+---
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+  <title>墨境 - 用文字构筑世界</title>
+  <meta name="author" content="淮子生生">
+  <meta name="description" content="一个关于奇幻、仙侠与情感的小说世界">
+  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <link rel="stylesheet" href="/-/css/index.css?v=5.5.5">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css">
+  <script>
+    (() => {
+      const saveToLocal = {
+        set: (key, value, ttl) => {
+          if (!ttl) return
+          const expiry = Date.now() + ttl * 86400000
+          localStorage.setItem(key, JSON.stringify({ value, expiry }))
+        },
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+          if (!itemStr) return undefined
+          const { value, expiry } = JSON.parse(itemStr)
+          if (Date.now() > expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return value
+        }
+      }
+      window.btf = {
+        saveToLocal,
+        getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = url
+          script.async = true
+          Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+          script.onload = script.onreadystatechange = () => {
+            if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+          }
+          script.onerror = reject
+          document.head.appendChild(script)
+        }),
+        getCSS: (url, id) => new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = url
+          if (id) link.id = id
+          link.onload = link.onreadystatechange = () => {
+            if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+          }
+          link.onerror = reject
+          document.head.appendChild(link)
+        }),
+        addGlobalFn: (key, fn, name = false, parent = window) => {
+          if (!false && key.startsWith('pjax')) return
+          const globalFn = parent.globalFn || {}
+          globalFn[key] = globalFn[key] || {}
+          globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+          parent.globalFn = globalFn
+        }
+      }
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+      const theme = saveToLocal.get('theme')
+      theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+      const detectApple = () => {
+        if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })()
+  </script>
+  <script>const GLOBAL_CONFIG = {
+    root: '/-/', algolia: undefined, localSearch: undefined, translate: undefined,
+    highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+    copy: { success: '复制成功', error: '复制失败', noSupport: '浏览器不支持' },
+    relativeDate: { homepage: false, post: false },
+    runtime: '', dateSuffix: { just: '刚刚', min: '分钟前', hour: '小时前', day: '天前', month: '个月前' },
+    copyright: undefined, lightbox: 'null', Snackbar: undefined,
+    infinitegrid: { js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js', buttonText: '加载更多' },
+    isPhotoFigcaption: false, islazyloadPlugin: true, isAnchor: false,
+    percent: { toc: true, rightside: false }, autoDarkmode: false
+  }</script>
+  <script id="config-diff">var GLOBAL_CONFIG_SITE = { title: '墨境', isHighlightShrink: false, isToc: false, pageType: 'home' }</script>
+  <style>
+    .novel-collection { padding: 40px 20px; max-width: 100%; margin: 0 auto; }
+    .novel-collection-title { text-align: center; font-size: 1.8em; font-weight: bold; margin-bottom: 10px; color: var(--font-color); }
+    .novel-collection-subtitle { text-align: center; font-size: 0.9em; color: var(--font-color); opacity: 0.6; margin-bottom: 40px; }
+    .novel-collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .novel-collection-card { display: block; background: var(--card-bg); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--font-color); border: 1px solid var(--card-border); transition: all 0.3s; opacity: 1; transform: translateY(0); }
+    .novel-collection-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+    .novel-collection-cover { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .novel-collection-info { padding: 16px; }
+    .novel-collection-name { font-size: 1.15em; font-weight: bold; margin-bottom: 8px; color: var(--font-color); }
+    .novel-collection-tags { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .novel-collection-tags .tag { font-size: 0.75em; padding: 3px 10px; background: #c44536; color: #fff; border-radius: 12px; font-weight: 500; }
+    .novel-collection-desc { font-size: 0.85em; color: var(--font-color); opacity: 0.7; line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .novel-collection-meta { font-size: 0.8em; color: var(--font-color); opacity: 0.6; }
+    .pagination-nav { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 40px; padding: 20px 0; flex-wrap: wrap; }
+    .pagination-nav button { min-width: 40px; height: 40px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--font-color); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .pagination-nav button:hover:not(.pg-active) { background: rgba(196,69,54,0.1); }
+    .pagination-nav .pg-active { background: #c44536 !important; color: #fff !important; border-color: #c44536 !important; }
+    .pagination-nav .pg-arrow { font-size: 16px; font-weight: bold; }
+    @media (max-width: 768px) {
+      .novel-collection { padding: 20px 12px; }
+      .novel-collection-grid { grid-template-columns: 1fr; gap: 16px; }
+      .novel-collection-cover { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <div id="menu-mask"></div>
+    <div id="sidebar-menus">
+      <div class="avatar-img text-center"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/-/images/avatar.jpg" onerror="this.onerror=null;this.src='/-/img/friend_404.gif'" alt="avatar"/></div>
+      <div class="site-data text-center">
+        <a href="/-/archives/"><div class="headline">文章</div><div class="length-num">292</div></a>
+        <a href="/-/tags/"><div class="headline">标签</div><div class="length-num">18</div></a>
+        <a href="/-/categories/"><div class="headline">分类</div><div class="length-num">8</div></a>
+      </div>
+      <div class="menus_items">
+        <div class="menus_item"><a class="site-page" href="/-/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+        <div class="menus_item"><a class="site-page" href="/-/characters/"><i class="fa-fw fas fa-project-diagram"></i><span> 人物关系图</span></a></div>
+        <div class="menus_item"><a class="site-page" href="/-/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div>
+        <div class="menus_item"><a class="site-page" href="/-/world/"><i class="fa-fw fas fa-globe-asia"></i><span> 世界观</span></a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="body-wrap">
+    <header class="full_page" id="page-header" style="background-image: url(/-/images/lixi.jpg);">
+      <nav id="nav">
+        <span id="blog-info"><a class="nav-site-title" href="/-/"><span class="site-name">墨境</span></a></span>
+        <div id="menus">
+          <div class="menus_items">
+            <div class="menus_item"><a class="site-page" href="/-/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div>
+            <div class="menus_item"><a class="site-page" href="/-/characters/"><i class="fa-fw fas fa-project-diagram"></i><span> 人物关系图</span></a></div>
+            <div class="menus_item"><a class="site-page" href="/-/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div>
+            <div class="menus_item"><a class="site-page" href="/-/world/"><i class="fa-fw fas fa-globe-asia"></i><span> 世界观</span></a></div>
+          </div>
+          <div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div>
+        </div>
+      </nav>
+      <div id="site-info">
+        <h1 id="site-title">墨境</h1>
+        <div id="site-subtitle"><span id="subtitle"></span></div>
+      </div>
+      <div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div>
+    </header>
+
+    <main class="layout" id="content-inner">
+      <!-- 左侧：作品合集 -->
+      <div id="page" style="flex:1;min-width:0;">
+        <div class="novel-collection">
+          <h2 class="novel-collection-title">作品合集</h2>
+          <p class="novel-collection-subtitle">用文字构筑另一个世界</p>
+          <div class="novel-collection-grid">
+            <a class="novel-collection-card" href="/-/novel/">
+              <img class="novel-collection-cover" src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">我在地府打工那些年</div>
+                <div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">仙侠</span><span class="tag">原创</span></div>
+                <div class="novel-collection-desc">一场跨越阴阳两界的禁忌之恋，当死神爱上凡人，规则便不再重要。</div>
+                <div class="novel-collection-meta">作者：淮子生生 | 121章 | 约64万字</div>
+              </div>
+            </a>
+            <a class="novel-collection-card" href="/-/novel2/">
+              <img class="novel-collection-cover" src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">这破游戏NPC太能打了</div>
+                <div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">游戏</span><span class="tag">穿越</span></div>
+                <div class="novel-collection-desc">穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。</div>
+                <div class="novel-collection-meta">作者：淮子生生 | 117章 | 约49万字</div>
+              </div>
+            </a>
+            <a class="novel-collection-card" href="/-/novel3/">
+              <img class="novel-collection-cover" src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">九州风云录</div>
+                <div class="novel-collection-tags"><span class="tag">GB</span><span class="tag">仙侠</span><span class="tag">轻喜剧</span></div>
+                <div class="novel-collection-desc">天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？</div>
+                <div class="novel-collection-meta">作者：淮子生生 | 13章 | 约6万字</div>
+              </div>
+            </a>
+            <a class="novel-collection-card" href="/-/novel4/">
+              <img class="novel-collection-cover" src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">北境玫瑰</div>
+                <div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">奇幻</span><span class="tag">原创</span></div>
+                <div class="novel-collection-desc">准神候选人黎昭，从时衍天宫逃难至北境，被Alpha指挥官按在墙上操。</div>
+                <div class="novel-collection-meta">作者：程行歌 | 12章 | 约5万字</div>
+              </div>
+            </a>
+            <a class="novel-collection-card" href="/-/novel5/">
+              <img class="novel-collection-cover" src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">皇叔何出此言</div>
+                <div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">古风</span><span class="tag">短篇</span></div>
+                <div class="novel-collection-desc">我知道你想看什么</div>
+                <div class="novel-collection-meta">作者：程行歌 | 1章 | 约9万字</div>
+              </div>
+            </a>
+            <a class="novel-collection-card" href="/-/novel6/">
+              <img class="novel-collection-cover" src="/-/images/豆包.png" alt="还没有名字">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">还没有名字</div>
+                <div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">原创</span></div>
+                <div class="novel-collection-desc">还没想好。等未来。也许。</div>
+                <div class="novel-collection-meta">作者：淮子生生 | 很多章 | 不知道多少字</div>
+              </div>
+            </a>
+            <a class="novel-collection-card" href="/-/novel7/">
+              <img class="novel-collection-cover" src="/-/images/fangqi.jpg" alt="小短文合集">
+              <div class="novel-collection-info">
+                <div class="novel-collection-name">小短文合集</div>
+                <div class="novel-collection-tags"><span class="tag">同人</span><span class="tag">原神</span></div>
+                <div class="novel-collection-desc">这是当年写大学的时候在lofter上写的原神同人文</div>
+                <div class="novel-collection-meta">作者：淮子生生 | 9章 | 约23万字</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：侧边栏（从主题复制） -->
+      <div class="aside-content" id="aside-content">
+        <div class="card-widget card-info text-center">
+          <div class="avatar-img"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/-/images/avatar.jpg" onerror="this.onerror=null;this.src='/-/img/friend_404.gif'" alt="avatar"/></div>
+          <div class="author-info-name">淮子生生</div>
+          <div class="author-info-description">一个关于奇幻、仙侠与情感的小说世界</div>
+          <a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a>
+        </div>
+        <div class="card-widget card-announcement">
+          <div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div>
+          <div class="announcement_content">别骂了，这个简陋的界面<br>其实是李姐拿命敲出来的<br><br><a href="/-/world/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🌏 世界观设定集</a><a href="/-/gallery/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">🖼️ 插图集</a><a href="/-/curtain/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;margin:0 0 8px;font-size:0.95em;font-family:inherit;">✨ 文字帘幕</a><a href="/-/yuliu/" style="display:block;padding:10px;background:#c44536;color:#fff;border-radius:8px;text-align:center;text-decoration:none;font-size:0.95em;font-family:inherit;">❀ 预留小界面</a></div>
+        </div>
+        <div class="sticky_layout"></div>
+      </div>
+    </main>
+
+    <footer id="footer">
+      <div class="footer-other">
+        <div class="footer-copyright">
+          <span class="copyright">&copy;&nbsp;2026 By 淮子生生</span>
+          <span class="framework-info">
+            <span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a>
+            <span class="footer-separator">|</span>
+            <span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.5</a>
+          </span>
+        </div>
+        <div class="footer_custom_text"><p>用文字构筑世界</p></div>
+      </div>
+    </footer>
+  </div>
+
+  <div id="rightside">
+    <div id="rightside-config-hide">
+      <button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button>
+      <button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button>
+    </div>
+    <div id="rightside-config-show">
+      <button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button>
+      <button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button>
+    </div>
+  </div>
+
+  <script src="/-/js/utils.js?v=5.5.5"></script>
+  <script src="/-/js/main.js?v=5.5.5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"></script>
+  <script>
+    window.typedJSFn = {
+      init: str => {
+        window.typed = new Typed('#subtitle', Object.assign({
+          strings: str, startDelay: 300, typeSpeed: 150, loop: true, backSpeed: 50,
+        }, {"typeSpeed":100,"backSpeed":50,"backDelay":2000,"loop":true}))
+      },
+      run: subtitleType => {
+        if (true) {
+          if (typeof Typed === 'function') { subtitleType() }
+          else { btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType) }
+        } else { subtitleType() }
+      },
+      processSubtitle: (content, extraContents = []) => {
+        if (true) {
+          const sub = ["用文字构筑世界","让故事在指尖流转","鬼脑发动中","我蒙上眼","仿佛你在身边","我来不及道声不安","有点混乱有点缓慢","才发现承诺是谎话"].slice()
+          if (extraContents.length > 0) { sub.unshift(...extraContents) }
+          if (typeof content === 'string') { sub.unshift(content) }
+          else if (Array.isArray(content)) { sub.unshift(...content) }
+          sub.length > 0 && typedJSFn.init(sub)
+        } else {
+          document.getElementById('subtitle').textContent = typeof content === 'string' ? content : (Array.isArray(content) && content.length > 0 ? content[0] : '')
+        }
+      }
+    }
+    btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+    function subtitleType () {
+      typedJSFn.processSubtitle(["用文字构筑世界","让故事在指尖流转","鬼脑发动中","我蒙上眼","仿佛你在身边","我来不及道声不安","有点混乱有点缓慢","才发现承诺是谎话"])
+    }
+    typedJSFn.run(subtitleType)
+  </script>
+
+  <!-- 分页脚本（内联） -->
+  <script>
+    (function() {
+      var cards = document.querySelectorAll('.novel-collection-card');
+      if (cards.length <= 6) return;
+      var perPage = 6;
+      var totalPages = Math.ceil(cards.length / perPage);
+      var currentPage = 1;
+
+      function showPage(page) {
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        currentPage = page;
+        cards.forEach(function(c, i) {
+          c.style.display = (i >= (page - 1) * perPage && i < page * perPage) ? '' : 'none';
+        });
+        document.querySelectorAll('.pg-btn').forEach(function(b) {
+          var p = parseInt(b.getAttribute('data-p'));
+          b.classList.toggle('pg-active', p === page);
+        });
+        var pr = document.querySelector('.pg-prev');
+        var nx = document.querySelector('.pg-next');
+        if (pr) {
+          pr.style.opacity = page === 1 ? '0.3' : '1';
+          pr.style.pointerEvents = page === 1 ? 'none' : '';
+        }
+        if (nx) {
+          nx.style.opacity = page === totalPages ? '0.3' : '1';
+          nx.style.pointerEvents = page === totalPages ? 'none' : '';
+        }
+      }
+
+      var container = document.querySelector('.novel-collection');
+      if (!container) return;
+
+      var div = document.createElement('div');
+      div.className = 'pagination-nav';
+
+      var prev = document.createElement('button');
+      prev.className = 'pg-prev pg-arrow';
+      prev.innerHTML = '&lt;';
+      prev.onclick = function() { showPage(currentPage - 1); };
+      div.appendChild(prev);
+
+      for (var i = 1; i <= totalPages; i++) {
+        (function(p) {
+          var b = document.createElement('button');
+          b.className = 'pg-btn';
+          b.setAttribute('data-p', p);
+          b.textContent = p;
+          b.onclick = function() { showPage(p); };
+          div.appendChild(b);
+        })(i);
+      }
+
+      var next = document.createElement('button');
+      next.className = 'pg-next pg-arrow';
+      next.innerHTML = '&gt;';
+      next.onclick = function() { showPage(currentPage + 1); };
+      div.appendChild(next);
+
+      container.appendChild(div);
+      showPage(1);
+    })();
+  </script>
+  <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+</body>
+</html>
