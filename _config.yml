@@ -111,5 +111,4 @@ deploy:
 index_generator:
   path: 'blog'
   per_page: 10
-  order_by: -date
 
