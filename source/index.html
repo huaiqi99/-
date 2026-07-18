@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>墨境</title>
+  <link rel="stylesheet" href="/-/css/index.css">
+  <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
+  <style>
+    .novel-collection { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+    .novel-collection-title { text-align: center; font-size: 1.8em; font-weight: bold; margin-bottom: 10px; color: var(--font-color); }
+    .novel-collection-subtitle { text-align: center; font-size: 0.9em; color: var(--font-color); opacity: 0.6; margin-bottom: 40px; }
+    .novel-collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .novel-collection-card { display: block; background: var(--card-bg); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--font-color); border: 1px solid var(--card-border); transition: all 0.3s; opacity: 1; transform: translateY(0); }
+    .novel-collection-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+    .novel-collection-cover { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .novel-collection-info { padding: 16px; }
+    .novel-collection-name { font-size: 1.15em; font-weight: bold; margin-bottom: 8px; color: var(--font-color); }
+    .novel-collection-tags { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+    .novel-collection-tags .tag { font-size: 0.75em; padding: 3px 10px; background: #c44536; color: #fff; border-radius: 12px; font-weight: 500; }
+    .novel-collection-desc { font-size: 0.85em; color: var(--font-color); opacity: 0.7; line-height: 1.5; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .novel-collection-meta { font-size: 0.8em; color: var(--font-color); opacity: 0.6; }
+    .pagination-nav { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px; padding: 20px 0; flex-wrap: wrap; }
+    .pagination-nav button { min-width: 40px; height: 40px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--font-color); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .pagination-nav button:hover:not(.pg-active) { background: rgba(196,69,54,0.1); }
+    .pagination-nav .pg-active { background: #c44536 !important; color: #fff !important; border-color: #c44536 !important; }
+    .pagination-nav .pg-arrow { font-size: 16px; font-weight: bold; }
+    @media (max-width: 768px) {
+      .novel-collection { padding: 20px 12px; }
+      .novel-collection-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="page-header" class="full_page" style="background-image: url(/-/images/lixi.png);">
+    <nav id="nav">
+      <span class="nav-title">墨境</span>
+      <div class="menus">
+        <a class="site-page" href="/-/">首页</a>
+        <a class="site-page" href="/-/world/">世界观</a>
+        <a class="site-page" href="/-/gallery/">插图集</a>
+        <a class="site-page" href="/-/about/">关于</a>
+      </div>
+    </nav>
+    <div id="site-info">
+      <h1 id="site-title">墨境</h1>
+      <div id="site-subtitle"><span id="subtitle"></span></div>
+    </div>
+    <div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div>
+  </div>
+
+  <div id="content-outer">
+    <main class="layout" id="content-inner">
+      <div id="page">
+        <div class="novel-collection">
+          <h2 class="novel-collection-title">作品合集</h2>
+          <p class="novel-collection-subtitle">用文字构筑另一个世界</p>
+          <div class="novel-collection-grid">
+            <a class="novel-collection-card" href="/-/novel/"><img class="novel-collection-cover" src="/-/images/difu-cover.jpg" alt="我在地府打工那些年"><div class="novel-collection-info"><div class="novel-collection-name">我在地府打工那些年</div><div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">仙侠</span><span class="tag">原创</span></div><div class="novel-collection-desc">一场跨越阴阳两界的禁忌之恋，当死神爱上凡人，规则便不再重要。</div><div class="novel-collection-meta">作者：淮子生生 | 121章 | 约64万字</div></div></a>
+            <a class="novel-collection-card" href="/-/novel2/"><img class="novel-collection-cover" src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了"><div class="novel-collection-info"><div class="novel-collection-name">这破游戏NPC太能打了</div><div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">游戏</span><span class="tag">穿越</span></div><div class="novel-collection-desc">穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。</div><div class="novel-collection-meta">作者：淮子生生 | 117章 | 约49万字</div></div></a>
+            <a class="novel-collection-card" href="/-/novel3/"><img class="novel-collection-cover" src="/-/images/jiuzhou-banner.jpg" alt="九州风云录"><div class="novel-collection-info"><div class="novel-collection-name">九州风云录</div><div class="novel-collection-tags"><span class="tag">GB</span><span class="tag">仙侠</span><span class="tag">轻喜剧</span></div><div class="novel-collection-desc">天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？</div><div class="novel-collection-meta">作者：淮子生生 | 13章 | 约6万字</div></div></a>
+            <a class="novel-collection-card" href="/-/novel4/"><img class="novel-collection-cover" src="/-/images/beijing2-banner.jpg" alt="北境玫瑰"><div class="novel-collection-info"><div class="novel-collection-name">北境玫瑰</div><div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">奇幻</span><span class="tag">原创</span></div><div class="novel-collection-desc">准神候选人黎昭，从时衍天宫逃难至北境，被Alpha指挥官按在墙上操。</div><div class="novel-collection-meta">作者：程行歌 | 12章 | 约5万字</div></div></a>
+            <a class="novel-collection-card" href="/-/novel5/"><img class="novel-collection-cover" src="-/images/huangshu-banner.jpg" alt="皇叔何出此言"><div class="novel-collection-info"><div class="novel-collection-name">皇叔何出此言</div><div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">古风</span><span class="tag">短篇</span></div><div class="novel-collection-desc">栾方棋与林淮的前世今生，两百多岁的他主动提出要做，究竟是何居心？</div><div class="novel-collection-meta">作者：程行歌 | 1章 | 约9万字</div></div></a>
+            <a class="novel-collection-card" href="/-/novel6/"><img class="novel-collection-cover" src="-/images/豆包.png" alt="还没有名字"><div class="novel-collection-info"><div class="novel-collection-name">还没有名字</div><div class="novel-collection-tags"><span class="tag">BL</span><span class="tag">原创</span></div><div class="novel-collection-desc">还没想好。等未来。也许。</div><div class="novel-collection-meta">作者：淮子生生 | 很多章 | 不知道多少字</div></div></a>
+            <a class="novel-collection-card" href="/-/novel7/"><img class="novel-collection-cover" src="-/images/fangqi.jpg" alt="小短文合集"><div class="novel-collection-info"><div class="novel-collection-name">小短文合集</div><div class="novel-collection-tags"><span class="tag">同人</span><span class="tag">原神</span></div><div class="novel-collection-desc">这是当年写大学的时候在lofter上写的原神同人文</div><div class="novel-collection-meta">作者：淮子生生 | 9章 | 约23万字</div></div></a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer id="footer">
+    <div id="footer-wrap">
+      <div class="copyright">©2026 By 淮子生生</div>
+      <div class="framework-info"><span>用文字构筑世界</span></div>
+    </div>
+  </footer>
+
+  <script src="/-/js/main.js"></script>
+  <script src="/-/js/pagination.js"></script>
+</body>
+</html>
