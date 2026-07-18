@@ -1,7 +1,7 @@
 // 首页作品卡片分页
 (function() {
   var cards = document.querySelectorAll('.novel-collection-card, .world-card');
-  if (cards.length <= 6) return;
+  if (cards.length <= 4) return;
 
   var perPage = 6;
   var totalPages = Math.ceil(cards.length / perPage);
