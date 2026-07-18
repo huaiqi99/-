@@ -3,7 +3,7 @@
 // 获取当前文章的分类名称
 -var currentCategoryName = ''
 if page.categories && page.categories.length > 0
-  - currentCategoryName = page.categories[0].name || page.categories[0]
+  - currentCategoryName = (page.categories[0] && typeof page.categories[0] === 'object' && page.categories[0].name) ? page.categories[0].name : ''
 
 // 筛选同一分类下的文章，并按日期排序
 -var categoryPosts = []
