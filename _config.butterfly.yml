@@ -65,4 +65,4 @@ post_pagination:
 # 注入自定义JS
 inject:
   bottom:
-    - <script src="/-/js/pagination.js"></script>
+    - <script src="/-/source/js/pagination.js"></script>

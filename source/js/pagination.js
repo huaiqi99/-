@@ -3,7 +3,7 @@
   var cards = document.querySelectorAll('.novel-collection-card, .world-card');
   if (cards.length <= 4) return;
 
-  var perPage = 6;
+  var perPage = 4;
   var totalPages = Math.ceil(cards.length / perPage);
   var currentPage = 1;
 
