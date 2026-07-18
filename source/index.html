@@ -52,10 +52,12 @@ layout: false
     <div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div>
   </div>
 
-  <div id="content-outer">
-    <main class="layout" id="content-inner">
-      <div id="page">
-        <div class="novel-collection">
+<div id="content-outer" style="padding: 40px 20px;">
+  <div style="max-width: 1200px; margin: 0 auto; display: flex; gap: 24px; align-items: flex-start;">
+    
+    <!-- 左侧：作品合集 -->
+    <div style="flex: 1; min-width: 0;">
+      <div class="novel-collection">
           <h2 class="novel-collection-title">作品合集</h2>
           <p class="novel-collection-subtitle">用文字构筑另一个世界</p>
           <div class="novel-collection-grid">
@@ -69,7 +71,37 @@ layout: false
           </div>
         </div>
       </div>
-    </main>
+
+    <!-- 右侧侧边栏 -->
+    <aside style="width: 300px; flex-shrink: 0;">
+      
+      <!-- 作者卡片 -->
+      <div style="background: var(--card-bg, #fff); border-radius: 12px; border: 1px solid var(--card-border, #e3e8f7); padding: 20px; margin-bottom: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <img src="/-/images/avatar.jpg" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" alt="头像">
+        <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 6px; color: var(--font-color, #333);">淮子生生</div>
+        <div style="font-size: 0.85em; color: var(--font-color, #666); margin-bottom: 12px;">一个关于奇幻、仙侠与情感的小说世界</div>
+        <a href="#" style="display: inline-block; padding: 8px 24px; background: #c44536; color: #fff; border-radius: 20px; text-decoration: none; font-size: 0.9em;">Follow Me</a>
+      </div>
+      
+      <!-- 公告卡片 -->
+      <div style="background: var(--card-bg, #fff); border-radius: 12px; border: 1px solid var(--card-border, #e3e8f7); padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <div style="font-weight: bold; margin-bottom: 8px; color: var(--font-color, #333);">📢 公告</div>
+        <div style="font-size: 0.85em; color: var(--font-color, #666); line-height: 1.5;">
+          别骂了，这个简陋的界面<br>
+          其实是李姐拿命敲出来的
+        </div>
+      </div>
+      
+      <!-- 快捷按钮 -->
+      <div style="background: var(--card-bg, #fff); border-radius: 12px; border: 1px solid var(--card-border, #e3e8f7); padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <a href="/-/world/" style="display: block; padding: 10px; background: #c44536; color: #fff; border-radius: 8px; text-decoration: none; margin-bottom: 10px; font-size: 0.9em; text-align: center;">🌍 世界观设定集</a>
+        <a href="/-/gallery/" style="display: block; padding: 10px; background: #c44536; color: #fff; border-radius: 8px; text-decoration: none; margin-bottom: 10px; font-size: 0.9em; text-align: center;">🖼️ 插图集</a>
+        <a href="#" style="display: block; padding: 10px; background: #c44536; color: #fff; border-radius: 8px; text-decoration: none; margin-bottom: 10px; font-size: 0.9em; text-align: center;">✨ 文字字幕</a>
+        <a href="#" style="display: block; padding: 10px; background: #c44536; color: #fff; border-radius: 8px; text-decoration: none; font-size: 0.9em; text-align: center;">⚙️ 预留小界面</a>
+      </div>
+      
+    </aside>
+    
   </div>
 
   <footer id="footer">
