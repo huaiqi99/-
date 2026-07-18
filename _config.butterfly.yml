@@ -61,3 +61,8 @@ darkmode:
 # 关闭上一篇下一篇
 post_pagination:
   enable: false
+
+# 注入自定义JS
+inject:
+  bottom:
+    - <script src="/-/js/novel-pagination.js"></script>
