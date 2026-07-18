@@ -109,5 +109,6 @@ deploy:
   type: ''
 
 index_generator:
-  per_page: 0
+  path: 'blog'
+  per_page: 10
 
