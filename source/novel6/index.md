@@ -2,7 +2,7 @@
 title: 那些年写过的同人
 date: 2024-01-01 00:00:00
 type: novel
-password: 我是变态
+password: 没有密码
 encrypt_message: '李姐允许你看了吗你就点'
 encrypt_wrong: '❌ 你没有得到李姐的许可！'
 ---
