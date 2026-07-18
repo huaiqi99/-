@@ -29,9 +29,23 @@ layout: false
     .pagination-nav .pg-active { background: #c44536 !important; color: #fff !important; border-color: #c44536 !important; }
     .pagination-nav .pg-arrow { font-size: 16px; font-weight: bold; }
     @media (max-width: 768px) {
-      .novel-collection { padding: 20px 12px; }
-      .novel-collection-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-    }
+  .novel-collection { padding: 20px 12px; }
+  .novel-collection-grid { grid-template-columns: 1fr; gap: 16px; }
+  
+  /* 手机端：左右布局变上下堆叠 */
+  #content-outer > div {
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 0 12px !important;
+  }
+  #content-outer > div > div:first-child {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+  #content-outer > div > aside {
+    width: 100% !important;
+  }
+}
   </style>
 </head>
 <body>
@@ -101,7 +115,7 @@ layout: false
       </div>
       
     </aside>
-    
+
   </div>
 
   <footer id="footer">
