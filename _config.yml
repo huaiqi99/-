@@ -108,5 +108,6 @@ theme: butterfly
 deploy:
   type: ''
 
-
+index_generator:
+  per_page: 0
 
