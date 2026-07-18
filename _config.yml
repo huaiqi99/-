@@ -108,7 +108,5 @@ theme: butterfly
 deploy:
   type: ''
 
-index_generator:
-  path: 'archive'
-  per_page: 10
+
 
