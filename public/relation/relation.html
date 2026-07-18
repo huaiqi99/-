@@ -1,0 +1,855 @@
+---
+layout: false
+---
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人物关系星图 - 墨境</title>
+  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    :root {
+      --card-bg: #fff;
+      --card-border: #e3e8f7;
+      --font-color: #4c4948;
+      --theme-color: #c44536;
+      --bg-color: #f7f9fe;
+      --meta-color: #858585;
+    }
+    [data-theme="dark"] {
+      --card-bg: #1b1b1b;
+      --card-border: #3d3d3d;
+      --font-color: #c0c0c0;
+      --bg-color: #0d0d0d;
+      --meta-color: #7a7a7a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg-color);
+      color: var(--font-color);
+      overflow-x: hidden;
+    }
+    /* 顶部导航 */
+    #nav {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      text-decoration: none;
+      color: var(--font-color);
+      font-size: 1.3em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand span { color: var(--theme-color); }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      color: var(--font-color);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--theme-color); }
+
+    /* 主体布局 */
+    .layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+    }
+    .graph-area { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+    .aside-content { width: 360px; flex-shrink: 0; }
+
+    /* 卡片通用 */
+    .card-widget {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .item-headline {
+      font-size: 1.05em;
+      font-weight: bold;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    /* 图形容器 */
+    .graph-wrap {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      position: relative;
+      height: 620px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    #relation-svg {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    #relation-svg:active { cursor: grabbing; }
+
+    /* 工具栏 */
+    .toolbar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--theme-color);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(196,69,54,0.3);
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--font-color);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .btn-secondary:hover { border-color: var(--theme-color); color: var(--theme-color); }
+    .btn-danger { background: #ff4d4f; color: #fff; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8em; }
+
+    /* D3 节点样式 */
+    .link-line {
+      stroke: #c0c0c0;
+      stroke-width: 1.5px;
+      opacity: 0.6;
+    }
+    .link-label-bg {
+      fill: var(--card-bg);
+      stroke: var(--card-border);
+      stroke-width: 1;
+      rx: 4;
+    }
+    .link-label-text {
+      font-size: 11px;
+      fill: var(--meta-color);
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .node-group { cursor: pointer; }
+    .node-ring {
+      fill: none;
+      stroke-width: 4px;
+      opacity: 0.25;
+    }
+    .node-circle {
+      stroke: #fff;
+      stroke-width: 3px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    }
+    .node-letter {
+      font-size: 16px;
+      font-weight: bold;
+      fill: #fff;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .node-tag-bg {
+      rx: 10;
+      opacity: 0.95;
+    }
+    .node-tag-text {
+      font-size: 10px;
+      fill: #fff;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+      font-weight: 500;
+    }
+    .node-name-text {
+      font-size: 13px;
+      font-weight: bold;
+      fill: var(--font-color);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .node-role-text {
+      font-size: 11px;
+      fill: var(--meta-color);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .node.selected .node-ring {
+      opacity: 0.6;
+      stroke-width: 6px;
+    }
+
+    /* 右侧面板表单 */
+    .empty-state {
+      text-align: center;
+      padding: 50px 0;
+      opacity: 0.5;
+    }
+    .empty-state i { font-size: 2.5em; margin-bottom: 15px; display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.8em;
+      margin-bottom: 6px;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--bg-color);
+      color: var(--font-color);
+      font-family: inherit;
+      font-size: 0.9em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--theme-color);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .avatar-upload {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--bg-color);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--card-border);
+      color: var(--meta-color);
+      font-size: 1.8em;
+      position: relative;
+      overflow: hidden;
+    }
+    .avatar-upload img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .avatar-hint {
+      text-align: center;
+      font-size: 0.75em;
+      opacity: 0.5;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .tag-selector { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag-chip {
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      font-size: 0.8em;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      background: var(--card-bg);
+      color: var(--font-color);
+    }
+    .tag-chip:hover { border-color: var(--theme-color); }
+    .tag-chip.active {
+      background: var(--theme-color);
+      color: #fff;
+      border-color: var(--theme-color);
+    }
+
+    .color-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    .color-option {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .color-option:hover { transform: scale(1.15); }
+    .color-option.active {
+      border-color: var(--font-color);
+      transform: scale(1.1);
+      box-shadow: 0 0 0 2px var(--card-bg), 0 0 0 4px var(--theme-color);
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .panel-actions .btn { flex: 1; justify-content: center; }
+
+    /* 底部关联区域 */
+    .causality-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .causality-hint {
+      color: var(--meta-color);
+      font-size: 0.85em;
+      text-align: center;
+      padding: 30px;
+      line-height: 1.6;
+    }
+
+    /* 关系快速添加 */
+    .relation-quick {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    @media (max-width: 1024px) {
+      .layout { flex-direction: column; }
+      .aside-content { width: 100%; }
+      .graph-wrap { height: 500px; }
+    }
+  </style>
+  <script>
+    (() => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+  </script>
+<base target="_blank">
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/-/"><i class="fas fa-project-diagram" style="color: var(--theme-color);"></i><span>墨境</span> · 人物关系星图</a>
+      <div class="nav-links">
+        <a href="/-/world/"><i class="fas fa-globe-asia"></i> 世界观</a>
+        <a href="/-/"><i class="fas fa-home"></i> 返回首页</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="layout" style="margin-top: 20px;">
+    <div class="graph-area">
+      <div class="graph-wrap" id="graph-container">
+        <div class="toolbar">
+          <button class="btn btn-primary" onclick="addCharacter()"><i class="fas fa-plus"></i> 新增人物</button>
+          <button class="btn btn-secondary" onclick="resetZoom()"><i class="fas fa-compress-arrows-alt"></i> 重置视图</button>
+          <button class="btn btn-secondary" onclick="addRelation()"><i class="fas fa-link"></i> 添加关系</button>
+        </div>
+        <svg id="relation-svg"></svg>
+      </div>
+
+      <div class="causality-section">
+        <div class="item-headline"><i class="fas fa-project-diagram" style="color: var(--theme-color);"></i><span>事件、背景与设定双向关联</span></div>
+        <div class="causality-hint">
+          在星图中点击人物节点可编辑详情与关系。<br>
+          拖动节点可调整布局，滚轮缩放画布，空白处拖拽平移。
+        </div>
+      </div>
+    </div>
+
+    <div class="aside-content" id="detail-panel">
+      <div class="card-widget">
+        <div class="item-headline"><i class="fas fa-user" style="color: var(--theme-color);"></i><span>人物详情</span></div>
+
+        <div id="empty-state" class="empty-state">
+          <i class="fas fa-mouse-pointer"></i>
+          <p>点击星图中的人物节点<br>查看或编辑详情</p>
+        </div>
+
+        <div id="edit-form" style="display: none;">
+          <div class="avatar-upload" id="avatar-box" onclick="document.getElementById('char-img').click()">
+            <i class="fas fa-image" id="avatar-icon"></i>
+            <img id="avatar-preview" style="display:none;">
+          </div>
+          <div class="avatar-hint">点击添加图片（当前仅演示）</div>
+          <input type="file" id="char-img" accept="image/*" style="display:none" onchange="previewImg(this)">
+
+          <div style="display: flex; gap: 12px;">
+            <div class="form-group" style="flex: 1;">
+              <label>姓名</label>
+              <input type="text" id="char-name" placeholder="角色名">
+            </div>
+            <div class="form-group" style="width: 80px;">
+              <label>年龄</label>
+              <input type="number" id="char-age" placeholder="24">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>身份 / 属性</label>
+            <input type="text" id="char-identity" placeholder="例如：档案修复师">
+          </div>
+
+          <div class="form-group">
+            <label>标签（可多选）</label>
+            <div class="tag-selector" id="tag-selector">
+              <span class="tag-chip" data-tag="主角1">主角1</span>
+              <span class="tag-chip" data-tag="主角2">主角2</span>
+              <span class="tag-chip" data-tag="主要配角">主要配角</span>
+              <span class="tag-chip" data-tag="反派">反派</span>
+              <span class="tag-chip" data-tag="亲友">亲友</span>
+              <span class="tag-chip" data-tag="家族线">家族线</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>星球颜色</label>
+            <div class="color-grid" id="color-grid"></div>
+          </div>
+
+          <div class="form-group">
+            <label>背景故事</label>
+            <textarea id="char-story" placeholder="写下这个角色的背景..."></textarea>
+          </div>
+
+          <div class="relation-quick">
+            <div class="form-group">
+              <label>快速关联（与选中人物）</label>
+              <select id="relate-target">
+                <option value="">选择目标人物...</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="relate-label" placeholder="关系描述，如：合作、猜忌" style="flex:1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--bg-color); color: var(--font-color);">
+              <button class="btn btn-primary btn-sm" onclick="confirmRelation()"><i class="fas fa-check"></i></button>
+            </div>
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn btn-primary" onclick="saveCharacter()"><i class="fas fa-save"></i> 保存</button>
+            <button class="btn btn-danger" onclick="deleteCharacter()"><i class="fas fa-trash-alt"></i> 删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================== 数据 ==================
+    let nodes = [
+      { id: "X", name: "X", role: "档案修复师", tag: "主角1", color: "#7a9e9f", age: "24", identity: "档案修复师", story: "擅长从残缺文本中拼出线索，习惯把所有风险写进笔记。" },
+      { id: "Y", name: "Y", role: "研究院联络人", tag: "主角2", color: "#e8a87c", age: "26", identity: "研究院联络人", story: "" },
+      { id: "Z", name: "Z", role: "调查记者", tag: "主要配角", color: "#85cdca", age: "28", identity: "调查记者", story: "" },
+      { id: "A", name: "A", role: "旧图书馆管理员", tag: "反派", color: "#cf6a87", age: "45", identity: "旧图书馆管理员", story: "" }
+    ];
+    let links = [
+      { source: "X", target: "Y", relation: "互相猜忌" },
+      { source: "X", target: "Z", relation: "合作调查" },
+      { source: "Y", target: "A", relation: "暗中监视" }
+    ];
+
+    const palette = [
+      "#7a9e9f","#e8a87c","#85cdca","#cf6a87","#c44536",
+      "#e6b89c","#9dc6a7","#a8a4ce","#d4a5a5","#9cadce",
+      "#d4c5a5","#a5c4d4","#c4a5d4","#d4a5c4","#8fbc8f"
+    ];
+
+    let selectedNode = null;
+
+    // ================== 初始化颜色面板 ==================
+    const colorGrid = document.getElementById('color-grid');
+    palette.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'color-option';
+      div.style.background = c;
+      div.dataset.color = c;
+      div.onclick = () => selectColor(c, div);
+      colorGrid.appendChild(div);
+    });
+
+    function selectColor(color, el) {
+      document.querySelectorAll('.color-option').forEach(d => d.classList.remove('active'));
+      el.classList.add('active');
+      if (selectedNode) {
+        selectedNode.color = color;
+        refreshNodeVisuals();
+      }
+    }
+
+    // ================== 标签选择 ==================
+    document.querySelectorAll('.tag-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        this.classList.toggle('active');
+        if (selectedNode) {
+          const active = Array.from(document.querySelectorAll('.tag-chip.active')).map(t => t.dataset.tag);
+          selectedNode.tag = active.join('，') || '角色';
+          refreshNodeVisuals();
+        }
+      });
+    });
+
+    // ================== D3 设置 ==================
+    const container = document.getElementById('graph-container');
+    const svg = d3.select("#relation-svg");
+    let width = container.clientWidth;
+    let height = 620;
+    svg.attr("viewBox", [-width/2, -height/2, width, height]);
+
+    const g = svg.append("g");
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.2, 4])
+      .on("zoom", (e) => g.attr("transform", e.transform));
+    svg.call(zoom)
+       .on("dblclick.zoom", null); // 禁用双击缩放
+
+    const simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(d => d.id).distance(200))
+      .force("charge", d3.forceManyBody().strength(-900))
+      .force("center", d3.forceCenter(0, 0))
+      .force("collide", d3.forceCollide().radius(55));
+
+    let linkGroup = g.append("g").attr("class", "links");
+    let nodeGroup = g.append("g").attr("class", "nodes");
+
+    // ================== 渲染 ==================
+    function render() {
+      // --- 连线 ---
+      const linkData = linkGroup.selectAll(".link-item").data(links, d => d.source.id + "-" + d.target.id);
+      linkData.exit().remove();
+
+      const linkEnter = linkData.enter().append("g").attr("class", "link-item");
+
+      linkEnter.append("line").attr("class", "link-line")
+        .attr("stroke-dasharray", "4,4");
+
+      const labelW = 60;
+      linkEnter.append("rect")
+        .attr("class", "link-label-bg")
+        .attr("width", labelW)
+        .attr("height", 20)
+        .attr("x", -labelW/2)
+        .attr("y", -10);
+
+      linkEnter.append("text")
+        .attr("class", "link-label-text")
+        .attr("dy", 1);
+
+      // --- 节点 ---
+      const nodeData = nodeGroup.selectAll(".node-group").data(nodes, d => d.id);
+      nodeData.exit().transition().duration(300).style("opacity", 0).remove();
+
+      const nodeEnter = nodeData.enter().append("g")
+        .attr("class", "node-group")
+        .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended))
+        .on("click", (e, d) => { e.stopPropagation(); selectNode(d); });
+
+      // 外圈光环
+      nodeEnter.append("circle")
+        .attr("class", "node-ring")
+        .attr("r", 40);
+
+      // 主圆
+      nodeEnter.append("circle")
+        .attr("class", "node-circle")
+        .attr("r", 30);
+
+      // 首字母/名字（圆内）
+      nodeEnter.append("text")
+        .attr("class", "node-letter")
+        .attr("dy", 1)
+        .text(d => d.name ? d.name.charAt(0) : "?");
+
+      // 上方标签背景
+      nodeEnter.append("rect")
+        .attr("class", "node-tag-bg")
+        .attr("y", -52)
+        .attr("height", 18);
+
+      // 上方标签文字
+      nodeEnter.append("text")
+        .attr("class", "node-tag-text")
+        .attr("y", -40);
+
+      // 下方名字
+      nodeEnter.append("text")
+        .attr("class", "node-name-text")
+        .attr("y", 48);
+
+      // 下方身份
+      nodeEnter.append("text")
+        .attr("class", "node-role-text")
+        .attr("y", 63);
+
+      // 点击空白处取消选择
+      svg.on("click", () => {
+        selectedNode = null;
+        showEmpty();
+        d3.selectAll(".node-group").classed("selected", false);
+      });
+
+      refreshNodeVisuals();
+      updateRelationSelect();
+
+      simulation.nodes(nodes);
+      simulation.force("link").links(links);
+      simulation.alpha(1).restart();
+    }
+
+    function refreshNodeVisuals() {
+      const allNodes = nodeGroup.selectAll(".node-group");
+
+      allNodes.select(".node-ring")
+        .attr("stroke", d => d.color || "#999");
+
+      allNodes.select(".node-circle")
+        .attr("fill", d => d.color || "#999");
+
+      allNodes.select(".node-letter")
+        .text(d => d.name ? d.name.charAt(0) : "?");
+
+      allNodes.select(".node-tag-bg")
+        .attr("fill", d => d.color || "#999")
+        .attr("width", d => Math.max(36, ((d.tag || "角色").length * 11 + 10)))
+        .attr("x", d => -Math.max(36, ((d.tag || "角色").length * 11 + 10)) / 2);
+
+      allNodes.select(".node-tag-text")
+        .text(d => d.tag || "角色");
+
+      allNodes.select(".node-name-text")
+        .text(d => d.name);
+
+      allNodes.select(".node-role-text")
+        .text(d => d.role || d.identity || "");
+    }
+
+    simulation.on("tick", () => {
+      linkGroup.selectAll(".link-item").each(function(d) {
+        const line = d3.select(this).select("line");
+        const rect = d3.select(this).select("rect");
+        const text = d3.select(this).select("text");
+
+        line.attr("x1", d.source.x).attr("y1", d.source.y)
+            .attr("x2", d.target.x).attr("y2", d.target.y);
+
+        const mx = (d.source.x + d.target.x) / 2;
+        const my = (d.source.y + d.target.y) / 2;
+        const txt = d.relation || "关系";
+        const tw = Math.max(40, txt.length * 12 + 12);
+
+        rect.attr("x", mx - tw/2).attr("y", my - 10).attr("width", tw);
+        text.attr("x", mx).attr("y", my).text(txt);
+      });
+
+      nodeGroup.selectAll(".node-group")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+
+    function dragstarted(e, d) {
+      if (!e.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x; d.fy = d.y;
+    }
+    function dragged(e, d) {
+      d.fx = e.x; d.fy = e.y;
+    }
+    function dragended(e, d) {
+      if (!e.active) simulation.alphaTarget(0);
+      d.fx = null; d.fy = null;
+    }
+
+    // ================== 节点选择与编辑 ==================
+    function selectNode(d) {
+      selectedNode = d;
+      d3.selectAll(".node-group").classed("selected", false);
+      d3.selectAll(".node-group").filter(n => n === d).classed("selected", true);
+
+      document.getElementById('empty-state').style.display = 'none';
+      document.getElementById('edit-form').style.display = 'block';
+
+      document.getElementById('char-name').value = d.name || "";
+      document.getElementById('char-age').value = d.age || "";
+      document.getElementById('char-identity').value = d.identity || d.role || "";
+      document.getElementById('char-story').value = d.story || "";
+
+      // 标签
+      const tags = (d.tag || "").split(/[，,]/).map(t => t.trim()).filter(Boolean);
+      document.querySelectorAll('.tag-chip').forEach(chip => {
+        chip.classList.toggle('active', tags.includes(chip.dataset.tag));
+      });
+
+      // 颜色
+      document.querySelectorAll('.color-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.color === d.color);
+      });
+    }
+
+    function showEmpty() {
+      document.getElementById('empty-state').style.display = 'block';
+      document.getElementById('edit-form').style.display = 'none';
+    }
+
+    function saveCharacter() {
+      if (!selectedNode) return;
+      selectedNode.name = document.getElementById('char-name').value.trim() || selectedNode.name;
+      selectedNode.age = document.getElementById('char-age').value;
+      selectedNode.identity = document.getElementById('char-identity').value;
+      selectedNode.role = selectedNode.identity;
+      selectedNode.story = document.getElementById('char-story').value;
+      refreshNodeVisuals();
+
+      // 简单提示
+      const btn = document.querySelector('.panel-actions .btn-primary');
+      const old = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> 已保存';
+      setTimeout(() => btn.innerHTML = old, 1200);
+    }
+
+    function deleteCharacter() {
+      if (!selectedNode) return;
+      if (!confirm('确定要删除「' + selectedNode.name + '」吗？')) return;
+      nodes = nodes.filter(n => n !== selectedNode);
+      links = links.filter(l => l.source !== selectedNode && l.target !== selectedNode);
+      selectedNode = null;
+      showEmpty();
+      render();
+    }
+
+    function addCharacter() {
+      const id = "c" + Date.now().toString(36);
+      const color = palette[Math.floor(Math.random() * palette.length)];
+      const newNode = {
+        id, name: "新人物", role: "待设定", tag: "主要配角",
+        color, age: "", identity: "待设定", story: "", x: 0, y: 0
+      };
+      nodes.push(newNode);
+      render();
+      // 自动选中新节点并居中
+      setTimeout(() => {
+        selectNode(newNode);
+        // 简单聚焦：把新节点移到中心附近
+        newNode.fx = 0; newNode.fy = 0;
+        simulation.alpha(0.5).restart();
+        setTimeout(() => { newNode.fx = null; newNode.fy = null; }, 500);
+      }, 50);
+    }
+
+    function addRelation() {
+      if (nodes.length < 2) { alert("至少需要两个人物才能建立关系"); return; }
+      alert("请点击选中一个人物，然后在右侧面板选择目标人物并填写关系描述。");
+    }
+
+    function updateRelationSelect() {
+      const sel = document.getElementById('relate-target');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">选择目标人物...</option>';
+      nodes.forEach(n => {
+        if (selectedNode && n.id === selectedNode.id) return;
+        const opt = document.createElement('option');
+        opt.value = n.id;
+        opt.textContent = n.name + "（" + (n.role || n.identity) + "）";
+        sel.appendChild(opt);
+      });
+      sel.value = cur;
+    }
+
+    function confirmRelation() {
+      if (!selectedNode) return;
+      const targetId = document.getElementById('relate-target').value;
+      const label = document.getElementById('relate-label').value.trim();
+      if (!targetId || !label) { alert("请选择目标人物并填写关系描述"); return; }
+      if (targetId === selectedNode.id) { alert("不能与自己建立关系"); return; }
+
+      // 检查是否已存在
+      const exists = links.find(l =>
+        (l.source.id === selectedNode.id && l.target.id === targetId) ||
+        (l.source.id === targetId && l.target.id === selectedNode.id)
+      );
+      if (exists) {
+        exists.relation = label;
+      } else {
+        links.push({ source: selectedNode.id, target: targetId, relation: label });
+      }
+      document.getElementById('relate-label').value = "";
+      render();
+    }
+
+    function resetZoom() {
+      svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity);
+    }
+
+    function previewImg(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById('avatar-preview').src = e.target.result;
+          document.getElementById('avatar-preview').style.display = 'block';
+          document.getElementById('avatar-icon').style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // ================== 响应式 ==================
+    window.addEventListener('resize', () => {
+      width = container.clientWidth;
+      svg.attr("viewBox", [-width/2, -height/2, width, height]);
+      simulation.force("center", d3.forceCenter(0, 0));
+      simulation.alpha(0.3).restart();
+    });
+
+    // 首次渲染
+    render();
+  </script>
+</body>
+</html>
