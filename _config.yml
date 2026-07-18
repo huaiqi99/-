@@ -111,6 +111,7 @@ theme: butterfly
 deploy:
   type: ''
 
-darkmode:
-  enable: true
+index_generator:
+  path: 'archive'
+  per_page: 10
 
