@@ -1,6 +1,3 @@
----
-layout: false
----
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
@@ -50,7 +47,6 @@ layout: false
       color: var(--font-color);
       overflow-x: hidden;
     }
-    /* 顶部导航 */
     #nav {
       background: var(--card-bg);
       border-bottom: 1px solid var(--card-border);
@@ -91,7 +87,6 @@ layout: false
     }
     .nav-links a:hover { opacity: 1; color: var(--theme-color); }
 
-    /* 主体布局 */
     .layout {
       max-width: 1400px;
       margin: 0 auto;
@@ -102,7 +97,6 @@ layout: false
     .graph-area { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; position: relative; }
     .aside-content { width: 360px; flex-shrink: 0; }
 
-    /* 卡片通用 */
     .card-widget {
       background: var(--card-bg);
       border-radius: 12px;
@@ -123,7 +117,6 @@ layout: false
       border-bottom: 1px solid var(--card-border);
     }
 
-    /* 图形容器 */
     .graph-wrap {
       background: var(--card-bg);
       border-radius: 12px;
@@ -140,7 +133,7 @@ layout: false
     }
     #relation-svg:active { cursor: grabbing; }
 
-    /* 工具栏 */
+    /* 工具栏：时期切换 + 重置 */
     .toolbar {
       position: absolute;
       top: 16px;
@@ -148,7 +141,52 @@ layout: false
       display: flex;
       gap: 10px;
       z-index: 10;
+      flex-wrap: wrap;
     }
+    .toolbar .btn-group {
+      display: flex;
+      gap: 4px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      padding: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .toolbar .btn-group .btn {
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.85em;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--meta-color);
+    }
+    .toolbar .btn-group .btn:hover { color: var(--font-color); }
+    .toolbar .btn-group .btn.active {
+      background: var(--theme-color);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(196,69,54,0.25);
+    }
+    .toolbar .btn-group .btn.active:hover { opacity: 0.9; }
+
+    .toolbar .btn-icon {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.85em;
+      color: var(--font-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .toolbar .btn-icon:hover { border-color: var(--theme-color); color: var(--theme-color); }
+
     .btn {
       padding: 8px 16px;
       border-radius: 8px;
@@ -177,7 +215,6 @@ layout: false
     .btn-danger { background: #ff4d4f; color: #fff; }
     .btn-sm { padding: 6px 12px; font-size: 0.8em; }
 
-    /* D3 节点样式 */
     .link-line {
       stroke: #c0c0c0;
       stroke-width: 1.5px;
@@ -245,7 +282,7 @@ layout: false
       stroke-width: 6px;
     }
 
-    /* 右侧面板表单 */
+    /* 右侧面板 */
     .empty-state {
       text-align: center;
       padding: 50px 0;
@@ -353,7 +390,6 @@ layout: false
     }
     .panel-actions .btn { flex: 1; justify-content: center; }
 
-    /* 底部关联区域 */
     .causality-section {
       background: var(--card-bg);
       border-radius: 12px;
@@ -369,7 +405,6 @@ layout: false
       line-height: 1.6;
     }
 
-    /* 关系快速添加 */
     .relation-quick {
       margin-top: 12px;
       padding-top: 12px;
@@ -382,9 +417,7 @@ layout: false
       .graph-wrap { height: 500px; }
     }
 
-    /* ========== 手机端优化 ========== */
     @media (max-width: 768px) {
-      /* 导航栏：标题缩小，链接只显示图标 */
       #nav { padding: 0 16px; }
       .nav-inner { height: 52px; }
       .nav-brand { font-size: 1.05em; gap: 6px; }
@@ -392,28 +425,34 @@ layout: false
       .nav-links a { font-size: 1.1em; }
       .nav-links a span { display: none; }
 
-      /* 主体布局去边距 */
       .layout { padding: 0; gap: 12px; margin-top: 12px; }
 
-      /* 工具栏：移出卡片，独立成栏 */
+      /* 工具栏：移动端适配 */
       .toolbar {
         position: static;
-        padding: 12px 16px;
+        padding: 10px 16px;
         justify-content: center;
         flex-wrap: wrap;
         background: var(--card-bg);
         border-bottom: 1px solid var(--card-border);
+        gap: 8px;
+      }
+      .toolbar .btn-group .btn {
+        padding: 5px 12px;
+        font-size: 0.8em;
+      }
+      .toolbar .btn-icon {
+        padding: 5px 10px;
+        font-size: 0.8em;
       }
 
-      /* 图形区：撑满全屏，去卡片化 */
       .graph-wrap {
         border-radius: 0;
         border: none;
-        height: 62vh;
+        height: 56vh;
         box-shadow: none;
       }
 
-      /* 右侧面板减少留白 */
       .aside-content { width: 100%; padding: 0 12px; }
       .card-widget {
         border-radius: 8px;
@@ -421,7 +460,6 @@ layout: false
         margin-bottom: 12px;
       }
 
-      /* 底部提示区 */
       .causality-section {
         border-radius: 0;
         border-left: none;
@@ -445,19 +483,23 @@ layout: false
     <div class="nav-inner">
       <a class="nav-brand" href="/-/"><i class="fas fa-project-diagram" style="color: var(--theme-color);"></i><span>墨境</span> · 人物关系星图</a>
       <div class="nav-links">
-        <a href="/-/world/"><i class="fas fa-globe-asia"></i> 世界观</a>
-        <a href="/-/"><i class="fas fa-home"></i> 返回首页</a>
+        <a href="/-/world/"><i class="fas fa-globe-asia"></i><span>世界观</span></a>
+        <a href="/-/"><i class="fas fa-home"></i><span>返回首页</span></a>
       </div>
     </div>
   </nav>
 
   <div class="layout" style="margin-top: 20px;">
     <div class="graph-area">
+      <!-- 工具栏：时期切换 + 重置视图 -->
       <div class="toolbar">
-        <button class="btn btn-primary" onclick="addCharacter()"><i class="fas fa-plus"></i> 新增人物</button>
-        <button class="btn btn-secondary" onclick="resetZoom()"><i class="fas fa-compress-arrows-alt"></i> 重置视图</button>
-        <button class="btn btn-secondary" onclick="addRelation()"><i class="fas fa-link"></i> 添加关系</button>
+        <div class="btn-group" id="era-toggle">
+          <button class="btn active" data-era="past" onclick="switchEra('past')">📜 秦墨予时期</button>
+          <button class="btn" data-era="present" onclick="switchEra('present')">🌿 栾方棋时期</button>
+        </div>
+        <button class="btn-icon" onclick="resetZoom()"><i class="fas fa-compress-arrows-alt"></i> 重置视图</button>
       </div>
+
       <div class="graph-wrap" id="graph-container">
         <svg id="relation-svg"></svg>
       </div>
@@ -466,7 +508,8 @@ layout: false
         <div class="item-headline"><i class="fas fa-project-diagram" style="color: var(--theme-color);"></i><span>事件、背景与设定双向关联</span></div>
         <div class="causality-hint">
           在星图中点击人物节点可编辑详情与关系。<br>
-          拖动节点可调整布局，滚轮缩放画布，空白处拖拽平移。
+          拖动节点可调整布局，滚轮缩放画布，空白处拖拽平移。<br>
+          <span style="color: var(--theme-color);">📜 秦墨予时期</span> ｜ <span style="color: var(--theme-color);">🌿 栾方棋时期</span>
         </div>
       </div>
     </div>
@@ -549,35 +592,42 @@ layout: false
   </div>
 
   <script>
-    // ================== 数据 ==================
-    let nodes = [
-  { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
-  { id: "lh", name: "林淮", role: "归终殿第二席", tag: "主角2", color: "#7a9e9f", age: "约220岁", identity: "枪修 · 前世影卫", story: "等了两百年，终于等到栾方棋转世回来。浮生之契的另一端，从秦墨予到栾方棋，从未放手。" },
-  { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
-  { id: "wyj", name: "魏元璟", role: "归终殿第五席", tag: "主要配角", color: "#e8a87c", age: "重铸后约30岁", identity: "前朝末帝 · 重铸魂魄", story: "从帝王到引渡人，从念安到魏元璟。在罗修身边重新学会了‘普通地幸福’。" },
-  { id: "cms", name: "程木栖", role: "栖梧馆医者", tag: "亲友", color: "#85cdca", age: "约400岁", identity: "前第三席 · 古琴医者", story: "京城决战后双手重伤，退居二线开设医馆。那双弹琴的手如今只用来为同门熬药。" },
-  { id: "rs", name: "冉舟", role: "前归终殿第九席", tag: "家族线", color: "#cf6a87", age: "约150岁（人偶）", identity: "人偶 · 秦雨令的影子", story: "她是被制造出来的替代品，却也是唯一一个在月光下为栾方棋舞过剑的‘姐姐’。最后那一剑，刺穿了他的心，也刺穿了她自己的命运。" },
-  { id: "bhe", name: "白禾川", role: "青丘之主", tag: "反派", color: "#b03a2e", age: "千年以上", identity: "九尾天狐 · 京城决战终局者", story: "为了复活秦雨令，不惜以五大神器覆写京城。最终死在天命君剑下，临死前喊的是秦雨令的名字。" },
-  { id: "cc", name: "楚迟", role: "伪神 · 浮生树之祖", tag: "家族线", color: "#6b8e6b", age: "消散时约千岁", identity: "天命君剥离的神魂", story: "栾方棋的养父，为他取名‘秦墨予’。燃尽魂力修复青丘后消散在锁龙井底。" },
-  { id: "sj", name: "天命君·司衡", role: "天庭四君之首", tag: "反派", color: "#d4c5a5", age: "亘古", identity: "执掌命途 · 秦雨令真身", story: "以秦雨令的身份下凡修正商烈历史。京城决战时现身，没有救任何人，只是确认‘因果已被修正’。" },
-  { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" }
-];
+    // ================== 数据（带 era 标记） ==================
+    let allNodes = [
+      { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", era: "all", story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
+      { id: "lh", name: "林淮", role: "归终殿第二席", tag: "主角2", color: "#7a9e9f", age: "约220岁", identity: "枪修 · 前世影卫", era: "all", story: "等了两百年，终于等到栾方棋转世回来。浮生之契的另一端，从秦墨予到栾方棋，从未放手。" },
+      { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", era: "present", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
+      { id: "wyj", name: "魏元璟", role: "归终殿第五席", tag: "主要配角", color: "#e8a87c", age: "重铸后约30岁", identity: "前朝末帝 · 重铸魂魄", era: "present", story: "从帝王到引渡人，从念安到魏元璟。在罗修身边重新学会了‘普通地幸福’。" },
+      { id: "cms", name: "程木栖", role: "栖梧馆医者", tag: "亲友", color: "#85cdca", age: "约400岁", identity: "前第三席 · 古琴医者", era: "present", story: "京城决战后双手重伤，退居二线开设医馆。那双弹琴的手如今只用来为同门熬药。" },
+      { id: "rs", name: "冉舟", role: "前归终殿第九席", tag: "家族线", color: "#cf6a87", age: "约150岁（人偶）", identity: "人偶 · 秦雨令的影子", era: "present", story: "她是被制造出来的替代品，却也是唯一一个在月光下为栾方棋舞过剑的‘姐姐’。最后那一剑，刺穿了他的心，也刺穿了她自己的命运。" },
+      { id: "bhe", name: "白禾川", role: "青丘之主", tag: "反派", color: "#b03a2e", age: "千年以上", identity: "九尾天狐 · 京城决战终局者", era: "past", story: "为了复活秦雨令，不惜以五大神器覆写京城。最终死在天命君剑下，临死前喊的是秦雨令的名字。" },
+      { id: "cc", name: "楚迟", role: "伪神 · 浮生树之祖", tag: "家族线", color: "#6b8e6b", age: "消散时约千岁", identity: "天命君剥离的神魂", era: "past", story: "栾方棋的养父，为他取名‘秦墨予’。燃尽魂力修复青丘后消散在锁龙井底。" },
+      { id: "sj", name: "天命君·司衡", role: "天庭四君之首", tag: "反派", color: "#d4c5a5", age: "亘古", identity: "执掌命途 · 秦雨令真身", era: "past", story: "以秦雨令的身份下凡修正商烈历史。京城决战时现身，没有救任何人，只是确认‘因果已被修正’。" },
+      { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", era: "past", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" }
+    ];
 
-let links = [
-  { source: "lfq", target: "lh", relation: "浮生之契 · 爱人" },
-  { source: "lfq", target: "lx", relation: "师兄 · 被骂着长大" },
-  { source: "lfq", target: "wyj", relation: "酒友 · 倾听者" },
-  { source: "lfq", target: "cms", relation: "师姐 · 医患" },
-  { source: "lfq", target: "rs", relation: "前世的姐姐 · 债" },
-  { source: "lfq", target: "bhe", relation: "仇敌 · 因果之源" },
-  { source: "lfq", target: "cc", relation: "养父子 · 浮生树的托付" },
-  { source: "lfq", target: "sj", relation: "一面之缘 · 改写命运" },
-  { source: "lx", target: "wyj", relation: "爱人 · 破例者" },
-  { source: "lh", target: "bhe", relation: "杀身之仇" },
-  { source: "cc", target: "sj", relation: "伪神与真身 · 赎罪" },
-  { source: "rs", target: "bhe", relation: "造物主与棋子" },
-  { source: "lcl", target: "bhe", relation: "碎魂之仇" }
-];
+    let allLinks = [
+      { source: "lfq", target: "lh", relation: "浮生之契 · 爱人" },
+      { source: "lfq", target: "lx", relation: "师兄 · 被骂着长大" },
+      { source: "lfq", target: "wyj", relation: "酒友 · 倾听者" },
+      { source: "lfq", target: "cms", relation: "师姐 · 医患" },
+      { source: "lfq", target: "rs", relation: "前世的姐姐 · 债" },
+      { source: "lfq", target: "bhe", relation: "仇敌 · 因果之源" },
+      { source: "lfq", target: "cc", relation: "养父子 · 浮生树的托付" },
+      { source: "lfq", target: "sj", relation: "一面之缘 · 改写命运" },
+      { source: "lx", target: "wyj", relation: "爱人 · 破例者" },
+      { source: "lh", target: "bhe", relation: "杀身之仇" },
+      { source: "cc", target: "sj", relation: "伪神与真身 · 赎罪" },
+      { source: "rs", target: "bhe", relation: "造物主与棋子" },
+      { source: "lcl", target: "bhe", relation: "碎魂之仇" }
+    ];
+
+    // 当前模式
+    let currentEra = "past";
+
+    // 用于渲染的当前数据（由 filterData 生成）
+    let nodes = [];
+    let links = [];
 
     const palette = [
       "#7a9e9f","#e8a87c","#85cdca","#cf6a87","#c44536",
@@ -587,7 +637,7 @@ let links = [
 
     let selectedNode = null;
 
-    // ================== 初始化颜色面板 ==================
+    // ================== 颜色面板 ==================
     const colorGrid = document.getElementById('color-grid');
     palette.forEach(c => {
       const div = document.createElement('div');
@@ -632,7 +682,7 @@ let links = [
       .scaleExtent([0.2, 4])
       .on("zoom", (e) => g.attr("transform", e.transform));
     svg.call(zoom)
-       .on("dblclick.zoom", null); // 禁用双击缩放
+       .on("dblclick.zoom", null);
 
     const simulation = d3.forceSimulation()
       .force("link", d3.forceLink().id(d => d.id).distance(200))
@@ -643,13 +693,36 @@ let links = [
     let linkGroup = g.append("g").attr("class", "links");
     let nodeGroup = g.append("g").attr("class", "nodes");
 
-    // ================== 渲染 ==================
-    function render() {
-      // --- 连线 ---
-      const linkData = linkGroup.selectAll(".link-item").data(links, d => d.source.id + "-" + d.target.id);
-      linkData.exit().remove();
+    // ================== 数据过滤 ==================
+    function filterData(era) {
+      const filteredNodes = allNodes.filter(n => n.era === era || n.era === "all");
+      const nodeIds = new Set(filteredNodes.map(n => n.id));
+      const filteredLinks = allLinks.filter(l => 
+        nodeIds.has(l.source) && nodeIds.has(l.target)
+      );
+      return { nodes: filteredNodes, links: filteredLinks };
+    }
 
-      const linkEnter = linkData.enter().append("g").attr("class", "link-item");
+    // ================== 渲染 ==================
+    function render(era) {
+      const data = filterData(era);
+      nodes = data.nodes;
+      links = data.links;
+
+      // 如果当前选中的节点不在新数据中，清空选择
+      if (selectedNode && !nodes.find(n => n.id === selectedNode.id)) {
+        selectedNode = null;
+        showEmpty();
+        d3.selectAll(".node-group").classed("selected", false);
+      }
+
+      // --- 连线 ---
+      const linkData = linkGroup.selectAll(".link-item").data(links, d => d.source + "-" + d.target);
+      linkData.exit().transition().duration(300).style("opacity", 0).remove();
+
+      const linkEnter = linkData.enter().append("g").attr("class", "link-item")
+        .style("opacity", 0);
+      linkEnter.transition().duration(300).style("opacity", 1);
 
       linkEnter.append("line").attr("class", "link-line")
         .attr("stroke-dasharray", "4,4");
@@ -672,11 +745,14 @@ let links = [
 
       const nodeEnter = nodeData.enter().append("g")
         .attr("class", "node-group")
+        .style("opacity", 0)
         .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended))
         .on("click", (e, d) => { e.stopPropagation(); selectNode(d); });
+
+      nodeEnter.transition().duration(400).style("opacity", 1);
 
       // 外圈光环
       nodeEnter.append("circle")
@@ -688,29 +764,29 @@ let links = [
         .attr("class", "node-circle")
         .attr("r", 30);
 
-      // 首字母/名字（圆内）
+      // 首字母
       nodeEnter.append("text")
         .attr("class", "node-letter")
         .attr("dy", 1)
         .text(d => d.name ? d.name.charAt(0) : "?");
 
-      // 上方标签背景
+      // 标签背景
       nodeEnter.append("rect")
         .attr("class", "node-tag-bg")
         .attr("y", -52)
         .attr("height", 18);
 
-      // 上方标签文字
+      // 标签文字
       nodeEnter.append("text")
         .attr("class", "node-tag-text")
         .attr("y", -40);
 
-      // 下方名字
+      // 名字
       nodeEnter.append("text")
         .attr("class", "node-name-text")
         .attr("y", 48);
 
-      // 下方身份
+      // 身份
       nodeEnter.append("text")
         .attr("class", "node-role-text")
         .attr("y", 63);
@@ -728,6 +804,15 @@ let links = [
       simulation.nodes(nodes);
       simulation.force("link").links(links);
       simulation.alpha(1).restart();
+    }
+
+    // ================== 时期切换 ==================
+    function switchEra(era) {
+      currentEra = era;
+      document.querySelectorAll('#era-toggle .btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.era === era);
+      });
+      render(era);
     }
 
     function refreshNodeVisuals() {
@@ -805,13 +890,11 @@ let links = [
       document.getElementById('char-identity').value = d.identity || d.role || "";
       document.getElementById('char-story').value = d.story || "";
 
-      // 标签
       const tags = (d.tag || "").split(/[，,]/).map(t => t.trim()).filter(Boolean);
       document.querySelectorAll('.tag-chip').forEach(chip => {
         chip.classList.toggle('active', tags.includes(chip.dataset.tag));
       });
 
-      // 颜色
       document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.color === d.color);
       });
@@ -831,7 +914,6 @@ let links = [
       selectedNode.story = document.getElementById('char-story').value;
       refreshNodeVisuals();
 
-      // 简单提示
       const btn = document.querySelector('.panel-actions .btn-primary');
       const old = btn.innerHTML;
       btn.innerHTML = '<i class="fas fa-check"></i> 已保存';
@@ -841,35 +923,11 @@ let links = [
     function deleteCharacter() {
       if (!selectedNode) return;
       if (!confirm('确定要删除「' + selectedNode.name + '」吗？')) return;
-      nodes = nodes.filter(n => n !== selectedNode);
-      links = links.filter(l => l.source !== selectedNode && l.target !== selectedNode);
+      allNodes = allNodes.filter(n => n.id !== selectedNode.id);
+      allLinks = allLinks.filter(l => l.source !== selectedNode.id && l.target !== selectedNode.id);
       selectedNode = null;
       showEmpty();
-      render();
-    }
-
-    function addCharacter() {
-      const id = "c" + Date.now().toString(36);
-      const color = palette[Math.floor(Math.random() * palette.length)];
-      const newNode = {
-        id, name: "新人物", role: "待设定", tag: "主要配角",
-        color, age: "", identity: "待设定", story: "", x: 0, y: 0
-      };
-      nodes.push(newNode);
-      render();
-      // 自动选中新节点并居中
-      setTimeout(() => {
-        selectNode(newNode);
-        // 简单聚焦：把新节点移到中心附近
-        newNode.fx = 0; newNode.fy = 0;
-        simulation.alpha(0.5).restart();
-        setTimeout(() => { newNode.fx = null; newNode.fy = null; }, 500);
-      }, 50);
-    }
-
-    function addRelation() {
-      if (nodes.length < 2) { alert("至少需要两个人物才能建立关系"); return; }
-      alert("请点击选中一个人物，然后在右侧面板选择目标人物并填写关系描述。");
+      render(currentEra);
     }
 
     function updateRelationSelect() {
@@ -893,18 +951,17 @@ let links = [
       if (!targetId || !label) { alert("请选择目标人物并填写关系描述"); return; }
       if (targetId === selectedNode.id) { alert("不能与自己建立关系"); return; }
 
-      // 检查是否已存在
-      const exists = links.find(l =>
-        (l.source.id === selectedNode.id && l.target.id === targetId) ||
-        (l.source.id === targetId && l.target.id === selectedNode.id)
+      const exists = allLinks.find(l =>
+        (l.source === selectedNode.id && l.target === targetId) ||
+        (l.source === targetId && l.target === selectedNode.id)
       );
       if (exists) {
         exists.relation = label;
       } else {
-        links.push({ source: selectedNode.id, target: targetId, relation: label });
+        allLinks.push({ source: selectedNode.id, target: targetId, relation: label });
       }
       document.getElementById('relate-label').value = "";
-      render();
+      render(currentEra);
     }
 
     function resetZoom() {
@@ -931,8 +988,8 @@ let links = [
       simulation.alpha(0.3).restart();
     });
 
-    // 首次渲染
-    render();
+    // ================== 首次渲染 ==================
+    render("past");
   </script>
 </body>
 </html>
