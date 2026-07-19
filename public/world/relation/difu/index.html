@@ -35,6 +35,7 @@ layout: false
       --theme-color: #c44536;
       --bg-color: #f7f9fe;
       --meta-color: #858585;
+      --main-color: #cc0000;
     }
     [data-theme="dark"] {
       --card-bg: #1b1b1b;
@@ -42,6 +43,7 @@ layout: false
       --font-color: #c0c0c0;
       --bg-color: #0d0d0d;
       --meta-color: #7a7a7a;
+      --main-color: #ff4444;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -189,7 +191,6 @@ layout: false
     }
     .toolbar .btn-icon:hover { border-color: var(--theme-color); color: var(--theme-color); }
 
-    /* D3 节点样式 */
     .link-line {
       stroke: #c0c0c0;
       stroke-width: 1.5px;
@@ -251,6 +252,9 @@ layout: false
       text-anchor: middle;
       pointer-events: none;
     }
+    .node-name-text.main {
+      fill: var(--main-color);
+    }
     .node-role-text {
       font-size: 11px;
       fill: var(--meta-color);
@@ -262,7 +266,6 @@ layout: false
       stroke-width: 6px;
     }
 
-    /* 右侧面板 */
     .empty-state {
       text-align: center;
       padding: 50px 0;
@@ -436,8 +439,8 @@ layout: false
     // ================== 数据 ==================
     const allNodes = [
       // === 秦墨予时期 (past) ===
-      { id: "qmy", name: "秦墨予", role: "商烈国师 · 浮生花缔契者", tag: "主角1", color: "#8b1a1a", age: "于23岁死亡", identity: "栾方棋的前世 · 因果起点", era: "past", story: "商烈末年的国师，权倾朝野却因爱疯魔。以浮生花与林淮立下共生契，死后两百年，转世为栾方棋。所有故事的因，都在他这里。" },
-      { id: "lh", name: "林淮", role: "归终殿第二席", tag: "主角2", color: "#7a9e9f", age: "约220岁", identity: "枪修 · 前世影卫", era: "all", story: "等了两百年，终于等到栾方棋转世回来。浮生之契的另一端，从秦墨予到栾方棋，从未放手。" },
+      { id: "qmy", name: "秦墨予", role: "商烈国师 · 浮生花缔契者", tag: "主角1", color: "#8b1a1a", age: "23岁", identity: "栾方棋的前世 · 因果起点", era: "past", isMain: true, story: "商烈末年的国师，权倾朝野却因爱疯魔。以浮生花与林淮立下共生契，死后两百年，转世为栾方棋。所有故事的因，都在他这里。" },
+      { id: "lh", name: "林淮", role: "归终殿第二席", tag: "主角2", color: "#7a9e9f", age: "约220岁", identity: "枪修 · 前世影卫", era: "all", isMain: true, story: "等了两百年，终于等到栾方棋转世回来。浮生之契的另一端，从秦墨予到栾方棋，从未放手。" },
       { id: "qyl", name: "秦雨令", role: "商烈贵妃 · 秦墨予之姐", tag: "家族线", color: "#d4a5a5", age: "31岁", identity: "天命君下凡化身 · 白禾川的执念", era: "past", story: "秦墨予的长姐，被皇帝纳入后宫三年。表面是祸国妖妃，实则是天命君下凡修正历史的工具。死后散魂，白禾川为她疯魔两百年。" },
       { id: "lcj", name: "凌宸钧", role: "商烈末代皇帝", tag: "主要配角", color: "#9cadce", age: "约36岁", identity: "秦墨予的君主 · 痴念者", era: "past", story: "商烈末帝，深爱秦墨予而不自知。秦墨予死后将其姐秦雨令纳入后宫，最终因过度偏执导致王朝覆灭。两百年后死在承天殿前。" },
       { id: "cc", name: "楚迟", role: "伪神 · 浮生树之祖", tag: "家族线", color: "#6b8e6b", age: "消散时约千岁", identity: "天命君剥离的神魂", era: "past", story: "栾方棋的养父，为他取名‘秦墨予’。曾以姓名担保救下林丛言，后被引至锁龙井，燃尽魂力修复青丘后消散。" },
@@ -446,56 +449,36 @@ layout: false
       { id: "syj", name: "司缘君·契缘", role: "天庭四君之一", tag: "主要配角", color: "#e6b89c", age: "亘古", identity: "执掌情缘 · 顾执的创造者", era: "past", story: "剜出半格神格造出伪神顾执，替她下凡挡情劫。因此触犯天规被剥去神格贬为凡人。" },
       { id: "gz", name: "顾执", role: "伪神 · 司缘君化身", tag: "主要配角", color: "#d4a5a5", age: "消散时约300岁", identity: "摧城笛原主 · 罗修的白月光", era: "all", story: "司缘君剜出半格神格造出的伪神，替她下凡挡情劫。爱上林丛言后，为救他耗尽神元而散魂。他的命格碎片最终融入了魏元璟的魂魄。" },
       { id: "lcy", name: "林丛言", role: "鬼修 · 断魂剑主", tag: "主要配角", color: "#9c7c6b", age: "约300岁", identity: "顾执的情劫对象 · 罗修的仇敌", era: "past", story: "前身是景枭，顾执为他而死之后才逐渐后悔。一直守在顾执骨血长出的桃林里，不肯离去。" },
-      { id: "by", name: "白榆", role: "青丘狐妖", tag: "主要配角", color: "#a8a4ce", age: "约200岁", identity: "白禾川之妹 · 秦雨令的养女", era: "past", story: "被秦雨令捡到的狐妖，视秦雨令为姐姐。为救秦雨令愿舍一尾，最终被白禾川所杀，魂魄封印于落月宫两百年。" },
+      { id: "by", name: "白榆", role: "青丘白狐 · 秦雨令之妹", tag: "家族线", color: "#f0c0c0", age: "约200岁（狐龄）", identity: "落月宫封印之魂 · 白禾川之妹", era: "past", story: "被秦雨令捡回的青丘白狐，化形后成为她的义妹。为复活秦雨令，被白禾川剜去妖丹封印于落月宫两百年。最终在京城决战中散魂。" },
 
       // === 栾方棋时期 (present) ===
-      { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", era: "all", story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
+      { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", era: "all", isMain: true, story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
       { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", era: "present", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
       { id: "wyj", name: "魏元璟", role: "归终殿第五席", tag: "主要配角", color: "#e8a87c", age: "重铸后约30岁", identity: "前朝末帝 · 重铸魂魄", era: "present", story: "从帝王到引渡人，从念安到魏元璟。在罗修身边重新学会了‘普通地幸福’。" },
       { id: "cms", name: "程木栖", role: "栖梧馆医者", tag: "亲友", color: "#85cdca", age: "约400岁", identity: "前第三席 · 古琴医者", era: "present", story: "京城决战后双手重伤，退居二线开设医馆。那双弹琴的手如今只用来为同门熬药。" },
       { id: "rs", name: "冉舟", role: "前归终殿第九席", tag: "家族线", color: "#cf6a87", age: "约150岁（人偶）", identity: "人偶 · 秦雨令的影子", era: "present", story: "她是被制造出来的替代品，却也是唯一一个在月光下为栾方棋舞过剑的‘姐姐’。最后那一剑，刺穿了他的心，也刺穿了她自己的命运。" },
-      { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", era: "present", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" }
+      { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", era: "present", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" },
+      // 李锦书：改为只在栾方棋时期出现
+      { id: "ljs", name: "李锦书", role: "人偶师 · 浮生一粟第三代主人", tag: "主要配角", color: "#d4c5a5", age: "约200岁", identity: "人偶师 · 观花卷持有者", era: "present", story: "浮生一粟第三代主人，被白禾川威胁制造人偶。造出了冉舟（秦雨令的替身），也指引栾方棋寻找断魂剑。最终被白禾川所杀。" }
     ];
 
     const allLinks = [
       // === 秦墨予时期关系 ===
-      // 秦墨予直接相连
       { source: "qmy", target: "lh", relation: "浮生之契 · 爱人", red: true },
       { source: "qmy", target: "lcj", relation: "君臣 · 债" },
       { source: "qmy", target: "qyl", relation: "姐弟 · 血缘" },
       { source: "qmy", target: "syj", relation: "间接因果" },
       { source: "qmy", target: "cc", relation: "养父子 · 取名之恩" },
-
-      // 楚迟 → 林丛言（楚迟曾以姓名担保救他）
       { source: "cc", target: "lcy", relation: "救命之恩 · 担保" },
-
-      // 林丛言 → 罗修（即使罗修在秦墨予时期不出现，这条线也在）
-      // 这条线在栾方棋时期也会显示，但罗修在秦墨予时期不出现，所以加了也无妨，过滤时会被滤掉
       { source: "lcy", target: "lx", relation: "情敌 · 仇敌" },
-
-      // 林丛言 → 顾执
       { source: "lcy", target: "gz", relation: "情劫 · 因果" },
-
-      // 顾执 → 司缘君
       { source: "gz", target: "syj", relation: "造物主 · 情劫之替" },
-
-      // 司缘君 → 天命君
       { source: "syj", target: "sj", relation: "同僚 · 罪与罚" },
-
-      // 天命君 → 白禾川
       { source: "sj", target: "bhe", relation: "青丘毁灭者 · 仇" },
-
-      // 天命君 → 秦雨令（真身与化身）
       { source: "sj", target: "qyl", relation: "真身 · 化身" },
-
-      // 秦雨令 → 白禾川
       { source: "qyl", target: "bhe", relation: "执念 · 因果" },
-
-      // 秦雨令 → 苏暮
-      { source: "qyl", target: "sm", relation: "一面之缘 · 影响" },
-
-      // 白禾川 → 苏暮（蛊惑）
-      { source: "bhe", target: "sm", relation: "蛊惑 · 换魂" },
+      { source: "qyl", target: "by", relation: "义姐妹 · 收养" },
+      { source: "bhe", target: "by", relation: "封印 · 杀身之仇" },
 
       // === 栾方棋时期关系 ===
       { source: "lfq", target: "lh", relation: "浮生之契 · 爱人", red: true },
@@ -505,19 +488,18 @@ layout: false
       { source: "lfq", target: "rs", relation: "前世的姐姐 · 债" },
       { source: "lfq", target: "bhe", relation: "仇敌 · 因果之源" },
       { source: "lfq", target: "lcl", relation: "最后一面 · 警语" },
-
-      // 罗修 ↔ 魏元璟（红线）
       { source: "lx", target: "wyj", relation: "爱人 · 破例者", red: true },
-
-      // 白禾川 → 天命君（反方向）
       { source: "bhe", target: "sj", relation: "被审判者 · 终局" },
-
-      // 天命君 → 白禾川（已在past中定义，此处不重复）
-      // 顾执 → 魏元璟（命格融合，在栾方棋时期也显示）
       { source: "gz", target: "wyj", relation: "命格融合 · 共生" },
+      { source: "lx", target: "gz", relation: "爱过 · 执念" },
 
-      // 罗修 → 顾执（即使顾执在栾方棋时期出现，这条线也在）
-      { source: "lx", target: "gz", relation: "爱过 · 执念" }
+      // === 李锦书关系链（仅栾方棋时期） ===
+      { source: "bhe", target: "ljs", relation: "胁迫 · 为虎作伥" },
+      { source: "ljs", target: "rs", relation: "造物主 · 人偶师" },
+      { source: "rs", target: "bhe", relation: "棋子 · 被利用" },
+
+      // === 黎洛兰-白禾川 威胁关系（仅栾方棋时期） ===
+      { source: "bhe", target: "lcl", relation: "威胁 · 碎魂" }
     ];
 
     let currentEra = "past";
@@ -543,36 +525,51 @@ layout: false
       .force("link", d3.forceLink().id(d => d.id).distance(200))
       .force("charge", d3.forceManyBody().strength(-900))
       .force("center", d3.forceCenter(0, 0))
-      .force("collide", d3.forceCollide().radius(55));
+      .force("collide", d3.forceCollide().radius(55))
+      .velocityDecay(0.3);
 
     let linkGroup = g.append("g").attr("class", "links");
     let nodeGroup = g.append("g").attr("class", "nodes");
 
     // ================== 数据过滤 ==================
     function filterData(era) {
-      const filteredNodes = allNodes.filter(n => n.era === era || n.era === "all");
-      const nodeIds = new Set(filteredNodes.map(n => n.id));
-      
-      // 关键修复：D3会把links的source/target改成对象，这里必须提取原始id
-      const filteredLinks = allLinks
-        .map(l => ({
-          source: (typeof l.source === 'object' && l.source !== null) ? l.source.id : l.source,
-          target: (typeof l.target === 'object' && l.target !== null) ? l.target.id : l.target,
-          relation: l.relation,
-          red: l.red
-        }))
-        .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
-
-      // 新节点给个初始位置，避免全从(0,0)原点炸开
-      const existingIds = new Set(nodes.map(n => n.id));
-      filteredNodes.forEach(n => {
-        if (!existingIds.has(n.id)) {
-          n.x = (Math.random() - 0.5) * 120;
-          n.y = (Math.random() - 0.5) * 120;
-          n.vx = 0;
-          n.vy = 0;
+      const oldPositions = {};
+      nodes.forEach(n => {
+        if (n.x !== undefined && n.y !== undefined) {
+          oldPositions[n.id] = { x: n.x, y: n.y };
         }
       });
+
+      const filteredNodes = allNodes.filter(n => n.era === era || n.era === "all");
+      
+      filteredNodes.forEach(n => {
+        if (oldPositions[n.id]) {
+          n.x = oldPositions[n.id].x;
+          n.y = oldPositions[n.id].y;
+        } else {
+          const angle = Math.random() * 2 * Math.PI;
+          const radius = 80 + Math.random() * 120;
+          n.x = Math.cos(angle) * radius;
+          n.y = Math.sin(angle) * radius;
+        }
+        n.fx = null;
+        n.fy = null;
+      });
+
+      const nodeIds = new Set(filteredNodes.map(n => n.id));
+
+      const filteredLinks = allLinks
+        .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
+        .map(l => {
+          const sourceNode = filteredNodes.find(n => n.id === l.source);
+          const targetNode = filteredNodes.find(n => n.id === l.target);
+          return {
+            source: sourceNode,
+            target: targetNode,
+            relation: l.relation,
+            red: l.red || false
+          };
+        });
 
       return { nodes: filteredNodes, links: filteredLinks };
     }
@@ -590,14 +587,12 @@ layout: false
       }
 
       // --- 连线 ---
-      const linkData = linkGroup.selectAll(".link-item").data(links, d => {
-        const s = (typeof d.source === 'object' && d.source !== null) ? d.source.id : d.source;
-        const t = (typeof d.target === 'object' && d.target !== null) ? d.target.id : d.target;
-        return s + "-" + t;
-      });
-      linkData.exit().transition().duration(250).style("opacity", 0).remove();
+      const linkData = linkGroup.selectAll(".link-item")
+        .data(links, d => d.source.id + "-" + d.target.id);
+      linkData.exit().transition().duration(300).style("opacity", 0).remove();
 
-      const linkEnter = linkData.enter().append("g").attr("class", "link-item").style("opacity", 0);
+      const linkEnter = linkData.enter().append("g").attr("class", "link-item")
+        .style("opacity", 0);
       linkEnter.transition().duration(300).style("opacity", 1);
 
       linkEnter.append("line")
@@ -618,19 +613,18 @@ layout: false
 
       // --- 节点 ---
       const nodeData = nodeGroup.selectAll(".node-group").data(nodes, d => d.id);
-      nodeData.exit().transition().duration(250).style("opacity", 0).remove();
+      nodeData.exit().transition().duration(300).style("opacity", 0).remove();
 
       const nodeEnter = nodeData.enter().append("g")
         .attr("class", "node-group")
         .style("opacity", 0)
-        .attr("transform", d => `translate(${d.x || 0},${d.y || 0})`)
         .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended))
         .on("click", (e, d) => { e.stopPropagation(); selectNode(d); });
 
-      nodeEnter.transition().duration(350).style("opacity", 1);
+      nodeEnter.transition().duration(400).style("opacity", 1);
 
       nodeEnter.append("circle").attr("class", "node-ring").attr("r", 40);
       nodeEnter.append("circle").attr("class", "node-circle").attr("r", 30);
@@ -638,7 +632,13 @@ layout: false
         .text(d => d.name ? d.name.charAt(0) : "?");
       nodeEnter.append("rect").attr("class", "node-tag-bg").attr("y", -52).attr("height", 18);
       nodeEnter.append("text").attr("class", "node-tag-text").attr("y", -40);
-      nodeEnter.append("text").attr("class", "node-name-text").attr("y", 48);
+
+      const nameText = nodeEnter.append("text")
+        .attr("class", "node-name-text")
+        .attr("y", 48)
+        .text(d => d.name);
+      nameText.attr("class", d => d.isMain ? "node-name-text main" : "node-name-text");
+
       nodeEnter.append("text").attr("class", "node-role-text").attr("y", 63);
 
       svg.on("click", () => {
@@ -648,9 +648,70 @@ layout: false
       });
 
       refreshNodeVisuals();
+
+      nodes.forEach(d => { d.fx = null; d.fy = null; });
+
       simulation.nodes(nodes);
       simulation.force("link").links(links);
-      simulation.alpha(0.4).restart(); // 从0.4开始，更平滑不炸开
+      simulation.alpha(1).restart();
+    }
+
+    function refreshNodeVisuals() {
+      const allNodes = nodeGroup.selectAll(".node-group");
+
+      allNodes.select(".node-ring")
+        .attr("stroke", d => d.color || "#999");
+
+      allNodes.select(".node-circle")
+        .attr("fill", d => d.color || "#999");
+
+      allNodes.select(".node-letter")
+        .text(d => d.name ? d.name.charAt(0) : "?");
+
+      allNodes.select(".node-tag-bg")
+        .attr("fill", d => d.color || "#999")
+        .attr("width", d => Math.max(36, ((d.tag || "角色").length * 11 + 10)))
+        .attr("x", d => -Math.max(36, ((d.tag || "角色").length * 11 + 10)) / 2);
+
+      allNodes.select(".node-tag-text")
+        .text(d => d.tag || "角色");
+
+      allNodes.select(".node-name-text")
+        .text(d => d.name)
+        .attr("class", d => d.isMain ? "node-name-text main" : "node-name-text");
+
+      allNodes.select(".node-role-text")
+        .text(d => d.role || d.identity || "");
+    }
+
+    simulation.on("tick", () => {
+      linkGroup.selectAll(".link-item").each(function(d) {
+        const line = d3.select(this).select("line");
+        const rect = d3.select(this).select("rect");
+        const text = d3.select(this).select("text");
+        line.attr("x1", d.source.x).attr("y1", d.source.y)
+            .attr("x2", d.target.x).attr("y2", d.target.y);
+        const mx = (d.source.x + d.target.x) / 2;
+        const my = (d.source.y + d.target.y) / 2;
+        const txt = d.relation || "关系";
+        const tw = Math.max(40, txt.length * 12 + 12);
+        rect.attr("x", mx - tw/2).attr("y", my - 10).attr("width", tw);
+        text.attr("x", mx).attr("y", my).text(txt);
+      });
+      nodeGroup.selectAll(".node-group")
+        .attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+
+    function dragstarted(e, d) {
+      if (!e.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x; d.fy = d.y;
+    }
+    function dragged(e, d) {
+      d.fx = e.x; d.fy = e.y;
+    }
+    function dragended(e, d) {
+      if (!e.active) simulation.alphaTarget(0);
+      d.fx = d.x; d.fy = d.y;
     }
 
     // ================== 时期切换 ==================
@@ -661,6 +722,69 @@ layout: false
       });
       render(era);
     }
+
+    // ================== 节点选择与编辑 ==================
+    function selectNode(d) {
+      selectedNode = d;
+      d3.selectAll(".node-group").classed("selected", false);
+      d3.selectAll(".node-group").filter(n => n === d).classed("selected", true);
+
+      document.getElementById('empty-state').style.display = 'none';
+      document.getElementById('edit-form').style.display = 'block';
+
+      document.getElementById('char-name').value = d.name || "";
+      document.getElementById('char-age').value = d.age || "";
+      document.getElementById('char-identity').value = d.identity || d.role || "";
+      document.getElementById('char-story').value = d.story || "";
+    }
+
+    function showEmpty() {
+      document.getElementById('empty-state').style.display = 'block';
+      document.getElementById('edit-form').style.display = 'none';
+    }
+
+    function saveCharacter() {
+      if (!selectedNode) return;
+      selectedNode.name = document.getElementById('char-name').value.trim() || selectedNode.name;
+      selectedNode.age = document.getElementById('char-age').value;
+      selectedNode.identity = document.getElementById('char-identity').value;
+      selectedNode.role = selectedNode.identity;
+      selectedNode.story = document.getElementById('char-story').value;
+      refreshNodeVisuals();
+
+      const btn = document.querySelector('.panel-actions .btn-primary');
+      const old = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> 已保存';
+      setTimeout(() => btn.innerHTML = old, 1200);
+    }
+
+    function deleteCharacter() {
+      if (!selectedNode) return;
+      if (!confirm('确定要删除「' + selectedNode.name + '」吗？')) return;
+      const idx = allNodes.findIndex(n => n.id === selectedNode.id);
+      if (idx !== -1) allNodes.splice(idx, 1);
+      for (let i = allLinks.length - 1; i >= 0; i--) {
+        if (allLinks[i].source === selectedNode.id || allLinks[i].target === selectedNode.id) {
+          allLinks.splice(i, 1);
+        }
+      }
+      selectedNode = null;
+      showEmpty();
+      render(currentEra);
+    }
+
+    function resetZoom() {
+      svg.transition().duration(600).call(zoom.transform, d3.zoomIdentity);
+    }
+
+    // ================== 响应式 ==================
+    window.addEventListener('resize', () => {
+      width = container.clientWidth;
+      svg.attr("viewBox", [-width/2, -height/2, width, height]);
+      simulation.force("center", d3.forceCenter(0, 0));
+      simulation.alpha(0.3).restart();
+    });
+
     // ================== 首次渲染 ==================
     render("past");
   </script>
