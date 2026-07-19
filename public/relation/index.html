@@ -4,6 +4,15 @@ layout: false
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
+    <script>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>人物关系星图 - 墨境</title>
