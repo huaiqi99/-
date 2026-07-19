@@ -9,7 +9,7 @@
     var parsed = JSON.parse(raw);
     if (parsed && parsed.value) theme = parsed.value;
   } catch(e) {}
-
+  
   if (theme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
   } else if (theme === 'light') {
@@ -24,68 +24,6 @@
   <link rel="stylesheet" href="/-/css/index.css">
   <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
   <style>
-    /* ================== 变量定义 ================== */
-    :root {
-      --card-bg: #fff;
-      --card-border: #e3e8f7;
-      --font-color: #4c4948;
-      --theme-color: #c44536;
-      --bg-color: #f7f9fe;
-      --meta-color: #858585;
-    }
-    [data-theme="dark"] {
-      --card-bg: #1b1b1b;
-      --card-border: #3d3d3d;
-      --font-color: #c0c0c0;
-      --bg-color: #0d0d0d;
-      --meta-color: #7a7a7a;
-    }
-
-    /* ================== 只在暗色模式下覆盖 butterfly ================== */
-    [data-theme="dark"] body {
-      background: var(--bg-color) !important;
-      color: var(--font-color) !important;
-    }
-    [data-theme="dark"] #page-header {
-      background: var(--card-bg) !important;
-      border-bottom: 1px solid var(--card-border) !important;
-    }
-    [data-theme="dark"] #page-header .nav-title,
-    [data-theme="dark"] #page-header a {
-      color: var(--font-color) !important;
-    }
-    [data-theme="dark"] #page-site-info h1 {
-      color: var(--font-color) !important;
-    }
-    [data-theme="dark"] #footer {
-      background: var(--card-bg) !important;
-      border-top: 1px solid var(--card-border) !important;
-      color: var(--meta-color) !important;
-    }
-    [data-theme="dark"] #footer-wrap {
-      color: var(--meta-color) !important;
-    }
-    [data-theme="dark"] #content-outer,
-    [data-theme="dark"] #content-inner,
-    [data-theme="dark"] #page,
-    [data-theme="dark"] .layout,
-    [data-theme="dark"] .gallery-container {
-      background: var(--bg-color) !important;
-      color: var(--font-color) !important;
-    }
-    [data-theme="dark"] .gallery-section h2 {
-      color: var(--font-color) !important;
-      border-bottom-color: var(--card-border) !important;
-    }
-    [data-theme="dark"] .gallery-header h1,
-    [data-theme="dark"] .gallery-header p {
-      color: var(--font-color) !important;
-    }
-    [data-theme="dark"] .gallery-wall-item {
-      background: var(--card-bg) !important;
-      border: 1px solid var(--card-border) !important;
-    }
-
     /* 隐藏侧边栏 */
     #aside-content { display: none !important; }
     .layout { display: block !important; }
@@ -117,8 +55,6 @@
       display: block;
       position: relative;
       cursor: zoom-in;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
     }
     .gallery-wall-item img {
       width: 100%;
