@@ -1,21 +1,30 @@
 // 获取当前文章的第一个分类名
 - var catName = ''
+- var firstCat = null
 if page.categories && page.categories.length > 0
   - var catArr = page.categories.data || page.categories.toArray()
   if catArr && catArr[0]
-    - catName = catArr[0].name || ''
+    - firstCat = catArr[0]
+    - catName = firstCat.name || ''
 
-// 收集同分类下的所有文章，按日期正序排列
+// 收集同分类下的所有文章
 - var sameCatPosts = []
 if catName
-  each p in site.posts.sort('date', 1).toArray()
+  each p in site.posts.toArray()
     if p.categories && p.categories.length > 0
       - var pCats = p.categories.data || p.categories.toArray()
       each c in pCats
         if c.name === catName
           - sameCatPosts.push(p)
 
-// 找当前文章在同分类中的位置
+// 按文件名排序（解决手动上传时日期相同导致的乱序）
+- sameCatPosts.sort(function(a, b) {
+-   var sa = a.source || a.slug || '';
+-   var sb = b.source || b.slug || '';
+-   return sa.localeCompare(sb);
+- });
+
+// 找当前文章位置
 - var idx = -1
 each p, i in sameCatPosts
   if p.path === page.path
@@ -25,26 +34,22 @@ each p, i in sameCatPosts
 - var next = idx >= 0 && idx < sameCatPosts.length - 1 ? sameCatPosts[idx+1] : null
 
 if prev || next
-  .novel-pagination(style="display:flex;justify-content:space-between;align-items:center;margin:30px 0;padding:16px;background:var(--card-bg);border-radius:10px;border:1px solid var(--card-border);")
+  .novel-pagination(style="display:flex;justify-content:center;align-items:stretch;gap:12px;margin:40px 0;padding:0 10px;flex-wrap:wrap;")
+    
     if prev
-      a(href=url_for(prev.path),style="text-decoration:none;color:var(--font-color);")
-        div(style="font-size:12px;opacity:.6;") ← 上一章
-        div(style="font-weight:bold;")= prev.title
+      a(href=url_for(prev.path), style="flex:1;min-width:0;max-width:300px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:12px 16px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;text-decoration:none;color:var(--font-color);transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,0.04);")
+        span(style="font-size:11px;opacity:.6;margin-bottom:4px;") ← 上一章
+        span(style="font-size:14px;font-weight:bold;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;")= prev.title
     else
-      div(style="opacity:.4;")
-        div(style="font-size:12px;") ← 上一章
-        div 没有了
-    
-    if page.categories && page.categories.length > 0
-      - var firstCat = (page.categories.data || page.categories.toArray())[0]
-      if firstCat
-        a(href=url_for(firstCat.path),style="text-decoration:none;background:#c44536;color:#fff;padding:6px 16px;border-radius:16px;font-size:13px;") 目录
-    
+      div(style="flex:1;min-width:0;max-width:300px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:12px 16px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;opacity:.4;box-shadow:0 2px 6px rgba(0,0,0,0.04);")
+        span(style="font-size:11px;margin-bottom:4px;") ← 上一章
+        span(style="font-size:14px;font-weight:bold;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;") 没有了
+
     if next
-      a(href=url_for(next.path),style="text-decoration:none;color:var(--font-color);text-align:right;")
-        div(style="font-size:12px;opacity:.6;") 下一章 →
-        div(style="font-weight:bold;")= next.title
+      a(href=url_for(next.path), style="flex:1;min-width:0;max-width:300px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:12px 16px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;text-decoration:none;color:var(--font-color);transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,0.04);")
+        span(style="font-size:11px;opacity:.6;margin-bottom:4px;") 下一章 →
+        span(style="font-size:14px;font-weight:bold;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;")= next.title
     else
-      div(style="opacity:.4;text-align:right;")
-        div(style="font-size:12px;") 下一章 →
-        div 没有了
+      div(style="flex:1;min-width:0;max-width:300px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding:12px 16px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;opacity:.4;box-shadow:0 2px 6px rgba(0,0,0,0.04);")
+        span(style="font-size:11px;margin-bottom:4px;") 下一章 →
+        span(style="font-size:14px;font-weight:bold;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;") 没有了
