@@ -1,6 +1,3 @@
----
-layout: false
----
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
@@ -191,6 +188,7 @@ layout: false
     }
     .toolbar .btn-icon:hover { border-color: var(--theme-color); color: var(--theme-color); }
 
+    /* 原版连线样式：有边框，不旋转 */
     .link-line {
       stroke: #c0c0c0;
       stroke-width: 1.5px;
@@ -198,6 +196,11 @@ layout: false
     }
     .link-line.red {
       stroke: #c44536;
+      stroke-width: 2.5px;
+      opacity: 0.9;
+    }
+    .link-line.pink {
+      stroke: #ff99cc;
       stroke-width: 2.5px;
       opacity: 0.9;
     }
@@ -367,7 +370,6 @@ layout: false
       else if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
     })();
   </script>
-<base target="_blank">
 </head>
 <body>
   <nav id="nav">
@@ -405,14 +407,15 @@ layout: false
         </div>
 
         <div id="edit-form" style="display: none;">
+          <!-- 表单布局调整：名字框缩小，年龄框加宽 -->
           <div style="display: flex; gap: 12px;">
-            <div class="form-group" style="flex: 1;">
+            <div class="form-group" style="flex: 1; max-width: 160px;">
               <label>姓名</label>
               <input type="text" id="char-name" placeholder="角色名">
             </div>
-            <div class="form-group" style="width: 80px;">
+            <div class="form-group" style="flex: 1;">
               <label>年龄</label>
-              <input type="number" id="char-age" placeholder="24">
+              <input type="text" id="char-age" placeholder="约200岁">
             </div>
           </div>
 
@@ -448,17 +451,16 @@ layout: false
       { id: "sj", name: "天命君·司衡", role: "天庭四君之首", tag: "反派", color: "#d4c5a5", age: "亘古", identity: "执掌命途 · 秦雨令真身", era: "all", story: "以秦雨令的身份下凡修正商烈历史。京城决战时现身，没有救任何人，只是确认‘因果已被修正’。" },
       { id: "syj", name: "司缘君·契缘", role: "天庭四君之一", tag: "主要配角", color: "#e6b89c", age: "亘古", identity: "执掌情缘 · 顾执的创造者", era: "past", story: "剜出半格神格造出伪神顾执，替她下凡挡情劫。因此触犯天规被剥去神格贬为凡人。" },
       { id: "gz", name: "顾执", role: "伪神 · 司缘君化身", tag: "主要配角", color: "#d4a5a5", age: "消散时约300岁", identity: "摧城笛原主 · 罗修的白月光", era: "all", story: "司缘君剜出半格神格造出的伪神，替她下凡挡情劫。爱上林丛言后，为救他耗尽神元而散魂。他的命格碎片最终融入了魏元璟的魂魄。" },
-      { id: "lcy", name: "林丛言", role: "鬼修 · 断魂剑主", tag: "主要配角", color: "#9c7c6b", age: "约300岁", identity: "顾执的情劫对象 · 罗修的仇敌", era: "past", story: "前身是景枭，顾执为他而死之后才逐渐后悔。一直守在顾执骨血长出的桃林里，不肯离去。" },
       { id: "by", name: "白榆", role: "青丘白狐 · 秦雨令之妹", tag: "家族线", color: "#f0c0c0", age: "约200岁（狐龄）", identity: "落月宫封印之魂 · 白禾川之妹", era: "past", story: "被秦雨令捡回的青丘白狐，化形后成为她的义妹。为复活秦雨令，被白禾川剜去妖丹封印于落月宫两百年。最终在京城决战中散魂。" },
 
       // === 栾方棋时期 (present) ===
       { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", era: "all", isMain: true, story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
-      { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", era: "present", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
+      { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", era: "all", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
+      { id: "lcy", name: "林丛言", role: "鬼修 · 断魂剑主", tag: "主要配角", color: "#9c7c6b", age: "约300岁", identity: "顾执的情劫对象 · 罗修的仇敌", era: "all", story: "前身是景枭，顾执为他而死之后才逐渐后悔。一直守在顾执骨血长出的桃林里，不肯离去。" },
       { id: "wyj", name: "魏元璟", role: "归终殿第五席", tag: "主要配角", color: "#e8a87c", age: "重铸后约30岁", identity: "前朝末帝 · 重铸魂魄", era: "present", story: "从帝王到引渡人，从念安到魏元璟。在罗修身边重新学会了‘普通地幸福’。" },
       { id: "cms", name: "程木栖", role: "栖梧馆医者", tag: "亲友", color: "#85cdca", age: "约400岁", identity: "前第三席 · 古琴医者", era: "present", story: "京城决战后双手重伤，退居二线开设医馆。那双弹琴的手如今只用来为同门熬药。" },
       { id: "rs", name: "冉舟", role: "前归终殿第九席", tag: "家族线", color: "#cf6a87", age: "约150岁（人偶）", identity: "人偶 · 秦雨令的影子", era: "present", story: "她是被制造出来的替代品，却也是唯一一个在月光下为栾方棋舞过剑的‘姐姐’。最后那一剑，刺穿了他的心，也刺穿了她自己的命运。" },
       { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", era: "present", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" },
-      // 李锦书：改为只在栾方棋时期出现
       { id: "ljs", name: "李锦书", role: "人偶师 · 浮生一粟第三代主人", tag: "主要配角", color: "#d4c5a5", age: "约200岁", identity: "人偶师 · 观花卷持有者", era: "present", story: "浮生一粟第三代主人，被白禾川威胁制造人偶。造出了冉舟（秦雨令的替身），也指引栾方棋寻找断魂剑。最终被白禾川所杀。" }
     ];
 
@@ -471,7 +473,8 @@ layout: false
       { source: "qmy", target: "cc", relation: "养父子 · 取名之恩" },
       { source: "cc", target: "lcy", relation: "救命之恩 · 担保" },
       { source: "lcy", target: "lx", relation: "情敌 · 仇敌" },
-      { source: "lcy", target: "gz", relation: "情劫 · 因果" },
+      // 林丛言-顾执：粉红色
+      { source: "lcy", target: "gz", relation: "情劫 · 因果", pink: true },
       { source: "gz", target: "syj", relation: "造物主 · 情劫之替" },
       { source: "syj", target: "sj", relation: "同僚 · 罪与罚" },
       { source: "sj", target: "bhe", relation: "青丘毁灭者 · 仇" },
@@ -493,12 +496,12 @@ layout: false
       { source: "gz", target: "wyj", relation: "命格融合 · 共生" },
       { source: "lx", target: "gz", relation: "爱过 · 执念" },
 
-      // === 李锦书关系链（仅栾方棋时期） ===
+      // === 李锦书关系链 ===
       { source: "bhe", target: "ljs", relation: "胁迫 · 为虎作伥" },
       { source: "ljs", target: "rs", relation: "造物主 · 人偶师" },
       { source: "rs", target: "bhe", relation: "棋子 · 被利用" },
 
-      // === 黎洛兰-白禾川 威胁关系（仅栾方棋时期） ===
+      // === 黎洛兰-白禾川 威胁关系 ===
       { source: "bhe", target: "lcl", relation: "威胁 · 碎魂" }
     ];
 
@@ -567,7 +570,8 @@ layout: false
             source: sourceNode,
             target: targetNode,
             relation: l.relation,
-            red: l.red || false
+            red: l.red || false,
+            pink: l.pink || false
           };
         });
 
@@ -586,7 +590,7 @@ layout: false
         d3.selectAll(".node-group").classed("selected", false);
       }
 
-      // --- 连线 ---
+      // --- 连线（原版：有边框，不旋转） ---
       const linkData = linkGroup.selectAll(".link-item")
         .data(links, d => d.source.id + "-" + d.target.id);
       linkData.exit().transition().duration(300).style("opacity", 0).remove();
@@ -595,10 +599,14 @@ layout: false
         .style("opacity", 0);
       linkEnter.transition().duration(300).style("opacity", 1);
 
+      // 连线：红/粉/灰
       linkEnter.append("line")
-        .attr("class", d => d.red ? "link-line red" : "link-line")
-        .attr("stroke-dasharray", "4,4");
+        .attr("class", "link-line")
+        .attr("stroke", d => d.red ? "#c44536" : (d.pink ? "#ff99cc" : "#c0c0c0"))
+        .attr("stroke-dasharray", d => (d.red || d.pink) ? "" : "4,4")
+        .attr("stroke-width", d => (d.red || d.pink) ? 2.5 : 1.5);
 
+      // 标签背景
       const labelW = 60;
       linkEnter.append("rect")
         .attr("class", "link-label-bg")
@@ -607,6 +615,7 @@ layout: false
         .attr("x", -labelW/2)
         .attr("y", -10);
 
+      // 标签文字
       linkEnter.append("text")
         .attr("class", "link-label-text")
         .attr("dy", 1);
@@ -684,20 +693,28 @@ layout: false
         .text(d => d.role || d.identity || "");
     }
 
+    // ====== 原版 tick：只更新位置，不旋转标签 ======
     simulation.on("tick", () => {
       linkGroup.selectAll(".link-item").each(function(d) {
         const line = d3.select(this).select("line");
         const rect = d3.select(this).select("rect");
         const text = d3.select(this).select("text");
-        line.attr("x1", d.source.x).attr("y1", d.source.y)
-            .attr("x2", d.target.x).attr("y2", d.target.y);
-        const mx = (d.source.x + d.target.x) / 2;
-        const my = (d.source.y + d.target.y) / 2;
+
+        const x1 = d.source.x, y1 = d.source.y;
+        const x2 = d.target.x, y2 = d.target.y;
+
+        line.attr("x1", x1).attr("y1", y1)
+            .attr("x2", x2).attr("y2", y2);
+
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
         const txt = d.relation || "关系";
         const tw = Math.max(40, txt.length * 12 + 12);
+
         rect.attr("x", mx - tw/2).attr("y", my - 10).attr("width", tw);
         text.attr("x", mx).attr("y", my).text(txt);
       });
+
       nodeGroup.selectAll(".node-group")
         .attr("transform", d => `translate(${d.x},${d.y})`);
     });
