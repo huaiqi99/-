@@ -30,17 +30,19 @@
   color: var(--custom-font) !important;
 }
 
-/* 标题用白色，保证清晰 */
+/* 标题用纯白 */
 [data-theme*="dark"] h1,
 [data-theme*="dark"] h2,
 [data-theme*="dark"] h3 {
   color: #f0f0f0 !important;
 }
 
-/* 正文、段落 */
+/* 正文、小字用亮灰，保证清晰 */
 [data-theme*="dark"] p,
-[data-theme*="dark"] span {
-  color: var(--custom-font);
+[data-theme*="dark"] span,
+[data-theme*="dark"] .gallery-header p,
+[data-theme*="dark"] .gallery-section h2 {
+  color: #e0e0e0 !important;
 }
 
 /* 页脚 */
@@ -51,5 +53,3 @@
 [data-theme*="dark"] #footer-wrap {
   color: var(--custom-meta) !important;
 }
-
-/* 顶部导航、页头 —— 不强制覆盖，让 butterfly 主题自己处理暗色样式 */
