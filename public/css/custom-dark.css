@@ -12,7 +12,8 @@
   --custom-meta: #858585;
 }
 
-[data-theme="dark"] {
+/* 注意：butterfly 主题把 data-theme 存成了 JSON 字符串，所以用 *= 包含匹配 */
+[data-theme*="dark"] {
   --custom-bg: #0d0d0d;
   --custom-font: #c0c0c0;
   --custom-border: #3d3d3d;
@@ -20,40 +21,40 @@
 }
 
 /* 主体覆盖 */
-[data-theme="dark"] body,
-[data-theme="dark"] #content-outer,
-[data-theme="dark"] #content-inner,
-[data-theme="dark"] #page,
-[data-theme="dark"] .layout {
+[data-theme*="dark"] body,
+[data-theme*="dark"] #content-outer,
+[data-theme*="dark"] #content-inner,
+[data-theme*="dark"] #page,
+[data-theme*="dark"] .layout {
   background: var(--custom-bg) !important;
   color: var(--custom-font) !important;
 }
 
 /* 顶部导航 */
-[data-theme="dark"] #page-header {
+[data-theme*="dark"] #page-header {
   background: #1b1b1b !important;
   border-bottom-color: var(--custom-border) !important;
 }
-[data-theme="dark"] #page-header .nav-title,
-[data-theme="dark"] #page-header a,
-[data-theme="dark"] #page-site-info h1 {
+[data-theme*="dark"] #page-header .nav-title,
+[data-theme*="dark"] #page-header a,
+[data-theme*="dark"] #page-site-info h1 {
   color: var(--custom-font) !important;
 }
 
 /* 页脚 */
-[data-theme="dark"] #footer {
+[data-theme*="dark"] #footer {
   background: #1b1b1b !important;
   border-top-color: var(--custom-border) !important;
 }
-[data-theme="dark"] #footer-wrap {
+[data-theme*="dark"] #footer-wrap {
   color: var(--custom-meta) !important;
 }
 
 /* 通用文字 */
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
-[data-theme="dark"] h3,
-[data-theme="dark"] p,
-[data-theme="dark"] span {
+[data-theme*="dark"] h1,
+[data-theme*="dark"] h2,
+[data-theme*="dark"] h3,
+[data-theme*="dark"] p,
+[data-theme*="dark"] span {
   color: var(--custom-font);
 }
