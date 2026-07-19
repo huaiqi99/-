@@ -1,0 +1,668 @@
+---
+layout: false
+---
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<script>
+(function() {
+  var raw = localStorage.getItem('theme');
+  var theme = raw;
+  try {
+    var parsed = JSON.parse(raw);
+    if (parsed && parsed.value) theme = parsed.value;
+  } catch(e) {}
+  
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人物关系星图 - 墨境</title>
+  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    :root {
+      --card-bg: #fff;
+      --card-border: #e3e8f7;
+      --font-color: #4c4948;
+      --theme-color: #c44536;
+      --bg-color: #f7f9fe;
+      --meta-color: #858585;
+    }
+    [data-theme="dark"] {
+      --card-bg: #1b1b1b;
+      --card-border: #3d3d3d;
+      --font-color: #c0c0c0;
+      --bg-color: #0d0d0d;
+      --meta-color: #7a7a7a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg-color);
+      color: var(--font-color);
+      overflow-x: hidden;
+    }
+    #nav {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      text-decoration: none;
+      color: var(--font-color);
+      font-size: 1.3em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand span { color: var(--theme-color); }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      color: var(--font-color);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--theme-color); }
+
+    .layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+    }
+    .graph-area { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; position: relative; }
+    .aside-content { width: 360px; flex-shrink: 0; }
+
+    .card-widget {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .item-headline {
+      font-size: 1.05em;
+      font-weight: bold;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .graph-wrap {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      position: relative;
+      height: 620px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    #relation-svg {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+    #relation-svg:active { cursor: grabbing; }
+
+    .toolbar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+    .toolbar .btn-group {
+      display: flex;
+      gap: 4px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      padding: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .toolbar .btn-group .btn {
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.85em;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--meta-color);
+    }
+    .toolbar .btn-group .btn:hover { color: var(--font-color); }
+    .toolbar .btn-group .btn.active {
+      background: var(--theme-color);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(196,69,54,0.25);
+    }
+    .toolbar .btn-group .btn.active:hover { opacity: 0.9; }
+
+    .toolbar .btn-icon {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.85em;
+      color: var(--font-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .toolbar .btn-icon:hover { border-color: var(--theme-color); color: var(--theme-color); }
+
+    /* D3 节点样式 */
+    .link-line {
+      stroke: #c0c0c0;
+      stroke-width: 1.5px;
+      opacity: 0.6;
+    }
+    .link-line.red {
+      stroke: #c44536;
+      stroke-width: 2.5px;
+      opacity: 0.9;
+    }
+    .link-label-bg {
+      fill: var(--card-bg);
+      stroke: var(--card-border);
+      stroke-width: 1;
+      rx: 4;
+    }
+    .link-label-text {
+      font-size: 11px;
+      fill: var(--meta-color);
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .node-group { cursor: pointer; }
+    .node-ring {
+      fill: none;
+      stroke-width: 4px;
+      opacity: 0.25;
+    }
+    .node-circle {
+      stroke: #fff;
+      stroke-width: 3px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    }
+    .node-letter {
+      font-size: 16px;
+      font-weight: bold;
+      fill: #fff;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+    }
+    .node-tag-bg {
+      rx: 10;
+      opacity: 0.95;
+    }
+    .node-tag-text {
+      font-size: 10px;
+      fill: #fff;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      pointer-events: none;
+      font-weight: 500;
+    }
+    .node-name-text {
+      font-size: 13px;
+      font-weight: bold;
+      fill: var(--font-color);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .node-role-text {
+      font-size: 11px;
+      fill: var(--meta-color);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+    .node.selected .node-ring {
+      opacity: 0.6;
+      stroke-width: 6px;
+    }
+
+    /* 右侧面板 */
+    .empty-state {
+      text-align: center;
+      padding: 50px 0;
+      opacity: 0.5;
+    }
+    .empty-state i { font-size: 2.5em; margin-bottom: 15px; display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.8em;
+      margin-bottom: 6px;
+      opacity: 0.7;
+      font-weight: 500;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--bg-color);
+      color: var(--font-color);
+      font-family: inherit;
+      font-size: 0.9em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--theme-color);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .panel-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .panel-actions .btn { flex: 1; justify-content: center; }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--theme-color);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(196,69,54,0.3);
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-danger { background: #ff4d4f; color: #fff; }
+
+    @media (max-width: 1024px) {
+      .layout { flex-direction: column; }
+      .aside-content { width: 100%; }
+      .graph-wrap { height: 500px; }
+    }
+
+    @media (max-width: 768px) {
+      #nav { padding: 0 16px; }
+      .nav-inner { height: 52px; }
+      .nav-brand { font-size: 1.05em; gap: 6px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 1.1em; }
+      .nav-links a span { display: none; }
+      .layout { padding: 0; gap: 12px; margin-top: 12px; }
+      .toolbar {
+        position: static;
+        padding: 10px 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+        background: var(--card-bg);
+        border-bottom: 1px solid var(--card-border);
+        gap: 8px;
+      }
+      .toolbar .btn-group .btn { padding: 5px 12px; font-size: 0.8em; }
+      .toolbar .btn-icon { padding: 5px 10px; font-size: 0.8em; }
+      .graph-wrap {
+        border-radius: 0;
+        border: none;
+        height: 56vh;
+        box-shadow: none;
+      }
+      .aside-content { width: 100%; padding: 0 12px; }
+      .card-widget { border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    }
+  </style>
+  <script>
+    (() => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+  </script>
+<base target="_blank">
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/-/"><i class="fas fa-project-diagram" style="color: var(--theme-color);"></i><span>墨境</span> · 人物关系星图</a>
+      <div class="nav-links">
+        <a href="/-/world/"><i class="fas fa-globe-asia"></i><span>世界观</span></a>
+        <a href="/-/"><i class="fas fa-home"></i><span>返回首页</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="layout" style="margin-top: 20px;">
+    <div class="graph-area">
+      <div class="toolbar">
+        <div class="btn-group" id="era-toggle">
+          <button class="btn active" data-era="past" onclick="switchEra('past')">📜 秦墨予时期</button>
+          <button class="btn" data-era="present" onclick="switchEra('present')">🌿 栾方棋时期</button>
+        </div>
+        <button class="btn-icon" onclick="resetZoom()"><i class="fas fa-compress-arrows-alt"></i> 重置视图</button>
+      </div>
+
+      <div class="graph-wrap" id="graph-container">
+        <svg id="relation-svg"></svg>
+      </div>
+    </div>
+
+    <div class="aside-content" id="detail-panel">
+      <div class="card-widget">
+        <div class="item-headline"><i class="fas fa-user" style="color: var(--theme-color);"></i><span>人物详情</span></div>
+
+        <div id="empty-state" class="empty-state">
+          <i class="fas fa-mouse-pointer"></i>
+          <p>点击星图中的人物节点<br>查看或编辑详情</p>
+        </div>
+
+        <div id="edit-form" style="display: none;">
+          <div style="display: flex; gap: 12px;">
+            <div class="form-group" style="flex: 1;">
+              <label>姓名</label>
+              <input type="text" id="char-name" placeholder="角色名">
+            </div>
+            <div class="form-group" style="width: 80px;">
+              <label>年龄</label>
+              <input type="number" id="char-age" placeholder="24">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>身份 / 属性</label>
+            <input type="text" id="char-identity" placeholder="例如：归终殿第四席">
+          </div>
+
+          <div class="form-group">
+            <label>背景故事</label>
+            <textarea id="char-story" placeholder="写下这个角色的背景..."></textarea>
+          </div>
+
+          <div class="panel-actions">
+            <button class="btn btn-primary" onclick="saveCharacter()"><i class="fas fa-save"></i> 保存</button>
+            <button class="btn btn-danger" onclick="deleteCharacter()"><i class="fas fa-trash-alt"></i> 删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================== 数据 ==================
+    const allNodes = [
+      // === 秦墨予时期 (past) ===
+      { id: "qmy", name: "秦墨予", role: "商烈国师 · 浮生花缔契者", tag: "主角1", color: "#8b1a1a", age: "于23岁死亡", identity: "栾方棋的前世 · 因果起点", era: "past", story: "商烈末年的国师，权倾朝野却因爱疯魔。以浮生花与林淮立下共生契，死后两百年，转世为栾方棋。所有故事的因，都在他这里。" },
+      { id: "lh", name: "林淮", role: "归终殿第二席", tag: "主角2", color: "#7a9e9f", age: "约220岁", identity: "枪修 · 前世影卫", era: "all", story: "等了两百年，终于等到栾方棋转世回来。浮生之契的另一端，从秦墨予到栾方棋，从未放手。" },
+      { id: "qyl", name: "秦雨令", role: "商烈贵妃 · 秦墨予之姐", tag: "家族线", color: "#d4a5a5", age: "31岁", identity: "天命君下凡化身 · 白禾川的执念", era: "past", story: "秦墨予的长姐，被皇帝纳入后宫三年。表面是祸国妖妃，实则是天命君下凡修正历史的工具。死后散魂，白禾川为她疯魔两百年。" },
+      { id: "lcj", name: "凌宸钧", role: "商烈末代皇帝", tag: "主要配角", color: "#9cadce", age: "约36岁", identity: "秦墨予的君主 · 痴念者", era: "past", story: "商烈末帝，深爱秦墨予而不自知。秦墨予死后将其姐秦雨令纳入后宫，最终因过度偏执导致王朝覆灭。两百年后死在承天殿前。" },
+      { id: "cc", name: "楚迟", role: "伪神 · 浮生树之祖", tag: "家族线", color: "#6b8e6b", age: "消散时约千岁", identity: "天命君剥离的神魂", era: "past", story: "栾方棋的养父，为他取名‘秦墨予’。曾以姓名担保救下林丛言，后被引至锁龙井，燃尽魂力修复青丘后消散。" },
+      { id: "bhe", name: "白禾川", role: "青丘之主", tag: "反派", color: "#b03a2e", age: "千年以上", identity: "九尾天狐 · 京城决战终局者", era: "all", story: "为了复活秦雨令，不惜以五大神器覆写京城。最终死在天命君剑下，临死前喊的是秦雨令的名字。" },
+      { id: "sj", name: "天命君·司衡", role: "天庭四君之首", tag: "反派", color: "#d4c5a5", age: "亘古", identity: "执掌命途 · 秦雨令真身", era: "all", story: "以秦雨令的身份下凡修正商烈历史。京城决战时现身，没有救任何人，只是确认‘因果已被修正’。" },
+      { id: "syj", name: "司缘君·契缘", role: "天庭四君之一", tag: "主要配角", color: "#e6b89c", age: "亘古", identity: "执掌情缘 · 顾执的创造者", era: "past", story: "剜出半格神格造出伪神顾执，替她下凡挡情劫。因此触犯天规被剥去神格贬为凡人。" },
+      { id: "gz", name: "顾执", role: "伪神 · 司缘君化身", tag: "主要配角", color: "#d4a5a5", age: "消散时约300岁", identity: "摧城笛原主 · 罗修的白月光", era: "all", story: "司缘君剜出半格神格造出的伪神，替她下凡挡情劫。爱上林丛言后，为救他耗尽神元而散魂。他的命格碎片最终融入了魏元璟的魂魄。" },
+      { id: "lcy", name: "林丛言", role: "鬼修 · 断魂剑主", tag: "主要配角", color: "#9c7c6b", age: "约300岁", identity: "顾执的情劫对象 · 罗修的仇敌", era: "past", story: "前身是景枭，顾执为他而死之后才逐渐后悔。一直守在顾执骨血长出的桃林里，不肯离去。" },
+      { id: "by", name: "白榆", role: "青丘狐妖", tag: "主要配角", color: "#a8a4ce", age: "约200岁", identity: "白禾川之妹 · 秦雨令的养女", era: "past", story: "被秦雨令捡到的狐妖，视秦雨令为姐姐。为救秦雨令愿舍一尾，最终被白禾川所杀，魂魄封印于落月宫两百年。" },
+
+      // === 栾方棋时期 (present) ===
+      { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", era: "all", story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
+      { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", era: "present", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
+      { id: "wyj", name: "魏元璟", role: "归终殿第五席", tag: "主要配角", color: "#e8a87c", age: "重铸后约30岁", identity: "前朝末帝 · 重铸魂魄", era: "present", story: "从帝王到引渡人，从念安到魏元璟。在罗修身边重新学会了‘普通地幸福’。" },
+      { id: "cms", name: "程木栖", role: "栖梧馆医者", tag: "亲友", color: "#85cdca", age: "约400岁", identity: "前第三席 · 古琴医者", era: "present", story: "京城决战后双手重伤，退居二线开设医馆。那双弹琴的手如今只用来为同门熬药。" },
+      { id: "rs", name: "冉舟", role: "前归终殿第九席", tag: "家族线", color: "#cf6a87", age: "约150岁（人偶）", identity: "人偶 · 秦雨令的影子", era: "present", story: "她是被制造出来的替代品，却也是唯一一个在月光下为栾方棋舞过剑的‘姐姐’。最后那一剑，刺穿了他的心，也刺穿了她自己的命运。" },
+      { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", era: "present", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" }
+    ];
+
+    const allLinks = [
+      // === 秦墨予时期关系 ===
+      // 秦墨予直接相连
+      { source: "qmy", target: "lh", relation: "浮生之契 · 爱人", red: true },
+      { source: "qmy", target: "lcj", relation: "君臣 · 债" },
+      { source: "qmy", target: "qyl", relation: "姐弟 · 血缘" },
+      { source: "qmy", target: "syj", relation: "间接因果" },
+      { source: "qmy", target: "cc", relation: "养父子 · 取名之恩" },
+
+      // 楚迟 → 林丛言（楚迟曾以姓名担保救他）
+      { source: "cc", target: "lcy", relation: "救命之恩 · 担保" },
+
+      // 林丛言 → 罗修（即使罗修在秦墨予时期不出现，这条线也在）
+      // 这条线在栾方棋时期也会显示，但罗修在秦墨予时期不出现，所以加了也无妨，过滤时会被滤掉
+      { source: "lcy", target: "lx", relation: "情敌 · 仇敌" },
+
+      // 林丛言 → 顾执
+      { source: "lcy", target: "gz", relation: "情劫 · 因果" },
+
+      // 顾执 → 司缘君
+      { source: "gz", target: "syj", relation: "造物主 · 情劫之替" },
+
+      // 司缘君 → 天命君
+      { source: "syj", target: "sj", relation: "同僚 · 罪与罚" },
+
+      // 天命君 → 白禾川
+      { source: "sj", target: "bhe", relation: "青丘毁灭者 · 仇" },
+
+      // 天命君 → 秦雨令（真身与化身）
+      { source: "sj", target: "qyl", relation: "真身 · 化身" },
+
+      // 秦雨令 → 白禾川
+      { source: "qyl", target: "bhe", relation: "执念 · 因果" },
+
+      // 秦雨令 → 苏暮
+      { source: "qyl", target: "sm", relation: "一面之缘 · 影响" },
+
+      // 白禾川 → 苏暮（蛊惑）
+      { source: "bhe", target: "sm", relation: "蛊惑 · 换魂" },
+
+      // === 栾方棋时期关系 ===
+      { source: "lfq", target: "lh", relation: "浮生之契 · 爱人", red: true },
+      { source: "lfq", target: "lx", relation: "师兄 · 被骂着长大" },
+      { source: "lfq", target: "wyj", relation: "酒友 · 倾听者" },
+      { source: "lfq", target: "cms", relation: "师姐 · 医患" },
+      { source: "lfq", target: "rs", relation: "前世的姐姐 · 债" },
+      { source: "lfq", target: "bhe", relation: "仇敌 · 因果之源" },
+      { source: "lfq", target: "lcl", relation: "最后一面 · 警语" },
+
+      // 罗修 ↔ 魏元璟（红线）
+      { source: "lx", target: "wyj", relation: "爱人 · 破例者", red: true },
+
+      // 白禾川 → 天命君（反方向）
+      { source: "bhe", target: "sj", relation: "被审判者 · 终局" },
+
+      // 天命君 → 白禾川（已在past中定义，此处不重复）
+      // 顾执 → 魏元璟（命格融合，在栾方棋时期也显示）
+      { source: "gz", target: "wyj", relation: "命格融合 · 共生" },
+
+      // 罗修 → 顾执（即使顾执在栾方棋时期出现，这条线也在）
+      { source: "lx", target: "gz", relation: "爱过 · 执念" }
+    ];
+
+    let currentEra = "past";
+    let nodes = [];
+    let links = [];
+    let selectedNode = null;
+
+    // ================== D3 设置 ==================
+    const container = document.getElementById('graph-container');
+    const svg = d3.select("#relation-svg");
+    let width = container.clientWidth;
+    let height = 620;
+    svg.attr("viewBox", [-width/2, -height/2, width, height]);
+
+    const g = svg.append("g");
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.2, 4])
+      .on("zoom", (e) => g.attr("transform", e.transform));
+    svg.call(zoom).on("dblclick.zoom", null);
+
+    const simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(d => d.id).distance(200))
+      .force("charge", d3.forceManyBody().strength(-900))
+      .force("center", d3.forceCenter(0, 0))
+      .force("collide", d3.forceCollide().radius(55));
+
+    let linkGroup = g.append("g").attr("class", "links");
+    let nodeGroup = g.append("g").attr("class", "nodes");
+
+    // ================== 数据过滤 ==================
+    function filterData(era) {
+      const filteredNodes = allNodes.filter(n => n.era === era || n.era === "all");
+      const nodeIds = new Set(filteredNodes.map(n => n.id));
+      
+      // 关键修复：D3会把links的source/target改成对象，这里必须提取原始id
+      const filteredLinks = allLinks
+        .map(l => ({
+          source: (typeof l.source === 'object' && l.source !== null) ? l.source.id : l.source,
+          target: (typeof l.target === 'object' && l.target !== null) ? l.target.id : l.target,
+          relation: l.relation,
+          red: l.red
+        }))
+        .filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
+
+      // 新节点给个初始位置，避免全从(0,0)原点炸开
+      const existingIds = new Set(nodes.map(n => n.id));
+      filteredNodes.forEach(n => {
+        if (!existingIds.has(n.id)) {
+          n.x = (Math.random() - 0.5) * 120;
+          n.y = (Math.random() - 0.5) * 120;
+          n.vx = 0;
+          n.vy = 0;
+        }
+      });
+
+      return { nodes: filteredNodes, links: filteredLinks };
+    }
+
+    // ================== 渲染 ==================
+    function render(era) {
+      const data = filterData(era);
+      nodes = data.nodes;
+      links = data.links;
+
+      if (selectedNode && !nodes.find(n => n.id === selectedNode.id)) {
+        selectedNode = null;
+        showEmpty();
+        d3.selectAll(".node-group").classed("selected", false);
+      }
+
+      // --- 连线 ---
+      const linkData = linkGroup.selectAll(".link-item").data(links, d => {
+        const s = (typeof d.source === 'object' && d.source !== null) ? d.source.id : d.source;
+        const t = (typeof d.target === 'object' && d.target !== null) ? d.target.id : d.target;
+        return s + "-" + t;
+      });
+      linkData.exit().transition().duration(250).style("opacity", 0).remove();
+
+      const linkEnter = linkData.enter().append("g").attr("class", "link-item").style("opacity", 0);
+      linkEnter.transition().duration(300).style("opacity", 1);
+
+      linkEnter.append("line")
+        .attr("class", d => d.red ? "link-line red" : "link-line")
+        .attr("stroke-dasharray", "4,4");
+
+      const labelW = 60;
+      linkEnter.append("rect")
+        .attr("class", "link-label-bg")
+        .attr("width", labelW)
+        .attr("height", 20)
+        .attr("x", -labelW/2)
+        .attr("y", -10);
+
+      linkEnter.append("text")
+        .attr("class", "link-label-text")
+        .attr("dy", 1);
+
+      // --- 节点 ---
+      const nodeData = nodeGroup.selectAll(".node-group").data(nodes, d => d.id);
+      nodeData.exit().transition().duration(250).style("opacity", 0).remove();
+
+      const nodeEnter = nodeData.enter().append("g")
+        .attr("class", "node-group")
+        .style("opacity", 0)
+        .attr("transform", d => `translate(${d.x || 0},${d.y || 0})`)
+        .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended))
+        .on("click", (e, d) => { e.stopPropagation(); selectNode(d); });
+
+      nodeEnter.transition().duration(350).style("opacity", 1);
+
+      nodeEnter.append("circle").attr("class", "node-ring").attr("r", 40);
+      nodeEnter.append("circle").attr("class", "node-circle").attr("r", 30);
+      nodeEnter.append("text").attr("class", "node-letter").attr("dy", 1)
+        .text(d => d.name ? d.name.charAt(0) : "?");
+      nodeEnter.append("rect").attr("class", "node-tag-bg").attr("y", -52).attr("height", 18);
+      nodeEnter.append("text").attr("class", "node-tag-text").attr("y", -40);
+      nodeEnter.append("text").attr("class", "node-name-text").attr("y", 48);
+      nodeEnter.append("text").attr("class", "node-role-text").attr("y", 63);
+
+      svg.on("click", () => {
+        selectedNode = null;
+        showEmpty();
+        d3.selectAll(".node-group").classed("selected", false);
+      });
+
+      refreshNodeVisuals();
+      simulation.nodes(nodes);
+      simulation.force("link").links(links);
+      simulation.alpha(0.4).restart(); // 从0.4开始，更平滑不炸开
+    }
+
+    // ================== 时期切换 ==================
+    function switchEra(era) {
+      currentEra = era;
+      document.querySelectorAll('#era-toggle .btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.era === era);
+      });
+      render(era);
+    }
+    // ================== 首次渲染 ==================
+    render("past");
+  </script>
+</body>
+</html>

@@ -1,246 +1,299 @@
+---
+layout: false
+---
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head><link rel="stylesheet" href="/-/css/custom-dark.css">
+<html lang="zh-CN" data-theme="light">
+<head>
+<script>
+(function() {
+  var raw = localStorage.getItem('theme');
+  var theme = raw;
+  try {
+    var parsed = JSON.parse(raw);
+    if (parsed && parsed.value) theme = parsed.value;
+  } catch(e) {}
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>世界观设定集 - 墨境</title>
-  <link rel="stylesheet" href="/-/css/index.css">
-  <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
+  <title>探索 - 墨境</title>
+  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
-    /* 隐藏侧边栏 */
-    #aside-content { display: none !important; }
-    .layout { display: block !important; }
-    #content-inner { max-width: 100% !important; }
-    #page { width: 100% !important; margin: 0 !important; }
-
-    .world-page-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-    .world-header { text-align: center; padding: 40px 20px; }
-    .world-header h1 { font-size: 2.2em; color: var(--font-color); margin-bottom: 10px; }
-    .world-header p { font-size: 1em; color: var(--font-color); opacity: 0.6; }
-    .world-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-top: 30px; }
-    .world-card { display: block; background: var(--card-bg); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--font-color); border: 1px solid var(--card-border); transition: all 0.3s; }
-    .world-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-    .world-card-cover { width: 100%; height: 180px; object-fit: cover; display: block; }
-    .world-card-info { padding: 16px; }
-    .world-card-name { font-size: 1.15em; font-weight: bold; margin-bottom: 8px; }
-    .world-card-tags { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
-    .world-card-tags .tag { font-size: 0.75em; padding: 3px 10px; background: #c44536; color: #fff; border-radius: 12px; font-weight: 500; }
-    .world-card-desc { font-size: 0.85em; opacity: 0.7; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  </style>
-</head>
-<body>
-  <div id="page-header" class="not-home-page">
-    <nav id="nav">
-      <span class="nav-title">墨境</span>
-      <div class="menus">
-        <a class="site-page" href="/-/">首页</a>
-        <a class="site-page" href="/-/world/">世界观</a>
-        <a class="site-page" href="/-/about/">关于</a>
-      </div>
-    </nav>
-    <div id="page-site-info"><h1 id="site-title">世界观设定集</h1></div>
-  </div>
-
-  <div id="content-outer">
-    <main class="layout" id="content-inner">
-      <div id="page">
-        <div class="world-page-container">
-          <div class="world-header">
-            <h1>🌏 世界观设定集</h1>
-            <p>用文字构筑的另一个世界，每一处细节都值得被记录</p>
-          </div>
-
-          <div class="world-grid">
-            <a class="world-card" href="./difu/">
-              <img class="world-card-cover" src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
-              <div class="world-card-info">
-                <div class="world-card-name">我在地府打工那些年</div>
-                <div class="world-card-tags">
-                  <span class="tag">三界架构</span>
-                  <span class="tag">天庭四君</span>
-                  <span class="tag">十殿阎罗</span>
-                  <span class="tag">归终殿</span>
-                </div>
-                <div class="world-card-desc">天庭书写命途，地府执行轮回，人间承受结果。三界之间有屏障相隔，但并非完全隔绝。</div>
-              </div>
-            </a>
-
-            <a class="world-card" href="./npc/">
-              <img class="world-card-cover" src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
-              <div class="world-card-info">
-                <div class="world-card-name">这破游戏NPC太能打了</div>
-                <div class="world-card-tags">
-                  <span class="tag">游戏世界</span>
-                  <span class="tag">NPC觉醒</span>
-                  <span class="tag">穿越</span>
-                </div>
-                <div class="world-card-desc">穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。</div>
-              </div>
-            </a>
-
-            <a class="world-card" href="./jiuzhou/">
-              <img class="world-card-cover" src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
-              <div class="world-card-info">
-                <div class="world-card-name">九州风云录</div>
-                <div class="world-card-tags">
-                  <span class="tag">天宫</span>
-                  <span class="tag">仙侠</span>
-                  <span class="tag">GB</span>
-                </div>
-                <div class="world-card-desc">天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？</div>
-              </div>
-            </a>
-
-            <a class="world-card" href="./beijing/">
-              <img class="world-card-cover" src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
-              <div class="world-card-info">
-                <div class="world-card-name">北境玫瑰</div>
-                <div class="world-card-tags">
-                  <span class="tag">奇幻</span>
-                  <span class="tag">ABO</span>
-                  <span class="tag">北境</span>
-                </div>
-                <div class="world-card-desc">准神候选人黎昭，从时衍天宫逃难至北境，被Alpha指挥官按在墙上操。</div>
-              </div>
-            </a>
-
-            <a class="world-card" href="./huangshu/">
-              <img class="world-card-cover" src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
-              <div class="world-card-info">
-                <div class="world-card-name">皇叔何出此言</div>
-                <div class="world-card-tags">
-                  <span class="tag">古风</span>
-                  <span class="tag">前世今生</span>
-                  <span class="tag">短篇</span>
-                </div>
-                <div class="world-card-desc">栾方棋与林淮的前世今生，两百多岁的他主动提出要做，究竟是何居心？</div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- 返回首页按钮 -->
-  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
-
-  <!-- 字号调节按钮 -->
-  <div class="world-font-control">
-    <button onclick="changeFontSize(-1)" title="减小字号">A-</button>
-    <span id="fontSizeLabel">中</span>
-    <button onclick="changeFontSize(1)" title="增大字号">A+</button>
-  </div>
-
-  <script>
-    var fontLevels = ['small', 'medium', 'large'];
-    var fontLabels = ['小', '中', '大'];
-    var currentLevel = 1;
-    function changeFontSize(delta) {
-      var newLevel = currentLevel + delta;
-      if (newLevel < 0) newLevel = 0;
-      if (newLevel > 2) newLevel = 2;
-      if (newLevel === currentLevel) return;
-      currentLevel = newLevel;
-      document.body.className = document.body.className.replace(/font-size-\w+/g, '').trim();
-      if (fontLevels[newLevel] !== 'medium') {
-        document.body.classList.add('font-size-' + fontLevels[newLevel]);
-      }
-      document.getElementById('fontSizeLabel').textContent = fontLabels[newLevel];
-      localStorage.setItem('worldFontSize', newLevel);
+    :root {
+      --card-bg: #fff;
+      --card-border: #e3e8f7;
+      --font-color: #4c4948;
+      --theme-color: #c44536;
+      --bg-color: #f7f9fe;
+      --meta-color: #858585;
     }
-    // 恢复上次设置
-    var saved = localStorage.getItem('worldFontSize');
-    if (saved !== null) {
-      currentLevel = parseInt(saved);
-      if (currentLevel !== 1) {
-        document.body.classList.add('font-size-' + fontLevels[currentLevel]);
-      }
-      document.getElementById('fontSizeLabel').textContent = fontLabels[currentLevel];
+    [data-theme="dark"] {
+      --card-bg: #1b1b1b;
+      --card-border: #3d3d3d;
+      --font-color: #c0c0c0;
+      --bg-color: #0d0d0d;
+      --meta-color: #7a7a7a;
     }
-  </script>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg-color);
+      color: var(--font-color);
+      overflow-x: hidden;
+    }
 
-  <style>
-    .world-home-btn {
-      position: fixed;
-      bottom: 90px;
-      right: 25px;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: #c44536;
-      color: #fff;
-      font-size: 1.4em;
+    /* 顶部导航 */
+    #nav {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      height: 60px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
       text-decoration: none;
-      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
-      z-index: 999;
-      transition: all 0.3s;
+      color: var(--font-color);
+      font-size: 1.3em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .world-home-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
-    }
-    .world-font-control {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
+    .nav-brand span { color: var(--theme-color); }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      color: var(--font-color);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      font-size: 0.95em;
       display: flex;
       align-items: center;
       gap: 6px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 6px 12px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-      z-index: 999;
     }
-    .world-font-control button {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--card-border);
-      background: var(--btn-bg);
-      color: var(--font-color);
+    .nav-links a:hover { opacity: 1; color: var(--theme-color); }
+
+    /* 主体 */
+    .layout {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .page-title {
+      font-size: 1.6em;
       font-weight: bold;
-      font-family: inherit;
-      cursor: pointer;
-      font-size: 0.9em;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .world-font-control button:hover {
-      background: #c44536;
-      color: #fff;
-      border-color: #c44536;
-    }
-    .world-font-control #fontSizeLabel {
-      font-size: 0.8em;
-      color: var(--font-color);
-      opacity: 0.7;
-      min-width: 20px;
+      margin-bottom: 8px;
       text-align: center;
     }
-    /* 字号调节 */
-    body.font-size-small .world-page-container,
-    body.font-size-small .accordion-content p,
-    body.font-size-small .accordion-content li { font-size: 0.85em !important; }
-    body.font-size-large .world-page-container,
-    body.font-size-large .accordion-content p,
-    body.font-size-large .accordion-content li { font-size: 1.15em !important; }
-    body.font-size-large .world-section h2 { font-size: 1.7em !important; }
-    body.font-size-large summary { font-size: 1.15em !important; }
-  </style>
+    .page-subtitle {
+      text-align: center;
+      color: var(--meta-color);
+      font-size: 0.9em;
+      margin-bottom: 40px;
+    }
 
-  <footer id="footer">
-    <div id="footer-wrap">
-      <div class="copyright">©2026 By 淮子生生</div>
-      <div class="framework-info"><span>用文字构筑世界</span></div>
+    /* 书籍列表 */
+    .book-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .book-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .book-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    .book-name {
+      font-size: 1.15em;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: var(--font-color);
+    }
+    .book-desc {
+      font-size: 0.85em;
+      color: var(--meta-color);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      /* 单行省略 */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .book-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--theme-color);
+      background: transparent;
+      color: var(--theme-color);
+      text-decoration: none;
+      font-size: 0.9em;
+      text-align: center;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-action:hover {
+      background: var(--theme-color);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(196,69,54,0.25);
+    }
+
+    /* 底部提示 */
+    .footer-hint {
+      text-align: center;
+      color: var(--meta-color);
+      font-size: 0.8em;
+      margin-top: 40px;
+      opacity: 0.6;
+    }
+
+    /* 手机端 */
+    @media (max-width: 768px) {
+      #nav { padding: 0 16px; }
+      .nav-inner { height: 52px; }
+      .nav-brand { font-size: 1.05em; gap: 6px; }
+      .nav-links { gap: 16px; }
+      .nav-links a span { display: none; }
+      .layout { padding: 24px 16px; }
+      .page-title { font-size: 1.3em; }
+      .book-item { padding: 20px; }
+      .book-actions { gap: 8px; }
+      .btn-action { min-width: 0; font-size: 0.85em; padding: 8px 12px; }
+    }
+  </style>
+  <script>
+    (() => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+  </script>
+<base target="_blank">
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/-/"><i class="fas fa-compass" style="color: var(--theme-color);"></i><span>墨境</span></a>
+      <div class="nav-links">
+        <a href="/-/"><i class="fas fa-home"></i><span>返回首页</span></a>
+      </div>
     </div>
-  </footer>
+  </nav>
+
+  <div class="layout">
+    <h1 class="page-title">🌏 探索中心</h1>
+    <p class="page-subtitle">选择一部作品，进入它的世界</p>
+
+    <div class="book-list">
+      <!-- 我在地府打工那些年 -->
+      <div class="book-item">
+        <div class="book-name">我在地府打工那些年</div>
+        <div class="book-desc">一场跨越阴阳两界的禁忌之恋，当死神爱上凡人，规则便不再重要。</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/difu/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/difu/">🌏 世界观</a>
+        </div>
+      </div>
+
+      <!-- 这破游戏NPC太能打了 -->
+      <div class="book-item">
+        <div class="book-name">这破游戏NPC太能打了</div>
+        <div class="book-desc">穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/npc/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/npc/">🌏 世界观</a>
+        </div>
+      </div>
+
+      <!-- 九州风云录 -->
+      <div class="book-item">
+        <div class="book-name">九州风云录</div>
+        <div class="book-desc">天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/jiuzhou/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/jiuzhou/">🌏 世界观</a>
+        </div>
+      </div>
+
+      <!-- 北境玫瑰 -->
+      <div class="book-item">
+        <div class="book-name">北境玫瑰</div>
+        <div class="book-desc">准神候选人黎昭，从时衍天宫逃难至北境，被Alpha指挥官按在墙上操。</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/beijing/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/beijing/">🌏 世界观</a>
+        </div>
+      </div>
+
+      <!-- 皇叔何出此言 -->
+      <div class="book-item">
+        <div class="book-name">皇叔何出此言</div>
+        <div class="book-desc">我知道你想看什么。</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/huangshu/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/huangshu/">🌏 世界观</a>
+        </div>
+      </div>
+
+      <!-- 还没有名字 -->
+      <div class="book-item">
+        <div class="book-name">还没有名字</div>
+        <div class="book-desc">还没想好。等未来。也许。</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/novel6/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/novel6/">🌏 世界观</a>
+        </div>
+      </div>
+
+      <!-- 小短文合集 -->
+      <div class="book-item">
+        <div class="book-name">小短文合集</div>
+        <div class="book-desc">这是当年写大学的时候在lofter上写的原神同人文。</div>
+        <div class="book-actions">
+          <a class="btn-action" href="/-/relation/yuanshen/">🕸️ 角色星图</a>
+          <a class="btn-action" href="/-/world/yuanshen/">🌏 世界观</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-hint">
+      更多作品陆续添加中 · 墨境
+    </div>
+  </div>
 </body>
 </html>
