@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-<script>
-(function() {
-  var raw = localStorage.getItem('theme');
-  var theme = raw;
-  try {
-    var parsed = JSON.parse(raw);
-    if (parsed && parsed.value) theme = parsed.value;
-  } catch(e) {}
-  
-  if (theme === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else if (theme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
-})();
-</script>
-
+<head><link rel="stylesheet" href="/-/css/custom-dark.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>插图集 - 墨境</title>
   <link rel="stylesheet" href="/-/css/index.css">
   <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
+
   <style>
+    :root {
+--card-bg: #fff;
+  --card-border: #e3e8f7;
+  --font-color: #4c4948;
+  --theme-color: #c44536;
+  --bg-color: #f7f9fe;
+  --meta-color: #858585;
+}
+[data-theme="dark"] {
+  --card-bg: #1b1b1b;
+  --card-border: #3d3d3d;
+  --font-color: #c0c0c0;
+  --bg-color: #0d0d0d;
+  --meta-color: #7a7a7a;
+}
     /* 隐藏侧边栏 */
     #aside-content { display: none !important; }
     .layout { display: block !important; }

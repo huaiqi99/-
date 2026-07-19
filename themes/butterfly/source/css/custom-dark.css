@@ -1,0 +1,59 @@
+/* ===== 墨境自定义页面暗色模式通用样式 ===== */
+/* 用法：在自定义页面的 <head> 里加一行：
+   <link rel="stylesheet" href="/-/css/custom-dark.css">
+   即可自动支持暗色模式，无需修改任何内联样式。
+*/
+
+/* 变量定义 */
+:root {
+  --custom-bg: #f7f9fe;
+  --custom-font: #4c4948;
+  --custom-border: #e3e8f7;
+  --custom-meta: #858585;
+}
+
+[data-theme="dark"] {
+  --custom-bg: #0d0d0d;
+  --custom-font: #c0c0c0;
+  --custom-border: #3d3d3d;
+  --custom-meta: #7a7a7a;
+}
+
+/* 主体覆盖 */
+[data-theme="dark"] body,
+[data-theme="dark"] #content-outer,
+[data-theme="dark"] #content-inner,
+[data-theme="dark"] #page,
+[data-theme="dark"] .layout {
+  background: var(--custom-bg) !important;
+  color: var(--custom-font) !important;
+}
+
+/* 顶部导航 */
+[data-theme="dark"] #page-header {
+  background: #1b1b1b !important;
+  border-bottom-color: var(--custom-border) !important;
+}
+[data-theme="dark"] #page-header .nav-title,
+[data-theme="dark"] #page-header a,
+[data-theme="dark"] #page-site-info h1 {
+  color: var(--custom-font) !important;
+}
+
+/* 页脚 */
+[data-theme="dark"] #footer {
+  background: #1b1b1b !important;
+  border-top-color: var(--custom-border) !important;
+}
+[data-theme="dark"] #footer-wrap {
+  color: var(--custom-meta) !important;
+}
+
+/* 通用文字 */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] p,
+[data-theme="dark"] span {
+  color: var(--custom-font);
+}
