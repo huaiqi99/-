@@ -502,16 +502,33 @@ layout: false
   <script>
     // ================== 数据 ==================
     let nodes = [
-      { id: "X", name: "X", role: "档案修复师", tag: "主角1", color: "#7a9e9f", age: "24", identity: "档案修复师", story: "擅长从残缺文本中拼出线索，习惯把所有风险写进笔记。" },
-      { id: "Y", name: "Y", role: "研究院联络人", tag: "主角2", color: "#e8a87c", age: "26", identity: "研究院联络人", story: "" },
-      { id: "Z", name: "Z", role: "调查记者", tag: "主要配角", color: "#85cdca", age: "28", identity: "调查记者", story: "" },
-      { id: "A", name: "A", role: "旧图书馆管理员", tag: "反派", color: "#cf6a87", age: "45", identity: "旧图书馆管理员", story: "" }
-    ];
-    let links = [
-      { source: "X", target: "Y", relation: "互相猜忌" },
-      { source: "X", target: "Z", relation: "合作调查" },
-      { source: "Y", target: "A", relation: "暗中监视" }
-    ];
+  { id: "lfq", name: "栾方棋", role: "归终殿第四席", tag: "主角1", color: "#c44536", age: "约200岁", identity: "浮生花宿主 · 符修", story: "魂魄与浮生树母体融合，转世两百年后重回地府。从末席一路升至第四席。温柔迟钝，却是串联一切因果的枢纽。" },
+  { id: "lh", name: "林淮", role: "归终殿第二席", tag: "主角2", color: "#7a9e9f", age: "约220岁", identity: "枪修 · 前世影卫", story: "等了两百年，终于等到栾方棋转世回来。浮生之契的另一端，从秦墨予到栾方棋，从未放手。" },
+  { id: "lx", name: "罗修", role: "归终殿首席", tag: "主要配角", color: "#2c3e50", age: "500+", identity: "首席引渡人 · 鬼修", story: "曾是鬼修，被阎王禁用魂术。看似粗犷不羁，实则对魏元璟破例无数，把所有的原则都为他弯了一次。" },
+  { id: "wyj", name: "魏元璟", role: "归终殿第五席", tag: "主要配角", color: "#e8a87c", age: "重铸后约30岁", identity: "前朝末帝 · 重铸魂魄", story: "从帝王到引渡人，从念安到魏元璟。在罗修身边重新学会了‘普通地幸福’。" },
+  { id: "cms", name: "程木栖", role: "栖梧馆医者", tag: "亲友", color: "#85cdca", age: "约400岁", identity: "前第三席 · 古琴医者", story: "京城决战后双手重伤，退居二线开设医馆。那双弹琴的手如今只用来为同门熬药。" },
+  { id: "rs", name: "冉舟", role: "前归终殿第九席", tag: "家族线", color: "#cf6a87", age: "约150岁（人偶）", identity: "人偶 · 秦雨令的影子", story: "她是被制造出来的替代品，却也是唯一一个在月光下为栾方棋舞过剑的‘姐姐’。最后那一剑，刺穿了他的心，也刺穿了她自己的命运。" },
+  { id: "bhe", name: "白禾川", role: "青丘之主", tag: "反派", color: "#b03a2e", age: "千年以上", identity: "九尾天狐 · 京城决战终局者", story: "为了复活秦雨令，不惜以五大神器覆写京城。最终死在天命君剑下，临死前喊的是秦雨令的名字。" },
+  { id: "cc", name: "楚迟", role: "伪神 · 浮生树之祖", tag: "家族线", color: "#6b8e6b", age: "消散时约千岁", identity: "天命君剥离的神魂", story: "栾方棋的养父，为他取名‘秦墨予’。燃尽魂力修复青丘后消散在锁龙井底。" },
+  { id: "sj", name: "天命君·司衡", role: "天庭四君之首", tag: "反派", color: "#d4c5a5", age: "亘古", identity: "执掌命途 · 秦雨令真身", story: "以秦雨令的身份下凡修正商烈历史。京城决战时现身，没有救任何人，只是确认‘因果已被修正’。" },
+  { id: "lcl", name: "黎洛兰", role: "五殿郡主", tag: "亲友", color: "#a8a4ce", age: "约300岁", identity: "摧城笛的吹奏者", story: "在地府吹了两百年的笛子，最后被白禾川碎魂。留给栾方棋的最后一句话是‘小心狐狸’。" }
+];
+
+let links = [
+  { source: "lfq", target: "lh", relation: "浮生之契 · 爱人" },
+  { source: "lfq", target: "lx", relation: "师兄 · 被骂着长大" },
+  { source: "lfq", target: "wyj", relation: "酒友 · 倾听者" },
+  { source: "lfq", target: "cms", relation: "师姐 · 医患" },
+  { source: "lfq", target: "rs", relation: "前世的姐姐 · 债" },
+  { source: "lfq", target: "bhe", relation: "仇敌 · 因果之源" },
+  { source: "lfq", target: "cc", relation: "养父子 · 浮生树的托付" },
+  { source: "lfq", target: "sj", relation: "一面之缘 · 改写命运" },
+  { source: "lx", target: "wyj", relation: "爱人 · 破例者" },
+  { source: "lh", target: "bhe", relation: "杀身之仇" },
+  { source: "cc", target: "sj", relation: "伪神与真身 · 赎罪" },
+  { source: "rs", target: "bhe", relation: "造物主与棋子" },
+  { source: "lcl", target: "bhe", relation: "碎魂之仇" }
+];
 
     const palette = [
       "#7a9e9f","#e8a87c","#85cdca","#cf6a87","#c44536",
