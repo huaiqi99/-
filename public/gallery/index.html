@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="/-/css/index.css">
   <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
   <style>
-    /* ================== 暗色模式变量定义 ================== */
+    /* ================== 变量定义 ================== */
     :root {
       --card-bg: #fff;
       --card-border: #e3e8f7;
@@ -41,29 +41,49 @@
       --meta-color: #7a7a7a;
     }
 
-    /* ================== 强制覆盖 butterfly 主题颜色 ================== */
-    body {
+    /* ================== 只在暗色模式下覆盖 butterfly ================== */
+    [data-theme="dark"] body {
       background: var(--bg-color) !important;
       color: var(--font-color) !important;
     }
-    #page-header {
+    [data-theme="dark"] #page-header {
       background: var(--card-bg) !important;
       border-bottom: 1px solid var(--card-border) !important;
     }
-    #page-header .nav-title,
-    #page-header a {
+    [data-theme="dark"] #page-header .nav-title,
+    [data-theme="dark"] #page-header a {
       color: var(--font-color) !important;
     }
-    #footer {
+    [data-theme="dark"] #page-site-info h1 {
+      color: var(--font-color) !important;
+    }
+    [data-theme="dark"] #footer {
       background: var(--card-bg) !important;
       border-top: 1px solid var(--card-border) !important;
       color: var(--meta-color) !important;
     }
-    #footer-wrap {
+    [data-theme="dark"] #footer-wrap {
       color: var(--meta-color) !important;
     }
-    #content-inner, #page {
-      background: transparent !important;
+    [data-theme="dark"] #content-outer,
+    [data-theme="dark"] #content-inner,
+    [data-theme="dark"] #page,
+    [data-theme="dark"] .layout,
+    [data-theme="dark"] .gallery-container {
+      background: var(--bg-color) !important;
+      color: var(--font-color) !important;
+    }
+    [data-theme="dark"] .gallery-section h2 {
+      color: var(--font-color) !important;
+      border-bottom-color: var(--card-border) !important;
+    }
+    [data-theme="dark"] .gallery-header h1,
+    [data-theme="dark"] .gallery-header p {
+      color: var(--font-color) !important;
+    }
+    [data-theme="dark"] .gallery-wall-item {
+      background: var(--card-bg) !important;
+      border: 1px solid var(--card-border) !important;
     }
 
     /* 隐藏侧边栏 */
