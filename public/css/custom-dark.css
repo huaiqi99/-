@@ -1,7 +1,6 @@
 /* ===== 墨境自定义页面暗色模式通用样式 ===== */
 /* 用法：在自定义页面的 <head> 里加一行：
    <link rel="stylesheet" href="/-/css/custom-dark.css">
-   即可自动支持暗色模式，无需修改任何内联样式。
 */
 
 /* 变量定义 */
@@ -12,7 +11,7 @@
   --custom-meta: #858585;
 }
 
-/* 注意：butterfly 主题把 data-theme 存成了 JSON 字符串，所以用 *= 包含匹配 */
+/* butterfly 把 data-theme 存成了 JSON 字符串，用 *= 包含匹配 */
 [data-theme*="dark"] {
   --custom-bg: #0d0d0d;
   --custom-font: #c0c0c0;
@@ -20,25 +19,28 @@
   --custom-meta: #7a7a7a;
 }
 
-/* 主体覆盖 */
+/* 主体背景与文字 */
 [data-theme*="dark"] body,
 [data-theme*="dark"] #content-outer,
 [data-theme*="dark"] #content-inner,
 [data-theme*="dark"] #page,
-[data-theme*="dark"] .layout {
+[data-theme*="dark"] .layout,
+[data-theme*="dark"] .gallery-container {
   background: var(--custom-bg) !important;
   color: var(--custom-font) !important;
 }
 
-/* 顶部导航 */
-[data-theme*="dark"] #page-header {
-  background: #1b1b1b !important;
-  border-bottom-color: var(--custom-border) !important;
+/* 标题用白色，保证清晰 */
+[data-theme*="dark"] h1,
+[data-theme*="dark"] h2,
+[data-theme*="dark"] h3 {
+  color: #f0f0f0 !important;
 }
-[data-theme*="dark"] #page-header .nav-title,
-[data-theme*="dark"] #page-header a,
-[data-theme*="dark"] #page-site-info h1 {
-  color: var(--custom-font) !important;
+
+/* 正文、段落 */
+[data-theme*="dark"] p,
+[data-theme*="dark"] span {
+  color: var(--custom-font);
 }
 
 /* 页脚 */
@@ -50,11 +52,4 @@
   color: var(--custom-meta) !important;
 }
 
-/* 通用文字 */
-[data-theme*="dark"] h1,
-[data-theme*="dark"] h2,
-[data-theme*="dark"] h3,
-[data-theme*="dark"] p,
-[data-theme*="dark"] span {
-  color: var(--custom-font);
-}
+/* 顶部导航、页头 —— 不强制覆盖，让 butterfly 主题自己处理暗色样式 */
