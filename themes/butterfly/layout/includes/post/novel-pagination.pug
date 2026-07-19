@@ -1,27 +1,28 @@
-// 获取当前分类名
+// 获取当前文章的第一个分类名
 - var catName = ''
 if page.categories && page.categories.length > 0
-  - var c = page.categories[0]
-  - catName = (c && c.name) ? c.name : (typeof c === 'string' ? c : '')
+  - var catArr = page.categories.data || page.categories.toArray()
+  if catArr && catArr[0]
+    - catName = catArr[0].name || ''
 
-// 收集同分类文章，按日期正序排列
-- var posts = []
+// 收集同分类下的所有文章，按日期正序排列
+- var sameCatPosts = []
 if catName
   each p in site.posts.sort('date', 1).toArray()
     if p.categories && p.categories.length > 0
-      each c2 in p.categories.toArray()
-        if c2.name === catName
-          - posts.push(p)
+      - var pCats = p.categories.data || p.categories.toArray()
+      each c in pCats
+        if c.name === catName
+          - sameCatPosts.push(p)
 
-// 找当前文章在分类中的位置
+// 找当前文章在同分类中的位置
 - var idx = -1
-each p, i in posts
+each p, i in sameCatPosts
   if p.path === page.path
     - idx = i
 
-// 上一章 / 下一章
-- var prev = idx > 0 ? posts[idx-1] : null
-- var next = idx >= 0 && idx < posts.length-1 ? posts[idx+1] : null
+- var prev = idx > 0 ? sameCatPosts[idx-1] : null
+- var next = idx >= 0 && idx < sameCatPosts.length - 1 ? sameCatPosts[idx+1] : null
 
 if prev || next
   .novel-pagination(style="display:flex;justify-content:space-between;align-items:center;margin:30px 0;padding:16px;background:var(--card-bg);border-radius:10px;border:1px solid var(--card-border);")
@@ -34,8 +35,10 @@ if prev || next
         div(style="font-size:12px;") ← 上一章
         div 没有了
     
-    if page.categories && page.categories.data && page.categories.data[0]
-      a(href=url_for('/'+page.categories.data[0].path),style="text-decoration:none;background:#c44536;color:#fff;padding:6px 16px;border-radius:16px;font-size:13px;") 目录
+    if page.categories && page.categories.length > 0
+      - var firstCat = (page.categories.data || page.categories.toArray())[0]
+      if firstCat
+        a(href=url_for(firstCat.path),style="text-decoration:none;background:#c44536;color:#fff;padding:6px 16px;border-radius:16px;font-size:13px;") 目录
     
     if next
       a(href=url_for(next.path),style="text-decoration:none;color:var(--font-color);text-align:right;")
