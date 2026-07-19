@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人物关系星图 · 千律州</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<style>
+  /* ========== CSS 变量（浅色默认） ========== */
+  :root {
+    --bg-main: #f7f4ef;
+    --bg-card: #ffffff;
+    --bg-toolbar: #ffffff;
+    --border-light: #ece6de;
+    --text-primary: #3a3a3a;
+    --text-secondary: #8a8a8a;
+    --text-muted: #b8b8b8;
+    --shadow: rgba(0,0,0,0.04);
+    --link-line: #d5cec6;
+    --link-red: #c9a8a0;
+    --link-pink: #d4b8b8;
+    --label-bg: rgba(255,255,255,0.88);
+    --node-shadow: rgba(0,0,0,0.06);
+    --node-stroke: #ffffff;
+    --ring-opacity: 0.15;
+    --ring-selected: 0.35;
+    --tag-opacity: 0.85;
+    --scrollbar: #e8e2da;
+  }
+
+  /* ========== 深色模式 ========== */
+  [data-theme="dark"] {
+    --bg-main: #181614;
+    --bg-card: #24201c;
+    --bg-toolbar: #1e1b18;
+    --border-light: #35302a;
+    --text-primary: #cfc8c0;
+    --text-secondary: #8a847c;
+    --text-muted: #5a5550;
+    --shadow: rgba(0,0,0,0.3);
+    --link-line: #4a4540;
+    --link-red: #b08a80;
+    --link-pink: #9a7a7a;
+    --label-bg: rgba(36,32,28,0.92);
+    --node-shadow: rgba(0,0,0,0.25);
+    --node-stroke: #2a2622;
+    --ring-opacity: 0.25;
+    --ring-selected: 0.5;
+    --tag-opacity: 0.9;
+    --scrollbar: #3a3530;
+  }
+
+  /* ========== 全局 ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+
+  /* ========== 顶栏 ========== */
+  #header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-light);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 10px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  #header .title {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--text-primary);
+  }
+  #header .title span { color: var(--text-secondary); }
+  #header .sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: 8px;
+    font-weight: 400;
+  }
+
+  /* ========== 国家切换按钮 ========== */
+  .country-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .country-tabs .btn {
+    padding: 4px 13px;
+    border-radius: 18px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    letter-spacing: 0.2px;
+  }
+  .country-tabs .btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+  }
+  .country-tabs .btn.active {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+    color: var(--bg-card);
+  }
+  [data-theme="dark"] .country-tabs .btn.active {
+    background: #cfc8c0;
+    border-color: #cfc8c0;
+    color: #181614;
+  }
+
+  /* ========== 主布局 ========== */
+  #main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ========== 图区域 ========== */
+  #graph-wrap {
+    flex: 1;
+    position: relative;
+    background: var(--bg-main);
+    min-height: 0;
+    transition: background 0.3s;
+  }
+  #graph-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  #graph-wrap svg:active { cursor: grabbing; }
+
+  /* ========== 右侧面板 ========== */
+  #panel {
+    width: 300px;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border-light);
+    padding: 22px 20px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  #panel .empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 40px;
+    line-height: 1.9;
+  }
+  #panel .empty i { font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.5; }
+  #panel .name {
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+  }
+  #panel .name .tag {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 6px;
+  }
+  #panel .role {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 2px 0 8px 0;
+  }
+  #panel .country-badge {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 12px;
+    border-radius: 12px;
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    transition: background 0.3s;
+  }
+  #panel .story {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+    margin-top: 2px;
+    transition: border-color 0.3s;
+  }
+  #panel .story .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  #panel .relations {
+    margin-top: 12px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+    transition: border-color 0.3s;
+  }
+  #panel .relations .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+  }
+  #panel .relations .item {
+    font-size: 12px;
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+  }
+  #panel .relations .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ========== SVG 连线样式（使用 CSS 变量） ========== */
+  .link-line {
+    stroke: var(--link-line);
+    stroke-width: 1.5px;
+    opacity: 0.5;
+  }
+  .link-line.red {
+    stroke: var(--link-red);
+    stroke-width: 2.2px;
+    opacity: 0.75;
+  }
+  .link-line.pink {
+    stroke: var(--link-pink);
+    stroke-width: 1.8px;
+    opacity: 0.6;
+  }
+  .link-label-bg {
+    fill: var(--label-bg);
+    stroke: var(--border-light);
+    stroke-width: 0.5;
+    rx: 4;
+    transition: fill 0.3s, stroke 0.3s;
+  }
+  .link-label-text {
+    font-size: 10px;
+    fill: var(--text-secondary);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  /* ========== SVG 节点样式 ========== */
+  .node-group { cursor: pointer; }
+  .node-ring {
+    fill: none;
+    stroke-width: 3.5px;
+    opacity: var(--ring-opacity);
+    transition: opacity 0.3s, stroke-width 0.3s;
+  }
+  .node-circle {
+    stroke: var(--node-stroke);
+    stroke-width: 2px;
+    filter: drop-shadow(0 2px 8px var(--shadow));
+    transition: filter 0.3s, stroke 0.3s;
+  }
+  .node-letter {
+    font-size: 16px;
+    font-weight: 600;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    letter-spacing: 0.3px;
+  }
+  .node-name {
+    font-size: 12px;
+    font-weight: 500;
+    fill: var(--text-primary);
+    text-anchor: middle;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+    transition: fill 0.3s;
+  }
+  .node-name.main {
+    font-weight: 700;
+  }
+  .node-role {
+    font-size: 10px;
+    fill: var(--text-secondary);
+    text-anchor: middle;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+    transition: fill 0.3s;
+  }
+  .node-tag-bg {
+    rx: 10;
+    opacity: var(--tag-opacity);
+    transition: opacity 0.3s;
+  }
+  .node-tag-text {
+    font-size: 9px;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+  .node.selected .node-ring {
+    opacity: var(--ring-selected);
+    stroke-width: 5px;
+  }
+
+  /* ========== 重置按钮 ========== */
+  .reset-btn {
+    padding: 4px 12px;
+    border-radius: 18px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+  }
+  .reset-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+  }
+
+  /* ========== 响应式 ========== */
+  @media (max-width: 820px) {
+    #main { flex-direction: column; }
+    #panel {
+      width: 100%;
+      max-height: 38vh;
+      border-left: none;
+      border-top: 1px solid var(--border-light);
+    }
+    #header { padding: 10px 16px; }
+    #header .title { font-size: 17px; }
+    .country-tabs .btn { font-size: 11px; padding: 3px 11px; }
+  }
+  @media (max-width: 500px) {
+    #header .sub { display: none; }
+    #panel { padding: 16px; }
+  }
+</style>
+
+<script>
+  // ================================================================
+  //  读取 Butterfly 主题的夜间模式设置
+  // ================================================================
+  (function() {
+    try {
+      const raw = localStorage.getItem('theme');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.value === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else if (parsed && parsed.value === 'light') {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
+</head>
+<body>
+
+<div id="header">
+  <div>
+    <span class="title">千律州 · <span>人物关系星图</span></span>
+    <span class="sub">点击节点查看详情 · 拖拽调整布局</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <div class="country-tabs" id="countryTabs">
+      <button class="btn active" data-country="业焰之国">业焰</button>
+      <button class="btn" data-country="双冕北境">北境</button>
+      <button class="btn" data-country="时衍天宫">时衍</button>
+      <button class="btn" data-country="无垠根庭">根庭</button>
+      <button class="btn" data-country="归墟之庭">归墟</button>
+      <button class="btn" data-country="永昼净土">永昼</button>
+    </div>
+    <button class="reset-btn" onclick="resetZoom()">↺ 重置</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="graph-wrap">
+    <svg id="chart"></svg>
+  </div>
+  <div id="panel">
+    <div class="empty" id="emptyState">
+      <i>✦</i>
+      <p>点击星图中的人物<br>查看其身份与故事</p>
+    </div>
+    <div id="detail" style="display:none;">
+      <div class="name" id="dName"></div>
+      <div class="role" id="dRole"></div>
+      <div class="country-badge" id="dCountry"></div>
+      <div class="story">
+        <div class="label">背景</div>
+        <div id="dStory"></div>
+      </div>
+      <div class="relations">
+        <div class="label">关联</div>
+        <div id="dRels"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================================================================
+  //  配色方案（清新透气 · 保留神明特征）
+  // ================================================================
+  const COLORS = {
+    // 主角 —— 淡金色
+    huaiyu: '#cdb891',
+    duanshenquan: '#cdb891',
+
+    // 业焰之国
+    zhuyan: '#e0a098',        // 珊瑚粉（火神的红柔化）
+    ruiqiu: '#b89088',        // 玫瑰褐
+    emmett: '#d4b898',        // 浅橙
+    lina: '#d4b898',
+
+    // 双冕北境
+    yegor: '#8aaaa8',         // 薄荷灰
+    aliekexie: '#98aa8a',     // 灰绿
+    ningmiao: '#a8a0c0',      // 雾霾紫（冰雷的冷感）
+
+    // 时衍天宫
+    zuomingyi: '#d4b898',     // 淡杏色
+    shiyuan: '#c4a8c0',       // 淡藤紫（时间）
+    jiezhou: '#8eb8c4',       // 浅天蓝（空间）
+
+    // 旧神
+    fayidun: '#b0aaa8',       // 银灰
+    benzun: '#b0aaa8',
+
+    // 归墟之庭
+    chenge: '#6b7f8a',        // 深海蓝
+
+    // 无垠根庭
+    yaoying: '#8db28a',       // 鼠尾草绿
+
+    // 暗线
+    lizhao: '#c0b8b0',        // 浅灰
+
+    // NPC（大胆配色）
+    leike: '#e0b8b0',         // 淡粉
+    lika: '#b0c4c8',          // 淡蓝
+
+    // 默认
+    default: '#c4bdb5'
+  };
+
+  // ================================================================
+  //  数据：所有角色
+  // ================================================================
+  const ALL_NODES = [
+    // —— 业焰之国 ——
+    {
+      id: '怀榆',
+      name: '怀榆',
+      role: '玩家 · 昭临的容器',
+      tag: '主角',
+      color: COLORS.huaiyu,
+      country: '业焰之国',
+      isMain: true,
+      story: '尘歌用海水与创生权柄创造的生命体，唯一被亲手养大的"孩子"。以为自己在玩游戏，实则走在被预设的成神之路上。对段深泉的依赖，是虚假世界中唯一真实的情感。'
+    },
+    {
+      id: '段深泉',
+      name: '段深泉',
+      role: '命定之人 · 前业焰大神使',
+      tag: '主角',
+      color: COLORS.duanshenquan,
+      country: '业焰之国',
+      isMain: true,
+      story: '与怀榆同源，被尘歌创造后送往时衍天宫由双子神抚养。记忆被格式化的半神，力量会在怀榆遇险时被强制转移。沉默却温柔，用行动守护着怀榆。'
+    },
+    {
+      id: '尘歌',
+      name: '尘歌',
+      role: '海神 · 系统的真相',
+      tag: '归墟之庭',
+      color: COLORS.chenge,
+      country: '业焰之国',
+      story: '唯一幸存的原初精灵，也是怀榆眼中的"系统"。以创生、织忆、共鸣三权柄塑造第三纪元，试图复刻已逝的七神家庭。对怀榆投注了远超"容器"的父亲式溺爱。'
+    },
+    {
+      id: '黎昭',
+      name: '黎昭',
+      role: '烬影会首领 · 被遗弃的代行者',
+      tag: '暗线',
+      color: COLORS.lizhao,
+      country: '业焰之国',
+      story: '尘歌创造的怀榆复制体，完成业焰弑神任务后被抛弃。流亡北境建立烬影会，以走私维生。被阿列克谢标记后从隐性Omega转为显性，在躲避尘歌与守护手下之间挣扎。'
+    },
+    {
+      id: '祝焱',
+      name: '祝焱',
+      role: '业焰之火神 · 塞赫美特的替身',
+      tag: '业焰',
+      color: COLORS.zhuyan,
+      country: '业焰之国',
+      story: '原名莫妮卡，红发少女被尘歌选中，塞入旧神记忆成为火神。四百年孤独后精神分裂，最终在怀榆的净化中选择自我终结，将力量归还大地。'
+    },
+    {
+      id: '瑞秋',
+      name: '瑞秋·维里迪姆',
+      role: '业焰前大神使 · 维里迪姆遗孤',
+      tag: '业焰',
+      color: COLORS.ruiqiu,
+      country: '业焰之国',
+      story: '家族被代行者屠戮，自身被蚀光诅咒囚禁两年。伪装复仇后将怀榆推入火山，却在祝焱的记忆空间中见证真相。祝焱临终前抽离其污染，嘱托她接手业焰城。'
+    },
+    {
+      id: '埃米特',
+      name: '埃米特·维里克',
+      role: '维里迪姆遗孤',
+      tag: '业焰',
+      color: COLORS.emmett,
+      country: '业焰之国',
+      story: '维里迪姆家族旁支遗孤，与妹妹莉娜隐姓埋名。在熔火祝祭上因系统道具触发诅咒而惨死，成为怀榆被定罪的关键。'
+    },
+    {
+      id: '莉娜',
+      name: '莉娜·维里克',
+      role: '维里迪姆遗孤',
+      tag: '业焰',
+      color: COLORS.lina,
+      country: '业焰之国',
+      story: '埃米特的妹妹，与哥哥一同在熔火祝祭上因诅咒而惨死。她的死让怀榆背负了沉重的愧疚。'
+    },
+
+    // —— 双冕北境 ——
+    {
+      id: '怀榆北境',
+      name: '怀榆',
+      role: '玩家 · 昭临的容器',
+      tag: '主角',
+      color: COLORS.huaiyu,
+      country: '双冕北境',
+      isMain: true,
+      story: '尘歌用海水与创生权柄创造的生命体。在北境卷入了女皇改革与烬影会的漩涡。'
+    },
+    {
+      id: '段深泉北境',
+      name: '段深泉',
+      role: '命定之人 · 前业焰大神使',
+      tag: '主角',
+      color: COLORS.duanshenquan,
+      country: '双冕北境',
+      isMain: true,
+      story: '与怀榆同源，被尘歌创造后送往时衍天宫由双子神抚养。在北境始终守护在怀榆身边。'
+    },
+    {
+      id: '尘歌北境',
+      name: '尘歌',
+      role: '海神 · 系统的真相',
+      tag: '归墟之庭',
+      color: COLORS.chenge,
+      country: '双冕北境',
+      story: '唯一幸存的原初精灵，也是怀榆眼中的"系统"。在北境永叹岭附身怀榆与凝淼对峙。'
+    },
+    {
+      id: '黎昭北境',
+      name: '黎昭',
+      role: '烬影会首领 · 被遗弃的代行者',
+      tag: '北境',
+      color: COLORS.lizhao,
+      country: '双冕北境',
+      story: '尘歌创造的怀榆复制体。流亡北境建立烬影会。被阿列克谢标记后从隐性Omega转为显性。'
+    },
+    {
+      id: '叶戈尔',
+      name: '叶戈尔·米洛斯拉夫斯基',
+      role: '北境荣誉伯爵 · 北风公会副会长',
+      tag: '北境',
+      color: COLORS.yegor,
+      country: '双冕北境',
+      story: '精明的贵族继承人，在银雪厅舞会上对女装的怀榆一见钟情。以债务为名将怀榆与段深泉留在身边，表面主雇实则暗藏真心。临别时索要"被永远记得"的承诺。'
+    },
+    {
+      id: '阿列克谢',
+      name: '阿列克谢·沃尔科夫',
+      role: '巡林铁卫最高指挥官',
+      tag: '北境',
+      color: COLORS.aliekexie,
+      country: '双冕北境',
+      story: '北境最年轻的军方高层，外表粗犷实则直觉精准。与黎昭在猎人小屋因催情剂发生关系，意外激活其Omega体质。从此在职责与私欲之间反复拉扯。'
+    },
+    {
+      id: '凝淼',
+      name: '凝淼',
+      role: '双冕北境女皇 · 冰雷权柄',
+      tag: '北境',
+      color: COLORS.ningmiao,
+      country: '双冕北境',
+      story: '尘歌造神计划中罕见的"清醒者"，保留旧神艾尔薇拉的完整记忆。用五百年的时间布局，最终以自我毁灭的方式掀翻棋盘，为北境换取真正的自由。'
+    },
+    {
+      id: '雷科',
+      name: '雷科',
+      role: '烬影会成员 · 巡逻队长',
+      tag: '北境',
+      color: COLORS.leike,
+      country: '双冕北境',
+      story: '烬影会的元老级成员，对黎昭忠心耿耿。头脑简单但重情重义，是黎昭在北境最信任的下属之一。'
+    },
+    {
+      id: '莉卡',
+      name: '莉卡',
+      role: '烬影会成员 · 后勤',
+      tag: '北境',
+      color: COLORS.lika,
+      country: '双冕北境',
+      story: '烬影会中少有的Omega之一，负责后勤与情报整理。在黎昭发情期时曾协助照料，是组织内不可或缺的支柱。'
+    },
+
+    // —— 时衍天宫 ——
+    {
+      id: '怀榆时衍',
+      name: '怀榆',
+      role: '玩家 · 昭临的容器',
+      tag: '主角',
+      color: COLORS.huaiyu,
+      country: '时衍天宫',
+      isMain: true,
+      story: '尘歌用海水与创生权柄创造的生命体。在时衍天宫将揭开自己与段深泉身世的真相。'
+    },
+    {
+      id: '段深泉时衍',
+      name: '段深泉',
+      role: '命定之人 · 前业焰大神使',
+      tag: '主角',
+      color: COLORS.duanshenquan,
+      country: '时衍天宫',
+      isMain: true,
+      story: '与怀榆同源，幼年被送往时衍天宫由双子神抚养。时衍天宫是他身世之谜的核心之地。'
+    },
+    {
+      id: '尘歌时衍',
+      name: '尘歌',
+      role: '海神 · 系统的真相',
+      tag: '归墟之庭',
+      color: COLORS.chenge,
+      country: '时衍天宫',
+      story: '唯一幸存的原初精灵，也是怀榆眼中的"系统"。时衍天宫藏着他对法伊顿最深的追忆。'
+    },
+    {
+      id: '左明仪',
+      name: '左明仪',
+      role: '时衍天宫引路人',
+      tag: '时衍天宫',
+      color: COLORS.zuomingyi,
+      country: '时衍天宫',
+      story: '待补充。'
+    },
+    {
+      id: '时渊',
+      name: '时渊·顾怀渊',
+      role: '时间之神 · 存续权柄',
+      tag: '时衍天宫',
+      color: COLORS.shiyuan,
+      country: '时衍天宫',
+      story: '时衍天宫双子神之一，四御顾氏出身。与芥舟为双生兄弟，共同抚养了幼年的段深泉。也是《归墟志异》署名的著者。'
+    },
+    {
+      id: '芥舟',
+      name: '芥舟·顾行舟',
+      role: '空间之神 · 易形权柄',
+      tag: '时衍天宫',
+      color: COLORS.jiezhou,
+      country: '时衍天宫',
+      story: '时衍天宫双子神之一，与时渊为双生兄弟。与兄长共同执掌时空权柄，抚养段深泉长大。'
+    },
+    {
+      id: '法伊顿',
+      name: '法伊顿·伊柳西昂',
+      role: '二代光明神 · 光精灵',
+      tag: '旧神',
+      color: COLORS.fayidun,
+      country: '时衍天宫',
+      story: '第二纪元的光明之神，光精灵。与尘歌同为天地孕育的精灵一族。不顾神凡之别爱上段深泉（本尊），分其一半力量使其成为半神。怀榆是其替身。'
+    },
+    {
+      id: '本尊段深泉',
+      name: '本尊·段深泉',
+      role: '法伊顿的爱人 · 半神',
+      tag: '旧神',
+      color: COLORS.benzun,
+      country: '时衍天宫',
+      story: '第二纪元时衍天宫四御段家子弟，与法伊顿结为伴侣。接受法伊顿分出的半数力量成为半神。当代段深泉是其替身。'
+    },
+
+    // —— 无垠根庭 ——
+    {
+      id: '怀榆根庭',
+      name: '怀榆',
+      role: '玩家 · 昭临的容器',
+      tag: '主角',
+      color: COLORS.huaiyu,
+      country: '无垠根庭',
+      isMain: true,
+      story: '在无垠根庭将面对草木之神瑶英，以及这片被植物吞噬的国度。'
+    },
+    {
+      id: '段深泉根庭',
+      name: '段深泉',
+      role: '命定之人 · 前业焰大神使',
+      tag: '主角',
+      color: COLORS.duanshenquan,
+      country: '无垠根庭',
+      isMain: true,
+      story: '在无垠根庭继续守护怀榆，面对扭曲的生命与演化的权柄。'
+    },
+    {
+      id: '尘歌根庭',
+      name: '尘歌',
+      role: '海神 · 系统的真相',
+      tag: '归墟之庭',
+      color: COLORS.chenge,
+      country: '无垠根庭',
+      story: '草木之神瑶英亦为其造物。无垠根庭的演化权柄正在失控。'
+    },
+    {
+      id: '黎昭根庭',
+      name: '黎昭',
+      role: '烬影会首领 · 被遗弃的代行者',
+      tag: '暗线',
+      color: COLORS.lizhao,
+      country: '无垠根庭',
+      story: '跟随怀榆的脚步进入无垠根庭，与阿列克谢的关系将面临新的考验。'
+    },
+    {
+      id: '阿列克谢根庭',
+      name: '阿列克谢·沃尔科夫',
+      role: '巡林铁卫最高指挥官',
+      tag: '北境',
+      color: COLORS.aliekexie,
+      country: '无垠根庭',
+      story: '追随黎昭离开北境，在无垠根庭继续与黎昭纠缠。'
+    },
+    {
+      id: '瑶英',
+      name: '瑶英',
+      role: '草木之神 · 演化权柄',
+      tag: '无垠根庭',
+      color: COLORS.yaoying,
+      country: '无垠根庭',
+      story: '尘歌造神计划中的草木之神，执掌演化权柄。其国度被超自然植物吞噬，她在扭曲的生命实验中追求"完美生命"。'
+    },
+
+    // —— 归墟之庭 ——
+    {
+      id: '怀榆归墟',
+      name: '怀榆',
+      role: '玩家 · 昭临的容器',
+      tag: '主角',
+      color: COLORS.huaiyu,
+      country: '归墟之庭',
+      isMain: true,
+      story: '最终抵达归墟之庭，直面尘歌的真相与自己的身世。'
+    },
+    {
+      id: '段深泉归墟',
+      name: '段深泉',
+      role: '命定之人 · 前业焰大神使',
+      tag: '主角',
+      color: COLORS.duanshenquan,
+      country: '归墟之庭',
+      isMain: true,
+      story: '陪伴怀榆走到最后，在归墟之庭见证一切的终结。'
+    },
+    {
+      id: '尘歌归墟',
+      name: '尘歌',
+      role: '海神 · 系统的真相',
+      tag: '归墟之庭',
+      color: COLORS.chenge,
+      country: '归墟之庭',
+      story: '归墟之庭的最终存在，也是怀榆的创造者与父亲。他将在这里与怀榆进行最后的对峙。'
+    },
+
+    // —— 永昼净土 ——
+    {
+      id: '怀榆永昼',
+      name: '怀榆',
+      role: '昭临 · 光明神',
+      tag: '主角',
+      color: COLORS.huaiyu,
+      country: '永昼净土',
+      isMain: true,
+      story: '尘歌死后，怀榆继承全部权柄，成为新一代的"伪创世神"。在永昼净土面临是否继续造神的选择。'
+    },
+    {
+      id: '段深泉永昼',
+      name: '段深泉',
+      role: '命定之人 · 怀榆的爱人',
+      tag: '主角',
+      color: COLORS.duanshenquan,
+      country: '永昼净土',
+      isMain: true,
+      story: '尘歌死后，段深泉成为怀榆唯一不愿离开这个世界的理由。他将帮助怀榆找到自己的答案。'
+    },
+    {
+      id: '黎昭永昼',
+      name: '黎昭',
+      role: '复活者 · 和解的代行者',
+      tag: '暗线',
+      color: COLORS.lizhao,
+      country: '永昼净土',
+      story: '在永昼净土复活，与怀榆达成最终的和解。他的存在证明了尘歌的造物也能走出自己的路。'
+    },
+    {
+      id: '阿列克谢永昼',
+      name: '阿列克谢·沃尔科夫',
+      role: '黎昭的伴侣',
+      tag: '北境',
+      color: COLORS.aliekexie,
+      country: '永昼净土',
+      story: '在永昼净土与黎昭重逢，陪伴他走过最后的旅程。'
+    }
+  ];
+
+  // ================================================================
+  //  关系数据
+  // ================================================================
+  const ALL_LINKS = [
+    // 业焰之国
+    { source: '怀榆', target: '段深泉', relation: '命定·爱人', red: true },
+    { source: '怀榆', target: '尘歌', relation: '创造·注视', pink: true },
+    { source: '黎昭', target: '尘歌', relation: '抛弃·逃亡' },
+    { source: '怀榆', target: '黎昭', relation: '同源·镜像' },
+    { source: '怀榆', target: '瑞秋', relation: '旧友·仇·和解' },
+    { source: '怀榆', target: '祝焱', relation: '净化的对象' },
+    { source: '瑞秋', target: '祝焱', relation: '神使·信仰' },
+    { source: '祝焱', target: '尘歌', relation: '造物·被弃' },
+    { source: '怀榆', target: '埃米特', relation: '保护·悲剧' },
+    { source: '怀榆', target: '莉娜', relation: '保护·悲剧' },
+    { source: '黎昭', target: '瑞秋', relation: '代行·屠戮' },
+    { source: '黎昭', target: '祝焱', relation: '代行·封印' },
+
+    // 双冕北境
+    { source: '怀榆北境', target: '段深泉北境', relation: '命定·爱人', red: true },
+    { source: '怀榆北境', target: '尘歌北境', relation: '创造·注视', pink: true },
+    { source: '黎昭北境', target: '尘歌北境', relation: '抛弃·逃亡' },
+    { source: '怀榆北境', target: '黎昭北境', relation: '同源·镜像' },
+    { source: '阿列克谢', target: '黎昭北境', relation: '纠缠·标记', red: true },
+    { source: '怀榆北境', target: '叶戈尔', relation: '债·被记住' },
+    { source: '段深泉北境', target: '叶戈尔', relation: '情敌·对峙' },
+    { source: '黎昭北境', target: '凝淼', relation: '合作·秘密' },
+    { source: '凝淼', target: '尘歌北境', relation: '造物·反叛' },
+    { source: '黎昭北境', target: '雷科', relation: '首领·下属' },
+    { source: '黎昭北境', target: '莉卡', relation: '首领·下属' },
+
+    // 时衍天宫
+    { source: '怀榆时衍', target: '段深泉时衍', relation: '命定·爱人', red: true },
+    { source: '怀榆时衍', target: '尘歌时衍', relation: '创造·注视', pink: true },
+    { source: '段深泉时衍', target: '时渊', relation: '抚养·出身' },
+    { source: '段深泉时衍', target: '芥舟', relation: '抚养·出身' },
+    { source: '时渊', target: '芥舟', relation: '双生·共治' },
+    { source: '法伊顿', target: '尘歌时衍', relation: '同源·追忆' },
+    { source: '法伊顿', target: '本尊段深泉', relation: '爱人·伴侣', red: true },
+    { source: '法伊顿', target: '怀榆时衍', relation: '原型·替身' },
+    { source: '本尊段深泉', target: '段深泉时衍', relation: '原型·替身' },
+    { source: '左明仪', target: '段深泉时衍', relation: '朋友·引路人' },
+    { source: '左明仪', target: '怀榆时衍', relation: '朋友·引路人' },
+
+    // 无垠根庭
+    { source: '怀榆根庭', target: '段深泉根庭', relation: '命定·爱人', red: true },
+    { source: '怀榆根庭', target: '尘歌根庭', relation: '创造·注视', pink: true },
+    { source: '黎昭根庭', target: '尘歌根庭', relation: '抛弃·逃亡' },
+    { source: '黎昭根庭', target: '阿列克谢根庭', relation: '纠缠·标记', red: true },
+    { source: '瑶英', target: '尘歌根庭', relation: '造物·被弃' },
+
+    // 归墟之庭
+    { source: '怀榆归墟', target: '段深泉归墟', relation: '命定·爱人', red: true },
+    { source: '怀榆归墟', target: '尘歌归墟', relation: '创造·对决' },
+    { source: '段深泉归墟', target: '尘歌归墟', relation: '造物·对抗' },
+
+    // 永昼净土
+    { source: '怀榆永昼', target: '段深泉永昼', relation: '命定·爱人', red: true },
+    { source: '怀榆永昼', target: '黎昭永昼', relation: '同源·和解' },
+    { source: '黎昭永昼', target: '阿列克谢永昼', relation: '纠缠·伴侣', red: true }
+  ];
+
+  // ================================================================
+  //  D3 力导向图引擎
+  // ================================================================
+  let currentCountry = '业焰之国';
+  let nodes = [];
+  let links = [];
+  let selectedNode = null;
+
+  const container = document.getElementById('graph-wrap');
+  const svg = d3.select('#chart');
+  let width = container.clientWidth;
+  let height = container.clientHeight || 600;
+
+  svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+
+  const g = svg.append('g');
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 3.5])
+    .on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoom).on('dblclick.zoom', null);
+
+  const simulation = d3.forceSimulation()
+    .force('link', d3.forceLink().id(d => d.id).distance(150))
+    .force('charge', d3.forceManyBody().strength(-600))
+    .force('center', d3.forceCenter(0, 0))
+    .force('collide', d3.forceCollide().radius(42))
+    .velocityDecay(0.35);
+
+  let linkGroup = g.append('g').attr('class', 'links');
+  let nodeGroup = g.append('g').attr('class', 'nodes');
+
+  // ================================================================
+  //  过滤 & 渲染
+  // ================================================================
+  function filterData(country) {
+    const oldPos = {};
+    nodes.forEach(n => { if (n.x !== undefined) oldPos[n.id] = { x: n.x, y: n.y }; });
+
+    const filtered = ALL_NODES.filter(n => n.country === country);
+    filtered.forEach(n => {
+      if (oldPos[n.id]) {
+        n.x = oldPos[n.id].x;
+        n.y = oldPos[n.id].y;
+      } else {
+        const angle = Math.random() * 2 * Math.PI;
+        const r = 50 + Math.random() * 90;
+        n.x = Math.cos(angle) * r;
+        n.y = Math.sin(angle) * r;
+      }
+      n.fx = null;
+      n.fy = null;
+    });
+
+    const ids = new Set(filtered.map(n => n.id));
+    const flinks = ALL_LINKS
+      .filter(l => ids.has(l.source) && ids.has(l.target))
+      .map(l => ({
+        source: filtered.find(n => n.id === l.source),
+        target: filtered.find(n => n.id === l.target),
+        relation: l.relation,
+        red: l.red || false,
+        pink: l.pink || false
+      }));
+
+    return { nodes: filtered, links: flinks };
+  }
+
+  function render(country) {
+    const data = filterData(country);
+    nodes = data.nodes;
+    links = data.links;
+
+    if (selectedNode && !nodes.find(n => n.id === selectedNode.id)) {
+      selectedNode = null;
+      showEmpty();
+      d3.selectAll('.node-group').classed('selected', false);
+    }
+
+    // —— 连线 ——
+    const linkSel = linkGroup.selectAll('.link-item')
+      .data(links, d => d.source.id + '-' + d.target.id);
+    linkSel.exit().transition().duration(250).style('opacity', 0).remove();
+
+    const linkEnter = linkSel.enter().append('g')
+      .attr('class', 'link-item')
+      .style('opacity', 0);
+    linkEnter.transition().duration(300).style('opacity', 1);
+
+    linkEnter.append('line')
+      .attr('class', 'link-line')
+      .attr('stroke', d => d.red ? 'var(--link-red)' : (d.pink ? 'var(--link-pink)' : 'var(--link-line)'))
+      .attr('stroke-dasharray', d => (d.red || d.pink) ? '' : '4,4')
+      .attr('stroke-width', d => d.red ? 2.2 : (d.pink ? 1.8 : 1.5));
+
+    linkEnter.append('rect')
+      .attr('class', 'link-label-bg')
+      .attr('width', 60).attr('height', 18).attr('x', -30).attr('y', -9);
+
+    linkEnter.append('text')
+      .attr('class', 'link-label-text')
+      .attr('dy', 1);
+
+    // —— 节点 ——
+    const nodeSel = nodeGroup.selectAll('.node-group')
+      .data(nodes, d => d.id);
+    nodeSel.exit().transition().duration(250).style('opacity', 0).remove();
+
+    const nodeEnter = nodeSel.enter().append('g')
+      .attr('class', 'node-group')
+      .style('opacity', 0)
+      .call(d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended))
+      .on('click', (e, d) => { e.stopPropagation(); selectNode(d); });
+
+    nodeEnter.transition().duration(350).style('opacity', 1);
+
+    nodeEnter.append('circle').attr('class', 'node-ring').attr('r', 38);
+    nodeEnter.append('circle').attr('class', 'node-circle').attr('r', 28);
+    nodeEnter.append('text').attr('class', 'node-letter').attr('dy', 1)
+      .text(d => d.name ? d.name.charAt(0) : '?');
+
+    const tagW = 44;
+    nodeEnter.append('rect')
+      .attr('class', 'node-tag-bg')
+      .attr('y', -46).attr('height', 16).attr('width', tagW).attr('x', -tagW / 2);
+    nodeEnter.append('text').attr('class', 'node-tag-text').attr('y', -38);
+
+    nodeEnter.append('text')
+      .attr('class', 'node-name')
+      .attr('y', 44)
+      .text(d => d.name);
+
+    nodeEnter.append('text')
+      .attr('class', 'node-role')
+      .attr('y', 58);
+
+    svg.on('click', () => {
+      selectedNode = null;
+      showEmpty();
+      d3.selectAll('.node-group').classed('selected', false);
+    });
+
+    refreshVisuals();
+
+    nodes.forEach(d => { d.fx = null; d.fy = null; });
+    simulation.nodes(nodes);
+    simulation.force('link').links(links);
+    simulation.alpha(1).restart();
+  }
+
+  function refreshVisuals() {
+    const all = nodeGroup.selectAll('.node-group');
+
+    all.select('.node-ring')
+      .attr('stroke', d => d.color || '#c4bdb5');
+
+    all.select('.node-circle')
+      .attr('fill', d => d.color || '#c4bdb5');
+
+    all.select('.node-letter')
+      .text(d => d.name ? d.name.charAt(0) : '?');
+
+    all.select('.node-tag-bg')
+      .attr('fill', d => d.color || '#c4bdb5')
+      .attr('width', d => Math.max(34, ((d.tag || '角色').length * 10 + 12)))
+      .attr('x', d => -Math.max(34, ((d.tag || '角色').length * 10 + 12)) / 2);
+
+    all.select('.node-tag-text')
+      .text(d => d.tag || '角色');
+
+    all.select('.node-name')
+      .text(d => d.name)
+      .attr('class', d => d.isMain ? 'node-name main' : 'node-name');
+
+    all.select('.node-role')
+      .text(d => (d.role || '').length > 16 ? d.role.slice(0, 14) + '…' : (d.role || ''));
+  }
+
+  // ================================================================
+  //  物理 tick
+  // ================================================================
+  simulation.on('tick', () => {
+    linkGroup.selectAll('.link-item').each(function(d) {
+      const line = d3.select(this).select('line');
+      const rect = d3.select(this).select('rect');
+      const text = d3.select(this).select('text');
+      const x1 = d.source.x, y1 = d.source.y;
+      const x2 = d.target.x, y2 = d.target.y;
+      line.attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2);
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const txt = d.relation || '关系';
+      const tw = Math.max(40, txt.length * 11 + 14);
+      rect.attr('x', mx - tw / 2).attr('y', my - 9).attr('width', tw);
+      text.attr('x', mx).attr('y', my).text(txt);
+    });
+    nodeGroup.selectAll('.node-group')
+      .attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  // ================================================================
+  //  拖拽
+  // ================================================================
+  function dragstarted(e, d) {
+    if (!e.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x; d.fy = d.y;
+  }
+  function dragged(e, d) {
+    d.fx = e.x; d.fy = e.y;
+  }
+  function dragended(e, d) {
+    if (!e.active) simulation.alphaTarget(0);
+    d.fx = d.x; d.fy = d.y;
+  }
+
+  // ================================================================
+  //  交互
+  // ================================================================
+  function switchCountry(country) {
+    currentCountry = country;
+    document.querySelectorAll('#countryTabs .btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.country === country);
+    });
+    render(country);
+  }
+
+  document.querySelectorAll('#countryTabs .btn').forEach(btn => {
+    btn.addEventListener('click', () => switchCountry(btn.dataset.country));
+  });
+
+  function selectNode(d) {
+    selectedNode = d;
+    d3.selectAll('.node-group').classed('selected', false);
+    d3.selectAll('.node-group').filter(n => n === d).classed('selected', true);
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('detail').style.display = 'block';
+
+    document.getElementById('dName').textContent = d.name;
+    document.getElementById('dRole').textContent = d.role || '身份未明';
+    document.getElementById('dCountry').textContent = '📍 ' + (d.country || '未知');
+
+    document.getElementById('dStory').textContent = d.story || '暂无背景记载。';
+
+    const rels = ALL_LINKS.filter(l => l.source === d.id || l.target === d.id);
+    const rc = document.getElementById('dRels');
+    if (rels.length === 0) {
+      rc.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">暂无关联</div>';
+    } else {
+      rc.innerHTML = rels.map(l => {
+        const other = l.source === d.id ? l.target : l.source;
+        const node = ALL_NODES.find(n => n.id === other);
+        const color = node ? node.color : '#c4bdb5';
+        return `<div class="item"><span class="dot" style="background:${color};"></span> ${other} · ${l.relation}</div>`;
+      }).join('');
+    }
+  }
+
+  function showEmpty() {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('detail').style.display = 'none';
+  }
+
+  function resetZoom() {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  }
+  window.resetZoom = resetZoom;
+
+  // ================================================================
+  //  响应式
+  // ================================================================
+  function resize() {
+    width = container.clientWidth;
+    height = container.clientHeight || 600;
+    svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+    simulation.force('center', d3.forceCenter(0, 0));
+    simulation.alpha(0.3).restart();
+  }
+  window.addEventListener('resize', resize);
+  new ResizeObserver(resize).observe(container);
+
+  // ================================================================
+  //  启动
+  // ================================================================
+  render('业焰之国');
+
+  setTimeout(() => {
+    const node = ALL_NODES.find(n => n.id === '怀榆');
+    if (node) selectNode(node);
+  }, 500);
+
+  console.log('🌿 千律州人物星图 · 兼容夜间模式');
+</script>
+</body>
+</html>
