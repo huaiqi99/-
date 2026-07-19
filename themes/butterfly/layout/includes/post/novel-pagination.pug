@@ -1,59 +1,47 @@
-// 小说章节专用上一章/下一章导航（按同一本书分类隔离）
-
-// 获取当前文章的分类名称
--var currentCategoryName = ''
+// 获取当前分类名
+- var catName = ''
 if page.categories && page.categories.length > 0
-  - currentCategoryName = (page.categories[0] && typeof page.categories[0] === 'object' && page.categories[0].name) ? page.categories[0].name : ''
+  - var c = page.categories[0]
+  - catName = (c && c.name) ? c.name : (typeof c === 'string' ? c : '')
 
-// 筛选同一分类下的文章，并按日期排序
--var categoryPosts = []
-if currentCategoryName
-  - site.posts.forEach(function(post) {
-  -   if (post.categories && post.categories.length > 0) {
-  -     post.categories.forEach(function(cat) {
-  -       if ((cat.name || cat) === currentCategoryName) {
-  -         categoryPosts.push(post);
-  -       }
-  -     });
-  -   }
-  - });
+// 收集同分类文章，按日期正序排列
+- var posts = []
+if catName
+  each p in site.posts.sort('date', 1).toArray()
+    if p.categories && p.categories.length > 0
+      each c2 in p.categories.toArray()
+        if c2.name === catName
+          - posts.push(p)
 
-// 按日期升序排列
-- categoryPosts.sort(function(a, b) { return a.date - b.date; });
+// 找当前文章在分类中的位置
+- var idx = -1
+each p, i in posts
+  if p.path === page.path
+    - idx = i
 
-// 找到当前文章在分类列表中的索引
--var currentIndex = -1;
--for (var i = 0; i < categoryPosts.length; i++)
-  - if (categoryPosts[i]._id === page._id)
-    - currentIndex = i;
-    - break;
+// 上一章 / 下一章
+- var prev = idx > 0 ? posts[idx-1] : null
+- var next = idx >= 0 && idx < posts.length-1 ? posts[idx+1] : null
 
-// 获取同分类的上一篇和下一篇
--var novelPrev = currentIndex > 0 ? categoryPosts[currentIndex - 1] : null;
--var novelNext = currentIndex < categoryPosts.length - 1 && currentIndex !== -1 ? categoryPosts[currentIndex + 1] : null;
-
-if novelPrev || novelNext
-  nav.novel-chapter-nav
-    .novel-nav-title 章节导航
-    .novel-nav-buttons
-      if novelPrev
-        a.novel-nav-btn.novel-nav-prev(href=url_for(novelPrev.path))
-          .novel-nav-info
-            .novel-nav-label 上一章
-            .novel-nav-chapter= novelPrev.title
-      else
-        .novel-nav-btn.novel-nav-disabled
-          .novel-nav-info
-            .novel-nav-label 上一章
-            .novel-nav-chapter 没有了
-      
-      if novelNext
-        a.novel-nav-btn.novel-nav-next(href=url_for(novelNext.path))
-          .novel-nav-info
-            .novel-nav-label 下一章
-            .novel-nav-chapter= novelNext.title
-      else
-        .novel-nav-btn.novel-nav-disabled
-          .novel-nav-info
-            .novel-nav-label 下一章
-            .novel-nav-chapter 没有了
+if prev || next
+  .novel-pagination(style="display:flex;justify-content:space-between;align-items:center;margin:30px 0;padding:16px;background:var(--card-bg);border-radius:10px;border:1px solid var(--card-border);")
+    if prev
+      a(href=url_for(prev.path),style="text-decoration:none;color:var(--font-color);")
+        div(style="font-size:12px;opacity:.6;") ← 上一章
+        div(style="font-weight:bold;")= prev.title
+    else
+      div(style="opacity:.4;")
+        div(style="font-size:12px;") ← 上一章
+        div 没有了
+    
+    if page.categories && page.categories.data && page.categories.data[0]
+      a(href=url_for('/'+page.categories.data[0].path),style="text-decoration:none;background:#c44536;color:#fff;padding:6px 16px;border-radius:16px;font-size:13px;") 目录
+    
+    if next
+      a(href=url_for(next.path),style="text-decoration:none;color:var(--font-color);text-align:right;")
+        div(style="font-size:12px;opacity:.6;") 下一章 →
+        div(style="font-weight:bold;")= next.title
+    else
+      div(style="opacity:.4;text-align:right;")
+        div(style="font-size:12px;") 下一章 →
+        div 没有了
