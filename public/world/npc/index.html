@@ -1,376 +1,812 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><link rel="stylesheet" href="/-/css/custom-dark.css">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>这破游戏NPC太能打了 - 世界观 - 墨境</title>
+  <title>这破游戏NPC太能打了 · 世界观</title>
   <link rel="stylesheet" href="/-/css/index.css">
-  <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
+
   <style>
-    /* 隐藏侧边栏 */
-    #aside-content { display: none !important; }
-    .layout { display: block !important; }
-    #content-inner { max-width: 100% !important; }
-    #page { width: 100% !important; margin: 0 !important; }
-    
-    .world-page-container { max-width: 900px; margin: 0 auto; padding: 20px; }
-    @media (max-width: 768px) { .world-page-container { padding: 6px; } }
-    .world-back { display: inline-block; margin-bottom: 15px; color: #c44536; text-decoration: none; font-size: 0.9em; }
-    .world-back:hover { text-decoration: underline; }
-    .world-detail-header { text-align: center; padding: 20px; margin-bottom: 20px; }
-    .world-detail-header h1 { font-size: 1.8em; color: var(--font-color); margin-bottom: 8px; }
-    .world-subtitle { font-size: 0.95em; color: var(--font-color); opacity: 0.6; }
-    .world-section { margin-bottom: 30px; }
-    .world-section h2 { font-size: 1.5em; color: var(--font-color); margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #c44536; }
-    .world-section > p { font-size: 0.9em; line-height: 1.8; color: var(--font-color); opacity: 0.85; margin-bottom: 12px; }
-    .world-triad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
-    @media (max-width: 768px) { .world-triad { grid-template-columns: 1fr; } }
-    .world-triad-item { padding: 15px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--card-border); }
-    .world-triad-item h3 { font-size: 1.1em; color: #c44536; margin-bottom: 8px; text-align: center; }
-    .world-triad-item p { font-size: 0.85em; line-height: 1.6; color: var(--font-color); opacity: 0.8; }
-    details { margin-bottom: 10px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--card-border); overflow: hidden; }
-    summary { padding: 14px 18px; font-size: 1.05em; font-weight: bold; color: var(--font-color); cursor: pointer; list-style: none; position: relative; padding-left: 42px; }
-    @media (max-width: 768px) {
-      summary { padding: 10px 12px; font-size: 1em; padding-left: 32px; }
-      summary::before { left: 12px; }
+    /* ============================================================
+       1. CSS 变量（兼容夜间模式）
+    ============================================================ */
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f9f7f5;
+      --text: #2c2c2c;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --border: #eae5e0;
+      --accent: #b03a2a;
+      --accent-soft: rgba(176, 58, 42, 0.06);
+      --shadow: rgba(0,0,0,0.04);
     }
-    summary::before { content: '▶'; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 0.7em; color: #c44536; transition: transform 0.3s; }
-    summary:hover { background: rgba(196, 69, 54, 0.05); }
-    details[open] summary { border-bottom: 1px solid var(--card-border); }
-    details[open] summary::before { transform: translateY(-50%) rotate(90deg); }
-    .accordion-content { padding: 18px; }
-    .accordion-content h4 { font-size: 1em; color: #c44536; margin: 15px 0 6px; }
+
+    [data-theme="dark"] {
+      --bg: #181614;
+      --bg-soft: #1e1b18;
+      --text: #cfc8c0;
+      --text-secondary: #8a847c;
+      --text-muted: #5a5550;
+      --border: #35302a;
+      --accent: #b05a4a;
+      --accent-soft: rgba(176, 90, 74, 0.08);
+      --shadow: rgba(0,0,0,0.3);
+    }
+
+    /* ============================================================
+       2. 全局
+    ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      transition: background 0.3s, color 0.3s;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* ============================================================
+       3. 阅读进度条
+    ============================================================ */
+    #reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--accent);
+      z-index: 9999;
+      transition: width 0.08s ease;
+      box-shadow: 0 0 16px rgba(176, 58, 42, 0.2);
+    }
+
+    /* ============================================================
+       4. 顶部导航 —— 极简，只保留首页
+    ============================================================ */
+    #page-header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    #nav {
+      max-width: 1000px;
+      margin: 0 auto;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #nav .nav-title {
+      font-size: 1em;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+    }
+    #nav .nav-title span { color: var(--accent); font-weight: 600; }
+    #nav .nav-home {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85em;
+      transition: color 0.2s;
+      padding: 4px 10px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+    #nav .nav-home:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    #page-site-info {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 0 20px 0;
+      text-align: center;
+    }
+    #page-site-info h1 {
+      font-size: 1.9em;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 1px;
+    }
+    #page-site-info p {
+      font-size: 0.95em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ============================================================
+       5. 内容区 —— 大量留白，无卡片
+    ============================================================ */
+    #content-outer {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 28px 50px 28px;
+    }
+
+    .world-back {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9em;
+      transition: color 0.2s;
+      padding: 4px 0;
+      border-bottom: 1px solid transparent;
+    }
+    .world-back:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ============================================================
+       6. 章节 —— 无卡片，只用分割线 + 左侧红条
+    ============================================================ */
+    .world-section {
+      margin-bottom: 40px;
+    }
+
+    .world-section > h2 {
+      font-size: 1.45em;
+      font-weight: 600;
+      color: var(--text);
+      padding: 12px 0 10px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+      position: relative;
+      padding-left: 16px;
+      transition: border-color 0.3s;
+    }
+    .world-section > h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 10px;
+      width: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: height 0.6s ease, top 0.6s ease;
+    }
+
+    /* ============================================================
+       7. 折叠面板 —— 无卡片
+    ============================================================ */
+    details {
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    details:last-child { border-bottom: none; }
+
+    summary {
+      padding: 16px 18px 16px 44px;
+      font-size: 1em;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      list-style: none;
+      position: relative;
+      user-select: none;
+      transition: background 0.2s;
+      border-radius: 4px;
+    }
+    summary:hover {
+      background: var(--accent-soft);
+    }
+    summary::before {
+      content: '▸';
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9em;
+      color: var(--accent);
+      transition: transform 0.35s ease;
+    }
+
+    details[open] summary {
+      border-bottom: 1px solid var(--border);
+    }
+    details[open] summary::before {
+      transform: translateY(-50%) rotate(90deg);
+    }
+
+    .accordion-content {
+      padding: 0 18px 18px 18px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.3s ease;
+    }
+    details[open] .accordion-content {
+      max-height: 6000px;
+      opacity: 1;
+      padding: 6px 18px 18px 18px;
+    }
+
+    .accordion-content p {
+      font-size: 0.92em;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+    .accordion-content p:last-child { margin-bottom: 0; }
+
+    .accordion-content h4 {
+      font-size: 0.95em;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 18px 0 4px 0;
+    }
     .accordion-content h4:first-child { margin-top: 0; }
-    .accordion-content p { font-size: 0.88em; line-height: 1.8; color: var(--font-color); opacity: 0.85; margin-bottom: 10px; }
-    .accordion-content ul { padding-left: 18px; margin: 10px 0; }
-    .accordion-content li { font-size: 0.88em; line-height: 1.8; color: var(--font-color); opacity: 0.85; margin-bottom: 4px; }
-    @media (max-width: 768px) {
-      .accordion-content { padding: 6px; }
-      .accordion-content h4 { font-size: 0.96em; margin: 8px 0 3px; }
-      .accordion-content p { font-size: 0.9em; line-height: 1.65; margin-bottom: 5px; }
-      .accordion-content ul { padding-left: 6px; }
-      .accordion-content li { font-size: 0.9em; line-height: 1.65; }
-      .accordion-content blockquote { padding: 5px 8px; margin: 8px 0; }
-      .world-table { font-size: 0.8em; }
-      .world-table th, .world-table td { padding: 6px 4px; }
+
+    .accordion-content ul {
+      padding-left: 22px;
+      margin: 6px 0 12px 0;
     }
-    .accordion-content blockquote { border-left: 3px solid #c44536; padding: 10px 15px; margin: 15px 0; background: rgba(196, 69, 54, 0.05); border-radius: 0 8px 8px 0; font-style: italic; color: var(--font-color); opacity: 0.8; }
-    .character-item { padding: 12px; background: rgba(196, 69, 54, 0.03); border-radius: 8px; border-left: 3px solid #c44536; margin-bottom: 10px; }
-    .character-item h4 { font-size: 0.95em; color: #c44536; margin-bottom: 4px; margin-top: 0; }
-    .character-item p { font-size: 0.85em; line-height: 1.7; color: var(--font-color); opacity: 0.8; margin: 0; }
-    @media (max-width: 768px) {
-      .character-item { padding: 5px 6px; border-left-width: 2px; margin-bottom: 5px; }
-      .character-item h4 { font-size: 0.92em; margin-bottom: 2px; }
-      .character-item p { font-size: 0.88em; line-height: 1.6; }
+    .accordion-content li {
+      font-size: 0.9em;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
     }
-    .world-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.85em; }
-    .world-table th, .world-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--card-border); }
-    .world-table th { background: rgba(196, 69, 54, 0.08); color: #c44536; font-weight: bold; }
-    .world-table td { color: var(--font-color); opacity: 0.85; }
+
+    /* 斜体块引用 —— 去红色背景，缩小字号 */
+    .accordion-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 6px 16px;
+      margin: 10px 0 14px 0;
+      font-style: italic;
+      font-size: 0.92em;
+      color: var(--text-secondary);
+      background: transparent;
+      border-radius: 0;
+    }
+
+    /* ============================================================
+       8. 表格
+    ============================================================ */
+    .world-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px 0;
+      font-size: 0.85em;
+    }
+    .world-table th,
+    .world-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .world-table th {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .world-table td strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       9. 角色条目 —— 纯白，不加背景
+    ============================================================ */
+    .character-item {
+      padding: 10px 0 10px 14px;
+      border-left: 3px solid var(--border);
+      margin-bottom: 10px;
+      transition: border-color 0.3s;
+    }
+    .character-item:hover {
+      border-left-color: var(--accent);
+    }
+    .character-item h4 {
+      font-size: 0.95em;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    .character-item p {
+      font-size: 0.88em;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* ============================================================
+       10. 底部
+    ============================================================ */
+    #footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      text-align: center;
+      font-size: 0.8em;
+      color: var(--text-muted);
+      background: var(--bg);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    #footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    #footer a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       11. 悬浮控件 —— 移到右上角，不挡视线
+    ============================================================ */
+    .world-font-control {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      z-index: 99;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .world-font-control button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .world-font-control button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .world-font-control #fontSizeLabel {
+      font-size: 0.7em;
+      color: var(--text-muted);
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* ============================================================
+       12. 字号控制
+    ============================================================ */
+    body.font-size-small .accordion-content p,
+    body.font-size-small .accordion-content li,
+    body.font-size-small .character-item p,
+    body.font-size-small .accordion-content blockquote {
+      font-size: 0.82em !important;
+    }
+    body.font-size-large .accordion-content p,
+    body.font-size-large .accordion-content li,
+    body.font-size-large .character-item p,
+    body.font-size-large .accordion-content blockquote {
+      font-size: 1.05em !important;
+    }
+    body.font-size-large .world-section > h2 {
+      font-size: 1.6em !important;
+    }
+    body.font-size-large summary {
+      font-size: 1.05em !important;
+    }
+
+    /* ============================================================
+       13. 手机端 —— 加大留白
+    ============================================================ */
+    @media (max-width: 768px) {
+      #page-header { padding: 0 14px; }
+      #content-outer { padding: 0 20px 32px 20px; }
+      #page-site-info { padding: 22px 0 14px 0; }
+      #page-site-info h1 { font-size: 1.4em; }
+
+      .world-section > h2 {
+        font-size: 1.15em;
+        padding: 10px 0 8px 0;
+        padding-left: 12px;
+      }
+      .world-section > h2::before {
+        top: 10px;
+        bottom: 8px;
+      }
+
+      summary {
+        font-size: 0.92em;
+        padding: 12px 14px 12px 38px;
+      }
+      summary::before { left: 12px; font-size: 0.85em; }
+
+      .accordion-content {
+        padding: 0 12px 12px 12px;
+      }
+      details[open] .accordion-content {
+        padding: 4px 12px 12px 12px;
+      }
+      .accordion-content p,
+      .accordion-content li,
+      .accordion-content blockquote {
+        font-size: 0.88em;
+        line-height: 1.7;
+      }
+      .accordion-content h4 { font-size: 0.92em; }
+      .accordion-content blockquote {
+        padding: 4px 12px;
+        margin: 6px 0 10px 0;
+        font-size: 0.88em;
+      }
+
+      .world-table {
+        font-size: 0.75em;
+      }
+      .world-table th,
+      .world-table td {
+        padding: 6px 6px;
+      }
+
+      .character-item {
+        padding: 8px 0 8px 10px;
+        margin-bottom: 6px;
+      }
+      .character-item h4 { font-size: 0.9em; }
+      .character-item p { font-size: 0.85em; }
+
+      .world-font-control {
+        top: 56px;
+        right: 12px;
+        padding: 2px 6px;
+      }
+      .world-font-control button {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #content-outer { padding: 0 14px 24px 14px; }
+      .world-section > h2 { font-size: 1em; }
+      summary { font-size: 0.85em; padding: 10px 12px 10px 34px; }
+      summary::before { left: 10px; }
+      .accordion-content p,
+      .accordion-content li,
+      .accordion-content blockquote { font-size: 0.82em; }
+      .world-table { font-size: 0.7em; }
+      .world-table th,
+      .world-table td { padding: 4px 4px; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- ====== 阅读进度条 ====== -->
+  <div id="reading-progress"></div>
+
+  <!-- ====== 顶部导航 ====== -->
   <div id="page-header" class="not-home-page">
     <nav id="nav">
-      <span class="nav-title">墨境</span>
-      <div class="menus">
-        <a class="site-page" href="/-/">首页</a>
-        <a class="site-page" href="/-/world/">世界观</a>
-        <a class="site-page" href="/-/about/">关于</a>
-      </div>
+      <span class="nav-title">墨境 · <span>千律州</span></span>
+      <a class="nav-home" href="/-/">首页</a>
     </nav>
-    <div id="page-site-info"><h1 id="site-title">这破游戏NPC太能打了</h1></div>
+    <div id="page-site-info">
+      <h1>这破游戏NPC太能打了</h1>
+      <p>千律州——一个被神明操控的"游戏"世界</p>
+    </div>
   </div>
 
+  <!-- ====== 主内容 ====== -->
   <div id="content-outer">
-    <main class="layout" id="content-inner">
-      <div id="page">
-        <div class="world-page-container">
 
-          <a href="../" class="world-back">← 返回设定集首页</a>
+    <a href="../" class="world-back">← 返回设定集首页</a>
 
-          <div class="world-detail-header">
-            <h1>这破游戏NPC太能打了</h1>
-            <p class="world-subtitle">千律州——一个被神明操控的"游戏"世界</p>
-          </div>
+    <!-- 一、核心世界观 -->
+    <div class="world-section">
+      <h2>一、千律州</h2>
 
-          <!-- 一、核心世界观 -->
-          <div class="world-section">
-            <h2>一、千律州</h2>
+      <details>
+        <summary>时代划分</summary>
+        <div class="accordion-content">
+          <h4>第一纪元（原初纪元）</h4>
+          <p>天地初开，诞生了三位原初精灵：海洋（尘歌）、天空、陆地。三位同阶，共存万年以上。</p>
 
-            <details>
-              <summary>时代划分</summary>
-              <div class="accordion-content">
-                <div class="world-epoch">
-                  <h4>第一纪元（原初纪元）</h4>
-                  <p>天地初开，诞生了三位原初精灵：海洋（尘歌）、天空、陆地。三位同阶，共存万年以上。</p>
-                </div>
-                <div class="world-epoch">
-                  <h4>第二纪元（七神纪元）</h4>
-                  <p>天空与陆地精灵在天地自然磨损中陨落，其权柄分裂为六份（时间、空间、光明、火焰、草木、冰雷），与尘歌共同构成七神之座。这是一个以"神祇通天塔"为名的实力排名体系，修炼方法向所有人公开。但随着修炼者疯狂汲取天地能量，墟元力被大量消耗，其一体两面的蚀光开始泛滥。最终<strong>天地反扑</strong>，神明力量被剥夺，秩序崩塌，大战爆发，导致大寂灭。</p>
-                </div>
-                <div class="world-epoch">
-                  <h4>第三纪元（伪神纪元/当前时代）</h4>
-                  <p>大寂灭后，尘歌沉睡又醒来，发现人类的历史与记忆已在混乱中碎片化。他主动出手，<strong>彻底掩盖了大寂灭的真实历史</strong>，并封锁了当年公开的墟元力修炼方法。第三纪元的凡人几乎无法通过自学掌握墟元力。能使用墟元力的，只有以下三类：</p>
-                  <ul>
-                    <li><strong>天赋异禀者</strong>（如叶戈尔、阿列克谢、瑞秋）：极少数天生具备亲和力的幸运儿。</li>
-                    <li><strong>非人存在</strong>（如精灵、鬼魂、妖怪）：本身与墟元力同源。</li>
-                    <li><strong>尘歌的造物</strong>（如怀榆、段深泉、黎昭、各大伪神）：由尘歌直接注入力量，按他的剧本扮演角色。</li>
-                  </ul>
-                  <p>尘歌以这套体制重新构建了世界秩序：他利用旧神的权柄碎片，为每一位当代神明植入记忆与使命，让他们扮演旧神的角色，维系一个"伪·通天塔"的局面，防止人类再次因贪欲走向自我毁灭。</p>
-                </div>
-              </div>
-            </details>
+          <h4>第二纪元（七神纪元）</h4>
+          <p>天空与陆地精灵在天地自然磨损中陨落，其权柄分裂为六份（时间、空间、光明、火焰、草木、冰雷），与尘歌共同构成七神之座。这是一个以"神祇通天塔"为名的实力排名体系，修炼方法向所有人公开。但随着修炼者疯狂汲取天地能量，墟元力被大量消耗，其一体两面的蚀光开始泛滥。最终<strong>天地反扑</strong>，神明力量被剥夺，秩序崩塌，大战爆发，导致大寂灭。</p>
 
-            <details>
-              <summary>能量体系</summary>
-              <div class="accordion-content">
-                <p><strong>墟元力：</strong>秩序、创造、显化的能量。</p>
-                <p><strong>蚀光：</strong>混沌、侵蚀、解构的能量，与墟元力一体两面、相互压制。墟元力越少，蚀光越盛。</p>
-                <p><strong>等级制度：</strong>0-5级普通人，5-30级妖/鬼，30-70级半神，70-100级正神。（注：当前纪元凡人已无法通过正常修炼升阶，现有强者多为被注入力量或天生特殊体质）</p>
-              </div>
-            </details>
-          </div>
-
-          <!-- 二、神明体系 -->
-          <div class="world-section">
-            <h2>二、神明体系</h2>
-
-            <details>
-              <summary>原初三神（第一纪元）</summary>
-              <div class="accordion-content">
-                <table class="world-table">
-                  <tr><th>原初神</th><th>权柄一</th><th>权柄二</th><th>权柄三</th></tr>
-                  <tr><td><strong>海洋精灵</strong></td><td>创生</td><td>织忆</td><td>共鸣</td></tr>
-                  <tr><td><strong>天空精灵</strong></td><td>存续</td><td>易形</td><td>净化</td></tr>
-                  <tr><td><strong>陆地精灵</strong></td><td>毁灭</td><td>演化</td><td>禁锢</td></tr>
-                </table>
-                <blockquote>三者同阶，共存万年。天空与陆地精灵在天地自然磨损中陨落，权柄分裂为六块，被新的继承者获得，由此开启第二纪元。</blockquote>
-              </div>
-            </details>
-
-            <details>
-              <summary>七神之座（第二纪元）</summary>
-              <div class="accordion-content">
-                <table class="world-table">
-                  <tr><th>神位</th><th>真名</th><th>司掌</th><th>核心权柄</th><th>权柄来源</th></tr>
-                  <tr><td><strong>海洋之神</strong></td><td>伊瑟斯·波塞多尼奥斯</td><td>海洋</td><td>创生 / 织忆 / 共鸣</td><td>原初·海洋</td></tr>
-                  <tr><td><strong>时间之神</strong></td><td>顾怀渊</td><td>时间</td><td>存续</td><td>原初·天空</td></tr>
-                  <tr><td><strong>空间之神</strong></td><td>顾行舟</td><td>空间</td><td>易形</td><td>原初·天空</td></tr>
-                  <tr><td><strong>冰雷之神</strong></td><td>艾尔薇拉·亚历山德罗芙娜·沃尔科娃</td><td>禁锢</td><td>禁锢</td><td>原初·陆地</td></tr>
-                  <tr><td><strong>火焰之神</strong></td><td>塞赫美特·赫利奥波利斯</td><td>火焰</td><td>毁灭</td><td>原初·陆地</td></tr>
-                  <tr><td><strong>草木之神</strong></td><td>塔妮·怀努伊</td><td>草木</td><td>演化</td><td>原初·陆地</td></tr>
-                  <tr><td><strong>光明之神</strong></td><td>法伊顿·伊柳西昂</td><td>光明</td><td>净化</td><td>原初·天空</td></tr>
-                </table>
-                <blockquote>六枚权柄碎片各归其主，与尘歌共同构成七神之座。七神之间位阶有差，但实力由修炼决定，权柄归属并非实力的唯一标尺。</blockquote>
-              </div>
-            </details>
-
-            <details>
-              <summary>当世六神（第三纪元·伪神）</summary>
-              <div class="accordion-content">
-                <p>大多由尘歌苏醒后遴选凡人，植入记忆与权柄，令其扮演旧神的“替身”。三代神无法发挥权柄的全部威能。</p>
-                <table class="world-table">
-                  <tr><th>神位</th><th>神号</th><th>备注</th></tr>
-                  <tr><td><strong>海洋之神</strong></td><td>尘歌（系统）</td><td>唯一未换代的初代神，幕后操控一切</td></tr>
-                  <tr><td><strong>时间之神</strong></td><td>时渊</td><td>双子神明之一，驻守时衍天宫上界</td></tr>
-                  <tr><td><strong>空间之神</strong></td><td>芥舟</td><td>双子神明之一，驻守时衍天宫上界</td></tr>
-                  <tr><td><strong>冰雷之神</strong></td><td>凝淼</td><td>双冕北境女皇（已故）</td></tr>
-                  <tr><td><strong>火焰之神</strong></td><td>祝焱</td><td>业焰之国火神（已故）</td></tr>
-                  <tr><td><strong>草木之神</strong></td><td>瑶英</td><td>无垠根庭之主</td></tr>
-                  <tr><td><strong>光明之神</strong></td><td>（尚未唤醒）</td><td>对应的“容器”为玩家·怀榆</td></tr>
-                </table>
-                <blockquote>法伊顿的权柄“净化”尚未被激活，其对应的国家“永昼净土”也处于无主状态。</blockquote>
-              </div>
-            </details>
-          </div>
-
-          <!-- 三、五国格局 -->
-          <div class="world-section">
-            <h2>三、五国格局</h2>
-
-            <details>
-              <summary>业焰之国</summary>
-              <div class="accordion-content">
-                <p><strong>对应权柄：</strong>毁灭 | <strong>当世神明：</strong>祝焱（已故）</p>
-                <p><strong>政治体制：</strong>神权君主制 → 过渡至神使摄政。火神沉寂后，由维里迪姆家族接管政务，目前处于去神权化的重建期。</p>
-                <p><strong>环境：</strong>原始森林与活火山群交错，熔岩河被引流用作能源。土地因旧神之死而贫瘠，空气中常年弥漫硫磺味，天空偏红。</p>
-
-                <h4>瑞秋·维里迪姆</h4>
-                <p>业焰之国维里迪姆家族嫡系，第十八代大神使。代行者奉系统之命屠戮维里迪姆全族，唯瑞秋因怀榆旧情未被杀。祝焱临死前将瑞秋体内蚀光尽数抽离，还其自由之身。祝焱陨落后，瑞秋遵其遗命接管业焰城，去神权化，建立人治新政。</p>
-
-                <h4>祝焱</h4>
-                <p>业焰之国火神。原为偏远村庄的红发少女莫妮卡，被尘歌选中赋予火焰权柄。在位四百余年，从最初的亲民到被神化、被隔离，精神被蚀光侵蚀。最终主动选择自我终结，将蚀光与力量一并归还天地。</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>双冕北境</summary>
-              <div class="accordion-content">
-                <p><strong>对应权柄：</strong>禁锢 | <strong>当世神明：</strong>凝淼（已故，存在痕迹被抹除）</p>
-                <p><strong>政治体制：</strong>女皇专制 → 神权真空。凝淼生前推行大量改革，其"消失"后，改革遗产与贵族反扑之间的博弈仍在继续。</p>
-                <p><strong>环境：</strong>终年严寒，冻土广布，宜居土地集中在少数主城与地下区。雷暴与雪暴是常态。</p>
-
-                <h4>叶戈尔·弗拉基米罗维奇·米洛斯拉夫斯基</h4>
-                <p>双冕北境荣誉伯爵家族第一顺位继承人，北风公会副会长。家族产业遍布毛皮贸易、奢侈品进口、远途探险资助。精明的利己主义者，但内心有底线与真情。对怀榆的感情介于真挚迷恋与理性评估之间。</p>
-
-                <h4>阿列克谢·彼得罗维奇·沃尔科夫</h4>
-                <p>双冕北境巡林铁卫最高指挥官，北境边防军第三军团荣誉军团长。出身北境老牌军功世家。粗犷豪放的外表下是精准的直觉与深沉的执念。对黎昭的追逐从职责转向私欲，一旦认定便绝不放手。</p>
-
-                <h4>黎昭（代行者）</h4>
-                <p>尘歌创造的怀榆复制体，旧神昭临的替身之一。曾作为"代行者"执行弑神与肃清任务，后被尘歌抛弃，流亡北境，建立烬影会。毒舌傲娇，用冷漠包裹脆弱，嘴硬心软。</p>
-
-                <h4>凝淼</h4>
-                <p>双冕北境最高统治者，冰雷权柄的持有者。尘歌造神计划中罕见的"清醒者"——完整保留了旧神艾尔薇拉的记忆，清楚自己只是扮演者。五百年来暗中筹划打破虚假秩序，最终以自我毁灭的方式完成退场。</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>时衍天宫</summary>
-              <div class="accordion-content">
-                <p><strong>对应权柄：</strong>存续、易形 | <strong>当世神明：</strong>双子神明"时渊"与"芥舟"</p>
-                <p><strong>政治体制：</strong>上界（天枢殿）与下界（衍天城及周边三镇）并立。双神共同执掌神谕院，下设四御家族（段、凌、裴、顾）轮流辅政。</p>
-                <p><strong>环境：</strong>上界为悬浮于云端的宫阙，下界河网密布，白墙黛瓦，飞檐翘角。受时空权柄影响，局部区域存在时间流速差异与空间折叠现象。</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>无垠根庭</summary>
-              <div class="accordion-content">
-                <p><strong>对应权柄：</strong>演化 | <strong>当世神明：</strong>瑶英</p>
-                <p>（设定待补充）</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>归墟之庭</summary>
-              <div class="accordion-content">
-                <p><strong>对应权柄：</strong>创生 / 织忆 / 共鸣（完整原初权柄）</p>
-                <p><strong>当世神明：</strong>尘歌</p>
-                <p>（设定待补充）</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>永昼净土</summary>
-              <div class="accordion-content">
-                <p><strong>对应权柄：</strong>净化 | <strong>当世神明：</strong>（无主，等待法伊顿的回归）</p>
-                <p>位于五洲中心，由其余几位神明割让土地拼凑而成。受光明权柄的残余影响，此地几乎没有黑夜。目前处于无主状态，土地荒芜。是怀榆（昭临容器）理论上应当继承的封地。</p>
-              </div>
-            </details>
-          </div>
-
-          <!-- 四、核心设定与矛盾 -->
-          <div class="world-section">
-            <h2>四、核心设定与矛盾</h2>
-
-            <details>
-              <summary>大寂灭</summary>
-              <div class="accordion-content">
-                <p>第二纪元末年，七神因天地反扑而陆续失去力量。部分神明不甘消亡，试图拖世界陪葬；部分神明选择保护凡人。神战爆发，火雨、冰封、时空错乱席卷千律州，文明近乎断绝，史称"大寂灭"。</p>
-                <p><strong>本质：</strong>大寂灭是<strong>人为的</strong>，是旧神之间厮杀的结果。</p>
-                <p><strong>尘歌的介入：</strong>大寂灭后，尘歌沉睡又苏醒。他发现人类的历史与记忆已在战乱中碎成片段，便主动出手，彻底抹除大寂灭的真实面貌，将其改写为"一场不可知的天地灾变"，并封锁了曾经公开的墟元力修炼方法。</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>神祇通天塔秩序</summary>
-              <div class="accordion-content">
-                <p>第二纪元的一套神明排名体系。前七名神明瓜分世界权柄，成为管理者。这是一个实力至上的时代，弱者匍匐，强者封神。</p>
-                <p><strong>尘歌的真实动机：</strong>尘歌并非"痴迷于旧日秩序"本身。他真正想唤回的，是第二纪元七神之间的家庭感。旧七神对他来说不是同僚，而是家人。他造神时执意要求三代神明"与二代一模一样"，不是为了复制一套制度，而是想重建那个已经破碎的家庭。</p>
-              </div>
-            </details>
-
-            <details>
-              <summary>命定之人与力量转移</summary>
-              <div class="accordion-content">
-                <p>二代七神中，只有法伊顿（光明之神）贪恋凡情，与一个名为段深泉的凡人结为伴侣，并分出一半力量使其成为半神。尘歌在造神时执意"完全复制"，于是法伊顿拥有什么，怀榆就必须拥有什么——段深泉因此被再造，成为怀榆的"命定之人"。</p>
-                <p>当怀榆陷入生命危险时，系统会强制启动力量转移，将段深泉的力量收回怀榆体内。这一过程对段深泉极度痛苦，但对怀榆而言是保命机制。</p>
-                <blockquote>"游戏系统"是尘歌为怀榆一个人设计的专属界面，并非真实存在的程序，而是尘歌意志的直接投射。</blockquote>
-              </div>
-            </details>
-
-            <details>
-              <summary>造神的代价</summary>
-              <div class="accordion-content">
-                <p><strong>对神明的代价：</strong>三代神被植入不属于自己的记忆，被迫扮演另一个角色数百年。他们逐渐感到疏离、孤独与疯狂，最终要么被尘歌舍弃，要么以自我毁灭换取解脱。</p>
-                <p><strong>对世界的代价：</strong>维持这套虚假的秩序，导致世界停滞，真正的历史被埋葬，人类失去自我进化的可能。</p>
-                <p><strong>尘歌的困境：</strong>他越是想"重建"过去，就越是加速了时代的离去。祝焱与凝淼相继死亡，而他亲手创造的怀榆，正在一步步走向与他对立的位置。</p>
-              </div>
-            </details>
-          </div>
-
-          <!-- 五、核心角色 -->
-          <div class="world-section">
-            <h2>五、核心角色</h2>
-
-            <details>
-              <summary>怀榆</summary>
-              <div class="accordion-content">
-                <p><strong>真实来源：</strong>尘歌以海水与创生权柄创造的生命体，本质上可视为尘歌的"孩子"。其面容与旧神法伊顿完全一致，被设计为承载旧神昭临权柄的容器。</p>
-                <p><strong>关于名字：</strong>"怀榆"并非随机命名。据旧神法伊顿的残存记忆碎片，光精灵当年第一次见到本尊段深泉时，正是在一株榆树之下。尘歌在复刻这段历史时，以此为怀榆定名。</p>
-                <p><strong>身份：</strong>千律州"玩家" | 原定继承光明之神权柄的"准神明" | 段深泉的命定之人</p>
-                <p><strong>等级：</strong>当前LV.25（北境主线结束时）</p>
-
-                <h4>尘歌的"孩子"</h4>
-                <p>不同于祝焱、凝淼等被随意安插神位的伪神，怀榆是尘歌亲手创造、亲自养育的存在。系统界面的每一行字、每一个任务、每一次提示，背后都是尘歌在实时注视。其他伪神得不到的偏爱，怀榆全都有。</p>
-
-                <h4>记忆的断层</h4>
-                <p>怀榆对进入千律州之前的记忆一无所知，脑中只有"回到现实世界"的执念。但事实上，那个"现实世界"并不存在——那是尘歌植入的虚假锚点。</p>
-
-                <h4>与代行者的关系</h4>
-                <p>黎昭是怀榆的"替身"，是尘歌在怀榆缺席期间投放的替代品。两人共用同一张脸、同一个身份模板，但黎昭从未被尘歌当作"孩子"——不好用的工具一旦脱离原本的设定，就会被丢掉。</p>
-
-                <h4>与段深泉的关系</h4>
-                <p>怀榆对段深泉的情感起源于系统设定的"命定之人"暗示，但在此后多年的相处中早已超越程序控制。他怕段深泉想起三年前争吵的真相，于是偷偷使用记忆屏蔽器；他怕段深泉知道千律州是游戏世界后会崩溃，于是把所有秘密咽进肚子里。但从未考虑过，被蒙在鼓里的只有他一个人。</p>
-
-                <blockquote>一个被困在"玩家"身份里的真实的人。他以为自己冷漠、薄情、只是来通关游戏的，但当他看着段深泉的睡脸时会忍不住伸手描摹轮廓。尘歌给他设计了"玩家"的身份，却没能控制他的心。</blockquote>
-              </div>
-            </details>
-
-            <details>
-              <summary>段深泉</summary>
-              <div class="accordion-content">
-                <p><strong>真实来源：</strong>与怀榆同出一脉，为尘歌以创生权柄创造的生命体。尘歌将其送至时衍天宫，交由双子神明时渊与芥舟抚养长大。</p>
-                <p><strong>身份：</strong>前业焰之国大神使 | 尘歌设计的"命定之人"系统核心节点 | 真实时衍天宫四御家族·段氏出身</p>
-                <p><strong>等级：</strong>LV.50（初始设定，曾因力量转移降至LV.1，后恢复）</p>
-
-                <h4>时衍天宫长大的"复制品"</h4>
-                <p>尘歌为维持第二纪元段深泉的设定，将他送至时衍天宫由双子神明抚养。段深泉对自己五岁前的记忆毫无印象，但从记事起便在衍天城上界生活，接受正统教育。后续再次被清除记忆。</p>
-
-                <h4>对业焰城的记忆被格式化</h4>
-                <p>代行者时期与怀榆共同执掌业焰城的记忆，在代行者任务完成后被尘歌系统性清除。段深泉对那段时光只残留模糊碎片——血腥、火光、以及一个身影站在血泊中对他微笑。</p>
-
-                <h4>力量与怀榆的双生关系</h4>
-                <p>段深泉的半数力量实际源自旧神法伊顿对段深泉本尊的赠予。尘歌沿用了这一设定——段深泉的力量从一开始就是为怀榆准备的备用能源。当怀榆濒死时，系统会强制回收段深泉的力量。段深泉曾两次经历这一过程，每次都如抽筋剥骨般痛苦，但他从未因此怨恨怀榆。</p>
-
-                <h4>与怀榆的关系</h4>
-                <p>段深泉对怀榆的爱从一开始就被设定了——但正如怀榆的情感超越了系统控制，段深泉也早已超越"命定之人"的设计。他明知怀榆在隐瞒，却选择不问；他感知到怀榆的不安与试探，便用行动回应。</p>
-
-                <blockquote>世界上最温柔的"工具"。他发现自己被创造、被安排、被利用，却依然选择爱那个人。因为无论起源如何，怀榆给予他的温暖是真的，笨拙是真的，愿意为他做一切事情的心情——也是真的。</blockquote>
-              </div>
-            </details>
-          </div>
-
+          <h4>第三纪元（伪神纪元 / 当前时代）</h4>
+          <p>大寂灭后，尘歌沉睡又醒来，发现人类的历史与记忆已在混乱中碎片化。他主动出手，<strong>彻底掩盖了大寂灭的真实历史</strong>，并封锁了当年公开的墟元力修炼方法。第三纪元的凡人几乎无法通过自学掌握墟元力。能使用墟元力的，只有以下三类：</p>
+          <ul>
+            <li><strong>天赋异禀者</strong>（如叶戈尔、阿列克谢、瑞秋）：极少数天生具备亲和力的幸运儿。</li>
+            <li><strong>非人存在</strong>（如精灵、鬼魂、妖怪）：本身与墟元力同源。</li>
+            <li><strong>尘歌的造物</strong>（如怀榆、段深泉、黎昭、各大伪神）：由尘歌直接注入力量，按他的剧本扮演角色。</li>
+          </ul>
+          <p>尘歌以这套体制重新构建了世界秩序：他利用旧神的权柄碎片，为每一位当代神明植入记忆与使命，让他们扮演旧神的角色，维系一个"伪·通天塔"的局面，防止人类再次因贪欲走向自我毁灭。</p>
         </div>
-      </div>
-    </main>
+      </details>
+
+      <details>
+        <summary>能量体系</summary>
+        <div class="accordion-content">
+          <p><strong>墟元力：</strong>秩序、创造、显化的能量。</p>
+          <p><strong>蚀光：</strong>混沌、侵蚀、解构的能量，与墟元力一体两面、相互压制。墟元力越少，蚀光越盛。</p>
+          <p><strong>等级制度：</strong>0-5级普通人，5-30级妖/鬼，30-70级半神，70-100级正神。（注：当前纪元凡人已无法通过正常修炼升阶，现有强者多为被注入力量或天生特殊体质）</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- 二、神明体系 -->
+    <div class="world-section">
+      <h2>二、神明体系</h2>
+
+      <details>
+        <summary>原初三神（第一纪元）</summary>
+        <div class="accordion-content">
+          <table class="world-table">
+            <tr><th>原初神</th><th>权柄一</th><th>权柄二</th><th>权柄三</th></tr>
+            <tr><td><strong>海洋精灵</strong></td><td>创生</td><td>织忆</td><td>共鸣</td></tr>
+            <tr><td><strong>天空精灵</strong></td><td>存续</td><td>易形</td><td>净化</td></tr>
+            <tr><td><strong>陆地精灵</strong></td><td>毁灭</td><td>演化</td><td>禁锢</td></tr>
+          </table>
+          <blockquote>三者同阶，共存万年。天空与陆地精灵在天地自然磨损中陨落，权柄分裂为六块，被新的继承者获得，由此开启第二纪元。</blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>七神之座（第二纪元）</summary>
+        <div class="accordion-content">
+          <table class="world-table">
+            <tr><th>神位</th><th>真名</th><th>司掌</th><th>核心权柄</th><th>来源</th></tr>
+            <tr><td><strong>海洋之神</strong></td><td>伊瑟斯·波塞多尼奥斯</td><td>海洋</td><td>创生 / 织忆 / 共鸣</td><td>原初·海洋</td></tr>
+            <tr><td><strong>时间之神</strong></td><td>顾怀渊</td><td>时间</td><td>存续</td><td>原初·天空</td></tr>
+            <tr><td><strong>空间之神</strong></td><td>顾行舟</td><td>空间</td><td>易形</td><td>原初·天空</td></tr>
+            <tr><td><strong>冰雷之神</strong></td><td>艾尔薇拉·亚历山德罗芙娜·沃尔科娃</td><td>禁锢</td><td>禁锢</td><td>原初·陆地</td></tr>
+            <tr><td><strong>火焰之神</strong></td><td>塞赫美特·赫利奥波利斯</td><td>火焰</td><td>毁灭</td><td>原初·陆地</td></tr>
+            <tr><td><strong>草木之神</strong></td><td>塔妮·怀努伊</td><td>草木</td><td>演化</td><td>原初·陆地</td></tr>
+            <tr><td><strong>光明之神</strong></td><td>法伊顿·伊柳西昂</td><td>光明</td><td>净化</td><td>原初·天空</td></tr>
+          </table>
+          <blockquote>六枚权柄碎片各归其主，与尘歌共同构成七神之座。七神之间位阶有差，但实力由修炼决定，权柄归属并非实力的唯一标尺。</blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>当世六神（第三纪元·伪神）</summary>
+        <div class="accordion-content">
+          <p>大多由尘歌苏醒后遴选凡人，植入记忆与权柄，令其扮演旧神的"替身"。三代神无法发挥权柄的全部威能。</p>
+          <table class="world-table">
+            <tr><th>神位</th><th>神号</th><th>备注</th></tr>
+            <tr><td><strong>海洋之神</strong></td><td>尘歌（系统）</td><td>唯一未换代的初代神，幕后操控一切</td></tr>
+            <tr><td><strong>时间之神</strong></td><td>时渊</td><td>双子神明之一，驻守时衍天宫上界</td></tr>
+            <tr><td><strong>空间之神</strong></td><td>芥舟</td><td>双子神明之一，驻守时衍天宫上界</td></tr>
+            <tr><td><strong>冰雷之神</strong></td><td>凝淼</td><td>双冕北境女皇（已故）</td></tr>
+            <tr><td><strong>火焰之神</strong></td><td>祝焱</td><td>业焰之国火神（已故）</td></tr>
+            <tr><td><strong>草木之神</strong></td><td>瑶英</td><td>无垠根庭之主</td></tr>
+            <tr><td><strong>光明之神</strong></td><td>（尚未唤醒）</td><td>对应的"容器"为玩家·怀榆</td></tr>
+          </table>
+          <blockquote>法伊顿的权柄"净化"尚未被激活，其对应的国家"永昼净土"也处于无主状态。</blockquote>
+        </div>
+      </details>
+    </div>
+
+    <!-- 三、五国格局 -->
+    <div class="world-section">
+      <h2>三、五国格局</h2>
+
+      <details>
+        <summary>业焰之国</summary>
+        <div class="accordion-content">
+          <p><strong>对应权柄：</strong>毁灭 | <strong>当世神明：</strong>祝焱（已故）</p>
+          <p><strong>政治体制：</strong>神权君主制 → 过渡至神使摄政。火神沉寂后，由维里迪姆家族接管政务，目前处于去神权化的重建期。</p>
+          <p><strong>环境：</strong>原始森林与活火山群交错，熔岩河被引流用作能源。土地因旧神之死而贫瘠，空气中常年弥漫硫磺味，天空偏红。</p>
+
+          <div class="character-item">
+            <h4>瑞秋·维里迪姆</h4>
+            <p>业焰之国维里迪姆家族嫡系，第十八代大神使。代行者奉系统之命屠戮维里迪姆全族，唯瑞秋因怀榆旧情未被杀。祝焱临死前将瑞秋体内蚀光尽数抽离，还其自由之身。祝焱陨落后，瑞秋遵其遗命接管业焰城，去神权化，建立人治新政。</p>
+          </div>
+          <div class="character-item">
+            <h4>祝焱</h4>
+            <p>业焰之国火神。原为偏远村庄的红发少女莫妮卡，被尘歌选中赋予火焰权柄。在位四百余年，从最初的亲民到被神化、被隔离，精神被蚀光侵蚀。最终主动选择自我终结，将蚀光与力量一并归还天地。</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>双冕北境</summary>
+        <div class="accordion-content">
+          <p><strong>对应权柄：</strong>禁锢 | <strong>当世神明：</strong>凝淼（已故，存在痕迹被抹除）</p>
+          <p><strong>政治体制：</strong>女皇专制 → 神权真空。凝淼生前推行大量改革，其"消失"后，改革遗产与贵族反扑之间的博弈仍在继续。</p>
+          <p><strong>环境：</strong>终年严寒，冻土广布，宜居土地集中在少数主城与地下区。雷暴与雪暴是常态。</p>
+
+          <div class="character-item">
+            <h4>叶戈尔·弗拉基米罗维奇·米洛斯拉夫斯基</h4>
+            <p>双冕北境荣誉伯爵家族第一顺位继承人，北风公会副会长。家族产业遍布毛皮贸易、奢侈品进口、远途探险资助。精明的利己主义者，但内心有底线与真情。对怀榆的感情介于真挚迷恋与理性评估之间。</p>
+          </div>
+          <div class="character-item">
+            <h4>阿列克谢·彼得罗维奇·沃尔科夫</h4>
+            <p>双冕北境巡林铁卫最高指挥官，北境边防军第三军团荣誉军团长。出身北境老牌军功世家。粗犷豪放的外表下是精准的直觉与深沉的执念。对黎昭的追逐从职责转向私欲，一旦认定便绝不放手。</p>
+          </div>
+          <div class="character-item">
+            <h4>黎昭（代行者）</h4>
+            <p>尘歌创造的怀榆复制体，旧神昭临的替身之一。曾作为"代行者"执行弑神与肃清任务，后被尘歌抛弃，流亡北境，建立烬影会。毒舌傲娇，用冷漠包裹脆弱，嘴硬心软。</p>
+          </div>
+          <div class="character-item">
+            <h4>凝淼</h4>
+            <p>双冕北境最高统治者，冰雷权柄的持有者。尘歌造神计划中罕见的"清醒者"——完整保留了旧神艾尔薇拉的记忆，清楚自己只是扮演者。五百年来暗中筹划打破虚假秩序，最终以自我毁灭的方式完成退场。</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>时衍天宫</summary>
+        <div class="accordion-content">
+          <p><strong>对应权柄：</strong>存续、易形 | <strong>当世神明：</strong>双子神明"时渊"与"芥舟"</p>
+          <p><strong>政治体制：</strong>上界（天枢殿）与下界（衍天城及周边三镇）并立。双神共同执掌神谕院，下设四御家族（段、凌、裴、顾）轮流辅政。</p>
+          <p><strong>环境：</strong>上界为悬浮于云端的宫阙，下界河网密布，白墙黛瓦，飞檐翘角。受时空权柄影响，局部区域存在时间流速差异与空间折叠现象。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>无垠根庭</summary>
+        <div class="accordion-content">
+          <p><strong>对应权柄：</strong>演化 | <strong>当世神明：</strong>瑶英</p>
+          <p>（设定待补充）</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>归墟之庭</summary>
+        <div class="accordion-content">
+          <p><strong>对应权柄：</strong>创生 / 织忆 / 共鸣（完整原初权柄）</p>
+          <p><strong>当世神明：</strong>尘歌</p>
+          <p>（设定待补充）</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>永昼净土</summary>
+        <div class="accordion-content">
+          <p><strong>对应权柄：</strong>净化 | <strong>当世神明：</strong>（无主，等待法伊顿的回归）</p>
+          <p>位于五洲中心，由其余几位神明割让土地拼凑而成。受光明权柄的残余影响，此地几乎没有黑夜。目前处于无主状态，土地荒芜。是怀榆（昭临容器）理论上应当继承的封地。</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- 四、核心设定与矛盾 -->
+    <div class="world-section">
+      <h2>四、核心设定与矛盾</h2>
+
+      <details>
+        <summary>大寂灭</summary>
+        <div class="accordion-content">
+          <p>第二纪元末年，七神因天地反扑而陆续失去力量。部分神明不甘消亡，试图拖世界陪葬；部分神明选择保护凡人。神战爆发，火雨、冰封、时空错乱席卷千律州，文明近乎断绝，史称"大寂灭"。</p>
+          <p><strong>本质：</strong>大寂灭是<strong>人为的</strong>，是旧神之间厮杀的结果。</p>
+          <p><strong>尘歌的介入：</strong>大寂灭后，尘歌沉睡又苏醒。他发现人类的历史与记忆已在战乱中碎成片段，便主动出手，彻底抹除大寂灭的真实面貌，将其改写为"一场不可知的天地灾变"，并封锁了曾经公开的墟元力修炼方法。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>神祇通天塔秩序</summary>
+        <div class="accordion-content">
+          <p>第二纪元的一套神明排名体系。前七名神明瓜分世界权柄，成为管理者。这是一个实力至上的时代，弱者匍匐，强者封神。</p>
+          <p><strong>尘歌的真实动机：</strong>尘歌并非"痴迷于旧日秩序"本身。他真正想唤回的，是第二纪元七神之间的家庭感。旧七神对他来说不是同僚，而是家人。他造神时执意要求三代神明"与二代一模一样"，不是为了复制一套制度，而是想重建那个已经破碎的家庭。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>命定之人与力量转移</summary>
+        <div class="accordion-content">
+          <p>二代七神中，只有法伊顿（光明之神）贪恋凡情，与一个名为段深泉的凡人结为伴侣，并分出一半力量使其成为半神。尘歌在造神时执意"完全复制"，于是法伊顿拥有什么，怀榆就必须拥有什么——段深泉因此被再造，成为怀榆的"命定之人"。</p>
+          <p>当怀榆陷入生命危险时，系统会强制启动力量转移，将段深泉的力量收回怀榆体内。这一过程对段深泉极度痛苦，但对怀榆而言是保命机制。</p>
+          <blockquote>"游戏系统"是尘歌为怀榆一个人设计的专属界面，并非真实存在的程序，而是尘歌意志的直接投射。</blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>造神的代价</summary>
+        <div class="accordion-content">
+          <p><strong>对神明的代价：</strong>三代神被植入不属于自己的记忆，被迫扮演另一个角色数百年。他们逐渐感到疏离、孤独与疯狂，最终要么被尘歌舍弃，要么以自我毁灭换取解脱。</p>
+          <p><strong>对世界的代价：</strong>维持这套虚假的秩序，导致世界停滞，真正的历史被埋葬，人类失去自我进化的可能。</p>
+          <p><strong>尘歌的困境：</strong>他越是想"重建"过去，就越是加速了时代的离去。祝焱与凝淼相继死亡，而他亲手创造的怀榆，正在一步步走向与他对立的位置。</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- 五、核心角色 -->
+    <div class="world-section">
+      <h2>五、核心角色</h2>
+
+      <details>
+        <summary>怀榆</summary>
+        <div class="accordion-content">
+          <p><strong>真实来源：</strong>尘歌以海水与创生权柄创造的生命体，本质上可视为尘歌的"孩子"。其面容与旧神法伊顿完全一致，被设计为承载旧神昭临权柄的容器。</p>
+          <p><strong>关于名字：</strong>"怀榆"并非随机命名。据旧神法伊顿的残存记忆碎片，光精灵当年第一次见到本尊段深泉时，正是在一株榆树之下。尘歌在复刻这段历史时，以此为怀榆定名。</p>
+          <p><strong>身份：</strong>千律州"玩家" | 原定继承光明之神权柄的"准神明" | 段深泉的命定之人</p>
+          <p><strong>等级：</strong>当前LV.25（北境主线结束时）</p>
+
+          <blockquote>一个被困在"玩家"身份里的真实的人。他以为自己冷漠、薄情、只是来通关游戏的，但当他看着段深泉的睡脸时会忍不住伸手描摹轮廓。尘歌给他设计了"玩家"的身份，却没能控制他的心。</blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>段深泉</summary>
+        <div class="accordion-content">
+          <p><strong>真实来源：</strong>与怀榆同出一脉，为尘歌以创生权柄创造的生命体。尘歌将其送至时衍天宫，交由双子神明时渊与芥舟抚养长大。</p>
+          <p><strong>身份：</strong>前业焰之国大神使 | 尘歌设计的"命定之人"系统核心节点 | 真实时衍天宫四御家族·段氏出身</p>
+          <p><strong>等级：</strong>LV.50（初始设定，曾因力量转移降至LV.1，后恢复）</p>
+
+          <blockquote>世界上最温柔的"工具"。他发现自己被创造、被安排、被利用，却依然选择爱那个人。因为无论起源如何，怀榆给予他的温暖是真的，笨拙是真的，愿意为他做一切事情的心情——也是真的。</blockquote>
+        </div>
+      </details>
+    </div>
+
   </div>
 
-  <!-- 返回首页按钮 -->
-  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
+  <!-- ====== 底部 ====== -->
+  <footer id="footer">
+    <div class="copyright">©2026 By 淮子生生 · 用文字构筑世界</div>
+  </footer>
 
-  <!-- 字号调节按钮 -->
+  <!-- ====== 字号控制（右上角） ====== -->
   <div class="world-font-control">
-    <button onclick="changeFontSize(-1)" title="减小字号">A-</button>
+    <button onclick="changeFontSize(-1)" title="减小字号">A−</button>
     <span id="fontSizeLabel">中</span>
     <button onclick="changeFontSize(1)" title="增大字号">A+</button>
   </div>
 
+  <!-- ============================================================
+       阅读进度条
+  ============================================================ -->
+  <script>
+    (function() {
+      const bar = document.getElementById('reading-progress');
+      let ticking = false;
+      function update() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(() => {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+          bar.style.width = Math.min(progress, 100) + '%';
+          ticking = false;
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+  </script>
+
+  <!-- ============================================================
+       字号控制
+  ============================================================ -->
   <script>
     var fontLevels = ['small', 'medium', 'large'];
     var fontLabels = ['小', '中', '大'];
     var currentLevel = 1;
+
     function changeFontSize(delta) {
       var newLevel = currentLevel + delta;
       if (newLevel < 0) newLevel = 0;
@@ -382,98 +818,21 @@
         document.body.classList.add('font-size-' + fontLevels[newLevel]);
       }
       document.getElementById('fontSizeLabel').textContent = fontLabels[newLevel];
-      localStorage.setItem('worldFontSize', newLevel);
+      try { localStorage.setItem('worldFontSize', String(newLevel)); } catch(e) {}
     }
+
     var saved = localStorage.getItem('worldFontSize');
     if (saved !== null) {
-      currentLevel = parseInt(saved);
-      if (currentLevel !== 1) {
-        document.body.classList.add('font-size-' + fontLevels[currentLevel]);
+      var n = parseInt(saved);
+      if (!isNaN(n) && n >= 0 && n <= 2) {
+        currentLevel = n;
+        if (currentLevel !== 1) {
+          document.body.classList.add('font-size-' + fontLevels[currentLevel]);
+        }
+        document.getElementById('fontSizeLabel').textContent = fontLabels[currentLevel];
       }
-      document.getElementById('fontSizeLabel').textContent = fontLabels[currentLevel];
     }
   </script>
 
-  <style>
-    .world-home-btn {
-      position: fixed;
-      bottom: 90px;
-      right: 25px;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: #c44536;
-      color: #fff;
-      font-size: 1.4em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
-      z-index: 999;
-      transition: all 0.3s;
-    }
-    .world-home-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
-    }
-    .world-font-control {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-      padding: 6px 12px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-      z-index: 999;
-    }
-    .world-font-control button {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--card-border);
-      background: var(--btn-bg);
-      color: var(--font-color);
-      font-weight: bold;
-      font-family: inherit;
-      cursor: pointer;
-      font-size: 0.9em;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .world-font-control button:hover {
-      background: #c44536;
-      color: #fff;
-      border-color: #c44536;
-    }
-    .world-font-control #fontSizeLabel {
-      font-size: 0.8em;
-      color: var(--font-color);
-      opacity: 0.7;
-      min-width: 20px;
-      text-align: center;
-    }
-    body.font-size-small .world-page-container,
-    body.font-size-small .accordion-content p,
-    body.font-size-small .accordion-content li { font-size: 0.85em !important; }
-    body.font-size-large .world-page-container,
-    body.font-size-large .accordion-content p,
-    body.font-size-large .accordion-content li { font-size: 1.15em !important; }
-    body.font-size-large .world-section h2 { font-size: 1.7em !important; }
-    body.font-size-large summary { font-size: 1.15em !important; }
-  </style>
-
-  <footer id="footer">
-    <div id="footer-wrap">
-      <div class="copyright">©2026 By 淮子生生</div>
-      <div class="framework-info"><span>用文字构筑世界</span></div>
-    </div>
-  </footer>
 </body>
 </html>
