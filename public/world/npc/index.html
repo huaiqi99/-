@@ -63,15 +63,17 @@
     }
 
     /* ============================================================
-       3. 顶部导航
+       3. 顶部导航 —— 字体控制放这里
     ============================================================ */
     #nav {
       max-width: 960px;
       margin: 0 auto;
       padding: 18px 24px 10px 24px;
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
       border-bottom: 1px solid var(--border-light);
       transition: border-color 0.3s;
     }
@@ -98,6 +100,42 @@
       transition: color 0.2s;
     }
     #nav .nav-links a:hover { color: var(--accent); }
+
+    /* 字体控制 —— 放右上角 */
+    .font-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-section);
+      border-radius: 20px;
+      padding: 2px 8px;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .font-control button {
+      padding: 4px 10px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .font-control button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .font-control .size-display {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 32px;
+      text-align: center;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
 
     /* ============================================================
        4. 页头信息
@@ -176,7 +214,7 @@
     }
 
     /* ============================================================
-       7. 折叠面板（无卡片，有呼吸感）
+       7. 折叠面板
     ============================================================ */
     details {
       margin-bottom: 4px;
@@ -222,7 +260,6 @@
       transform: translateY(-50%) rotate(90deg);
     }
 
-    /* 内容区 —— 展开/收起动画 */
     .accordion-content {
       padding: 0 18px 4px 18px;
       max-height: 0;
@@ -263,40 +300,49 @@
       margin-bottom: 2px;
     }
 
+    /* ====== 斜体：恢复效果，但缩小一点 ====== */
     .accordion-content blockquote {
       border-left: 3px solid var(--accent);
       padding: 6px 16px;
       margin: 10px 0 14px 0;
       background: var(--accent-soft);
       border-radius: 0 6px 6px 0;
-      font-style: normal;
       color: var(--text-secondary);
       font-size: 0.93rem;
     }
-
     .accordion-content blockquote em,
-    .accordion-content blockquote i {
+    .accordion-content blockquote i,
+    .accordion-content blockquote cite {
       font-style: italic;
-      font-size: inherit;
+      font-size: 0.93rem;  /* 与正文一致，不放大 */
     }
 
     /* ============================================================
-       8. 表格
+       8. 表格 —— 手机端可横向滑动
     ============================================================ */
-    .world-table {
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 10px 0 16px 0;
+      border-radius: 6px;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.3s;
+    }
+    .table-wrap table {
       width: 100%;
       border-collapse: collapse;
-      margin: 10px 0 16px 0;
       font-size: 0.88rem;
+      min-width: 480px;
     }
-    .world-table th,
-    .world-table td {
+    .table-wrap table th,
+    .table-wrap table td {
       padding: 8px 10px;
       text-align: left;
       border-bottom: 1px solid var(--border-light);
       color: var(--text-secondary);
+      white-space: nowrap;
     }
-    .world-table th {
+    .table-wrap table th {
       background: var(--accent-soft);
       color: var(--accent);
       font-weight: 600;
@@ -304,13 +350,16 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .world-table td strong {
+    .table-wrap table td strong {
       color: var(--text-primary);
       font-weight: 500;
     }
+    .table-wrap table tr:last-child td {
+      border-bottom: none;
+    }
 
     /* ============================================================
-       9. 角色条目（无卡片，干净）
+       9. 角色条目
     ============================================================ */
     .character-item {
       padding: 10px 0 10px 14px;
@@ -332,7 +381,7 @@
     }
 
     /* ============================================================
-       10. 底部（字体控制放这里，不挡视线）
+       10. 底部 —— 删掉世界观按钮
     ============================================================ */
     #footer {
       max-width: 960px;
@@ -353,65 +402,64 @@
       text-decoration: none;
     }
     #footer a:hover { text-decoration: underline; }
-
     .footer-left {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 12px;
       flex-wrap: wrap;
-    }
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .footer-right button {
-      padding: 2px 10px;
-      border-radius: 16px;
-      border: 1px solid var(--border-light);
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-      height: 28px;
-    }
-    .footer-right button:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .footer-right .size-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      min-width: 22px;
-      text-align: center;
     }
 
     /* ============================================================
-       11. 字号控制
+       11. 字号控制 —— 渐进式放大/缩小
     ============================================================ */
-    body.font-small {
-      font-size: 15px;
+    body {
+      --font-size-base: 16px;
+      --font-size-scale: 1;
     }
-    body.font-small .accordion-content p,
-    body.font-small .accordion-content li,
-    body.font-small .character-item p {
-      font-size: 0.9rem;
+    body.font-sm {
+      --font-size-base: 15px;
     }
-    body.font-small .world-table { font-size: 0.82rem; }
+    body.font-md {
+      --font-size-base: 16px;
+    }
+    body.font-lg {
+      --font-size-base: 17px;
+    }
+    body.font-xl {
+      --font-size-base: 18px;
+    }
+    body.font-2xl {
+      --font-size-base: 19px;
+    }
 
-    body.font-large {
-      font-size: 18px;
+    body {
+      font-size: var(--font-size-base);
     }
-    body.font-large .accordion-content p,
-    body.font-large .accordion-content li,
-    body.font-large .character-item p {
-      font-size: 1.05rem;
+
+    body .accordion-content p,
+    body .accordion-content li,
+    body .character-item p {
+      font-size: calc(var(--font-size-base) * 0.95);
     }
-    body.font-large .section-title { font-size: 1.5rem; }
-    body.font-large .world-table { font-size: 0.95rem; }
-    body.font-large summary { font-size: 1.08rem; }
+    body .accordion-content blockquote {
+      font-size: calc(var(--font-size-base) * 0.93);
+    }
+    body .accordion-content blockquote em,
+    body .accordion-content blockquote i {
+      font-size: calc(var(--font-size-base) * 0.93);
+    }
+    body .world-table {
+      font-size: calc(var(--font-size-base) * 0.88);
+    }
+    body .section-title {
+      font-size: calc(var(--font-size-base) * 1.35);
+    }
+    body summary {
+      font-size: calc(var(--font-size-base) * 1.0);
+    }
+    body #page-header h1 {
+      font-size: calc(var(--font-size-base) * 1.8);
+    }
 
     /* ============================================================
        12. 手机端
@@ -419,21 +467,28 @@
     @media (max-width: 768px) {
       #nav {
         padding: 14px 16px 8px 16px;
-        flex-wrap: wrap;
-        gap: 8px;
       }
       #nav .nav-left { gap: 14px; }
       #nav .nav-title { font-size: 1rem; }
       #nav .nav-links a { font-size: 0.85rem; }
 
+      .font-control button {
+        padding: 2px 8px;
+        font-size: 0.75rem;
+      }
+      .font-control .size-display {
+        min-width: 26px;
+        font-size: 0.7rem;
+      }
+
       #page-header {
         padding: 20px 16px 14px 16px;
       }
       #page-header h1 {
-        font-size: 1.4rem;
+        font-size: calc(var(--font-size-base) * 1.4);
       }
       #page-header .sub {
-        font-size: 0.9rem;
+        font-size: calc(var(--font-size-base) * 0.9);
       }
 
       #content {
@@ -441,7 +496,7 @@
       }
 
       .section-title {
-        font-size: 1.15rem;
+        font-size: calc(var(--font-size-base) * 1.15);
         padding: 10px 0 6px 12px;
       }
       .section-title::before {
@@ -450,7 +505,7 @@
       }
 
       summary {
-        font-size: 0.92rem;
+        font-size: calc(var(--font-size-base) * 0.92);
         padding: 12px 14px 12px 36px;
       }
       summary::before {
@@ -466,19 +521,27 @@
       }
       .accordion-content p,
       .accordion-content li {
-        font-size: 0.9rem;
-        line-height: 1.8;
+        font-size: calc(var(--font-size-base) * 0.9);
       }
       .accordion-content blockquote {
+        font-size: calc(var(--font-size-base) * 0.9);
         padding: 4px 12px;
-        font-size: 0.9rem;
+      }
+      .accordion-content blockquote em,
+      .accordion-content blockquote i {
+        font-size: calc(var(--font-size-base) * 0.9);
       }
 
-      .world-table {
-        font-size: 0.78rem;
+      .table-wrap {
+        margin: 8px 0 12px 0;
+        border-radius: 4px;
       }
-      .world-table th,
-      .world-table td {
+      .table-wrap table {
+        font-size: calc(var(--font-size-base) * 0.78);
+        min-width: 400px;
+      }
+      .table-wrap table th,
+      .table-wrap table td {
         padding: 5px 6px;
       }
 
@@ -486,33 +549,53 @@
         padding: 8px 0 8px 10px;
         margin-bottom: 6px;
       }
-      .character-item h4 { font-size: 0.9rem; }
-      .character-item p { font-size: 0.88rem; }
+      .character-item h4 {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+      .character-item p {
+        font-size: calc(var(--font-size-base) * 0.88);
+      }
 
       #footer {
         padding: 14px 16px 18px 16px;
-        font-size: 0.8rem;
+        font-size: calc(var(--font-size-base) * 0.8);
         flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
-      }
-      .footer-right button {
-        font-size: 0.75rem;
-        height: 26px;
-        padding: 2px 8px;
+        gap: 6px;
       }
     }
 
     @media (max-width: 480px) {
-      #page-header h1 { font-size: 1.2rem; }
-      .section-title { font-size: 1rem; }
-      summary { font-size: 0.88rem; padding: 10px 12px 10px 32px; }
+      #page-header h1 {
+        font-size: calc(var(--font-size-base) * 1.2);
+      }
+      .section-title {
+        font-size: calc(var(--font-size-base) * 1.0);
+      }
+      summary {
+        font-size: calc(var(--font-size-base) * 0.88);
+        padding: 10px 12px 10px 32px;
+      }
       summary::before { left: 10px; }
       .accordion-content p,
-      .accordion-content li { font-size: 0.87rem; }
-      .world-table { font-size: 0.7rem; }
-      .world-table th,
-      .world-table td { padding: 4px 4px; }
+      .accordion-content li {
+        font-size: calc(var(--font-size-base) * 0.87);
+      }
+      .accordion-content blockquote {
+        font-size: calc(var(--font-size-base) * 0.87);
+      }
+      .accordion-content blockquote em,
+      .accordion-content blockquote i {
+        font-size: calc(var(--font-size-base) * 0.87);
+      }
+      .table-wrap table {
+        font-size: calc(var(--font-size-base) * 0.7);
+        min-width: 320px;
+      }
+      .table-wrap table th,
+      .table-wrap table td {
+        padding: 4px 4px;
+      }
       #footer { padding: 12px 12px 16px 12px; }
     }
   </style>
@@ -522,13 +605,18 @@
   <!-- ====== 阅读进度条 ====== -->
   <div id="reading-progress"></div>
 
-  <!-- ====== 顶部导航 ====== -->
+  <!-- ====== 顶部导航（字体控制放这里） ====== -->
   <nav id="nav">
     <div class="nav-left">
       <span class="nav-title">墨境 · <span>千律州</span></span>
+      <div class="nav-links">
+        <a href="/-/">首页</a>
+      </div>
     </div>
-    <div class="nav-links">
-      <a href="/-/">首页</a>
+    <div class="font-control">
+      <button onclick="changeSize(-1)" title="缩小字号">A−</button>
+      <span class="size-display" id="sizeDisplay">中</span>
+      <button onclick="changeSize(1)" title="放大字号">A+</button>
     </div>
   </nav>
 
@@ -563,7 +651,7 @@
             <li><strong>非人存在</strong>（如精灵、鬼魂、妖怪）：本身与墟元力同源。</li>
             <li><strong>尘歌的造物</strong>（如怀榆、段深泉、黎昭、各大伪神）：由尘歌直接注入力量。</li>
           </ul>
-          <p>尘歌以这套体制重新构建了世界秩序：他利用旧神的权柄碎片，为每一位当代神明植入记忆与使命，让他们扮演旧神的角色，维系一个"伪·通天塔"的局面。</p>
+          <blockquote>尘歌以这套体制重新构建了世界秩序：他利用旧神的权柄碎片，为每一位当代神明植入记忆与使命，让他们扮演旧神的角色，维系一个"伪·通天塔"的局面。</blockquote>
         </div>
       </details>
 
@@ -584,47 +672,53 @@
       <details>
         <summary>原初三神（第一纪元）</summary>
         <div class="accordion-content">
-          <table class="world-table">
-            <tr><th>原初神</th><th>权柄一</th><th>权柄二</th><th>权柄三</th></tr>
-            <tr><td><strong>海洋精灵</strong></td><td>创生</td><td>织忆</td><td>共鸣</td></tr>
-            <tr><td><strong>天空精灵</strong></td><td>存续</td><td>易形</td><td>净化</td></tr>
-            <tr><td><strong>陆地精灵</strong></td><td>毁灭</td><td>演化</td><td>禁锢</td></tr>
-          </table>
-          <blockquote>三者同阶，共存万年。天空与陆地精灵在天地自然磨损中陨落，权柄分裂为六块，由此开启第二纪元。</blockquote>
+          <div class="table-wrap">
+            <table>
+              <tr><th>原初神</th><th>权柄一</th><th>权柄二</th><th>权柄三</th></tr>
+              <tr><td><strong>海洋精灵</strong></td><td>创生</td><td>织忆</td><td>共鸣</td></tr>
+              <tr><td><strong>天空精灵</strong></td><td>存续</td><td>易形</td><td>净化</td></tr>
+              <tr><td><strong>陆地精灵</strong></td><td>毁灭</td><td>演化</td><td>禁锢</td></tr>
+            </table>
+          </div>
+          <blockquote><i>三者同阶，共存万年。天空与陆地精灵在天地自然磨损中陨落，权柄分裂为六块，由此开启第二纪元。</i></blockquote>
         </div>
       </details>
 
       <details>
         <summary>七神之座（第二纪元）</summary>
         <div class="accordion-content">
-          <table class="world-table">
-            <tr><th>神位</th><th>真名</th><th>司掌</th><th>核心权柄</th><th>来源</th></tr>
-            <tr><td><strong>海洋之神</strong></td><td>伊瑟斯·波塞多尼奥斯</td><td>海洋</td><td>创生 / 织忆 / 共鸣</td><td>原初·海洋</td></tr>
-            <tr><td><strong>时间之神</strong></td><td>顾怀渊</td><td>时间</td><td>存续</td><td>原初·天空</td></tr>
-            <tr><td><strong>空间之神</strong></td><td>顾行舟</td><td>空间</td><td>易形</td><td>原初·天空</td></tr>
-            <tr><td><strong>冰雷之神</strong></td><td>艾尔薇拉·亚历山德罗芙娜·沃尔科娃</td><td>禁锢</td><td>禁锢</td><td>原初·陆地</td></tr>
-            <tr><td><strong>火焰之神</strong></td><td>塞赫美特·赫利奥波利斯</td><td>火焰</td><td>毁灭</td><td>原初·陆地</td></tr>
-            <tr><td><strong>草木之神</strong></td><td>塔妮·怀努伊</td><td>草木</td><td>演化</td><td>原初·陆地</td></tr>
-            <tr><td><strong>光明之神</strong></td><td>法伊顿·伊柳西昂</td><td>光明</td><td>净化</td><td>原初·天空</td></tr>
-          </table>
-          <blockquote>六枚权柄碎片各归其主，与尘歌共同构成七神之座。</blockquote>
+          <div class="table-wrap">
+            <table>
+              <tr><th>神位</th><th>真名</th><th>司掌</th><th>核心权柄</th><th>来源</th></tr>
+              <tr><td><strong>海洋之神</strong></td><td>伊瑟斯·波塞多尼奥斯</td><td>海洋</td><td>创生 / 织忆 / 共鸣</td><td>原初·海洋</td></tr>
+              <tr><td><strong>时间之神</strong></td><td>顾怀渊</td><td>时间</td><td>存续</td><td>原初·天空</td></tr>
+              <tr><td><strong>空间之神</strong></td><td>顾行舟</td><td>空间</td><td>易形</td><td>原初·天空</td></tr>
+              <tr><td><strong>冰雷之神</strong></td><td>艾尔薇拉·亚历山德罗芙娜·沃尔科娃</td><td>禁锢</td><td>禁锢</td><td>原初·陆地</td></tr>
+              <tr><td><strong>火焰之神</strong></td><td>塞赫美特·赫利奥波利斯</td><td>火焰</td><td>毁灭</td><td>原初·陆地</td></tr>
+              <tr><td><strong>草木之神</strong></td><td>塔妮·怀努伊</td><td>草木</td><td>演化</td><td>原初·陆地</td></tr>
+              <tr><td><strong>光明之神</strong></td><td>法伊顿·伊柳西昂</td><td>光明</td><td>净化</td><td>原初·天空</td></tr>
+            </table>
+          </div>
+          <blockquote><i>>六枚权柄碎片各归其主，与尘歌共同构成七神之座。</i></blockquote>
         </div>
       </details>
 
       <details>
         <summary>当世六神（第三纪元）</summary>
         <div class="accordion-content">
-          <table class="world-table">
-            <tr><th>神位</th><th>神号</th><th>备注</th></tr>
-            <tr><td><strong>海洋之神</strong></td><td>尘歌（系统）</td><td>唯一未换代的初代神</td></tr>
-            <tr><td><strong>时间之神</strong></td><td>时渊</td><td>双子神明之一</td></tr>
-            <tr><td><strong>空间之神</strong></td><td>芥舟</td><td>双子神明之一</td></tr>
-            <tr><td><strong>冰雷之神</strong></td><td>凝淼</td><td>双冕北境女皇（已故）</td></tr>
-            <tr><td><strong>火焰之神</strong></td><td>祝焱</td><td>业焰之国火神（已故）</td></tr>
-            <tr><td><strong>草木之神</strong></td><td>瑶英</td><td>无垠根庭之主</td></tr>
-            <tr><td><strong>光明之神</strong></td><td>（尚未唤醒）</td><td>对应的"容器"为玩家·怀榆</td></tr>
-          </table>
-          <blockquote>法伊顿的权柄"净化"尚未被激活，其对应的国家"永昼净土"也处于无主状态。</blockquote>
+          <div class="table-wrap">
+            <table>
+              <tr><th>神位</th><th>神号</th><th>备注</th></tr>
+              <tr><td><strong>海洋之神</strong></td><td>尘歌（系统）</td><td>唯一未换代的初代神</td></tr>
+              <tr><td><strong>时间之神</strong></td><td>时渊</td><td>双子神明之一</td></tr>
+              <tr><td><strong>空间之神</strong></td><td>芥舟</td><td>双子神明之一</td></tr>
+              <tr><td><strong>冰雷之神</strong></td><td>凝淼</td><td>双冕北境女皇（已故）</td></tr>
+              <tr><td><strong>火焰之神</strong></td><td>祝焱</td><td>业焰之国火神（已故）</td></tr>
+              <tr><td><strong>草木之神</strong></td><td>瑶英</td><td>无垠根庭之主</td></tr>
+              <tr><td><strong>光明之神</strong></td><td>（尚未唤醒）</td><td>对应的"容器"为玩家·怀榆</td></tr>
+            </table>
+          </div>
+          <blockquote><i>法伊顿的权柄"净化"尚未被激活，其对应的国家"永昼净土"也处于无主状态。</i></blockquote>
         </div>
       </details>
     </div>
@@ -737,7 +831,7 @@
         <div class="accordion-content">
           <p>二代七神中，只有法伊顿（光明之神）与凡人段深泉结为伴侣，并分出一半力量使其成为半神。尘歌在造神时"完全复制"——段深泉因此被再造，成为怀榆的"命定之人"。</p>
           <p>当怀榆濒死时，系统会强制将段深泉的力量收回怀榆体内，对段深泉极度痛苦。</p>
-          <blockquote>"游戏系统"是尘歌为怀榆一个人设计的专属界面，是尘歌意志的直接投射。</blockquote>
+          <blockquote><i>"游戏系统"是尘歌为怀榆一个人设计的专属界面，是尘歌意志的直接投射。</i></blockquote>
         </div>
       </details>
 
@@ -762,7 +856,7 @@
           <p><strong>名字的由来：</strong>旧神法伊顿第一次见到本尊段深泉时，正是在一株榆树之下。尘歌以此为怀榆定名。</p>
           <p><strong>身份：</strong>千律州"玩家" · 准神明 · 段深泉的命定之人</p>
           <p><strong>等级：</strong>LV.25（北境主线结束时）</p>
-          <blockquote>被困在"玩家"身份里的真实的人。他以为自己冷漠薄情，但看着段深泉的睡脸时会忍不住伸手描摹轮廓。尘歌给他设计了"玩家"的身份，却没能控制他的心。</blockquote>
+          <blockquote><i>被困在"玩家"身份里的真实的人。他以为自己冷漠薄情，但看着段深泉的睡脸时会忍不住伸手描摹轮廓。尘歌给他设计了"玩家"的身份，却没能控制他的心。</i></blockquote>
         </div>
       </details>
 
@@ -772,26 +866,19 @@
           <p><strong>真实来源：</strong>与怀榆同源，尘歌以创生权柄创造。幼年被送至时衍天宫，由双子神明抚养长大。</p>
           <p><strong>身份：</strong>前业焰大神使 · 命定之人系统核心节点 · 时衍天宫段氏出身</p>
           <p><strong>等级：</strong>LV.50（曾因力量转移降至LV.1）</p>
-          <blockquote>世界上最温柔的"工具"。他发现自己被创造、被安排、被利用，却依然选择爱那个人。因为无论起源如何，怀榆给予他的温暖是真的。</blockquote>
+          <blockquote><i>世界上最温柔的"工具"。他发现自己被创造、被安排、被利用，却依然选择爱那个人。因为无论起源如何，怀榆给予他的温暖是真的。</i></blockquote>
         </div>
       </details>
     </div>
 
   </div>
 
-  <!-- ====== 底部 ====== -->
+  <!-- ====== 底部（删掉了世界观按钮） ====== -->
   <footer id="footer">
     <div class="footer-left">
       <span>©2026 淮子生生</span>
-      <span style="opacity:0.4;">·</span>
+      <span style="opacity:0.3;">·</span>
       <span>用文字构筑世界</span>
-      <span style="opacity:0.4;">·</span>
-      <a href="/-/world/">世界观</a>
-    </div>
-    <div class="footer-right">
-      <button onclick="changeSize(-1)" title="减小字号">A−</button>
-      <span class="size-label" id="sizeLabel">中</span>
-      <button onclick="changeSize(1)" title="增大字号">A+</button>
     </div>
   </footer>
 
@@ -820,36 +907,41 @@
   </script>
 
   <!-- ============================================================
-       字号控制 JS
+       字号控制 JS —— 渐进式放大/缩小（5档）
   ============================================================ -->
   <script>
-    var sizes = ['small', 'medium', 'large'];
-    var labels = ['小', '中', '大'];
-    var current = 1;
+    var sizeLevels = ['sm', 'md', 'lg', 'xl', '2xl'];
+    var sizeLabels = ['小', '中', '大', '更大', '最大'];
+    var currentLevel = 1; // 默认中
 
     function changeSize(delta) {
-      var next = current + delta;
+      var next = currentLevel + delta;
       if (next < 0) next = 0;
-      if (next > 2) next = 2;
-      if (next === current) return;
-      current = next;
-      document.body.className = document.body.className.replace(/font-\w+/g, '').trim();
-      if (sizes[current] !== 'medium') {
-        document.body.classList.add('font-' + sizes[current]);
-      }
-      document.getElementById('sizeLabel').textContent = labels[current];
-      try { localStorage.setItem('worldFontSize', String(current)); } catch(e) {}
+      if (next >= sizeLevels.length) next = sizeLevels.length - 1;
+      if (next === currentLevel) return;
+
+      // 移除所有字号类
+      sizeLevels.forEach(function(s) {
+        document.body.classList.remove('font-' + s);
+      });
+
+      currentLevel = next;
+      document.body.classList.add('font-' + sizeLevels[currentLevel]);
+      document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
+
+      try { localStorage.setItem('worldFontSize', String(currentLevel)); } catch(e) {}
     }
 
+    // 恢复保存的设置
     var saved = localStorage.getItem('worldFontSize');
     if (saved !== null) {
       var n = parseInt(saved);
-      if (!isNaN(n) && n >= 0 && n <= 2) {
-        current = n;
-        if (current !== 1) {
-          document.body.classList.add('font-' + sizes[current]);
+      if (!isNaN(n) && n >= 0 && n < sizeLevels.length) {
+        currentLevel = n;
+        if (currentLevel !== 1) {
+          document.body.classList.add('font-' + sizeLevels[currentLevel]);
         }
-        document.getElementById('sizeLabel').textContent = labels[current];
+        document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
       }
     }
   </script>
