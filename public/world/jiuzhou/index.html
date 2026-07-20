@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>九州风云录 · 世界观</title>
+  <style>
+    :root {
+      --bg-body: #ffffff;
+      --bg-section: #faf8f6;
+      --text-primary: #2c2c2c;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --border-light: #ece6de;
+      --accent: #b03a2a;
+      --accent-soft: rgba(176, 58, 42, 0.06);
+    }
+    [data-theme="dark"] {
+      --bg-body: #1a1816;
+      --bg-section: #24201c;
+      --text-primary: #cfc8c0;
+      --text-secondary: #9a948c;
+      --text-muted: #6a6560;
+      --border-light: #35302a;
+      --accent: #b05a4a;
+      --accent-soft: rgba(176, 90, 74, 0.1);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.8;
+      transition: background 0.3s, color 0.3s;
+      -webkit-font-smoothing: antialiased;
+    }
+    #reading-progress {
+      position: fixed; top:0; left:0;
+      width:0%; height:3px;
+      background: var(--accent);
+      z-index:9999;
+      transition: width 0.08s ease;
+    }
+    #nav {
+      max-width:960px; margin:0 auto;
+      padding:18px 24px 10px 24px;
+      display:flex; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; gap:12px;
+      border-bottom:1px solid var(--border-light);
+    }
+    #nav .nav-title { font-size:1.1rem; font-weight:500; letter-spacing:0.5px; }
+    #nav .nav-title span { color:var(--accent); }
+    .font-control {
+      display:flex; align-items:center; gap:4px;
+      background:var(--bg-section);
+      border-radius:20px; padding:2px 8px;
+      border:1px solid var(--border-light);
+    }
+    .font-control button {
+      padding:4px 10px; border-radius:14px; border:none;
+      background:transparent; color:var(--text-muted);
+      font-size:0.85rem; cursor:pointer;
+      transition:all 0.2s; font-family:inherit; font-weight:500;
+    }
+    .font-control button:hover { background:var(--accent); color:#fff; }
+    .font-control .size-display {
+      font-size:0.75rem; color:var(--text-muted);
+      min-width:32px; text-align:center;
+    }
+    #page-header {
+      max-width:960px; margin:0 auto;
+      padding:32px 24px 16px 24px; text-align:center;
+    }
+    #page-header h1 { font-size:1.8rem; font-weight:600; letter-spacing:1px; }
+    #page-header .sub { font-size:1rem; color:var(--text-muted); margin-top:4px; }
+    #content {
+      max-width:960px; margin:0 auto;
+      padding:8px 24px 40px 24px;
+    }
+    .triad {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:16px; margin:16px 0 8px 0;
+    }
+    .triad-item {
+      padding:16px 18px;
+      border:1px solid var(--border-light);
+      border-radius:8px;
+      background:var(--bg-section);
+    }
+    .triad-item h3 { font-size:1.05rem; color:var(--accent); margin-bottom:6px; font-weight:600; text-align:center; }
+    .triad-item p { font-size:0.92rem; line-height:1.8; color:var(--text-secondary); margin:0; }
+    @media (max-width:768px) { .triad { grid-template-columns:1fr; gap:12px; } }
+
+    .section { margin-bottom:40px; }
+    .section-title {
+      font-size:1.35rem; font-weight:600;
+      padding:12px 0 8px 16px;
+      margin-bottom:14px;
+      border-bottom:1px solid var(--border-light);
+      position:relative;
+    }
+    .section-title::before {
+      content:''; position:absolute; left:0; top:12px; bottom:8px;
+      width:4px; background:var(--accent); border-radius:2px;
+    }
+    details {
+      margin-bottom:4px;
+      border-bottom:1px solid var(--border-light);
+      background:var(--bg-section);
+      border-radius:6px; overflow:hidden;
+    }
+    details:last-child { border-bottom:none; }
+    summary {
+      padding:14px 18px 14px 42px;
+      font-size:1rem; font-weight:500;
+      cursor:pointer; list-style:none;
+      position:relative; user-select:none;
+      border-radius:6px;
+      transition:background 0.2s;
+    }
+    summary:hover { background:var(--accent-soft); }
+    summary::before {
+      content:'▸'; position:absolute; left:16px; top:50%;
+      transform:translateY(-50%);
+      font-size:1rem; color:var(--accent);
+      transition:transform 0.35s ease;
+    }
+    details[open] summary { border-bottom:1px solid var(--border-light); }
+    details[open] summary::before { transform:translateY(-50%) rotate(90deg); }
+    .accordion-content {
+      padding:0 18px 4px 18px;
+      max-height:0; overflow:hidden; opacity:0;
+      transition:max-height 0.45s ease, opacity 0.35s ease, padding 0.3s ease;
+    }
+    details[open] .accordion-content {
+      max-height:8000px; opacity:1;
+      padding:4px 18px 18px 18px;
+    }
+    .accordion-content p {
+      font-size:0.95rem; line-height:1.9;
+      color:var(--text-secondary); margin-bottom:12px;
+    }
+    .accordion-content p:last-child { margin-bottom:0; }
+    .accordion-content h4 {
+      font-size:0.95rem; font-weight:600; color:var(--accent);
+      margin:18px 0 4px 0;
+    }
+    .accordion-content h4:first-child { margin-top:0; }
+    .accordion-content ul {
+      padding-left:22px; margin:6px 0 12px 0;
+    }
+    .accordion-content li {
+      font-size:0.93rem; line-height:1.9;
+      color:var(--text-secondary); margin-bottom:2px;
+    }
+    .character-item {
+      padding:10px 0 10px 14px;
+      border-left:3px solid var(--accent);
+      margin-bottom:10px;
+    }
+    .character-item h4 { font-size:0.95rem; color:var(--accent); margin-bottom:2px; font-weight:600; }
+    .character-item p { font-size:0.93rem; line-height:1.8; color:var(--text-secondary); margin:0; }
+    #footer {
+      max-width:960px; margin:0 auto;
+      padding:18px 24px 24px 24px;
+      border-top:1px solid var(--border-light);
+      display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+      font-size:0.85rem; color:var(--text-muted);
+    }
+
+    body { --font-size-base:16px; }
+    body.font-sm { --font-size-base:15px; }
+    body.font-md { --font-size-base:16px; }
+    body.font-lg { --font-size-base:17px; }
+    body.font-xl { --font-size-base:18px; }
+    body.font-2xl { --font-size-base:19px; }
+    body { font-size:var(--font-size-base); }
+    body .accordion-content p,
+    body .accordion-content li,
+    body .character-item p { font-size:calc(var(--font-size-base) * 0.95); }
+    body .triad-item p { font-size:calc(var(--font-size-base) * 0.92); }
+    body .section-title { font-size:calc(var(--font-size-base) * 1.35); }
+    body summary { font-size:calc(var(--font-size-base) * 1.0); }
+    body #page-header h1 { font-size:calc(var(--font-size-base) * 1.8); }
+
+    @media (max-width:768px) {
+      #nav { padding:14px 16px 8px 16px; }
+      #page-header { padding:20px 16px 12px 16px; }
+      #page-header h1 { font-size:calc(var(--font-size-base) * 1.4); }
+      #page-header .sub { font-size:calc(var(--font-size-base) * 0.9); }
+      #content { padding:4px 14px 30px 14px; }
+      .section-title { font-size:calc(var(--font-size-base) * 1.15); padding:10px 0 6px 12px; }
+      .section-title::before { top:10px; bottom:6px; }
+      summary { font-size:calc(var(--font-size-base) * 0.92); padding:12px 14px 12px 36px; }
+      summary::before { left:12px; }
+      details[open] .accordion-content { padding:2px 12px 14px 12px; }
+      .accordion-content p,
+      .accordion-content li { font-size:calc(var(--font-size-base) * 0.9); }
+      .character-item { padding:8px 0 8px 10px; }
+      #footer { padding:14px 16px 18px 16px; flex-direction:column; align-items:flex-start; gap:6px; }
+    }
+    @media (max-width:480px) {
+      #page-header h1 { font-size:calc(var(--font-size-base) * 1.2); }
+      .section-title { font-size:calc(var(--font-size-base) * 1.0); }
+      summary { font-size:calc(var(--font-size-base) * 0.88); padding:10px 12px 10px 32px; }
+      summary::before { left:10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="reading-progress"></div>
+
+  <nav id="nav">
+    <span class="nav-title">九州 · <span>风云录</span></span>
+    <div class="font-control">
+      <button onclick="changeSize(-1)">A−</button>
+      <span class="size-display" id="sizeDisplay">中</span>
+      <button onclick="changeSize(1)">A+</button>
+    </div>
+  </nav>
+
+  <header id="page-header">
+    <h1>九州风云录</h1>
+    <p class="sub">当美貌成了原罪，爱便是唯一的赦免。</p>
+  </header>
+
+  <div id="content">
+
+    <div class="section">
+      <h2 class="section-title">一、三界架构</h2>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:16px;">世界分三层，各有屏障，并非不可逾越。</p>
+      <div class="triad">
+        <div class="triad-item"><h3>天界</h3><p>众神居所，天宫执掌三界秩序。天河横贯，蟠桃园四季常青。权力倾轧、流言蜚语，与人间无异。</p></div>
+        <div class="triad-item"><h3>人间</h3><p>凡人世代生息之地。九州大地上祭祀不绝，凡人不知天宫之事，但春祈秋报从未断绝。</p></div>
+        <div class="triad-item"><h3>幽冥</h3><p>魂魄轮回之所。亡魂渡忘川、过奈何桥、入轮回井。与天宫井水不犯河水。</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">二、天宫与神权</h2>
+
+      <details>
+        <summary>主神与职司</summary>
+        <div class="accordion-content">
+          <p>天宫以<strong>主神</strong>为尊，下设各司。神职分文武——文职司礼乐文书，武职司征战镇守。</p>
+          <ul>
+            <li><strong>礼乐司</strong>：掌祭祀仪典、歌舞乐律。</li>
+            <li><strong>沧溟殿</strong>：掌四海八荒水脉。</li>
+            <li><strong>雷部、北斗星君府</strong>：掌天罚与星象。</li>
+          </ul>
+          <p>神族幼崽须入学堂修习《天条》、心法与各界认知。天宫不靠武力维系统治，而靠秩序与名分。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>乐游神 · 沈见川</summary>
+        <div class="accordion-content">
+          <p>司掌人间祭祀、歌舞与春日宴饮。职责看似风光，实则游离于权力核心之外——礼乐神不需要武力，只需要“好看”和“会跳舞”。</p>
+          <p>祭服须十二重云锦、九旒冠冕，祭典时需“阴阳合德，天人交感”，扮成雌雄莫辨的模样。春祭当日不食烟火，干坐一整天。</p>
+          <p>因相貌出众、职衔清闲，常被暗讽“靠关系上位”。一千年前曾在祭典后被高阶神官性侵，从此灵力衰退、常年失眠。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>主神 · 李渊</summary>
+        <div class="accordion-content">
+          <p>天宫第三任主神，从人间游历飞升，执政三千年。年少时在河滩捡到弃婴沈见川，将其养大成人。</p>
+          <p>性情沉稳威严，对三界事务了如指掌，但在某些事上始终保持沉默——比如那只木镯的真正用途。</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">三、核心人物</h2>
+      <div class="character-item"><h4>沈见川（乐游神）</h4><p>生得极好看，也因此招致觊觎与侵害。灵力衰退、常年失眠，腕上戴着李渊所赠的木镯，已有千年。</p></div>
+      <div class="character-item"><h4>李汐</h4><p>李渊与方冉之女，继承水系仙根。从小由沈见川带大，性格刚烈果决。十五岁表白，十八岁将其占有。</p></div>
+      <div class="character-item"><h4>方冉（沧溟神女）</h4><p>水脉之主，李渊之妻。性情外柔内刚，是天宫公认的“天后”典范。</p></div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">四、关键器物与谜团</h2>
+
+      <details>
+        <summary>木镯</summary>
+        <div class="accordion-content">
+          <p>李渊千年前所赠，形制朴素，戴在沈见川腕上从未取下。李汐发现它会悄然吸收灵力。</p>
+          <p><strong>谜团</strong>：压制灵力？保护监测？还是某种控制？李渊从不解释。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>安神茶</summary>
+        <div class="accordion-content">
+          <p>李汐为沈见川所制，饮后可安睡整夜，但长期饮用产生依赖，停用后失眠加重。</p>
+          <p><strong>谜团</strong>：是否含有微量灵力或镇静成分？</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">五、时间与因果</h2>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:12px;">天宫以千年为刻度。沈见川活了三千年——前两千年少年意气，后一千年沉入黑暗。时间没有治愈他，只是让伤口结了一层薄痂。</p>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:8px;"><strong>关键节点</strong>：三千年前被李渊捡回 · 一千年前遭遇侵害 · 十八年前李汐出生 · 十五年前开始带李汐 · 故事开场于李汐十八岁生辰前夜。</p>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">六、核心矛盾</h2>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:8px;">乐游神的漂亮是一种诅咒——被觊觎、被议论、被侵害。</p>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:8px;">李汐的爱强势而偏执，却也是唯一愿意教他变强、愿意接纳他全部腐烂的人。</p>
+      <p style="font-size:0.95rem;color:var(--text-secondary);">救赎不是被改造成另一个人，而是在暗室中终于被看见。</p>
+    </div>
+
+  </div>
+
+  <footer id="footer">
+    <span>©2026 九州风云录 · 世界观</span>
+    <span>用文字构筑世界</span>
+  </footer>
+
+  <script>
+    (function() {
+      const bar = document.getElementById('reading-progress');
+      let ticking = false;
+      function update() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+          bar.style.width = Math.min(progress, 100) + '%';
+          ticking = false;
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+
+    var sizeLevels = ['sm','md','lg','xl','2xl'];
+    var sizeLabels = ['小','中','大','更大','最大'];
+    var currentLevel = 1;
+
+    function changeSize(delta) {
+      var next = currentLevel + delta;
+      if (next < 0) next = 0;
+      if (next >= sizeLevels.length) next = sizeLevels.length - 1;
+      if (next === currentLevel) return;
+      sizeLevels.forEach(function(s) { document.body.classList.remove('font-' + s); });
+      currentLevel = next;
+      document.body.classList.add('font-' + sizeLevels[currentLevel]);
+      document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
+      try { localStorage.setItem('worldFontSize', String(currentLevel)); } catch(e) {}
+    }
+    var saved = localStorage.getItem('worldFontSize');
+    if (saved !== null) {
+      var n = parseInt(saved);
+      if (!isNaN(n) && n >= 0 && n < sizeLevels.length) {
+        currentLevel = n;
+        if (currentLevel !== 1) document.body.classList.add('font-' + sizeLevels[currentLevel]);
+        document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
+      }
+    }
+
+    (function() {
+      var html = document.documentElement;
+      function applyTheme() {
+        var attr = html.getAttribute('data-theme');
+        if (!attr) {
+          try {
+            var raw = localStorage.getItem('theme');
+            if (raw) { var parsed = JSON.parse(raw); if (parsed && parsed.value) attr = parsed.value; }
+          } catch(e) {}
+        }
+        if (attr === 'dark') html.setAttribute('data-theme', 'dark');
+        else html.removeAttribute('data-theme');
+      }
+      applyTheme();
+      window.addEventListener('storage', function(e) { if (e.key === 'theme') applyTheme(); });
+      var observer = new MutationObserver(function() { applyTheme(); });
+      observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+    })();
+  </script>
+
+</body>
+</html>

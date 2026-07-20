@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<script>
+(function() {
+  var raw = localStorage.getItem('theme');
+  var theme = raw;
+  try {
+    var parsed = JSON.parse(raw);
+    if (parsed && parsed.value) theme = parsed.value;
+  } catch(e) {}
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人物关系星图 · 九州风云录</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<style>
+  /* ========== 浅色模式 ========== */
+  :root {
+    --bg-main: #f7f4ef;
+    --bg-card: #ffffff;
+    --bg-toolbar: #ffffff;
+    --border-light: #ece6de;
+    --text-primary: #3a3a3a;
+    --text-secondary: #8a8a8a;
+    --text-muted: #b8b8b8;
+    --shadow: rgba(0,0,0,0.04);
+    --link-line: #9e9286;
+    --link-red: #d93030;
+    --link-pink: #c06a7a;
+    --label-bg: rgba(255,255,255,0.88);
+    --node-shadow: rgba(0,0,0,0.06);
+    --node-stroke: #ffffff;
+    --ring-opacity: 0.15;
+    --ring-selected: 0.35;
+    --tag-opacity: 0.85;
+    --scrollbar: #e8e2da;
+    --main-color: #c44536;
+  }
+
+  /* ========== 深色模式 ========== */
+  [data-theme="dark"] {
+    --bg-main: #181614;
+    --bg-card: #24201c;
+    --bg-toolbar: #1e1b18;
+    --border-light: #35302a;
+    --text-primary: #cfc8c0;
+    --text-secondary: #8a847c;
+    --text-muted: #5a5550;
+    --shadow: rgba(0,0,0,0.3);
+    --link-line: #9a8e82;
+    --link-red: #ff5252;
+    --link-pink: #d48989;
+    --label-bg: rgba(36,32,28,0.92);
+    --node-shadow: rgba(0,0,0,0.25);
+    --node-stroke: #2a2622;
+    --ring-opacity: 0.25;
+    --ring-selected: 0.5;
+    --tag-opacity: 0.9;
+    --scrollbar: #3a3530;
+    --main-color: #c9b8a8;
+  }
+
+  /* ========== 全局 ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+
+  /* ========== 顶栏 ========== */
+  #header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-light);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 10px;
+    transition: background 0.3s, border-color 0.3s;
+    z-index: 10;
+  }
+  #header .left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  #header .title {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--text-primary);
+  }
+  #header .title span { color: var(--text-secondary); }
+  #header .sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+  .back-btn {
+    padding: 4px 14px;
+    border-radius: 18px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .back-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+  }
+  .reset-btn {
+    padding: 4px 12px;
+    border-radius: 18px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+  }
+  .reset-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+  }
+
+  /* ========== 主布局 ========== */
+  #main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    transition: flex-direction 0.3s;
+  }
+
+  /* ========== 图区域 ========== */
+  #graph-wrap {
+    flex: 1;
+    position: relative;
+    background: var(--bg-main);
+    min-height: 0;
+    transition: background 0.3s;
+  }
+  #graph-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  #graph-wrap svg:active { cursor: grabbing; }
+
+  /* ========== 右侧面板 ========== */
+  #panel {
+    width: 300px;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border-light);
+    padding: 22px 20px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  #panel .empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 40px;
+    line-height: 1.9;
+  }
+  #panel .empty i { font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.5; }
+  #panel .name {
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+  }
+  #panel .name .tag {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 6px;
+  }
+  #panel .age {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 2px 0 8px 0;
+  }
+  #panel .role {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 2px 0 8px 0;
+  }
+  #panel .story {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-primary);
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+    margin-top: 2px;
+    transition: border-color 0.3s;
+  }
+  #panel .story .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  #panel .relations {
+    margin-top: 12px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+    transition: border-color 0.3s;
+  }
+  #panel .relations .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+  }
+  #panel .relations .item {
+    font-size: 12px;
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+  }
+  #panel .relations .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ========== SVG 连线样式 ========== */
+  .link-line {
+    stroke: var(--link-line);
+    stroke-width: 1.8px;
+    opacity: 0.6;
+  }
+  .link-label-bg {
+    fill: var(--label-bg);
+    stroke: var(--border-light);
+    stroke-width: 0.5;
+    rx: 4;
+    transition: fill 0.3s, stroke 0.3s;
+  }
+  .link-label-text {
+    font-size: 10px;
+    fill: var(--text-secondary);
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  /* ========== SVG 节点样式 ========== */
+  .node-group { cursor: pointer; }
+  .node-ring {
+    fill: none;
+    stroke-width: 3.5px;
+    opacity: var(--ring-opacity);
+    transition: opacity 0.3s, stroke-width 0.3s;
+  }
+  .node-circle {
+    stroke: var(--node-stroke);
+    stroke-width: 2px;
+    filter: drop-shadow(0 2px 8px var(--shadow));
+    transition: filter 0.3s, stroke 0.3s;
+  }
+  .node-letter {
+    font-size: 16px;
+    font-weight: 600;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    letter-spacing: 0.3px;
+  }
+  .node-name {
+    font-size: 12px;
+    font-weight: 500;
+    fill: var(--text-primary);
+    text-anchor: middle;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+    transition: fill 0.3s;
+  }
+  .node-name.main {
+    font-weight: 700;
+    fill: var(--main-color);
+  }
+  .node-role {
+    font-size: 10px;
+    fill: var(--text-secondary);
+    text-anchor: middle;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+    transition: fill 0.3s;
+  }
+  .node-tag-bg {
+    rx: 10;
+    opacity: var(--tag-opacity);
+    transition: opacity 0.3s;
+  }
+  .node-tag-text {
+    font-size: 9px;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+  .node.selected .node-ring {
+    opacity: var(--ring-selected);
+    stroke-width: 5px;
+  }
+
+  /* ========== 响应式 ========== */
+  @media (max-width: 820px) {
+    body {
+      overflow-y: auto;
+      height: auto;
+      min-height: 100vh;
+    }
+    #main {
+      flex-direction: column;
+      overflow: visible;
+      height: auto;
+    }
+    #header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 8px var(--shadow);
+    }
+    #graph-wrap {
+      flex: none;
+      height: calc(100vh - 60px);
+      width: 100%;
+      min-height: 400px;
+    }
+    #panel {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid var(--border-light);
+      max-height: none;
+      overflow-y: visible;
+      padding: 20px 16px;
+    }
+    #header .sub { display: none; }
+  }
+  @media (max-width: 500px) {
+    #panel { padding: 16px; }
+    #header .left { gap: 8px; }
+    .back-btn { font-size: 11px; padding: 3px 10px; }
+    #graph-wrap { height: calc(100vh - 56px); }
+  }
+</style>
+
+<script>
+  (function() {
+    try {
+      var raw = localStorage.getItem('theme');
+      var theme = raw;
+      try {
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.value) theme = parsed.value;
+      } catch(e) {}
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (theme === 'light') {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    } catch(e) {}
+  })();
+</script>
+</head>
+<body>
+
+<div id="header">
+  <div class="left">
+    <a class="back-btn" href="javascript:history.back()">← 返回</a>
+    <span class="title">九州 · <span>人物关系星图</span></span>
+    <span class="sub">点击节点 · 拖拽布局</span>
+  </div>
+  <button class="reset-btn" onclick="resetZoom()">↺ 重置</button>
+</div>
+
+<div id="main">
+  <div id="graph-wrap">
+    <svg id="chart"></svg>
+  </div>
+  <div id="panel">
+    <div class="empty" id="emptyState">
+      <i>✦</i>
+      <p>点击星图中的人物<br>查看其身份与故事</p>
+    </div>
+    <div id="detail" style="display:none;">
+      <div class="name" id="dName"></div>
+      <div class="age" id="dAge"></div>
+      <div class="role" id="dRole"></div>
+      <div class="story">
+        <div class="label">背景</div>
+        <div id="dStory"></div>
+      </div>
+      <div class="relations">
+        <div class="label">关联</div>
+        <div id="dRels"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================================================================
+  //  配色
+  // ================================================================
+  const COLORS = {
+    sx: '#b08878',   // 沈见川
+    lx: '#8aaaa8',   // 李汐
+    ly: '#a8b0c0',   // 李渊
+    fr: '#8ab8b8',   // 方冉
+    default: '#c4bdb5'
+  };
+
+  // ================================================================
+  //  数据
+  // ================================================================
+  const ALL_NODES = [
+    {
+      id: 'shenjianchuan',
+      name: '沈见川',
+      role: '乐游神 · 司掌人间祭祀',
+      tag: '主角',
+      color: COLORS.sx,
+      age: '约三千岁',
+      identity: '李渊养弟 · 李汐之叔',
+      isMain: true,
+      story: '三千年前被李渊从河滩捡回，养大成人。封神号"乐游"，司掌人间祭祀、歌舞与春日宴饮。因生得极好看而遭觊觎，千年前遭遇侵害，从此灵力衰退、常年失眠。手腕上戴着一只李渊所赠的木镯，千年未取。'
+    },
+    {
+      id: 'lixi',
+      name: '李汐',
+      role: '天帝之女 · 水系仙根',
+      tag: '主角',
+      color: COLORS.lx,
+      age: '十八岁',
+      identity: '李渊与方冉之女',
+      isMain: true,
+      story: '从小由沈见川带大，性格刚烈果决。十五岁时向沈见川表白，十八岁生辰前夜在凡间客栈将其占有。强势而偏执，却是唯一愿意教沈见川变强、愿意接纳他全部腐烂的人。'
+    },
+    {
+      id: 'liyuan',
+      name: '李渊',
+      role: '天宫主神 · 三界之主',
+      tag: '核心',
+      color: COLORS.ly,
+      age: '三千余岁',
+      identity: '沈见川养兄 · 李汐之父',
+      story: '天宫第三任主神，从人间游历飞升。年少时捡回弃婴沈见川，将其养大。对三界事务了如指掌，但在某些事上始终保持沉默——比如那只木镯的真正用途。'
+    },
+    {
+      id: 'fangran',
+      name: '方冉',
+      role: '沧溟神女 · 水脉之主',
+      tag: '核心',
+      color: COLORS.fr,
+      age: '约三千岁',
+      identity: '李渊之妻 · 李汐之母',
+      story: '司掌四海八荒水脉，性情外柔内刚。沈见川曾追求过她，但彼时她已与李渊相恋多年。成婚后诞下李汐，是天宫公认的"天后"。'
+    }
+  ];
+
+  const ALL_LINKS = [
+    { source: 'shenjianchuan', target: 'lixi', relation: '爱人 · 执念', red: true },
+    { source: 'shenjianchuan', target: 'liyuan', relation: '养兄弟 · 恩与债' },
+    { source: 'shenjianchuan', target: 'fangran', relation: '曾经单恋 · 未果', pink: true },
+    { source: 'liyuan', target: 'fangran', relation: '夫妻 · 同心', red: true },
+    { source: 'liyuan', target: 'lixi', relation: '父女 · 血脉' },
+    { source: 'fangran', target: 'lixi', relation: '母女 · 温柔' }
+  ];
+
+  // ================================================================
+  //  D3 引擎
+  // ================================================================
+  let nodes = [];
+  let links = [];
+  let selectedNode = null;
+
+  const container = document.getElementById('graph-wrap');
+  const svg = d3.select('#chart');
+  let width = container.clientWidth;
+  let height = container.clientHeight || 600;
+  svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+
+  const g = svg.append('g');
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 3.5])
+    .on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoom).on('dblclick.zoom', null);
+
+  const simulation = d3.forceSimulation()
+    .force('link', d3.forceLink().id(d => d.id).distance(200))
+    .force('charge', d3.forceManyBody().strength(-800))
+    .force('center', d3.forceCenter(0, 0))
+    .force('collide', d3.forceCollide().radius(44))
+    .velocityDecay(0.35);
+
+  let linkGroup = g.append('g').attr('class', 'links');
+  let nodeGroup = g.append('g').attr('class', 'nodes');
+
+  function render() {
+    nodes = ALL_NODES.map(n => ({ ...n }));
+    links = ALL_LINKS.map(l => {
+      const s = nodes.find(n => n.id === l.source);
+      const t = nodes.find(n => n.id === l.target);
+      if (!s || !t) return null;
+      return { source: s, target: t, relation: l.relation, red: l.red || false, pink: l.pink || false };
+    }).filter(l => l !== null);
+
+    nodes.forEach((d, i) => {
+      const angle = (i / nodes.length) * 2 * Math.PI;
+      const r = 120 + (i % 2 === 0 ? 40 : -20);
+      d.x = Math.cos(angle) * r;
+      d.y = Math.sin(angle) * r;
+      d.fx = null; d.fy = null;
+    });
+
+    // —— 连线 ——
+    const linkSel = linkGroup.selectAll('.link-item')
+      .data(links, d => d.source.id + '-' + d.target.id);
+    linkSel.exit().transition().duration(250).style('opacity', 0).remove();
+
+    linkSel.select('line')
+      .style('stroke', d => d.red ? 'var(--link-red)' : (d.pink ? 'var(--link-pink)' : 'var(--link-line)'))
+      .style('stroke-width', d => d.red ? 2.5 : (d.pink ? 1.8 : 1.8))
+      .style('stroke-dasharray', d => {
+        if (d.red) return '6,4';
+        if (d.pink) return '6,4';
+        return '4,4';
+      })
+      .style('opacity', d => d.red ? 0.9 : (d.pink ? 0.7 : 0.6));
+
+    const linkEnter = linkSel.enter().append('g')
+      .attr('class', 'link-item')
+      .style('opacity', 0);
+    linkEnter.transition().duration(300).style('opacity', 1);
+
+    linkEnter.append('line')
+      .style('stroke', d => d.red ? 'var(--link-red)' : (d.pink ? 'var(--link-pink)' : 'var(--link-line)'))
+      .style('stroke-width', d => d.red ? 2.5 : (d.pink ? 1.8 : 1.8))
+      .style('stroke-dasharray', d => {
+        if (d.red) return '6,4';
+        if (d.pink) return '6,4';
+        return '4,4';
+      })
+      .style('opacity', d => d.red ? 0.9 : (d.pink ? 0.7 : 0.6));
+
+    linkEnter.append('rect').attr('class', 'link-label-bg')
+      .attr('width', 60).attr('height', 18).attr('x', -30).attr('y', -9);
+    linkEnter.append('text').attr('class', 'link-label-text').attr('dy', 1);
+
+    // —— 节点 ——
+    const nodeSel = nodeGroup.selectAll('.node-group')
+      .data(nodes, d => d.id);
+    nodeSel.exit().transition().duration(250).style('opacity', 0).remove();
+
+    const nodeEnter = nodeSel.enter().append('g')
+      .attr('class', 'node-group')
+      .style('opacity', 0)
+      .call(d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended))
+      .on('click', function(e, d) {
+        e.stopPropagation();
+        selectNode(d);
+        nodes.forEach(n => {
+          if (n !== d) { n.vx = (Math.random() - 0.5) * 4; n.vy = (Math.random() - 0.5) * 4; }
+        });
+        simulation.alpha(0.8).restart();
+      });
+
+    nodeEnter.transition().duration(350).style('opacity', 1);
+
+    nodeEnter.append('circle').attr('class', 'node-ring').attr('r', 38);
+    nodeEnter.append('circle').attr('class', 'node-circle').attr('r', 28);
+    nodeEnter.append('text').attr('class', 'node-letter').attr('dy', 1)
+      .text(d => d.name ? d.name.charAt(0) : '?');
+
+    const tagW = 44;
+    nodeEnter.append('rect')
+      .attr('class', 'node-tag-bg')
+      .attr('y', -46).attr('height', 16).attr('width', tagW).attr('x', -tagW / 2);
+    nodeEnter.append('text').attr('class', 'node-tag-text').attr('y', -38);
+
+    nodeEnter.append('text').attr('class', 'node-name').attr('y', 44).text(d => d.name);
+    nodeEnter.append('text').attr('class', 'node-role').attr('y', 58);
+
+    svg.on('click', () => {
+      selectedNode = null;
+      showEmpty();
+      d3.selectAll('.node-group').classed('selected', false);
+    });
+
+    refreshVisuals();
+
+    nodes.forEach(d => { d.fx = null; d.fy = null; });
+    simulation.nodes(nodes);
+    simulation.force('link').links(links);
+    simulation.alpha(1).restart();
+  }
+
+  function refreshVisuals() {
+    const all = nodeGroup.selectAll('.node-group');
+    all.select('.node-ring').attr('stroke', d => d.color || '#c4bdb5');
+    all.select('.node-circle').attr('fill', d => d.color || '#c4bdb5');
+    all.select('.node-letter').text(d => d.name ? d.name.charAt(0) : '?');
+
+    all.select('.node-tag-bg')
+      .attr('fill', d => d.color || '#c4bdb5')
+      .attr('width', d => Math.max(34, ((d.tag || '角色').length * 10 + 12)))
+      .attr('x', d => -Math.max(34, ((d.tag || '角色').length * 10 + 12)) / 2);
+    all.select('.node-tag-text').text(d => d.tag || '角色');
+
+    all.select('.node-name')
+      .text(d => d.name)
+      .attr('class', d => d.isMain ? 'node-name main' : 'node-name');
+
+    all.select('.node-role')
+      .text(d => (d.role || '').length > 16 ? d.role.slice(0, 14) + '…' : (d.role || ''));
+  }
+
+  simulation.on('tick', () => {
+    linkGroup.selectAll('.link-item').each(function(d) {
+      const line = d3.select(this).select('line');
+      const rect = d3.select(this).select('rect');
+      const text = d3.select(this).select('text');
+      const x1 = d.source.x, y1 = d.source.y;
+      const x2 = d.target.x, y2 = d.target.y;
+      line.attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2);
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const txt = d.relation || '关系';
+      const tw = Math.max(40, txt.length * 11 + 14);
+      rect.attr('x', mx - tw / 2).attr('y', my - 9).attr('width', tw);
+      text.attr('x', mx).attr('y', my).text(txt);
+    });
+    nodeGroup.selectAll('.node-group')
+      .attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  function dragstarted(e, d) {
+    if (!e.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x; d.fy = d.y;
+  }
+  function dragged(e, d) {
+    d.fx = e.x; d.fy = e.y;
+  }
+  function dragended(e, d) {
+    if (!e.active) simulation.alphaTarget(0);
+    d.fx = d.x; d.fy = d.y;
+  }
+
+  function selectNode(d) {
+    selectedNode = d;
+    d3.selectAll('.node-group').classed('selected', false);
+    d3.selectAll('.node-group').filter(n => n === d).classed('selected', true);
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('detail').style.display = 'block';
+
+    document.getElementById('dName').textContent = d.name;
+    document.getElementById('dAge').textContent = '年龄：' + (d.age || '未知');
+    document.getElementById('dRole').textContent = d.role || '身份未明';
+    document.getElementById('dStory').textContent = d.story || '暂无背景记载。';
+
+    const rels = ALL_LINKS.filter(l => l.source === d.id || l.target === d.id);
+    const rc = document.getElementById('dRels');
+    if (rels.length === 0) {
+      rc.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">暂无关联</div>';
+    } else {
+      rc.innerHTML = rels.map(l => {
+        const other = l.source === d.id ? l.target : l.source;
+        const node = ALL_NODES.find(n => n.id === other);
+        const color = node ? node.color : '#c4bdb5';
+        return `<div class="item"><span class="dot" style="background:${color};"></span> ${other} · ${l.relation}</div>`;
+      }).join('');
+    }
+
+    if (window.innerWidth <= 820) {
+      const panel = document.getElementById('panel');
+      setTimeout(() => { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+    }
+  }
+
+  function showEmpty() {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('detail').style.display = 'none';
+  }
+
+  function resetZoom() {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    nodes.forEach(n => { n.vx = (Math.random() - 0.5) * 3; n.vy = (Math.random() - 0.5) * 3; });
+    simulation.alpha(0.6).restart();
+  }
+  window.resetZoom = resetZoom;
+
+  function resize() {
+    width = container.clientWidth;
+    height = container.clientHeight || 600;
+    svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+    simulation.force('center', d3.forceCenter(0, 0));
+    simulation.alpha(0.3).restart();
+  }
+  window.addEventListener('resize', resize);
+  new ResizeObserver(resize).observe(container);
+
+  render();
+  setTimeout(() => {
+    const node = ALL_NODES.find(n => n.id === 'shenjianchuan');
+    if (node) selectNode(node);
+  }, 500);
+</script>
+</body>
+</html>
