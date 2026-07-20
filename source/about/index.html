@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关于 - 墨境</title>
+  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --card-bg: #fff;
+      --card-border: #e3e8f7;
+      --font-color: #4c4948;
+      --theme-color: #c44536;
+      --bg-color: #f7f9fe;
+      --meta-color: #858585;
+    }
+    [data-theme="dark"] {
+      --card-bg: #1b1b1b;
+      --card-border: #3d3d3d;
+      --font-color: #c0c0c0;
+      --bg-color: #0d0d0d;
+      --meta-color: #7a7a7a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
+      background: var(--bg-color);
+      color: var(--font-color);
+      overflow-x: hidden;
+      line-height: 1.8;
+    }
+
+    /* 顶部导航 */
+    #nav {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      text-decoration: none;
+      color: var(--font-color);
+      font-size: 1.3em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-brand span { color: var(--theme-color); }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a {
+      color: var(--font-color);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--theme-color); }
+
+    /* 主体 */
+    .layout {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .about-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .about-card h1 {
+      font-size: 1.6em;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--theme-color);
+      display: inline-block;
+    }
+    .about-card h2 {
+      font-size: 1.2em;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: var(--theme-color);
+    }
+    .about-card h3 {
+      font-size: 1.05em;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .about-card p {
+      margin-bottom: 12px;
+      color: var(--font-color);
+      opacity: 0.9;
+    }
+    .about-card a {
+      color: var(--theme-color);
+      text-decoration: none;
+    }
+    .about-card a:hover { text-decoration: underline; }
+    .about-card .email {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-color);
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      margin-top: 8px;
+    }
+
+    /* 手机端 */
+    @media (max-width: 768px) {
+      #nav { padding: 0 16px; }
+      .nav-inner { height: 52px; }
+      .nav-brand { font-size: 1.05em; gap: 6px; }
+      .nav-links { gap: 16px; }
+      .nav-links a span { display: none; }
+      .layout { padding: 24px 16px; }
+      .about-card { padding: 24px; }
+      .about-card h1 { font-size: 1.4em; }
+    }
+  </style>
+  <script>
+    (() => {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      else if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+  </script>
+<base target="_blank">
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="/-/"><i class="fas fa-feather-alt" style="color: var(--theme-color);"></i><span>墨境</span></a>
+      <div class="nav-links">
+        <a href="/-/"><i class="fas fa-home"></i><span>首页</span></a>
+        <a href="/-/world/"><i class="fas fa-compass"></i><span>探索</span></a>
+        <a href="/-/about/"><i class="fas fa-user"></i><span>关于</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <div class="about-card">
+      <h1>关于墨境</h1>
+      <p>墨境是一个专注于原创小说的个人博客。在这里，每一篇故事都是一次精心编织的梦境，每一个角色都有自己的命运与抉择。</p>
+
+      <h2>写作理念</h2>
+      <p>用来堆放各种脑洞，因为手机备忘录实在塞不下了，所以做了这里。</p>
+      <p>网站偶尔会出一些莫名其妙的 bug，我正在加急修复中。如果你看到什么页面错乱、加载失败，那说明我又在熬夜写代码了。习惯就好。</p>
+
+      <h2>作品系列</h2>
+
+      <h3>北境玫瑰</h3>
+      <p>BL向 ABO 奇幻黑帮题材。以烬影会首领黎昭的视角展开，讲述一个被神明抛弃的准神候选人在北境底层挣扎求生，却因一次意外被顶级 Alpha 指挥官标记，从此在发情期的失控、黑帮的存亡与女皇的棋局之间，一步步卷入北境变局的故事。</p>
+
+      <h3>这破游戏 NPC 太难打了</h3>
+      <p>BL 向奇幻冒险题材。以穿越者怀榆的视角展开，讲述一个自称"玩家"的人在千律州完成主线任务、解锁命定羁绊的旅程。只是他渐渐发现——这个世界，和他以为的"游戏"不太一样。</p>
+
+      <h3>我在地府打工的那些年</h3>
+      <p>BL 向仙侠题材的轻喜剧，以地府最弱引渡人栾方棋的视角展开，讲述一个办公室打工人被卷入神明遗产、千年诅咒与一场跨越两百年单相思的故事。主职抓鬼，副业谈恋爱，顺便拯救一下世界。</p>
+
+      <h3>九州风云录</h3>
+      <p>仙侠题材的轻喜剧 GB 故事。以乐游神沈见川的视角展开，讲述天庭众神的日常与一段跨越三千年的情感纠葛。</p>
+
+      <h2>联系作者</h2>
+      <p>如果你对作品有任何想法或建议，欢迎通过邮件与我交流。</p>
+      <div class="email"><i class="fas fa-envelope"></i> <a href="mailto:2629885225@qq.com">2629885225@qq.com</a></div>
+
+      <p style="margin-top: 32px; opacity: 0.6; font-style: italic; text-align: center;">用文字筑梦，用代码修梦。</p>
+    </div>
+  </div>
+</body>
+</html>
