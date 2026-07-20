@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,49 +7,8 @@
   <link rel="shortcut icon" href="/-/img/favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
-  /* 屏蔽所有 Butterfly 主题干扰 */
-  #aside-content { display: none !important; }
-  #sidebar { display: none !important; }
-  #toggle-menu { display: none !important; }
-  #rightside { display: none !important; }
-  #menus { display: none !important; }
-  .layout { display: block !important; }
-  #content-inner { max-width: 100% !important; }
-  #page { width: 100% !important; margin: 0 !important; }
-  #page-header .nav { background: transparent !important; }
-  #page-header .nav .menus_items { display: none !important; }
-  #page-header .nav #toggle-menu { display: none !important; }
-  .full_page { min-height: auto !important; background: var(--bg-body) !important; }
-  #site-info { display: none !important; }
-  #scroll-down { display: none !important; }
-  #body-wrap .page-header { background: var(--bg-body) !important; }
-  /* 隐藏任何可能出现的菜单按钮 */
-  .nav-toggle, .menu-toggle, .sidebar-toggle, [class*="toggle"] { display: none !important; }
-</style>
-
-  <style>
     /* ============================================================
-       0. 隐藏 Butterfly 主题全局组件
-    ============================================================ */
-    #aside-content { display: none !important; }
-    .layout { display: block !important; }
-    #content-inner { max-width: 100% !important; }
-    #page { width: 100% !important; margin: 0 !important; }
-    /* 隐藏移动端三条杠菜单按钮 */
-    #nav .menus,
-    .toggle-menu,
-    .nav-toggle,
-    .menu-toggle,
-    .sidebar-toggle,
-    #sidebar-toggle,
-    [class*="toggle"] { display: none !important; }
-    /* 隐藏目录 */
-    #toc,
-    .toc,
-    .toc-wrapper { display: none !important; }
-
-    /* ============================================================
-       1. 夜间模式
+       0. 夜间模式兼容
     ============================================================ */
     :root {
       --bg-body: #ffffff;
@@ -74,7 +33,7 @@
     }
 
     /* ============================================================
-       2. 全局
+       1. 全局
     ============================================================ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -92,7 +51,7 @@
     }
 
     /* ============================================================
-       3. 顶部导航（完全独立于 Butterfly）
+       2. 顶部导航
     ============================================================ */
     #nav {
       max-width: 960px;
@@ -126,90 +85,139 @@
     .nav-links a:hover { color: var(--accent); }
 
     /* ============================================================
-       4. 主内容
+       3. 页头
+    ============================================================ */
+    #header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 12px 24px;
+      width: 100%;
+    }
+    #header h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    #header .sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       4. 主内容（无卡片）
     ============================================================ */
     #content {
-      max-width: 680px;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 48px 24px 40px 24px;
+      padding: 8px 24px 40px 24px;
       width: 100%;
       flex: 1;
     }
 
-    /* 开场 */
-    .opening {
-      font-size: 1.5rem;
-      font-weight: 300;
-      color: var(--text-primary);
-      letter-spacing: 0.5px;
-      margin-bottom: 24px;
-      line-height: 1.6;
+    .section {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-light);
+      transition: border-color 0.3s;
     }
-    .opening em {
-      font-style: italic;
-      color: var(--accent);
-      font-weight: 400;
+    .section:last-child {
+      border-bottom: none;
     }
 
-    /* 正文 */
-    .body-text p {
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      padding-left: 12px;
+      position: relative;
+    }
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .section p {
       font-size: 0.95rem;
       color: var(--text-secondary);
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
-    .body-text p:last-child { margin-bottom: 0; }
+    .section p:last-child { margin-bottom: 0; }
 
-    /* 作品标签（轻量嵌入） */
-    .work-tags {
+    /* ============================================================
+       5. 作品列表（内嵌在关于页）
+    ============================================================ */
+    .work-item {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px 16px;
-      padding: 20px 0 12px 0;
-      border-top: 1px solid var(--border-light);
-      margin-top: 20px;
+      align-items: baseline;
+      gap: 12px;
+      padding: 6px 0 6px 12px;
+      border-left: 2px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+      border-radius: 0 4px 4px 0;
     }
-    .work-tags span {
-      font-size: 0.85rem;
-      color: var(--text-muted);
+    .work-item:hover {
+      border-left-color: var(--accent);
+      background: var(--bg-hover);
     }
-    .work-tags .name {
-      color: var(--text-primary);
+    .work-name {
       font-weight: 500;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      flex-shrink: 0;
     }
-    .work-tags .sep {
-      color: var(--border-light);
-    }
-
-    /* 联系 */
-    .contact-line {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border-light);
-      font-size: 0.9rem;
+    .work-desc {
+      font-size: 0.88rem;
       color: var(--text-muted);
     }
-    .contact-line a {
-      color: var(--accent);
+
+    /* ============================================================
+       6. 联系方式
+    ============================================================ */
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-light);
+      color: var(--text-secondary);
       text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.2s;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+      margin-top: 4px;
     }
-    .contact-line a:hover {
-      border-bottom-color: var(--accent);
+    .contact-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .contact-link i {
+      font-size: 0.85rem;
+      color: var(--accent);
     }
 
-    /* 落款 */
+    /* ============================================================
+       7. 底部引语
+    ============================================================ */
     .closing {
       text-align: center;
       font-style: italic;
       color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-top: 32px;
-      opacity: 0.6;
+      font-size: 0.9rem;
+      padding-top: 16px;
+      opacity: 0.7;
     }
 
     /* ============================================================
-       5. 底部
+       8. 底部
     ============================================================ */
     #footer {
       max-width: 960px;
@@ -224,7 +232,7 @@
     }
 
     /* ============================================================
-       6. 手机端
+       9. 手机端
     ============================================================ */
     @media (max-width: 768px) {
       #nav {
@@ -233,28 +241,47 @@
       .nav-brand { font-size: 1rem; }
       .nav-links a { font-size: 0.85rem; }
 
+      #header {
+        padding: 24px 16px 10px 16px;
+      }
+      #header h1 { font-size: 1.3rem; }
+      #header .sub { font-size: 0.85rem; }
+
       #content {
-        padding: 32px 16px 30px 16px;
+        padding: 4px 16px 30px 16px;
       }
 
-      .opening {
-        font-size: 1.2rem;
+      .section {
+        padding: 16px 0;
       }
-      .body-text p {
+      .section-title {
+        font-size: 1rem;
+        padding-left: 10px;
+      }
+      .section p {
         font-size: 0.9rem;
       }
-      .work-tags {
-        gap: 4px 12px;
-        padding: 16px 0 10px 0;
+
+      .work-item {
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px 0 8px 10px;
       }
-      .work-tags span {
-        font-size: 0.8rem;
+      .work-name {
+        font-size: 0.9rem;
       }
-      .contact-line {
+      .work-desc {
+        font-size: 0.82rem;
+      }
+
+      .contact-link {
         font-size: 0.85rem;
+        padding: 5px 14px 5px 10px;
       }
+
       .closing {
-        font-size: 0.8rem;
+        font-size: 0.82rem;
+        padding-top: 12px;
       }
 
       #footer {
@@ -264,9 +291,11 @@
     }
 
     @media (max-width: 480px) {
-      .opening { font-size: 1.05rem; }
-      .body-text p { font-size: 0.85rem; }
-      .work-tags span { font-size: 0.75rem; }
+      #header h1 { font-size: 1.1rem; }
+      .section-title { font-size: 0.92rem; }
+      .section p { font-size: 0.85rem; }
+      .work-name { font-size: 0.85rem; }
+      .work-desc { font-size: 0.78rem; }
     }
   </style>
 
@@ -300,11 +329,19 @@
         } catch(e) {}
       }
     });
+
+    var observer = new MutationObserver(function() {
+      // 自动同步，无需额外操作
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
   </script>
 </head>
 <body>
 
-  <!-- ====== 顶部导航（独立） ====== -->
+  <!-- ====== 顶部导航 ====== -->
   <nav id="nav">
     <a class="nav-brand" href="/-/">墨境 · <span>关于</span></a>
     <div class="nav-links">
@@ -313,32 +350,52 @@
     </div>
   </nav>
 
+  <!-- ====== 页头 ====== -->
+  <header id="header">
+    <h1>关于墨境</h1>
+    <p class="sub">用文字筑梦，用代码修梦</p>
+  </header>
+
   <!-- ====== 主内容 ====== -->
   <main id="content">
 
-    <div class="opening">
-      用来堆放各种脑洞。<br>
-      因为手机备忘录塞不下了，<em>所以做了这里。</em>
-    </div>
-
-    <div class="body-text">
-      <p>墨境是一个专注于原创小说的个人博客。每一篇故事都是一次精心编织的梦境，每一个角色都有自己的命运与抉择。</p>
+    <div class="section">
+      <div class="section-title">缘起</div>
+      <p>墨境是一个专注于原创小说的个人博客。在这里，每一篇故事都是一次精心编织的梦境，每一个角色都有自己的命运与抉择。</p>
+      <p>用来堆放各种脑洞，因为手机备忘录实在塞不下了，所以做了这里。</p>
       <p>网站偶尔会出一些莫名其妙的 bug，我正在加急修复中。如果你看到什么页面错乱、加载失败，那说明我又在熬夜写代码了。习惯就好。</p>
     </div>
 
-    <!-- 作品以标签形式轻量嵌入 -->
-    <div class="work-tags">
-      <span><span class="name">北境玫瑰</span> · ABO · 奇幻黑帮</span>
-      <span class="sep">|</span>
-      <span><span class="name">这破游戏NPC太能打了</span> · BL · 奇幻冒险</span>
-      <span class="sep">|</span>
-      <span><span class="name">我在地府打工那些年</span> · BL · 仙侠</span>
-      <span class="sep">|</span>
-      <span><span class="name">九州风云录</span> · GB · 仙侠</span>
+    <div class="section">
+      <div class="section-title">作品系列</div>
+
+      <div class="work-item">
+        <span class="work-name">北境玫瑰</span>
+        <span class="work-desc">BL · ABO · 奇幻黑帮 · 被神明抛弃的准神候选人在北境求生</span>
+      </div>
+
+      <div class="work-item">
+        <span class="work-name">这破游戏 NPC 太难打了</span>
+        <span class="work-desc">BL · 奇幻冒险 · 穿越者发现世界并非游戏那么简单</span>
+      </div>
+
+      <div class="work-item">
+        <span class="work-name">我在地府打工那些年</span>
+        <span class="work-desc">BL · 仙侠 · 地府引渡人卷入神明遗产与两百年单相思</span>
+      </div>
+
+      <div class="work-item">
+        <span class="work-name">九州风云录</span>
+        <span class="work-desc">GB · 仙侠 · 天庭众神日常与三千年情感纠葛</span>
+      </div>
     </div>
 
-    <div class="contact-line">
-      想聊聊？ <a href="mailto:2629885225@qq.com">2629885225@qq.com</a>
+    <div class="section">
+      <div class="section-title">联系</div>
+      <p>如果你对作品有任何想法或建议，欢迎通过邮件与我交流。</p>
+      <a class="contact-link" href="mailto:2629885225@qq.com">
+        <i class="fas fa-envelope"></i> 2629885225@qq.com
+      </a>
     </div>
 
     <div class="closing">用文字筑梦，用代码修梦。</div>
