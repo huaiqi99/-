@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>关于 · 墨境</title>
-  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <title>探索 · 墨境</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
     /* ============================================================
@@ -18,7 +17,7 @@
       --text-muted: #8a8a8a;
       --border-light: #ece6de;
       --accent: #b03a2a;
-      --accent-soft: rgba(176, 58, 42, 0.06);
+      --accent-soft: rgba(176, 58, 42, 0.08);
     }
 
     [data-theme="dark"] {
@@ -29,7 +28,7 @@
       --text-muted: #6a6560;
       --border-light: #35302a;
       --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.1);
+      --accent-soft: rgba(176, 90, 74, 0.12);
     }
 
     /* ============================================================
@@ -42,7 +41,7 @@
       background: var(--bg-body);
       color: var(--text-primary);
       font-size: 16px;
-      line-height: 1.8;
+      line-height: 1.7;
       transition: background 0.3s, color 0.3s;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
@@ -90,7 +89,7 @@
     #header {
       max-width: 960px;
       margin: 0 auto;
-      padding: 32px 24px 12px 24px;
+      padding: 32px 24px 16px 24px;
       width: 100%;
     }
     #header h1 {
@@ -106,7 +105,7 @@
     }
 
     /* ============================================================
-       4. 主内容（无卡片）
+       4. 主内容（信息流，无卡片）
     ============================================================ */
     #content {
       max-width: 960px;
@@ -116,88 +115,101 @@
       flex: 1;
     }
 
-    .section {
-      padding: 20px 0;
+    /* 每条信息 = 一个条目 */
+    .entry {
+      display: flex;
+      align-items: flex-start;
+      padding: 18px 0;
       border-bottom: 1px solid var(--border-light);
-      transition: border-color 0.3s;
+      transition: border-color 0.3s, background 0.2s;
+      gap: 20px;
     }
-    .section:last-child {
+    .entry:last-child {
       border-bottom: none;
     }
-
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 8px;
+    .entry:hover {
+      background: var(--bg-hover);
+      margin: 0 -12px;
       padding-left: 12px;
-      position: relative;
-    }
-    .section-title::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 4px;
-      bottom: 4px;
-      width: 3px;
-      background: var(--accent);
-      border-radius: 2px;
+      padding-right: 12px;
+      border-radius: 6px;
     }
 
-    .section p {
+    /* 左侧标签（如「缘起」「作品」「联系」） */
+    .entry-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 72px;
+      padding-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    /* 右侧内容 */
+    .entry-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .entry-body p {
       font-size: 0.95rem;
       color: var(--text-secondary);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      line-height: 1.8;
     }
-    .section p:last-child { margin-bottom: 0; }
+    .entry-body p:last-child { margin-bottom: 0; }
 
-    /* ============================================================
-       5. 作品列表（内嵌在关于页）
-    ============================================================ */
+    /* 作品列表（内嵌） */
+    .work-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
     .work-item {
       display: flex;
       align-items: baseline;
-      gap: 12px;
-      padding: 6px 0 6px 12px;
-      border-left: 2px solid transparent;
-      transition: border-color 0.2s, background 0.2s;
-      border-radius: 0 4px 4px 0;
-    }
-    .work-item:hover {
-      border-left-color: var(--accent);
-      background: var(--bg-hover);
+      gap: 10px;
+      padding: 2px 0;
     }
     .work-name {
       font-weight: 500;
       color: var(--text-primary);
-      font-size: 0.95rem;
+      font-size: 0.92rem;
+      flex-shrink: 0;
+      min-width: 80px;
+    }
+    .work-tag {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg-hover);
+      padding: 0 10px;
+      border-radius: 12px;
+      line-height: 1.8;
       flex-shrink: 0;
     }
     .work-desc {
       font-size: 0.88rem;
       color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    /* ============================================================
-       6. 联系方式
-    ============================================================ */
+    /* 联系链接 */
     .contact-link {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 16px 6px 12px;
-      border-radius: 20px;
-      border: 1px solid var(--border-light);
       color: var(--text-secondary);
       text-decoration: none;
       font-size: 0.9rem;
-      transition: all 0.25s;
-      margin-top: 4px;
+      padding: 4px 0;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s;
     }
     .contact-link:hover {
-      border-color: var(--accent);
       color: var(--accent);
-      background: var(--accent-soft);
+      border-bottom-color: var(--accent);
     }
     .contact-link i {
       font-size: 0.85rem;
@@ -205,19 +217,7 @@
     }
 
     /* ============================================================
-       7. 底部引语
-    ============================================================ */
-    .closing {
-      text-align: center;
-      font-style: italic;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      padding-top: 16px;
-      opacity: 0.7;
-    }
-
-    /* ============================================================
-       8. 底部
+       5. 底部
     ============================================================ */
     #footer {
       max-width: 960px;
@@ -232,7 +232,7 @@
     }
 
     /* ============================================================
-       9. 手机端
+       6. 手机端
     ============================================================ */
     @media (max-width: 768px) {
       #nav {
@@ -242,7 +242,7 @@
       .nav-links a { font-size: 0.85rem; }
 
       #header {
-        padding: 24px 16px 10px 16px;
+        padding: 24px 16px 12px 16px;
       }
       #header h1 { font-size: 1.3rem; }
       #header .sub { font-size: 0.85rem; }
@@ -251,37 +251,46 @@
         padding: 4px 16px 30px 16px;
       }
 
-      .section {
-        padding: 16px 0;
+      .entry {
+        flex-direction: column;
+        gap: 6px;
+        padding: 14px 0;
       }
-      .section-title {
-        font-size: 1rem;
-        padding-left: 10px;
+      .entry:hover {
+        margin: 0 -8px;
+        padding-left: 8px;
+        padding-right: 8px;
       }
-      .section p {
+
+      .entry-label {
+        width: auto;
+        font-size: 0.8rem;
+      }
+
+      .entry-body p {
         font-size: 0.9rem;
       }
 
       .work-item {
-        flex-direction: column;
-        gap: 2px;
-        padding: 8px 0 8px 10px;
+        flex-wrap: wrap;
+        gap: 4px 8px;
       }
       .work-name {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
+        min-width: auto;
+      }
+      .work-tag {
+        font-size: 0.7rem;
+        padding: 0 8px;
       }
       .work-desc {
         font-size: 0.82rem;
+        white-space: normal;
+        width: 100%;
       }
 
       .contact-link {
         font-size: 0.85rem;
-        padding: 5px 14px 5px 10px;
-      }
-
-      .closing {
-        font-size: 0.82rem;
-        padding-top: 12px;
       }
 
       #footer {
@@ -292,10 +301,10 @@
 
     @media (max-width: 480px) {
       #header h1 { font-size: 1.1rem; }
-      .section-title { font-size: 0.92rem; }
-      .section p { font-size: 0.85rem; }
-      .work-name { font-size: 0.85rem; }
+      .entry-body p { font-size: 0.85rem; }
+      .work-name { font-size: 0.82rem; }
       .work-desc { font-size: 0.78rem; }
+      .work-tag { font-size: 0.65rem; }
     }
   </style>
 
@@ -330,9 +339,7 @@
       }
     });
 
-    var observer = new MutationObserver(function() {
-      // 自动同步，无需额外操作
-    });
+    var observer = new MutationObserver(function() {});
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-theme']
@@ -356,49 +363,57 @@
     <p class="sub">用文字筑梦，用代码修梦</p>
   </header>
 
-  <!-- ====== 主内容 ====== -->
+  <!-- ====== 主内容（信息流） ====== -->
   <main id="content">
 
-    <div class="section">
-      <div class="section-title">缘起</div>
-      <p>墨境是一个专注于原创小说的个人博客。在这里，每一篇故事都是一次精心编织的梦境，每一个角色都有自己的命运与抉择。</p>
-      <p>用来堆放各种脑洞，因为手机备忘录实在塞不下了，所以做了这里。</p>
-      <p>网站偶尔会出一些莫名其妙的 bug，我正在加急修复中。如果你看到什么页面错乱、加载失败，那说明我又在熬夜写代码了。习惯就好。</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">作品系列</div>
-
-      <div class="work-item">
-        <span class="work-name">北境玫瑰</span>
-        <span class="work-desc">BL · ABO · 奇幻黑帮 · 被神明抛弃的准神候选人在北境求生</span>
-      </div>
-
-      <div class="work-item">
-        <span class="work-name">这破游戏 NPC 太难打了</span>
-        <span class="work-desc">BL · 奇幻冒险 · 穿越者发现世界并非游戏那么简单</span>
-      </div>
-
-      <div class="work-item">
-        <span class="work-name">我在地府打工那些年</span>
-        <span class="work-desc">BL · 仙侠 · 地府引渡人卷入神明遗产与两百年单相思</span>
-      </div>
-
-      <div class="work-item">
-        <span class="work-name">九州风云录</span>
-        <span class="work-desc">GB · 仙侠 · 天庭众神日常与三千年情感纠葛</span>
+    <!-- 条目：缘起 -->
+    <div class="entry">
+      <div class="entry-label">缘起</div>
+      <div class="entry-body">
+        <p>墨境是一个专注于原创小说的个人博客。用来堆放各种脑洞——因为手机备忘录实在塞不下了，所以做了这里。</p>
+        <p>网站偶尔会出一些莫名其妙的 bug，我正在加急修复中。如果你看到什么页面错乱、加载失败，那说明我又在熬夜写代码了。习惯就好。</p>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">联系</div>
-      <p>如果你对作品有任何想法或建议，欢迎通过邮件与我交流。</p>
-      <a class="contact-link" href="mailto:2629885225@qq.com">
-        <i class="fas fa-envelope"></i> 2629885225@qq.com
-      </a>
+    <!-- 条目：作品系列 -->
+    <div class="entry">
+      <div class="entry-label">作品</div>
+      <div class="entry-body">
+        <div class="work-list">
+          <div class="work-item">
+            <span class="work-name">北境玫瑰</span>
+            <span class="work-tag">BL · ABO</span>
+            <span class="work-desc">被神明抛弃的准神候选人在北境求生</span>
+          </div>
+          <div class="work-item">
+            <span class="work-name">这破游戏NPC太能打了</span>
+            <span class="work-tag">BL · 奇幻</span>
+            <span class="work-desc">穿越者发现世界并非游戏那么简单</span>
+          </div>
+          <div class="work-item">
+            <span class="work-name">我在地府打工那些年</span>
+            <span class="work-tag">BL · 仙侠</span>
+            <span class="work-desc">地府引渡人卷入两百年单相思</span>
+          </div>
+          <div class="work-item">
+            <span class="work-name">九州风云录</span>
+            <span class="work-tag">GB · 仙侠</span>
+            <span class="work-desc">天庭众神日常与三千年情感纠葛</span>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="closing">用文字筑梦，用代码修梦。</div>
+    <!-- 条目：联系 -->
+    <div class="entry">
+      <div class="entry-label">联系</div>
+      <div class="entry-body">
+        <p>如果你对作品有任何想法或建议，欢迎通过邮件与我交流。</p>
+        <a class="contact-link" href="mailto:2629885225@qq.com">
+          <i class="fas fa-envelope"></i> 2629885225@qq.com
+        </a>
+      </div>
+    </div>
 
   </main>
 
