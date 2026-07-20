@@ -911,7 +911,8 @@
   // ====== 动态参数：线长 250，低阻尼 0.3，让节点滑得更远 ======
   const simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(d => d.id).distance(250))
-    .force('charge', d3.forceManyBody().strength(-600))
+    .force('charge', d3.forceManyBody().strength(-900
+    ))
     .force('center', d3.forceCenter(0, 0))
     .force('collide', d3.forceCollide().radius(38))
     .velocityDecay(0.3);   // ← 低阻尼，散花效果明显
