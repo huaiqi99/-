@@ -1,295 +1,380 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
 <head>
-<script>
-(function() {
-  var raw = localStorage.getItem('theme');
-  var theme = raw;
-  try {
-    var parsed = JSON.parse(raw);
-    if (parsed && parsed.value) theme = parsed.value;
-  } catch(e) {}
-  if (theme === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else if (theme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-  }
-})();
-</script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>探索 - 墨境</title>
-  <link rel="shortcut icon" href="/-/img/favicon.ico">
+  <title>探索 · 墨境</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
+    /* ============================================================
+       0. 夜间模式兼容
+    ============================================================ */
     :root {
-      --card-bg: #fff;
-      --card-border: #e3e8f7;
-      --font-color: #4c4948;
-      --theme-color: #c44536;
-      --bg-color: #f7f9fe;
-      --meta-color: #858585;
-    }
-    [data-theme="dark"] {
-      --card-bg: #1b1b1b;
-      --card-border: #3d3d3d;
-      --font-color: #c0c0c0;
-      --bg-color: #0d0d0d;
-      --meta-color: #7a7a7a;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", sans-serif;
-      background: var(--bg-color);
-      color: var(--font-color);
-      overflow-x: hidden;
+      --bg-body: #ffffff;
+      --bg-hover: rgba(176, 58, 42, 0.04);
+      --text-primary: #2c2c2c;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --border-light: #ece6de;
+      --accent: #b03a2a;
+      --accent-soft: rgba(176, 58, 42, 0.08);
     }
 
-    /* 顶部导航 */
-    #nav {
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--card-border);
-      padding: 0 20px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
+    [data-theme="dark"] {
+      --bg-body: #1a1816;
+      --bg-hover: rgba(176, 90, 74, 0.08);
+      --text-primary: #cfc8c0;
+      --text-secondary: #9a948c;
+      --text-muted: #6a6560;
+      --border-light: #35302a;
+      --accent: #b05a4a;
+      --accent-soft: rgba(176, 90, 74, 0.12);
     }
-    .nav-inner {
-      max-width: 1400px;
+
+    /* ============================================================
+       1. 全局
+    ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.7;
+      transition: background 0.3s, color 0.3s;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================================
+       2. 顶部导航
+    ============================================================ */
+    #nav {
+      max-width: 960px;
       margin: 0 auto;
-      height: 60px;
+      padding: 18px 24px 10px 24px;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      transition: border-color 0.3s;
     }
     .nav-brand {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-primary);
       text-decoration: none;
-      color: var(--font-color);
-      font-size: 1.3em;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      letter-spacing: 0.5px;
     }
-    .nav-brand span { color: var(--theme-color); }
-    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-brand span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 18px;
+    }
     .nav-links a {
-      color: var(--font-color);
+      color: var(--text-muted);
       text-decoration: none;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-      font-size: 0.95em;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ============================================================
+       3. 页头
+    ============================================================ */
+    #header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 16px 24px;
+      width: 100%;
+    }
+    #header h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    #header .sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       4. 作品列表（无卡片）
+    ============================================================ */
+    #list {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 8px 24px 40px 24px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .entry {
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-light);
+      transition: border-color 0.3s, background 0.2s;
+      gap: 20px;
     }
-    .nav-links a:hover { opacity: 1; color: var(--theme-color); }
-
-    /* 主体 */
-    .layout {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 40px 20px;
+    .entry:last-child {
+      border-bottom: none;
     }
-    .page-title {
-      font-size: 1.6em;
-      font-weight: bold;
-      margin-bottom: 8px;
-      text-align: center;
-    }
-    .page-subtitle {
-      text-align: center;
-      color: var(--meta-color);
-      font-size: 0.9em;
-      margin-bottom: 40px;
+    .entry:hover {
+      background: var(--bg-hover);
+      margin: 0 -12px;
+      padding-left: 12px;
+      padding-right: 12px;
+      border-radius: 6px;
     }
 
-    /* 书籍列表 */
-    .book-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .entry-info {
+      flex: 1;
+      min-width: 0;
     }
-    .book-item {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-      transition: transform 0.2s, box-shadow 0.2s;
+    .entry-name {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
     }
-    .book-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    .entry-name .highlight {
+      color: var(--accent);
     }
-    .book-name {
-      font-size: 1.15em;
-      font-weight: bold;
-      margin-bottom: 6px;
-      color: var(--font-color);
-    }
-    .book-desc {
-      font-size: 0.85em;
-      color: var(--meta-color);
-      line-height: 1.5;
-      margin-bottom: 16px;
-      /* 单行省略 */
+    .entry-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 1px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .book-actions {
+
+    .entry-actions {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 8px;
+      flex-shrink: 0;
     }
-    .btn-action {
-      flex: 1;
-      min-width: 120px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--theme-color);
+    .entry-actions a {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-light);
       background: transparent;
-      color: var(--theme-color);
+      color: var(--text-secondary);
+      font-size: 0.8rem;
       text-decoration: none;
-      font-size: 0.9em;
-      text-align: center;
-      transition: all 0.2s;
+      transition: all 0.25s;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      cursor: pointer;
+      gap: 5px;
       font-family: inherit;
+      cursor: pointer;
     }
-    .btn-action:hover {
-      background: var(--theme-color);
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(196,69,54,0.25);
+    .entry-actions a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .entry-actions a .icon {
+      font-size: 0.75rem;
     }
 
-    /* 底部提示 */
-    .footer-hint {
+    /* ============================================================
+       5. 底部
+    ============================================================ */
+    #footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px 24px 24px;
+      width: 100%;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.8rem;
+      color: var(--text-muted);
       text-align: center;
-      color: var(--meta-color);
-      font-size: 0.8em;
-      margin-top: 40px;
-      opacity: 0.6;
+      transition: border-color 0.3s;
     }
 
-    /* 手机端 */
+    /* ============================================================
+       6. 手机端
+    ============================================================ */
     @media (max-width: 768px) {
-      #nav { padding: 0 16px; }
-      .nav-inner { height: 52px; }
-      .nav-brand { font-size: 1.05em; gap: 6px; }
-      .nav-links { gap: 16px; }
-      .nav-links a span { display: none; }
-      .layout { padding: 24px 16px; }
-      .page-title { font-size: 1.3em; }
-      .book-item { padding: 20px; }
-      .book-actions { gap: 8px; }
-      .btn-action { min-width: 0; font-size: 0.85em; padding: 8px 12px; }
+      #nav {
+        padding: 14px 16px 8px 16px;
+      }
+      .nav-brand { font-size: 1rem; }
+      .nav-links a { font-size: 0.85rem; }
+
+      #header {
+        padding: 24px 16px 12px 16px;
+      }
+      #header h1 { font-size: 1.3rem; }
+      #header .sub { font-size: 0.85rem; }
+
+      #list {
+        padding: 4px 16px 30px 16px;
+      }
+
+      .entry {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 14px 0;
+      }
+      .entry:hover {
+        margin: 0 -8px;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .entry-name {
+        font-size: 0.98rem;
+      }
+      .entry-desc {
+        font-size: 0.82rem;
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .entry-actions {
+        gap: 6px;
+      }
+      .entry-actions a {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 0.78rem;
+      }
+
+      #footer {
+        padding: 14px 16px 18px 16px;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #header h1 { font-size: 1.1rem; }
+      .entry-name { font-size: 0.92rem; }
+      .entry-actions a {
+        font-size: 0.72rem;
+        padding: 6px 8px;
+      }
     }
   </style>
   <script>
-    (() => {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-      else if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    // ============================================================
+    //  读取 Butterfly 主题的夜间模式
+    // ============================================================
+    (function() {
+      try {
+        var raw = localStorage.getItem('theme');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        }
+      } catch(e) {}
     })();
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme') {
+        try {
+          var parsed = JSON.parse(e.newValue);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch(e) {}
+      }
+    });
+
+    var observer = new MutationObserver(function() {
+      var attr = document.documentElement.getAttribute('data-theme');
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
   </script>
 </head>
 <body>
+
   <nav id="nav">
-    <div class="nav-inner">
-      <a class="nav-brand" href="/-/"><i class="fas fa-compass" style="color: var(--theme-color);"></i><span>墨境</span></a>
-      <div class="nav-links">
-        <a href="/-/"><i class="fas fa-home"></i><span>返回首页</span></a>
-      </div>
+    <a class="nav-brand" href="/-/">墨境 · <span>探索</span></a>
+    <div class="nav-links">
+      <a href="/-/">首页</a>
     </div>
   </nav>
 
-  <div class="layout">
-    <h1 class="page-title">🌏 探索中心</h1>
-    <p class="page-subtitle">选择一部作品，进入它的世界</p>
+  <header id="header">
+    <h1>选择一部作品</h1>
+    <p class="sub">进入它的世界，查看角色与设定</p>
+  </header>
 
-    <div class="book-list">
-      <!-- 我在地府打工那些年 -->
-      <div class="book-item">
-        <div class="book-name">我在地府打工那些年</div>
-        <div class="book-desc">一场跨越阴阳两界的禁忌之恋，当死神爱上凡人，规则便不再重要。</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/world/relation/difu/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/difu/">🌏 世界观</a>
-        </div>
+  <main id="list">
+
+    <div class="entry">
+      <div class="entry-info">
+        <div class="entry-name"><span class="highlight">●</span> 我在地府打工那些年</div>
+        <div class="entry-desc">浮生一梦，花开两世，轮回已就，故人当归。</div>
       </div>
-
-      <!-- 这破游戏NPC太能打了 -->
-      <div class="book-item">
-        <div class="book-name">这破游戏NPC太能打了</div>
-        <div class="book-desc">穿越进游戏世界，发现NPC不仅有了自我意识，还强得离谱。</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/world/relation/npc/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/npc/">🌏 世界观</a>
-        </div>
-      </div>
-
-      <!-- 九州风云录 -->
-      <div class="book-item">
-        <div class="book-name">九州风云录</div>
-        <div class="book-desc">天宫第一闲人乐游神的追爱日常，三千岁的他能否等来属于自己的春天？</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/relation/jiuzhou/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/jiuzhou/">🌏 世界观</a>
-        </div>
-      </div>
-
-      <!-- 北境玫瑰 -->
-      <div class="book-item">
-        <div class="book-name">北境玫瑰</div>
-        <div class="book-desc">准神候选人黎昭，从时衍天宫逃难至北境，被Alpha指挥官按在墙上操。</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/relation/beijing/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/beijing/">🌏 世界观</a>
-        </div>
-      </div>
-
-      <!-- 皇叔何出此言 -->
-      <div class="book-item">
-        <div class="book-name">皇叔何出此言</div>
-        <div class="book-desc">我知道你想看什么。</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/relation/huangshu/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/huangshu/">🌏 世界观</a>
-        </div>
-      </div>
-
-      <!-- 还没有名字 -->
-      <div class="book-item">
-        <div class="book-name">还没有名字</div>
-        <div class="book-desc">还没想好。等未来。也许。</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/relation/novel6/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/novel6/">🌏 世界观</a>
-        </div>
-      </div>
-
-      <!-- 小短文合集 -->
-      <div class="book-item">
-        <div class="book-name">小短文合集</div>
-        <div class="book-desc">这是当年写大学的时候在lofter上写的原神同人文。</div>
-        <div class="book-actions">
-          <a class="btn-action" href="/-/relation/yuanshen/">🕸️ 角色星图</a>
-          <a class="btn-action" href="/-/world/yuanshen/">🌏 世界观</a>
-        </div>
+      <div class="entry-actions">
+        <a href="/-/world/relation/difu/"><span class="icon">✦</span> 星图</a>
+        <a href="/-/world/difu/"><span class="icon">◈</span> 世界观</a>
       </div>
     </div>
 
-    <div class="footer-hint">
-      更多作品陆续添加中 · 墨境
+    <div class="entry">
+      <div class="entry-info">
+        <div class="entry-name"><span class="highlight">●</span> 这破游戏NPC太能打了</div>
+        <div class="entry-desc">此去千秋，有人提灯，渡尽长夜始见光。</div>
+      </div>
+      <div class="entry-actions">
+        <a href="/-/world/relation/npc/"><span class="icon">✦</span> 星图</a>
+        <a href="/-/world/npc/"><span class="icon">◈</span> 世界观</a>
+      </div>
     </div>
-  </div>
+
+    <div class="entry">
+      <div class="entry-info">
+        <div class="entry-name"><span class="highlight">●</span> 九州风云录</div>
+        <div class="entry-desc">残烛蒙尘，暗室千年，风过旧窗，照见骨里青山。</div>
+      </div>
+      <div class="entry-actions">
+        <a href="/-/relation/jiuzhou/"><span class="icon">✦</span> 星图</a>
+        <a href="/-/world/jiuzhou/"><span class="icon">◈</span> 世界观</a>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="entry-info">
+        <div class="entry-name"><span class="highlight">●</span> 北境玫瑰</div>
+        <div class="entry-desc">北风剥尽千般相，铁锈缠作骨中霜。来路归途皆不问，只道风雪是寻常。</div>
+      </div>
+      <div class="entry-actions">
+        <a href="/-/relation/beijing/"><span class="icon">✦</span> 星图</a>
+        <a href="/-/world/beijing/"><span class="icon">◈</span> 世界观</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer id="footer">
+    更多作品陆续添加中 · 用文字构筑世界
+  </footer>
+
 </body>
 </html>
