@@ -79,6 +79,11 @@
     gap: 10px;
     transition: background 0.3s, border-color 0.3s;
   }
+  #header .left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
   #header .title {
     font-size: 19px;
     font-weight: 600;
@@ -89,18 +94,9 @@
   #header .sub {
     font-size: 12px;
     color: var(--text-muted);
-    margin-left: 8px;
+    margin-left: 4px;
     font-weight: 400;
   }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  /* ========== 返回按钮 ========== */
   .back-btn {
     padding: 4px 14px;
     border-radius: 18px;
@@ -154,7 +150,6 @@
     color: #181614;
   }
 
-  /* ========== 重置按钮 ========== */
   .reset-btn {
     padding: 4px 12px;
     border-radius: 18px;
@@ -286,7 +281,7 @@
     flex-shrink: 0;
   }
 
-  /* ========== SVG 连线样式（使用 CSS 变量） ========== */
+  /* ========== SVG 连线样式 ========== */
   .link-line {
     stroke: var(--link-line);
     stroke-width: 1.5px;
@@ -392,14 +387,13 @@
     }
     #header { padding: 10px 16px; }
     #header .title { font-size: 17px; }
+    #header .sub { display: none; }
     .country-tabs .btn { font-size: 11px; padding: 3px 11px; }
-    .back-btn { font-size: 11px; padding: 3px 12px; }
-    .reset-btn { font-size: 11px; padding: 3px 10px; }
   }
   @media (max-width: 500px) {
-    #header .sub { display: none; }
     #panel { padding: 16px; }
-    .header-right { gap: 6px; }
+    #header .left { gap: 8px; }
+    .back-btn { font-size: 11px; padding: 3px 10px; }
   }
 </style>
 
@@ -425,11 +419,12 @@
 <body>
 
 <div id="header">
-  <div>
+  <div class="left">
+    <a class="back-btn" href="javascript:history.back()">← 返回</a>
     <span class="title">千律州 · <span>人物关系星图</span></span>
-    <span class="sub">点击节点查看详情 · 拖拽调整布局</span>
+    <span class="sub">点击节点 · 拖拽布局 · 动态弹射</span>
   </div>
-  <div class="header-right">
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <div class="country-tabs" id="countryTabs">
       <button class="btn active" data-country="业焰之国">业焰</button>
       <button class="btn" data-country="双冕北境">北境</button>
@@ -439,7 +434,6 @@
       <button class="btn" data-country="永昼净土">永昼</button>
     </div>
     <button class="reset-btn" onclick="resetZoom()">↺ 重置</button>
-    <button class="back-btn" onclick="history.back()">← 返回</button>
   </div>
 </div>
 
@@ -470,7 +464,7 @@
 
 <script>
   // ================================================================
-  //  配色方案（清新透气 · 保留神明特征）
+  //  配色方案
   // ================================================================
   const COLORS = {
     huaiyu: '#cdb891',
@@ -492,7 +486,7 @@
   };
 
   // ================================================================
-  //  数据：所有角色（已移除不关键NPC）
+  //  数据：所有角色（完全保留你原版的数据）
   // ================================================================
   const ALL_NODES = [
     // —— 业焰之国 ——
@@ -532,7 +526,7 @@
       tag: '暗线',
       color: COLORS.lizhao,
       country: '业焰之国',
-      story: '尘歌创造的怀榆复制体，完成业焰弑神任务后被抛弃。流亡北境建立烬影会，以走私维生。被阿列克谢标记后从隐性Omega转为显性，在躲避尘歌与守护手下之间挣扎。'
+      story: '尘歌创造的怀榆复制体，完成业焰弑神任务后被抛弃。流亡北境建立烬影会。拥有法伊顿的部分记忆碎片，曾试图让段深泉爱上自己。'
     },
     {
       id: '祝焱',
@@ -590,7 +584,7 @@
       tag: '北境',
       color: COLORS.lizhao,
       country: '双冕北境',
-      story: '尘歌创造的怀榆复制体。流亡北境建立烬影会。被阿列克谢标记后从隐性Omega转为显性。'
+      story: '尘歌创造的怀榆复制体。流亡北境建立烬影会。被阿列克谢标记后从隐性Omega转为显性。拥有法伊顿的记忆碎片。'
     },
     {
       id: '叶戈尔',
@@ -827,14 +821,14 @@
   ];
 
   // ================================================================
-  //  关系数据（已移除不关键NPC连线 · 新增段深泉↔尘歌、段深泉↔黎昭）
+  //  关系数据（完全保留你原版的关系）
   // ================================================================
   const ALL_LINKS = [
-    // —— 业焰之国 ——
+    // 业焰之国
     { source: '怀榆', target: '段深泉', relation: '命定·爱人', red: true },
     { source: '怀榆', target: '尘歌', relation: '创造·注视', pink: true },
-    { source: '段深泉', target: '尘歌', relation: '造物·父亲', pink: true },
-    { source: '段深泉', target: '黎昭', relation: '曾追求过', pink: true },
+    { source: '段深泉', target: '尘歌', relation: '创造·抚养', pink: true },
+    { source: '段深泉', target: '黎昭', relation: '原型·纠缠' },
     { source: '黎昭', target: '尘歌', relation: '抛弃·逃亡' },
     { source: '怀榆', target: '黎昭', relation: '同源·镜像' },
     { source: '怀榆', target: '瑞秋', relation: '旧友·仇·和解' },
@@ -844,11 +838,11 @@
     { source: '黎昭', target: '瑞秋', relation: '代行·屠戮' },
     { source: '黎昭', target: '祝焱', relation: '代行·封印' },
 
-    // —— 双冕北境 ——
+    // 双冕北境
     { source: '怀榆北境', target: '段深泉北境', relation: '命定·爱人', red: true },
     { source: '怀榆北境', target: '尘歌北境', relation: '创造·注视', pink: true },
-    { source: '段深泉北境', target: '尘歌北境', relation: '造物·父亲', pink: true },
-    { source: '段深泉北境', target: '黎昭北境', relation: '曾追求过', pink: true },
+    { source: '段深泉北境', target: '尘歌北境', relation: '创造·抚养', pink: true },
+    { source: '段深泉北境', target: '黎昭北境', relation: '原型·纠缠' },
     { source: '黎昭北境', target: '尘歌北境', relation: '抛弃·逃亡' },
     { source: '怀榆北境', target: '黎昭北境', relation: '同源·镜像' },
     { source: '阿列克谢', target: '黎昭北境', relation: '纠缠·标记', red: true },
@@ -857,10 +851,11 @@
     { source: '黎昭北境', target: '凝淼', relation: '合作·秘密' },
     { source: '凝淼', target: '尘歌北境', relation: '造物·反叛' },
 
-    // —— 时衍天宫 ——
+    // 时衍天宫
     { source: '怀榆时衍', target: '段深泉时衍', relation: '命定·爱人', red: true },
     { source: '怀榆时衍', target: '尘歌时衍', relation: '创造·注视', pink: true },
-    { source: '段深泉时衍', target: '尘歌时衍', relation: '造物·父亲', pink: true },
+    { source: '段深泉时衍', target: '尘歌时衍', relation: '创造·抚养', pink: true },
+    { source: '段深泉时衍', target: '黎昭', relation: '原型·纠缠' },
     { source: '段深泉时衍', target: '时渊', relation: '抚养·出身' },
     { source: '段深泉时衍', target: '芥舟', relation: '抚养·出身' },
     { source: '时渊', target: '芥舟', relation: '双生·共治' },
@@ -871,28 +866,28 @@
     { source: '左明仪', target: '段深泉时衍', relation: '朋友·引路人' },
     { source: '左明仪', target: '怀榆时衍', relation: '朋友·引路人' },
 
-    // —— 无垠根庭 ——
+    // 无垠根庭
     { source: '怀榆根庭', target: '段深泉根庭', relation: '命定·爱人', red: true },
     { source: '怀榆根庭', target: '尘歌根庭', relation: '创造·注视', pink: true },
-    { source: '段深泉根庭', target: '尘歌根庭', relation: '造物·父亲', pink: true },
-    { source: '段深泉根庭', target: '黎昭根庭', relation: '曾追求过', pink: true },
+    { source: '段深泉根庭', target: '尘歌根庭', relation: '创造·抚养', pink: true },
+    { source: '段深泉根庭', target: '黎昭根庭', relation: '原型·纠缠' },
     { source: '黎昭根庭', target: '尘歌根庭', relation: '抛弃·逃亡' },
     { source: '黎昭根庭', target: '阿列克谢根庭', relation: '纠缠·标记', red: true },
     { source: '瑶英', target: '尘歌根庭', relation: '造物·被弃' },
 
-    // —— 归墟之庭 ——
+    // 归墟之庭
     { source: '怀榆归墟', target: '段深泉归墟', relation: '命定·爱人', red: true },
     { source: '怀榆归墟', target: '尘歌归墟', relation: '创造·对决' },
     { source: '段深泉归墟', target: '尘歌归墟', relation: '造物·对抗' },
 
-    // —— 永昼净土 ——
+    // 永昼净土
     { source: '怀榆永昼', target: '段深泉永昼', relation: '命定·爱人', red: true },
     { source: '怀榆永昼', target: '黎昭永昼', relation: '同源·和解' },
     { source: '黎昭永昼', target: '阿列克谢永昼', relation: '纠缠·伴侣', red: true }
   ];
 
   // ================================================================
-  //  D3 力导向图引擎
+  //  D3 力导向图引擎 —— 动态增强版
   // ================================================================
   let currentCountry = '业焰之国';
   let nodes = [];
@@ -913,19 +908,19 @@
     .on('zoom', e => g.attr('transform', e.transform));
   svg.call(zoom).on('dblclick.zoom', null);
 
-  // 连线距离 200，碰撞半径 50 —— 更舒展，不挤
+  // ====== 动态参数：线长 250，低阻尼 0.3，让节点滑得更远 ======
   const simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id(d => d.id).distance(200))
-    .force('charge', d3.forceManyBody().strength(-700))
+    .force('link', d3.forceLink().id(d => d.id).distance(250))
+    .force('charge', d3.forceManyBody().strength(-600))
     .force('center', d3.forceCenter(0, 0))
-    .force('collide', d3.forceCollide().radius(50))
-    .velocityDecay(0.35);
+    .force('collide', d3.forceCollide().radius(38))
+    .velocityDecay(0.3);   // ← 低阻尼，散花效果明显
 
   let linkGroup = g.append('g').attr('class', 'links');
   let nodeGroup = g.append('g').attr('class', 'nodes');
 
   // ================================================================
-  //  过滤 & 渲染
+  //  过滤 & 渲染（保留位置 + 高 alpha 重启）
   // ================================================================
   function filterData(country) {
     const oldPos = {};
@@ -937,8 +932,9 @@
         n.x = oldPos[n.id].x;
         n.y = oldPos[n.id].y;
       } else {
+        // 新节点从中心附近随机偏移，形成散花起点
         const angle = Math.random() * 2 * Math.PI;
-        const r = 50 + Math.random() * 90;
+        const r = 40 + Math.random() * 100;
         n.x = Math.cos(angle) * r;
         n.y = Math.sin(angle) * r;
       }
@@ -949,18 +945,27 @@
     const ids = new Set(filtered.map(n => n.id));
     const flinks = ALL_LINKS
       .filter(l => ids.has(l.source) && ids.has(l.target))
-      .map(l => ({
-        source: filtered.find(n => n.id === l.source),
-        target: filtered.find(n => n.id === l.target),
-        relation: l.relation,
-        red: l.red || false,
-        pink: l.pink || false
-      }));
+      .map(l => {
+        const s = filtered.find(n => n.id === l.source);
+        const t = filtered.find(n => n.id === l.target);
+        if (!s || !t) return null;
+        return {
+          source: s,
+          target: t,
+          relation: l.relation,
+          red: l.red || false,
+          pink: l.pink || false
+        };
+      })
+      .filter(l => l !== null);
 
     return { nodes: filtered, links: flinks };
   }
 
-  function render(country) {
+  // ================================================================
+  //  渲染（含点击弹射）
+  // ================================================================
+  function render(country, isInit = false) {
     const data = filterData(country);
     nodes = data.nodes;
     links = data.links;
@@ -1007,29 +1012,40 @@
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended))
-      .on('click', (e, d) => { e.stopPropagation(); selectNode(d); });
+      .on('click', function(e, d) {
+        e.stopPropagation();
+        selectNode(d);
+        // ====== 点击弹射效果 ======
+        nodes.forEach(n => {
+          if (n !== d) {
+            n.vx = (Math.random() - 0.5) * 6;
+            n.vy = (Math.random() - 0.5) * 6;
+          }
+        });
+        simulation.alpha(1).restart();
+      });
 
     nodeEnter.transition().duration(350).style('opacity', 1);
 
-    nodeEnter.append('circle').attr('class', 'node-ring').attr('r', 38);
-    nodeEnter.append('circle').attr('class', 'node-circle').attr('r', 28);
+    nodeEnter.append('circle').attr('class', 'node-ring').attr('r', 36);
+    nodeEnter.append('circle').attr('class', 'node-circle').attr('r', 26);
     nodeEnter.append('text').attr('class', 'node-letter').attr('dy', 1)
       .text(d => d.name ? d.name.charAt(0) : '?');
 
     const tagW = 44;
     nodeEnter.append('rect')
       .attr('class', 'node-tag-bg')
-      .attr('y', -46).attr('height', 16).attr('width', tagW).attr('x', -tagW / 2);
-    nodeEnter.append('text').attr('class', 'node-tag-text').attr('y', -38);
+      .attr('y', -44).attr('height', 16).attr('width', tagW).attr('x', -tagW / 2);
+    nodeEnter.append('text').attr('class', 'node-tag-text').attr('y', -36);
 
     nodeEnter.append('text')
       .attr('class', 'node-name')
-      .attr('y', 44)
+      .attr('y', 42)
       .text(d => d.name);
 
     nodeEnter.append('text')
       .attr('class', 'node-role')
-      .attr('y', 58);
+      .attr('y', 56);
 
     svg.on('click', () => {
       selectedNode = null;
@@ -1042,7 +1058,14 @@
     nodes.forEach(d => { d.fx = null; d.fy = null; });
     simulation.nodes(nodes);
     simulation.force('link').links(links);
-    simulation.alpha(1).restart();
+
+    // ====== 初始 / 切换时：高 alpha 启动，散花效果 ======
+    if (isInit) {
+      simulation.alpha(1).restart();
+    } else {
+      // 切换国家时也以高 alpha 重启，节点会流动到新位置
+      simulation.alpha(0.9).restart();
+    }
   }
 
   function refreshVisuals() {
@@ -1117,7 +1140,7 @@
     document.querySelectorAll('#countryTabs .btn').forEach(b => {
       b.classList.toggle('active', b.dataset.country === country);
     });
-    render(country);
+    render(country, false);
   }
 
   document.querySelectorAll('#countryTabs .btn').forEach(btn => {
@@ -1159,6 +1182,12 @@
 
   function resetZoom() {
     svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    // 重置时弹射一下，增加活力
+    nodes.forEach(n => {
+      n.vx = (Math.random() - 0.5) * 4;
+      n.vy = (Math.random() - 0.5) * 4;
+    });
+    simulation.alpha(0.8).restart();
   }
   window.resetZoom = resetZoom;
 
@@ -1176,16 +1205,17 @@
   new ResizeObserver(resize).observe(container);
 
   // ================================================================
-  //  启动
+  //  启动（带初始化散花动画）
   // ================================================================
-  render('业焰之国');
+  render('业焰之国', true);
 
+  // 延迟选中怀榆，展示面板
   setTimeout(() => {
     const node = ALL_NODES.find(n => n.id === '怀榆');
     if (node) selectNode(node);
-  }, 500);
+  }, 600);
 
-  console.log('🌿 千律州人物星图 · 已修复');
+  console.log('🌿 千律州人物星图 · 动态增强版（线长250·阻尼0.3·点击弹射）');
 </script>
 </body>
 </html>
