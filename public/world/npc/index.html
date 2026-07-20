@@ -101,7 +101,6 @@
     }
     #nav .nav-links a:hover { color: var(--accent); }
 
-    /* 字体控制 —— 放右上角 */
     .font-control {
       display: flex;
       align-items: center;
@@ -168,7 +167,6 @@
       padding: 8px 24px 40px 24px;
     }
 
-    /* 返回链接 */
     .back-link {
       display: inline-block;
       margin-bottom: 24px;
@@ -300,7 +298,7 @@
       margin-bottom: 2px;
     }
 
-    /* ====== 斜体：恢复效果，但缩小一点 ====== */
+    /* ====== 斜体：恢复效果，与正文等大 ====== */
     .accordion-content blockquote {
       border-left: 3px solid var(--accent);
       padding: 6px 16px;
@@ -314,7 +312,7 @@
     .accordion-content blockquote i,
     .accordion-content blockquote cite {
       font-style: italic;
-      font-size: 0.93rem;  /* 与正文一致，不放大 */
+      font-size: 0.93rem;
     }
 
     /* ============================================================
@@ -381,7 +379,7 @@
     }
 
     /* ============================================================
-       10. 底部 —— 删掉世界观按钮
+       10. 底部
     ============================================================ */
     #footer {
       max-width: 960px;
@@ -448,7 +446,7 @@
     body .accordion-content blockquote i {
       font-size: calc(var(--font-size-base) * 0.93);
     }
-    body .world-table {
+    body .table-wrap table {
       font-size: calc(var(--font-size-base) * 0.88);
     }
     body .section-title {
@@ -651,7 +649,7 @@
             <li><strong>非人存在</strong>（如精灵、鬼魂、妖怪）：本身与墟元力同源。</li>
             <li><strong>尘歌的造物</strong>（如怀榆、段深泉、黎昭、各大伪神）：由尘歌直接注入力量。</li>
           </ul>
-          <blockquote><i>尘歌以这套体制重新构建了世界秩序：他利用旧神的权柄碎片，为每一位当代神明植入记忆与使命，让他们扮演旧神的角色，维系一个"伪·通天塔"的局面。</i></blockquote>
+          <blockquote><em>尘歌以这套体制重新构建了世界秩序：他利用旧神的权柄碎片，为每一位当代神明植入记忆与使命，让他们扮演旧神的角色，维系一个"伪·通天塔"的局面。</blockquote></em>
         </div>
       </details>
 
@@ -680,7 +678,7 @@
               <tr><td><strong>陆地精灵</strong></td><td>毁灭</td><td>演化</td><td>禁锢</td></tr>
             </table>
           </div>
-          <blockquote><i>三者同阶，共存万年。天空与陆地精灵在天地自然磨损中陨落，权柄分裂为六块，由此开启第二纪元。</i></blockquote>
+          <blockquote><em>三者同阶，共存万年。天空与陆地精灵在天地自然磨损中陨落，权柄分裂为六块，由此开启第二纪元。</em></blockquote>
         </div>
       </details>
 
@@ -699,7 +697,7 @@
               <tr><td><strong>光明之神</strong></td><td>法伊顿·伊柳西昂</td><td>光明</td><td>净化</td><td>原初·天空</td></tr>
             </table>
           </div>
-          <blockquote><i>六枚权柄碎片各归其主，与尘歌共同构成七神之座。</i></blockquote>
+          <blockquote><em>六枚权柄碎片各归其主，与尘歌共同构成七神之座。</em></blockquote>
         </div>
       </details>
 
@@ -718,7 +716,7 @@
               <tr><td><strong>光明之神</strong></td><td>（尚未唤醒）</td><td>对应的"容器"为玩家·怀榆</td></tr>
             </table>
           </div>
-          <blockquote><i>法伊顿的权柄"净化"尚未被激活，其对应的国家"永昼净土"也处于无主状态。</i></blockquote>
+          <blockquote><em>法伊顿的权柄"净化"尚未被激活，其对应的国家"永昼净土"也处于无主状态。</em></blockquote>
         </div>
       </details>
     </div>
@@ -831,7 +829,7 @@
         <div class="accordion-content">
           <p>二代七神中，只有法伊顿（光明之神）与凡人段深泉结为伴侣，并分出一半力量使其成为半神。尘歌在造神时"完全复制"——段深泉因此被再造，成为怀榆的"命定之人"。</p>
           <p>当怀榆濒死时，系统会强制将段深泉的力量收回怀榆体内，对段深泉极度痛苦。</p>
-          <blockquote><i>"游戏系统"是尘歌为怀榆一个人设计的专属界面，是尘歌意志的直接投射。</i></blockquote>
+          <blockquote><em>"游戏系统"是尘歌为怀榆一个人设计的专属界面，是尘歌意志的直接投射。</em></blockquote>
         </div>
       </details>
 
@@ -856,7 +854,7 @@
           <p><strong>名字的由来：</strong>旧神法伊顿第一次见到本尊段深泉时，正是在一株榆树之下。尘歌以此为怀榆定名。</p>
           <p><strong>身份：</strong>千律州"玩家" · 准神明 · 段深泉的命定之人</p>
           <p><strong>等级：</strong>LV.25（北境主线结束时）</p>
-          <blockquote><i>被困在"玩家"身份里的真实的人。他以为自己冷漠薄情，但看着段深泉的睡脸时会忍不住伸手描摹轮廓。尘歌给他设计了"玩家"的身份，却没能控制他的心。</i></blockquote>
+          <blockquote><em>被困在"玩家"身份里的真实的人。他以为自己冷漠薄情，但看着段深泉的睡脸时会忍不住伸手描摹轮廓。尘歌给他设计了"玩家"的身份，却没能控制他的心。</em></blockquote>
         </div>
       </details>
 
@@ -866,14 +864,14 @@
           <p><strong>真实来源：</strong>与怀榆同源，尘歌以创生权柄创造。幼年被送至时衍天宫，由双子神明抚养长大。</p>
           <p><strong>身份：</strong>前业焰大神使 · 命定之人系统核心节点 · 时衍天宫段氏出身</p>
           <p><strong>等级：</strong>LV.50（曾因力量转移降至LV.1）</p>
-          <blockquote><i>世界上最温柔的"工具"。他发现自己被创造、被安排、被利用，却依然选择爱那个人。因为无论起源如何，怀榆给予他的温暖是真的。</i></blockquote>
+          <blockquote><em>世界上最温柔的"工具"。他发现自己被创造、被安排、被利用，却依然选择爱那个人。因为无论起源如何，怀榆给予他的温暖是真的。</em></blockquote>
         </div>
       </details>
     </div>
 
   </div>
 
-  <!-- ====== 底部（删掉了世界观按钮） ====== -->
+  <!-- ====== 底部 ====== -->
   <footer id="footer">
     <div class="footer-left">
       <span>©2026 淮子生生</span>
@@ -912,7 +910,7 @@
   <script>
     var sizeLevels = ['sm', 'md', 'lg', 'xl', '2xl'];
     var sizeLabels = ['小', '中', '大', '更大', '最大'];
-    var currentLevel = 1; // 默认中
+    var currentLevel = 1;
 
     function changeSize(delta) {
       var next = currentLevel + delta;
@@ -920,7 +918,6 @@
       if (next >= sizeLevels.length) next = sizeLevels.length - 1;
       if (next === currentLevel) return;
 
-      // 移除所有字号类
       sizeLevels.forEach(function(s) {
         document.body.classList.remove('font-' + s);
       });
@@ -932,7 +929,6 @@
       try { localStorage.setItem('worldFontSize', String(currentLevel)); } catch(e) {}
     }
 
-    // 恢复保存的设置
     var saved = localStorage.getItem('worldFontSize');
     if (saved !== null) {
       var n = parseInt(saved);
@@ -944,6 +940,57 @@
         document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
       }
     }
+  </script>
+
+  <!-- ============================================================
+       夜间模式同步 —— 跟随 Butterfly 主题
+  ============================================================ -->
+  <script>
+    (function() {
+      var html = document.documentElement;
+
+      function applyTheme() {
+        var attr = html.getAttribute('data-theme');
+        // 如果 html 上还没有 data-theme，尝试从 localStorage 读取
+        if (!attr) {
+          try {
+            var raw = localStorage.getItem('theme');
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (parsed && parsed.value) attr = parsed.value;
+            }
+          } catch(e) {}
+        }
+        // 如果检测到 dark，设置 data-theme="dark"
+        if (attr === 'dark') {
+          html.setAttribute('data-theme', 'dark');
+        } else {
+          html.removeAttribute('data-theme');
+        }
+      }
+
+      // 初始应用
+      applyTheme();
+
+      // 监听 localStorage 变化（其他标签页切换主题时同步）
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'theme') {
+          applyTheme();
+        }
+      });
+
+      // 监听 data-theme 属性变化（父页面直接修改属性时同步）
+      var observer = new MutationObserver(function() {
+        applyTheme();
+      });
+      observer.observe(html, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+
+      // 每2秒检查一次，防止某些情况没触发事件
+      setInterval(applyTheme, 2000);
+    })();
   </script>
 
 </body>
