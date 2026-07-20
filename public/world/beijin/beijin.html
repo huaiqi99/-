@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>北境玫瑰 · 世界观</title>
+  <style>
+    /* ============================================================
+       0. 夜间模式兼容
+    ============================================================ */
+    :root {
+      --bg-body: #ffffff;
+      --bg-section: #faf8f6;
+      --text-primary: #2c2c2c;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --border-light: #ece6de;
+      --accent: #b03a2a;
+      --accent-soft: rgba(176, 58, 42, 0.06);
+      --highlight-bg: #fdf6f0;
+      --highlight-border: #d4a090;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #1a1816;
+      --bg-section: #24201c;
+      --text-primary: #cfc8c0;
+      --text-secondary: #9a948c;
+      --text-muted: #6a6560;
+      --border-light: #35302a;
+      --accent: #b05a4a;
+      --accent-soft: rgba(176, 90, 74, 0.1);
+      --highlight-bg: #2c201c;
+      --highlight-border: #6a4540;
+    }
+
+    /* ============================================================
+       1. 全局
+    ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.8;
+      transition: background 0.3s, color 0.3s;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============================================================
+       2. 阅读进度条
+    ============================================================ */
+    #reading-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--accent);
+      z-index: 9999;
+      transition: width 0.08s ease;
+    }
+
+    /* ============================================================
+       3. 顶部导航
+    ============================================================ */
+    #nav {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-light);
+      transition: border-color 0.3s;
+    }
+    #nav .nav-left {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+    #nav .nav-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    #nav .nav-title span { color: var(--accent); }
+    #nav .nav-links {
+      display: flex;
+      gap: 18px;
+    }
+    #nav .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    #nav .nav-links a:hover { color: var(--accent); }
+
+    .font-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-section);
+      border-radius: 20px;
+      padding: 2px 8px;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .font-control button {
+      padding: 4px 10px;
+      border-radius: 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .font-control button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .font-control .size-display {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 32px;
+      text-align: center;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    /* ============================================================
+       4. 页头
+    ============================================================ */
+    #page-header {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 20px 24px;
+      text-align: center;
+    }
+    #page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 1px;
+    }
+    #page-header .sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* ============================================================
+       5. 主内容
+    ============================================================ */
+    #content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 8px 24px 40px 24px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+      padding: 4px 0;
+      border-bottom: 1px solid transparent;
+    }
+    .back-link:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ============================================================
+       6. 衍生说明（高亮卡片）
+    ============================================================ */
+    .derivative-notice {
+      background: var(--highlight-bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .derivative-notice strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .derivative-notice .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      line-height: 1.8;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* ============================================================
+       7. 章节标题
+    ============================================================ */
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding: 12px 0 8px 16px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 8px;
+      width: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: height 0.5s ease;
+    }
+
+    /* ============================================================
+       8. 折叠面板
+    ============================================================ */
+    details {
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border-light);
+      transition: border-color 0.3s;
+      background: var(--bg-section);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    details:last-child { border-bottom: none; }
+
+    summary {
+      padding: 14px 18px 14px 42px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      list-style: none;
+      position: relative;
+      user-select: none;
+      transition: background 0.2s;
+      border-radius: 6px;
+    }
+    summary:hover {
+      background: var(--accent-soft);
+    }
+
+    summary::before {
+      content: '▸';
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--accent);
+      transition: transform 0.35s ease;
+    }
+
+    details[open] summary {
+      border-bottom: 1px solid var(--border-light);
+    }
+    details[open] summary::before {
+      transform: translateY(-50%) rotate(90deg);
+    }
+
+    .accordion-content {
+      padding: 0 18px 4px 18px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.3s ease;
+    }
+    details[open] .accordion-content {
+      max-height: 8000px;
+      opacity: 1;
+      padding: 4px 18px 18px 18px;
+    }
+
+    .accordion-content p {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .accordion-content p:last-child { margin-bottom: 0; }
+
+    .accordion-content h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 18px 0 4px 0;
+    }
+    .accordion-content h4:first-child { margin-top: 0; }
+
+    .accordion-content ul {
+      padding-left: 22px;
+      margin: 6px 0 12px 0;
+    }
+    .accordion-content li {
+      font-size: 0.93rem;
+      line-height: 1.9;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+
+    .accordion-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 6px 16px;
+      margin: 10px 0 14px 0;
+      background: var(--accent-soft);
+      border-radius: 0 6px 6px 0;
+      color: var(--text-secondary);
+      font-size: 0.93rem;
+    }
+    .accordion-content blockquote em,
+    .accordion-content blockquote i,
+    .accordion-content blockquote cite {
+      font-style: italic;
+      font-size: 0.93rem;
+    }
+
+    /* ============================================================
+       9. 表格
+    ============================================================ */
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 10px 0 16px 0;
+      border-radius: 6px;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.3s;
+    }
+    .table-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      min-width: 480px;
+    }
+    .table-wrap table th,
+    .table-wrap table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .table-wrap table th {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .table-wrap table td strong {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .table-wrap table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* ============================================================
+       10. 角色条目
+    ============================================================ */
+    .character-item {
+      padding: 10px 0 10px 14px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 10px;
+      background: transparent;
+    }
+    .character-item h4 {
+      font-size: 0.95rem;
+      color: var(--accent);
+      margin-bottom: 2px;
+      font-weight: 600;
+    }
+    .character-item p {
+      font-size: 0.93rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* ============================================================
+       11. 底部
+    ============================================================ */
+    #footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px 24px 24px;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      transition: border-color 0.3s;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    #footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    #footer a:hover { text-decoration: underline; }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       12. 字号控制
+    ============================================================ */
+    body {
+      --font-size-base: 16px;
+      --font-size-scale: 1;
+    }
+    body.font-sm {
+      --font-size-base: 15px;
+    }
+    body.font-md {
+      --font-size-base: 16px;
+    }
+    body.font-lg {
+      --font-size-base: 17px;
+    }
+    body.font-xl {
+      --font-size-base: 18px;
+    }
+    body.font-2xl {
+      --font-size-base: 19px;
+    }
+
+    body {
+      font-size: var(--font-size-base);
+    }
+
+    body .accordion-content p,
+    body .accordion-content li,
+    body .character-item p,
+    body .derivative-notice {
+      font-size: calc(var(--font-size-base) * 0.95);
+    }
+    body .accordion-content blockquote {
+      font-size: calc(var(--font-size-base) * 0.93);
+    }
+    body .accordion-content blockquote em,
+    body .accordion-content blockquote i {
+      font-size: calc(var(--font-size-base) * 0.93);
+    }
+    body .table-wrap table {
+      font-size: calc(var(--font-size-base) * 0.88);
+    }
+    body .section-title {
+      font-size: calc(var(--font-size-base) * 1.35);
+    }
+    body summary {
+      font-size: calc(var(--font-size-base) * 1.0);
+    }
+    body #page-header h1 {
+      font-size: calc(var(--font-size-base) * 1.8);
+    }
+
+    /* ============================================================
+       13. 响应式
+    ============================================================ */
+    @media (max-width: 768px) {
+      #nav {
+        padding: 14px 16px 8px 16px;
+      }
+      #nav .nav-left { gap: 14px; }
+      #nav .nav-title { font-size: 1rem; }
+      #nav .nav-links a { font-size: 0.85rem; }
+
+      .font-control button {
+        padding: 2px 8px;
+        font-size: 0.75rem;
+      }
+      .font-control .size-display {
+        min-width: 26px;
+        font-size: 0.7rem;
+      }
+
+      #page-header {
+        padding: 20px 16px 14px 16px;
+      }
+      #page-header h1 {
+        font-size: calc(var(--font-size-base) * 1.4);
+      }
+      #page-header .sub {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+
+      #content {
+        padding: 4px 14px 30px 14px;
+      }
+
+      .derivative-notice {
+        padding: 12px 14px;
+        font-size: calc(var(--font-size-base) * 0.9);
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-size: calc(var(--font-size-base) * 1.15);
+        padding: 10px 0 6px 12px;
+      }
+      .section-title::before {
+        top: 10px;
+        bottom: 6px;
+      }
+
+      summary {
+        font-size: calc(var(--font-size-base) * 0.92);
+        padding: 12px 14px 12px 36px;
+      }
+      summary::before {
+        left: 12px;
+        font-size: 0.9rem;
+      }
+
+      .accordion-content {
+        padding: 0 12px 2px 12px;
+      }
+      details[open] .accordion-content {
+        padding: 2px 12px 14px 12px;
+      }
+      .accordion-content p,
+      .accordion-content li {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+      .accordion-content blockquote {
+        font-size: calc(var(--font-size-base) * 0.9);
+        padding: 4px 12px;
+      }
+      .accordion-content blockquote em,
+      .accordion-content blockquote i {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+
+      .table-wrap {
+        margin: 8px 0 12px 0;
+        border-radius: 4px;
+      }
+      .table-wrap table {
+        font-size: calc(var(--font-size-base) * 0.78);
+        min-width: 400px;
+      }
+      .table-wrap table th,
+      .table-wrap table td {
+        padding: 5px 6px;
+      }
+
+      .character-item {
+        padding: 8px 0 8px 10px;
+        margin-bottom: 6px;
+      }
+      .character-item h4 {
+        font-size: calc(var(--font-size-base) * 0.9);
+      }
+      .character-item p {
+        font-size: calc(var(--font-size-base) * 0.88);
+      }
+
+      #footer {
+        padding: 14px 16px 18px 16px;
+        font-size: calc(var(--font-size-base) * 0.8);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #page-header h1 {
+        font-size: calc(var(--font-size-base) * 1.2);
+      }
+      .section-title {
+        font-size: calc(var(--font-size-base) * 1.0);
+      }
+      summary {
+        font-size: calc(var(--font-size-base) * 0.88);
+        padding: 10px 12px 10px 32px;
+      }
+      summary::before { left: 10px; }
+      .accordion-content p,
+      .accordion-content li {
+        font-size: calc(var(--font-size-base) * 0.87);
+      }
+      .accordion-content blockquote {
+        font-size: calc(var(--font-size-base) * 0.87);
+      }
+      .accordion-content blockquote em,
+      .accordion-content blockquote i {
+        font-size: calc(var(--font-size-base) * 0.87);
+      }
+      .derivative-notice {
+        font-size: calc(var(--font-size-base) * 0.85);
+        padding: 10px 12px;
+      }
+      .table-wrap table {
+        font-size: calc(var(--font-size-base) * 0.7);
+        min-width: 320px;
+      }
+      .table-wrap table th,
+      .table-wrap table td {
+        padding: 4px 4px;
+      }
+      #footer { padding: 12px 12px 16px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====== 阅读进度条 ====== -->
+  <div id="reading-progress"></div>
+
+  <!-- ====== 顶部导航 ====== -->
+  <nav id="nav">
+    <div class="nav-left">
+      <span class="nav-title">墨境 · <span>北境玫瑰</span></span>
+      <div class="nav-links">
+        <a href="/-/">首页</a>
+      </div>
+    </div>
+    <div class="font-control">
+      <button onclick="changeSize(-1)" title="缩小字号">A−</button>
+      <span class="size-display" id="sizeDisplay">中</span>
+      <button onclick="changeSize(1)" title="放大字号">A+</button>
+    </div>
+  </nav>
+
+  <!-- ====== 页头 ====== -->
+  <header id="page-header">
+    <h1>北境玫瑰</h1>
+    <p class="sub">同人衍生 · ABO世界观 · 双冕北境</p>
+  </header>
+
+  <!-- ====== 主内容 ====== -->
+  <div id="content">
+
+    <a href="../" class="back-link">← 返回设定集首页</a>
+
+    <!-- ====== 衍生说明（高亮卡片，置于最顶端） ====== -->
+    <div class="derivative-notice">
+      <span class="badge">衍生说明</span>
+      <strong>本文为《这破游戏NPC太能打了》千律州设定的同人衍生作品</strong>，在保留原作风貌的基础上，引入ABO世界观，以双冕北境为舞台，围绕烬影会首领黎昭与巡林铁卫指挥官阿列克谢·沃尔科夫之间的恩怨纠缠展开故事。时间线位于原作主线之前（凝淼尚在位期间），属于“准神陨落后·北境变局前夜”的独立篇章。
+    </div>
+
+    <!-- 一、北境概述 -->
+    <div class="section">
+      <h2 class="section-title">一、双冕北境</h2>
+
+      <details>
+        <summary>地理与政治</summary>
+        <div class="accordion-content">
+          <p><strong>双冕北境</strong>位于千律州最北端，终年严寒，冻土广布，雷暴与雪暴是日常景象。北境民风剽悍，信奉强者为尊。墟元力修炼者在此并不罕见，恶劣的自然环境本身就是最严酷的筛选器。</p>
+          <p><strong>上下分区：</strong>北境主要城镇依地势划分为上层区与下层区。上层区居住着贵族、富商与神殿人员，街道整洁，建筑坚固，物资供应充足。下层区则是平民、流亡者与底层帮派的聚集地，道路泥泞，房屋破败，物价高昂但收入微薄，生活极为艰难。上下层之间的阶梯与升降梯是唯一通道，由巡林铁卫设卡管控，社会阶层固化严重。</p>
+          <p><strong>政治格局：</strong>北境呈现贵族、神殿、女皇三方制衡的紧张局面。女皇凝淼以神明之尊维系着表面权威，但贵族势力通过土地与贸易逐渐坐大，神殿则借助信仰渗透民间，暗中争夺话语权。三方之间既有合作又有倾轧，任何一方的异动都可能打破脆弱的平衡。</p>
+          <p><strong>经济与走私：</strong>北境物资匮乏，官方管控严格，导致走私行业异常繁荣。墟元结晶、武器材料、禁药等违禁品通过边境线源源不断流入，成为下层区许多帮派与个人赖以生存的命脉。巡林铁卫虽竭力打击，却始终无法根除。</p>
+          <blockquote><em>女皇凝淼在位已逾五百年，她早已清醒地意识到自己不过是尘歌手中的一枚棋子。她以铁腕统治维系北境的秩序，但暗地里，她一直在寻找打破虚假秩序的方法。她的沉默本身就是一颗定时炸弹。</em></blockquote>
+        </div>
+      </details>
+    </div>
+
+    <!-- 二、ABO 世界观 -->
+    <div class="section">
+      <h2 class="section-title">二、ABO 设定</h2>
+
+      <details>
+        <summary>第二性别与信息素</summary>
+        <div class="accordion-content">
+          <p>本文为同人创作，在千律州原有设定基础上引入第二性别体系，旨在强化角色冲突与情感张力。</p>
+          <div class="table-wrap">
+            <table>
+              <tr><th>性别</th><th>特征</th></tr>
+              <tr><td><strong>Alpha</strong></td><td>身体素质与力量优于另外两性，信息素显著且具有压迫性。发情期或易感期时，信息素会不受控制地外溢。顶级Alpha的信息素能影响周围人的生理状态。</td></tr>
+              <tr><td><strong>Beta</strong></td><td>占比最高，信息素极淡或不可感知，无发情期，对信息素感知迟钝，被视为“普通人”。</td></tr>
+              <tr><td><strong>Omega</strong></td><td>占比稀少，体能相对较弱，拥有发情期。发情期时信息素浓烈且具有诱惑力，容易引发Alpha的本能反应。可被标记（临时标记或永久标记），被标记后会对标记者产生信息素层面的依赖。</td></tr>
+            </table>
+          </div>
+          <p><strong>隐性Omega：</strong>极少数Omega因外力压制（如神格封印、药物干涉、先天缺陷）而呈现Beta体征，无发情期、无信息素外泄，生理检测与Beta无异。但在特定刺激下（如顶级Alpha的深度接触），封印可能被破除，显露出真实性别。黎昭即为此类。</p>
+          <blockquote><em>标记机制：Alpha通过咬破Omega后颈腺体注入信息素完成临时标记。被标记的Omega在发情期时对标记者的信息素产生强烈渴望，抑制剂效果大打折扣。永久标记则涉及更深层的生理结合，几乎不可逆。</em></blockquote>
+        </div>
+      </details>
+    </div>
+
+    <!-- 三、三大阵营 -->
+    <div class="section">
+      <h2 class="section-title">三、三大阵营</h2>
+
+      <details>
+        <summary>烬影会</summary>
+        <div class="accordion-content">
+          <p><strong>前身：</strong>黑鼠帮。北境下层区最不入流的混混组织，以收保护费、小偷小摸为生，连其他黑帮都看不起他们。</p>
+          <p><strong>改名：</strong>黎昭接手后，因嫌“黑鼠帮”难听，翻阅典籍取其名为“烬影”。烬为余火，影为暗处，寓意“暗处余火，不灭不休”。黎昭曾对亲信解释：“笔画多，显得有文化。”——他的大多数成员并不识字。</p>
+          <p><strong>组织结构：</strong>烬影会以黎昭为核心，下设伊万为军师负责文书记账，雷科为武力担当负责外勤与护卫。组织内部不设严苛等级，成员同吃同住，收入按需分配。黎昭立有死规矩：严禁强迫他人进行性行为，不抛弃老弱，保护投靠的Omega与儿童。烬影会因此在下层区赢得了相对正面的口碑，许多走投无路的平民宁愿投靠烬影会也不愿加入其他帮派。</p>
+          <p><strong>据点：</strong>初期栖身下水道，后逐步租用下层区城东旅馆。在教堂神父科利亚的庇护下，拥有一处隐秘的容身点，用于紧急避难与发情期安置。</p>
+          <blockquote><em>“烬影会与其说是一个黑帮，不如说是一个被逼到绝境的人抱团取暖的共同体。他们或许不识字、不体面，但黎昭给了他们活下去的尊严。” —— 科利亚神父</em></blockquote>
+        </div>
+      </details>
+
+      <details>
+        <summary>北境官方势力</summary>
+        <div class="accordion-content">
+          <h4>凝淼·亚历山德罗芙娜·沃尔科娃</h4>
+          <p><strong>第二性别：</strong>无性（神明之躯，不属人类性别范畴）</p>
+          <p><strong>身份：</strong>双冕北境女皇，冰雷之神，司掌禁锢权柄。</p>
+          <p><strong>实质：</strong>尘歌创造的第三代神明之一，却也是唯一在漫长岁月中彻底清醒的“伪神”。她知道自己从何而来，为何坐上皇座，也知道这一切不过是尘歌编织的剧本。五百年来，她一面维持北境的表面稳定，一面暗中谋划如何打破虚假的秩序。她的存在是北境政治棋盘上最大的变数。</p>
+
+          <h4>阿列克谢·谢尔盖耶维奇·沃尔科夫</h4>
+          <p><strong>第二性别：</strong>顶级Alpha</p>
+          <p><strong>信息素：</strong>伏特加（浓烈、灼烧、极具压迫性）</p>
+          <p><strong>身份：</strong>巡林铁卫最高指挥官，北境最年轻的军方高层，女皇凝淼最信任的将领之一。</p>
+          <p><strong>性格：</strong>战场冷酷果决，私生活克制。作为顶级Alpha，他对信息素的控制力极强，但在黎昭面前屡屡失控。他对黎昭的追逐已从职责范畴延伸至私人领域，他本人对此既不承认也不否认。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>第三方势力</summary>
+        <div class="accordion-content">
+          <h4>北境贵族</h4>
+          <p>表面效忠女皇，暗地里各有算盘。部分贵族对女皇的统治心怀不满，试图在神明秩序松动时攫取更多权力。他们与烬影会、走私贩子均有暗中往来，是北境灰色地带的重要推手。阿列克谢在追查黎昭的过程中，不可避免地会触及贵族利益网。</p>
+
+          <h4>科利亚</h4>
+          <p><strong>第二性别：</strong>Omega</p>
+          <p><strong>信息素：</strong>未明确（有独立的Alpha伴侣）</p>
+          <p><strong>身份：</strong>北境下层区某偏僻教堂的神父。表面虔诚侍神，实则油嘴滑舌、心思活络，是烬影会的秘密盟友。</p>
+          <p><strong>性格：</strong>温和表象下藏着精明与算计。他收留走投无路的烬影会成员，帮助黎昭度过发情期，甚至张罗相亲。他似乎知晓许多不该知道的事，关于北境高层、尘歌造神、黎昭的来历，但他从不主动开口，只在关键时刻给予提示。</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- 四、主要角色 -->
+    <div class="section">
+      <h2 class="section-title">四、主要角色</h2>
+
+      <details>
+        <summary>黎昭</summary>
+        <div class="accordion-content">
+          <div class="character-item">
+            <h4>黎昭 · 烬影会首领</h4>
+            <p><strong>第二性别：</strong>隐性Omega（前期自认为Beta，被阿列克谢标记后显化）</p>
+            <p><strong>信息素：</strong>血锈（浓稠、甜腻、铁与蜜糖交织）</p>
+            <p><strong>曾用名：</strong>昭临（准神候选人时期）、怀榆（尘歌造物编号）</p>
+            <p><strong>外貌：</strong>浅棕色长发，金色眼眸，身形瘦小，左眉尾有一颗小痣。</p>
+            <p><strong>性格：</strong>嘴硬心软，毒舌且爱翻白眼，自诩冷漠自私实则重情重义。贪生怕死，但为了烬影会的人可以把自己卖了换钱。</p>
+            <p><strong>经历：</strong>曾是尘歌创造的“怀榆”复制体，作为准神候选人被培养，后因任务失败被抛弃流亡。逃至北境后隐姓埋名，本想低调苟活，却阴差阳错成为黑帮首领。猎人小屋事件后被阿列克谢标记，隐性Omega身份暴露，发情期成为他最大的软肋。</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>伊万</summary>
+        <div class="accordion-content">
+          <div class="character-item">
+            <h4>伊万 · 烬影会军师</h4>
+            <p><strong>第二性别：</strong>Beta</p>
+            <p><strong>身份：</strong>烬影会中少数识字的成员，曾是商人账房，能写会算，是黎昭的主要智囊。</p>
+            <p><strong>性格：</strong>冷静、务实、谨慎。是关键时刻拉住黎昭的人。</p>
+            <p><strong>典型事件：</strong>在黎昭发情期最严重时，果断安排转移；在黎昭冲动想去自首时，与雷科合力阻止。</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>雷科</summary>
+        <div class="accordion-content">
+          <div class="character-item">
+            <h4>雷科 · 烬影会武力担当</h4>
+            <p><strong>第二性别：</strong>Alpha</p>
+            <p><strong>身份：</strong>早期追随黎昭的成员，身材魁梧，脸上有刀疤，忠诚得近乎憨直。</p>
+            <p><strong>性格：</strong>脑子不太好使，但重义气、能打。黎昭骂他“傻子”他从不还嘴，只会嘿嘿笑。</p>
+            <p><strong>典型事件：</strong>在暗道中抱着发情期的黎昭狂奔，一路掐自己大腿防止失控；事后跪在地上嚎啕大哭。</p>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- 五、关键支线与悬念 -->
+    <div class="section">
+      <h2 class="section-title">五、关键支线与悬念</h2>
+
+      <details>
+        <summary>科利亚的教堂</summary>
+        <div class="accordion-content">
+          <p>位于下层区与郊外交界处的偏僻教堂，表面是普通礼拜堂，实则是烬影会的秘密避难所。科利亚在此收留过无数走投无路的Omega与底层人，黎昭发情期最严重的三天也是在此度过。教堂地下更衣室有一条直通外界的小道，是黎昭多次逃脱追捕的关键出口。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>凝淼的棋局</summary>
+        <div class="accordion-content">
+          <p>女皇凝淼虽未在故事前期正式登场，但她的意志始终笼罩着北境的一切。阿列克谢对烬影会的搜查、北境贵族与官方的博弈、乃至黎昭的流亡路线，都或多或少被她所影响。她究竟是在纵容这一切，还是在等待一个时机，是故事后期最大的悬念之一。</p>
+          <blockquote><em>“北境风雪之下，一个被遗弃的准神、一个被玩弄的指挥官、一个清醒的女皇，在一场虚假的秩序里，各自寻找自己的真实。”</em></blockquote>
+        </div>
+      </details>
+    </div>
+
+  </div>
+
+  <!-- ====== 底部 ====== -->
+  <footer id="footer">
+    <div class="footer-left">
+      <span>©2026 淮子生生 · 北境玫瑰</span>
+      <span style="opacity:0.3;">·</span>
+      <span>同人衍生 · ABO世界观</span>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       进度条 JS
+  ============================================================ -->
+  <script>
+    (function() {
+      const bar = document.getElementById('reading-progress');
+      let ticking = false;
+      function update() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+          bar.style.width = Math.min(progress, 100) + '%';
+          ticking = false;
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    })();
+  </script>
+
+  <!-- ============================================================
+       字号控制 JS
+  ============================================================ -->
+  <script>
+    var sizeLevels = ['sm', 'md', 'lg', 'xl', '2xl'];
+    var sizeLabels = ['小', '中', '大', '更大', '最大'];
+    var currentLevel = 1;
+
+    function changeSize(delta) {
+      var next = currentLevel + delta;
+      if (next < 0) next = 0;
+      if (next >= sizeLevels.length) next = sizeLevels.length - 1;
+      if (next === currentLevel) return;
+
+      sizeLevels.forEach(function(s) {
+        document.body.classList.remove('font-' + s);
+      });
+
+      currentLevel = next;
+      document.body.classList.add('font-' + sizeLevels[currentLevel]);
+      document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
+
+      try { localStorage.setItem('worldFontSize', String(currentLevel)); } catch(e) {}
+    }
+
+    var saved = localStorage.getItem('worldFontSize');
+    if (saved !== null) {
+      var n = parseInt(saved);
+      if (!isNaN(n) && n >= 0 && n < sizeLevels.length) {
+        currentLevel = n;
+        if (currentLevel !== 1) {
+          document.body.classList.add('font-' + sizeLevels[currentLevel]);
+        }
+        document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
+      }
+    }
+  </script>
+
+  <!-- ============================================================
+       夜间模式同步
+  ============================================================ -->
+  <script>
+    (function() {
+      var html = document.documentElement;
+
+      function applyTheme() {
+        var attr = html.getAttribute('data-theme');
+        if (!attr) {
+          try {
+            var raw = localStorage.getItem('theme');
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              if (parsed && parsed.value) attr = parsed.value;
+            }
+          } catch(e) {}
+        }
+        if (attr === 'dark') {
+          html.setAttribute('data-theme', 'dark');
+        } else {
+          html.removeAttribute('data-theme');
+        }
+      }
+
+      applyTheme();
+
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'theme') {
+          applyTheme();
+        }
+      });
+
+      var observer = new MutationObserver(function() {
+        applyTheme();
+      });
+      observer.observe(html, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+    })();
+  </script>
+
+</body>
+</html>
