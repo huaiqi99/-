@@ -93,6 +93,34 @@
     font-weight: 400;
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ========== 返回按钮 ========== */
+  .back-btn {
+    padding: 4px 14px;
+    border-radius: 18px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .back-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+  }
+
   /* ========== 国家切换按钮 ========== */
   .country-tabs {
     display: flex;
@@ -124,6 +152,23 @@
     background: #cfc8c0;
     border-color: #cfc8c0;
     color: #181614;
+  }
+
+  /* ========== 重置按钮 ========== */
+  .reset-btn {
+    padding: 4px 12px;
+    border-radius: 18px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+  }
+  .reset-btn:hover {
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
   }
 
   /* ========== 主布局 ========== */
@@ -336,23 +381,6 @@
     stroke-width: 5px;
   }
 
-  /* ========== 重置按钮 ========== */
-  .reset-btn {
-    padding: 4px 12px;
-    border-radius: 18px;
-    border: 1px solid var(--border-light);
-    background: transparent;
-    font-size: 12px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.25s;
-    font-family: inherit;
-  }
-  .reset-btn:hover {
-    border-color: var(--text-secondary);
-    color: var(--text-primary);
-  }
-
   /* ========== 响应式 ========== */
   @media (max-width: 820px) {
     #main { flex-direction: column; }
@@ -365,10 +393,13 @@
     #header { padding: 10px 16px; }
     #header .title { font-size: 17px; }
     .country-tabs .btn { font-size: 11px; padding: 3px 11px; }
+    .back-btn { font-size: 11px; padding: 3px 12px; }
+    .reset-btn { font-size: 11px; padding: 3px 10px; }
   }
   @media (max-width: 500px) {
     #header .sub { display: none; }
     #panel { padding: 16px; }
+    .header-right { gap: 6px; }
   }
 </style>
 
@@ -398,7 +429,7 @@
     <span class="title">千律州 · <span>人物关系星图</span></span>
     <span class="sub">点击节点查看详情 · 拖拽调整布局</span>
   </div>
-  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+  <div class="header-right">
     <div class="country-tabs" id="countryTabs">
       <button class="btn active" data-country="业焰之国">业焰</button>
       <button class="btn" data-country="双冕北境">北境</button>
@@ -408,6 +439,7 @@
       <button class="btn" data-country="永昼净土">永昼</button>
     </div>
     <button class="reset-btn" onclick="resetZoom()">↺ 重置</button>
+    <button class="back-btn" onclick="history.back()">← 返回</button>
   </div>
 </div>
 
@@ -441,49 +473,26 @@
   //  配色方案（清新透气 · 保留神明特征）
   // ================================================================
   const COLORS = {
-    // 主角 —— 淡金色
     huaiyu: '#cdb891',
     duanshenquan: '#cdb891',
-
-    // 业焰之国
-    zhuyan: '#e0a098',        // 珊瑚粉（火神的红柔化）
-    ruiqiu: '#b89088',        // 玫瑰褐
-    emmett: '#d4b898',        // 浅橙
-    lina: '#d4b898',
-
-    // 双冕北境
-    yegor: '#8aaaa8',         // 薄荷灰
-    aliekexie: '#98aa8a',     // 灰绿
-    ningmiao: '#a8a0c0',      // 雾霾紫（冰雷的冷感）
-
-    // 时衍天宫
-    zuomingyi: '#d4b898',     // 淡杏色
-    shiyuan: '#c4a8c0',       // 淡藤紫（时间）
-    jiezhou: '#8eb8c4',       // 浅天蓝（空间）
-
-    // 旧神
-    fayidun: '#b0aaa8',       // 银灰
+    zhuyan: '#e0a098',
+    ruiqiu: '#b89088',
+    yegor: '#8aaaa8',
+    aliekexie: '#98aa8a',
+    ningmiao: '#a8a0c0',
+    zuomingyi: '#d4b898',
+    shiyuan: '#c4a8c0',
+    jiezhou: '#8eb8c4',
+    fayidun: '#b0aaa8',
     benzun: '#b0aaa8',
-
-    // 归墟之庭
-    chenge: '#6b7f8a',        // 深海蓝
-
-    // 无垠根庭
-    yaoying: '#8db28a',       // 鼠尾草绿
-
-    // 暗线
-    lizhao: '#c0b8b0',        // 浅灰
-
-    // NPC（大胆配色）
-    leike: '#e0b8b0',         // 淡粉
-    lika: '#b0c4c8',          // 淡蓝
-
-    // 默认
+    chenge: '#6b7f8a',
+    yaoying: '#8db28a',
+    lizhao: '#c0b8b0',
     default: '#c4bdb5'
   };
 
   // ================================================================
-  //  数据：所有角色
+  //  数据：所有角色（已移除不关键NPC）
   // ================================================================
   const ALL_NODES = [
     // —— 业焰之国 ——
@@ -542,24 +551,6 @@
       color: COLORS.ruiqiu,
       country: '业焰之国',
       story: '家族被代行者屠戮，自身被蚀光诅咒囚禁两年。伪装复仇后将怀榆推入火山，却在祝焱的记忆空间中见证真相。祝焱临终前抽离其污染，嘱托她接手业焰城。'
-    },
-    {
-      id: '埃米特',
-      name: '埃米特·维里克',
-      role: '维里迪姆遗孤',
-      tag: '业焰',
-      color: COLORS.emmett,
-      country: '业焰之国',
-      story: '维里迪姆家族旁支遗孤，与妹妹莉娜隐姓埋名。在熔火祝祭上因系统道具触发诅咒而惨死，成为怀榆被定罪的关键。'
-    },
-    {
-      id: '莉娜',
-      name: '莉娜·维里克',
-      role: '维里迪姆遗孤',
-      tag: '业焰',
-      color: COLORS.lina,
-      country: '业焰之国',
-      story: '埃米特的妹妹，与哥哥一同在熔火祝祭上因诅咒而惨死。她的死让怀榆背负了沉重的愧疚。'
     },
 
     // —— 双冕北境 ——
@@ -627,24 +618,6 @@
       color: COLORS.ningmiao,
       country: '双冕北境',
       story: '尘歌造神计划中罕见的"清醒者"，保留旧神艾尔薇拉的完整记忆。用五百年的时间布局，最终以自我毁灭的方式掀翻棋盘，为北境换取真正的自由。'
-    },
-    {
-      id: '雷科',
-      name: '雷科',
-      role: '烬影会成员 · 巡逻队长',
-      tag: '北境',
-      color: COLORS.leike,
-      country: '双冕北境',
-      story: '烬影会的元老级成员，对黎昭忠心耿耿。头脑简单但重情重义，是黎昭在北境最信任的下属之一。'
-    },
-    {
-      id: '莉卡',
-      name: '莉卡',
-      role: '烬影会成员 · 后勤',
-      tag: '北境',
-      color: COLORS.lika,
-      country: '双冕北境',
-      story: '烬影会中少有的Omega之一，负责后勤与情报整理。在黎昭发情期时曾协助照料，是组织内不可或缺的支柱。'
     },
 
     // —— 时衍天宫 ——
@@ -854,26 +827,28 @@
   ];
 
   // ================================================================
-  //  关系数据
+  //  关系数据（已移除不关键NPC连线 · 新增段深泉↔尘歌、段深泉↔黎昭）
   // ================================================================
   const ALL_LINKS = [
-    // 业焰之国
+    // —— 业焰之国 ——
     { source: '怀榆', target: '段深泉', relation: '命定·爱人', red: true },
     { source: '怀榆', target: '尘歌', relation: '创造·注视', pink: true },
+    { source: '段深泉', target: '尘歌', relation: '造物·父亲', pink: true },
+    { source: '段深泉', target: '黎昭', relation: '曾追求过', pink: true },
     { source: '黎昭', target: '尘歌', relation: '抛弃·逃亡' },
     { source: '怀榆', target: '黎昭', relation: '同源·镜像' },
     { source: '怀榆', target: '瑞秋', relation: '旧友·仇·和解' },
     { source: '怀榆', target: '祝焱', relation: '净化的对象' },
     { source: '瑞秋', target: '祝焱', relation: '神使·信仰' },
     { source: '祝焱', target: '尘歌', relation: '造物·被弃' },
-    { source: '怀榆', target: '埃米特', relation: '保护·悲剧' },
-    { source: '怀榆', target: '莉娜', relation: '保护·悲剧' },
     { source: '黎昭', target: '瑞秋', relation: '代行·屠戮' },
     { source: '黎昭', target: '祝焱', relation: '代行·封印' },
 
-    // 双冕北境
+    // —— 双冕北境 ——
     { source: '怀榆北境', target: '段深泉北境', relation: '命定·爱人', red: true },
     { source: '怀榆北境', target: '尘歌北境', relation: '创造·注视', pink: true },
+    { source: '段深泉北境', target: '尘歌北境', relation: '造物·父亲', pink: true },
+    { source: '段深泉北境', target: '黎昭北境', relation: '曾追求过', pink: true },
     { source: '黎昭北境', target: '尘歌北境', relation: '抛弃·逃亡' },
     { source: '怀榆北境', target: '黎昭北境', relation: '同源·镜像' },
     { source: '阿列克谢', target: '黎昭北境', relation: '纠缠·标记', red: true },
@@ -881,12 +856,11 @@
     { source: '段深泉北境', target: '叶戈尔', relation: '情敌·对峙' },
     { source: '黎昭北境', target: '凝淼', relation: '合作·秘密' },
     { source: '凝淼', target: '尘歌北境', relation: '造物·反叛' },
-    { source: '黎昭北境', target: '雷科', relation: '首领·下属' },
-    { source: '黎昭北境', target: '莉卡', relation: '首领·下属' },
 
-    // 时衍天宫
+    // —— 时衍天宫 ——
     { source: '怀榆时衍', target: '段深泉时衍', relation: '命定·爱人', red: true },
     { source: '怀榆时衍', target: '尘歌时衍', relation: '创造·注视', pink: true },
+    { source: '段深泉时衍', target: '尘歌时衍', relation: '造物·父亲', pink: true },
     { source: '段深泉时衍', target: '时渊', relation: '抚养·出身' },
     { source: '段深泉时衍', target: '芥舟', relation: '抚养·出身' },
     { source: '时渊', target: '芥舟', relation: '双生·共治' },
@@ -897,19 +871,21 @@
     { source: '左明仪', target: '段深泉时衍', relation: '朋友·引路人' },
     { source: '左明仪', target: '怀榆时衍', relation: '朋友·引路人' },
 
-    // 无垠根庭
+    // —— 无垠根庭 ——
     { source: '怀榆根庭', target: '段深泉根庭', relation: '命定·爱人', red: true },
     { source: '怀榆根庭', target: '尘歌根庭', relation: '创造·注视', pink: true },
+    { source: '段深泉根庭', target: '尘歌根庭', relation: '造物·父亲', pink: true },
+    { source: '段深泉根庭', target: '黎昭根庭', relation: '曾追求过', pink: true },
     { source: '黎昭根庭', target: '尘歌根庭', relation: '抛弃·逃亡' },
     { source: '黎昭根庭', target: '阿列克谢根庭', relation: '纠缠·标记', red: true },
     { source: '瑶英', target: '尘歌根庭', relation: '造物·被弃' },
 
-    // 归墟之庭
+    // —— 归墟之庭 ——
     { source: '怀榆归墟', target: '段深泉归墟', relation: '命定·爱人', red: true },
     { source: '怀榆归墟', target: '尘歌归墟', relation: '创造·对决' },
     { source: '段深泉归墟', target: '尘歌归墟', relation: '造物·对抗' },
 
-    // 永昼净土
+    // —— 永昼净土 ——
     { source: '怀榆永昼', target: '段深泉永昼', relation: '命定·爱人', red: true },
     { source: '怀榆永昼', target: '黎昭永昼', relation: '同源·和解' },
     { source: '黎昭永昼', target: '阿列克谢永昼', relation: '纠缠·伴侣', red: true }
@@ -937,11 +913,12 @@
     .on('zoom', e => g.attr('transform', e.transform));
   svg.call(zoom).on('dblclick.zoom', null);
 
+  // 连线距离 200，碰撞半径 50 —— 更舒展，不挤
   const simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id(d => d.id).distance(150))
-    .force('charge', d3.forceManyBody().strength(-600))
+    .force('link', d3.forceLink().id(d => d.id).distance(200))
+    .force('charge', d3.forceManyBody().strength(-700))
     .force('center', d3.forceCenter(0, 0))
-    .force('collide', d3.forceCollide().radius(42))
+    .force('collide', d3.forceCollide().radius(50))
     .velocityDecay(0.35);
 
   let linkGroup = g.append('g').attr('class', 'links');
@@ -1208,7 +1185,7 @@
     if (node) selectNode(node);
   }, 500);
 
-  console.log('🌿 千律州人物星图 · 兼容夜间模式');
+  console.log('🌿 千律州人物星图 · 已修复');
 </script>
 </body>
 </html>
