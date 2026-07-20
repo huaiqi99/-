@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>北境玫瑰 · 人物关系星图</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    /* ========== CSS 变量（浅色默认） ========== */
+    :root {
+      --bg-main: #f7f4ef;
+      --bg-card: #ffffff;
+      --bg-toolbar: #ffffff;
+      --border-light: #ece6de;
+      --text-primary: #3a3a3a;
+      --text-secondary: #8a8a8a;
+      --text-muted: #b8b8b8;
+      --shadow: rgba(0,0,0,0.04);
+      --link-line: #9e9286;
+      --link-red: #d93030;
+      --link-pink: #d4b8b8;
+      --label-bg: rgba(255,255,255,0.88);
+      --node-shadow: rgba(0,0,0,0.06);
+      --node-stroke: #ffffff;
+      --ring-opacity: 0.15;
+      --ring-selected: 0.35;
+      --tag-opacity: 0.85;
+      --scrollbar: #e8e2da;
+    }
+
+    [data-theme="dark"] {
+      --bg-main: #181614;
+      --bg-card: #24201c;
+      --bg-toolbar: #1e1b18;
+      --border-light: #35302a;
+      --text-primary: #cfc8c0;
+      --text-secondary: #8a847c;
+      --text-muted: #5a5550;
+      --shadow: rgba(0,0,0,0.3);
+      --link-line: #9a8e82;
+      --link-red: #ff5252;
+      --link-pink: #9a7a7a;
+      --label-bg: rgba(36,32,28,0.92);
+      --node-shadow: rgba(0,0,0,0.25);
+      --node-stroke: #2a2622;
+      --ring-opacity: 0.25;
+      --ring-selected: 0.5;
+      --tag-opacity: 0.9;
+      --scrollbar: #3a3530;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+
+    /* ========== 顶栏 ========== */
+    #header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-light);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 10px;
+      transition: background 0.3s, border-color 0.3s;
+      z-index: 10;
+    }
+    #header .left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    #header .title {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: var(--text-primary);
+    }
+    #header .title span { color: var(--text-secondary); }
+    #header .sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 4px;
+      font-weight: 400;
+    }
+    .back-btn {
+      padding: 4px 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border-light);
+      background: transparent;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+    .reset-btn {
+      padding: 4px 12px;
+      border-radius: 18px;
+      border: 1px solid var(--border-light);
+      background: transparent;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: inherit;
+    }
+    .reset-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    /* ========== 主布局 ========== */
+    #main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ========== 图区域 ========== */
+    #graph-wrap {
+      flex: 1;
+      position: relative;
+      background: var(--bg-main);
+      min-height: 0;
+      transition: background 0.3s;
+    }
+    #graph-wrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    #graph-wrap svg:active { cursor: grabbing; }
+
+    /* ========== 右侧面板 ========== */
+    #panel {
+      width: 300px;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-light);
+      padding: 22px 20px;
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    #panel .empty {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-top: 40px;
+      line-height: 1.9;
+    }
+    #panel .empty i { font-size: 28px; display: block; margin-bottom: 10px; opacity: 0.5; }
+    #panel .name {
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+    }
+    #panel .name .tag {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+    #panel .role {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin: 2px 0 8px 0;
+    }
+    #panel .country-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 12px;
+      border-radius: 12px;
+      background: var(--bg-main);
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      transition: background 0.3s;
+    }
+    #panel .story {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      border-top: 1px solid var(--border-light);
+      padding-top: 12px;
+      margin-top: 2px;
+      transition: border-color 0.3s;
+    }
+    #panel .story .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    #panel .relations {
+      margin-top: 12px;
+      border-top: 1px solid var(--border-light);
+      padding-top: 12px;
+      transition: border-color 0.3s;
+    }
+    #panel .relations .label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+    }
+    #panel .relations .item {
+      font-size: 12px;
+      padding: 2px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+    }
+    #panel .relations .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ========== SVG 样式 ========== */
+    .link-label-bg {
+      fill: var(--label-bg);
+      stroke: var(--border-light);
+      stroke-width: 0.5;
+      rx: 4;
+      transition: fill 0.3s, stroke 0.3s;
+    }
+    .link-label-text {
+      font-size: 10px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    .node-group { cursor: pointer; }
+    .node-ring {
+      fill: none;
+      stroke-width: 3.5px;
+      opacity: var(--ring-opacity);
+      transition: opacity 0.3s, stroke-width 0.3s;
+    }
+    .node-circle {
+      stroke: var(--node-stroke);
+      stroke-width: 2px;
+      filter: drop-shadow(0 2px 8px var(--shadow));
+      transition: filter 0.3s, stroke 0.3s;
+    }
+    .node-letter {
+      font-size: 16px;
+      font-weight: 600;
+      fill: #ffffff;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+      letter-spacing: 0.3px;
+    }
+    .node-name {
+      font-size: 12px;
+      font-weight: 500;
+      fill: var(--text-primary);
+      text-anchor: middle;
+      pointer-events: none;
+      letter-spacing: 0.2px;
+      transition: fill 0.3s;
+    }
+    .node-name.main {
+      font-weight: 700;
+      fill: #c44536;
+    }
+    .node-role {
+      font-size: 10px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      pointer-events: none;
+      letter-spacing: 0.2px;
+      transition: fill 0.3s;
+    }
+    .node-tag-bg {
+      rx: 10;
+      opacity: var(--tag-opacity);
+      transition: opacity 0.3s;
+    }
+    .node-tag-text {
+      font-size: 9px;
+      fill: #ffffff;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+    }
+    .node.selected .node-ring {
+      opacity: var(--ring-selected);
+      stroke-width: 5px;
+    }
+
+    /* ========== 响应式 ========== */
+    @media (max-width: 820px) {
+      body {
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+      }
+      #main {
+        flex-direction: column;
+        overflow: visible;
+        height: auto;
+      }
+      #header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        box-shadow: 0 2px 8px var(--shadow);
+      }
+      #graph-wrap {
+        flex: none;
+        height: calc(100vh - 60px);
+        width: 100%;
+        min-height: 400px;
+      }
+      #panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-light);
+        max-height: none;
+        overflow-y: visible;
+        padding: 20px 16px;
+      }
+      #header .sub { display: none; }
+    }
+    @media (max-width: 500px) {
+      #panel { padding: 16px; }
+      #header .left { gap: 8px; }
+      .back-btn { font-size: 11px; padding: 3px 10px; }
+      #graph-wrap {
+        height: calc(100vh - 56px);
+      }
+    }
+  </style>
+  <script>
+    (function() {
+      try {
+        const raw = localStorage.getItem('theme');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+
+<div id="header">
+  <div class="left">
+    <a class="back-btn" href="javascript:history.back()">← 返回</a>
+    <span class="title">北境玫瑰 · <span>人物关系星图</span></span>
+    <span class="sub">点击节点 · 拖拽布局</span>
+  </div>
+  <button class="reset-btn" onclick="resetZoom()">↺ 重置</button>
+</div>
+
+<div id="main">
+  <div id="graph-wrap">
+    <svg id="chart"></svg>
+  </div>
+  <div id="panel">
+    <div class="empty" id="emptyState">
+      <i>✦</i>
+      <p>点击星图中的人物<br>查看其身份与羁绊</p>
+    </div>
+    <div id="detail" style="display:none;">
+      <div class="name" id="dName"></div>
+      <div class="role" id="dRole"></div>
+      <div class="country-badge" id="dCountry"></div>
+      <div class="story">
+        <div class="label">背景</div>
+        <div id="dStory"></div>
+      </div>
+      <div class="relations">
+        <div class="label">关联</div>
+        <div id="dRels"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================================================================
+  //  配色方案
+  // ================================================================
+  const COLORS = {
+    lizhao: '#b0a090',
+    aliekexie: '#8aaa8a',
+    ningmiao: '#a0a0c0',
+    keliya: '#c4b090',
+    yiwan: '#8ab0b0',
+    leike: '#b0a080'
+  };
+
+  // ================================================================
+  //  数据：北境玫瑰核心人物
+  // ================================================================
+  const ALL_NODES = [
+    {
+      id: '黎昭',
+      name: '黎昭',
+      role: '烬影会首领 · 隐性Omega',
+      tag: '烬影会',
+      color: COLORS.lizhao,
+      isMain: true,
+      story: '曾是尘歌创造的“怀榆”复制体，作为准神候选人被培养，任务失败后被抛弃流亡至北境。阴差阳错成为烬影会首领，以铁腕与柔情庇护底层民众。被阿列克谢标记后，隐性Omega体质暴露，发情期成为其最大软肋。表面毒舌冷漠，实则重情重义。'
+    },
+    {
+      id: '阿列克谢',
+      name: '阿列克谢·沃尔科夫',
+      role: '巡林铁卫最高指挥官 · 顶级Alpha',
+      tag: '北境官方',
+      color: COLORS.aliekexie,
+      story: '北境最年轻的军方高层，女皇凝淼最信任的将领。战场上冷酷果决，对信息素的控制力极强，却在黎昭面前屡屡失控。猎人小屋一夜间激活了黎昭的Omega体质，从此在职责与私欲间反复拉扯。'
+    },
+    {
+      id: '凝淼',
+      name: '凝淼',
+      role: '双冕北境女皇 · 冰雷之神',
+      tag: '北境官方',
+      color: COLORS.ningmiao,
+      story: '尘歌创造的第三代神明之一，唯一彻底清醒的“伪神”。以无性之身统治北境五百年，表面维系秩序，暗中寻找打破虚假世界的契机。她注视着阿列克谢与黎昭的纠缠，并将这一局棋视为撬动北境变局的支点。'
+    },
+    {
+      id: '科利亚',
+      name: '科利亚',
+      role: '教堂神父 · 烬影会秘密盟友',
+      tag: '第三方',
+      color: COLORS.keliya,
+      story: '北境下层区偏僻教堂的神父，表面虔诚，实则油滑通透。收留走投无路的烬影会成员，帮助黎昭度过发情期，甚至张罗相亲。知晓许多北境高层的秘密，却只在他认为必要的时刻才开口。'
+    },
+    {
+      id: '伊万',
+      name: '伊万',
+      role: '烬影会军师 · Beta',
+      tag: '烬影会',
+      color: COLORS.yiwan,
+      story: '烬影会中少数识字的成员，曾是商人账房，能写会算。是黎昭最信任的智囊，在关键时刻总能冷静判断、果断行动。曾成功组织黎昭发情期的转移，并多次劝阻黎昭的冲动之举。'
+    },
+    {
+      id: '雷科',
+      name: '雷科',
+      role: '烬影会武力担当 · Alpha',
+      tag: '烬影会',
+      color: COLORS.leike,
+      story: '早期追随黎昭的粗壮汉子，脸上有刀疤，忠诚近乎憨直。虽头脑简单但重义气、能打，是烬影会最坚实的拳头。曾抱着发情期的黎昭在暗道狂奔，靠掐大腿才没失控，事后跪地嚎啕大哭。'
+    }
+  ];
+
+  // ================================================================
+  //  关系数据：红线表示爱人（黎昭 ↔ 阿列克谢）
+  //  新增：凝淼 ↔ 黎昭 合作关系（普通灰色虚线）
+  // ================================================================
+  const ALL_LINKS = [
+    { source: '黎昭', target: '阿列克谢', relation: '标记·爱人', red: true },
+    { source: '黎昭', target: '伊万', relation: '首领与军师' },
+    { source: '黎昭', target: '雷科', relation: '首领与武力' },
+    { source: '黎昭', target: '科利亚', relation: '盟友' },
+    { source: '阿列克谢', target: '凝淼', relation: '上下级' },
+    // 新增：凝淼与黎昭的合作关系
+    { source: '凝淼', target: '黎昭', relation: '合作' }
+  ];
+
+  // ================================================================
+  //  D3 力导向图引擎
+  // ================================================================
+  let nodes = [];
+  let links = [];
+  let selectedNode = null;
+
+  const container = document.getElementById('graph-wrap');
+  const svg = d3.select('#chart');
+  let width = container.clientWidth;
+  let height = container.clientHeight || 600;
+
+  svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+
+  const g = svg.append('g');
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 3.5])
+    .on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoom).on('dblclick.zoom', null);
+
+  const simulation = d3.forceSimulation()
+    .force('link', d3.forceLink().id(d => d.id).distance(250))
+    .force('charge', d3.forceManyBody().strength(-900))
+    .force('center', d3.forceCenter(0, 0))
+    .force('collide', d3.forceCollide().radius(38))
+    .velocityDecay(0.3);
+
+  let linkGroup = g.append('g').attr('class', 'links');
+  let nodeGroup = g.append('g').attr('class', 'nodes');
+
+  // ================================================================
+  //  渲染
+  // ================================================================
+  function render(isInit = false) {
+    // 拷贝数据，保留位置
+    const oldPos = {};
+    nodes.forEach(n => { if (n.x !== undefined) oldPos[n.id] = { x: n.x, y: n.y }; });
+
+    // 初始随机位置
+    const allNodes = ALL_NODES.map(n => {
+      const pos = oldPos[n.id];
+      if (pos) {
+        n.x = pos.x;
+        n.y = pos.y;
+      } else {
+        const angle = Math.random() * 2 * Math.PI;
+        const r = 40 + Math.random() * 100;
+        n.x = Math.cos(angle) * r;
+        n.y = Math.sin(angle) * r;
+      }
+      n.fx = null;
+      n.fy = null;
+      return n;
+    });
+
+    nodes = allNodes;
+
+    // 关联关系
+    const linksData = ALL_LINKS.map(l => {
+      const s = nodes.find(n => n.id === l.source);
+      const t = nodes.find(n => n.id === l.target);
+      if (!s || !t) return null;
+      return {
+        source: s,
+        target: t,
+        relation: l.relation,
+        red: l.red || false,
+        pink: l.pink || false
+      };
+    }).filter(l => l !== null);
+    links = linksData;
+
+    // ---- 连线 ----
+    const linkSel = linkGroup.selectAll('.link-item')
+      .data(links, d => d.source.id + '-' + d.target.id);
+    linkSel.exit().transition().duration(250).style('opacity', 0).remove();
+
+    // 更新已有连线
+    linkSel.select('line')
+      .style('stroke', d => d.red ? 'var(--link-red)' : 'var(--link-line)')
+      .style('stroke-width', d => d.red ? 2.5 : 1.5)
+      .style('stroke-dasharray', d => d.red ? '6,4' : '4,4')
+      .style('opacity', d => d.red ? 0.9 : 0.6);
+
+    const linkEnter = linkSel.enter().append('g')
+      .attr('class', 'link-item')
+      .style('opacity', 0);
+    linkEnter.transition().duration(300).style('opacity', 1);
+
+    linkEnter.append('line')
+      .style('stroke', d => d.red ? 'var(--link-red)' : 'var(--link-line)')
+      .style('stroke-width', d => d.red ? 2.5 : 1.5)
+      .style('stroke-dasharray', d => d.red ? '6,4' : '4,4')
+      .style('opacity', d => d.red ? 0.9 : 0.6);
+
+    linkEnter.append('rect')
+      .attr('class', 'link-label-bg')
+      .attr('width', 60).attr('height', 18).attr('x', -30).attr('y', -9);
+
+    linkEnter.append('text')
+      .attr('class', 'link-label-text')
+      .attr('dy', 1);
+
+    // ---- 节点 ----
+    const nodeSel = nodeGroup.selectAll('.node-group')
+      .data(nodes, d => d.id);
+    nodeSel.exit().transition().duration(250).style('opacity', 0).remove();
+
+    const nodeEnter = nodeSel.enter().append('g')
+      .attr('class', 'node-group')
+      .style('opacity', 0)
+      .call(d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended))
+      .on('click', function(e, d) {
+        e.stopPropagation();
+        selectNode(d);
+        // 给其他节点一点随机速度使其重新排布
+        nodes.forEach(n => {
+          if (n !== d) {
+            n.vx = (Math.random() - 0.5) * 6;
+            n.vy = (Math.random() - 0.5) * 6;
+          }
+        });
+        simulation.alpha(1).restart();
+      });
+
+    nodeEnter.transition().duration(350).style('opacity', 1);
+
+    nodeEnter.append('circle').attr('class', 'node-ring').attr('r', 36);
+    nodeEnter.append('circle').attr('class', 'node-circle').attr('r', 26);
+    nodeEnter.append('text').attr('class', 'node-letter').attr('dy', 1)
+      .text(d => d.name ? d.name.charAt(0) : '?');
+
+    const tagW = 44;
+    nodeEnter.append('rect')
+      .attr('class', 'node-tag-bg')
+      .attr('y', -44).attr('height', 16).attr('width', tagW).attr('x', -tagW / 2);
+    nodeEnter.append('text').attr('class', 'node-tag-text').attr('y', -36);
+
+    nodeEnter.append('text')
+      .attr('class', 'node-name')
+      .attr('y', 42)
+      .text(d => d.name);
+
+    nodeEnter.append('text')
+      .attr('class', 'node-role')
+      .attr('y', 56);
+
+    svg.on('click', () => {
+      selectedNode = null;
+      showEmpty();
+      d3.selectAll('.node-group').classed('selected', false);
+    });
+
+    refreshVisuals();
+
+    nodes.forEach(d => { d.fx = null; d.fy = null; });
+    simulation.nodes(nodes);
+    simulation.force('link').links(links);
+
+    if (isInit) {
+      simulation.alpha(1).restart();
+    } else {
+      simulation.alpha(0.9).restart();
+    }
+  }
+
+  function refreshVisuals() {
+    const all = nodeGroup.selectAll('.node-group');
+
+    all.select('.node-ring')
+      .attr('stroke', d => d.color || '#c4bdb5');
+
+    all.select('.node-circle')
+      .attr('fill', d => d.color || '#c4bdb5');
+
+    all.select('.node-letter')
+      .text(d => d.name ? d.name.charAt(0) : '?');
+
+    all.select('.node-tag-bg')
+      .attr('fill', d => d.color || '#c4bdb5')
+      .attr('width', d => Math.max(34, ((d.tag || '角色').length * 10 + 12)))
+      .attr('x', d => -Math.max(34, ((d.tag || '角色').length * 10 + 12)) / 2);
+
+    all.select('.node-tag-text')
+      .text(d => d.tag || '角色');
+
+    all.select('.node-name')
+      .text(d => d.name)
+      .attr('class', d => d.isMain ? 'node-name main' : 'node-name');
+
+    all.select('.node-role')
+      .text(d => (d.role || '').length > 16 ? d.role.slice(0, 14) + '…' : (d.role || ''));
+  }
+
+  // ================================================================
+  //  物理 tick
+  // ================================================================
+  simulation.on('tick', () => {
+    linkGroup.selectAll('.link-item').each(function(d) {
+      const line = d3.select(this).select('line');
+      const rect = d3.select(this).select('rect');
+      const text = d3.select(this).select('text');
+      const x1 = d.source.x, y1 = d.source.y;
+      const x2 = d.target.x, y2 = d.target.y;
+      line.attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2);
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const txt = d.relation || '关系';
+      const tw = Math.max(40, txt.length * 11 + 14);
+      rect.attr('x', mx - tw / 2).attr('y', my - 9).attr('width', tw);
+      text.attr('x', mx).attr('y', my).text(txt);
+    });
+    nodeGroup.selectAll('.node-group')
+      .attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+
+  // ================================================================
+  //  拖拽
+  // ================================================================
+  function dragstarted(e, d) {
+    if (!e.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x; d.fy = d.y;
+  }
+  function dragged(e, d) {
+    d.fx = e.x; d.fy = e.y;
+  }
+  function dragended(e, d) {
+    if (!e.active) simulation.alphaTarget(0);
+    d.fx = d.x; d.fy = d.y;
+  }
+
+  // ================================================================
+  //  交互
+  // ================================================================
+  function selectNode(d) {
+    selectedNode = d;
+    d3.selectAll('.node-group').classed('selected', false);
+    d3.selectAll('.node-group').filter(n => n === d).classed('selected', true);
+
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('detail').style.display = 'block';
+
+    document.getElementById('dName').textContent = d.name;
+    document.getElementById('dRole').textContent = d.role || '身份未明';
+    document.getElementById('dCountry').textContent = '📍 双冕北境';
+
+    document.getElementById('dStory').textContent = d.story || '暂无背景记载。';
+
+    const rels = ALL_LINKS.filter(l => l.source === d.id || l.target === d.id);
+    const rc = document.getElementById('dRels');
+    if (rels.length === 0) {
+      rc.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">暂无关联</div>';
+    } else {
+      rc.innerHTML = rels.map(l => {
+        const other = l.source === d.id ? l.target : l.source;
+        const node = ALL_NODES.find(n => n.id === other);
+        const color = node ? node.color : '#c4bdb5';
+        return `<div class="item"><span class="dot" style="background:${color};"></span> ${other} · ${l.relation}</div>`;
+      }).join('');
+    }
+
+    if (window.innerWidth <= 820) {
+      const panel = document.getElementById('panel');
+      setTimeout(() => {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+    }
+  }
+
+  function showEmpty() {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('detail').style.display = 'none';
+  }
+
+  function resetZoom() {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    nodes.forEach(n => {
+      n.vx = (Math.random() - 0.5) * 4;
+      n.vy = (Math.random() - 0.5) * 4;
+    });
+    simulation.alpha(0.8).restart();
+  }
+  window.resetZoom = resetZoom;
+
+  // ================================================================
+  //  响应式
+  // ================================================================
+  function resize() {
+    width = container.clientWidth;
+    height = container.clientHeight || 600;
+    svg.attr('viewBox', [-width / 2, -height / 2, width, height]);
+    simulation.force('center', d3.forceCenter(0, 0));
+    simulation.alpha(0.3).restart();
+  }
+  window.addEventListener('resize', resize);
+  new ResizeObserver(resize).observe(container);
+
+  // ================================================================
+  //  启动，默认选中黎昭
+  // ================================================================
+  render(true);
+
+  setTimeout(() => {
+    const node = ALL_NODES.find(n => n.id === '黎昭');
+    if (node) selectNode(node);
+  }, 600);
+</script>
+</body>
+</html>
