@@ -7,6 +7,27 @@
   <link rel="shortcut icon" href="/-/img/favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
   <style>
+  /* 屏蔽所有 Butterfly 主题干扰 */
+  #aside-content { display: none !important; }
+  #sidebar { display: none !important; }
+  #toggle-menu { display: none !important; }
+  #rightside { display: none !important; }
+  #menus { display: none !important; }
+  .layout { display: block !important; }
+  #content-inner { max-width: 100% !important; }
+  #page { width: 100% !important; margin: 0 !important; }
+  #page-header .nav { background: transparent !important; }
+  #page-header .nav .menus_items { display: none !important; }
+  #page-header .nav #toggle-menu { display: none !important; }
+  .full_page { min-height: auto !important; background: var(--bg-body) !important; }
+  #site-info { display: none !important; }
+  #scroll-down { display: none !important; }
+  #body-wrap .page-header { background: var(--bg-body) !important; }
+  /* 隐藏任何可能出现的菜单按钮 */
+  .nav-toggle, .menu-toggle, .sidebar-toggle, [class*="toggle"] { display: none !important; }
+</style>
+
+  <style>
     /* ============================================================
        0. 隐藏 Butterfly 主题全局组件
     ============================================================ */
