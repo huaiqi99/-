@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>年表 · 地府篇</title>
+  <title>时间线 · 墨境</title>
   <style>
     /* ============================================================
-       夜间模式
+       0. 夜间模式
     ============================================================ */
     :root {
       --bg-body: #ffffff;
@@ -16,9 +16,8 @@
       --border-light: #ece6de;
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.06);
-      --wave-color: #d4c8bc;
-      --node-color: #b03a2a;
-      --card-shadow: rgba(0,0,0,0.04);
+      --accent-glow: rgba(176, 58, 42, 0.25);
+      --wave-color: #c95a4a;
     }
 
     [data-theme="dark"] {
@@ -29,17 +28,14 @@
       --border-light: #35302a;
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.1);
-      --wave-color: #5a5048;
-      --node-color: #b05a4a;
-      --card-shadow: rgba(0,0,0,0.3);
+      --accent-glow: rgba(176, 90, 74, 0.3);
+      --wave-color: #d07a6a;
     }
 
-    /* ============================================================
-       全局
-    ============================================================ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
       background: var(--bg-body);
       color: var(--text-primary);
       font-size: 16px;
@@ -47,33 +43,46 @@
       transition: background 0.3s, color 0.3s;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ============================================================
-       顶部导航
-    ============================================================ */
     #nav {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 18px 24px 10px 24px;
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border-light);
+      transition: border-color 0.3s;
     }
-    .nav-brand { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); text-decoration: none; }
+    .nav-brand {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
     .nav-brand span { color: var(--accent); }
-    .nav-links { display: flex; gap: 18px; }
-    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-links {
+      display: flex;
+      gap: 18px;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
     .nav-links a:hover { color: var(--accent); }
 
-    /* ============================================================
-       页头
-    ============================================================ */
     #header {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 32px 24px 20px 24px;
+      width: 100%;
     }
     #header h1 {
       font-size: 1.6rem;
@@ -88,392 +97,210 @@
     }
 
     /* ============================================================
-       年表容器
+       时间线
     ============================================================ */
-    #timeline {
-      max-width: 960px;
+    #timeline-wrap {
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 20px 24px 60px 24px;
+      padding: 0 24px 20px 24px;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-width: thin;
+    }
+    #timeline-wrap::-webkit-scrollbar { height: 4px; }
+    #timeline-wrap::-webkit-scrollbar-track { background: var(--border-light); border-radius: 4px; }
+    #timeline-wrap::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    #timeline-track {
       position: relative;
+      width: 1600px;
+      height: 160px;
+      margin: 20px 0 10px 0;
+      flex-shrink: 0;
     }
 
-    /* SVG 波浪线 */
-    #wave-svg {
+    /* ===== 时间轴（加粗！） ===== */
+    .tl-axis {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--accent);
+      transform: translateY(-50%);
+      border-radius: 3px;
+      opacity: 0.5;
+    }
+
+    /* ===== 波浪（纯实线、半透明、泛光） ===== */
+    .tl-wave-svg {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 100px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      overflow: visible;
+    }
+    .tl-wave-svg svg {
       width: 100%;
       height: 100%;
       display: block;
+      overflow: visible;
     }
-    .wave-path {
+
+    /* 两条实线波浪，半透明，带泛光 */
+    .wave-line {
       fill: none;
-      stroke: var(--wave-color);
-      stroke-width: 2;
+      stroke-width: 2.5;
       stroke-linecap: round;
+      filter: drop-shadow(0 0 18px var(--accent-glow));
+    }
+    .wave-1 {
+      stroke: var(--wave-color);
+      opacity: 0.3;
+    }
+    .wave-2 {
+      stroke: var(--wave-color);
+      opacity: 0.15;
+      stroke-width: 2;
     }
 
-    /* ============================================================
-       节点
-    ============================================================ */
-    .node-group {
+    /* ---- 流动动画：波在横轴上左右滑移 ---- */
+    @keyframes waveDrift {
+      0% { transform: translateX(-20px); }
+      100% { transform: translateX(20px); }
+    }
+    .wave-drift {
+      animation: waveDrift 4s ease-in-out infinite alternate;
+    }
+    .wave-drift-2 {
+      animation: waveDrift 5s ease-in-out infinite alternate-reverse;
+    }
+
+    /* ===== 节点 ===== */
+    .tl-node {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s;
+      z-index: 2;
     }
-    .node-dot {
-      fill: var(--node-color);
-      stroke: var(--bg-body);
-      stroke-width: 3;
-      transition: r 0.3s, stroke-width 0.3s;
+    .tl-node:hover { transform: translate(-50%, -50%) scale(1.12); }
+
+    .tl-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 3px solid var(--bg-body);
+      box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(176,58,42,0.2);
+      transition: all 0.3s;
     }
-    .node-dot:hover {
-      r: 8;
-      stroke-width: 4;
-    }
-    .node-label {
-      font-size: 11px;
-      fill: var(--text-secondary);
-      font-weight: 500;
-      letter-spacing: 0.3px;
-    }
-    .node-label.year {
-      font-size: 12px;
-      font-weight: 600;
-      fill: var(--accent);
+    .tl-node.active .tl-dot {
+      box-shadow: 0 0 0 5px var(--accent-glow), 0 4px 28px rgba(176,58,42,0.35);
+      transform: scale(1.2);
     }
 
-    /* ============================================================
-       事件卡片（点击展开）
-    ============================================================ */
-    .event-card {
-      max-width: 480px;
-      margin: 12px 0 0 0;
-      padding: 16px 20px;
-      background: var(--bg-body);
-      border-left: 3px solid var(--accent);
-      border-radius: 0 8px 8px 0;
-      box-shadow: 0 4px 16px var(--card-shadow);
-      opacity: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: opacity 0.4s ease, max-height 0.5s ease, margin 0.3s ease, padding 0.3s ease;
-      pointer-events: none;
-    }
-    .event-card.open {
-      opacity: 1;
-      max-height: 300px;
-      padding: 16px 20px;
-      margin: 12px 0 0 0;
-      pointer-events: auto;
-    }
-    .event-card .title {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-    .event-card .desc {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-    .event-card .meta {
+    .tl-label {
+      margin-top: 16px;
       font-size: 0.8rem;
       color: var(--text-muted);
-      margin-top: 6px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      transition: color 0.3s;
+    }
+    .tl-node.active .tl-label {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       详情
+    ============================================================ */
+    #detail {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 8px 24px 40px 24px;
+      width: 100%;
+    }
+    #detail-content {
+      background: var(--accent-soft);
+      border-radius: 8px;
+      padding: 24px 28px;
+      border-left: 3px solid var(--accent);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      min-height: 80px;
+    }
+    #detail-content .period {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    #detail-content .title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    #detail-content .desc {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.8;
     }
 
     /* ============================================================
        底部
     ============================================================ */
     #footer {
-      max-width: 960px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 18px 24px 24px 24px;
+      width: 100%;
       border-top: 1px solid var(--border-light);
       font-size: 0.8rem;
       color: var(--text-muted);
       text-align: center;
+      transition: border-color 0.3s;
     }
 
-    /* ============================================================
-       手机端
-    ============================================================ */
     @media (max-width: 768px) {
       #nav { padding: 14px 16px 8px 16px; }
       .nav-brand { font-size: 1rem; }
       .nav-links a { font-size: 0.85rem; }
       #header { padding: 24px 16px 16px 16px; }
       #header h1 { font-size: 1.3rem; }
-      #timeline { padding: 12px 12px 40px 12px; }
-      .node-label { font-size: 10px; }
-      .node-label.year { font-size: 11px; }
-      .event-card { max-width: 100%; }
+      #timeline-wrap { padding: 0 16px 16px 16px; }
+      #timeline-track { width: 1400px; height: 130px; }
+      .tl-dot { width: 13px; height: 13px; }
+      .tl-label { font-size: 0.7rem; margin-top: 12px; }
+      #detail { padding: 4px 16px 30px 16px; }
+      #detail-content { padding: 18px 16px; min-height: 60px; }
+      #detail-content .title { font-size: 1rem; }
+      #detail-content .desc { font-size: 0.85rem; }
+      #footer { padding: 14px 16px 18px 16px; font-size: 0.75rem; }
+    }
+
+    @media (max-width: 480px) {
+      #header h1 { font-size: 1.1rem; }
+      #timeline-track { width: 1200px; height: 110px; }
+      .tl-dot { width: 11px; height: 11px; }
+      .tl-label { font-size: 0.6rem; margin-top: 10px; }
     }
   </style>
-</head>
-<body>
-
-  <!-- ====== 导航 ====== -->
-  <nav id="nav">
-    <a class="nav-brand" href="/-/">墨境 · <span>年表</span></a>
-    <div class="nav-links">
-      <a href="/-/">首页</a>
-      <a href="/-/world/">探索</a>
-    </div>
-  </nav>
-
-  <!-- ====== 页头 ====== -->
-  <header id="header">
-    <h1>我在地府打工那些年 · 年表</h1>
-    <p class="sub">点击节点查看事件详情</p>
-  </header>
-
-  <!-- ====== 年表 ====== -->
-  <div id="timeline">
-    <svg id="wave-svg" viewBox="0 0 800 1200" preserveAspectRatio="xMidYMid meet">
-      <!-- 波浪线会由 JS 绘制 -->
-    </svg>
-  </div>
-
-  <!-- ====== 底部 ====== -->
-  <footer id="footer">
-    ©2026 淮子生生 · 用文字构筑世界
-  </footer>
 
   <script>
-    // ============================================================
-    //  数据
-    // ============================================================
-    const events = [
-      { id: 0, year: '商烈末年', label: '秦墨予与林淮立下浮生契', desc: '国师秦墨予以浮生花与影卫林淮缔结共生之契，约定两百年后重逢。秦墨予死后转世为栾方棋。', meta: '浮生契 · 因果起点' },
-      { id: 1, year: '约200年后', label: '栾方棋转世重回地府', desc: '浮生树母体与栾方棋魂魄融合，转世两百年后重回地府。从归终殿末席一路升至第四席。', meta: '归终殿 · 第四席' },
-      { id: 2, year: '京城决战前', label: '白禾川收集五大神器', desc: '青丘之主白禾川为复活秦雨令，集齐浮生树、断魂剑、摧城笛、玉骨扇、观花卷五大神器，欲覆写京城。', meta: '五大神器 · 青丘执念' },
-      { id: 3, year: '京城决战', label: '栾方棋撕裂天幕 · 白禾川陨落', desc: '栾方棋以浮生树母体撕裂天幕，对抗白禾川的时空覆写。阎罗王亲自出手制衡，天命君司衡现身确认因果修正。', meta: '决战 · 因果修正' },
-      { id: 4, year: '战后', label: '归终殿升为第十殿', desc: '归终殿从临时收容所升为地府第十殿，与十殿阎罗同列。罗修稳坐首席，魏元璟融合顾执命格重生。', meta: '归终殿 · 新生' }
-    ];
-
-    // ============================================================
-    //  绘制波浪线 + 节点
-    // ============================================================
-    const svg = document.getElementById('wave-svg');
-    const width = 800;
-    const height = 1200;
-    const padding = 60;
-    const waveAmplitude = 40;
-    const waveFrequency = 0.025;
-    const totalEvents = events.length;
-
-    // 计算每个节点的 Y 位置（均匀分布）
-    const yPositions = [];
-    const startY = 100;
-    const endY = height - 80;
-    for (let i = 0; i < totalEvents; i++) {
-      const t = totalEvents > 1 ? i / (totalEvents - 1) : 0.5;
-      yPositions.push(startY + (endY - startY) * t);
-    }
-
-    // 生成波浪路径
-    function generateWavePath(offset = 0) {
-      let path = '';
-      const steps = 120;
-      for (let i = 0; i <= steps; i++) {
-        const t = i / steps;
-        const x = padding + (width - padding * 2) * t;
-        const yBase = startY + (endY - startY) * t;
-        const wave = Math.sin(t * Math.PI * 2 * 3 + offset) * waveAmplitude * (1 - Math.abs(t - 0.5) * 0.4);
-        const y = yBase + wave;
-        path += (i === 0 ? 'M' : 'L') + x + ',' + y;
-      }
-      return path;
-    }
-
-    // 计算节点在波浪上的位置
-    function getNodePosition(index, offset = 0) {
-      const t = totalEvents > 1 ? index / (totalEvents - 1) : 0.5;
-      const x = padding + (width - padding * 2) * t;
-      const yBase = startY + (endY - startY) * t;
-      const wave = Math.sin(t * Math.PI * 2 * 3 + offset) * waveAmplitude * (1 - Math.abs(t - 0.5) * 0.4);
-      const y = yBase + wave;
-      return { x, y };
-    }
-
-    // 渲染
-    function render(offset = 0) {
-      // 清除旧内容（保留 svg 本身）
-      while (svg.firstChild) svg.removeChild(svg.firstChild);
-
-      // 1. 波浪线
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', generateWavePath(offset));
-      path.setAttribute('class', 'wave-path');
-      svg.appendChild(path);
-
-      // 2. 节点 + 标签 + 卡片（卡片用 div 浮在 svg 上方，这里只画节点）
-      for (let i = 0; i < totalEvents; i++) {
-        const pos = getNodePosition(i, offset);
-        const event = events[i];
-        const isLeft = i % 2 === 0;
-
-        // 节点组
-        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        group.setAttribute('class', 'node-group');
-        group.setAttribute('data-index', i);
-        group.style.cursor = 'pointer';
-
-        // 圆点
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', pos.x);
-        circle.setAttribute('cy', pos.y);
-        circle.setAttribute('r', 6);
-        circle.setAttribute('class', 'node-dot');
-        group.appendChild(circle);
-
-        // 年份标签
-        const yearLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        yearLabel.setAttribute('x', isLeft ? pos.x - 16 : pos.x + 16);
-        yearLabel.setAttribute('y', pos.y - 14);
-        yearLabel.setAttribute('text-anchor', isLeft ? 'end' : 'start');
-        yearLabel.setAttribute('class', 'node-label year');
-        yearLabel.textContent = event.year;
-        group.appendChild(yearLabel);
-
-        // 事件简述标签
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        const labelX = isLeft ? pos.x - 16 : pos.x + 16;
-        const labelY = pos.y + 22;
-        label.setAttribute('x', labelX);
-        label.setAttribute('y', labelY);
-        label.setAttribute('text-anchor', isLeft ? 'end' : 'start');
-        label.setAttribute('class', 'node-label');
-        label.textContent = event.label.length > 12 ? event.label.slice(0, 12) + '…' : event.label;
-        group.appendChild(label);
-
-        // 点击事件
-        group.addEventListener('click', function(e) {
-          e.stopPropagation();
-          toggleCard(i);
-        });
-
-        svg.appendChild(group);
-      }
-
-      // 3. 添加交互说明（小字）
-      const hint = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      hint.setAttribute('x', width / 2);
-      hint.setAttribute('y', height - 16);
-      hint.setAttribute('text-anchor', 'middle');
-      hint.setAttribute('fill', 'var(--text-muted)');
-      hint.setAttribute('font-size', '11');
-      hint.setAttribute('opacity', '0.5');
-      hint.textContent = '点击节点查看事件详情';
-      svg.appendChild(hint);
-    }
-
-    // ============================================================
-    //  卡片管理（用 DOM 操作，不依赖 svg）
-    // ============================================================
-    let openIndex = -1;
-    const cards = [];
-
-    function createCard(index) {
-      const event = events[index];
-      const card = document.createElement('div');
-      card.className = 'event-card';
-      card.dataset.index = index;
-      card.innerHTML = `
-        <div class="title">${event.label}</div>
-        <div class="desc">${event.desc}</div>
-        <div class="meta">${event.meta}</div>
-      `;
-      // 插入到 timeline 中 svg 后面
-      const timeline = document.getElementById('timeline');
-      timeline.insertBefore(card, svg.nextSibling);
-      cards.push(card);
-      return card;
-    }
-
-    // 预先创建所有卡片（隐藏）
-    for (let i = 0; i < totalEvents; i++) {
-      const card = createCard(i);
-      card.classList.remove('open');
-      card.style.maxHeight = '0';
-      card.style.opacity = '0';
-      card.style.margin = '0';
-      card.style.padding = '0 20px';
-    }
-
-    function toggleCard(index) {
-      // 关闭之前打开的
-      if (openIndex !== -1 && openIndex !== index) {
-        const prev = cards[openIndex];
-        if (prev) {
-          prev.classList.remove('open');
-          prev.style.maxHeight = '0';
-          prev.style.opacity = '0';
-          prev.style.padding = '0 20px';
-          prev.style.margin = '0';
-        }
-      }
-
-      const card = cards[index];
-      if (!card) return;
-
-      if (openIndex === index) {
-        // 点击同一个：关闭
-        card.classList.remove('open');
-        card.style.maxHeight = '0';
-        card.style.opacity = '0';
-        card.style.padding = '0 20px';
-        card.style.margin = '0';
-        openIndex = -1;
-      } else {
-        // 打开新的
-        card.classList.add('open');
-        card.style.maxHeight = '300px';
-        card.style.opacity = '1';
-        card.style.padding = '16px 20px';
-        card.style.margin = '12px 0 0 0';
-        openIndex = index;
-      }
-    }
-
-    // ============================================================
-    //  波浪动画
-    // ============================================================
-    let animationId = null;
-    let phase = 0;
-
-    function animate() {
-      phase += 0.008;
-      render(phase);
-      // 重新绑定卡片点击事件（因为 render 重建了 svg）
-      document.querySelectorAll('.node-group').forEach(el => {
-        const idx = parseInt(el.dataset.index);
-        el.addEventListener('click', function(e) {
-          e.stopPropagation();
-          toggleCard(idx);
-        });
-      });
-      animationId = requestAnimationFrame(animate);
-    }
-
-    // 启动
-    render(0);
-    // 绑定初始节点事件
-    document.querySelectorAll('.node-group').forEach(el => {
-      const idx = parseInt(el.dataset.index);
-      el.addEventListener('click', function(e) {
-        e.stopPropagation();
-        toggleCard(idx);
-      });
-    });
-
-    // 启动波浪动画（用 requestAnimationFrame）
-    // 稍微延迟一下让初始渲染完成
-    setTimeout(() => {
-      animate();
-    }, 100);
-
-    // ============================================================
-    //  夜间模式 —— 跟随 Butterfly 主题
-    // ============================================================
     (function() {
       try {
         var raw = localStorage.getItem('theme');
@@ -487,28 +314,131 @@
         }
       } catch(e) {}
     })();
-
-    // ============================================================
-    //  响应式：窗口变化时重绘
-    // ============================================================
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        // 重新渲染，保持当前相位
-        render(phase);
-        // 重新绑定事件
-        document.querySelectorAll('.node-group').forEach(el => {
-          const idx = parseInt(el.dataset.index);
-          el.addEventListener('click', function(e) {
-            e.stopPropagation();
-            toggleCard(idx);
-          });
-        });
-      }, 300);
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme') {
+        try {
+          var parsed = JSON.parse(e.newValue);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }
+        } catch(e) {}
+      }
     });
+  </script>
+</head>
+<body>
 
-    console.log('🌊 波浪年表已加载 · 点击节点查看事件详情');
+  <nav id="nav">
+    <a class="nav-brand" href="/-/">墨境 · <span>年表</span></a>
+    <div class="nav-links">
+      <a href="/-/">首页</a>
+      <a href="/-/world/">探索</a>
+    </div>
+  </nav>
+
+  <header id="header">
+    <h1>时间线</h1>
+    <p class="sub">点击节点查看事件详情 · 滑动浏览</p>
+  </header>
+
+  <div id="timeline-wrap">
+    <div id="timeline-track">
+
+      <!-- 时间轴：加粗到 5px -->
+      <div class="tl-axis"></div>
+
+      <!-- 波浪层 -->
+      <div class="tl-wave-svg">
+        <svg viewBox="0 0 1600 100" preserveAspectRatio="none">
+          <!-- 波浪1：实线，半透明，流动 -->
+          <path class="wave-line wave-1 wave-drift"
+                d="M0,50 C120,20 260,80 400,50 C540,20 680,80 820,50 C960,20 1100,80 1240,50 C1380,20 1520,80 1600,50" />
+          <!-- 波浪2：实线，更淡，反向流动 -->
+          <path class="wave-line wave-2 wave-drift-2"
+                d="M0,50 C120,80 260,20 400,50 C540,80 680,20 820,50 C960,80 1100,20 1240,50 C1380,80 1520,20 1600,50" />
+        </svg>
+      </div>
+
+      <!-- 节点 -->
+      <div class="tl-node active" data-index="0" style="left:0%;">
+        <div class="tl-dot"></div>
+        <span class="tl-label">第一纪元</span>
+      </div>
+      <div class="tl-node" data-index="1" style="left:25%;">
+        <div class="tl-dot"></div>
+        <span class="tl-label">第二纪元·七神</span>
+      </div>
+      <div class="tl-node" data-index="2" style="left:50%;">
+        <div class="tl-dot"></div>
+        <span class="tl-label">大寂灭</span>
+      </div>
+      <div class="tl-node" data-index="3" style="left:75%;">
+        <div class="tl-dot"></div>
+        <span class="tl-label">第三纪元·当代</span>
+      </div>
+      <div class="tl-node" data-index="4" style="left:100%;">
+        <div class="tl-dot"></div>
+        <span class="tl-label">永昼净土</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="detail">
+    <div id="detail-content">
+      <div class="period" id="detail-period">第一纪元</div>
+      <div class="title" id="detail-title">原初三神</div>
+      <div class="desc" id="detail-desc">天地初开，海洋（尘歌）、天空、陆地三位精灵诞生。三神同阶，共存万年以上。</div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    ©2026 淮子生生 · 用文字构筑世界
+  </footer>
+
+  <script>
+    (function() {
+      var data = [
+        { period: '第一纪元', title: '原初三神', desc: '天地初开，海洋（尘歌）、天空、陆地三位精灵诞生。三神同阶，共存万年以上，世界在此奠基。' },
+        { period: '第二纪元', title: '七神之座', desc: '天空与陆地精灵在天地磨损中陨落，其权柄分裂为六份——时间、空间、光明、火焰、草木、冰雷，与尘歌共同构成七神之座。' },
+        { period: '第二纪元·末', title: '大寂灭', desc: '神战爆发，火雨、冰封、时空错乱席卷千律州。文明近乎断绝，七神仅尘歌幸存，其余尽数陨落。' },
+        { period: '第三纪元', title: '伪神时代', desc: '尘歌沉睡后苏醒，抹除大寂灭的历史，以旧神权柄碎片创造当代伪神。封锁修炼之法，世界进入表面平稳的暗流中。' },
+        { period: '终章', title: '永昼净土', desc: '尘歌陨落后，怀榆继承全部权柄，成为新一代的伪创世神。世界在永昼净土迎来新的可能——或新的循环。' }
+      ];
+
+      var nodes = document.querySelectorAll('.tl-node');
+      var detailPeriod = document.getElementById('detail-period');
+      var detailTitle = document.getElementById('detail-title');
+      var detailDesc = document.getElementById('detail-desc');
+
+      function selectNode(index) {
+        nodes.forEach(function(el) { el.classList.remove('active'); });
+        nodes[index].classList.add('active');
+
+        var container = document.getElementById('detail-content');
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(6px)';
+
+        setTimeout(function() {
+          detailPeriod.textContent = data[index].period;
+          detailTitle.textContent = data[index].title;
+          detailDesc.textContent = data[index].desc;
+          container.style.opacity = '1';
+          container.style.transform = 'translateY(0)';
+        }, 180);
+      }
+
+      nodes.forEach(function(node) {
+        node.addEventListener('click', function(e) {
+          var idx = parseInt(this.getAttribute('data-index'), 10);
+          selectNode(idx);
+        });
+      });
+
+      selectNode(0);
+    })();
   </script>
 
 </body>
