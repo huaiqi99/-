@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间线 · 墨境</title>
+    <style>
+        :root {
+            --bg-body: #ffffff;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --border-light: #ece6de;
+            --accent: #b03a2a;
+            --accent-soft: rgba(176, 58, 42, 0.06);
+            --accent-glow: rgba(176, 58, 42, 0.25);
+            --wave-color: #c95a4a;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1816;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --border-light: #35302a;
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.1);
+            --accent-glow: rgba(176, 90, 74, 0.3);
+            --wave-color: #d07a6a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            font-size: 16px;
+            line-height: 1.8;
+            transition: background 0.3s, color 0.3s;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 10px 24px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .nav-brand { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); text-decoration: none; }
+        .nav-brand span { color: var(--accent); }
+        .nav-links { display: flex; gap: 18px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--accent); }
+
+        #header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px 20px 24px;
+            width: 100%;
+        }
+        #header h1 { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); }
+        #header .sub { font-size: 0.95rem; color: var(--text-muted); margin-top: 2px; }
+
+        #timeline-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 20px 24px;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+        }
+        #timeline-wrap::-webkit-scrollbar { height: 4px; }
+        #timeline-wrap::-webkit-scrollbar-track { background: var(--border-light); border-radius: 4px; }
+        #timeline-wrap::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        #timeline-track {
+            position: relative;
+            width: 12000px;
+            height: 360px;
+            margin: 20px 0 10px 0;
+            flex-shrink: 0;
+        }
+
+        .tl-axis {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            transform: translateY(-50%);
+            border-radius: 2px;
+            opacity: 0.4;
+        }
+
+        .tl-wave-svg {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 100px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            overflow: visible;
+        }
+        .tl-wave-svg svg { width: 100%; height: 100%; display: block; overflow: visible; }
+        .wave-line { fill: none; stroke-width: 2; stroke-linecap: round; filter: drop-shadow(0 0 18px var(--accent-glow)); }
+        .wave-1 { stroke: var(--wave-color); opacity: 0.25; }
+        .wave-2 { stroke: var(--wave-color); opacity: 0.12; stroke-width: 1.5; }
+
+        @keyframes waveDrift {
+            0% { transform: translateX(-20px); }
+            100% { transform: translateX(20px); }
+        }
+        .wave-drift { animation: waveDrift 4s ease-in-out infinite alternate; }
+        .wave-drift-2 { animation: waveDrift 5s ease-in-out infinite alternate-reverse; }
+
+        .tl-node {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s;
+            z-index: 2;
+        }
+        .tl-node:hover { transform: translate(-50%, -50%) scale(1.08); }
+
+        .tl-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid var(--bg-body);
+            box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(176,58,42,0.2);
+            transition: all 0.3s;
+        }
+        .tl-node.active .tl-dot {
+            box-shadow: 0 0 0 5px var(--accent-glow), 0 4px 28px rgba(176,58,42,0.35);
+            transform: scale(1.2);
+        }
+
+        .tl-year {
+            margin-top: 16px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            transition: color 0.3s;
+        }
+        .tl-event {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            margin-top: 3px;
+            opacity: 0.8;
+            transition: color 0.3s;
+        }
+        .tl-node.active .tl-year { color: var(--accent); }
+        .tl-node.active .tl-event { color: var(--accent); opacity: 1; }
+
+        .tl-node.sub .tl-dot {
+            width: 15px;
+            height: 15px;
+            border-width: 2px;
+        }
+        .tl-node.sub .tl-year { font-size: 0.9rem; margin-top: 14px; }
+        .tl-node.sub .tl-event { font-size: 0.8rem; }
+
+        .tl-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent);
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .tl-divider .label {
+            position: absolute;
+            top: -6px;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--bg-body);
+            padding: 0 10px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        #detail {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 8px 24px 40px 24px;
+            width: 100%;
+        }
+        #detail-content {
+            background: var(--accent-soft);
+            border-radius: 8px;
+            padding: 24px 32px;
+            border-left: 3px solid var(--accent);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            min-height: 80px;
+        }
+        #detail-content .period { font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+        #detail-content .title { font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+        #detail-content .desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; }
+
+        #footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px 24px 24px;
+            width: 100%;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            #nav { padding: 14px 16px 8px 16px; }
+            .nav-brand { font-size: 1rem; }
+            #header { padding: 24px 16px 16px 16px; }
+            #header h1 { font-size: 1.3rem; }
+            #timeline-wrap { padding: 0 16px 16px 16px; }
+            #timeline-track { width: 8000px; height: 300px; }
+            .tl-dot { width: 20px; height: 20px; }
+            .tl-node.sub .tl-dot { width: 13px; height: 13px; }
+            .tl-year { font-size: 0.9rem; margin-top: 14px; }
+            .tl-node.sub .tl-year { font-size: 0.75rem; margin-top: 12px; }
+            .tl-event { font-size: 0.8rem; }
+            .tl-node.sub .tl-event { font-size: 0.65rem; }
+            #detail { padding: 4px 16px 30px 16px; }
+            #detail-content { padding: 18px 16px; min-height: 60px; }
+            #detail-content .title { font-size: 1rem; }
+            #detail-content .desc { font-size: 0.85rem; }
+        }
+
+        @media (max-width: 480px) {
+            #header h1 { font-size: 1.1rem; }
+            #timeline-track { width: 6000px; height: 260px; }
+            .tl-dot { width: 16px; height: 16px; }
+            .tl-node.sub .tl-dot { width: 10px; height: 10px; }
+            .tl-year { font-size: 0.75rem; margin-top: 12px; }
+            .tl-node.sub .tl-year { font-size: 0.65rem; margin-top: 10px; }
+            .tl-event { font-size: 0.65rem; }
+            .tl-node.sub .tl-event { font-size: 0.55rem; }
+        }
+    </style>
+
+    <script>
+        (function() {
+            try {
+                var raw = localStorage.getItem('theme');
+                if (raw) {
+                    var parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    }
+                }
+            } catch (e) {}
+        })();
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                try {
+                    var parsed = JSON.parse(e.newValue);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                    }
+                } catch (e) {}
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <nav id="nav">
+        <a class="nav-brand" href="/-/">墨境 · <span>年表</span></a>
+        <div class="nav-links">
+            <a href="/-/">首页</a>
+            <a href="/-/world/">探索</a>
+        </div>
+    </nav>
+
+    <header id="header">
+        <h1>千律州时间线</h1>
+        <p class="sub">点击节点查看详情 · 滑动浏览全貌 · 全部节点等距 · 线够长</p>
+    </header>
+
+    <div id="timeline-wrap">
+        <div id="timeline-track">
+
+            <div class="tl-axis"></div>
+
+            <div class="tl-wave-svg">
+                <svg viewBox="0 0 12000 100" preserveAspectRatio="none">
+                    <path class="wave-line wave-1 wave-drift" d="M0,50 C900,20 1800,80 2700,50 C3600,20 4500,80 5400,50 C6300,20 7200,80 8100,50 C9000,20 9900,80 10800,50 C11700,20 12000,80 12000,50" />
+                    <path class="wave-line wave-2 wave-drift-2" d="M0,50 C900,80 1800,20 2700,50 C3600,80 4500,20 5400,50 C6300,80 7200,20 8100,50 C9000,80 9900,20 10800,50 C11700,80 12000,20 12000,50" />
+                </svg>
+            </div>
+
+            <!-- 竖线：纪元分隔 -->
+            <div class="tl-divider" style="left:1%;"><span class="label">第一纪元</span></div>
+            <div class="tl-divider" style="left:10.5%;"><span class="label">第二纪元</span></div>
+            <div class="tl-divider" style="left:48.5%;"><span class="label">第三纪元</span></div>
+
+            <!-- ====== 29个节点，1%~99%均匀分布，每个间隔约3.5% ====== -->
+
+            <!-- 节点0-2（第一纪元） -->
+            <div class="tl-node active" data-index="0" style="left:1%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">纪元初年</span>
+                <span class="tl-event">原初三神诞生</span>
+            </div>
+            <div class="tl-node sub" data-index="1" style="left:4.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">约前万年</span>
+                <span class="tl-event">天空精灵陨落</span>
+            </div>
+            <div class="tl-node sub" data-index="2" style="left:8%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">约前万三千年</span>
+                <span class="tl-event">陆地精灵咒杀</span>
+            </div>
+
+            <!-- 节点3-13（第二纪元） -->
+            <div class="tl-node" data-index="3" style="left:11.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">元年</span>
+                <span class="tl-event">通天塔立</span>
+            </div>
+            <div class="tl-node sub" data-index="4" style="left:15%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一百年</span>
+                <span class="tl-event">火神登顶</span>
+            </div>
+            <div class="tl-node sub" data-index="5" style="left:18.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一百五十年</span>
+                <span class="tl-event">冰神登顶</span>
+            </div>
+            <div class="tl-node sub" data-index="6" style="left:22%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">二百年</span>
+                <span class="tl-event">双子神登顶</span>
+            </div>
+            <div class="tl-node sub" data-index="7" style="left:25.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">二百八十年</span>
+                <span class="tl-event">草木之神登顶</span>
+            </div>
+            <div class="tl-node sub" data-index="8" style="left:29%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">约一千年</span>
+                <span class="tl-event">光明之神登顶</span>
+            </div>
+            <div class="tl-node sub" data-index="9" style="left:32.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">约一千五百年</span>
+                <span class="tl-event">法伊顿凡心</span>
+            </div>
+            <div class="tl-node sub" data-index="10" style="left:36%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一千五百零二年</span>
+                <span class="tl-event">分神退位</span>
+            </div>
+            <div class="tl-node sub" data-index="11" style="left:39.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一千五百零四年</span>
+                <span class="tl-event">大寂灭·上</span>
+            </div>
+            <div class="tl-node sub" data-index="12" style="left:43%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一千五百零五年</span>
+                <span class="tl-event">大寂灭·下</span>
+            </div>
+            <div class="tl-node sub" data-index="13" style="left:46.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一千五百四十七年</span>
+                <span class="tl-event">段深泉之死</span>
+            </div>
+
+            <!-- 节点14-28（第三纪元） -->
+            <div class="tl-node" data-index="14" style="left:50%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">元年</span>
+                <span class="tl-event">新纪元开启</span>
+            </div>
+            <div class="tl-node sub" data-index="15" style="left:53.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">十三年</span>
+                <span class="tl-event">归墟之庭重建</span>
+            </div>
+            <div class="tl-node sub" data-index="16" style="left:57%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五十三年</span>
+                <span class="tl-event">祝焱再临</span>
+            </div>
+            <div class="tl-node sub" data-index="17" style="left:60.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一百零三年</span>
+                <span class="tl-event">凝淼再临</span>
+            </div>
+            <div class="tl-node sub" data-index="18" style="left:64%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">一百五十年</span>
+                <span class="tl-event">双子神再临</span>
+            </div>
+            <div class="tl-node sub" data-index="19" style="left:67.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">二百年</span>
+                <span class="tl-event">草木之神再临</span>
+            </div>
+            <div class="tl-node sub" data-index="20" style="left:71%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百年</span>
+                <span class="tl-event">怀榆与段深泉</span>
+            </div>
+            <div class="tl-node sub" data-index="21" style="left:74.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百零五年</span>
+                <span class="tl-event">双子的分离</span>
+            </div>
+            <div class="tl-node sub" data-index="22" style="left:78%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百二十一年</span>
+                <span class="tl-event">业焰初遇</span>
+            </div>
+            <div class="tl-node sub" data-index="23" style="left:81.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百二十二年</span>
+                <span class="tl-event">代行者诞生</span>
+            </div>
+            <div class="tl-node sub" data-index="24" style="left:85%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五二二至五二四</span>
+                <span class="tl-event">黎昭代行</span>
+            </div>
+            <div class="tl-node sub" data-index="25" style="left:88.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百二十四年</span>
+                <span class="tl-event">代行者流放</span>
+            </div>
+            <div class="tl-node sub" data-index="26" style="left:92%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百二十五年</span>
+                <span class="tl-event">火神陨落</span>
+            </div>
+            <div class="tl-node sub" data-index="27" style="left:95.5%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百二十六年</span>
+                <span class="tl-event">北境女皇退场</span>
+            </div>
+            <div class="tl-node sub" data-index="28" style="left:99%;">
+                <div class="tl-dot"></div>
+                <span class="tl-year">五百二十七年</span>
+                <span class="tl-event">时衍天宫</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="detail">
+        <div id="detail-content">
+            <div class="period" id="detail-period">第一纪元</div>
+            <div class="title" id="detail-title">原初三神诞生</div>
+            <div class="desc" id="detail-desc">海洋精灵尘歌于原初之海苏醒，掌创生、织忆、共鸣三权；天空精灵于苍穹之上凝聚，掌存续、易形、净化三权；陆地精灵于大地深处成型，掌毁灭、演化、禁锢三权。三神同阶，互不统属，世界秩序于此奠基。</div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        ©2026 淮子生生 · 用文字构筑世界
+    </footer>
+
+    <script>
+        (function() {
+            var data = [
+                { period: '第一纪元', title: '原初三神诞生', desc: '海洋精灵尘歌于原初之海苏醒，掌创生、织忆、共鸣三权；天空精灵于苍穹之上凝聚，掌存续、易形、净化三权；陆地精灵于大地深处成型，掌毁灭、演化、禁锢三权。三神同阶，互不统属，世界秩序于此奠基。' },
+                { period: '第一纪元', title: '天空精灵磨损陨落', desc: '天地自然磨损，天空精灵权柄崩解，神躯消散于苍穹。存续、易形、净化三权碎裂，散落于千律州各处。天光黯淡，时序初乱，海洋与陆地二神独守世界。' },
+                { period: '第一纪元', title: '陆地精灵咒杀而亡', desc: '人类以禁忌咒术弑杀陆地精灵，具体缘由已不可考。毁灭、演化、禁锢三权碎裂。蚀光与墟元力本为一体两面，如影随形，陆地精灵之死导致权柄抽空、墟元力失衡，蚀光因之猖狂蔓延。海洋精灵尘歌成为唯一存世的原初之神，独活于世。' },
+                { period: '第二纪元', title: '通天塔立', desc: '尘歌以海洋之神伊瑟斯·波塞多尼奥斯之名，建立神祇通天塔秩序，向凡人公开墟元力修炼之法，强者登塔封神，弱者匍匐塔底。同时将千律州最偏远的地段，即最南边的海与陆地，命名为归墟之庭，划为自身封地。' },
+                { period: '第二纪元', title: '火焰之神登顶', desc: '塞赫美特·赫利奥波利斯登顶封神，执掌毁灭权柄。业焰之国初建，熔岩与原始森林交错之地纳入神治。' },
+                { period: '第二纪元', title: '冰雷之神登顶', desc: '艾尔薇拉·亚历山德罗芙娜·沃尔科娃登顶封神，执掌禁锢权柄。双冕北境臣服于冰雪与雷暴，冻土之上立起女皇王座。' },
+                { period: '第二纪元', title: '双子神登顶', desc: '顾怀渊登顶，执掌存续权柄；顾行舟登顶，执掌易形权柄。时衍天宫建立，上界宫阙与下界城池并立。' },
+                { period: '第二纪元', title: '草木之神登顶', desc: '塔妮·怀努伊登顶封神，执掌演化权柄。无垠根庭于草木丰茂之地崛起。' },
+                { period: '第二纪元', title: '光明之神登顶，七神齐聚', desc: '法伊顿·伊柳西昂登顶封神，执掌净化权柄，承神号昭临。七神之座至此完整。业焰之国、无垠根庭、双冕北境、时衍天宫各划分一部分国土，于千律州正中心拼凑而成永昼净土，作为光明神域。尘歌因封地偏远，未参与割让。' },
+                { period: '第二纪元', title: '法伊顿凡心初动', desc: '段深泉生母段锦痴恋法伊顿，追随至永昼净土，成为其神使。法伊顿对人类并无真情，段锦与陌生男子成婚，生下段深泉后日日洗脑，令其爱慕法伊顿。段锦死后，段深泉继位大神使。法伊顿因对人类之爱生出几分好奇，遂与段深泉纠缠。二者之间爱薄如纸，更多是法伊顿对人类的观望，与段深泉一厢情愿的执念。法伊顿曾在榆树下所遇实为段锦而非段深泉，因其对人类漠不关心，早已混淆二人。后来法伊顿自取怀榆之名，由此而来。尘歌与六神皆不知内情，只当是爱称，实则讽刺至极。' },
+                { period: '第二纪元', title: '法伊顿分神退位', desc: '法伊顿·伊柳西昂自愿放弃一半神力，赠与段深泉，使其成为半神。法伊顿退出七神之座，永昼净土陷入无主状态。其余六神默许保密，通天塔秩序表面维持，实则根基已动摇。' },
+                { period: '第二纪元', title: '大寂灭爆发（上）', desc: '蚀光泛滥至临界点，天地反扑，神战爆发。塞赫美特·赫利奥波利斯、艾尔薇拉·亚历山德罗芙娜·沃尔科娃、法伊顿·伊柳西昂于大寂灭中战死。火雨倾盆，冰封千里，光明陨落，千律州文明开始崩塌。' },
+                { period: '第二纪元', title: '大寂灭（下）', desc: '塔妮·怀努伊于余波中陨落，顾怀渊、顾行舟双子陨落。七神仅存海洋之神伊瑟斯·波塞多尼奥斯，即尘歌。' },
+                { period: '第二纪元', title: '段深泉之死与尘歌沉睡', desc: '段深泉以半神之躯寿终正寝，普通老死。尘歌前去见了最后一眼。通天塔秩序彻底崩塌，尘歌封印归墟之庭，陷入长达约两百年的沉睡。尘歌所在乎的从来不是段深泉，而是法伊顿。段深泉之死，不过是旧日幻影的彻底消散。' },
+                { period: '第三纪元', title: '新纪元开启', desc: '尘歌沉睡约两百年后苏醒，发现人类历史与记忆已碎片化。尘歌彻底掩盖大寂灭真实历史，将其改写为不可知的天地灾变，封锁公开墟元力修炼之法。第三纪元正式开启。' },
+                { period: '第三纪元', title: '归墟之庭重建', desc: '尘歌于废墟之上重建归墟之庭，作为伪神秩序的核心。开始筹备造神计划，以旧神权柄碎片遴选当代伪神。尘歌决意重建七神之座。' },
+                { period: '第三纪元', title: '火焰之神再临', desc: '尘歌选中业焰之地偏远村庄的红发少女莫妮卡·弗拉米亚，赋予火焰权柄与旧神塞赫美特之记忆，莫妮卡承神号祝焱。业焰之国重建，神权君主制确立。' },
+                { period: '第三纪元', title: '冰雷之神再临', desc: '达里娅·彼得罗娃登神，承艾尔薇拉之禁锢权柄与记忆，承神号凝淼。重建双冕北境，女皇专制确立。凝淼是罕见的清醒者，完整保留旧神记忆，知晓自己只是扮演者。' },
+                { period: '第三纪元', title: '双子神再临', desc: '造物时渊承存续权柄，造物芥舟承易形权柄，重建时衍天宫。上界天枢殿与下界衍天城并立，四御家族辅政。三代双子神为尘歌以海水权柄所造，尘歌未赐本名，仅以神号称之，易与二代真名顾怀渊、顾行舟混淆，特作区分。' },
+                { period: '第三纪元', title: '草木之神再临', desc: '造物瑶英承演化权柄，重建无垠根庭。三代草木之神同为造物，未获赐名，承神号瑶英。' },
+                { period: '第三纪元', title: '怀榆与段深泉诞生', desc: '尘歌以创生权柄创造造物怀榆，海水与权柄所铸，面容与旧神法伊顿一致，光明权柄之容器。尘歌以创生权柄再创造造物段深泉，复刻旧神法伊顿爱人之轨迹，怀榆之命定之人。二者本质均为尘歌之造物，非自然人类。尘歌对怀榆投入了远超工具的情感。' },
+                { period: '第三纪元', title: '双子的分离', desc: '段深泉被送往时衍天宫，由时渊、芥舟抚养长大。怀榆留在归墟之庭，由尘歌亲自养育。尘歌为怀榆设计专属系统界面，每一行提示背后都是他的实时注视。' },
+                { period: '第三纪元', title: '业焰初遇', desc: '怀榆离开归墟之庭，前往业焰之国。段深泉离开时衍天宫，被送往业焰之国。二人相遇，命定之人系统强制绑定。怀榆自恃玩家身份，对段深泉态度轻慢。' },
+                { period: '第三纪元', title: '怀榆负气出走，代行者诞生', desc: '怀榆与段深泉爆发激烈争吵，怀榆负气遁入业焰山野，过起三年野人生活。尘歌见怀榆任务脱轨，紧急以海水权柄创造造物黎昭，初无姓名，暂用怀榆身份模板。尘歌将二代神法伊顿之记忆直接导入黎昭，设定其为法伊顿转世、段深泉命定之人。黎昭性格因转世设定而极度自大，接替怀榆执行业焰之国任务。' },
+                { period: '第三纪元', title: '黎昭代行与祝焱之封', desc: '黎昭以代行者身份清剿魔兽、维持业焰秩序，祝焱为其设宴庆功。宴上祝焱认出尘歌意志附于黎昭之身，当场崩溃，跪求尘歌放过自己，不愿再做神明。尘歌为防真相泄露，紧急发布系统任务，判定祝焱已疯，令黎昭将其封印。为顺利封印，尘歌对维里迪姆神使家族降下蚀光诅咒。黎昭无法违抗系统，封印祝焱，并屠戮被诅咒的神使全族。此后黎昭自恃法伊顿转世，强行带段深泉前往时衍天宫，被双子神驱逐出境。' },
+                { period: '第三纪元', title: '代行者流放', desc: '尘歌判定黎昭养废，剥夺其代行者身份，流放至北境。黎昭弃用怀榆之名，后于北境与阿列克谢相遇，阿列克谢为其取名黎昭。段深泉与黎昭共处之记忆被尘歌系统性清除，送回业焰之国，等待真正的怀榆归来。' },
+                { period: '第三纪元', title: '玩家重启与火神陨落', desc: '怀榆于山野困顿三年后，系统界面重启，怀榆喜出望外。三年野人生活磨平其傲气，性格转为轻度自卑，携隐形心理创伤重返文明世界。再遇段深泉后如履薄冰，再也不敢惹其生气。同年，被封印于火山之下的祝焱油尽灯枯，正式陨落。业焰之国进入无神时代。' },
+                { period: '第三纪元', title: '北境女皇退场', desc: '凝淼于永叹岭祭坛以自我毁灭完成退场，打破伪神秩序。其存在被尘歌从所有人记忆中抹除，唯怀榆与段深泉残存模糊印象。尘歌因消耗过度，再次陷入沉睡。' },
+                { period: '第三纪元', title: '……', desc: '系统休眠，大神使克莱托斯·塔拉西奥斯接管后续任务。怀榆与段深泉离开北境，前往时衍天宫，段深泉的故乡。真正的身世之谜，即将揭开。' }
+            ];
+
+            var nodes = document.querySelectorAll('.tl-node');
+            var detailPeriod = document.getElementById('detail-period');
+            var detailTitle = document.getElementById('detail-title');
+            var detailDesc = document.getElementById('detail-desc');
+
+            var indexMap = [];
+            nodes.forEach(function(node) {
+                indexMap.push(parseInt(node.getAttribute('data-index'), 10));
+            });
+
+            function selectNode(index) {
+                nodes.forEach(function(el) { el.classList.remove('active'); });
+                nodes[index].classList.add('active');
+
+                var container = document.getElementById('detail-content');
+                container.style.opacity = '0';
+                container.style.transform = 'translateY(6px)';
+
+                var dataIndex = indexMap[index];
+                setTimeout(function() {
+                    detailPeriod.textContent = data[dataIndex].period;
+                    detailTitle.textContent = data[dataIndex].title;
+                    detailDesc.textContent = data[dataIndex].desc;
+                    container.style.opacity = '1';
+                    container.style.transform = 'translateY(0)';
+                }, 180);
+            }
+
+            nodes.forEach(function(node, idx) {
+                node.addEventListener('click', function(e) {
+                    selectNode(idx);
+                });
+            });
+
+            selectNode(0);
+        })();
+    </script>
+
+</body>
+</html>
