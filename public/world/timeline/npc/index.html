@@ -87,7 +87,7 @@
         #timeline-track {
             position: relative;
             width: 12000px;
-            height: 360px;
+            height: 380px;  /* 增高一点给大字留空间 */
             margin: 20px 0 10px 0;
             flex-shrink: 0;
         }
@@ -153,9 +153,10 @@
             transform: scale(1.2);
         }
 
+        /* ---------- 统一放大字体，主节点和子节点完全一致 ---------- */
         .tl-year {
             margin-top: 16px;
-            font-size: 1.05rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-muted);
             white-space: nowrap;
@@ -163,7 +164,7 @@
             transition: color 0.3s;
         }
         .tl-event {
-            font-size: 0.95rem;
+            font-size: 1.2rem;
             color: var(--text-muted);
             white-space: nowrap;
             margin-top: 3px;
@@ -173,13 +174,19 @@
         .tl-node.active .tl-year { color: var(--accent); }
         .tl-node.active .tl-event { color: var(--accent); opacity: 1; }
 
+        /* 子节点不再单独缩小 */
         .tl-node.sub .tl-dot {
             width: 15px;
             height: 15px;
             border-width: 2px;
         }
-        .tl-node.sub .tl-year { font-size: 0.9rem; margin-top: 14px; }
-        .tl-node.sub .tl-event { font-size: 0.8rem; }
+        .tl-node.sub .tl-year {
+            font-size: 1.5rem;
+            margin-top: 16px;
+        }
+        .tl-node.sub .tl-event {
+            font-size: 1.2rem;
+        }
 
         .tl-divider {
             position: absolute;
@@ -195,7 +202,7 @@
             position: absolute;
             top: -6px;
             transform: translateX(-50%);
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--accent);
             background: var(--bg-body);
@@ -233,34 +240,65 @@
             text-align: center;
         }
 
+        /* ========== 平板/手机 ========== */
         @media (max-width: 768px) {
             #nav { padding: 14px 16px 8px 16px; }
             .nav-brand { font-size: 1rem; }
             #header { padding: 24px 16px 16px 16px; }
             #header h1 { font-size: 1.3rem; }
             #timeline-wrap { padding: 0 16px 16px 16px; }
-            #timeline-track { width: 8000px; height: 300px; }
+            #timeline-track { width: 8000px; height: 320px; }
             .tl-dot { width: 20px; height: 20px; }
             .tl-node.sub .tl-dot { width: 13px; height: 13px; }
-            .tl-year { font-size: 0.9rem; margin-top: 14px; }
-            .tl-node.sub .tl-year { font-size: 0.75rem; margin-top: 12px; }
-            .tl-event { font-size: 0.8rem; }
-            .tl-node.sub .tl-event { font-size: 0.65rem; }
+
+            .tl-year {
+                font-size: 1.2rem;
+                margin-top: 14px;
+            }
+            .tl-event {
+                font-size: 0.95rem;
+            }
+            .tl-node.sub .tl-year {
+                font-size: 1.2rem;
+                margin-top: 14px;
+            }
+            .tl-node.sub .tl-event {
+                font-size: 0.95rem;
+            }
+            .tl-divider .label {
+                font-size: 0.85rem;
+            }
+
             #detail { padding: 4px 16px 30px 16px; }
             #detail-content { padding: 18px 16px; min-height: 60px; }
             #detail-content .title { font-size: 1rem; }
             #detail-content .desc { font-size: 0.85rem; }
         }
 
+        /* ========== 小屏手机 ========== */
         @media (max-width: 480px) {
             #header h1 { font-size: 1.1rem; }
-            #timeline-track { width: 6000px; height: 260px; }
+            #timeline-track { width: 6000px; height: 280px; }
             .tl-dot { width: 16px; height: 16px; }
             .tl-node.sub .tl-dot { width: 10px; height: 10px; }
-            .tl-year { font-size: 0.75rem; margin-top: 12px; }
-            .tl-node.sub .tl-year { font-size: 0.65rem; margin-top: 10px; }
-            .tl-event { font-size: 0.65rem; }
-            .tl-node.sub .tl-event { font-size: 0.55rem; }
+
+            .tl-year {
+                font-size: 1rem;
+                margin-top: 12px;
+            }
+            .tl-event {
+                font-size: 0.8rem;
+            }
+            .tl-node.sub .tl-year {
+                font-size: 1rem;
+                margin-top: 12px;
+            }
+            .tl-node.sub .tl-event {
+                font-size: 0.8rem;
+            }
+            .tl-divider .label {
+                font-size: 0.7rem;
+            }
         }
     </style>
 

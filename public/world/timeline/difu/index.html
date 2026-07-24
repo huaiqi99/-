@@ -87,7 +87,7 @@
         #timeline-track {
             position: relative;
             width: 12000px;
-            height: 360px;
+            height: 380px;
             margin: 20px 0 10px 0;
             flex-shrink: 0;
         }
@@ -153,9 +153,10 @@
             transform: scale(1.2);
         }
 
+        /* ---------- 统一字体大小，主节点和子节点完全一致 ---------- */
         .tl-year {
             margin-top: 16px;
-            font-size: 1.05rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-muted);
             white-space: nowrap;
@@ -163,7 +164,7 @@
             transition: color 0.3s;
         }
         .tl-event {
-            font-size: 0.95rem;
+            font-size: 1.2rem;
             color: var(--text-muted);
             white-space: nowrap;
             margin-top: 3px;
@@ -173,13 +174,19 @@
         .tl-node.active .tl-year { color: var(--accent); }
         .tl-node.active .tl-event { color: var(--accent); opacity: 1; }
 
+        /* 子节点不再单独缩小，跟主节点一样大 */
         .tl-node.sub .tl-dot {
             width: 15px;
             height: 15px;
             border-width: 2px;
         }
-        .tl-node.sub .tl-year { font-size: 0.9rem; margin-top: 14px; }
-        .tl-node.sub .tl-event { font-size: 0.8rem; }
+        .tl-node.sub .tl-year {
+            font-size: 1.5rem;  /* 与主节点相同 */
+            margin-top: 16px;
+        }
+        .tl-node.sub .tl-event {
+            font-size: 1.2rem;  /* 与主节点相同 */
+        }
 
         .tl-divider {
             position: absolute;
@@ -195,7 +202,7 @@
             position: absolute;
             top: -6px;
             transform: translateX(-50%);
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--accent);
             background: var(--bg-body);
@@ -233,34 +240,65 @@
             text-align: center;
         }
 
+        /* ========== 平板/手机 ========== */
         @media (max-width: 768px) {
             #nav { padding: 14px 16px 8px 16px; }
             .nav-brand { font-size: 1rem; }
             #header { padding: 24px 16px 16px 16px; }
             #header h1 { font-size: 1.3rem; }
             #timeline-wrap { padding: 0 16px 16px 16px; }
-            #timeline-track { width: 8000px; height: 300px; }
+            #timeline-track { width: 8000px; height: 320px; }
             .tl-dot { width: 20px; height: 20px; }
             .tl-node.sub .tl-dot { width: 13px; height: 13px; }
-            .tl-year { font-size: 0.9rem; margin-top: 14px; }
-            .tl-node.sub .tl-year { font-size: 0.75rem; margin-top: 12px; }
-            .tl-event { font-size: 0.8rem; }
-            .tl-node.sub .tl-event { font-size: 0.65rem; }
+
+            .tl-year {
+                font-size: 1.2rem;
+                margin-top: 14px;
+            }
+            .tl-event {
+                font-size: 0.95rem;
+            }
+            .tl-node.sub .tl-year {
+                font-size: 1.2rem;
+                margin-top: 14px;
+            }
+            .tl-node.sub .tl-event {
+                font-size: 0.95rem;
+            }
+            .tl-divider .label {
+                font-size: 0.85rem;
+            }
+
             #detail { padding: 4px 16px 30px 16px; }
             #detail-content { padding: 18px 16px; min-height: 60px; }
             #detail-content .title { font-size: 1rem; }
             #detail-content .desc { font-size: 0.85rem; }
         }
 
+        /* ========== 小屏手机 ========== */
         @media (max-width: 480px) {
             #header h1 { font-size: 1.1rem; }
-            #timeline-track { width: 6000px; height: 260px; }
+            #timeline-track { width: 6000px; height: 280px; }
             .tl-dot { width: 16px; height: 16px; }
             .tl-node.sub .tl-dot { width: 10px; height: 10px; }
-            .tl-year { font-size: 0.75rem; margin-top: 12px; }
-            .tl-node.sub .tl-year { font-size: 0.65rem; margin-top: 10px; }
-            .tl-event { font-size: 0.65rem; }
-            .tl-node.sub .tl-event { font-size: 0.55rem; }
+
+            .tl-year {
+                font-size: 1rem;
+                margin-top: 12px;
+            }
+            .tl-event {
+                font-size: 0.8rem;
+            }
+            .tl-node.sub .tl-year {
+                font-size: 1rem;
+                margin-top: 12px;
+            }
+            .tl-node.sub .tl-event {
+                font-size: 0.8rem;
+            }
+            .tl-divider .label {
+                font-size: 0.7rem;
+            }
         }
     </style>
 
@@ -327,15 +365,13 @@
             <div class="tl-divider" style="left:72.5%;"><span class="label">明熙年间</span></div>
             <div class="tl-divider" style="left:79.5%;"><span class="label">战后</span></div>
 
-            <!-- ====== 27个节点，1%~92%均匀分布 ====== -->
-
-            <!-- 节点0-4：上古 -->
+            <!-- ====== 所有节点，主和子字体大小已统一 ====== -->
             <div class="tl-node active" data-index="0" style="left:1%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">三千年前</span>
                 <span class="tl-event">青丘覆灭，白禾川流亡</span>
             </div>
-            <div class="tl-node sub" data-index="1" style="left:4.5%;">
+            <div class="tl-node" data-index="1" style="left:4.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约一千年前</span>
                 <span class="tl-event">天命君造伪神楚迟</span>
@@ -345,61 +381,59 @@
                 <span class="tl-year">约六百年前</span>
                 <span class="tl-event">卞城王建归终殿</span>
             </div>
-            <div class="tl-node sub" data-index="3" style="left:11.5%;">
+            <div class="tl-node" data-index="3" style="left:11.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约四百年前</span>
                 <span class="tl-event">罗修入归终殿</span>
             </div>
 
-            <!-- 节点4-8：商烈·永昌 -->
             <div class="tl-node" data-index="4" style="left:15%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约三百年前</span>
                 <span class="tl-event">司缘君创顾执</span>
             </div>
-            <div class="tl-node sub" data-index="5" style="left:18.5%;">
+            <div class="tl-node" data-index="5" style="left:18.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百七十年前</span>
                 <span class="tl-event">景枭亡，顾执寻转世</span>
             </div>
-            <div class="tl-node sub" data-index="6" style="left:22%;">
+            <div class="tl-node" data-index="6" style="left:22%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百五十年前</span>
                 <span class="tl-event">罗修与林丛言结怨</span>
             </div>
-            <div class="tl-node sub" data-index="7" style="left:25.5%;">
+            <div class="tl-node" data-index="7" style="left:25.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百四十九年前</span>
                 <span class="tl-event">顾执散魂，楚迟断剑</span>
             </div>
-            <div class="tl-node sub" data-index="8" style="left:29%;">
+            <div class="tl-node" data-index="8" style="left:29%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百四十八年前</span>
                 <span class="tl-event">罗修入生死门</span>
             </div>
 
-            <!-- 节点9-14：商烈·景和 -->
             <div class="tl-node" data-index="9" style="left:32.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百四十二年前</span>
                 <span class="tl-event">凌宸钧登基，楚迟收秦墨予</span>
             </div>
-            <div class="tl-node sub" data-index="10" style="left:36%;">
+            <div class="tl-node" data-index="10" style="left:36%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百三十七年前</span>
                 <span class="tl-event">白禾川被秦雨令所救</span>
             </div>
-            <div class="tl-node sub" data-index="11" style="left:39.5%;">
+            <div class="tl-node" data-index="11" style="left:39.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百三十五年前</span>
                 <span class="tl-event">楚迟入锁龙井</span>
             </div>
-            <div class="tl-node sub" data-index="12" style="left:43%;">
+            <div class="tl-node" data-index="12" style="left:43%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百三十三—二二九</span>
                 <span class="tl-event">秦墨予为官、遇林淮、疯魔</span>
             </div>
-            <div class="tl-node sub" data-index="13" style="left:46.5%;">
+            <div class="tl-node" data-index="13" style="left:46.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百二十六年前</span>
                 <span class="tl-event">秦雨令入宫封令妃</span>
@@ -410,41 +444,38 @@
                 <span class="tl-event">商烈亡，苍珩立，林淮战死</span>
             </div>
 
-            <!-- 节点15-18：苍珩·景德 -->
             <div class="tl-node" data-index="15" style="left:53.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百一十八年前</span>
                 <span class="tl-event">林淮入归终殿</span>
             </div>
-            <div class="tl-node sub" data-index="16" style="left:57%;">
+            <div class="tl-node" data-index="16" style="left:57%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约二百零三年前</span>
                 <span class="tl-event">栾方棋出生</span>
             </div>
-            <div class="tl-node sub" data-index="17" style="left:60.5%;">
+            <div class="tl-node" data-index="17" style="left:60.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约一百七十八年前</span>
                 <span class="tl-event">栾方棋入归终殿</span>
             </div>
-            <div class="tl-node sub" data-index="18" style="left:64%;">
+            <div class="tl-node" data-index="18" style="left:64%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">约一百七十年前</span>
                 <span class="tl-event">冉舟入归终殿，白禾川造偶</span>
             </div>
 
-            <!-- 节点19-20：苍珩年间（魏天恒） -->
             <div class="tl-node" data-index="19" style="left:67.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">苍珩三十九年</span>
                 <span class="tl-event">主线开启：无涯村·观花卷</span>
             </div>
-            <div class="tl-node sub" data-index="20" style="left:71%;">
+            <div class="tl-node" data-index="20" style="left:71%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">苍珩四十年</span>
                 <span class="tl-event">锁龙井·冉舟之死</span>
             </div>
 
-            <!-- 节点21-22：明熙年间 -->
             <div class="tl-node" data-index="21" style="left:74.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">明熙元年</span>
@@ -456,18 +487,17 @@
                 <span class="tl-event">京城决战·白禾川死</span>
             </div>
 
-            <!-- 节点23-26：战后 -->
             <div class="tl-node" data-index="23" style="left:81.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">战后五年</span>
                 <span class="tl-event">归终殿升格·林淮栾方棋成亲</span>
             </div>
-            <div class="tl-node sub" data-index="24" style="left:85%;">
+            <div class="tl-node" data-index="24" style="left:85%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">战后二十五年</span>
                 <span class="tl-event">念安恢复记忆为魏元璟</span>
             </div>
-            <div class="tl-node sub" data-index="25" style="left:88.5%;">
+            <div class="tl-node" data-index="25" style="left:88.5%;">
                 <div class="tl-dot"></div>
                 <span class="tl-year">战后三十五年</span>
                 <span class="tl-event">罗修与魏元璟破冰</span>
@@ -496,59 +526,32 @@
     <script>
         (function() {
             var data = [
-                // 节点0
-                { period: '上古', title: '青丘覆灭，白禾川流亡', desc: '青丘狐族篡改凡人命格，天命君·司衡降天火覆灭青丘，降永世轮回诅咒。白禾川离开青丘流亡人间，被天庭通缉。' },
-                // 节点1
+                { period: '上古', title: '青丘覆灭，白禾川流亡', desc: '三千年前，青丘狐族崛起，擅摄魂换命之术，肆意篡改凡人命格，干扰天命。天命君司衡降下天火，覆灭青丘，降下诅咒让狐族魂魄永世轮回。诅咒降下之后，白禾川离开青丘，流亡人间，被天庭通缉。' },
                 { period: '上古', title: '天命君造伪神楚迟', desc: '天命君以一缕神魂与海棠花结合，创造伪神楚迟，下凡赎罪。' },
-                // 节点2
                 { period: '上古', title: '卞城王建归终殿', desc: '卞城王建立归终殿，处理地府不便插手的冤魂事务。' },
-                // 节点3
                 { period: '上古', title: '罗修入归终殿', desc: '罗修进入归终殿，取代程木栖，成为首席引渡人。' },
-                // 节点4
                 { period: '商烈·永昌', title: '司缘君创顾执', desc: '司缘君·契缘剜出半个命格，以桃花枝为媒介创造伪神顾执，携带五大神器下凡，为自己抵挡情劫。' },
-                // 节点5
-                { period: '商烈·永昌', title: '景枭亡，顾执寻转世', desc: '情劫对象景枭死亡，顾执寻找其转世林丛言，继续纠缠。' },
-                // 节点6
-                { period: '商烈·永昌', title: '罗修与林丛言结怨', desc: '罗修与林丛言结怨，多次交锋。同年，顾执与林丛言相遇，再续前缘。半年后林丛言火烧顾家宅，顾执流浪，罗修对其产生情愫。' },
-                // 节点7
-                { period: '商烈·永昌', title: '顾执散魂，楚迟断剑', desc: '林丛言对顾执降死咒，蛊惑罗修盗取三生石，后阎罗王追杀。同年顾执以命驱动摧城笛散魂而亡；楚迟以性命担保救下林丛言，折断断魂剑，暴雨天灾持续七年。' },
-                // 节点8
+                { period: '商烈·永昌', title: '景枭死亡，顾执寻转世', desc: '司缘君的情劫对象景枭死亡，顾执寻找其转世林丛言，继续纠缠。' },
+                { period: '商烈·永昌', title: '罗修与林丛言结怨', desc: '罗修与林丛言结怨，多次交锋。同年，顾执与林丛言相遇，再续前缘。半年后林丛言火烧顾家宅，顾执流浪，罗修将其捡回，照顾，对其产生情愫。' },
+                { period: '商烈·永昌', title: '顾执散魂，楚迟断剑', desc: '林丛言对顾执降下死咒，蛊惑罗修盗取三生石，后被阎罗王追杀。同年，顾执以命驱动摧城笛散魂而亡。楚迟以性命担保救下林丛言，折断断魂剑，由此引发的暴雨天灾持续七年。' },
                 { period: '商烈·永昌', title: '罗修入生死门', desc: '罗修被罚入生死门一年，斩断情丝。' },
-                // 节点9
-                { period: '商烈·景和', title: '凌宸钧登基，楚迟收秦墨予', desc: '凌宸钧被太后扶持登基，年号景和。楚迟于市集救下十岁秦墨予，为其取名。' },
-                // 节点10
+                { period: '商烈·景和', title: '凌宸钧登基，楚迟收秦墨予', desc: '商烈皇帝驾崩，太子遭毒杀，四皇子凌宸钧被太后扶持登基，年号景和。同年，楚迟于市集救下十岁秦墨予，为其取名。' },
                 { period: '商烈·景和', title: '白禾川被秦雨令所救', desc: '白禾川受秦广王追杀，受伤化为原型狐狸，被秦雨令捡到。' },
-                // 节点11
                 { period: '商烈·景和', title: '楚迟入锁龙井', desc: '楚迟离开浮生一粟前往青州，后被囚锁龙井。' },
-                // 节点12
                 { period: '商烈·景和', title: '秦墨予为官、遇林淮、疯魔', desc: '秦墨予入朝任内史，三年后任国师，与被卖到国师府的影卫林淮相遇，日久生情。后被凌决下蚀心散、假意投靠、反水入狱、出狱后疯魔修咒，与浮生树结魂契诅咒林淮永世不忘，最终被凌决暗杀而死。' },
-                // 节点13
-                { period: '商烈·景和', title: '秦雨令入宫封令妃', desc: '秦雨令入宫，封令妃。' },
-                // 节点14
-                { period: '商烈·景和', title: '商烈亡，苍珩立，林淮战死', desc: '秦雨令散魂而死，凌宸钧为此疯魔。同年苍珩灭商烈，凌宸钧被斩首。苍珩太祖魏氏攻破京城，建立苍珩王朝，年号景德。林淮战死化为地缚灵。' },
-                // 节点15
+                { period: '商烈·景和', title: '秦雨令入宫封令妃', desc: '秦雨令入宫，封令妃，后世称之为祸国妖妃之年。' },
+                { period: '商烈·景和', title: '商烈亡，苍珩立，林淮战死', desc: '入宫三年后，秦雨令魂魄衰竭而亡，凌宸钧为此疯魔。同年，苍珩灭商烈，林淮战死，成为地缚灵，凌宸钧被斩首。苍珩太祖魏氏攻破京城，建立苍珩王朝，年号景德，白禾川成为开国国师。' },
                 { period: '苍珩·景德', title: '林淮入归终殿', desc: '林淮被罗修发现，引渡回地府，成为引渡人。' },
-                // 节点16
                 { period: '苍珩·景德', title: '栾方棋出生', desc: '秦墨予转世，栾方棋出生。' },
-                // 节点17
                 { period: '苍珩·景德', title: '栾方棋入归终殿', desc: '栾方棋因病死亡，享年二十五岁，被林淮引渡回地府，成为引渡人。' },
-                // 节点18
-                { period: '苍珩·景德', title: '冉舟入归终殿，白禾川造偶', desc: '白禾川与李锦书合作制造人偶“冉舟”，代代迭代。冉舟人偶之一被送入归终殿，替代杨弦风成为引渡人。后冉舟与栾方棋相识，建立“姐弟”羁绊。' },
-                // 节点19
-                { period: '苍珩年间（魏天恒）', title: '主线开启：无涯村·观花卷', desc: '苍珩三十九年：栾方棋先后接到无涯村任务、皇宫调查任务。与林淮从几百年老同事逐渐变得熟悉。后与林淮一同进入观花卷，穿越回二百五十年前的商烈。' },
-                // 节点20
-                { period: '苍珩年间（魏天恒）', title: '锁龙井·冉舟之死', desc: '苍珩四十年：栾方棋与林淮从观花卷归来，李锦书被白禾川杀死。锁龙井任务中遇楚迟，了解青丘覆灭与伪神真相。出井后栾方棋双腿残疾，后被杨弦风陷害，与冉舟同归于尽，以死换取青丘之地彻底净化。' },
-                // 节点21
+                { period: '苍珩·景德', title: '冉舟入归终殿', desc: '白禾川与李锦书合作制造人偶“冉舟”，代代迭代。冉舟人偶之一被送入归终殿，替代杨弦风成为引渡人。后冉舟与栾方棋相识，建立“姐弟”羁绊。' },
+                { period: '苍珩年间', title: '主线开启：无涯村·观花卷', desc: '苍珩三十九年：栾方棋先后接到无涯村任务、皇宫调查任务。与林淮从几百年老同事逐渐变得熟悉。后与林淮一同进入观花卷，穿越回二百五十年前的商烈，了解到两百五十年前暴雨天灾真相。' },
+                { period: '苍珩年间', title: '锁龙井·冉舟之死', desc: '苍珩四十年：栾方棋与林淮从观花卷归来，李锦书被白禾川杀死。后续在锁龙井任务中遇楚迟，了解青丘覆灭与伪神真相。出井后栾方棋双腿残疾，后被杨弦风陷害，与冉舟同归于尽，以死换取青丘之地彻底净化。' },
                 { period: '明熙年间', title: '魏元璟登基', desc: '魏天恒驾崩，魏元璟登基，年号明熙。' },
-                // 节点22
                 { period: '明熙年间', title: '京城决战·白禾川死', desc: '明熙五年：栾方棋昏迷十年后苏醒，恢复前世记忆。白禾川集齐五大神器，试图以五行法阵覆盖京城，京城决战爆发。魏元璟被罗修杀死，林淮重伤濒死，栾方棋以浮生树母体之力撕裂观花卷天幕。天命君·司衡降临，回收神器，击杀白禾川。栾方棋献祭一半生命，建立共生契约，救回林淮。' },
-                // 节点23
-                { period: '战后', title: '归终殿升格·林淮栾方棋成亲', desc: '战后五年：归终殿升格为地府第十殿，规模扩张。前十席引渡人获封号，开坛收徒。栾方棋与林淮成亲，魂命相牵。同年，魏元璟碎魂与顾执命格融合，形成混合双生体（念安）。' },
-                // 节点24
+                { period: '战后', title: '归终殿升格·林淮栾方棋成亲', desc: '战后五年：归终殿升格为地府第十殿，规模扩张。前十席引渡人获封号，开坛收徒。栾方棋与林淮成亲，魂命相牵。同年，魏元璟碎魂与顾执命格融合，形成混合双生体。' },
                 { period: '战后', title: '念安恢复记忆为魏元璟', desc: '战后二十五年：念安恢复记忆，改名为魏元璟，位列第十席。' },
-                // 节点25
                 { period: '战后', title: '罗修与魏元璟破冰', desc: '战后三十五年：罗修与魏元璟关系破冰，正式携手。' },
-                // 节点26
                 { period: '战后', title: '罗修与魏元璟成亲', desc: '战后四十五年：罗修与魏元璟成亲。' }
             ];
 
