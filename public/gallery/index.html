@@ -1,413 +1,147 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><link rel="stylesheet" href="/-/css/custom-dark.css">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>插图集 - 墨境</title>
-  <link rel="stylesheet" href="/-/css/index.css">
-  <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
-
+  <title>插图集</title>
   <style>
-    :root {
-      --card-bg: #fff;
-      --card-border: #e3e8f7;
-      --font-color: #4c4948;
-      --theme-color: #c44536;
-      --bg-color: #f7f9fe;
-      --meta-color: #858585;
-    }
-    [data-theme="dark"] {
-      --card-bg: #1b1b1b;
-      --card-border: #3d3d3d;
-      --font-color: #c0c0c0;
-      --bg-color: #0d0d0d;
-      --meta-color: #7a7a7a;
-    }
-    /* 隐藏侧边栏 */
-    #aside-content { display: none !important; }
-    .layout { display: block !important; }
-    #content-inner { max-width: 100% !important; }
-    #page { width: 100% !important; margin: 0 !important; }
-
-    .gallery-container { max-width: 1200px; margin: 0 auto; padding: 30px 20px 60px; }
-    .gallery-header { text-align: center; padding: 20px 20px 30px; }
-    .gallery-header h1 { font-size: 1.8em; color: var(--font-color); margin-bottom: 8px; }
-    .gallery-header p { font-size: 0.9em; color: var(--font-color); opacity: 0.5; }
-
-    /* ===== 手风琴样式（新加/改动） ===== */
-    .gallery-section {
-      margin-bottom: 12px;
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      background: var(--card-bg);
-      overflow: hidden;
-      transition: background 0.2s;
-    }
-    .gallery-section.active {
-      background: var(--card-bg);
-    }
-
-    /* 手风琴标题行 */
-    .accordion-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 22px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.2s;
-      border-bottom: 1px solid transparent;
-    }
-    .gallery-section.active .accordion-header {
-      border-bottom-color: var(--card-border);
-    }
-    .accordion-header:hover {
-      background: var(--bg-color);
-    }
-    .accordion-header h2 {
-      font-size: 1.2em;
+    * {
+      padding: 0;
       margin: 0;
-      color: var(--font-color);
-      opacity: 0.85;
-      font-weight: 600;
-    }
-    .accordion-header .arrow {
-      font-size: 1.2em;
-      color: var(--meta-color);
-      transition: transform 0.35s ease;
-      margin-left: 12px;
-      flex-shrink: 0;
-    }
-    .gallery-section.active .accordion-header .arrow {
-      transform: rotate(180deg);
+      box-sizing: border-box;
     }
 
-    /* 手风琴内容区（重点：可折叠） */
-    .accordion-content {
-      overflow: hidden;
-      max-height: 0;
-      padding: 0 22px;
-      transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.4s ease;
-    }
-    .gallery-section.active .accordion-content {
-      padding: 18px 22px 22px;  /* 展开时才有内边距 */
-      /* max-height 由 JavaScript 动态计算设置，这里不设固定值 */
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      overflow: auto;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* 图片墙（保持原有的瀑布流） */
-    .gallery-wall {
-      column-count: 3;
-      column-gap: 12px;
-      margin: 0;
-    }
-    @media (max-width: 768px) {
-      .gallery-wall { column-count: 2; column-gap: 8px; }
-    }
-
-    .gallery-wall-item {
-      break-inside: avoid;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      overflow: hidden;
-      display: block;
-      position: relative;
-      cursor: zoom-in;
-      background: var(--card-border);
-    }
-    .gallery-wall-item img {
+    main {
       width: 100%;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-    .gallery-wall-item:hover img {
-      transform: scale(1.03);
-    }
-    .gallery-wall-item .img-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px 12px 12px;
-      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
-      color: #fff;
-      font-size: 0.85em;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .gallery-wall-item:hover .img-caption {
-      opacity: 1;
     }
 
-    /* 灯箱（保持原样） */
-    .lightbox {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
+    article {
+      max-width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 60vh 40vh;
+    }
+
+    article img {
+      object-fit: cover;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.92);
-      z-index: 10000;
-      cursor: zoom-out;
-      animation: fadeIn 0.3s;
-    }
-    .lightbox.active {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-      border-radius: 4px;
-      animation: zoomIn 0.3s;
-      cursor: default;
-    }
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: #fff;
-      font-size: 2em;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-      z-index: 10001;
-    }
-    .lightbox-close:hover { opacity: 1; }
-    .lightbox-caption {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: 0.95em;
-      opacity: 0.8;
-      text-align: center;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes zoomIn {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
     }
 
-    /* 返回首页按钮 */
-    .world-home-btn {
-      position: fixed;
-      bottom: 90px;
-      right: 25px;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: #c44536;
-      color: #fff;
-      font-size: 1.4em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
-      z-index: 999;
-      transition: all 0.3s;
+    .article_img {
+      position: sticky;
+      top: 0;
     }
-    .world-home-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
+
+    main h2 {
+      font-size: 2rem;
+    }
+
+    main p {
+      font-size: 1.15rem;
+    }
+
+    .article_info {
+      text-align: center;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 0.5rem;
+      height: 40vh;
+      background: #fff;
+    }
+
+    .article_info h2 {
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+
+    .article_info p {
+      color: #333;
     }
   </style>
+<base target="_blank">
 </head>
 <body>
-  <div id="page-header" class="not-home-page">
-    <nav id="nav">
-      <span class="nav-title">墨境</span>
-      <div class="menus">
-        <a class="site-page" href="/-/">首页</a>
-        <a class="site-page" href="/-/world/">世界观</a>
-        <a class="site-page" href="/-/about/">关于</a>
+  <main>
+    <article>
+      <div class="article_img">
+        <img src="/-/images/difu-cover.jpg" alt="">
       </div>
-    </nav>
-    <div id="page-site-info"><h1 id="site-title">插图集</h1></div>
-  </div>
-
-  <div id="content-outer">
-    <main class="layout" id="content-inner">
-      <div id="page">
-        <div class="gallery-container">
-
-          <div class="gallery-header">
-            <h1>🖼️ 插图集</h1>
-            <p>都是ai的，但是我觉得挺好看，李姐不会画画哈哈</p>
-          </div>
-
-          <!-- ====== 小说封面（手风琴1，默认展开） ====== -->
-          <div class="gallery-section active" id="section-cover">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-              <h2>📘 小说封面</h2>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="accordion-content">
-              <div class="gallery-wall">
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
-                  <div class="img-caption">我在地府打工那些年</div>
-                </div>
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
-                  <div class="img-caption">这破游戏NPC太能打了</div>
-                </div>
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
-                  <div class="img-caption">九州风云录</div>
-                </div>
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
-                  <div class="img-caption">北境玫瑰</div>
-                </div>
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
-                  <div class="img-caption">皇叔何出此言</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ====== 角色插图（手风琴2） ====== -->
-          <div class="gallery-section" id="section-char">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-              <h2>🧝 角色插图</h2>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="accordion-content">
-              <div class="gallery-wall">
-                <!-- 这里目前空的，你以后按格式加图片即可 -->
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/placeholder-char.jpg" alt="角色占位" style="opacity:0.3;">
-                  <div class="img-caption">角色示例</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ====== 场景插图（手风琴3） ====== -->
-          <div class="gallery-section" id="section-scene">
-            <div class="accordion-header" onclick="toggleAccordion(this)">
-              <h2>🏞️ 场景插图</h2>
-              <span class="arrow">▼</span>
-            </div>
-            <div class="accordion-content">
-              <div class="gallery-wall">
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/lixi.jpg" alt="李汐">
-                  <div class="img-caption">李汐</div>
-                </div>
-                <div class="gallery-wall-item" onclick="openLightbox(this)">
-                  <img src="/-/images/shenjianc.jpg" alt="皇叔何出此言">
-                  <div class="img-caption">皇叔何出此言</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+      <div class="article_info">
+        <h2>我在地府打工那些年</h2>
+        <p>阴曹地府的KPI，比人间还难完成。</p>
       </div>
-    </main>
-  </div>
+    </article>
 
-  <!-- 灯箱 -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-    <span class="lightbox-close">&times;</span>
-    <img id="lightbox-img" src="" alt="">
-    <div class="lightbox-caption" id="lightbox-caption"></div>
-  </div>
+    <article>
+      <div class="article_img">
+        <img src="/-/images/npc-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>这破游戏NPC太能打了</h2>
+        <p>我只是个路人甲，为什么要逼我出绝招。</p>
+      </div>
+    </article>
 
-  <script>
-    // ===== 手风琴切换逻辑 =====
-    function toggleAccordion(header) {
-      var section = header.parentElement; // .gallery-section
-      var content = section.querySelector('.accordion-content');
-      var isActive = section.classList.contains('active');
+    <article>
+      <div class="article_img">
+        <img src="/-/images/jiuzhou-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>九州风云录</h2>
+        <p>山河破碎风飘絮，一剑霜寒十四州。</p>
+      </div>
+    </article>
 
-      // 关闭所有其他手风琴面板（实现“一个打开，其他关闭”的效果）
-      var allSections = document.querySelectorAll('.gallery-section');
-      allSections.forEach(function(sec) {
-        var c = sec.querySelector('.accordion-content');
-        sec.classList.remove('active');
-        // 移除内联 max-height，让 CSS 恢复为 0
-        c.style.maxHeight = '0px';
-      });
+    <article>
+      <div class="article_img">
+        <img src="/-/images/beijing2-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>北境玫瑰</h2>
+        <p>风雪掩埋了旧时代的王座，却埋不住一朵倔强的红。</p>
+      </div>
+    </article>
 
-      // 如果当前点击的是已关闭的，则打开它
-      if (!isActive) {
-        section.classList.add('active');
-        // 关键：把 max-height 设为内容的实际滚动高度，实现平滑展开
-        content.style.maxHeight = content.scrollHeight + 'px';
-      }
-    }
+    <article>
+      <div class="article_img">
+        <img src="/-/images/huangshu-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>皇叔何出此言</h2>
+        <p>朝堂之上无父子，龙椅之下皆白骨。</p>
+      </div>
+    </article>
 
-    // ===== 页面加载完成后，确保默认展开的第一个面板高度正确 =====
-    window.addEventListener('load', function() {
-      var activeSection = document.querySelector('.gallery-section.active');
-      if (activeSection) {
-        var content = activeSection.querySelector('.accordion-content');
-        // 延迟一点点确保渲染完成
-        setTimeout(function() {
-          content.style.maxHeight = content.scrollHeight + 'px';
-        }, 50);
-      }
-    });
+    <article>
+      <div class="article_img">
+        <img src="/-/images/lixi.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>李汐</h2>
+        <p>她站在时间的尽头，等一个不会回来的人。</p>
+      </div>
+    </article>
 
-    // ===== 窗口尺寸变化时，重新计算展开面板的高度（应对图片加载完或窗口缩放） =====
-    var resizeTimer;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function() {
-        var activeSection = document.querySelector('.gallery-section.active');
-        if (activeSection) {
-          var content = activeSection.querySelector('.accordion-content');
-          // 如果内容可见，重置高度为 auto 再获取 scrollHeight（防止累积偏差）
-          content.style.maxHeight = 'none';
-          var height = content.scrollHeight;
-          content.style.maxHeight = height + 'px';
-        }
-      }, 300);
-    });
-
-    // ===== 原有的灯箱功能（完全保留，未改动） =====
-    function openLightbox(el) {
-      var img = el.querySelector('img');
-      var caption = el.querySelector('.img-caption');
-      var lightbox = document.getElementById('lightbox');
-      document.getElementById('lightbox-img').src = img.src;
-      document.getElementById('lightbox-caption').textContent = caption ? caption.textContent : img.alt;
-      lightbox.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeLightbox(event) {
-      if (event.target.id === 'lightbox' || event.target.className === 'lightbox-close') {
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        document.getElementById('lightbox').classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-  </script>
-
-  <!-- 返回首页按钮 -->
-  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
-
-  <footer id="footer">
-    <div id="footer-wrap">
-      <div class="copyright">©2026 By 淮棋</div>
-      <div class="framework-info"><span>用文字构筑世界</span></div>
-    </div>
-  </footer>
+    <article>
+      <div class="article_img">
+        <img src="/-/images/shenjianc.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>沈见川</h2>
+        <p>三千年的闲人，终究躲不过一场命定的劫。</p>
+      </div>
+    </article>
+  </main>
 </body>
 </html>
