@@ -3,7 +3,7 @@
 <head><link rel="stylesheet" href="/-/css/custom-dark.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>插图集 · 墨境</title>
+  <title>插图集 - 墨境</title>
   <link rel="stylesheet" href="/-/css/index.css">
   <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
 
@@ -34,78 +34,71 @@
     .gallery-header h1 { font-size: 1.8em; color: var(--font-color); margin-bottom: 8px; }
     .gallery-header p { font-size: 0.9em; color: var(--font-color); opacity: 0.5; }
 
-    /* ===== 手风琴样式 ===== */
-    .gallery-accordion {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .accordion-item {
+    /* ===== 手风琴样式（新加/改动） ===== */
+    .gallery-section {
+      margin-bottom: 12px;
       border: 1px solid var(--card-border);
       border-radius: 10px;
       background: var(--card-bg);
       overflow: hidden;
-      transition: border-color 0.3s;
+      transition: background 0.2s;
     }
-    .accordion-item:hover {
-      border-color: var(--theme-color);
+    .gallery-section.active {
+      background: var(--card-bg);
     }
 
+    /* 手风琴标题行 */
     .accordion-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       padding: 16px 22px;
       cursor: pointer;
       user-select: none;
-      transition: background 0.25s;
-      gap: 16px;
+      transition: background 0.2s;
+      border-bottom: 1px solid transparent;
+    }
+    .gallery-section.active .accordion-header {
+      border-bottom-color: var(--card-border);
     }
     .accordion-header:hover {
-      background: var(--accent-soft, rgba(196, 69, 54, 0.05));
+      background: var(--bg-color);
     }
     .accordion-header h2 {
       font-size: 1.2em;
       margin: 0;
       color: var(--font-color);
+      opacity: 0.85;
       font-weight: 600;
-      transition: color 0.3s;
     }
-    .accordion-item.active .accordion-header h2 {
-      color: var(--theme-color);
-    }
-
-    .accordion-arrow {
+    .accordion-header .arrow {
       font-size: 1.2em;
       color: var(--meta-color);
-      transition: transform 0.35s ease, color 0.3s;
+      transition: transform 0.35s ease;
+      margin-left: 12px;
       flex-shrink: 0;
     }
-    .accordion-item.active .accordion-arrow {
+    .gallery-section.active .accordion-header .arrow {
       transform: rotate(180deg);
-      color: var(--theme-color);
     }
 
-    .accordion-body {
-      max-height: 0;
+    /* 手风琴内容区（重点：可折叠） */
+    .accordion-content {
       overflow: hidden;
-      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+      max-height: 0;
       padding: 0 22px;
+      transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.4s ease;
     }
-    .accordion-item.active .accordion-body {
-      max-height: 6000px; /* 足够容纳所有图片 */
-      padding: 0 22px 28px 22px;
-    }
-
-    .accordion-body .gallery-wall {
-      padding-top: 4px;
+    .gallery-section.active .accordion-content {
+      padding: 18px 22px 22px;  /* 展开时才有内边距 */
+      /* max-height 由 JavaScript 动态计算设置，这里不设固定值 */
     }
 
-    /* 图片墙（瀑布流） */
+    /* 图片墙（保持原有的瀑布流） */
     .gallery-wall {
       column-count: 3;
       column-gap: 12px;
+      margin: 0;
     }
     @media (max-width: 768px) {
       .gallery-wall { column-count: 2; column-gap: 8px; }
@@ -119,6 +112,7 @@
       display: block;
       position: relative;
       cursor: zoom-in;
+      background: var(--card-border);
     }
     .gallery-wall-item img {
       width: 100%;
@@ -144,7 +138,7 @@
       opacity: 1;
     }
 
-    /* 灯箱 */
+    /* 灯箱（保持原样） */
     .lightbox {
       display: none;
       position: fixed;
@@ -246,84 +240,77 @@
 
           <div class="gallery-header">
             <h1>🖼️ 插图集</h1>
-            <p>都是ai的，但是我觉得挺好看</p>
+            <p>都是ai的，但是我觉得挺好看，李姐不会画画哈哈</p>
           </div>
 
-          <!-- ===== 手风琴 ===== -->
-          <div class="gallery-accordion">
-
-            <!-- 面板1：小说封面（默认展开） -->
-            <div class="accordion-item active">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <h2>小说封面</h2>
-                <span class="accordion-arrow">▾</span>
-              </div>
-              <div class="accordion-body">
-                <div class="gallery-wall">
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
-                    <div class="img-caption">我在地府打工那些年</div>
-                  </div>
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
-                    <div class="img-caption">这破游戏NPC太能打了</div>
-                  </div>
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
-                    <div class="img-caption">九州风云录</div>
-                  </div>
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
-                    <div class="img-caption">北境玫瑰</div>
-                  </div>
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
-                    <div class="img-caption">皇叔何出此言</div>
-                  </div>
+          <!-- ====== 小说封面（手风琴1，默认展开） ====== -->
+          <div class="gallery-section active" id="section-cover">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <h2>📘 小说封面</h2>
+              <span class="arrow">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="gallery-wall">
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/difu-cover.jpg" alt="我在地府打工那些年">
+                  <div class="img-caption">我在地府打工那些年</div>
+                </div>
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/npc-banner.jpg" alt="这破游戏NPC太能打了">
+                  <div class="img-caption">这破游戏NPC太能打了</div>
+                </div>
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/jiuzhou-banner.jpg" alt="九州风云录">
+                  <div class="img-caption">九州风云录</div>
+                </div>
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/beijing2-banner.jpg" alt="北境玫瑰">
+                  <div class="img-caption">北境玫瑰</div>
+                </div>
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/huangshu-banner.jpg" alt="皇叔何出此言">
+                  <div class="img-caption">皇叔何出此言</div>
                 </div>
               </div>
             </div>
-
-            <!-- 面板2：角色插图 -->
-            <div class="accordion-item">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <h2>角色插图</h2>
-                <span class="accordion-arrow">▾</span>
-              </div>
-              <div class="accordion-body">
-                <div class="gallery-wall">
-                  <!-- 放您的角色插图，格式如下：
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/你的图片名.jpg" alt="描述">
-                    <div class="img-caption">图片标题</div>
-                  </div>
-                  -->
-                </div>
-              </div>
-            </div>
-
-            <!-- 面板3：场景插图 -->
-            <div class="accordion-item">
-              <div class="accordion-header" onclick="toggleAccordion(this)">
-                <h2>场景插图</h2>
-                <span class="accordion-arrow">▾</span>
-              </div>
-              <div class="accordion-body">
-                <div class="gallery-wall">
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/lixi.jpg" alt="李汐">
-                    <div class="img-caption">李汐</div>
-                  </div>
-                  <div class="gallery-wall-item" onclick="openLightbox(this)">
-                    <img src="/-/images/shenjianc.jpg" alt="皇叔何出此言">
-                    <div class="img-caption">皇叔何出此言</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
-          <!-- 手风琴结束 -->
+
+          <!-- ====== 角色插图（手风琴2） ====== -->
+          <div class="gallery-section" id="section-char">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <h2>🧝 角色插图</h2>
+              <span class="arrow">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="gallery-wall">
+                <!-- 这里目前空的，你以后按格式加图片即可 -->
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/placeholder-char.jpg" alt="角色占位" style="opacity:0.3;">
+                  <div class="img-caption">角色示例</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== 场景插图（手风琴3） ====== -->
+          <div class="gallery-section" id="section-scene">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <h2>🏞️ 场景插图</h2>
+              <span class="arrow">▼</span>
+            </div>
+            <div class="accordion-content">
+              <div class="gallery-wall">
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/lixi.jpg" alt="李汐">
+                  <div class="img-caption">李汐</div>
+                </div>
+                <div class="gallery-wall-item" onclick="openLightbox(this)">
+                  <img src="/-/images/shenjianc.jpg" alt="皇叔何出此言">
+                  <div class="img-caption">皇叔何出此言</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -337,35 +324,59 @@
     <div class="lightbox-caption" id="lightbox-caption"></div>
   </div>
 
-  <!-- 返回首页按钮 -->
-  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
-
-  <footer id="footer">
-    <div id="footer-wrap">
-      <div class="copyright">©2026 By 淮子生生</div>
-      <div class="framework-info"><span>用文字构筑世界</span></div>
-    </div>
-  </footer>
-
   <script>
-    // 手风琴切换
-    function toggleAccordion(headerEl) {
-      var item = headerEl.closest('.accordion-item');
-      if (!item) return;
-      var isActive = item.classList.contains('active');
+    // ===== 手风琴切换逻辑 =====
+    function toggleAccordion(header) {
+      var section = header.parentElement; // .gallery-section
+      var content = section.querySelector('.accordion-content');
+      var isActive = section.classList.contains('active');
 
-      // 关闭所有
-      document.querySelectorAll('.accordion-item').forEach(function(el) {
-        el.classList.remove('active');
+      // 关闭所有其他手风琴面板（实现“一个打开，其他关闭”的效果）
+      var allSections = document.querySelectorAll('.gallery-section');
+      allSections.forEach(function(sec) {
+        var c = sec.querySelector('.accordion-content');
+        sec.classList.remove('active');
+        // 移除内联 max-height，让 CSS 恢复为 0
+        c.style.maxHeight = '0px';
       });
 
-      // 如果之前是关闭的，就打开它
+      // 如果当前点击的是已关闭的，则打开它
       if (!isActive) {
-        item.classList.add('active');
+        section.classList.add('active');
+        // 关键：把 max-height 设为内容的实际滚动高度，实现平滑展开
+        content.style.maxHeight = content.scrollHeight + 'px';
       }
     }
 
-    // 灯箱
+    // ===== 页面加载完成后，确保默认展开的第一个面板高度正确 =====
+    window.addEventListener('load', function() {
+      var activeSection = document.querySelector('.gallery-section.active');
+      if (activeSection) {
+        var content = activeSection.querySelector('.accordion-content');
+        // 延迟一点点确保渲染完成
+        setTimeout(function() {
+          content.style.maxHeight = content.scrollHeight + 'px';
+        }, 50);
+      }
+    });
+
+    // ===== 窗口尺寸变化时，重新计算展开面板的高度（应对图片加载完或窗口缩放） =====
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        var activeSection = document.querySelector('.gallery-section.active');
+        if (activeSection) {
+          var content = activeSection.querySelector('.accordion-content');
+          // 如果内容可见，重置高度为 auto 再获取 scrollHeight（防止累积偏差）
+          content.style.maxHeight = 'none';
+          var height = content.scrollHeight;
+          content.style.maxHeight = height + 'px';
+        }
+      }, 300);
+    });
+
+    // ===== 原有的灯箱功能（完全保留，未改动） =====
     function openLightbox(el) {
       var img = el.querySelector('img');
       var caption = el.querySelector('.img-caption');
@@ -388,5 +399,15 @@
       }
     });
   </script>
+
+  <!-- 返回首页按钮 -->
+  <a href="/-/" class="world-home-btn" title="返回首页">🏠</a>
+
+  <footer id="footer">
+    <div id="footer-wrap">
+      <div class="copyright">©2026 By 淮棋</div>
+      <div class="framework-info"><span>用文字构筑世界</span></div>
+    </div>
+  </footer>
 </body>
 </html>
