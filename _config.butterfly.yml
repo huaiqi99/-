@@ -63,3 +63,7 @@ post_pagination:
 inject:
   bottom:
     - <script src="/-/source/js/pagination.js"></script>
+
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/custom.css">
