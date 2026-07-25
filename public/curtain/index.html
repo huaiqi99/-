@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>墨境 · 文字珠帘</title>
   <style>
-    /* ===== 统一墨境风格配色 ===== */
+    /* ===== 统一墨境风格 ===== */
     :root {
       --bg-body: #ffffff;
       --bg-section: #faf8f6;
@@ -16,6 +16,7 @@
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.06);
       --accent-glow: rgba(176, 58, 42, 0.2);
+      --curtain-text: #2c2c2c;
     }
 
     [data-theme="dark"] {
@@ -28,6 +29,7 @@
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.1);
       --accent-glow: rgba(176, 90, 74, 0.25);
+      --curtain-text: #cfc8c0;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -152,25 +154,42 @@
       isolation: isolate;
     }
 
+    /* 背景图片 — 在画布下层 */
+    .temple {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(620px, 62vw);
+      pointer-events: none;
+    }
+    .temple img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+
+    /* 画布 — 透明背景，叠在图片上层 */
     #curtain {
+      position: relative;
+      z-index: 2;
       width: 100%;
       height: 560px;
       display: block;
-      border-radius: 8px;
-      background: var(--bg-section);
-      border: 1px solid var(--border-light);
+      background: transparent !important;
       cursor: none;
       touch-action: none;
-      transition: background 0.3s, border-color 0.3s;
-    }
-    #curtain:hover {
-      border-color: var(--accent);
+      border-radius: 8px;
     }
 
-    /* ===== 标题叠层 ===== */
+    /* 标题叠层 — 在画布上层 */
     .headline-overlay {
       position: absolute;
-      z-index: 10;
+      z-index: 6;
       left: clamp(24px, 4vw, 56px);
       bottom: clamp(30px, 5vh, 60px);
       pointer-events: none;
@@ -194,7 +213,7 @@
 
     .caption-overlay {
       position: absolute;
-      z-index: 10;
+      z-index: 6;
       right: clamp(24px, 4vw, 56px);
       bottom: clamp(30px, 5vh, 60px);
       pointer-events: none;
@@ -206,7 +225,7 @@
     /* ===== 配置按钮 ===== */
     .configure-wrap {
       position: absolute;
-      z-index: 20;
+      z-index: 10;
       top: 16px;
       right: 16px;
     }
@@ -229,7 +248,7 @@
     /* ===== 设置面板 ===== */
     .settings {
       position: absolute;
-      z-index: 30;
+      z-index: 20;
       top: 52px;
       right: 16px;
       width: 280px;
@@ -338,6 +357,7 @@
       .headline-overlay h2 { font-size: 1.2rem; }
       .caption-overlay { display: none; }
       .settings { width: 240px; right: 8px; top: 48px; padding: 14px 16px; }
+      .temple { width: min(420px, 85vw); }
     }
 
     @media (max-width: 480px) {
@@ -345,6 +365,7 @@
       .headline-overlay h2 { font-size: 1rem; }
       .headline-overlay .eyebrow { font-size: 0.6rem; }
       .settings { width: 200px; }
+      .temple { width: min(320px, 90vw); }
     }
   </style>
 </head>
@@ -373,17 +394,29 @@
   <!-- ===== 页头 ===== -->
   <header id="page-header">
     <h1>文字珠帘</h1>
-    <p class="sub">移动鼠标拨动文字 · 可换图片 · 可换文字 · 全部等距</p>
+    <p class="sub">移动鼠标拨动文字 · 可换图片 · 可换文字</p>
   </header>
 
   <!-- ===== 画布区 ===== -->
   <main class="artboard" id="artboard">
+
+    <!-- 背景图片（在画布下层） -->
+    <div class="temple" id="temple">
+      <picture>
+        <source id="templeSource" srcset="/-/images/lixi.jpg" type="image/png" />
+        <img id="templeImg" src="/-/images/lixi.jpg" width="901" height="730" fetchpriority="high" decoding="async" alt="背景图" />
+      </picture>
+    </div>
+
+    <!-- 画布（透明，叠在图片上层） -->
     <canvas id="curtain" aria-label="可交互的文字珠帘"></canvas>
 
+    <!-- 配置按钮 -->
     <div class="configure-wrap">
       <button class="configure" id="configure" type="button" aria-expanded="false" aria-controls="settings">配 置</button>
     </div>
 
+    <!-- 标题叠层（在画布上层） -->
     <div class="headline-overlay">
       <p class="eyebrow">/ 淮子生生</p>
       <h2>墨境 · <span>文字帘幕</span></h2>
@@ -502,16 +535,23 @@
       var observer = new MutationObserver(function() { applyTheme(); });
       observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
     })();
+
+    // ===== 获取主题颜色 (供canvas使用) =====
+    function getThemeColor(varName) {
+      var val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      return val || (varName === '--curtain-text' ? '#2c2c2c' : '#b03a2a');
+    }
   </script>
 
   <!-- ============================================================
-       珠帘核心 JS (原功能完全保留)
+       珠帘核心 JS
   ============================================================ -->
   <script>
     (function() {
       const artboard = document.getElementById("artboard");
       const canvas = document.getElementById("curtain");
       const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
+      const templeImg = document.getElementById("templeImg");
       const configure = document.getElementById("configure");
       const settings = document.getElementById("settings");
       const reset = document.getElementById("reset");
@@ -526,7 +566,6 @@
 遥襟甫畅，逸兴遄飞。爽籁发而清风生，纤歌凝而白云遏。睢园绿竹，气凌彭泽之樽；邺水朱华，光照临川之笔。四美具，二难并。穷睇眄于中天，极娱游于暇日。天高地迥，觉宇宙之无穷；兴尽悲来，识盈虚之有数。望长安于日下，目吴会于云间。地势极而南溟深，天柱高而北辰远。关山难越，谁悲失路之人？萍水相逢，尽是他乡之客。怀帝阍而不见，奉宣室以何年？
 呜呼！时运不齐，命途多舛。冯唐易老，李广难封。屈贾谊于长沙，非无圣主；窜梁鸿于海曲，岂乏明时？所赖君子见机，达人知命。老当益壮，宁移白首之心？穷且益坚，不坠青云之志。酌贪泉而觉爽，处涸辙以犹欢。北海虽赊，扶摇可接；东隅已逝，桑榆非晚。孟尝高洁，空余报国之情；阮籍猖狂，岂效穷途之哭！`;
 
-      const defaultImgSrc = "/-/images/lixi.jpg";
       let glyphs = defaultGlyphs;
       const mouse = { x: -999, y: -999, oldX: -999, oldY: -999, active: false };
       const physics = { strength: 0.82, radius: 34, friction: 0.95, gravity: 0.18 };
@@ -537,18 +576,6 @@
         "rgba(176, 58, 42, 0.04)",
       ];
       let width = 0, height = 0, dpr = 1;
-
-      // ---- 图片加载 ----
-      let currentImg = null;
-      const img = new Image();
-
-      function loadImage(src) {
-        return new Promise((resolve) => {
-          img.onload = () => { resolve(img); };
-          img.onerror = () => { resolve(null); };
-          img.src = src;
-        });
-      }
 
       // ---- 构建珠帘 ----
       function build() {
@@ -563,14 +590,11 @@
         const rowCapacity = Math.max(1, absoluteMinRows - 1);
         let columns = Math.max(minColumns, Math.min(maxColumns, Math.ceil(source.length / rowCapacity)));
 
-        const imgW = img.width || 600;
-        const imgH = img.height || 400;
         const rect = artboard.getBoundingClientRect();
         const centerX = rect.width / 2;
-        const curtainWidth = Math.min(rect.width * 0.82, imgW * 0.72);
+        const curtainWidth = Math.min(rect.width * 0.82, 560);
         const left = centerX - curtainWidth / 2;
-        const imageTop = Math.max(20, (rect.height - imgH * 0.55) / 2 - 20);
-        const imageBottom = imageTop + imgH * 0.55;
+        const imageBottom = Math.min(rect.height * 0.65, 420);
 
         const requiredTextRows = Math.max(1, Math.ceil(source.length / columns)) + 1;
         let rows = Math.max(absoluteMinRows, requiredTextRows);
@@ -710,32 +734,17 @@
       }
 
       function draw() {
+        // 清空为透明
         ctx.clearRect(0, 0, width, height);
-
-        // 绘制背景图片
-        if (img.complete && img.naturalWidth > 0) {
-          const imgW = img.naturalWidth;
-          const imgH = img.naturalHeight;
-          const rect = artboard.getBoundingClientRect();
-          const scale = Math.min((width * 0.78) / imgW, (height * 0.58) / imgH, 0.85);
-          const drawW = imgW * scale;
-          const drawH = imgH * scale;
-          const x = (width - drawW) / 2;
-          const y = (height - drawH) / 2 - 10;
-          ctx.save();
-          ctx.globalAlpha = 0.85;
-          ctx.shadowColor = "rgba(0,0,0,0.08)";
-          ctx.shadowBlur = 24;
-          ctx.shadowOffsetX = 4;
-          ctx.shadowOffsetY = 8;
-          ctx.drawImage(img, x, y, drawW, drawH);
-          ctx.restore();
-        }
 
         const columnsCount = chains.length;
         if (!columnsCount) return;
         const widthParam = Math.max(4.5, Math.min(6.5, ((width * 0.84) / columnsCount) * 0.34));
         updateRibbons(widthParam);
+
+        // 获取主题颜色
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--curtain-text').trim() || '#2c2c2c';
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#b03a2a';
 
         ctx.shadowColor = "rgba(176, 58, 42, 0.06)";
         ctx.shadowBlur = 3;
@@ -765,7 +774,8 @@
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
 
-        ctx.fillStyle = "#b03a2a";
+        // 锚点 — 使用主题强调色
+        ctx.fillStyle = accentColor;
         for (const chain of chains) {
           const anchor = chain[0];
           ctx.beginPath();
@@ -773,7 +783,8 @@
           ctx.fill();
         }
 
-        ctx.fillStyle = "#4a4a4a";
+        // 珠帘文字 — 使用主题文字颜色（自动适应深浅）
+        ctx.fillStyle = textColor;
         for (const chain of chains) {
           for (let index = 1; index < chain.length; index++) {
             const point = chain[index];
@@ -832,9 +843,7 @@
         if (!file) return;
         const reader = new FileReader();
         reader.onload = () => {
-          const dataUrl = reader.result;
-          img.onload = () => { resize(); };
-          img.src = dataUrl;
+          templeImg.src = reader.result;
         };
         reader.readAsDataURL(file);
       }
@@ -847,8 +856,7 @@
       });
       reset.addEventListener("click", build);
       resetAll.addEventListener("click", () => {
-        img.onload = () => { resize(); };
-        img.src = defaultImgSrc;
+        templeImg.src = "/-/images/lixi.jpg";
         customImage.value = "";
         customText.value = "";
         glyphs = defaultGlyphs;
@@ -866,10 +874,14 @@
       canvas.addEventListener("pointerleave", leave);
       window.addEventListener("resize", resize);
 
-      img.onload = () => { resize(); };
-      img.src = defaultImgSrc;
-      if (img.complete) resize();
+      resize();
       frame();
+
+      // 监听主题变化重绘（颜色自适应）
+      var themeObserver = new MutationObserver(function() {
+        build();
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     })();
   </script>
 </body>
