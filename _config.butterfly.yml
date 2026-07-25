@@ -1,4 +1,4 @@
-index_img: /images/lixi.jpg
+index_img: /images/lixi.png
 
 menu:
   首页: / || fas fa-home
@@ -14,7 +14,7 @@ subtitle:
   effect: true
   source: false
   sub:
-    - '我蒙上眼'
+    - '我蒙上眼饿饿饿饿'
     - '仿佛你在身边'
     - '我来不及道声不安'
     - '有点混乱有点缓慢'
