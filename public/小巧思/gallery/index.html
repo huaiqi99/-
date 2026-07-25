@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>插图集</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      overflow: auto;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    article {
+      max-width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 60vh 40vh;
+    }
+
+    article img {
+      object-fit: contain;        /* 改成 contain，图片完整显示 */
+      width: 100%;
+      height: 100%;
+    }
+
+    .article_img {
+      position: sticky;
+      top: 0;
+       background: #fff;       /* 深色背景，图片周围不留白 */
+    }
+
+    main h2 {
+      font-size: 2rem;
+    }
+
+    main p {
+      font-size: 1.15rem;
+    }
+
+    .article_info {
+      text-align: center;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 0.5rem;
+      height: 40vh;
+      background: #fff;
+    }
+
+    .article_info h2 {
+      color: #1a1a1a;
+      font-weight: 700;
+    }
+
+    .article_info p {
+      color: #333;
+    }
+
+    /* 返回首页按钮 */
+    .home-btn {
+      position: fixed;
+      bottom: 40px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #c44536;
+      color: #fff;
+      font-size: 1.4em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(196, 69, 54, 0.35);
+      z-index: 999;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+    .home-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(196, 69, 54, 0.45);
+    }
+  </style>
+<base target="_blank">
+</head>
+<body>
+  <main>
+    <article>
+      <div class="article_img">
+        <img src="/-/images/difu-cover.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>我在地府打工那些年</h2>
+        <p>阴曹地府的KPI，比人间还难完成。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="article_img">
+        <img src="/-/images/npc-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>这破游戏NPC太能打了</h2>
+        <p>我只是个路人甲，为什么要逼我出绝招。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="article_img">
+        <img src="/-/images/jiuzhou-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>九州风云录</h2>
+        <p>山河破碎风飘絮，一剑霜寒十四州。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="article_img">
+        <img src="/-/images/beijing2-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>北境玫瑰</h2>
+        <p>风雪掩埋了旧时代的王座，却埋不住一朵倔强的红。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="article_img">
+        <img src="/-/images/huangshu-banner.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>皇叔何出此言</h2>
+        <p>朝堂之上无父子，龙椅之下皆白骨。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="article_img">
+        <img src="/-/images/lixi.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>李汐</h2>
+        <p>她站在时间的尽头，等一个不会回来的人。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="article_img">
+        <img src="/-/images/shenjianc.jpg" alt="">
+      </div>
+      <div class="article_info">
+        <h2>沈见川</h2>
+        <p>三千年的闲人，终究躲不过一场命定的劫。</p>
+      </div>
+    </article>
+  </main>
+
+  <a href="/-/" class="home-btn" title="返回首页">🏠</a>
+</body>
+</html>
