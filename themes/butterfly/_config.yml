@@ -141,3 +141,7 @@ site_verification:
 # CDN (use local)
 CDN:
   use: local
+
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/custom.css">
