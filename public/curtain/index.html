@@ -15,7 +15,6 @@
       --border-light: #ece6de;
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.06);
-      --accent-glow: rgba(176, 58, 42, 0.2);
       --curtain-text: #2c2c2c;
     }
 
@@ -28,7 +27,6 @@
       --border-light: #35302a;
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.1);
-      --accent-glow: rgba(176, 90, 74, 0.25);
       --curtain-text: #cfc8c0;
     }
 
@@ -170,10 +168,9 @@
       display: block;
       border-radius: 4px;
       opacity: 0.85;
-      transition: opacity 0.3s;
     }
 
-    /* 画布 — 透明背景，叠在图片上层 */
+    /* 画布 — 透明，叠在图片上层，只显示文字 */
     #curtain {
       position: relative;
       z-index: 2;
@@ -259,7 +256,6 @@
       border-radius: 8px;
       background: var(--bg-body);
       box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-      transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
     .settings[hidden] { display: none; }
 
@@ -408,7 +404,7 @@
       </picture>
     </div>
 
-    <!-- 画布（透明，叠在图片上层） -->
+    <!-- 画布（透明，叠在图片上层，只画文字） -->
     <canvas id="curtain" aria-label="可交互的文字珠帘"></canvas>
 
     <!-- 配置按钮 -->
@@ -535,16 +531,10 @@
       var observer = new MutationObserver(function() { applyTheme(); });
       observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
     })();
-
-    // ===== 获取主题颜色 (供canvas使用) =====
-    function getThemeColor(varName) {
-      var val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-      return val || (varName === '--curtain-text' ? '#2c2c2c' : '#b03a2a');
-    }
   </script>
 
   <!-- ============================================================
-       珠帘核心 JS
+       珠帘核心 JS — 只画文字，不画填充带
   ============================================================ -->
   <script>
     (function() {
@@ -569,12 +559,6 @@
       let glyphs = defaultGlyphs;
       const mouse = { x: -999, y: -999, oldX: -999, oldY: -999, active: false };
       const physics = { strength: 0.82, radius: 34, friction: 0.95, gravity: 0.18 };
-      const RIBBON_COLORS = [
-        "rgba(176, 58, 42, 0.08)",
-        "rgba(176, 58, 42, 0.05)",
-        "rgba(176, 58, 42, 0.10)",
-        "rgba(176, 58, 42, 0.04)",
-      ];
       let width = 0, height = 0, dpr = 1;
 
       // ---- 构建珠帘 ----
@@ -706,75 +690,18 @@
         }
       }
 
-      function updateRibbons(wParam) {
-        for (const chain of chains) {
-          const n = chain.length;
-          let ribbon = chain._ribbon;
-          if (!ribbon || ribbon.length !== n) {
-            ribbon = chain._ribbon = new Array(n);
-            for (let i = 0; i < n; i++) ribbon[i] = { lx: 0, ly: 0, rx: 0, ry: 0 };
-          }
-          for (let i = 0; i < n; i++) {
-            const prev = chain[i === 0 ? 0 : i - 1];
-            const next = chain[i === n - 1 ? n - 1 : i + 1];
-            const dx = next.x - prev.x;
-            const dy = next.y - prev.y;
-            const dist = Math.hypot(dx, dy) || 1;
-            const nx = -dy / dist;
-            const ny = dx / dist;
-            const extra = i === n - 1 ? 6.5 : 0;
-            const p = chain[i];
-            const r = ribbon[i];
-            r.lx = p.x + nx * wParam;
-            r.ly = p.y + ny * wParam + extra;
-            r.rx = p.x - nx * wParam;
-            r.ry = p.y - ny * wParam + extra;
-          }
-        }
-      }
-
+      // ---- 绘制（只画文字和锚点，不画任何背景填充） ----
       function draw() {
-        // 清空为透明
         ctx.clearRect(0, 0, width, height);
 
         const columnsCount = chains.length;
         if (!columnsCount) return;
-        const widthParam = Math.max(4.5, Math.min(6.5, ((width * 0.84) / columnsCount) * 0.34));
-        updateRibbons(widthParam);
 
         // 获取主题颜色
         const textColor = getComputedStyle(document.documentElement).getPropertyValue('--curtain-text').trim() || '#2c2c2c';
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#b03a2a';
 
-        ctx.shadowColor = "rgba(176, 58, 42, 0.06)";
-        ctx.shadowBlur = 3;
-        ctx.shadowOffsetX = 1.2;
-        ctx.shadowOffsetY = 2;
-        ctx.lineWidth = 0.5;
-        ctx.strokeStyle = "rgba(176, 58, 42, 0.08)";
-
-        for (let tone = 0; tone < 4; tone++) {
-          ctx.beginPath();
-          for (let c = tone; c < columnsCount; c += 4) {
-            const ribbon = chains[c]._ribbon;
-            const n = ribbon.length;
-            if (n < 2) continue;
-            ctx.moveTo(ribbon[0].lx, ribbon[0].ly);
-            for (let i = 1; i < n; i++) ctx.lineTo(ribbon[i].lx, ribbon[i].ly);
-            for (let i = n - 1; i >= 0; i--) ctx.lineTo(ribbon[i].rx, ribbon[i].ry);
-            ctx.closePath();
-          }
-          ctx.fillStyle = RIBBON_COLORS[tone];
-          ctx.fill();
-          ctx.stroke();
-        }
-
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-
-        // 锚点 — 使用主题强调色
+        // --- 画锚点（小圆点） ---
         ctx.fillStyle = accentColor;
         for (const chain of chains) {
           const anchor = chain[0];
@@ -783,8 +710,12 @@
           ctx.fill();
         }
 
-        // 珠帘文字 — 使用主题文字颜色（自动适应深浅）
+        // --- 画珠帘文字 ---
         ctx.fillStyle = textColor;
+        ctx.shadowColor = "rgba(0,0,0,0.05)";
+        ctx.shadowBlur = 2;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 1;
         for (const chain of chains) {
           for (let index = 1; index < chain.length; index++) {
             const point = chain[index];
@@ -792,6 +723,8 @@
             ctx.fillText(point.char, point.x, point.y + 1);
           }
         }
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
       }
 
       function frame() {
@@ -877,7 +810,7 @@
       resize();
       frame();
 
-      // 监听主题变化重绘（颜色自适应）
+      // 主题切换时重建（文字颜色自适应）
       var themeObserver = new MutationObserver(function() {
         build();
       });
