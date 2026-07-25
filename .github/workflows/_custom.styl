@@ -1,0 +1,195 @@
+// ============================
+// 小说博客自定义样式
+// ============================
+
+// --- 章节导航 ---
+.novel-chapter-nav
+  margin: 30px 0
+  padding: 20px
+  background: var(--card-bg)
+  border-radius: 12px
+  border: 1px solid var(--card-border)
+
+.novel-nav-title
+  text-align: center
+  font-size: 0.9em
+  color: var(--font-color)
+  opacity: 0.6
+  margin-bottom: 15px
+  letter-spacing: 2px
+
+.novel-nav-buttons
+  display: flex
+  gap: 12px
+  justify-content: space-between
+
+.novel-nav-btn
+  display: flex
+  align-items: center
+  gap: 10px
+  padding: 12px 16px
+  background: var(--btn-bg)
+  border-radius: 8px
+  text-decoration: none
+  color: var(--font-color)
+  transition: all 0.3s
+  flex: 1
+  max-width: 48%
+
+  &:hover
+    background: #c44536
+    color: #fff
+    transform: translateY(-2px)
+    box-shadow: 0 4px 12px rgba(196, 69, 54, 0.3)
+
+    .novel-nav-label
+      color: rgba(255,255,255,0.8)
+
+.novel-nav-next
+  justify-content: flex-end
+  text-align: right
+
+.novel-nav-info
+  display: flex
+  flex-direction: column
+  gap: 2px
+  min-width: 0
+
+.novel-nav-label
+  font-size: 0.75em
+  color: var(--font-color)
+  opacity: 0.5
+
+.novel-nav-chapter
+  font-size: 0.85em
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+.novel-nav-disabled
+  opacity: 0.4
+  cursor: not-allowed
+  pointer-events: none
+
+// --- 首页作品合集 ---
+.novel-collection
+  padding: 40px 20px
+  max-width: 1200px
+  margin: 0 auto
+
+.novel-collection-title
+  text-align: center
+  font-size: 1.8em
+  font-weight: bold
+  margin-bottom: 10px
+  color: var(--font-color)
+
+.novel-collection-subtitle
+  text-align: center
+  font-size: 0.9em
+  color: var(--font-color)
+  opacity: 0.6
+  margin-bottom: 40px
+
+.novel-collection-grid
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))
+  gap: 24px
+
+.novel-collection-card
+  display: block
+  background: var(--card-bg)
+  border-radius: 12px
+  overflow: hidden
+  text-decoration: none
+  color: var(--font-color)
+  border: 1px solid var(--card-border)
+  transition: all 0.3s
+  opacity: 1
+  transform: translateY(0)
+
+  &:hover
+    transform: translateY(-4px) scale(1.02)
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2)
+
+  &:active
+    transform: translateY(-2px) scale(1.01)
+
+.novel-collection-cover
+  width: 100%
+  height: 180px
+  object-fit: cover
+  display: block
+
+.novel-collection-info
+  padding: 16px
+
+.novel-collection-name
+  font-size: 1.15em
+  font-weight: bold
+  margin-bottom: 8px
+  color: var(--font-color)
+
+.novel-collection-tags
+  display: flex
+  gap: 6px
+  margin-bottom: 8px
+  flex-wrap: wrap
+
+  .tag
+    font-size: 0.75em
+    padding: 3px 10px
+    background: #c44536
+    color: #fff
+    border-radius: 12px
+    font-weight: 500
+
+.novel-collection-desc
+  font-size: 0.85em
+  color: var(--font-color)
+  opacity: 0.7
+  line-height: 1.5
+  margin-bottom: 10px
+  display: -webkit-box
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  overflow: hidden
+
+.novel-collection-meta
+  font-size: 0.8em
+  color: var(--font-color)
+  opacity: 0.6
+
+// 字体大小控制
+.font-size-control
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  margin: 15px 0
+  padding: 10px
+  background: var(--card-bg)
+  border-radius: 8px
+  border: 1px solid var(--card-border)
+
+.font-label
+  font-size: 0.85em
+  color: var(--font-color)
+  opacity: 0.7
+
+.font-btn
+  width: 36px
+  height: 36px
+  border: 1px solid var(--card-border)
+  background: var(--btn-bg)
+  color: var(--font-color)
+  border-radius: 6px
+  cursor: pointer
+  font-weight: bold
+  font-family: 'Noto Serif SC', serif
+  transition: all 0.2s
+
+  &:hover
+    background: #c44536
+    color: #fff
+    border-color: #c44536
