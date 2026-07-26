@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具导航 · 墨境</title>
+  <link rel="stylesheet" href="/-/css/index.css">
+  <script>(function(){var t=localStorage.getItem('butterfly-theme')||localStorage.getItem('theme')||'light';if(t==='auto')t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);window.addEventListener('storage',function(e){if(e.key==='butterfly-theme'||e.key==='theme'){var n=e.newValue||'light';if(n==='auto')n=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',n)}})})();</script>
+  <style>
+    :root {
+      --bg-body: #ffffff;
+      --bg-card: #ffffff;
+      --bg-hover: rgba(176, 58, 42, 0.04);
+      --text-primary: #2c2c2c;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --border-light: #ece6de;
+      --accent: #b03a2a;
+      --accent-soft: rgba(176, 58, 42, 0.08);
+      --card-shadow: rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #1a1816;
+      --bg-card: #1f1c1a;
+      --bg-hover: rgba(176, 90, 74, 0.08);
+      --text-primary: #cfc8c0;
+      --text-secondary: #9a948c;
+      --text-muted: #6a6560;
+      --border-light: #35302a;
+      --accent: #b05a4a;
+      --accent-soft: rgba(176, 90, 74, 0.12);
+      --card-shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    * { padding: 0; margin: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.7;
+      transition: background 0.3s, color 0.3s;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* 隐藏侧边栏 */
+    #aside-content { display: none !important; }
+    .layout { display: block !important; }
+    #content-inner { max-width: 100% !important; }
+    #page { width: 100% !important; margin: 0 !important; }
+
+    /* ===== 导航栏 ===== */
+    #nav {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .nav-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    .nav-title span { color: var(--accent); }
+    .menus {
+      display: flex;
+      gap: 18px;
+    }
+    .menus a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .menus a:hover { color: var(--accent); }
+
+    #page-site-info {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 16px 24px;
+    }
+    #page-site-info h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    #page-site-info .sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ===== 主容器 ===== */
+    .tools-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 8px 24px 40px 24px;
+    }
+
+    /* ===== 分栏标题 ===== */
+    .tools-section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      padding-left: 12px;
+      border-left: 4px solid var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== 网格 ===== */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    /* ===== 卡片 ===== */
+    .tool-card {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 16px 18px;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+    .tool-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 6px 20px var(--card-shadow);
+    }
+    .tool-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .tool-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1em;
+      flex-shrink: 0;
+      color: #fff;
+      font-weight: 600;
+    }
+    .tool-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .tool-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .tool-url {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    /* ===== 底部 ===== */
+    #footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 18px 24px 24px 24px;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 768px) {
+      #nav { padding: 14px 16px 8px 16px; }
+      .nav-title { font-size: 1rem; }
+      .menus a { font-size: 0.85rem; }
+      #page-site-info { padding: 24px 16px 12px 16px; }
+      #page-site-info h1 { font-size: 1.3rem; }
+      #page-site-info .sub { font-size: 0.85rem; }
+      .tools-container { padding: 4px 16px 30px 16px; }
+      .tools-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .tool-card { padding: 14px 14px; }
+      .tool-name { font-size: 0.9rem; }
+      .tool-desc { font-size: 0.78rem; }
+      .section-title { font-size: 0.95rem; }
+      #footer { padding: 14px 16px 18px 16px; font-size: 0.75rem; }
+    }
+
+    @media (max-width: 480px) {
+      .tools-grid { grid-template-columns: 1fr; }
+      #page-site-info h1 { font-size: 1.1rem; }
+      .tool-card { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="page-header" class="not-home-page">
+    <nav id="nav">
+      <span class="nav-title">墨境 · <span>工具</span></span>
+      <div class="menus">
+        <a href="/-/">首页</a>
+        <a href="/-/world/">世界观</a>
+        <a href="/-/about/">关于</a>
+      </div>
+    </nav>
+    <div id="page-site-info">
+      <h1>🛠️ 工具导航</h1>
+      <p class="sub">写文、画图时常用的工具集合</p>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <main class="layout" id="content-inner">
+      <div id="page">
+        <div class="tools-container">
+
+          <!-- ===== 第一栏：AI 绘画 ===== -->
+          <div class="tools-section">
+            <div class="section-title"> AI 绘画</div>
+            <div class="tools-grid">
+              <a class="tool-card" href="https://www.midjourney.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#1a1a1a;">MJ</div>
+                  <div class="tool-name">Midjourney</div>
+                </div>
+                <div class="tool-desc">目前最强的 AI 绘画工具，适合小说封面和角色立绘。</div>
+                <div class="tool-url">midjourney.com</div>
+              </a>
+            </div>
+          </div>
+
+          <!-- ===== 第二栏：AI 助手 ===== -->
+          <div class="tools-section">
+            <div class="section-title"> AI 助手</div>
+            <div class="tools-grid">
+              <a class="tool-card" href="https://www.doubao.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#4d6bfe;">豆</div>
+                  <div class="tool-name">豆包</div>
+                </div>
+                <div class="tool-desc">字节跳动旗下 AI 助手，支持联网搜索和文件上传。</div>
+                <div class="tool-url">doubao.com</div>
+              </a>
+              <a class="tool-card" href="https://chat.deepseek.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#4d6bfe;">D</div>
+                  <div class="tool-name">DeepSeek</div>
+                </div>
+                <div class="tool-desc">深度求索，长文本处理能力极强，写设定和润色都很顺手。</div>
+                <div class="tool-url">chat.deepseek.com</div>
+              </a>
+              <a class="tool-card" href="https://chatgpt.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#10a37f;">C</div>
+                  <div class="tool-name">ChatGPT</div>
+                </div>
+                <div class="tool-desc">OpenAI 出品，通用性最强，适合头脑风暴和灵感激发。</div>
+                <div class="tool-url">chatgpt.com</div>
+              </a>
+              <a class="tool-card" href="https://x.ai" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#000000;">G</div>
+                  <div class="tool-name">Grok</div>
+                </div>
+                <div class="tool-desc">xAI 旗下 AI，风格犀利，适合需要锐利视角的对话。</div>
+                <div class="tool-url">x.ai</div>
+              </a>
+              <a class="tool-card" href="https://gemini.google.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#4285f4;">G</div>
+                  <div class="tool-name">Gemini</div>
+                </div>
+                <div class="tool-desc">Google 出品，多模态能力强，支持图片理解和生成。</div>
+                <div class="tool-url">gemini.google.com</div>
+              </a>
+              <a class="tool-card" href="https://kimi.moonshot.cn" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#ff6b35;">K</div>
+                  <div class="tool-name">Kimi</div>
+                </div>
+                <div class="tool-desc">月之暗面出品，超长上下文，适合处理大量文本资料。</div>
+                <div class="tool-url">kimi.moonshot.cn</div>
+              </a>
+            </div>
+          </div>
+
+          <!-- ===== 第三栏：常用链接 ===== -->
+          <div class="tools-section">
+            <div class="section-title"> 常用链接</div>
+            <div class="tools-grid">
+              <a class="tool-card" href="https://x.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#000000;">𝕏</div>
+                  <div class="tool-name">推特</div>
+                </div>
+                <div class="tool-desc">全球社交媒体平台，关注画师和写手的重要窗口。</div>
+                <div class="tool-url">x.com</div>
+              </a>
+              <a class="tool-card" href="https://github.com/huaiqi99/" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#181717;">🐙</div>
+                  <div class="tool-name">GitHub · 淮棋</div>
+                </div>
+                <div class="tool-desc">我的个人代码仓库，存放各种项目和小工具。</div>
+                <div class="tool-url">github.com/huaiqi99/</div>
+              </a>
+              <a class="tool-card" href="https://ewanwtt.net/auth/register?code=Ums0Y9" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#2d7a9b;">☁️</div>
+                  <div class="tool-name">尔湾云</div>
+                </div>
+                <div class="tool-desc">VPS 服务器，适合部署个人网站和项目。</div>
+                <div class="tool-url">ewanwtt.net</div>
+              </a>
+              <a class="tool-card" href="https://www.lofter.com" target="_blank">
+                <div class="tool-card-header">
+                  <div class="tool-icon" style="background:#2e5a88;">📝</div>
+                  <div class="tool-name">Lofter</div>
+                </div>
+                <div class="tool-desc">国内创作者社区，适合发布图文作品。</div>
+                <div class="tool-url">lofter.com</div>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer id="footer">
+    <div id="footer-wrap">
+      <span>©2026 淮棋 · 用文字构筑世界</span>
+    </div>
+  </footer>
+
+</body>
+</html>
