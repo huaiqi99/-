@@ -21,7 +21,7 @@ if catName
 - sameCatPosts.sort(function(a, b) {
 -   var sa = a.source || a.slug || '';
 -   var sb = b.source || b.slug || '';
--   return sa.localeCompare(sb);
+-   return sa.localeCompare(sb, undefined, { numeric: true });
 - });
 
 // 找当前文章位置
