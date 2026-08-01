@@ -186,10 +186,21 @@
       color: var(--text-muted);
       margin-left: 6px;
     }
+    #panel .fullname-row {
+      margin: 2px 0 2px 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    #panel .fullname-row .label {
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
     #panel .role {
       font-size: 13px;
       color: var(--text-secondary);
-      margin: 2px 0 8px 0;
+      margin: 4px 0 8px 0;
     }
     #panel .country-badge {
       display: inline-block;
@@ -407,6 +418,8 @@
     </div>
     <div id="detail" style="display:none;">
       <div class="name" id="dName"></div>
+      <div class="fullname-row" id="dCnFullName"></div>
+      <div class="fullname-row" id="dRuFullName"></div>
       <div class="role" id="dRole"></div>
       <div class="country-badge" id="dCountry"></div>
       <div class="story">
@@ -436,12 +449,14 @@
   };
 
   // ================================================================
-  //  数据：北境玫瑰核心人物（含瓦伦蒂娜）
+  //  数据：北境玫瑰核心人物（含中文全名 & 俄语名）
   // ================================================================
   const ALL_NODES = [
     {
       id: '黎昭',
-      name: '黎昭',
+      name: '黎昭',                     // 星图简称
+      cnFullName: '黎昭',               // 中文全名
+      ruFullName: '',                   // 无俄语名
       role: '烬影会首领 · Omega',
       tag: '烬影会',
       color: COLORS.lizhao,
@@ -450,8 +465,9 @@
     },
     {
       id: '阿列克谢',
-      name: '阿列克谢·彼得罗维奇·沃尔科夫',
-      name: 'Алексей Петрович Волков',
+      name: '阿列克谢',
+      cnFullName: '阿列克谢·彼得罗维奇·沃尔科夫',
+      ruFullName: 'Алексей Петрович Волков',
       role: '巡林铁卫最高指挥官 · Alpha',
       tag: '北境官方',
       color: COLORS.aliekexie,
@@ -459,8 +475,9 @@
     },
     {
       id: '凝淼',
-      name: '达里娅·彼得罗娃',
-      name:'Дарья Петрова',
+      name: '凝淼',
+      cnFullName: '达里娅·彼得罗娃',
+      ruFullName: 'Дарья Петрова',
       role: '双冕北境女皇 · 冰雷之神',
       tag: '北境官方',
       color: COLORS.ningmiao,
@@ -468,8 +485,9 @@
     },
     {
       id: '科利亚',
-      name: '尼古拉·茨韦特科夫',
-      name:'Николай Цветков',
+      name: '科利亚',
+      cnFullName: '尼古拉·茨韦特科夫',
+      ruFullName: 'Николай Цветков',
       role: '教堂神父 · 烬影会秘密盟友',
       tag: '第三方',
       color: COLORS.keliya,
@@ -477,8 +495,9 @@
     },
     {
       id: '瓦伦蒂娜',
-      name: '瓦伦蒂娜·德米特里耶夫娜·莫罗佐娃',
-      name:'Валентина Дмитриевна Морозова',
+      name: '瓦伦蒂娜',
+      cnFullName: '瓦伦蒂娜·德米特里耶夫娜·莫罗佐娃',
+      ruFullName: 'Валентина Дмитриевна Морозова',
       role: '莫罗佐夫家族长女 · Alpha',
       tag: '贵族',
       color: COLORS.walentina,
@@ -487,8 +506,9 @@
     },
     {
       id: '伊万',
-      name: '伊万·格里戈里耶维奇·别利亚耶夫',
-      name: 'Иван Григорьевич Беляев',
+      name: '伊万',
+      cnFullName: '伊万·格里戈里耶维奇·别利亚耶夫',
+      ruFullName: 'Иван Григорьевич Беляев',
       role: '烬影会军师 · Beta',
       tag: '烬影会',
       color: COLORS.yiwan,
@@ -496,8 +516,9 @@
     },
     {
       id: '雷科',
-      name: '列昂尼德·列科夫',
-      name: 'Леонид Леков',
+      name: '雷科',
+      cnFullName: '列昂尼德·列科夫',
+      ruFullName: 'Леонид Леков',
       role: '烬影会劳力担当 · Alpha',
       tag: '烬影会',
       color: COLORS.leike,
@@ -506,7 +527,7 @@
   ];
 
   // ================================================================
-  //  关系数据（已补回 凝淼↔黎昭 的合作线）
+  //  关系数据（完整）
   // ================================================================
   const ALL_LINKS = [
     // 主CP
@@ -519,16 +540,16 @@
     // 黎昭的外部联系
     { source: '黎昭', target: '科利亚', relation: '盟友' },
     { source: '黎昭', target: '瓦伦蒂娜', relation: '相助者' },
-    // 凝淼与黎昭的合作线（补回）
+    // 凝淼与黎昭的合作线
     { source: '凝淼', target: '黎昭', relation: '合作' },
     // 阿列克谢的外部联系
     { source: '阿列克谢', target: '凝淼', relation: '上下级' },
-    // 贵族圈间接关联（瓦伦蒂娜 ↔ 阿列克谢）
+    // 贵族圈间接关联
     { source: '阿列克谢', target: '瓦伦蒂娜', relation: '同僚/关联' }
   ];
 
   // ================================================================
-  //  D3 力导向图引擎
+  //  D3 力导向图引擎（保持不变）
   // ================================================================
   let nodes = [];
   let links = [];
@@ -768,9 +789,27 @@
     document.getElementById('detail').style.display = 'block';
 
     document.getElementById('dName').textContent = d.name;
+
+    // 中文全名
+    const cnEl = document.getElementById('dCnFullName');
+    if (d.cnFullName) {
+      cnEl.innerHTML = `<span class="label">中文全名</span> ${d.cnFullName}`;
+      cnEl.style.display = 'block';
+    } else {
+      cnEl.style.display = 'none';
+    }
+
+    // 俄语名
+    const ruEl = document.getElementById('dRuFullName');
+    if (d.ruFullName) {
+      ruEl.innerHTML = `<span class="label">俄语原名</span> ${d.ruFullName}`;
+      ruEl.style.display = 'block';
+    } else {
+      ruEl.style.display = 'none';
+    }
+
     document.getElementById('dRole').textContent = d.role || '身份未明';
     document.getElementById('dCountry').textContent = '📍 双冕北境';
-
     document.getElementById('dStory').textContent = d.story || '暂无背景记载。';
 
     const rels = ALL_LINKS.filter(l => l.source === d.id || l.target === d.id);
