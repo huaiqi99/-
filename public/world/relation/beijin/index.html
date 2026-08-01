@@ -423,7 +423,7 @@
 
 <script>
   // ================================================================
-  //  配色方案
+  //  配色方案（新增瓦伦蒂娜）
   // ================================================================
   const COLORS = {
     lizhao: '#b0a090',
@@ -431,11 +431,12 @@
     ningmiao: '#a0a0c0',
     keliya: '#c4b090',
     yiwan: '#8ab0b0',
-    leike: '#b0a080'
+    leike: '#b0a080',
+    walentina: '#b58a8a'      // 深玫瑰色
   };
 
   // ================================================================
-  //  数据：北境玫瑰核心人物
+  //  数据：北境玫瑰核心人物（新增瓦伦蒂娜）
   // ================================================================
   const ALL_NODES = [
     {
@@ -472,6 +473,15 @@
       story: '北境下层区偏僻教堂的神父，表面虔诚，实则油滑通透。收留走投无路的烬影会成员，帮助黎昭度过发情期，甚至张罗相亲。知晓许多北境高层的秘密，却只在他认为必要的时刻才开口。'
     },
     {
+      id: '瓦伦蒂娜',
+      name: '瓦伦蒂娜·莫罗佐娃',
+      role: '莫罗佐夫家族长女 · 贵族Alpha',
+      tag: '贵族',
+      color: COLORS.walentina,
+      isMain: false,
+      story: '北境老牌贵族莫罗佐夫家族的掌权者，手握三座矿脉与多条贸易线。表面冷峻精明，在家族与利益间精准权衡。豢养科利亚三年，从最初的“买来的宠物”逐渐软化，最终在科利亚怀孕后打破家族联姻计划，将其接回庄园。她是黎昭在黑暗时期少有的助力者之一，但她的帮助始终建立在与科利亚的羁绊之上。'
+    },
+    {
       id: '伊万',
       name: '伊万',
       role: '烬影会军师 · Beta',
@@ -490,21 +500,27 @@
   ];
 
   // ================================================================
-  //  关系数据：红线表示爱人（黎昭 ↔ 阿列克谢）
-  //  新增：凝淼 ↔ 黎昭 合作关系（普通灰色虚线）
+  //  关系数据（新增瓦伦蒂娜相关三条链接）
   // ================================================================
   const ALL_LINKS = [
+    // 主CP
     { source: '黎昭', target: '阿列克谢', relation: '标记·爱人', red: true },
+    // 副CP（瓦伦蒂娜 ↔ 科利亚）
+    { source: '瓦伦蒂娜', target: '科利亚', relation: '爱人', red: true },
+    // 烬影会内部
     { source: '黎昭', target: '伊万', relation: '首领与军师' },
     { source: '黎昭', target: '雷科', relation: '首领与武力' },
+    // 黎昭的外部联系
     { source: '黎昭', target: '科利亚', relation: '盟友' },
+    { source: '黎昭', target: '瓦伦蒂娜', relation: '相助者' },
+    // 阿列克谢的外部联系
     { source: '阿列克谢', target: '凝淼', relation: '上下级' },
-    // 新增：凝淼与黎昭的合作关系
-    { source: '凝淼', target: '黎昭', relation: '合作' }
+    // 贵族圈间接关联（瓦伦蒂娜 ↔ 阿列克谢）
+    { source: '阿列克谢', target: '瓦伦蒂娜', relation: '同僚/关联' }
   ];
 
   // ================================================================
-  //  D3 力导向图引擎
+  //  D3 力导向图引擎（以下保持不变）
   // ================================================================
   let nodes = [];
   let links = [];
@@ -538,11 +554,9 @@
   //  渲染
   // ================================================================
   function render(isInit = false) {
-    // 拷贝数据，保留位置
     const oldPos = {};
     nodes.forEach(n => { if (n.x !== undefined) oldPos[n.id] = { x: n.x, y: n.y }; });
 
-    // 初始随机位置
     const allNodes = ALL_NODES.map(n => {
       const pos = oldPos[n.id];
       if (pos) {
@@ -561,7 +575,6 @@
 
     nodes = allNodes;
 
-    // 关联关系
     const linksData = ALL_LINKS.map(l => {
       const s = nodes.find(n => n.id === l.source);
       const t = nodes.find(n => n.id === l.target);
@@ -581,7 +594,6 @@
       .data(links, d => d.source.id + '-' + d.target.id);
     linkSel.exit().transition().duration(250).style('opacity', 0).remove();
 
-    // 更新已有连线
     linkSel.select('line')
       .style('stroke', d => d.red ? 'var(--link-red)' : 'var(--link-line)')
       .style('stroke-width', d => d.red ? 2.5 : 1.5)
@@ -622,7 +634,6 @@
       .on('click', function(e, d) {
         e.stopPropagation();
         selectNode(d);
-        // 给其他节点一点随机速度使其重新排布
         nodes.forEach(n => {
           if (n !== d) {
             n.vx = (Math.random() - 0.5) * 6;
