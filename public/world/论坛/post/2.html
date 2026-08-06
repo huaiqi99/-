@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>历史系新来的特聘讲师 · 北境茶馆</title>
+  <style>
+    /* ========== 样式与 post/1.html 完全相同 ========== */
+    :root {
+      --bg-body: #f7f4ef;
+      --bg-card: #ffffff;
+      --bg-card-alt: #f2eee9;
+      --border-light: #ece6de;
+      --border-card: #e4ddd4;
+      --text-primary: #2c2c2c;
+      --text-secondary: #4a4a4a;
+      --text-muted: #8a8a8a;
+      --text-muted-light: #b0aaa2;
+      --accent: #b03a2a;
+      --accent-soft: rgba(176, 58, 42, 0.06);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+      --radius: 12px;
+      --radius-sm: 6px;
+      --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      --transition: 0.25s ease;
+    }
+    [data-theme="dark"] {
+      --bg-body: #181614;
+      --bg-card: #24201c;
+      --bg-card-alt: #1e1b18;
+      --border-light: #35302a;
+      --border-card: #3a3530;
+      --text-primary: #cfc8c0;
+      --text-secondary: #9a948c;
+      --text-muted: #6a6560;
+      --text-muted-light: #5a5550;
+      --accent: #b05a4a;
+      --accent-soft: rgba(176, 90, 74, 0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      transition: background var(--transition), color var(--transition);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0 16px;
+    }
+    #topbar {
+      max-width: 820px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px 0 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    #topbar .brand {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #topbar .brand span { color: var(--accent); }
+    #topbar .brand small {
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+    #topbar .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #topbar .actions a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    #topbar .actions a:hover { color: var(--accent); }
+    .back-btn {
+      padding: 4px 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border-light);
+      background: transparent;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .theme-toggle:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+    #app {
+      max-width: 820px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 20px 0 40px 0;
+      flex: 1;
+    }
+    .back-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .back-bar .breadcrumb {
+      font-size: 0.8rem;
+      color: var(--text-muted-light);
+    }
+    .back-bar .breadcrumb span { color: var(--text-secondary); }
+    .floor {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+    .floor.lz {
+      border-left: 3px solid var(--accent);
+    }
+    .floor .head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .floor .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg-card-alt);
+      border: 2px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .floor .avatar.accent {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    .floor .info {
+      flex: 1;
+      min-width: 0;
+    }
+    .floor .info .name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .floor .info .name .badge {
+      font-size: 0.6rem;
+      font-weight: 400;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 1px 8px;
+      border-radius: 10px;
+    }
+    .floor .info .time {
+      font-size: 0.7rem;
+      color: var(--text-muted-light);
+    }
+    .floor .floor-num {
+      font-size: 0.7rem;
+      color: var(--text-muted-light);
+      font-weight: 400;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .floor .body {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      word-break: break-word;
+    }
+    .floor .body .quote {
+      background: var(--bg-card-alt);
+      border-left: 3px solid var(--border-card);
+      padding: 8px 14px;
+      margin: 8px 0;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .floor .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--text-muted-light);
+    }
+    .floor .actions button {
+      background: transparent;
+      border: none;
+      color: var(--text-muted-light);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all var(--transition);
+    }
+    .floor .actions button:hover {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    @media (max-width: 600px) {
+      body { padding: 0 10px; }
+      #topbar { padding: 14px 0 10px 0; }
+      #topbar .brand { font-size: 0.95rem; }
+      #app { padding: 14px 0 30px 0; }
+      .floor { padding: 14px 14px; }
+      .floor .body { font-size: 0.88rem; }
+      .back-bar { flex-wrap: wrap; }
+    }
+  </style>
+  <script>
+    (function() {
+      try {
+        const raw = localStorage.getItem('theme');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+          }
+        }
+      } catch(e) {}
+    })();
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+    }
+  </script>
+</head>
+<body>
+<div id="topbar">
+  <a class="brand" href="#">🍵 北境茶馆 <small>· 帖子</small></a>
+  <div class="actions">
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
+</div>
+<div id="app">
+  <div class="back-bar">
+    <a class="back-btn" href="../index.html">← 返回列表</a>
+    <span class="breadcrumb">北境茶馆 · <span>历史系新来的特聘讲师</span></span>
+  </div>
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar accent">楼</div>
+      <div class="info">
+        <div class="name">匿名楼主 <span class="badge">楼主</span></div>
+        <div class="time">2026-01-10 09:17</div>
+      </div>
+      <span class="floor-num">#1</span>
+    </div>
+    <div class="body">
+      我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。而且他讲到“祈雨仪式”的时候，说了一句：“其实有时候真的会下雨，不是因为仪式本身，是因为那时候的人太想让它下了，信念够深的话，世界会回应你。”<br><br>
+      我朋友说当时教室里安静得能听见针掉在地上的声音。
+    </div>
+    <div class="actions">
+      <button>👍 点赞</button>
+      <button>💬 回复</button>
+      <button>⭐ 收藏</button>
+    </div>
+  </div>
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info">
+        <div class="name">匿名用户</div>
+        <div class="time">2026-01-10 10:02</div>
+      </div>
+      <span class="floor-num">#2</span>
+    </div>
+    <div class="body">我上了！！我真的上了！！他不是在讲课，他是在带我们参观他的记忆。那种“我好像当时就在场”的感觉真的太强了。</div>
+    <div class="actions"><button>👍 点赞</button><button>💬 回复</button></div>
+  </div>
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info">
+        <div class="name">匿名用户</div>
+        <div class="time">2026-01-10 11:44</div>
+      </div>
+      <span class="floor-num">#3</span>
+    </div>
+    <div class="body">但他上课不用PPT你敢信？？他就带一张手写的提纲，往讲台上一放，然后就开始讲。讲到一半他突然停下来，问：“这个投影仪怎么开来着？”</div>
+    <div class="actions"><button>👍 点赞</button><button>💬 回复</button></div>
+  </div>
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info">
+        <div class="name">匿名用户</div>
+        <div class="time">2026-01-10 13:20</div>
+      </div>
+      <span class="floor-num">#4</span>
+    </div>
+    <div class="body">段深泉不是他对象吗？对象不教他？</div>
+    <div class="actions"><button>👍 点赞</button><button>💬 回复</button></div>
+  </div>
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info">
+        <div class="name">匿名用户</div>
+        <div class="time">2026-01-10 14:55</div>
+      </div>
+      <span class="floor-num">#5</span>
+    </div>
+    <div class="body">段教授教了，但怀老师说“它按钮太多了”。段教授说“就一个红色的”。怀老师说“红色的也分好几种红”……然后段教授不说话了。我笑到打鸣。</div>
+    <div class="actions"><button>👍 点赞</button><button>💬 回复</button></div>
+  </div>
+</div>
+</body>
+</html>
