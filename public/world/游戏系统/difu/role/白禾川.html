@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>白禾川 · 角色卡</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #ece6de;
+            --border-card: #e4ddd4;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --accent: #b03a2a;
+            --accent-soft: rgba(176, 58, 42, 0.06);
+            --accent-soft-hover: rgba(176, 58, 42, 0.10);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.25s ease;
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-card-alt: #1e1b18;
+            --border-light: #35302a;
+            --border-card: #3a3530;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+            --accent-soft-hover: rgba(176, 90, 74, 0.14);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #topbar {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        #topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #topbar .brand span { color: var(--accent); }
+        #topbar .brand small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        #topbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn {
+            padding: 4px 14px;
+            border-radius: 18px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .back-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .theme-toggle:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        #app {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+        }
+
+        /* ===== 角色头部（无头像，纯文字） ===== */
+        .hero-header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .hero-header .name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .hero-header .sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .hero-header .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .hero-header .meta .item .label {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .hero-header .meta .item .value {
+            font-weight: 500;
+        }
+        .hero-header .meta .item .value.accent {
+            color: var(--accent);
+        }
+        .stars {
+            color: #e8b84a;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .tags .tag {
+            font-size: 0.7rem;
+            background: var(--bg-card-alt);
+            padding: 2px 12px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-card);
+        }
+        .tags .tag.accent {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* ===== 双栏 ===== */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 700px) {
+            .row { grid-template-columns: 1fr; }
+        }
+
+        /* ===== 卡片通用 ===== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 18px 20px 20px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+        .card:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .card .title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .card .title .deco {
+            color: var(--accent);
+            margin-right: 4px;
+        }
+        .card .title .badge {
+            font-weight: 400;
+            text-transform: none;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.6rem;
+            padding: 1px 10px;
+            border-radius: 10px;
+            margin-left: 6px;
+        }
+        .card .subtitle {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin: 6px 0 4px 0;
+        }
+
+        /* ===== 雷达图 ===== */
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .radar-wrap svg {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+
+        /* ===== 属性列表 ===== */
+        .attr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 16px;
+        }
+        .attr-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 2px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .attr-item .label {
+            color: var(--text-secondary);
+        }
+        .attr-item .val {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .attr-item .val.s { color: var(--accent); font-weight: 700; }
+        .attr-item .val.a { color: #e8b84a; font-weight: 600; }
+        .attr-item .val.b { color: var(--text-muted); }
+
+        /* ===== 武器/神器 ===== */
+        .weapon-block {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 4px 0;
+        }
+        .weapon-block .name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .weapon-block .sub {
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+            margin-top: 4px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .weapon-block .quote {
+            font-style: italic;
+            color: var(--text-muted);
+            padding-left: 12px;
+            border-left: 2px solid var(--accent);
+            margin-top: 4px;
+            font-size: 0.82rem;
+        }
+
+        /* ===== 技能 ===== */
+        .skill {
+            border-bottom: 1px solid var(--border-card);
+            padding: 10px 0;
+        }
+        .skill:last-child { border-bottom: none; }
+        .skill .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .skill .name .type {
+            font-weight: 400;
+            font-size: 0.65rem;
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+        .skill .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .skill .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+
+        /* ===== 羁绊（分类） ===== */
+        .bond-section {
+            margin-bottom: 12px;
+        }
+        .bond-section:last-child { margin-bottom: 0; }
+        .bond-section .section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .bond-section .section-label .deco {
+            color: var(--accent);
+        }
+        .bond {
+            border-bottom: 1px solid var(--border-card);
+            padding: 8px 0;
+        }
+        .bond:last-child { border-bottom: none; }
+        .bond .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .bond .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .bond .desc .highlight {
+            color: var(--accent);
+        }
+        .bond .trigger {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .bond .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+
+        /* ===== 彩蛋语音（上下结构，场景在上，语音在下） ===== */
+        .voice-section {
+            margin-bottom: 10px;
+        }
+        .voice-section:last-child { margin-bottom: 0; }
+        .voice-section .section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .voice-section .section-label .deco {
+            color: var(--accent);
+        }
+        .voice-item {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .voice-item:last-child { border-bottom: none; }
+        .voice-item .scene {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .voice-item .line {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+        .voice-item .line .highlight {
+            color: var(--accent);
+        }
+        .voice-item .note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding-left: 4px;
+        }
+
+        /* ===== 制作人笔记 ===== */
+        .note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            padding: 4px 0;
+        }
+        .note .quote-block {
+            background: var(--bg-card-alt);
+            border-left: 3px solid var(--accent);
+            padding: 10px 16px;
+            margin: 8px 0;
+            border-radius: var(--radius-sm);
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+        .note .qa {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .note .qa:last-child { border-bottom: none; }
+        .note .qa .q {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .note .qa .a {
+            color: var(--text-secondary);
+            padding-left: 16px;
+        }
+        .note .qa .a .highlight {
+            color: var(--accent);
+        }
+        .note .final {
+            background: var(--accent-soft);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            #topbar { padding: 14px 0 10px 0; }
+            #topbar .brand { font-size: 0.95rem; }
+            .hero-header .name { font-size: 1.4rem; }
+            .card { padding: 14px 14px 16px 14px; }
+            .attr-grid { grid-template-columns: 1fr; }
+            .hero-header .meta { gap: 8px 14px; font-size: 0.8rem; }
+            .voice-item .line { font-size: 0.82rem; }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+        }
+    </script>
+</head>
+<body>
+<div id="topbar">
+    <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
+    <div class="actions">
+        <a class="back-btn" href="../index.html">← 返回图鉴</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+</div>
+
+<div id="app">
+
+    <!-- 头部 -->
+    <div class="hero-header">
+        <div class="name">白禾川</div>
+        <div class="sub">控制系法师 · 持续输出</div>
+        <div class="stars">★★★★★★</div>
+        <div class="meta">
+            <span class="item"><span class="label">阵营</span> <span class="value accent">青丘遗主</span></span>
+            <span class="item"><span class="label">星级</span> <span class="value">六星</span></span>
+            <span class="item"><span class="label">定位</span> <span class="value">控制系法师 / 持续输出</span></span>
+        </div>
+        <div class="tags">
+            <span class="tag accent">限定</span>
+            <span class="tag">控制</span>
+            <span class="tag">持续输出</span>
+            <span class="tag">中/远程</span>
+            <span class="tag">高操作</span>
+        </div>
+    </div>
+
+    <!-- 属性面板 -->
+    <div class="row">
+        <div class="card">
+            <div class="title"><span class="deco">✿</span> 属性面板</div>
+            <div class="radar-wrap">
+                <svg viewBox="0 0 300 300">
+                    <defs>
+                        <radialGradient id="radar-grad">
+                            <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.04"/>
+                            <stop offset="80%" stop-color="var(--accent)" stop-opacity="0.18"/>
+                        </radialGradient>
+                    </defs>
+                    <polygon points="150,30 253.9,90 253.9,210 150,270 46.1,210 46.1,90"
+                             fill="none" stroke="var(--border-card)" stroke-width="0.8"/>
+                    <polygon points="150,60 227.9,105 227.9,195 150,240 72.1,195 72.1,105"
+                             fill="none" stroke="var(--border-card)" stroke-width="0.5" stroke-dasharray="4,4"/>
+                    <polygon points="150,90 201.9,120 201.9,180 150,210 98.1,180 98.1,120"
+                             fill="none" stroke="var(--border-card)" stroke-width="0.5" stroke-dasharray="3,3"/>
+                    <polygon points="150,120 175.9,135 175.9,165 150,180 124.1,165 124.1,135"
+                             fill="none" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
+                    <line x1="150" y1="30" x2="150" y2="270" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
+                    <line x1="46.1" y1="90" x2="253.9" y2="210" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
+                    <line x1="253.9" y1="90" x2="46.1" y2="210" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
+                    <polygon points="150,45 240.6,107 221.4,198 150,252 78.6,198 59.4,107"
+                             fill="url(#radar-grad)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+                    <circle cx="150" cy="45" r="3" fill="var(--accent)"/>
+                    <circle cx="240.6" cy="107" r="3" fill="var(--accent)"/>
+                    <circle cx="221.4" cy="198" r="3" fill="var(--accent)"/>
+                    <circle cx="150" cy="252" r="3" fill="var(--accent)"/>
+                    <circle cx="78.6" cy="198" r="3" fill="var(--accent)"/>
+                    <circle cx="59.4" cy="107" r="3" fill="var(--accent)"/>
+                    <text x="150" y="16" fill="var(--text-muted)" font-size="8" text-anchor="middle">攻击</text>
+                    <text x="262" y="108" fill="var(--text-muted)" font-size="8" text-anchor="start">防御</text>
+                    <text x="238" y="208" fill="var(--text-muted)" font-size="8" text-anchor="start">范围伤害</text>
+                    <text x="150" y="288" fill="var(--text-muted)" font-size="8" text-anchor="middle">控制</text>
+                    <text x="62" y="208" fill="var(--text-muted)" font-size="8" text-anchor="end">单体</text>
+                    <text x="38" y="108" fill="var(--text-muted)" font-size="8" text-anchor="end">生存</text>
+                    <text x="150" y="38" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="middle">90</text>
+                    <text x="246" y="105" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="start">68</text>
+                    <text x="228" y="202" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="start">85</text>
+                    <text x="150" y="265" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="middle">95</text>
+                    <text x="72" y="202" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="end">70</text>
+                    <text x="52" y="105" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="end">65</text>
+                </svg>
+            </div>
+        </div>
+        <div class="card">
+            <div class="title"><span class="deco">✿</span> 详细数值</div>
+            <div class="attr-grid">
+                <div class="attr-item"><span class="label">攻击</span><span class="val s">90 S</span></div>
+                <div class="attr-item"><span class="label">防御</span><span class="val b">68 B+</span></div>
+                <div class="attr-item"><span class="label">速度</span><span class="val a">82 A+</span></div>
+                <div class="attr-item"><span class="label">射程</span><span class="val s">中/远</span></div>
+                <div class="attr-item"><span class="label">范围伤害</span><span class="val s">85 S</span></div>
+                <div class="attr-item"><span class="label">单体伤害</span><span class="val a">70 A</span></div>
+                <div class="attr-item"><span class="label">控制</span><span class="val s">95 SS</span></div>
+                <div class="attr-item"><span class="label">辅助</span><span class="val">15 D</span></div>
+                <div class="attr-item"><span class="label">生存</span><span class="val b">65 B</span></div>
+                <div class="attr-item"><span class="label">操作难度</span><span class="val s">★★★★☆ 高</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 本命武器 -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 本命武器</div>
+        <div class="weapon-block">
+            <div class="name">九尾狐火</div>
+            <div>青丘九尾天狐的本命之火，具备侵蚀、灼烧、持续伤害三重特性。</div>
+            <div>威力远弱于罗修的黑焰，但胜在毫无使用限制——白禾川不需要任何人“看着”他。</div>
+            <div>可化作弧形虚影扑杀敌人，也可凝为火墙封锁战场，燃烧时间极长。</div>
+            <div class="quote">“狐火不会烧死你，它会慢慢把你烤熟。就像当年的青丘。”——白禾川</div>
+        </div>
+    </div>
+
+    <!-- 专属神器 -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 专属神器</div>
+        <div class="weapon-block">
+            <div class="name">时溯玉翎 · 玉骨扇</div>
+            <div>青丘遗物，形如白玉骨扇，扇面流转着时序之力。</div>
+            <div>可完全暂停某一范围内的时间，令范围内一切生灵陷入绝对静止。</div>
+            <div>与程木栖的“时间凝滞”不同，玉骨扇的暂停是彻底的——连思维都会被冻结。</div>
+            <div>对友方不生效，白禾川不会控制自己人。</div>
+            <div class="quote">“我没那么蠢。”——白禾川</div>
+            <div>扇面每一次开合，都在消耗使用者的寿元。白禾川不在乎。</div>
+            <div class="quote">“反正我也不想活太久。”——白禾川</div>
+        </div>
+    </div>
+
+    <!-- 特殊机制（无） -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 特殊机制</div>
+        <div style="font-size:0.85rem;color:var(--text-muted);padding:4px 0;">无</div>
+    </div>
+
+    <!-- 技能组 -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 技能组</div>
+
+        <div class="skill">
+            <div class="name">普攻 · 狐火·焚 <span class="type">普攻</span></div>
+            <div class="desc">释放狐火攻击单体敌人，造成法术伤害，并附加“灼烧”效果，持续造成伤害。狐火的温度不算高，但烧得特别久。白禾川喜欢看敌人慢慢被烧死的模样。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">战技 · 时溯·凝 <span class="type">战技</span></div>
+            <div class="desc">挥动玉骨扇，暂停选定范围内的全部时间，使范围内敌人进入“绝对静止”状态，无法行动、无法施法、无法被选中（对友方不生效），持续数秒。技能冷却时间较长。白禾川很少用这招——不是心疼寿元，是觉得敌人不反抗就没意思了。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">必杀 · 青丘·烬土之海 <span class="type">必杀</span></div>
+            <div class="desc">解放九尾狐火，对前方大范围区域持续喷射狐火，造成多段法术伤害，并在地面留下持续燃烧的“烬土”区域，踏入其中的敌人将持续受到伤害并减速。白禾川开大的时候，整个战场都会变成青丘废土的颜色。他不会像罗修那样犹豫——他巴不得烧得更旺一些。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">被动 · 千年执念 <span class="type">被动</span></div>
+            <div class="desc">战斗时间越长，白禾川的法术伤害越高，每过一段时间提升一定比例的攻击力，无上限。</div>
+            <div class="quote">“我等了一千年，不差这一会儿。”</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">被动 · 狐族之傲 <span class="type">被动</span></div>
+            <div class="desc">生命值低于一定比例时，自动解除所有控制效果，并在短时间内免疫控制，同时释放一次无消耗的狐火反击。青丘之主，不会跪着死。</div>
+        </div>
+    </div>
+
+    <!-- 羁绊 -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 羁绊效果</div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 孽缘</div>
+            <div class="bond">
+                <div class="name">白禾川 · 天命君·司衡</div>
+                <div class="desc">双方对彼此造成的伤害提升 30%。双方技能有 20% 概率对对方生效（友伤）。</div>
+                <div class="quote">“我恨他，他也恨我。这就够了。”</div>
+                <div class="trigger">触发条件：白禾川与天命君·司衡同时出场</div>
+            </div>
+            <div class="bond">
+                <div class="name">白禾川 · 天命君·司衡（互为敌对时）</div>
+                <div class="desc">双方对彼此造成的伤害提升 30%。白禾川对天命君造成伤害时，有概率触发“秦雨令”语音。</div>
+                <div class="trigger">触发条件：白禾川与天命君·司衡互为敌对</div>
+            </div>
+        </div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 执念</div>
+            <div class="bond">
+                <div class="name">白禾川 · 秦雨令</div>
+                <div class="desc">秦雨令受到攻击时，白禾川有 30% 概率为其承受该次伤害。</div>
+                <div class="quote">“……别误会。我只是还没跟你算完账。”</div>
+                <div class="trigger">触发条件：白禾川与秦雨令同时出场</div>
+            </div>
+            <div class="bond">
+                <div class="name">白禾川 · 秦雨令（秦雨令退场时）</div>
+                <div class="desc">秦雨令退场时，白禾川进入<span class="highlight">「狂暴」</span>状态：攻击力提升 50%，技能冷却减半，持续至战斗结束。狂暴状态下，白禾川的狐火变为苍白色，伤害额外提升 20%。狂暴状态结束后，白禾川会陷入短暂的虚弱。他已经不在乎了。</div>
+                <div class="quote">“你……你又走了？”</div>
+                <div class="trigger">触发条件：秦雨令退场</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  彩蛋语音（上下结构，场景在上，语音在下）                       -->
+    <!-- ============================================================ -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 彩蛋语音</div>
+
+        <!-- 与天命君敌对 -->
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与天命君·司衡（互为敌对）</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">天命君：“两千年前，你烧了我的家。”<br>白禾川：“今天，我烧你的命。”<br>天命君：“……你不会赢。”<br>白禾川：“我知道。但我不会停。”</div>
+            </div>
+        </div>
+
+        <!-- 与秦雨令敌对 -->
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与秦雨令（互为敌对）</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">秦雨令：“你站在我对面？”<br>白禾川：“……好。”<br>（沉默）<br>白禾川：“好。”</div>
+            </div>
+        </div>
+
+        <!-- 与各角色同队 -->
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与罗修同队</div>
+            <div class="voice-item">
+                <div class="scene">嘲讽</div>
+                <div class="line">白禾川：“黑焰？呵。烧自己人的火，也配叫火？”<br>罗修没有回答。魏元璟在远处喊：“罗修，别理他。”<br>白禾川：“……有人管的感觉，挺好的。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与栾方棋同队</div>
+            <div class="voice-item">
+                <div class="scene">嘲讽</div>
+                <div class="line">白禾川：“一棵树也配当神器？我青丘的树，比你高十倍。”<br>栾方棋微笑：“那您的树，还在吗？”<br>白禾川沉默。此后再也不跟栾方棋说话。</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
+            <div class="voice-item">
+                <div class="scene">嘲讽</div>
+                <div class="line">白禾川：“你不说话的样子，很像一个人。”<br>白禾川：“……算了。不像。他不会站在我这边。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与魏元璟同队</div>
+            <div class="voice-item">
+                <div class="scene">嘲讽</div>
+                <div class="line">白禾川：“笛子？你吹笛子的样子，跟他一样蠢。”<br>魏元璟：“谁？”<br>白禾川不说话了。过了很久，才低声说：“……一个连自己是谁都不知道的人。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与程木栖同队</div>
+            <div class="voice-item">
+                <div class="scene">嘲讽</div>
+                <div class="line">白禾川：“你的琴弦断过三次？我活了两千年，断过的东西比你见过的都多。”<br>程木栖微笑：“那您接回来了吗？”<br>白禾川：“……”<br>程木栖轻声说：“断了的东西，接回来就不是原来的了。”<br>白禾川：“……我知道。”</div>
+            </div>
+        </div>
+
+        <!-- 极特殊情况 -->
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 极特殊情况</div>
+            <div class="voice-item">
+                <div class="scene">我方秦雨令被敌对天命君击杀</div>
+                <div class="line">白禾川：“你……你敢杀她？”<br>（停顿）<br>白禾川：“不……是你。是你杀了她,两千年前就是你,两千年后还是你。”<br>（笑声，逐渐变成嘶吼）<br>白禾川：“天命君……你欠我的，这辈子也还不清。”<br><span class="highlight">白禾川进入永久狂暴状态，持续至战斗结束。语音结束后，白禾川的狐火变为苍白色，不再熄灭。</span></div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">我方天命君被敌对秦雨令击杀</div>
+                <div class="line">白禾川：“……死得好。”<br>（沉默良久）<br>白禾川：“……不,不好。”<span class="note">此语音极难触发，至今只有三段录像。玩家称之为“白禾川唯一一次说人话”。</span></div>
+            </div>
+        </div>
+
+        <!-- 狂暴 / 阵亡 -->
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 其他</div>
+            <div class="voice-item">
+                <div class="scene">狂暴状态触发</div>
+                <div class="line">“青丘……不在了。”<br>（停顿）<br>“我也不在了。”</div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">阵亡</div>
+                <div class="line">“秦雨令，是迟，天命君……你说凡人求神是贪婪，那神骗凡人，又算什么？”</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 制作人笔记 -->
+    <div class="card">
+        <div class="title"><span class="deco">✿</span> 制作人笔记</div>
+        <div class="note">
+
+            <div class="qa">
+                <div class="q">关于阵营归属</div>
+                <div class="a">玩家问：白禾川为什么不是归终殿阵营？<br>
+                官方回答：他不需要归终殿。他有青丘。哪怕青丘已经烧了八百年，哪怕狐族只剩他一个——<span class="highlight">青丘之主，永远不会属于任何人的殿。</span><br>
+                玩家追问：那他在游戏里算什么？<br>
+                官方沉默了一下，说：<span class="highlight">算一个没有家的人。</span></div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于白禾川的强度</div>
+                <div class="a">有玩家质疑：白禾川的控制技能是不是太强了？时间暂停，这谁打得过？<br>
+                策划回复：玉骨扇的冷却时间很长。而且白禾川的爆发输出不高，他需要时间慢慢烧。遇到高爆发的阵容，他可能还没开出大就被秒了。<br>
+                玩家：那不就是“控制强但身板脆”？<br>
+                策划：对,就像当年的青丘。很强，但也很脆。一烧就没了。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于白禾川喜欢秦雨令吗</div>
+                <div class="a">社区发起投票：白禾川到底喜不喜欢秦雨令？<br>
+                选项A：喜欢。选项B：恨。选项C：又爱又恨。选项D：他自己也不知道。<br>
+                <span class="highlight">87% 的玩家选了 D。</span><br><br>
+                官方策划在制作人笔记里写了这样一段话：<br>
+                <div class="quote-block">
+                    “爱与恨，本就是一体两面。<br>
+                    他恨天命君，因为天命君烧了青丘。<br>
+                    他找了两百年秦雨令的魂魄，翻遍了天地间每一个角落。<br>
+                    他不知道秦雨令就是天命君。<br>
+                    如果他早一点知道，会放弃吗？会杀了他吗？会……更恨他吗？<br>
+                    还是会在那两千年的执念里，多出一个连他自己都说不清楚的东西？<br>
+                    我们不知道。白禾川也不知道。<br>
+                    但他在临死前说的最后一句话是：<br>
+                    ‘秦雨令，是迟，天命君……你说凡人求神是贪婪，那神骗凡人，又算什么？’<br>
+                    他没有问‘你爱不爱我’。<br>
+                    他问的是‘你凭什么骗我’。<br>
+                    这就是白禾川。一个连临死前的质问，都分不清是恨还是不甘的人。<br>
+                    所以，他喜欢秦雨令吗？<br>
+                    <span class="highlight">爱与恨，本就是一体两面。</span><br>
+                    而他，<span class="highlight">两样都占了。</span>”
+                </div>
+                这段笔记发布后，玩家社区炸了。转发量破百万，评论区哭成一片。有人写道：<br>
+                “白禾川不是反派。他是一个爱错人、恨错人、找错人，最后连自己该恨谁都搞不清楚的可怜人。”<br>
+                还有人写：他没有家。他没有族人。他连恨的人都是他找了两百年的人。他什么都没有。他只有一把烧不完的狐火，和一个停不下来的时间。
+            </div>
+
+            <div class="qa">
+                <div class="q">关于语音彩蛋</div>
+                <div class="a">极特殊情况：我方秦雨令被敌对天命君击杀时触发<br>
+                ——白禾川进入永久狂暴状态，持续至战斗结束。语音结束后，白禾川的狐火变为苍白色，不再熄灭。<br><br>
+                我方天命君被敌对秦雨令击杀时触发<br>
+                ——“谁都别死。你们都别死。让我一个人死就够了。”<br>
+                此语音极难触发，至今只有三段录像。玩家称之为“白禾川唯一一次说人话”。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于白禾川的死</div>
+                <div class="a">玩家问：白禾川在剧情里死了，那游戏里还能用吗？<br>
+                官方：能用的。角色死亡不影响游戏使用。这是常识。<br>
+                玩家：那他的语音……<br>
+                官方：他死之前的语音，都在。死之后的语音……他没有死之后。他的故事结束了。<br>
+                玩家沉默了，然后说：那他的羁绊效果呢？和秦雨令一起出场的时候，秦雨令退场他会狂暴。<br>
+                官方：对。<br>
+                玩家：那如果秦雨令没退场，他就不狂暴？<br>
+                官方：对。<br>
+                玩家：那如果秦雨令一直没退场呢？那他就一直不用狂暴？那他就不用死了？<br>
+                <span class="highlight">官方没有回答。</span><br>
+                玩家社区把这句未回答的话，解读为：<span class="highlight">“是的。如果秦雨令一直在他身边，白禾川就不用死。”</span>然后社区哭了。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于白禾川能不能赢</div>
+                <div class="a">有玩家在社区发帖：《白禾川到底能不能打赢天命君？》<br>
+                帖子里详细计算了两人的数值、技能、羁绊效果。<br>
+                结论是：白禾川的胜率不到 10%。<br>
+                但狂暴状态下，白禾川才会狂暴，胜率还是 10%。<br>
+                在秦雨令在场且退场，胜率提升到 45%。<br>
+                如果秦雨令活着，白禾川不会狂暴。<br><br>
+                帖子最后写道：<br>
+                <span class="highlight">“白禾川只有在秦雨令死的时候，才会变强。但如果秦雨令活着，他宁可不要那 35% 的胜率。”</span><br><br>
+                评论区高赞：<br>
+                “这就是白禾川。一个宁愿输，也不愿意让她死的人。”<br>
+                第二高赞：“不是。他是宁可认输，也不愿意靠她死才能赢。”<br>
+                第三高赞：“他需要的不是狂暴,他需要的是她活着。”</div>
+            </div>
+
+            <div class="final">
+                在白禾川的角色设计文档最后一页，策划写了一句话，没有署名，没有日期，只是用铅笔草草写就：
+                <br><br>
+                “青丘烧了八百年，他找了秦雨令两百年。<br>
+                他恨天命君一千年。<br>
+                他活了这么久，到头来，他什么都没有。<br>
+                他偷了两千年的时间，就为了等一个永远不会回来的人。<br>
+                值得吗？<br>
+                不值得。”
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
