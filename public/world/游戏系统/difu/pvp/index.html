@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>社区 PVP · 归终纪</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #ece6de;
+            --border-card: #e4ddd4;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --accent: #b03a2a;
+            --accent-soft: rgba(176, 58, 42, 0.06);
+            --accent-soft-hover: rgba(176, 58, 42, 0.10);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.25s ease;
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-card-alt: #1e1b18;
+            --border-light: #35302a;
+            --border-card: #3a3530;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+            --accent-soft-hover: rgba(176, 90, 74, 0.14);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #topbar {
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        #topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #topbar .brand span { color: var(--accent); }
+        #topbar .brand small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        #topbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn {
+            padding: 4px 14px;
+            border-radius: 18px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .back-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .theme-toggle:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        #app {
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 24px 0 0 0;
+            flex: 1;
+        }
+
+        /* 引文 */
+        .epigraph {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+            padding: 0 0 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 24px;
+            line-height: 1.8;
+            text-align: center;
+        }
+        .epigraph .mark {
+            color: var(--accent);
+        }
+
+        /* 版本梗概 */
+        .version-brief {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            box-shadow: var(--shadow-sm);
+        }
+        .version-brief .label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .version-brief .label .deco {
+            color: var(--accent);
+        }
+
+        /* 卡片通用 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 16px 20px 18px 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color var(--transition);
+        }
+        .card:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .card .title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .card .title .deco {
+            color: var(--accent);
+            margin-right: 4px;
+        }
+
+        /* 阵容表格 */
+        .comp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2px 16px;
+            font-size: 0.85rem;
+        }
+        .comp-grid .comp-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 4px 0;
+        }
+        .comp-grid .comp-desc {
+            color: var(--text-secondary);
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .comp-grid .comp-desc:last-child {
+            border-bottom: none;
+        }
+        .comp-grid .comp-name:last-child {
+            border-bottom: none;
+        }
+
+        /* 热评 */
+        .comment {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-card);
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .comment:last-child {
+            border-bottom: none;
+        }
+        .comment .author {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+        }
+        .comment .text {
+            color: var(--text-secondary);
+        }
+        .comment .text .highlight {
+            color: var(--accent);
+        }
+
+        /* 梗百科 */
+        .meme {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 4px 14px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+            font-size: 0.85rem;
+        }
+        .meme:last-child {
+            border-bottom: none;
+        }
+        .meme .term {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .meme .def {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 更新信息 */
+        .update-note {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        @media (max-width: 600px) {
+            #topbar { padding: 14px 0 10px 0; }
+            #topbar .brand { font-size: 0.95rem; }
+            #app { padding: 16px 0 0 0; }
+            .card { padding: 14px 14px 16px 14px; }
+            .comp-grid { grid-template-columns: 1fr; gap: 0; }
+            .comp-grid .comp-name { padding-bottom: 0; }
+            .comp-grid .comp-desc { padding-top: 0; border-bottom: 1px solid var(--border-card); }
+            .meme { grid-template-columns: 1fr; gap: 0; }
+            .meme .term { padding-bottom: 2px; }
+            .version-brief { font-size: 0.85rem; padding: 14px 16px; }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+        }
+    </script>
+</head>
+<body>
+<div id="topbar">
+    <a class="brand" href="#">归终纪 <small>· 社区 PVP</small></a>
+    <div class="actions">
+        <a class="back-btn" href="../index.html">← 返回图鉴</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+</div>
+
+<div id="app">
+
+    <div class="epigraph">
+        — 战局隐于风里，玩家藏于热评 —
+    </div>
+
+    <!-- 内容由 JS 渲染 -->
+    <div id="pvp-content"></div>
+
+</div>
+
+<script>
+    // ================================================================
+    //  PVP 内容池 —— 每次新角色上线，在这里加几条就行
+    // ================================================================
+
+    const PVP_DATA = {
+        // 版本梗概（一段话，描述当前天梯氛围）
+        brief: '程师姐上线后，天梯从“互秒大赛”变成了“谁家师姐先抬手”。部分玩家尝试用罗修单防程木栖，效果尚不明确，但罗修本人表示不想说话。',
+
+        // 热门阵容
+        comps: [
+            {
+                name: '程木栖 + 林淮 + 任意治疗',
+                desc: '「师姐护着，淮哥输出，奶妈挂机。」这游戏什么时候改名叫《师姐去哪儿》？'
+            },
+            {
+                name: '罗修 + 黎元开 + 程木栖',
+                desc: '双前排硬扛，师姐后排收割。前提是罗修别先冲上去一打五。'
+            },
+            {
+                name: 'SP程木栖 + 罗修 + 林淮',
+                desc: '医者形态的程师姐奶量惊人，罗修终于可以放心冲锋了——反正死不了。'
+            }
+        ],
+
+        // 社区热评
+        comments: [
+            { author: '匿名玩家', text: '程师姐大招那个随机普攻……我前一秒还在笑，后一秒被自己人打死了。' },
+            { author: '匿名玩家', text: '罗修玩家别哭了，你们至少还能上场。你看隔壁来方机，连卡都没出。' },
+            { author: '匿名玩家', text: 'SP程师姐奶量惊人，但我还是想用首席形态打人。谁懂。' },
+            { author: '匿名玩家', text: '林淮玩家最近都在哭：师姐你能不能别光顾着控场，看看我血条啊！' },
+            { author: '匿名玩家', text: '程木栖的被动「师姐在呢」到底有没有实装？我队友说有效果，但我感觉是我的心理作用。' }
+        ],
+
+        // 梗百科
+        memes: [
+            {
+                term: '师姐永不后退',
+                def: '指程木栖首席时期被动「师姐在呢」——实际效果是全体减伤5%，但玩家坚信有这个被动就不会输。'
+            },
+            {
+                term: '罗修陷阱',
+                def: '指罗修玩家开局冲太猛导致团灭的经典操作。常用于调侃：“又进了罗修陷阱。”'
+            },
+            {
+                term: '程师姐的百宝箱',
+                def: '形容程木栖首席时期的随机普攻——你永远不知道她下一招掏出什么武器。'
+            }
+        ],
+
+        // 最后更新时间（手动改）
+        lastUpdated: '2026-08-07'
+    };
+
+    // ================================================================
+    //  渲染函数
+    // ================================================================
+
+    function renderPVP() {
+        const container = document.getElementById('pvp-content');
+        const data = PVP_DATA;
+
+        let html = '';
+
+        // 版本梗概
+        html += `
+            <div class="version-brief">
+                <div class="label"><span class="deco">✦</span> 当前版本</div>
+                ${data.brief}
+            </div>
+        `;
+
+        // 热门阵容
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 热门阵容</div>
+                <div class="comp-grid">
+        `;
+        data.comps.forEach(comp => {
+            html += `
+                <div class="comp-name">${comp.name}</div>
+                <div class="comp-desc">${comp.desc}</div>
+            `;
+        });
+        html += `
+                </div>
+            </div>
+        `;
+
+        // 社区热评
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 社区热评</div>
+        `;
+        data.comments.forEach(c => {
+            html += `
+                <div class="comment">
+                    <span class="author">${c.author}</span>
+                    <span class="text">：${c.text}</span>
+                </div>
+            `;
+        });
+        html += `
+            </div>
+        `;
+
+        // 梗百科
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 本周梗百科</div>
+        `;
+        data.memes.forEach(m => {
+            html += `
+                <div class="meme">
+                    <div class="term">${m.term}</div>
+                    <div class="def">${m.def}</div>
+                </div>
+            `;
+        });
+        html += `
+            </div>
+        `;
+
+        // 更新时间
+        html += `
+            <div class="update-note">
+                最后更新 · ${data.lastUpdated}
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    renderPVP();
+</script>
+
+</body>
+</html>
