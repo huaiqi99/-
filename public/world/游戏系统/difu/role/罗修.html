@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>罗修 · 角色卡</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #ece6de;
+            --border-card: #e4ddd4;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --accent: #7b4b8a;
+            --accent-soft: rgba(123, 75, 138, 0.06);
+            --accent-soft-hover: rgba(123, 75, 138, 0.10);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.25s ease;
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-card-alt: #1e1b18;
+            --border-light: #35302a;
+            --border-card: #3a3530;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --accent: #9b6baa;
+            --accent-soft: rgba(155, 107, 170, 0.08);
+            --accent-soft-hover: rgba(155, 107, 170, 0.14);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #topbar {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        #topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #topbar .brand span { color: var(--accent); }
+        #topbar .brand small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        #topbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .theme-toggle:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        #app {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+        }
+
+        .hero-header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .hero-header .name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .hero-header .sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .hero-header .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .hero-header .meta .item .label {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .hero-header .meta .item .value {
+            font-weight: 500;
+        }
+        .hero-header .meta .item .value.accent {
+            color: var(--accent);
+        }
+        .stars {
+            color: #e8b84a;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .tags .tag {
+            font-size: 0.7rem;
+            background: var(--bg-card-alt);
+            padding: 2px 12px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-card);
+        }
+        .tags .tag.accent {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 700px) {
+            .row { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 18px 20px 20px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+        .card:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .card .title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .card .title .deco {
+            color: var(--accent);
+            margin-right: 4px;
+        }
+
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+            min-height: 320px;
+        }
+        .radar-wrap svg {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+
+        .attr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 16px;
+        }
+        .attr-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 2px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .attr-item .label {
+            color: var(--text-secondary);
+        }
+        .attr-item .val {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .attr-item .val.s { color: var(--accent); font-weight: 700; }
+        .attr-item .val.a { color: #e8b84a; font-weight: 600; }
+        .attr-item .val.b { color: var(--text-muted); }
+
+        .weapon-block {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 4px 0;
+        }
+        .weapon-block .name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .weapon-block .quote {
+            font-style: italic;
+            color: var(--text-muted);
+            padding-left: 12px;
+            border-left: 2px solid var(--accent);
+            margin-top: 4px;
+            font-size: 0.82rem;
+        }
+
+        .skill {
+            border-bottom: 1px solid var(--border-card);
+            padding: 10px 0;
+        }
+        .skill:last-child { border-bottom: none; }
+        .skill .name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .skill .name .type {
+            font-weight: 400;
+            font-size: 0.65rem;
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+        .skill .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .skill .desc .highlight {
+            color: var(--accent);
+        }
+        .skill .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+        .skill .sp-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding: 4px 10px;
+            background: var(--bg-card-alt);
+            border-radius: var(--radius-sm);
+            border-left: 2px solid var(--accent);
+        }
+
+        .bond-section {
+            margin-bottom: 12px;
+        }
+        .bond-section:last-child { margin-bottom: 0; }
+        .bond-section .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .bond-section .section-label .deco {
+            color: var(--accent);
+        }
+        .bond {
+            border-bottom: 1px solid var(--border-card);
+            padding: 8px 0;
+        }
+        .bond:last-child { border-bottom: none; }
+        .bond .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .bond .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .bond .desc .highlight {
+            color: var(--accent);
+        }
+        .bond .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+
+        .voice-section {
+            margin-bottom: 10px;
+        }
+        .voice-section:last-child { margin-bottom: 0; }
+        .voice-section .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .voice-section .section-label .deco {
+            color: var(--accent);
+        }
+        .voice-item {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .voice-item:last-child { border-bottom: none; }
+        .voice-item .scene {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .voice-item .line {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+        .voice-item .line .highlight {
+            color: var(--accent);
+        }
+        .voice-item .note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding-left: 4px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+        }
+        .note .qa {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .note .qa:last-child { border-bottom: none; }
+        .note .qa .q {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .note .qa .a {
+            color: var(--text-secondary);
+            padding-left: 16px;
+            line-height: 1.6;
+        }
+        .note .qa .a .highlight {
+            color: var(--accent);
+        }
+        .note .qa .a .player-line {
+            display: block;
+            padding: 2px 0;
+        }
+        .note .final {
+            background: var(--accent-soft);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            #topbar { padding: 14px 0 10px 0; }
+            #topbar .brand { font-size: 0.95rem; }
+            .hero-header .name { font-size: 1.4rem; }
+            .card { padding: 14px 14px 16px 14px; }
+            .attr-grid { grid-template-columns: 1fr; }
+            .hero-header .meta { gap: 8px 14px; font-size: 0.8rem; }
+            .voice-item .line { font-size: 0.82rem; }
+            .card .title { font-size: 0.85rem; }
+            .bond-section .section-label,
+            .voice-section .section-label { font-size: 0.75rem; }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                var raw = localStorage.getItem('theme');
+                if (raw) {
+                    var parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+
+        function toggleTheme() {
+            var html = document.documentElement;
+            var isDark = html.getAttribute('data-theme') === 'dark';
+            var newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+        }
+    </script>
+</head>
+<body>
+
+<div id="topbar">
+    <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
+    <div class="actions">
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+</div>
+
+<div id="app">
+
+    <div class="hero-header">
+        <div class="name">罗修</div>
+        <div class="sub">全能法师 · 六边形战士 · 首席</div>
+        <div class="stars">★★★★★★</div>
+        <div class="meta">
+            <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
+            <span class="item"><span class="label">席位</span> <span class="value">首席</span></span>
+        </div>
+        <div class="tags">
+            <span class="tag accent">主线</span>
+            <span class="tag">全能</span>
+            <span class="tag">群攻</span>
+            <span class="tag">近/中/远</span>
+            <span class="tag">高操作</span>
+            <span class="tag">友伤</span>
+        </div>
+    </div>
+
+    <!-- 属性面板 -->
+    <div class="row">
+        <div class="card">
+            <div class="title"><span class="deco">❖</span> 属性面板</div>
+            <div class="radar-wrap">
+                <svg viewBox="-25 -25 350 350" id="radar-chart"></svg>
+            </div>
+        </div>
+        <div class="card">
+            <div class="title"><span class="deco">❖</span> 详细数值</div>
+            <div class="attr-grid">
+                <div class="attr-item"><span class="label">攻击</span><span class="val s">110 SS</span></div>
+                <div class="attr-item"><span class="label">防御</span><span class="val a">80 A</span></div>
+                <div class="attr-item"><span class="label">速度</span><span class="val a">75 A</span></div>
+                <div class="attr-item"><span class="label">射程</span><span class="val s">近/中/远</span></div>
+                <div class="attr-item"><span class="label">控制</span><span class="val s">85 S</span></div>
+                <div class="attr-item"><span class="label">单体伤害</span><span class="val a">75 A-</span></div>
+                <div class="attr-item"><span class="label">群攻</span><span class="val s">95 SS</span></div>
+                <div class="attr-item"><span class="label">辅助</span><span class="val b">50 B-</span></div>
+                <div class="attr-item"><span class="label">生存</span><span class="val a">82 A</span></div>
+                <div class="attr-item"><span class="label">操作难度</span><span class="val s">★★★★☆ 高</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 本命武器 -->
+    <div class="card">
+        <div class="title"><span class="deco">❖</span> 本命武器 · 九幽焚天焰</div>
+        <div class="weapon-block">
+            <div>罗修的本命武器是一簇黑色的火焰，天庭册封名为「冥渊焚世·九幽焰」。</div>
+            <div style="margin-top:4px;">它并非实体，却能焚烧一切——魂魄、灵力、时间、因果。被它烧过的东西，就算时间倒流也无法完全恢复，因为「烧毁」本身已经被刻进了那件事物的「存在」之中。</div>
+            <div style="margin-top:4px;">天庭曾将此火册封为神器，录入神器名录。但九幽焚天焰只认罗修一人。</div>
+            <div style="margin-top:4px;">平时罗修不怎么用它。一来太强，容易把任务目标烧得渣都不剩；二来——用他的话来说——</div>
+            <div class="quote">“杀鸡不用牛刀，我又不是林淮那小子，天天惦记着一枪带走。”</div>
+            <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">顺带一提，他管这火叫「火」。</div>
+        </div>
+    </div>
+
+    <!-- 特殊机制 · 友伤 -->
+    <div class="card">
+        <div class="title"><span class="deco">❖</span> 特殊机制 · 友伤·焚烬</div>
+        <div class="weapon-block">
+            <div>罗修使用「九幽焚天焰」时，有概率对随机队友造成伤害（伤害为对敌方的 50%）。</div>
+            <div style="margin-top:4px;">魏元璟在场时，友伤概率降低至 5%。魏元璟不在场时，友伤概率为 20%。</div>
+            <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">脸黑的时候会一直触发。罗修自己也很无奈，但他不会道歉。</div>
+            <div class="quote">“我说了让开点。”</div>
+        </div>
+    </div>
+
+    <!-- 技能组 -->
+    <div class="card">
+        <div class="title"><span class="deco">❖</span> 技能组</div>
+
+        <div class="skill">
+            <div class="name">普攻 · 双刀·斩风 <span class="type">普攻</span></div>
+            <div class="desc">挥动双刀攻击，造成物理伤害。攻击时可切换武器形态，普攻附带对应效果：长枪（攻击范围提升）、符箓（附加魂力伤害）、鞭子（概率减速）。</div>
+            <div class="quote">“我用什么武器取决于我今天想怎么打。不是我不会，是我不想。”</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">战技 · 百兵·通明 <span class="type">战技</span></div>
+            <div class="desc">切换武器形态，持续 2 回合。不同形态提供不同增益：长枪（攻击力提升 10%，射程变为远程）、符箓（攻击附带额外魂力伤害）、鞭子（普攻有 30% 概率减速敌人）、双刀（攻击速度提升 15%）。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">必杀 · 九幽焚天焰 <span class="type">必杀</span></div>
+            <div class="desc">解放九幽焚天焰，对敌方全体造成大量法术伤害，并附加「焚烬」效果：目标无法被治疗，持续 2 回合。对已被控制的敌人伤害额外提升 30%。对带有「焚烬」效果的目标造成真实伤害。</div>
+            <div class="sp-desc" style="margin-top:6px;"><span class="highlight">⚠ 友伤判定：</span> 本技能有概率对随机队友造成伤害（伤害为对敌方的 50%）。魏元璟在场时概率 5%，不在场时概率 20%。</div>
+            <div class="quote">“我说了——让开点。”</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">被动 · 鬼修·五百年 <span class="type">被动</span></div>
+            <div class="desc">罗修每回合开始时，若自身生命值低于 70%，攻击力提升 15%。若生命值低于 40%，额外获得 20% 伤害减免。五百年鬼修，不是白活的。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">被动 · 首席·担责 <span class="type">被动</span></div>
+            <div class="desc">当任意队友生命值低于 30% 时，罗修本回合获得一次额外行动机会，且该次行动伤害提升 10%。首席不是白当的。</div>
+        </div>
+    </div>
+
+    <!-- 羁绊效果 -->
+    <div class="card">
+        <div class="title"><span class="deco">❖</span> 羁绊效果</div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 十年共饮</div>
+            <div class="bond">
+                <div class="name">与「魏元璟」同时出场时：</div>
+                <div class="desc">魏元璟在场时，罗修的「九幽焚天焰」友伤概率降低至 5%。魏元璟受到攻击时，罗修有 20% 概率为其挡下该次伤害。双方效果命中提升 10%。<div class="quote">“喝过十年酒，总得看着点。”</div></div>
+            </div>
+        </div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终五席</div>
+            <div class="bond">
+                <div class="name">与「林淮 · 栾方棋 · 程木栖 · 魏元璟」同时出场时：</div>
+                <div class="desc">全体攻击、防御、速度提升 8%。每回合开始时随机解除一名队友的控制效果。</div>
+            </div>
+        </div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 故人·已矣</div>
+            <div class="bond">
+                <div class="name">与「顾执」同时出场时：</div>
+                <div class="desc">无特殊增益。顾执退场时，罗修攻击力提升 10%，持续 1 回合。<div class="quote">“只是认识的人死了。心情不太好，打人更用力了点。”</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 彩蛋语音 -->
+    <div class="card">
+        <div class="title"><span class="deco">❖</span> 彩蛋语音</div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与魏元璟同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">魏元璟：“上次我给你带的酒你喝了吗？”<br>罗修：“哪次？”<br>魏元璟：“我前天从宫里给你带的贡酒！你就忘了吗罗修！”<br>罗修低低笑了一声。</div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">魏元璟退场时</div>
+                <div class="line">罗修：“……元璟！”<br><span class="note">这是你能听到罗修最失态的语气。</span></div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">罗修触发友伤（烧到魏元璟）</div>
+                <div class="line">魏元璟：“罗修！”<br>罗修：“……失误。”<br>魏元璟：“你每次都是失误。”<br>罗修：“……下次不会了。”<br><span class="note">事实上，下次他还是会。</span></div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与魏元璟互为敌对</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">魏元璟：“你个蠢货怎么站在那边去了！”<br>罗修：“打完就陪你喝酒。”</div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">魏元璟被罗修击杀</div>
+                <div class="line">魏元璟：“这个场景……倒是眼熟。”<br>罗修没有说话。</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">罗修：“你顾头不顾尾的毛病什么时候能改改？往前冲的时候能不能看一眼身后？每次防守都得我给你兜着。”<br>林淮：“……谢了。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与栾方棋同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">罗修：“可以啊，现在都能独当一面了。”<br>栾方棋：“……你在夸我？”<br>罗修：“夸你还不乐意？你个……”<br>（话没说完，但意思到了。）<br>栾方棋：“……对味了。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与程木栖同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">罗修：“琴的事……我找人给你弄了把新的，有空试试？”<br>程木栖：“我还以为罗首席不记得自己把某人的琴弄断两次了呢，真是受宠若惊。”<br>罗修：“……你能不能说点好听的。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与顾执同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">顾执：“好久不见。”<br>罗修：“……嗯。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 阵亡</div>
+            <div class="voice-item">
+                <div class="line">“火……好像熄灭了。”</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 制作人笔记 -->
+    <div class="card">
+        <div class="title"><span class="deco">❖</span> 制作人笔记</div>
+        <div class="note">
+
+            <div class="qa">
+                <div class="q">关于神器册封</div>
+                <div class="a">事情是这样的。<br><br>天庭四君之一的司序君，某日下凡巡查人间阴气波动。路过某座荒山时，正好撞见罗修在收一只修行了三百年的厉鬼。司序君站在远处看了一会儿，觉得这地府的小鬼差出手倒是利落，正准备转身离开——她的衣袖被一缕飘散的黑焰溅到了。<br><br>那缕黑焰只有指甲盖大小，司序君随手拂了一下，没灭。又拂了一下，还是没灭。她低头看了看袖口那块越烧越大的黑色缺口，终于皱起了眉。<br><br>三天后，罗修在京城执行任务时被一纸调令拽回地府——地府来人说五殿有人点名要见他。罗修赶到的时候，看到的是坐在阎罗殿客座上喝茶的司序君，以及她袖口上那块没来得及补的黑洞。<br><br>司序君很客气，说要评估一下他的火焰威力。罗修当场烧了块阴铁，又烧了张符纸，最后当着她的面把一盏鬼灯连灯带火苗烧成了虚无。司序君看完沉默了一会儿，说：<span class="highlight">“确实是神器级别的。”</span><br><br>罗修当时的第一反应是：“你不会要把我的火征用了吧？这玩意儿烧的是我的血，别人用不了。”<br><br>司序君笑眯眯地说：“那你有兴趣来天庭任职吗？”<br><br>罗修：“……没兴趣。”<br><br>司序君还挺遗憾的。走之前留了一句话：<span class="highlight">“这火在天庭有名册了。你不用，但它得记着。”</span><br><br>从此之后，「冥渊焚世·九幽焰」正式录入神器名录。罗修本人对此的态度是：“记就记吧，又不用我交份子钱。”</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于强度</div>
+                <div class="a">有玩家发帖：“终于见到个正常的数值了。110攻击，80防御，没几个突出去的，这才是正经六边形。”<br><br>回复区第一条：<span class="highlight">“正常在哪？这年头连六边形战士都有人说正常了，数值怪也能上桌吃饭了属于是。”</span><br><br>另一条：“他群攻95，控制85，这叫正常？你管这叫正常？”<br><br>但也有玩家觉得罗修根本不好用：“有自伤的角色，谁爱用谁用。我抽到他之后试了三场，两场烧到魏元璟，一场烧到程木栖，程木栖还问我是不是故意的。”<br><br>底下回复：“你带魏元璟了吗？”<br>“带了。”<br>“带了还烧？”<br>“带了，5%，我中了。怪谁？”<br>“怪你脸黑。”<br>“怪罗修。”<br>“他烧你的时候你可不敢当面说。”<br><br>还有人认真分析过罗修的友伤机制：<span class="highlight">“20%看着不高，但每回合都触发的话，实际体验大概是三到四回合烧一次队友。如果你队里全是脆皮，三回合下来你自己先把队友干掉了。所以罗修必须配魏元璟，不然就是杀敌一千自损八百——自损的那个还是队友。”</span><br><br>总结：<span class="highlight">“罗修是强，但他需要一张魏元璟才能稳定发挥。没有魏元璟的罗修就像没有准星的炮台——打哪算哪。”</span></div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于三角恋</div>
+                <div class="a">有网友做过一张关系星图，把罗修、林丛言、顾执三个人连在一起，发现这三个人能形成闭环，每个人都在等一个回不来的人。星图发布后被转了几千次，有人评论：<span class="highlight">“看完不笑说明你是罗修。”</span><br><br>然后罗修本人如果听到网友讨论他的黑历史，大概率会烧那个人屁股。<br><br>当然，除了那一小撮执迷不悟的拆官配党，大部分人还是支持修璟cp的。罗修的个人剧情出完之前，他的风评一度很差——很多人觉得他对魏元璟太冷漠了，明明人家都死了又活、活了又等，他就是不开口，看得人直想锤屏幕。<br><br>直到最后一章《我的爱人》发布，以罗修第一人称视角补完了整条情感线，风评一夜之间彻底翻转。<br><br>有玩家看完之后在社区发帖：“我错了。我之前骂罗修渣男，我现在跪下道歉。他不是不爱，他是太爱了，爱到不敢说，爱到死了之后才敢写出来。”<br><br>底下最高赞回复：<span class="highlight">“他说‘魏元璟是我的现在，是我的未来，是我愿意用余生去珍惜的人’。这句话我看了二十遍，每一遍都在哭。”</span><br><br>当然也有人怀疑：“这是不是文案策划把罗修写得太渣了，最后不得不找补的剧情？”<br><br>立刻有人反驳：<span class="highlight">“他要是真的渣，就不会在魏元璟死后把念安带在身边二十年。你管那叫找补？那叫漫长告别。”</span></div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于友伤机制</div>
+                <div class="a">社区投票：“最想让策划删除的机制是什么？”<br><br>罗修的友伤投票率第二。<br>第一是白禾川的友伤（毕竟他两个羁绊都有友伤）。<br><br>有人发帖：<span class="highlight">“概率是个好东西，下次别填了。”</span><br><br>底下：“我觉得不是概率的问题。是罗修的问题。”<br>“罗修有什么问题？”<br>“他烧队友的时候从不道歉。”<br>“他道歉了。”<br>“他说‘失误’和‘下次不会了’。你看他改了吗？”<br>“没改。”<br>“那就是没道歉。”<br><br>然后有人贴了一张游戏截图，截图里罗修刚刚烧到魏元璟，下一秒语音跳出来：“……下次不会了。”而下一回合，他又烧到了魏元璟。<br><br>配文：<span class="highlight">“罗修的嘴比他的火还难灭。”</span><br><br>官方对此没有任何回应。但有玩家在拆包数据里发现过一条被废弃的罗修语音：“……我故意的。”不知道为什么没有实装。有人猜测是太崩人设了，有人猜测是策划试录之后自己也觉得过分了。也有人觉得这才是真实的罗修——他就是故意的，但他不会承认。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于罗修不当神仙</div>
+                <div class="a">有玩家问过：“罗修拒绝天庭的时候在想什么？”<br><br>司序君的戏份实装后，很多人回去重刷了那段剧情。有人总结：<span class="highlight">“司序君问他想不想当神仙的时候，他没有犹豫。他说‘没兴趣’的语气跟他烧鬼的时候一样——干脆，利落，不解释。”</span><br><br>但他后来回到地府，继续烧他的火，继续管他的弟子，继续在魏元璟带酒来的时候低低地笑一声。<br><br>有人说：<span class="highlight">“罗修不当神仙，是因为地府有魏元璟。他等了五百年才等到一个不怕他火的人，他不可能为了一个天庭编制就走。”</span><br><br>也有人不同意：“他不是为了魏元璟。他是为了他自己。他在人间待习惯了，地府就是他的地方。神仙住的地方太干净了，他烧起来不自在。”</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于“我的爱人”</div>
+                <div class="a">《我的爱人》发布当晚，归终纪社区讨论量突破了历史记录。帖子主题从“罗修你终于说了”到“魏元璟你值得”再到“林淮和栾方棋的婚礼能办大一点吗因为我想看罗修随份子的时候笑一下”，什么都有。<br><br>但有一篇帖子写得特别安静，没有被顶到最高，却被人反复收藏。<br><br>标题是：《罗修写“我的爱人”的时候，手抖了没有？》<br><br>内容只有几句话：<br><br>他在《我的爱人》里写魏元璟的时候，用的是“你”。通篇都是“你”。他写顾执的时候用的是“他”。他写魏元璟的时候用“你”。<br><br><span class="highlight">这意味着他写的时候，魏元璟就在他身边。</span><br><br>所以他手抖了没有？<br><br>我不知道。但我知道他写得很慢。<span class="highlight">因为他怕写快了，魏元璟就看不清了。</span></div>
+            </div>
+
+            <div class="final">
+                设计文档最后一页写着一句话，被涂改过好几次，最后留下的版本是：<br><br>
+                <span class="highlight">“他烧了五百年，才找到一个人愿意站在他火里不被烧死。”</span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- 雷达图 -->
+<!-- ============================================================ -->
+<script>
+(function() {
+    var drawStats = [110, 80, 75, 85, 95, 82];
+    var displayStats = [110, 80, 75, 85, 95, 82];
+    var labels = ['攻击', '防御', '速度', '控制', '群攻', '生存'];
+    var cx = 150, cy = 150, maxR = 120;
+    var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
+        return deg * Math.PI / 180;
+    });
+    var scale = 1.0;
+
+    var svg = document.getElementById('radar-chart');
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+
+    var layers = [0.3, 0.5, 0.7, 1.0];
+    layers.forEach(function(ratio) {
+        var r = maxR * ratio;
+        var pts = angles.map(function(a) {
+            return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a));
+        }).join(' ');
+        var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', pts);
+        poly.setAttribute('fill', 'none');
+        poly.setAttribute('stroke', 'var(--border-card)');
+        poly.setAttribute('stroke-width', ratio === 1.0 ? '0.8' : '0.5');
+        if (ratio !== 1.0) poly.setAttribute('stroke-dasharray', '4,4');
+        svg.appendChild(poly);
+    });
+
+    angles.forEach(function(a) {
+        var x = cx + maxR * Math.sin(a);
+        var y = cy - maxR * Math.cos(a);
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', 'var(--border-card)');
+        line.setAttribute('stroke-width', '0.4');
+        line.setAttribute('stroke-dasharray', '2,3');
+        svg.appendChild(line);
+    });
+
+    var vertices = drawStats.map(function(val, i) {
+        var r = (val / 100) * maxR * scale;
+        var a = angles[i];
+        return {
+            x: cx + r * Math.sin(a),
+            y: cy - r * Math.cos(a),
+            val: displayStats[i]
+        };
+    });
+
+    var centerPts = angles.map(function() {
+        return cx + ',' + cy;
+    }).join(' ');
+    var targetPts = vertices.map(function(v) {
+        return v.x + ',' + v.y;
+    }).join(' ');
+
+    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', centerPts);
+    poly.setAttribute('fill', 'var(--accent-soft)');
+    poly.setAttribute('stroke', 'var(--accent)');
+    poly.setAttribute('stroke-width', '2.5');
+    poly.setAttribute('stroke-linejoin', 'round');
+    var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    anim.setAttribute('attributeName', 'points');
+    anim.setAttribute('from', centerPts);
+    anim.setAttribute('to', targetPts);
+    anim.setAttribute('dur', '1.2s');
+    anim.setAttribute('fill', 'freeze');
+    anim.setAttribute('calcMode', 'spline');
+    anim.setAttribute('keySplines', '0.25 0.1 0.25 1');
+    poly.appendChild(anim);
+    svg.appendChild(poly);
+
+    vertices.forEach(function(v) {
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', v.x);
+        circle.setAttribute('cy', v.y);
+        circle.setAttribute('r', '3');
+        circle.setAttribute('fill', 'var(--accent)');
+        circle.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1s');
+        fade.setAttribute('fill', 'freeze');
+        circle.appendChild(fade);
+        svg.appendChild(circle);
+    });
+
+    var labelPositions = [
+        { x: 150, y: 10, text: '攻击', anchor: 'middle' },
+        { x: 264, y: 112, text: '防御', anchor: 'start' },
+        { x: 248, y: 206, text: '速度', anchor: 'start' },
+        { x: 150, y: 286, text: '控制', anchor: 'middle' },
+        { x: 52, y: 210, text: '群攻', anchor: 'end' },
+        { x: 36, y: 106, text: '生存', anchor: 'end' }
+    ];
+    labelPositions.forEach(function(lp) {
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', lp.x);
+        text.setAttribute('y', lp.y);
+        text.setAttribute('fill', 'var(--text-muted)');
+        text.setAttribute('font-size', '8');
+        text.setAttribute('font-weight', '400');
+        text.setAttribute('text-anchor', lp.anchor);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = lp.text;
+        svg.appendChild(text);
+    });
+
+    var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
+    vertices.forEach(function(v, i) {
+        var offset = 12;
+        var a = angles[i];
+        var dx = offset * Math.sin(a);
+        var dy = -offset * Math.cos(a);
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', v.x + dx);
+        text.setAttribute('y', v.y + dy);
+        text.setAttribute('fill', 'var(--accent)');
+        text.setAttribute('font-size', '9');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('text-anchor', anchorMap[i]);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = v.val;
+        text.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1.2s');
+        fade.setAttribute('fill', 'freeze');
+        text.appendChild(fade);
+        svg.appendChild(text);
+    });
+})();
+</script>
+
+</body>
+</html>
