@@ -203,7 +203,7 @@
             border-color: var(--accent-soft-hover);
         }
         .card .title {
-            font-size: 0.72rem;
+            font-size: 0.95rem;   /* 原 0.72rem，调大 */
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -277,7 +277,7 @@
         .skill:last-child { border-bottom: none; }
         .skill .name {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;   /* 原 0.9rem，略大一点，保持层次 */
             display: flex;
             align-items: center;
             gap: 8px;
@@ -311,7 +311,7 @@
         }
         .bond-section:last-child { margin-bottom: 0; }
         .bond-section .section-label {
-            font-size: 0.7rem;
+            font-size: 0.85rem;   /* 原 0.7rem，调大 */
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.4px;
@@ -358,7 +358,7 @@
         }
         .voice-section:last-child { margin-bottom: 0; }
         .voice-section .section-label {
-            font-size: 0.7rem;
+            font-size: 0.85rem;   /* 原 0.7rem，调大 */
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.4px;
@@ -444,6 +444,10 @@
             .attr-grid { grid-template-columns: 1fr; }
             .hero-header .meta { gap: 8px 14px; font-size: 0.8rem; }
             .voice-item .line { font-size: 0.82rem; }
+            /* 移动端标题适当缩小，但仍比原来大 */
+            .card .title { font-size: 0.85rem; }
+            .bond-section .section-label,
+            .voice-section .section-label { font-size: 0.75rem; }
         }
     </style>
     <script>
