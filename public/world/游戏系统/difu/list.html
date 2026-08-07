@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>角色合集 · 归终纪</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #ece6de;
+            --border-card: #e4ddd4;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --accent: #b03a2a;
+            --accent-soft: rgba(176, 58, 42, 0.06);
+            --accent-soft-hover: rgba(176, 58, 42, 0.10);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --radius: 14px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.25s ease;
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-card-alt: #1e1b18;
+            --border-light: #35302a;
+            --border-card: #3a3530;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+            --accent-soft-hover: rgba(176, 90, 74, 0.14);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #topbar {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        #topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #topbar .brand span { color: var(--accent); }
+        #topbar .brand small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        #topbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn {
+            padding: 4px 14px;
+            border-radius: 18px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .back-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .theme-toggle:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        #app {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .page-header .title {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .page-header .sub {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .grid-item {
+            display: block;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 20px 16px 18px 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+        .grid-item:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+        }
+        .grid-item .name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .grid-item .sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .grid-item .meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+        }
+        .grid-item .meta .label {
+            color: var(--text-muted);
+        }
+        .grid-item .stars {
+            color: #e8b84a;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .grid-item .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .grid-item .tags .tag {
+            font-size: 0.6rem;
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            color: var(--text-muted);
+            border: 1px solid var(--border-card);
+        }
+        .grid-item .tags .tag.accent {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .divider {
+            width: 24px;
+            height: 1px;
+            background: var(--border-card);
+            margin: 8px 0 6px 0;
+            transition: background var(--transition);
+        }
+        .grid-item:hover .divider {
+            background: var(--accent);
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            #topbar { padding: 14px 0 10px 0; }
+            #topbar .brand { font-size: 0.95rem; }
+            .page-header .title { font-size: 1.3rem; }
+            .grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 420px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                var raw = localStorage.getItem('theme');
+                if (raw) {
+                    var parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+
+        function toggleTheme() {
+            var html = document.documentElement;
+            var isDark = html.getAttribute('data-theme') === 'dark';
+            var newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+        }
+    </script>
+</head>
+<body>
+
+<div id="topbar">
+    <a class="brand" href="#">归终纪 <small>· 角色合集</small></a>
+    <div class="actions">
+        <a class="back-btn" href="index.html">← 返回首页</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+</div>
+
+<div id="app">
+
+    <div class="page-header">
+        <div class="title">角色合集</div>
+        <div class="sub">— 归终之纪，万物有录 —</div>
+    </div>
+
+    <!-- 角色列表 -->
+    <div class="grid" id="roleGrid">
+
+        <!-- 程木栖 -->
+        <a class="grid-item" href="role/程木栖.html">
+            <div class="name">程木栖</div>
+            <div class="sub">全能控场 · 多面输出</div>
+            <div class="stars">★★★★★★</div>
+            <div class="divider"></div>
+            <div class="meta">
+                <span><span class="label">阵营</span> 归终殿</span>
+                <span><span class="label">星级</span> 六星</span>
+            </div>
+            <div class="tags">
+                <span class="tag accent">控场</span>
+                <span class="tag">多面输出</span>
+                <span class="tag">近/中/远程</span>
+            </div>
+        </a>
+
+        <!-- 白禾川 -->
+        <a class="grid-item" href="role/白禾川.html">
+            <div class="name">白禾川</div>
+            <div class="sub">控制系法师 · 持续输出</div>
+            <div class="stars">★★★★★★</div>
+            <div class="divider"></div>
+            <div class="meta">
+                <span><span class="label">阵营</span> 青丘</span>
+                <span><span class="label">星级</span> 六星</span>
+            </div>
+            <div class="tags">
+                <span class="tag accent">限定</span>
+                <span class="tag">控制</span>
+                <span class="tag">持续输出</span>
+            </div>
+        </a>
+
+    </div>
+
+    <div class="footer-note">
+        更多角色陆续加入中 · 共收录 <span id="count"></span> 位
+    </div>
+
+</div>
+
+<script>
+    // 统计角色数量
+    var grid = document.getElementById('roleGrid');
+    var items = grid.querySelectorAll('.grid-item');
+    document.getElementById('count').textContent = items.length;
+</script>
+
+</body>
+</html>
