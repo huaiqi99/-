@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>归终纪 · 游戏系统</title>
+    <title>角色合集 · 归终纪</title>
     <style>
         :root {
             --bg-body: #f7f4ef;
@@ -16,7 +16,7 @@
             --text-muted: #8a8a8a;
             --accent: #b03a2a;
             --accent-soft: rgba(176, 58, 42, 0.06);
-            --accent-glow: rgba(176, 58, 42, 0.10);
+            --accent-soft-hover: rgba(176, 58, 42, 0.10);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
             --radius: 14px;
@@ -34,7 +34,7 @@
             --text-muted: #6a6560;
             --accent: #b05a4a;
             --accent-soft: rgba(176, 90, 74, 0.08);
-            --accent-glow: rgba(176, 90, 74, 0.15);
+            --accent-soft-hover: rgba(176, 90, 74, 0.14);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
         }
@@ -46,12 +46,12 @@
             transition: background var(--transition), color var(--transition);
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            padding: 0 16px;
+            padding: 0 16px 40px 16px;
             display: flex;
             flex-direction: column;
         }
         #topbar {
-            max-width: 820px;
+            max-width: 960px;
             margin: 0 auto;
             width: 100%;
             padding: 20px 0 12px 0;
@@ -115,118 +115,115 @@
         }
 
         #app {
-            max-width: 820px;
+            max-width: 960px;
             margin: 0 auto;
             width: 100%;
-            padding: 24px 0 40px 0;
-            flex: 1;
+            padding: 20px 0 0 0;
         }
 
-        .epigraph {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-style: italic;
-            letter-spacing: 0.3px;
-            padding: 0 0 20px 0;
-            border-bottom: 1px solid var(--border-light);
+        /* 头部 */
+        .page-header {
             margin-bottom: 24px;
-            line-height: 1.8;
-            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
         }
-        .epigraph .mark {
-            color: var(--accent);
-            font-style: normal;
+        .page-header .title {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .page-header .sub {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
 
+        /* 角色卡片网格 */
         .grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
         }
-        .grid-card {
+        .grid-item {
             display: block;
             background: var(--bg-card);
             border: 1px solid var(--border-card);
             border-radius: var(--radius);
-            padding: 32px 24px 26px 24px;
+            padding: 20px 16px 18px 16px;
             text-decoration: none;
             color: var(--text-primary);
             box-shadow: var(--shadow-sm);
             transition: all var(--transition);
-            position: relative;
         }
-        .grid-card:hover {
+        .grid-item:hover {
             border-color: var(--accent);
             box-shadow: var(--shadow-md);
             transform: translateY(-3px);
         }
-        .grid-card .deco {
-            font-size: 1.4rem;
-            color: var(--accent);
-            opacity: 0.4;
-            margin-bottom: 6px;
-            display: block;
-            letter-spacing: 2px;
-            transition: opacity var(--transition);
-        }
-        .grid-card:hover .deco {
-            opacity: 0.7;
-        }
-        .grid-card .name {
-            font-size: 1.05rem;
+        .grid-item .name {
+            font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 2px;
         }
-        .grid-card .desc {
-            font-size: 0.82rem;
+        .grid-item .sub {
+            font-size: 0.78rem;
             color: var(--text-muted);
-            line-height: 1.6;
-            margin-top: 2px;
         }
-        .grid-card .status {
-            display: inline-block;
-            font-size: 0.65rem;
-            font-weight: 500;
+        .grid-item .meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+        }
+        .grid-item .meta .label {
             color: var(--text-muted);
-            padding: 2px 12px;
-            border-radius: 12px;
+        }
+        .grid-item .stars {
+            color: #e8b84a;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+        .grid-item .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .grid-item .tags .tag {
+            font-size: 0.6rem;
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            color: var(--text-muted);
             border: 1px solid var(--border-card);
-            margin-top: 12px;
-            letter-spacing: 0.3px;
-            transition: all var(--transition);
         }
-        .grid-card:hover .status {
-            border-color: var(--accent-soft);
-            color: var(--accent);
-        }
-        .grid-card .status.done {
-            color: var(--accent);
-            border-color: var(--accent-soft);
+        .grid-item .tags .tag.accent {
             background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
-        .grid-card .divider {
+        .divider {
             width: 24px;
             height: 1px;
             background: var(--border-card);
-            margin: 10px 0 8px 0;
+            margin: 8px 0 6px 0;
             transition: background var(--transition);
         }
-        .grid-card:hover .divider {
+        .grid-item:hover .divider {
             background: var(--accent);
         }
 
         @media (max-width: 600px) {
-            .grid { grid-template-columns: 1fr; }
             #topbar { padding: 14px 0 10px 0; }
             #topbar .brand { font-size: 0.95rem; }
-            #app { padding: 16px 0 30px 0; }
-            .grid-card { padding: 24px 18px 20px 18px; }
-            .epigraph { font-size: 0.78rem; }
+            .page-header .title { font-size: 1.3rem; }
+            .grid { grid-template-columns: 1fr 1fr; }
         }
-        @media (max-width: 400px) {
-            .grid-card .name { font-size: 0.95rem; }
-            .grid-card .desc { font-size: 0.78rem; }
+        @media (max-width: 420px) {
+            .grid { grid-template-columns: 1fr; }
         }
     </style>
     <script>
@@ -254,35 +251,86 @@
 </head>
 <body>
 <div id="topbar">
-    <a class="brand" href="#">归终纪 <small>· 游戏系统</small></a>
+    <a class="brand" href="#">归终纪 <small>· 角色合集</small></a>
     <div class="actions">
-        <a class="back-btn" href="/-/world/">← 返回探索</a>
+        <a class="back-btn" href="index.html">← 返回首页</a>
         <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
 </div>
+
 <div id="app">
-
-    <div class="epigraph">
-        — 角色藏于卷中，战局隐于风里 —
+    <div class="page-header">
+        <div class="title">角色合集</div>
+        <div class="sub">— 归终之纪，万物有录 —</div>
     </div>
 
+    <!-- ============================================================ -->
+    <!--  角色列表（后续新增角色只需在这里加一个卡片）                  -->
+    <!-- ============================================================ -->
     <div class="grid">
-        <a class="grid-card" href="list.html">
-            <span class="deco">✿</span>
-            <div class="name">角色合集</div>
+
+        <!-- 程木栖 -->
+        <a class="grid-item" href="role/程木栖.html">
+            <div class="name">程木栖</div>
+            <div class="sub">全能控场 · 多面输出</div>
+            <div class="stars">★★★★★</div>
             <div class="divider"></div>
-            <div class="desc">查看所有角色卡牌 · 属性 · 技能 · 羁绊</div>
-            <span class="status done">已收录 2 位</span>
+            <div class="meta">
+                <span><span class="label">阵营</span> 归终殿</span>
+                <span><span class="label">星级</span> 五星</span>
+            </div>
+            <div class="tags">
+                <span class="tag accent">控场</span>
+                <span class="tag">多面输出</span>
+                <span class="tag">近/中/远程</span>
+            </div>
         </a>
-        <a class="grid-card" href="pvp/index.html">
-            <span class="deco">✦</span>
-            <div class="name">社区 PVP</div>
+
+        <!-- 白禾川 -->
+        <a class="grid-item" href="role/白禾川.html">
+            <div class="name">白禾川</div>
+            <div class="sub">控制系法师 · 持续输出</div>
+            <div class="stars">★★★★★★</div>
             <div class="divider"></div>
-            <div class="desc">天梯环境 · 热门阵容 · 玩家梗百科</div>
-            <span class="status">建设中</span>
+            <div class="meta">
+                <span><span class="label">阵营</span> 青丘遗主</span>
+                <span><span class="label">星级</span> 六星</span>
+            </div>
+            <div class="tags">
+                <span class="tag accent">限定</span>
+                <span class="tag">控制</span>
+                <span class="tag">持续输出</span>
+            </div>
         </a>
+
+        <!-- 后续新增角色在此复制卡片，修改 href 和内容即可 -->
+        <!--
+        <a class="grid-item" href="role/罗修.html">
+            <div class="name">罗修</div>
+            <div class="sub">近战爆发 · 黑焰</div>
+            <div class="stars">★★★★★</div>
+            <div class="divider"></div>
+            <div class="meta">
+                <span><span class="label">阵营</span> 归终</span>
+                <span><span class="label">星级</span> 五星</span>
+            </div>
+            <div class="tags">
+                <span class="tag">近战</span>
+                <span class="tag">爆发</span>
+            </div>
+        </a>
+        -->
+
     </div>
 
+    <div style="margin-top:20px;font-size:0.8rem;color:var(--text-muted);text-align:center;">
+        更多角色陆续加入中 · 共收录 <span id="count">2</span> 位
+    </div>
 </div>
+
+<script>
+    // 自动统计角色数量
+    document.getElementById('count').textContent = document.querySelectorAll('.grid-item').length;
+</script>
 </body>
 </html>
