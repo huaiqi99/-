@@ -106,6 +106,25 @@
       border-color: var(--text-secondary);
       color: var(--text-primary);
     }
+    .back-home-btn {
+      padding: 4px 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border-light);
+      background: transparent;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-home-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
 
     /* ========== 主容器 ========== */
     #app {
@@ -230,7 +249,7 @@
       color: var(--text-muted-light);
     }
 
-    /* ---- 帖子卡片（点击跳转独立页面） ---- */
+    /* ---- 帖子卡片 ---- */
     .post-item {
       display: block;
       background: var(--bg-card);
@@ -322,13 +341,55 @@
     .post-item .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
 
-    /* ========== 空状态 ========== */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
+    /* ========== 详情视图 ========== */
+    #detail-view {
+      display: none;
     }
+    #detail-view .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: color var(--transition);
+      font-family: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    #detail-view .back-link:hover { color: var(--accent); }
+    #detail-view .detail-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    #detail-view .detail-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #detail-view .detail-body {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: var(--text-secondary);
+      background: var(--bg-card-alt);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border-card);
+      white-space: pre-wrap;
+    }
+    #detail-view .detail-stats {
+      margin-top: 14px;
+      display: flex;
+      gap: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    #detail-view .detail-stats .num { color: var(--text-secondary); font-weight: 500; }
 
     /* ========== 发帖按钮 ========== */
     .new-post-btn {
@@ -441,18 +502,12 @@
     }
     .modal-box .submit-btn:hover { opacity: 0.85; }
 
-    /* 新帖提示（刚发布的帖子暂时没有独立页面） */
-    .new-post-notice {
-      margin-bottom: 10px;
-      padding: 12px 16px;
-      background: var(--accent-soft);
-      border: 1px solid var(--accent);
-      border-radius: var(--radius-sm);
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-    }
-    .new-post-notice strong {
-      color: var(--accent);
+    /* ========== 空状态 ========== */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
     }
 
     /* ========== 响应式 ========== */
@@ -468,6 +523,7 @@
       .filter-bar .search-box input { width: 100px; }
       .modal-box { padding: 18px 16px; }
       .new-post-btn { bottom: 18px; right: 18px; width: 48px; height: 48px; font-size: 1.3rem; }
+      .back-home-btn { font-size: 0.7rem; padding: 3px 10px; }
     }
   </style>
   <script>
@@ -500,6 +556,7 @@
     🍵 北境茶馆 <small>· 炉火正旺</small>
   </a>
   <div class="actions">
+    <a class="back-home-btn" href="../index.html">← 返回首页</a>
     <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
   </div>
 </div>
@@ -536,13 +593,17 @@
       </div>
     </div>
 
-    <!-- 新帖提示（刚发布的） -->
-    <div id="new-post-notice" class="new-post-notice" style="display:none;">
-      ✅ 已发布！<strong id="new-post-title"></strong> —— 查看请点击帖子卡片。
-    </div>
-
     <!-- 帖子容器 -->
     <div id="post-list"></div>
+  </div>
+
+  <!-- ====== 详情视图 ====== -->
+  <div id="detail-view">
+    <button class="back-link" onclick="goBackToList()">← 返回列表</button>
+    <div class="detail-title" id="detail-title"></div>
+    <div class="detail-meta" id="detail-meta"></div>
+    <div class="detail-body" id="detail-body"></div>
+    <div class="detail-stats" id="detail-stats"></div>
   </div>
 
   <!-- ====== 发帖按钮 ====== -->
@@ -585,18 +646,20 @@
 
   const STORAGE_KEY = 'beijing_forum_posts';
 
+  // 默认帖子数据（预设帖子，跳转外部页面）
+  // externalLink 指向对应的静态 HTML 文件
   const DEFAULT_POSTS = [
     {
       id: 1,
-      title: '年度最甜Alpha投票：阿列克谢 vs 瓦伦蒂娜，你选谁？',
+      title: '【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。',
       category: '讨论',
       author: '匿名楼主',
       date: '2026-01-12',
-      content: '快年底了，搞个投票吧！本年度最甜Alpha我提名两位……',
+      content: '大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……',
       replies: 99,
       likes: 3400,
       hot: true,
-      url: 'post/1.html'
+      externalLink: '1.html'
     },
     {
       id: 2,
@@ -604,11 +667,11 @@
       category: '求助',
       author: '匿名楼主',
       date: '2026-01-10',
-      content: '我朋友选了他的《古代祭祀文化与信仰体系》……',
+      content: '我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。',
       replies: 142,
       likes: 5600,
       hot: true,
-      url: 'post/2.html'
+      externalLink: '2.html'
     },
     {
       id: 3,
@@ -616,11 +679,11 @@
       category: '讨论',
       author: '匿名楼主',
       date: '2026-01-08',
-      content: '科利亚那首《归途》你们听过吧？……',
+      content: '科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。',
       replies: 49,
       likes: 2100,
       hot: false,
-      url: 'post/3.html'
+      externalLink: '3.html'
     },
     {
       id: 4,
@@ -628,11 +691,11 @@
       category: '树洞',
       author: '匿名楼主',
       date: '2026-01-05',
-      content: '我是文学院大二的，这学期有一门《千律州文明通史》……',
+      content: '我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。',
       replies: 203,
       likes: 8900,
       hot: false,
-      url: 'post/4.html'
+      externalLink: '4.html'
     },
     {
       id: 5,
@@ -640,14 +703,15 @@
       category: '求助',
       author: '昭昭是我老婆',
       date: '2025-12-28',
-      content: '我们感情很好，他很爱我，我也很爱他……',
+      content: '我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。',
       replies: 312,
       likes: 12000,
       hot: true,
-      url: 'post/5.html'
+      externalLink: '5.html'
     }
   ];
 
+  // 茶馆语录
   const SAYINGS = [
     '一壶茶，三两句闲话，便是人间好时节。',
     '北境的风冷，茶馆的灯暖。',
@@ -667,16 +731,11 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // 确保老帖子有 url 字段，没有则补一个默认
-          return parsed.map(p => {
-            if (!p.url && p.id >= 1 && p.id <= 5) {
-              return { ...p, url: 'post/' + p.id + '.html' };
-            }
-            return p;
-          });
+          return parsed;
         }
       }
     } catch(e) {}
+    // 初始化默认数据
     savePosts(DEFAULT_POSTS);
     return DEFAULT_POSTS;
   }
@@ -698,7 +757,10 @@
   let currentPosts = loadPosts();
   let currentFilter = 'all';
   let currentSearch = '';
+  let currentView = 'list'; // 'list' | 'detail'
+  let currentDetailId = null;
 
+  // 今日发帖数
   function getTodayCount() {
     const today = new Date().toDateString();
     try {
@@ -722,15 +784,26 @@
   // ================================================================
 
   function render() {
+    if (currentView === 'detail') {
+      renderDetail();
+      return;
+    }
+    renderList();
+  }
+
+  // ---- 列表 ----
+  function renderList() {
     const container = document.getElementById('post-list');
     const countEl = document.getElementById('post-count');
 
     let filtered = currentPosts;
 
+    // 分类筛选
     if (currentFilter !== 'all') {
       filtered = filtered.filter(p => p.category === currentFilter);
     }
 
+    // 搜索
     if (currentSearch.trim()) {
       const q = currentSearch.trim().toLowerCase();
       filtered = filtered.filter(p =>
@@ -739,6 +812,7 @@
       );
     }
 
+    // 按日期排序（新帖在前）
     filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     countEl.textContent = filtered.length + ' 个帖子';
@@ -749,30 +823,85 @@
     }
 
     container.innerHTML = filtered.map(post => {
-      // 如果帖子有 url 字段就用它，否则默认用 post/id.html
-      const link = post.url || 'post/' + post.id + '.html';
-      return `
-        <a class="post-item" href="${link}">
-          <div class="title">
-            ${post.title}
-            <span class="category-tag">${post.category}</span>
-            ${post.hot ? '<span class="hot">🔥 热</span>' : ''}
-          </div>
-          <div class="meta">
-            <span class="author">${post.author}</span>
-            <span>·</span>
-            <span>${post.date}</span>
-            <span>·</span>
-            <span>最后回复 ${getRelativeTime(post.date)}</span>
-          </div>
-          <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
-          <div class="stats">
-            <span>💬 <span class="num">${post.replies}</span></span>
-            <span>👍 <span class="num">${formatNumber(post.likes)}</span></span>
-          </div>
-        </a>
+      // 判断是否为外部链接帖子（预设帖子有 externalLink）
+      const isExternal = post.externalLink && typeof post.externalLink === 'string';
+
+      // 卡片内容
+      const cardContent = `
+        <div class="title">
+          ${post.title}
+          <span class="category-tag">${post.category}</span>
+          ${post.hot ? '<span class="hot">🔥 热</span>' : ''}
+        </div>
+        <div class="meta">
+          <span class="author">${post.author}</span>
+          <span>·</span>
+          <span>${post.date}</span>
+          <span>·</span>
+          <span>最后回复 ${getRelativeTime(post.date)}</span>
+        </div>
+        <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
+        <div class="stats">
+          <span>💬 <span class="num">${post.replies}</span></span>
+          <span>👍 <span class="num">${formatNumber(post.likes)}</span></span>
+        </div>
       `;
+
+      if (isExternal) {
+        // 外部链接：渲染为 <a> 标签，跳转到对应的 .html 文件
+        return `<a class="post-item" href="${post.externalLink}" target="_self">${cardContent}</a>`;
+      } else {
+        // 本地帖子：渲染为 div，点击打开详情视图
+        return `<div class="post-item" onclick="openDetail(${post.id})">${cardContent}</div>`;
+      }
     }).join('');
+  }
+
+  // ---- 详情 ----
+  function renderDetail() {
+    const post = currentPosts.find(p => p.id === currentDetailId);
+    if (!post) {
+      goBackToList();
+      return;
+    }
+
+    document.getElementById('list-view').style.display = 'none';
+    document.getElementById('detail-view').style.display = 'block';
+
+    document.getElementById('detail-title').textContent = post.title;
+    document.getElementById('detail-meta').innerHTML = `
+      <span>${post.author}</span>
+      <span>·</span>
+      <span>${post.date}</span>
+      <span>·</span>
+      <span>分类：${post.category}</span>
+      ${post.hot ? '<span>🔥 热门</span>' : ''}
+    `;
+    document.getElementById('detail-body').textContent = post.content;
+    document.getElementById('detail-stats').innerHTML = `
+      <span>💬 <span class="num">${post.replies}</span> 回复</span>
+      <span>👍 <span class="num">${formatNumber(post.likes)}</span> 点赞</span>
+    `;
+  }
+
+  // ---- 视图切换 ----
+  function openDetail(id) {
+    currentDetailId = id;
+    currentView = 'detail';
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBackToList() {
+    currentView = 'list';
+    document.getElementById('list-view').style.display = 'block';
+    document.getElementById('detail-view').style.display = 'none';
+    render();
+  }
+
+  function goHome() {
+    goBackToList();
+    return false;
   }
 
   // ================================================================
@@ -794,11 +923,6 @@
     const days = Math.floor(diff / 24);
     if (days < 7) return days + '天前';
     return dateStr;
-  }
-
-  function goHome() {
-    render();
-    return false;
   }
 
   // ================================================================
@@ -834,9 +958,8 @@
       content: content,
       replies: 0,
       likes: 0,
-      hot: false,
-      // 新帖子没有对应的独立HTML页面，但保留一个占位路径
-      url: 'post/' + (currentPosts.length + 1) + '.html'
+      hot: false
+      // 新帖子没有 externalLink，属于本地帖子
     };
 
     currentPosts = [newPost, ...currentPosts];
@@ -844,12 +967,6 @@
 
     const todayCount = incrementTodayCount();
     document.getElementById('today-num').textContent = todayCount;
-
-    // 显示新帖提示
-    const notice = document.getElementById('new-post-notice');
-    document.getElementById('new-post-title').textContent = title;
-    notice.style.display = 'block';
-    setTimeout(() => { notice.style.display = 'none'; }, 5000);
 
     closeNewPostModal();
     render();
