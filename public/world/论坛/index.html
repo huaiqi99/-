@@ -146,15 +146,8 @@
       box-shadow: var(--shadow-sm);
       align-items: center;
     }
-    .tavern-status .status-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .tavern-status .status-item .num {
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
+    .tavern-status .status-item { display: flex; align-items: center; gap: 4px; }
+    .tavern-status .status-item .num { color: var(--text-secondary); font-weight: 500; }
     .tavern-status .divider { opacity: 0.3; }
     .tavern-status .saying {
       margin-left: auto;
@@ -581,7 +574,7 @@
       replies: 99,
       likes: 3400,
       hot: true,
-      externalLink: '1.html'
+      externalLink: 'post/1.html'
     },
     {
       id: 2,
@@ -593,7 +586,7 @@
       replies: 142,
       likes: 5600,
       hot: true,
-      externalLink: '2.html'
+      externalLink: 'post/2.html'
     },
     {
       id: 3,
@@ -605,7 +598,7 @@
       replies: 49,
       likes: 2100,
       hot: false,
-      externalLink: '3.html'
+      externalLink: 'post/3.html'
     },
     {
       id: 4,
@@ -617,7 +610,7 @@
       replies: 203,
       likes: 8900,
       hot: false,
-      externalLink: '4.html'
+      externalLink: 'post/4.html'
     },
     {
       id: 5,
@@ -629,7 +622,7 @@
       replies: 312,
       likes: 12000,
       hot: true,
-      externalLink: '5.html'
+      externalLink: 'post/5.html'
     }
   ];
 
@@ -652,7 +645,6 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // 把 DEFAULT_POSTS 里的 externalLink 补回去
           const defaultMap = {};
           DEFAULT_POSTS.forEach(p => { defaultMap[p.id] = p.externalLink; });
           return parsed.map(p => ({
@@ -850,7 +842,6 @@
       title, category, author,
       date: new Date().toISOString().slice(0, 10),
       content, replies: 0, likes: 0, hot: false
-      // 新帖子没有 externalLink，属于本地帖子
     };
 
     currentPosts = [newPost, ...currentPosts];
