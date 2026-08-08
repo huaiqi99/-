@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>北境茶馆 · 论坛</title>
   <style>
-    /* ========== CSS 变量（浅色默认） ========== */
+    /* ========== CSS 变量 ========== */
     :root {
       --bg-body: #f7f4ef;
       --bg-card: #ffffff;
       --bg-card-alt: #f2eee9;
+      --bg-modal: rgba(0,0,0,0.35);
       --border-light: #ece6de;
       --border-card: #e4ddd4;
       --text-primary: #2c2c2c;
@@ -17,19 +18,20 @@
       --text-muted: #8a8a8a;
       --text-muted-light: #b0aaa2;
       --accent: #b03a2a;
-      --accent-soft: rgba(176, 58, 42, 0.06);
-      --accent-glow: rgba(176, 58, 42, 0.15);
+      --accent-soft: rgba(176, 58, 42, 0.08);
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
       --radius: 12px;
+      --radius-sm: 8px;
       --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
       --transition: 0.25s ease;
     }
-
     [data-theme="dark"] {
       --bg-body: #181614;
       --bg-card: #24201c;
       --bg-card-alt: #1e1b18;
+      --bg-modal: rgba(0,0,0,0.6);
       --border-light: #35302a;
       --border-card: #3a3530;
       --text-primary: #cfc8c0;
@@ -37,14 +39,12 @@
       --text-muted: #6a6560;
       --text-muted-light: #5a5550;
       --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.08);
-      --accent-glow: rgba(176, 90, 74, 0.2);
+      --accent-soft: rgba(176, 90, 74, 0.12);
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: var(--font);
       background: var(--bg-body);
@@ -52,17 +52,17 @@
       transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+      padding: 0 16px;
       display: flex;
       flex-direction: column;
-      padding: 0 16px;
     }
 
     /* ========== 顶栏 ========== */
     #topbar {
-      max-width: 820px;
+      max-width: 860px;
       margin: 0 auto;
       width: 100%;
-      padding: 20px 0 12px 0;
+      padding: 18px 0 12px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -77,7 +77,7 @@
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     #topbar .brand span { color: var(--accent); }
     #topbar .brand small {
@@ -89,27 +89,8 @@
     #topbar .actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
-    #topbar .actions a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-    }
-    #topbar .actions a:hover { color: var(--accent); }
-    #topbar .actions .back-link {
-      padding: 4px 14px;
-      border-radius: 18px;
-      border: 1px solid var(--border-light);
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      transition: all var(--transition);
-    }
-    #topbar .actions .back-link:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
-
     .theme-toggle {
       background: transparent;
       border: 1px solid var(--border-light);
@@ -128,29 +109,125 @@
 
     /* ========== 主容器 ========== */
     #app {
-      max-width: 820px;
+      max-width: 860px;
       margin: 0 auto;
       width: 100%;
       padding: 20px 0 40px 0;
       flex: 1;
     }
 
-    /* ========== 帖子列表视图 ========== */
+    /* ========== 茶馆实况小条 ========== */
+    .tavern-status {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      margin-bottom: 18px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
+      align-items: center;
+    }
+    .tavern-status .status-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tavern-status .status-item .num {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .tavern-status .divider {
+      opacity: 0.3;
+    }
+    .tavern-status .saying {
+      margin-left: auto;
+      font-style: italic;
+      color: var(--text-muted-light);
+      font-size: 0.75rem;
+    }
+    .tavern-status .saying::before {
+      content: '“';
+      color: var(--accent);
+      opacity: 0.5;
+    }
+    .tavern-status .saying::after {
+      content: '”';
+      color: var(--accent);
+      opacity: 0.5;
+    }
+
+    /* ========== 列表视图 ========== */
     #list-view .list-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 16px;
+      align-items: center;
+      margin-bottom: 14px;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
     }
     #list-view .list-header h2 {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 600;
     }
     #list-view .list-header .count {
       font-size: 0.8rem;
       color: var(--text-muted);
+    }
+
+    /* ---- 分类标签 + 搜索 ---- */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .filter-bar .filter-tag {
+      font-size: 0.75rem;
+      padding: 3px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border-card);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .filter-bar .filter-tag:hover {
+      border-color: var(--text-muted);
+    }
+    .filter-bar .filter-tag.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .filter-bar .search-box {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .filter-bar .search-box input {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition);
+      width: 140px;
+    }
+    .filter-bar .search-box input:focus {
+      border-color: var(--accent);
+    }
+    .filter-bar .search-box input::placeholder {
+      color: var(--text-muted-light);
     }
 
     /* ---- 帖子卡片 ---- */
@@ -166,11 +243,28 @@
       transition: all var(--transition);
       cursor: pointer;
       box-shadow: var(--shadow-sm);
+      animation: card-in 0.4s ease forwards;
+      opacity: 0;
+      transform: translateY(10px);
     }
+    .post-item:nth-child(1) { animation-delay: 0.04s; }
+    .post-item:nth-child(2) { animation-delay: 0.08s; }
+    .post-item:nth-child(3) { animation-delay: 0.12s; }
+    .post-item:nth-child(4) { animation-delay: 0.16s; }
+    .post-item:nth-child(5) { animation-delay: 0.20s; }
+    .post-item:nth-child(6) { animation-delay: 0.24s; }
+    .post-item:nth-child(7) { animation-delay: 0.28s; }
+    .post-item:nth-child(8) { animation-delay: 0.32s; }
+
+    @keyframes card-in {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
     .post-item:hover {
       border-color: var(--accent);
       box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
     .post-item .title {
       font-size: 1rem;
@@ -188,7 +282,13 @@
       padding: 1px 10px;
       border-radius: 12px;
       font-weight: 500;
-      letter-spacing: 0.3px;
+    }
+    .post-item .title .category-tag {
+      font-size: 0.6rem;
+      color: var(--text-muted-light);
+      border: 1px solid var(--border-card);
+      padding: 0 8px;
+      border-radius: 10px;
     }
     .post-item .meta {
       font-size: 0.78rem;
@@ -201,9 +301,6 @@
     .post-item .meta .author {
       color: var(--text-secondary);
       font-weight: 500;
-    }
-    .post-item .meta .dot {
-      opacity: 0.4;
     }
     .post-item .excerpt {
       font-size: 0.88rem;
@@ -225,6 +322,171 @@
     .post-item .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
 
+    /* ========== 详情视图 ========== */
+    #detail-view {
+      display: none;
+    }
+    #detail-view .back-link {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: color var(--transition);
+    }
+    #detail-view .back-link:hover { color: var(--accent); }
+    #detail-view .detail-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    #detail-view .detail-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    #detail-view .detail-body {
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: var(--text-secondary);
+      background: var(--bg-card-alt);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      border: 1px solid var(--border-card);
+      white-space: pre-wrap;
+    }
+    #detail-view .detail-stats {
+      margin-top: 14px;
+      display: flex;
+      gap: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    #detail-view .detail-stats .num { color: var(--text-secondary); font-weight: 500; }
+
+    /* ========== 发帖按钮 ========== */
+    .new-post-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      font-size: 1.6rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: all var(--transition);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .new-post-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 8px 40px var(--accent-glow);
+    }
+
+    /* ========== 发帖弹窗 ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg-modal);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      max-width: 520px;
+      width: 100%;
+      padding: 24px 28px;
+      box-shadow: var(--shadow-lg);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-box .modal-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .modal-box .modal-close {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1;
+    }
+    .modal-box .modal-close:hover { color: var(--text-primary); }
+    .modal-box label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+    .modal-box input,
+    .modal-box select,
+    .modal-box textarea {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .modal-box input:focus,
+    .modal-box select:focus,
+    .modal-box textarea:focus {
+      border-color: var(--accent);
+    }
+    .modal-box textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .modal-box .submit-btn {
+      margin-top: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 8px 24px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .modal-box .submit-btn:hover { opacity: 0.85; }
+
+    /* ========== 空状态 ========== */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
     /* ========== 响应式 ========== */
     @media (max-width: 600px) {
       body { padding: 0 10px; }
@@ -233,6 +495,11 @@
       #app { padding: 14px 0 30px 0; }
       .post-item { padding: 14px 14px; }
       .post-item .title { font-size: 0.92rem; }
+      .tavern-status { font-size: 0.7rem; padding: 8px 14px; gap: 10px; }
+      .tavern-status .saying { display: none; }
+      .filter-bar .search-box input { width: 100px; }
+      .modal-box { padding: 18px 16px; }
+      .new-post-btn { bottom: 18px; right: 18px; width: 48px; height: 48px; font-size: 1.3rem; }
     }
   </style>
   <script>
@@ -249,7 +516,6 @@
         }
       } catch(e) {}
     })();
-
     function toggleTheme() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
@@ -262,130 +528,488 @@
 <body>
 
 <div id="topbar">
-  <a class="brand" href="#">
-    🍵 北境茶馆 <small>· 热门讨论</small>
+  <a class="brand" href="#" onclick="return goHome()">
+    🍵 北境茶馆 <small>· 炉火正旺</small>
   </a>
   <div class="actions">
-    <a class="back-link" href="/-/world/">← 返回探索</a>
     <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
   </div>
 </div>
 
 <div id="app">
+
+  <!-- ====== 茶馆实况小条 ====== -->
+  <div class="tavern-status" id="tavern-status">
+    <span class="status-item">🔥 在线 <span class="num" id="online-num">47</span></span>
+    <span class="divider">|</span>
+    <span class="status-item">📝 今日新帖 <span class="num" id="today-num">0</span></span>
+    <span class="divider">|</span>
+    <span class="status-item">🍵 茶水温度 <span class="num" id="tea-temp">82</span>°</span>
+    <span class="saying" id="saying-text">一壶茶，三两句闲话，便是人间好时节。</span>
+  </div>
+
+  <!-- ====== 列表视图 ====== -->
   <div id="list-view">
+
     <div class="list-header">
       <h2>📋 热门讨论</h2>
-      <span class="count">5 个帖子</span>
+      <span class="count" id="post-count">0 个帖子</span>
     </div>
 
-    <!-- 帖子1 -->
-    <a class="post-item" href="post/6.html">
-      <div class="title">
-        【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。
-        <span class="hot">🔥 热</span>
+    <!-- 分类筛选 + 搜索 -->
+    <div class="filter-bar">
+      <button class="filter-tag active" data-filter="all">全部</button>
+      <button class="filter-tag" data-filter="讨论">讨论</button>
+      <button class="filter-tag" data-filter="求助">求助</button>
+      <button class="filter-tag" data-filter="树洞">树洞</button>
+      <button class="filter-tag" data-filter="同人">同人</button>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="🔍 搜索帖子..." />
       </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span class="dot">·</span>
-        <span>2026-01-12</span>
-        <span class="dot">·</span>
-        <span>最后回复 3小时前</span>
-      </div>
-      <div class="excerpt">
-        大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……
-      </div>
-      <div class="stats">
-        <span>💬 <span class="num">99</span></span>
-        <span>👍 <span class="num">3.4k</span></span>
-      </div>
-    </a>
+    </div>
 
-    <!-- 帖子2 -->
-    <a class="post-item" href="post/2.html">
-      <div class="title">
-        【求助】历史系新来的特聘讲师是不是有点太离谱了？？
-        <span class="hot">🔥 热</span>
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span class="dot">·</span>
-        <span>2026-01-10</span>
-        <span class="dot">·</span>
-        <span>最后回复 1天前</span>
-      </div>
-      <div class="excerpt">
-        我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。而且他讲到“祈雨仪式”的时候，说了一句：“其实有时候真的会下雨……”
-      </div>
-      <div class="stats">
-        <span>💬 <span class="num">142</span></span>
-        <span>👍 <span class="num">5.6k</span></span>
-      </div>
-    </a>
-
-    <!-- 帖子3 -->
-    <a class="post-item" href="post/3.html">
-      <div class="title">
-        【讨论】你们有没有发现《归途》的歌词……细思极恐？
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span class="dot">·</span>
-        <span>2026-01-08</span>
-        <span class="dot">·</span>
-        <span>最后回复 2天前</span>
-      </div>
-      <div class="excerpt">
-        科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——风将你的名字吹向远方……
-      </div>
-      <div class="stats">
-        <span>💬 <span class="num">49</span></span>
-        <span>👍 <span class="num">2.1k</span></span>
-      </div>
-    </a>
-
-    <!-- 帖子4 -->
-    <a class="post-item" href="post/4.html">
-      <div class="title">
-        【树洞】有没有人认识那个新来的历史教授？？我直接垂直入坑
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span class="dot">·</span>
-        <span>2026-01-05</span>
-        <span class="dot">·</span>
-        <span>最后回复 5天前</span>
-      </div>
-      <div class="excerpt">
-        我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。那个教授！！长头发！！金眼睛！！高冷脸！！
-      </div>
-      <div class="stats">
-        <span>💬 <span class="num">203</span></span>
-        <span>👍 <span class="num">8.9k</span></span>
-      </div>
-    </a>
-
-    <!-- 帖子5 -->
-    <a class="post-item" href="post/5.html">
-      <div class="title">
-        【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产
-      </div>
-      <div class="meta">
-        <span class="author">昭昭是我老婆</span>
-        <span class="dot">·</span>
-        <span>2025-12-28</span>
-        <span class="dot">·</span>
-        <span>最后回复 2周前</span>
-      </div>
-      <div class="excerpt">
-        我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。我想让他去看医生，他又不肯。我该怎么办？急，在线等。
-      </div>
-      <div class="stats">
-        <span>💬 <span class="num">312</span></span>
-        <span>👍 <span class="num">1.2w</span></span>
-      </div>
-    </a>
+    <!-- 帖子容器 -->
+    <div id="post-list"></div>
   </div>
+
+  <!-- ====== 详情视图 ====== -->
+  <div id="detail-view">
+    <span class="back-link" onclick="goBackToList()">← 返回列表</span>
+    <div class="detail-title" id="detail-title"></div>
+    <div class="detail-meta" id="detail-meta"></div>
+    <div class="detail-body" id="detail-body"></div>
+    <div class="detail-stats" id="detail-stats"></div>
+  </div>
+
+  <!-- ====== 发帖按钮 ====== -->
+  <button class="new-post-btn" id="new-post-btn" title="写新帖">✍️</button>
+
+  <!-- ====== 发帖弹窗 ====== -->
+  <div class="modal-overlay" id="new-post-modal">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div class="modal-title">✍️ 写新帖</div>
+      <form id="new-post-form">
+        <label for="post-title">标题</label>
+        <input type="text" id="post-title" placeholder="取个吸引人的标题..." required />
+
+        <label for="post-category">分类</label>
+        <select id="post-category">
+          <option value="讨论">讨论</option>
+          <option value="求助">求助</option>
+          <option value="树洞">树洞</option>
+          <option value="同人">同人</option>
+        </select>
+
+        <label for="post-author">署名</label>
+        <input type="text" id="post-author" placeholder="你的名字（或匿名）" value="匿名楼主" />
+
+        <label for="post-content">内容</label>
+        <textarea id="post-content" placeholder="写下你的想法..." required></textarea>
+
+        <button type="submit" class="submit-btn">📨 发布帖子</button>
+      </form>
+    </div>
+  </div>
+
 </div>
+
+<script>
+  // ================================================================
+  //  数据层
+  // ================================================================
+
+  const STORAGE_KEY = 'beijing_forum_posts';
+
+  // 默认帖子数据
+  const DEFAULT_POSTS = [
+    {
+      id: 1,
+      title: '【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。',
+      category: '讨论',
+      author: '匿名楼主',
+      date: '2026-01-12',
+      content: '大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……\n\n关键是这个人演技确实在线，但资源好到离谱。有人扒过他背后是哪个公司在推吗？',
+      replies: 99,
+      likes: 3400,
+      hot: true
+    },
+    {
+      id: 2,
+      title: '【求助】历史系新来的特聘讲师是不是有点太离谱了？？',
+      category: '求助',
+      author: '匿名楼主',
+      date: '2026-01-10',
+      content: '我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。\n\n而且他讲到“祈雨仪式”的时候，说了一句：“其实有时候真的会下雨……”\n\n然后全班沉默了十秒。',
+      replies: 142,
+      likes: 5600,
+      hot: true
+    },
+    {
+      id: 3,
+      title: '【讨论】你们有没有发现《归途》的歌词……细思极恐？',
+      category: '讨论',
+      author: '匿名楼主',
+      date: '2026-01-08',
+      content: '科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。\n\n我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——\n\n“风将你的名字吹向远方……”\n\n你们品品。',
+      replies: 49,
+      likes: 2100,
+      hot: false
+    },
+    {
+      id: 4,
+      title: '【树洞】有没有人认识那个新来的历史教授？？我直接垂直入坑',
+      category: '树洞',
+      author: '匿名楼主',
+      date: '2026-01-05',
+      content: '我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。\n\n那个教授！！长头发！！金眼睛！！高冷脸！！\n\n关键是讲东西讲得极好，全程脱稿，还会突然停下来看着窗外说“这堂课讲到的事情，有些就发生在这片土地上”。',
+      replies: 203,
+      likes: 8900,
+      hot: false
+    },
+    {
+      id: 5,
+      title: '【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产',
+      category: '求助',
+      author: '昭昭是我老婆',
+      date: '2025-12-28',
+      content: '我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。\n\n我想让他去看医生，他又不肯。\n\n我该怎么办？急，在线等。',
+      replies: 312,
+      likes: 12000,
+      hot: true
+    }
+  ];
+
+  // 茶馆语录
+  const SAYINGS = [
+    '一壶茶，三两句闲话，便是人间好时节。',
+    '北境的风冷，茶馆的灯暖。',
+    '说书人一拍惊堂木，满座俱静。',
+    '有些故事，喝着喝着就讲完了。',
+    '茶凉了可以续，人走了……也会回来。',
+    '这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'
+  ];
+
+  // ================================================================
+  //  数据管理
+  // ================================================================
+
+  function loadPosts() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch(e) {}
+    // 初始化默认数据
+    savePosts(DEFAULT_POSTS);
+    return DEFAULT_POSTS;
+  }
+
+  function savePosts(posts) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+    } catch(e) {}
+  }
+
+  function getNextId(posts) {
+    return posts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
+  }
+
+  // ================================================================
+  //  状态管理
+  // ================================================================
+
+  let currentPosts = loadPosts();
+  let currentFilter = 'all';
+  let currentSearch = '';
+  let currentView = 'list'; // 'list' | 'detail'
+  let currentDetailId = null;
+
+  // 今日发帖数（用 localStorage 记录当天已发帖数）
+  function getTodayCount() {
+    const today = new Date().toDateString();
+    try {
+      const raw = localStorage.getItem('beijing_today_count');
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data.date === today) return data.count;
+      }
+    } catch(e) {}
+    return 0;
+  }
+  function incrementTodayCount() {
+    const today = new Date().toDateString();
+    const count = getTodayCount() + 1;
+    localStorage.setItem('beijing_today_count', JSON.stringify({ date: today, count }));
+    return count;
+  }
+
+  // ================================================================
+  //  渲染函数
+  // ================================================================
+
+  function render() {
+    if (currentView === 'detail') {
+      renderDetail();
+      return;
+    }
+    renderList();
+  }
+
+  // ---- 列表 ----
+  function renderList() {
+    const container = document.getElementById('post-list');
+    const countEl = document.getElementById('post-count');
+
+    let filtered = currentPosts;
+
+    // 分类筛选
+    if (currentFilter !== 'all') {
+      filtered = filtered.filter(p => p.category === currentFilter);
+    }
+
+    // 搜索
+    if (currentSearch.trim()) {
+      const q = currentSearch.trim().toLowerCase();
+      filtered = filtered.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.author.toLowerCase().includes(q)
+      );
+    }
+
+    // 按日期排序（新帖在前）
+    filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    countEl.textContent = filtered.length + ' 个帖子';
+
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="empty-state">🍵 没有找到帖子，要不你来写一篇？</div>`;
+      return;
+    }
+
+    container.innerHTML = filtered.map(post => `
+      <div class="post-item" onclick="openDetail(${post.id})">
+        <div class="title">
+          ${post.title}
+          <span class="category-tag">${post.category}</span>
+          ${post.hot ? '<span class="hot">🔥 热</span>' : ''}
+        </div>
+        <div class="meta">
+          <span class="author">${post.author}</span>
+          <span>·</span>
+          <span>${post.date}</span>
+          <span>·</span>
+          <span>最后回复 ${getRelativeTime(post.date)}</span>
+        </div>
+        <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
+        <div class="stats">
+          <span>💬 <span class="num">${post.replies}</span></span>
+          <span>👍 <span class="num">${formatNumber(post.likes)}</span></span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ---- 详情 ----
+  function renderDetail() {
+    const post = currentPosts.find(p => p.id === currentDetailId);
+    if (!post) {
+      goBackToList();
+      return;
+    }
+
+    document.getElementById('list-view').style.display = 'none';
+    document.getElementById('detail-view').style.display = 'block';
+
+    document.getElementById('detail-title').textContent = post.title;
+    document.getElementById('detail-meta').innerHTML = `
+      <span>${post.author}</span>
+      <span>·</span>
+      <span>${post.date}</span>
+      <span>·</span>
+      <span>分类：${post.category}</span>
+      ${post.hot ? '<span>🔥 热门</span>' : ''}
+    `;
+    document.getElementById('detail-body').textContent = post.content;
+    document.getElementById('detail-stats').innerHTML = `
+      <span>💬 <span class="num">${post.replies}</span> 回复</span>
+      <span>👍 <span class="num">${formatNumber(post.likes)}</span> 点赞</span>
+    `;
+  }
+
+  // ---- 视图切换 ----
+  function openDetail(id) {
+    currentDetailId = id;
+    currentView = 'detail';
+    render();
+    // 滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBackToList() {
+    currentView = 'list';
+    document.getElementById('list-view').style.display = 'block';
+    document.getElementById('detail-view').style.display = 'none';
+    render();
+  }
+
+  function goHome() {
+    goBackToList();
+    return false;
+  }
+
+  // ================================================================
+  //  工具函数
+  // ================================================================
+
+  function formatNumber(n) {
+    if (n >= 10000) return (n / 10000).toFixed(1) + 'w';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+    return n;
+  }
+
+  function getRelativeTime(dateStr) {
+    const now = new Date();
+    const then = new Date(dateStr);
+    const diff = Math.floor((now - then) / (1000 * 60 * 60));
+    if (diff < 1) return '刚刚';
+    if (diff < 24) return diff + '小时前';
+    const days = Math.floor(diff / 24);
+    if (days < 7) return days + '天前';
+    return dateStr;
+  }
+
+  // ================================================================
+  //  发帖功能
+  // ================================================================
+
+  function openNewPostModal() {
+    document.getElementById('new-post-modal').classList.add('open');
+    document.getElementById('post-title').focus();
+  }
+
+  function closeNewPostModal() {
+    document.getElementById('new-post-modal').classList.remove('open');
+    document.getElementById('new-post-form').reset();
+  }
+
+  function submitNewPost(e) {
+    e.preventDefault();
+
+    const title = document.getElementById('post-title').value.trim();
+    const category = document.getElementById('post-category').value;
+    const author = document.getElementById('post-author').value.trim() || '匿名楼主';
+    const content = document.getElementById('post-content').value.trim();
+
+    if (!title || !content) return;
+
+    const newPost = {
+      id: getNextId(currentPosts),
+      title: title,
+      category: category,
+      author: author,
+      date: new Date().toISOString().slice(0, 10),
+      content: content,
+      replies: 0,
+      likes: 0,
+      hot: false
+    };
+
+    currentPosts = [newPost, ...currentPosts];
+    savePosts(currentPosts);
+
+    // 更新今日发帖数
+    const todayCount = incrementTodayCount();
+    document.getElementById('today-num').textContent = todayCount;
+
+    closeNewPostModal();
+    render();
+
+    // 轻轻滚动到顶部看到新帖
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ================================================================
+  //  分类筛选 + 搜索
+  // ================================================================
+
+  function setupFilters() {
+    // 分类标签
+    document.querySelectorAll('.filter-tag').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        render();
+      });
+    });
+
+    // 搜索
+    const searchInput = document.getElementById('search-input');
+    let searchTimer;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        currentSearch = this.value;
+        render();
+      }, 250);
+    });
+  }
+
+  // ================================================================
+  //  茶馆实况模拟
+  // ================================================================
+
+  function setupTavernStatus() {
+    // 在线人数随机跳动
+    const onlineEl = document.getElementById('online-num');
+    setInterval(() => {
+      const base = 47;
+      const variation = Math.floor(Math.random() * 30) - 10;
+      onlineEl.textContent = Math.max(12, base + variation);
+    }, 5000);
+
+    // 茶水温度随机浮动
+    const tempEl = document.getElementById('tea-temp');
+    setInterval(() => {
+      const base = 82;
+      const variation = Math.floor(Math.random() * 8) - 3;
+      tempEl.textContent = Math.max(65, Math.min(95, base + variation));
+    }, 8000);
+
+    // 今日发帖数
+    document.getElementById('today-num').textContent = getTodayCount();
+
+    // 随机茶馆语录
+    const sayingEl = document.getElementById('saying-text');
+    setInterval(() => {
+      const idx = Math.floor(Math.random() * SAYINGS.length);
+      sayingEl.textContent = SAYINGS[idx];
+    }, 12000);
+  }
+
+  // ================================================================
+  //  启动
+  // ================================================================
+
+  // 发帖按钮
+  document.getElementById('new-post-btn').addEventListener('click', openNewPostModal);
+  document.getElementById('modal-close').addEventListener('click', closeNewPostModal);
+  document.getElementById('new-post-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeNewPostModal();
+  });
+  document.getElementById('new-post-form').addEventListener('submit', submitNewPost);
+
+  setupFilters();
+  setupTavernStatus();
+
+  // 首次渲染
+  render();
+</script>
 
 </body>
 </html>
