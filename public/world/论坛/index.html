@@ -214,6 +214,7 @@
     .filter-bar .search-box input:focus { border-color: var(--accent); }
     .filter-bar .search-box input::placeholder { color: var(--text-muted-light); }
 
+    /* ---- 预设帖子（硬编码） ---- */
     .post-item {
       display: block;
       background: var(--bg-card);
@@ -299,6 +300,73 @@
     }
     .post-item .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
+
+    /* ---- 动态帖子（新发布的） ---- */
+    .post-item-dynamic {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all var(--transition);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      animation: card-in 0.4s ease forwards;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .post-item-dynamic:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .post-item-dynamic .title {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .post-item-dynamic .title .category-tag {
+      font-size: 0.6rem;
+      color: var(--text-muted-light);
+      border: 1px solid var(--border-card);
+      padding: 0 8px;
+      border-radius: 10px;
+    }
+    .post-item-dynamic .meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .post-item-dynamic .meta .author { color: var(--text-secondary); font-weight: 500; }
+    .post-item-dynamic .excerpt {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .post-item-dynamic .stats {
+      margin-top: 8px;
+      display: flex;
+      gap: 14px;
+      font-size: 0.75rem;
+      color: var(--text-muted-light);
+    }
+    .post-item-dynamic .stats span { display: flex; align-items: center; gap: 4px; }
+    .post-item-dynamic .stats .num { font-weight: 500; color: var(--text-secondary); }
 
     #detail-view { display: none; }
     #detail-view .back-link {
@@ -506,8 +574,10 @@
   <div id="list-view">
     <div class="list-header">
       <h2>📋 热门讨论</h2>
-      <span class="count" id="post-count">0 个帖子</span>
+      <span class="count" id="post-count">5 个帖子</span>
     </div>
+
+    <!-- 分类筛选 + 搜索（仅对动态帖子生效） -->
     <div class="filter-bar">
       <button class="filter-tag active" data-filter="all">全部</button>
       <button class="filter-tag" data-filter="讨论">讨论</button>
@@ -518,7 +588,103 @@
         <input type="text" id="search-input" placeholder="🔍 搜索帖子..." />
       </div>
     </div>
-    <div id="post-list"></div>
+
+    <!-- ===== 预设帖子（硬编码，跳转外部页面） ===== -->
+    <a class="post-item" href="post/1.html">
+      <div class="title">
+        【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。
+        <span class="hot">🔥 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">匿名楼主</span>
+        <span>·</span>
+        <span>2026-01-12</span>
+        <span>·</span>
+        <span>最后回复 3小时前</span>
+      </div>
+      <div class="excerpt">大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……</div>
+      <div class="stats">
+        <span>💬 <span class="num">99</span></span>
+        <span>👍 <span class="num">3.4k</span></span>
+      </div>
+    </a>
+
+    <a class="post-item" href="post/2.html">
+      <div class="title">
+        【求助】历史系新来的特聘讲师是不是有点太离谱了？？
+        <span class="hot">🔥 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">匿名楼主</span>
+        <span>·</span>
+        <span>2026-01-10</span>
+        <span>·</span>
+        <span>最后回复 1天前</span>
+      </div>
+      <div class="excerpt">我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。而且他讲到“祈雨仪式”的时候，说了一句：“其实有时候真的会下雨……”</div>
+      <div class="stats">
+        <span>💬 <span class="num">142</span></span>
+        <span>👍 <span class="num">5.6k</span></span>
+      </div>
+    </a>
+
+    <a class="post-item" href="post/3.html">
+      <div class="title">
+        【讨论】你们有没有发现《归途》的歌词……细思极恐？
+      </div>
+      <div class="meta">
+        <span class="author">匿名楼主</span>
+        <span>·</span>
+        <span>2026-01-08</span>
+        <span>·</span>
+        <span>最后回复 2天前</span>
+      </div>
+      <div class="excerpt">科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——风将你的名字吹向远方……</div>
+      <div class="stats">
+        <span>💬 <span class="num">49</span></span>
+        <span>👍 <span class="num">2.1k</span></span>
+      </div>
+    </a>
+
+    <a class="post-item" href="post/4.html">
+      <div class="title">
+        【树洞】有没有人认识那个新来的历史教授？？我直接垂直入坑
+      </div>
+      <div class="meta">
+        <span class="author">匿名楼主</span>
+        <span>·</span>
+        <span>2026-01-05</span>
+        <span>·</span>
+        <span>最后回复 5天前</span>
+      </div>
+      <div class="excerpt">我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。那个教授！！长头发！！金眼睛！！高冷脸！！</div>
+      <div class="stats">
+        <span>💬 <span class="num">203</span></span>
+        <span>👍 <span class="num">8.9k</span></span>
+      </div>
+    </a>
+
+    <a class="post-item" href="post/5.html">
+      <div class="title">
+        【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产
+        <span class="hot">🔥 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">昭昭是我老婆</span>
+        <span>·</span>
+        <span>2025-12-28</span>
+        <span>·</span>
+        <span>最后回复 2周前</span>
+      </div>
+      <div class="excerpt">我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。我想让他去看医生，他又不肯。我该怎么办？急，在线等。</div>
+      <div class="stats">
+        <span>💬 <span class="num">312</span></span>
+        <span>👍 <span class="num">1.2w</span></span>
+      </div>
+    </a>
+
+    <!-- ===== 动态帖子容器（新发布的帖子放在这里） ===== -->
+    <div id="dynamic-posts"></div>
   </div>
 
   <div id="detail-view">
@@ -558,107 +724,24 @@
 
 <script>
   // ================================================================
-  //  数据层
+  //  新帖子数据管理（只处理用户发布的帖子）
   // ================================================================
 
-  const STORAGE_KEY = 'beijing_forum_posts';
+  const STORAGE_KEY = 'beijing_forum_dynamic_posts';
 
-  const DEFAULT_POSTS = [
-    {
-      id: 1,
-      title: '【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。',
-      category: '讨论',
-      author: '匿名楼主',
-      date: '2026-01-12',
-      content: '大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……',
-      replies: 99,
-      likes: 3400,
-      hot: true,
-      externalLink: 'post/1.html'
-    },
-    {
-      id: 2,
-      title: '【求助】历史系新来的特聘讲师是不是有点太离谱了？？',
-      category: '求助',
-      author: '匿名楼主',
-      date: '2026-01-10',
-      content: '我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。',
-      replies: 142,
-      likes: 5600,
-      hot: true,
-      externalLink: 'post/2.html'
-    },
-    {
-      id: 3,
-      title: '【讨论】你们有没有发现《归途》的歌词……细思极恐？',
-      category: '讨论',
-      author: '匿名楼主',
-      date: '2026-01-08',
-      content: '科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。',
-      replies: 49,
-      likes: 2100,
-      hot: false,
-      externalLink: 'post/3.html'
-    },
-    {
-      id: 4,
-      title: '【树洞】有没有人认识那个新来的历史教授？？我直接垂直入坑',
-      category: '树洞',
-      author: '匿名楼主',
-      date: '2026-01-05',
-      content: '我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。',
-      replies: 203,
-      likes: 8900,
-      hot: false,
-      externalLink: 'post/4.html'
-    },
-    {
-      id: 5,
-      title: '【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产',
-      category: '求助',
-      author: '昭昭是我老婆',
-      date: '2025-12-28',
-      content: '我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。',
-      replies: 312,
-      likes: 12000,
-      hot: true,
-      externalLink: 'post/5.html'
-    }
-  ];
-
-  const SAYINGS = [
-    '一壶茶，三两句闲话，便是人间好时节。',
-    '北境的风冷，茶馆的灯暖。',
-    '说书人一拍惊堂木，满座俱静。',
-    '有些故事，喝着喝着就讲完了。',
-    '茶凉了可以续，人走了……也会回来。',
-    '这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'
-  ];
-
-  // ================================================================
-  //  数据管理
-  // ================================================================
-
-  function loadPosts() {
+  // 加载动态帖子
+  function loadDynamicPosts() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const defaultMap = {};
-          DEFAULT_POSTS.forEach(p => { defaultMap[p.id] = p.externalLink; });
-          return parsed.map(p => ({
-            ...p,
-            externalLink: defaultMap[p.id] || null
-          }));
-        }
+        if (Array.isArray(parsed)) return parsed;
       }
     } catch(e) {}
-    savePosts(DEFAULT_POSTS);
-    return DEFAULT_POSTS;
+    return [];
   }
 
-  function savePosts(posts) {
+  function saveDynamicPosts(posts) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)); } catch(e) {}
   }
 
@@ -670,12 +753,13 @@
   //  状态管理
   // ================================================================
 
-  let currentPosts = loadPosts();
+  let dynamicPosts = loadDynamicPosts();
   let currentFilter = 'all';
   let currentSearch = '';
   let currentView = 'list';
   let currentDetailId = null;
 
+  // 今日发帖数
   function getTodayCount() {
     const today = new Date().toDateString();
     try {
@@ -687,6 +771,7 @@
     } catch(e) {}
     return 0;
   }
+
   function incrementTodayCount() {
     const today = new Date().toDateString();
     const count = getTodayCount() + 1;
@@ -700,14 +785,13 @@
 
   function render() {
     if (currentView === 'detail') { renderDetail(); return; }
-    renderList();
+    renderDynamicPosts();
   }
 
-  function renderList() {
-    const container = document.getElementById('post-list');
-    const countEl = document.getElementById('post-count');
+  function renderDynamicPosts() {
+    const container = document.getElementById('dynamic-posts');
+    let filtered = dynamicPosts;
 
-    let filtered = currentPosts;
     if (currentFilter !== 'all') {
       filtered = filtered.filter(p => p.category === currentFilter);
     }
@@ -720,48 +804,40 @@
     }
     filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    countEl.textContent = filtered.length + ' 个帖子';
-
     if (filtered.length === 0) {
-      container.innerHTML = `<div class="empty-state">🍵 没有找到帖子，要不你来写一篇？</div>`;
+      container.innerHTML = '';
       return;
     }
 
-    container.innerHTML = filtered.map(post => {
-      const isExternal = post.externalLink && typeof post.externalLink === 'string';
-      const cardContent = `
+    container.innerHTML = filtered.map(post => `
+      <div class="post-item-dynamic" onclick="openDetail(${post.id})">
         <div class="title">
           ${post.title}
           <span class="category-tag">${post.category}</span>
-          ${post.hot ? '<span class="hot">🔥 热</span>' : ''}
         </div>
         <div class="meta">
           <span class="author">${post.author}</span>
           <span>·</span>
           <span>${post.date}</span>
           <span>·</span>
-          <span>最后回复 ${getRelativeTime(post.date)}</span>
+          <span>刚刚发布</span>
         </div>
         <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
         <div class="stats">
           <span>💬 <span class="num">${post.replies}</span></span>
-          <span>👍 <span class="num">${formatNumber(post.likes)}</span></span>
+          <span>👍 <span class="num">${post.likes}</span></span>
         </div>
-      `;
-
-      if (isExternal) {
-        return `<a class="post-item" href="${post.externalLink}" target="_self">${cardContent}</a>`;
-      } else {
-        return `<div class="post-item" onclick="openDetail(${post.id})">${cardContent}</div>`;
-      }
-    }).join('');
+      </div>
+    `).join('');
   }
 
   function renderDetail() {
-    const post = currentPosts.find(p => p.id === currentDetailId);
+    const post = dynamicPosts.find(p => p.id === currentDetailId);
     if (!post) { goBackToList(); return; }
+
     document.getElementById('list-view').style.display = 'none';
     document.getElementById('detail-view').style.display = 'block';
+
     document.getElementById('detail-title').textContent = post.title;
     document.getElementById('detail-meta').innerHTML = `
       <span>${post.author}</span>
@@ -769,12 +845,11 @@
       <span>${post.date}</span>
       <span>·</span>
       <span>分类：${post.category}</span>
-      ${post.hot ? '<span>🔥 热门</span>' : ''}
     `;
     document.getElementById('detail-body').textContent = post.content;
     document.getElementById('detail-stats').innerHTML = `
       <span>💬 <span class="num">${post.replies}</span> 回复</span>
-      <span>👍 <span class="num">${formatNumber(post.likes)}</span> 点赞</span>
+      <span>👍 <span class="num">${post.likes}</span> 点赞</span>
     `;
   }
 
@@ -793,27 +868,6 @@
   }
 
   function goHome() { goBackToList(); return false; }
-
-  // ================================================================
-  //  工具
-  // ================================================================
-
-  function formatNumber(n) {
-    if (n >= 10000) return (n / 10000).toFixed(1) + 'w';
-    if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
-    return n;
-  }
-
-  function getRelativeTime(dateStr) {
-    const now = new Date();
-    const then = new Date(dateStr);
-    const diff = Math.floor((now - then) / (1000 * 60 * 60));
-    if (diff < 1) return '刚刚';
-    if (diff < 24) return diff + '小时前';
-    const days = Math.floor(diff / 24);
-    if (days < 7) return days + '天前';
-    return dateStr;
-  }
 
   // ================================================================
   //  发帖
@@ -838,14 +892,14 @@
     if (!title || !content) return;
 
     const newPost = {
-      id: getNextId(currentPosts),
+      id: getNextId(dynamicPosts),
       title, category, author,
       date: new Date().toISOString().slice(0, 10),
-      content, replies: 0, likes: 0, hot: false
+      content, replies: 0, likes: 0
     };
 
-    currentPosts = [newPost, ...currentPosts];
-    savePosts(currentPosts);
+    dynamicPosts = [newPost, ...dynamicPosts];
+    saveDynamicPosts(dynamicPosts);
     document.getElementById('today-num').textContent = incrementTodayCount();
     closeNewPostModal();
     render();
@@ -896,8 +950,16 @@
 
     const sayingEl = document.getElementById('saying-text');
     setInterval(() => {
-      const idx = Math.floor(Math.random() * SAYINGS.length);
-      sayingEl.textContent = SAYINGS[idx];
+      const sayings = [
+        '一壶茶，三两句闲话，便是人间好时节。',
+        '北境的风冷，茶馆的灯暖。',
+        '说书人一拍惊堂木，满座俱静。',
+        '有些故事，喝着喝着就讲完了。',
+        '茶凉了可以续，人走了……也会回来。',
+        '这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'
+      ];
+      const idx = Math.floor(Math.random() * sayings.length);
+      sayingEl.textContent = sayings[idx];
     }, 12000);
   }
 
