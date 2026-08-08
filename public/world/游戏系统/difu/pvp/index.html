@@ -123,7 +123,6 @@
             flex: 1;
         }
 
-        /* 引文 */
         .epigraph {
             font-size: 0.85rem;
             color: var(--text-muted);
@@ -134,8 +133,70 @@
             line-height: 1.8;
             text-align: center;
         }
-        .epigraph .mark {
+        .epigraph .mark { color: var(--accent); }
+        .epigraph .live-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            margin-right: 6px;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        /* 卡片通用 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 16px 20px 18px 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color var(--transition);
+            animation: card-in 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        .card:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.10s; }
+        .card:nth-child(3) { animation-delay: 0.15s; }
+        .card:nth-child(4) { animation-delay: 0.20s; }
+        .card:nth-child(5) { animation-delay: 0.25s; }
+        .card:nth-child(6) { animation-delay: 0.30s; }
+        .card:nth-child(7) { animation-delay: 0.35s; }
+        .card:nth-child(8) { animation-delay: 0.40s; }
+
+        @keyframes card-in {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .card .title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card .title .deco { color: var(--accent); margin-right: 4px; }
+        .card .title .badge {
+            font-size: 0.55rem;
+            background: var(--accent-soft);
             color: var(--accent);
+            padding: 1px 10px;
+            border-radius: 10px;
+            font-weight: 400;
         }
 
         /* 版本梗概 */
@@ -149,6 +210,21 @@
             color: var(--text-secondary);
             line-height: 1.8;
             box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            animation: card-in 0.5s ease forwards;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+        .version-brief::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0.4;
         }
         .version-brief .label {
             font-size: 0.65rem;
@@ -157,105 +233,365 @@
             color: var(--text-muted);
             font-weight: 600;
         }
-        .version-brief .label .deco {
-            color: var(--accent);
-        }
+        .version-brief .label .deco { color: var(--accent); }
 
-        /* 卡片通用 */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius);
-            padding: 16px 20px 18px 20px;
-            margin-bottom: 16px;
-            box-shadow: var(--shadow-sm);
-            transition: border-color var(--transition);
-        }
-        .card:hover {
-            border-color: var(--accent-soft-hover);
-        }
-        .card .title {
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .card .title .deco {
-            color: var(--accent);
-            margin-right: 4px;
-        }
-
-        /* 阵容表格 */
-        .comp-grid {
+        /* ===== 天梯数据速览 ===== */
+        .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2px 16px;
-            font-size: 0.85rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
         }
-        .comp-grid .comp-name {
-            color: var(--text-primary);
-            font-weight: 500;
-            padding: 4px 0;
+        .stat-item {
+            text-align: center;
+            padding: 10px 8px;
+            background: var(--bg-card-alt);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-card);
         }
-        .comp-grid .comp-desc {
-            color: var(--text-secondary);
-            padding: 4px 0;
-            border-bottom: 1px solid var(--border-card);
+        .stat-item .number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.2;
         }
-        .comp-grid .comp-desc:last-child {
-            border-bottom: none;
+        .stat-item .number .suffix {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: var(--text-muted);
         }
-        .comp-grid .comp-name:last-child {
-            border-bottom: none;
+        .stat-item .label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .stat-item .sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+            margin-top: 1px;
         }
 
-        /* 热评 */
-        .comment {
+        /* ===== 热门阵容 ===== */
+        .comp-scroll-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        .comp-scroll {
+            display: flex;
+            gap: 14px;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+        .comp-scroll .comp-card {
+            flex: 0 0 220px;
+            background: var(--bg-card-alt);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            border: 1px solid var(--border-card);
+            transition: border-color var(--transition);
+            cursor: default;
+        }
+        .comp-scroll .comp-card:hover {
+            border-color: var(--accent);
+        }
+        .comp-card .comp-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .comp-card .comp-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .comp-card .comp-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 1px 8px;
+            border-radius: 8px;
+            margin-top: 6px;
+        }
+
+        .scroll-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .scroll-controls button {
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-card);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            font-size: 0.75rem;
+            font-family: inherit;
+        }
+        .scroll-controls button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .scroll-controls .scroll-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .scroll-controls .scroll-dots .sdot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-card);
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+        .scroll-controls .scroll-dots .sdot.active {
+            background: var(--accent);
+            width: 16px;
+            border-radius: 4px;
+        }
+
+        /* ===== 社区热评 ===== */
+        .comment-carousel {
+            position: relative;
+            min-height: 64px;
+        }
+        .comment-slide {
+            animation: fadeSlide 0.4s ease forwards;
+        }
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .comment-slide .author {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+        }
+        .comment-slide .text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+        .comment-slide .text .highlight { color: var(--accent); }
+
+        .comment-progress {
+            width: 100%;
+            height: 2px;
+            background: var(--border-card);
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .comment-progress .bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            border-radius: 2px;
+            transition: width 3s linear;
+        }
+
+        /* ===== 本周高光时刻 ===== */
+        .highlight-item {
             padding: 8px 0;
             border-bottom: 1px solid var(--border-card);
             font-size: 0.85rem;
             line-height: 1.7;
             color: var(--text-secondary);
         }
-        .comment:last-child {
-            border-bottom: none;
-        }
-        .comment .author {
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.75rem;
-        }
-        .comment .text {
-            color: var(--text-secondary);
-        }
-        .comment .text .highlight {
+        .highlight-item:last-child { border-bottom: none; }
+        .highlight-item .h-tag {
+            display: inline-block;
+            font-size: 0.6rem;
             color: var(--accent);
+            background: var(--accent-soft);
+            padding: 0 8px;
+            border-radius: 8px;
+            margin-right: 6px;
+            font-weight: 500;
+        }
+        .highlight-item .h-text { color: var(--text-secondary); }
+        .highlight-item .h-text .hl { color: var(--accent); }
+
+        /* ===== 策划回应 ===== */
+        .dev-response {
+            background: var(--accent-soft);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            border-left: 2px solid var(--accent);
+            margin-top: 6px;
+        }
+        .dev-response .dev-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .dev-response .dev-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .dev-response .dev-text .hl { color: var(--accent); }
+
+        /* ===== 本周热词（来自第一份） ===== */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            padding: 4px 0;
+        }
+        .tag-cloud .tag-item {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--bg-card-alt);
+            padding: 3px 14px;
+            border-radius: 16px;
+            border: 1px solid var(--border-card);
+            transition: all var(--transition);
+            cursor: default;
+            animation: tag-float 3s ease-in-out infinite alternate;
+        }
+        .tag-cloud .tag-item:nth-child(1) { animation-delay: 0s; font-size: 0.85rem; color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+        .tag-cloud .tag-item:nth-child(2) { animation-delay: 0.4s; font-size: 0.8rem; }
+        .tag-cloud .tag-item:nth-child(3) { animation-delay: 0.8s; }
+        .tag-cloud .tag-item:nth-child(4) { animation-delay: 1.2s; font-size: 0.7rem; }
+        .tag-cloud .tag-item:nth-child(5) { animation-delay: 1.6s; font-size: 0.8rem; }
+        .tag-cloud .tag-item:nth-child(6) { animation-delay: 2.0s; font-size: 0.7rem; }
+        .tag-cloud .tag-item:nth-child(7) { animation-delay: 0.6s; }
+        .tag-cloud .tag-item:nth-child(8) { animation-delay: 1.8s; font-size: 0.75rem; }
+        .tag-cloud .tag-item:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: scale(1.05);
+        }
+        @keyframes tag-float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-3px); }
         }
 
-        /* 梗百科 */
-        .meme {
-            display: grid;
-            grid-template-columns: 80px 1fr;
-            gap: 4px 14px;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border-card);
-            font-size: 0.85rem;
+        /* ===== 玩家呼声（来自第一份） ===== */
+        .voice-scroll {
+            max-height: 120px;
+            overflow: hidden;
+            position: relative;
         }
-        .meme:last-child {
-            border-bottom: none;
+        .voice-scroll::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: linear-gradient(to top, var(--bg-card), transparent);
+            pointer-events: none;
         }
-        .meme .term {
+        .voice-track {
+            animation: scroll-voice 12s linear infinite;
+        }
+        .voice-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scroll-voice {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        .voice-item {
+            padding: 4px 0;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .voice-item .tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 0 8px;
+            border-radius: 4px;
+            margin-right: 6px;
             font-weight: 500;
+        }
+
+        /* ===== 战力风向标（来自第一份） ===== */
+        .power-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .power-item {
+            background: var(--bg-card-alt);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            text-align: center;
+            border: 1px solid var(--border-card);
+        }
+        .power-item .char {
+            font-weight: 600;
+            font-size: 0.85rem;
             color: var(--text-primary);
         }
-        .meme .def {
+        .power-item .stat {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .power-item .stat .num {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .power-item .bar {
+            width: 100%;
+            height: 3px;
+            background: var(--border-card);
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .power-item .bar .fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--accent);
+            transition: width 1s ease;
+        }
+
+        /* ===== 梗百科 ===== */
+        .meme-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .meme-item {
+            background: var(--bg-card-alt);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            border: 1px solid var(--border-card);
+            transition: border-color var(--transition);
+        }
+        .meme-item:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .meme-item .term {
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .meme-item .def {
+            font-size: 0.78rem;
             color: var(--text-secondary);
             line-height: 1.6;
         }
 
-        /* 更新信息 */
         .update-note {
             font-size: 0.7rem;
             color: var(--text-muted);
@@ -263,6 +599,11 @@
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         @media (max-width: 600px) {
@@ -270,12 +611,13 @@
             #topbar .brand { font-size: 0.95rem; }
             #app { padding: 16px 0 0 0; }
             .card { padding: 14px 14px 16px 14px; }
-            .comp-grid { grid-template-columns: 1fr; gap: 0; }
-            .comp-grid .comp-name { padding-bottom: 0; }
-            .comp-grid .comp-desc { padding-top: 0; border-bottom: 1px solid var(--border-card); }
-            .meme { grid-template-columns: 1fr; gap: 0; }
-            .meme .term { padding-bottom: 2px; }
+            .comp-scroll .comp-card { flex: 0 0 170px; }
+            .meme-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .power-grid { grid-template-columns: 1fr 1fr; }
             .version-brief { font-size: 0.85rem; padding: 14px 16px; }
+            .card .title { font-size: 0.65rem; }
+            .tag-cloud .tag-item { font-size: 0.7rem !important; }
         }
     </style>
     <script>
@@ -313,71 +655,105 @@
 <div id="app">
 
     <div class="epigraph">
-        — 战局隐于风里，玩家藏于热评 —
+        <span class="live-dot"></span> 战局隐于风里，玩家藏于热评 <span class="online-count">在线 <span class="num" id="online-num">1247</span></span>
     </div>
 
-    <!-- 内容由 JS 渲染 -->
     <div id="pvp-content"></div>
 
 </div>
 
 <script>
     // ================================================================
-    //  PVP 内容池 —— 每次新角色上线，在这里加几条就行
+    //  PVP 数据池（融合两份文件的数据）
     // ================================================================
 
     const PVP_DATA = {
-        // 版本梗概（一段话，描述当前天梯氛围）
-        brief: '程师姐上线后，天梯从“互秒大赛”变成了“谁家师姐先抬手”。部分玩家尝试用罗修单防程木栖，效果尚不明确，但罗修本人表示不想说话。',
+        brief: '归终殿五人组全部实装后，天梯环境进入“谁家全屏先抬手”时代。林淮玩家集体抗议浮空机制，罗修玩家仍在辩解友伤不是故意的，而白禾川厨……白禾川厨已经习惯了被无视。',
 
-        // 热门阵容
+        stats: [
+            { number: 62, suffix: '%', label: '林淮出场率', sub: '高分局数据' },
+            { number: 58, suffix: '%', label: '栾方棋 ban 率', sub: '被针对最多' },
+            { number: 41, suffix: '%', label: '修璟组合胜率', sub: 'T0 阵容' },
+            { number: 1.8, suffix: 's', label: '平均对局时长', sub: '罗修玩家冲太快' }
+        ],
+
         comps: [
-            {
-                name: '程木栖 + 林淮 + 任意治疗',
-                desc: '「师姐护着，淮哥输出，奶妈挂机。」这游戏什么时候改名叫《师姐去哪儿》？'
-            },
-            {
-                name: '罗修 + 黎元开 + 程木栖',
-                desc: '双前排硬扛，师姐后排收割。前提是罗修别先冲上去一打五。'
-            },
-            {
-                name: 'SP程木栖 + 罗修 + 林淮',
-                desc: '医者形态的程师姐奶量惊人，罗修终于可以放心冲锋了——反正死不了。'
-            }
+            { name: '林淮 + 栾方棋', desc: '手术刀式精准打击。林淮负责杀，栾方棋负责保。', tag: 'T0 · 淮棋' },
+            { name: '罗修 + 魏元璟', desc: '轰炸机式地图炮。一个放火一个控场，队友和对面一起遭殃。', tag: 'T0 · 修璟' },
+            { name: '林淮 + 罗修 + 栾方棋', desc: '双核保姆流，栾方棋忙得脚不沾地。', tag: 'T1 · 双核' },
+            { name: '魏元璟 + 栾方棋', desc: '最好的朋友组合。控场+保人，靠磨也能磨死对面。', tag: 'T1.5 · 酒友' },
+            { name: '罗修 + 林淮 + 白禾川', desc: '全屏友伤警告。罗修烧队友，白禾川打队友。', tag: '娱乐 · 地狱' },
+            { name: '栾方棋 + 秦墨予 + 林淮', desc: '前世今生同台，特效值回票价。', tag: '特效 · 豪华' },
+            { name: '程木栖 + 林淮 + 任意奶', desc: '师姐护着，淮哥输出——这游戏叫《师姐去哪儿》。', tag: 'T1 · 稳健' }
         ],
 
-        // 社区热评
         comments: [
-            { author: '匿名玩家', text: '程师姐大招那个随机普攻……我前一秒还在笑，后一秒被自己人打死了。' },
-            { author: '匿名玩家', text: '罗修玩家别哭了，你们至少还能上场。你看隔壁来方机，连卡都没出。' },
-            { author: '匿名玩家', text: 'SP程师姐奶量惊人，但我还是想用首席形态打人。谁懂。' },
-            { author: '匿名玩家', text: '林淮玩家最近都在哭：师姐你能不能别光顾着控场，看看我血条啊！' },
-            { author: '匿名玩家', text: '程木栖的被动「师姐在呢」到底有没有实装？我队友说有效果，但我感觉是我的心理作用。' }
+            { author: '林淮玩家', text: '攻击力155，一枪干碎天梯梦，两枪干碎我的上分梦。' },
+            { author: '罗修玩家', text: '友伤20%烧队友，魏元璟在场降到5%。所以我缺的是魏元璟吗？' },
+            { author: '栾方棋玩家', text: '说我是内部爱的，建议打完京城决战再来跟我说话。' },
+            { author: '魏元璟玩家', text: '防御55，生存100。打不中比打不动更恶心。' },
+            { author: '白禾川厨', text: '白禾川什么时候出SP？不会真没了吧……' },
+            { author: '林淮玩家', text: '魏元璟浮空的时候，只有我像个原始人。' },
+            { author: '罗修玩家', text: '罗修的嘴比他的火还难灭。——拆包数据说的。' },
+            { author: '栾方棋玩家', text: '我们浮生树还能再战五百年。树在人在。' },
+            { author: '林淮玩家', text: '第二套技能倍率这么低谁用啊？用的人说：伤害不重要，好看是一辈子的事。' },
+            { author: '魏元璟玩家', text: '罗修开大全屏黑火，我开大全屏绿光。队友的屏幕：什么也看不见。' }
         ],
 
-        // 梗百科
+        hotWords: [
+            '内部爱', '浮生树会秃', '冥府夫妻', '十年共控', '对不起魏元璟',
+            '说点大家不知道的', '师姐永不后退', '罗修陷阱', '原始人林淮', '白禾川厨破防'
+        ],
+
+        power: [
+            { char: '林淮', rate: 78, label: '出场率' },
+            { char: '罗修', rate: 72, label: '出场率' },
+            { char: '栾方棋', rate: 85, label: 'ban率' },
+            { char: '魏元璟', rate: 65, label: '出场率' },
+            { char: '程木栖', rate: 70, label: '出场率' },
+            { char: '白禾川', rate: 45, label: '出场率' }
+        ],
+
+        voices: [
+            { tag: '🔥 热议', text: '罗修到底是不是渣男？——《我的爱人》发布后这个问题已经没有争议了。' },
+            { tag: '🤔 讨论', text: '魏元璟的浮空机制是不是太克制林淮了？林淮玩家：是的。' },
+            { tag: '💢 吐槽', text: '罗修友伤20%烧队友，到底哪个策划想出来的？罗修说不是故意的。' },
+            { tag: '🥲 破防', text: '栾方棋一夜白头的特效，每次看都哭一次。' },
+            { tag: '😭 意难平', text: '黎洛兰的笛声……现在地府已经没有早晚笛了。' },
+            { tag: '🍬 嗑到了', text: '罗修脚下开牡丹花，只有魏元璟在场时才触发。策划你承认吧。' }
+        ],
+
+        highlights: [
+            { tag: '名场面', text: '有玩家用罗修烧了对面四个人，然后把自己也烧死了。结算：罗修击杀4人，死亡1次（自己）。' },
+            { tag: '离谱操作', text: '敌方林淮攻击155，我方魏元璟防御55。林淮一刀miss，再一刀miss。林淮玩家当场卸载游戏。' },
+            { tag: '社区名梗', text: '栾方棋开大，林淮开第二套技能，浮生树花瓣覆盖全屏。低端机黑屏。官方：正在修复。' },
+            { tag: '逆天组合', text: '罗修+白禾川+魏元璟，全屏友伤拉满。第一回合结束，己方全倒，对面毫发无伤。' }
+        ],
+
+        devResponses: [
+            { q: '关于林淮第二套技能倍率', a: '策划回应：设计初衷是“好看”。倍率低是因为给的是特效钱，不是伤害钱。' },
+            { q: '关于罗修友伤机制', a: '策划回应：我们统计过，罗修烧到魏元璟的概率确实偏高。但我们没有动代码。' },
+            { q: '关于白禾川厨', a: '策划回应：……你们还在等SP吗？' }
+        ],
+
         memes: [
-            {
-                term: '师姐永不后退',
-                def: '指程木栖首席时期被动「师姐在呢」——实际效果是全体减伤5%，但玩家坚信有这个被动就不会输。'
-            },
-            {
-                term: '罗修陷阱',
-                def: '指罗修玩家开局冲太猛导致团灭的经典操作。常用于调侃：“又进了罗修陷阱。”'
-            },
-            {
-                term: '程师姐的百宝箱',
-                def: '形容程木栖首席时期的随机普攻——你永远不知道她下一招掏出什么武器。'
-            }
+            { term: '内部爱', def: '指栾方棋。玩家调侃他特效多、形态多、剧情多。官方：“每个角色都用心制作了。”玩家：“说点大家不知道的。”' },
+            { term: '浮生树会秃', def: '林淮和栾方棋站在浮生树下时花瓣会飘落。玩家担心：“再这样下去树要秃了。”' },
+            { term: '冥府夫妻混合双打', def: '罗修放九幽焚天焰（全屏黑火），魏元璟吹镇魂破虚引（全屏绿光）。队友：我们呢？' },
+            { term: '修璟·十年共控', def: '罗修被魏元璟控了十年。从眩晕里走出来过吗？没有。' },
+            { term: '对不起魏元璟', def: '《我的爱人》发布后玩家对罗修的统一台词。之前骂过他的都在道歉。' },
+            { term: '说点大家不知道的', def: '玩家社区万能回复。适用场景：任何关于“内部爱”的讨论。' }
         ],
 
-        // 最后更新时间（手动改）
-        lastUpdated: '2026-08-07'
+        lastUpdated: '2026-08-09'
     };
 
     // ================================================================
-    //  渲染函数
+    //  渲染
     // ================================================================
+
+    let commentIndex = 0;
+    let commentTimer = null;
 
     function renderPVP() {
         const container = document.getElementById('pvp-content');
@@ -393,66 +769,372 @@
             </div>
         `;
 
-        // 热门阵容
+        // ===== 天梯数据速览 =====
         html += `
             <div class="card">
-                <div class="title"><span class="deco">✦</span> 热门阵容</div>
-                <div class="comp-grid">
-        `;
-        data.comps.forEach(comp => {
-            html += `
-                <div class="comp-name">${comp.name}</div>
-                <div class="comp-desc">${comp.desc}</div>
-            `;
-        });
-        html += `
+                <div class="title"><span class="deco">✦</span> 天梯数据速览 <span class="badge">实时</span></div>
+                <div class="stats-grid" id="stats-grid">
+                    ${data.stats.map(s => `
+                        <div class="stat-item">
+                            <div class="number"><span class="stat-num" data-target="${s.number}">0</span><span class="suffix">${s.suffix}</span></div>
+                            <div class="label">${s.label}</div>
+                            <div class="sub">${s.sub}</div>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         `;
 
-        // 社区热评
+        // ===== 热门阵容 =====
         html += `
             <div class="card">
-                <div class="title"><span class="deco">✦</span> 社区热评</div>
-        `;
-        data.comments.forEach(c => {
-            html += `
-                <div class="comment">
-                    <span class="author">${c.author}</span>
-                    <span class="text">：${c.text}</span>
+                <div class="title"><span class="deco">✦</span> 热门阵容 <span class="badge">自动滚动</span></div>
+                <div class="comp-scroll-wrapper">
+                    <div class="comp-scroll" id="comp-scroll">
+                        ${data.comps.map(comp => `
+                            <div class="comp-card">
+                                <div class="comp-name">${comp.name}</div>
+                                <div class="comp-desc">${comp.desc}</div>
+                                <span class="comp-tag">${comp.tag}</span>
+                            </div>
+                        `).join('')}
+                        <!-- 复制第一张用于无缝循环 -->
+                        <div class="comp-card">
+                            <div class="comp-name">${data.comps[0].name}</div>
+                            <div class="comp-desc">${data.comps[0].desc}</div>
+                            <span class="comp-tag">${data.comps[0].tag}</span>
+                        </div>
+                    </div>
                 </div>
-            `;
-        });
-        html += `
+                <div class="scroll-controls">
+                    <button id="scroll-prev" aria-label="上一组">‹</button>
+                    <div class="scroll-dots" id="scroll-dots">
+                        ${data.comps.map((_, i) => `<span class="sdot ${i === 0 ? 'active' : ''}" data-idx="${i}"></span>`).join('')}
+                    </div>
+                    <button id="scroll-next" aria-label="下一组">›</button>
+                </div>
             </div>
         `;
 
-        // 梗百科
+        // ===== 本周热词（来自第一份） =====
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 本周热词 <span class="badge">社区高频</span></div>
+                <div class="tag-cloud">
+                    ${data.hotWords.map(word => `
+                        <span class="tag-item">#${word}</span>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        // ===== 社区热评 =====
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 社区热评 <span class="badge">3s 轮播</span></div>
+                <div class="comment-carousel" id="comment-carousel">
+                    <div class="comment-slide" id="comment-slide">
+                        <span class="author">${data.comments[0].author}</span>
+                        <span class="text">：${data.comments[0].text}</span>
+                    </div>
+                    <div class="comment-progress" id="comment-progress">
+                        <div class="bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // ===== 玩家呼声（来自第一份） =====
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 玩家呼声 <span class="badge">↻ 滚动</span></div>
+                <div class="voice-scroll">
+                    <div class="voice-track">
+                        ${data.voices.map(v => `
+                            <div class="voice-item">
+                                <span class="tag">${v.tag}</span>
+                                ${v.text}
+                            </div>
+                        `).join('')}
+                        ${data.voices.map(v => `
+                            <div class="voice-item">
+                                <span class="tag">${v.tag}</span>
+                                ${v.text}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // ===== 战力风向标（来自第一份） =====
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 战力风向标 <span class="badge">本周数据</span></div>
+                <div class="power-grid">
+                    ${data.power.map(p => `
+                        <div class="power-item">
+                            <div class="char">${p.char}</div>
+                            <div class="stat"><span class="num">${p.rate}%</span> ${p.label}</div>
+                            <div class="bar"><div class="fill" style="width:${p.rate}%"></div></div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        // ===== 本周高光时刻 =====
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 本周高光时刻 <span class="badge">真实玩家投稿</span></div>
+                ${data.highlights.map(h => `
+                    <div class="highlight-item">
+                        <span class="h-tag">${h.tag}</span>
+                        <span class="h-text">${h.text}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // ===== 策划回应区 =====
+        html += `
+            <div class="card">
+                <div class="title"><span class="deco">✦</span> 策划回应区 <span class="badge">官方</span></div>
+                ${data.devResponses.map(d => `
+                    <div style="margin-bottom:8px;font-size:0.85rem;color:var(--text-primary);font-weight:500;">${d.q}</div>
+                    <div class="dev-response">
+                        <div class="dev-label">策划回应</div>
+                        <div class="dev-text">${d.a}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // ===== 梗百科 =====
         html += `
             <div class="card">
                 <div class="title"><span class="deco">✦</span> 本周梗百科</div>
-        `;
-        data.memes.forEach(m => {
-            html += `
-                <div class="meme">
-                    <div class="term">${m.term}</div>
-                    <div class="def">${m.def}</div>
+                <div class="meme-grid">
+                    ${data.memes.map(m => `
+                        <div class="meme-item">
+                            <div class="term">${m.term}</div>
+                            <div class="def">${m.def}</div>
+                        </div>
+                    `).join('')}
                 </div>
-            `;
-        });
-        html += `
             </div>
         `;
 
-        // 更新时间
+        // ===== 更新信息 =====
         html += `
             <div class="update-note">
-                最后更新 · ${data.lastUpdated}
+                <span>最后更新 · ${data.lastUpdated}</span>
+                <span style="font-size:0.65rem;color:var(--text-muted);opacity:0.6;">⏳ 自动刷新中</span>
             </div>
         `;
 
         container.innerHTML = html;
+
+        // 启动所有动态效果
+        startCarousel(data.comments);
+        startStatsAnimation();
+        startCompScroll(data.comps);
     }
+
+    // ================================================================
+    //  热评轮播 (3s + 进度条)
+    // ================================================================
+
+    function startCarousel(comments) {
+        if (commentTimer) {
+            clearInterval(commentTimer);
+            commentTimer = null;
+        }
+
+        const slide = document.getElementById('comment-slide');
+        if (!slide) return;
+
+        commentIndex = 0;
+
+        function goTo(idx) {
+            const c = comments[idx];
+            slide.style.animation = 'none';
+            void slide.offsetHeight;
+            slide.innerHTML = `
+                <span class="author">${c.author}</span>
+                <span class="text">：${c.text}</span>
+            `;
+            slide.style.animation = 'fadeSlide 0.4s ease forwards';
+            commentIndex = idx;
+            // 重置进度条
+            const bar = document.getElementById('progress-bar');
+            if (bar) {
+                bar.style.transition = 'none';
+                bar.style.width = '0%';
+                void bar.offsetHeight;
+                bar.style.transition = 'width 3s linear';
+                bar.style.width = '100%';
+            }
+        }
+
+        // 首次启动进度条
+        setTimeout(() => {
+            const bar = document.getElementById('progress-bar');
+            if (bar) {
+                bar.style.transition = 'width 3s linear';
+                bar.style.width = '100%';
+            }
+        }, 100);
+
+        commentTimer = setInterval(() => {
+            const next = (commentIndex + 1) % comments.length;
+            goTo(next);
+        }, 3000);
+    }
+
+    // ================================================================
+    //  统计数字滚动
+    // ================================================================
+
+    function startStatsAnimation() {
+        const els = document.querySelectorAll('.stat-num');
+        els.forEach(el => {
+            const target = parseFloat(el.dataset.target);
+            const duration = 1200;
+            const startTime = performance.now();
+
+            function update(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = eased * target;
+                el.textContent = Math.round(current);
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.textContent = target;
+                }
+            }
+            requestAnimationFrame(update);
+        });
+    }
+
+    // ================================================================
+    //  热门阵容自动滚动
+    // ================================================================
+
+    let compIndex = 0;
+    let compTimer = null;
+    let compPaused = false;
+
+    function startCompScroll(comps) {
+        const scrollEl = document.getElementById('comp-scroll');
+        const dots = document.querySelectorAll('#scroll-dots .sdot');
+        const prevBtn = document.getElementById('scroll-prev');
+        const nextBtn = document.getElementById('scroll-next');
+
+        if (!scrollEl || dots.length === 0) return;
+
+        const cardWidth = 220 + 14;
+        const totalCards = comps.length;
+        let currentIdx = 0;
+
+        function goTo(idx) {
+            if (idx >= totalCards) {
+                scrollEl.style.transition = 'none';
+                scrollEl.style.transform = `translateX(0px)`;
+                void scrollEl.offsetHeight;
+                idx = 0;
+                currentIdx = 0;
+                scrollEl.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            } else {
+                currentIdx = idx;
+                scrollEl.style.transform = `translateX(-${idx * cardWidth}px)`;
+            }
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === idx % totalCards);
+            });
+            compIndex = idx % totalCards;
+        }
+
+        function next() {
+            goTo((currentIdx + 1) % (totalCards + 1));
+        }
+
+        function prev() {
+            const prevIdx = currentIdx - 1;
+            if (prevIdx < 0) {
+                scrollEl.style.transition = 'none';
+                scrollEl.style.transform = `translateX(-${totalCards * cardWidth}px)`;
+                void scrollEl.offsetHeight;
+                scrollEl.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                setTimeout(() => {
+                    goTo(totalCards - 1);
+                }, 20);
+            } else {
+                goTo(prevIdx);
+            }
+        }
+
+        dots.forEach((dot, idx) => {
+            dot.addEventListener('click', function() {
+                if (compTimer) {
+                    clearInterval(compTimer);
+                    compTimer = null;
+                }
+                goTo(idx);
+                startAutoScroll();
+            });
+        });
+
+        if (prevBtn) prevBtn.addEventListener('click', function() {
+            if (compTimer) {
+                clearInterval(compTimer);
+                compTimer = null;
+            }
+            prev();
+            startAutoScroll();
+        });
+
+        if (nextBtn) nextBtn.addEventListener('click', function() {
+            if (compTimer) {
+                clearInterval(compTimer);
+                compTimer = null;
+            }
+            next();
+            startAutoScroll();
+        });
+
+        const wrapper = scrollEl.closest('.comp-scroll-wrapper');
+        if (wrapper) {
+            wrapper.addEventListener('mouseenter', () => {
+                compPaused = true;
+                if (compTimer) {
+                    clearInterval(compTimer);
+                    compTimer = null;
+                }
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                compPaused = false;
+                startAutoScroll();
+            });
+        }
+
+        function startAutoScroll() {
+            if (compTimer) clearInterval(compTimer);
+            if (compPaused) return;
+            compTimer = setInterval(() => {
+                next();
+            }, 3500);
+        }
+
+        setTimeout(startAutoScroll, 500);
+    }
+
+    // ================================================================
+    //  启动
+    // ================================================================
 
     renderPVP();
 </script>
