@@ -84,6 +84,21 @@
             align-items: center;
             gap: 12px;
         }
+        .back-btn {
+            padding: 4px 14px;
+            border-radius: 18px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .back-btn:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
         .theme-toggle {
             background: transparent;
             border: 1px solid var(--border-light);
@@ -467,6 +482,7 @@
 <div id="topbar">
     <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
     <div class="actions">
+        <a class="back-btn" href="../list.html">← 返回列表</a>
         <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
 </div>
@@ -495,8 +511,8 @@
     <div class="row">
         <div class="card">
             <div class="title"><span class="deco">❖</span> 属性面板</div>
-            <div class="radar-wrap">
-                <svg viewBox="-25 -25 350 350" id="radar-chart"></svg>
+            <div class="radar-wrap" id="radar-chart">
+                <svg viewBox="-18 -18 336 336" id="radar-svg"></svg>
             </div>
         </div>
         <div class="card">
@@ -504,12 +520,11 @@
             <div class="attr-grid">
                 <div class="attr-item"><span class="label">攻击</span><span class="val s">110 SS</span></div>
                 <div class="attr-item"><span class="label">防御</span><span class="val a">80 A</span></div>
-                <div class="attr-item"><span class="label">速度</span><span class="val a">75 A</span></div>
+                <div class="attr-item"><span class="label">速度</span><span class="val a">87 A</span></div>
                 <div class="attr-item"><span class="label">射程</span><span class="val s">近/中/远</span></div>
-                <div class="attr-item"><span class="label">控制</span><span class="val s">85 S</span></div>
-                <div class="attr-item"><span class="label">单体伤害</span><span class="val a">75 A-</span></div>
-                <div class="attr-item"><span class="label">群攻</span><span class="val s">95 SS</span></div>
-                <div class="attr-item"><span class="label">辅助</span><span class="val b">50 B-</span></div>
+                <div class="attr-item"><span class="label">控制</span><span class="val a">50 B+</span></div>
+                <div class="attr-item"><span class="label">范围</span><span class="val s">95 SS</span></div>
+                <div class="attr-item"><span class="label">增益</span><span class="val b">10 E</span></div>
                 <div class="attr-item"><span class="label">生存</span><span class="val a">82 A</span></div>
                 <div class="attr-item"><span class="label">操作难度</span><span class="val s">★★★★☆ 高</span></div>
             </div>
@@ -686,7 +701,7 @@
 
             <div class="qa">
                 <div class="q">关于强度</div>
-                <div class="a">有玩家发帖：“终于见到个正常的数值了。110攻击，80防御，没几个突出去的，这才是正经六边形。”<br><br>回复区第一条：<span class="highlight">“正常在哪？这年头连六边形战士都有人说正常了，数值怪也能上桌吃饭了属于是。”</span><br><br>另一条：“他群攻95，控制85，这叫正常？你管这叫正常？”<br><br>但也有玩家觉得罗修根本不好用：“有自伤的角色，谁爱用谁用。我抽到他之后试了三场，两场烧到魏元璟，一场烧到程木栖，程木栖还问我是不是故意的。”<br><br>底下回复：“你带魏元璟了吗？”<br>“带了。”<br>“带了还烧？”<br>“带了，5%，我中了。怪谁？”<br>“怪你脸黑。”<br>“怪罗修。”<br>“他烧你的时候你可不敢当面说。”<br><br>还有人认真分析过罗修的友伤机制：<span class="highlight">“20%看着不高，但每回合都触发的话，实际体验大概是三到四回合烧一次队友。如果你队里全是脆皮，三回合下来你自己先把队友干掉了。所以罗修必须配魏元璟，不然就是杀敌一千自损八百——自损的那个还是队友。”</span><br><br>总结：<span class="highlight">“罗修是强，但他需要一张魏元璟才能稳定发挥。没有魏元璟的罗修就像没有准星的炮台——打哪算哪。”</span></div>
+                <div class="a">有玩家发帖：“终于见到个正常的数值了。110攻击，80防御，没几个突出去的，这才是正经六边形。”<br><br>回复区第一条：<span class="highlight">“正常在哪？这年头连六边形战士都有人说正常了，数值怪也能上桌吃饭了属于是。”</span><br><br>另一条：“他群攻95，控制50，这叫正常？你管这叫正常？”<br><br>但也有玩家觉得罗修根本不好用：“有自伤的角色，谁爱用谁用。我抽到他之后试了三场，两场烧到魏元璟，一场烧到程木栖，程木栖还问我是不是故意的。”<br><br>底下回复：“你带魏元璟了吗？”<br>“带了。”<br>“带了还烧？”<br>“带了，5%，我中了。怪谁？”<br>“怪你脸黑。”<br>“怪罗修。”<br>“他烧你的时候你可不敢当面说。”<br><br>还有人认真分析过罗修的友伤机制：<span class="highlight">“20%看着不高，但每回合都触发的话，实际体验大概是三到四回合烧一次队友。如果你队里全是脆皮，三回合下来你自己先把队友干掉了。所以罗修必须配魏元璟，不然就是杀敌一千自损八百——自损的那个还是队友。”</span><br><br>总结：<span class="highlight">“罗修是强，但他需要一张魏元璟才能稳定发挥。没有魏元璟的罗修就像没有准星的炮台——打哪算哪。”</span></div>
             </div>
 
             <div class="qa">
@@ -734,7 +749,8 @@
     var accent = 'var(--accent)';
     var accentSoft = 'var(--accent-soft)';
 
-    var svg = document.getElementById('radar-luo');
+    var svg = document.getElementById('radar-svg');
+    if (!svg) return;
     while (svg.firstChild) { svg.removeChild(svg.firstChild); }
 
     var layers = [0.3, 0.5, 0.7, 1.0];
@@ -867,3 +883,6 @@
     });
 })();
 </script>
+
+</body>
+</html>

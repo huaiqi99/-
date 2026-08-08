@@ -515,8 +515,8 @@
     <div class="row">
         <div class="card">
             <div class="title"><span class="deco">✦</span> 属性面板</div>
-            <div class="radar-wrap">
-                <svg viewBox="-25 -25 350 350" id="radar-chart"></svg>
+            <div class="radar-wrap" id="radar-chart">
+                <svg viewBox="-18 -18 336 336" id="radar-svg"></svg>
             </div>
         </div>
         <div class="card">
@@ -527,9 +527,8 @@
                 <div class="attr-item"><span class="label">速度</span><span class="val s">120 SS</span></div>
                 <div class="attr-item"><span class="label">射程</span><span class="val s">近</span></div>
                 <div class="attr-item"><span class="label">控制</span><span class="val b">40 C</span></div>
-                <div class="attr-item"><span class="label">单体伤害</span><span class="val s">155 SSS+</span></div>
-                <div class="attr-item"><span class="label">群攻</span><span class="val b">35 D</span></div>
-                <div class="attr-item"><span class="label">辅助</span><span class="val b">5 E</span></div>
+                <div class="attr-item"><span class="label">范围</span><span class="val b">35 D</span></div>
+                <div class="attr-item"><span class="label">增益</span><span class="val b">10 E</span></div>
                 <div class="attr-item"><span class="label">生存</span><span class="val b">60 B-</span></div>
                 <div class="attr-item"><span class="label">操作难度</span><span class="val a">★★★☆☆ 中等</span></div>
             </div>
@@ -756,7 +755,10 @@
 <!-- ============================================================ -->
 <script>
 (function() {
-    var stats = [155, 52, 120, 40, 35, 10];
+    // 绘制用数值：攻击135（让图形在边框内完整显示）
+    // 显示用数值：攻击155（视觉欺骗，让玩家看到面板数值）
+    var drawStats = [135, 52, 120, 40, 35, 10];
+    var displayStats = [155, 52, 120, 40, 35, 10];
     var labels = ['攻击', '防御', '速度', '控制', '范围', '增益'];
     var cx = 150, cy = 150, maxR = 120;
     var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
@@ -766,9 +768,11 @@
     var accent = 'var(--accent)';
     var accentSoft = 'var(--accent-soft)';
 
-    var svg = document.getElementById('radar-huai');
+    var svg = document.getElementById('radar-svg');
+    if (!svg) return;
     while (svg.firstChild) { svg.removeChild(svg.firstChild); }
 
+    // 网格
     var layers = [0.3, 0.5, 0.7, 1.0];
     layers.forEach(function(ratio) {
         var r = maxR * ratio;
@@ -784,6 +788,7 @@
         svg.appendChild(poly);
     });
 
+    // 对角线
     angles.forEach(function(a) {
         var x = cx + maxR * Math.sin(a);
         var y = cy - maxR * Math.cos(a);
@@ -798,13 +803,14 @@
         svg.appendChild(line);
     });
 
-    var vertices = stats.map(function(val, i) {
+    // 顶点（用drawStats绘图，用displayStats显示）
+    var vertices = drawStats.map(function(val, i) {
         var r = (val / 100) * maxR * scale;
         var a = angles[i];
         return {
             x: cx + r * Math.sin(a),
             y: cy - r * Math.cos(a),
-            val: val
+            val: displayStats[i]
         };
     });
 
@@ -815,6 +821,7 @@
         return v.x + ',' + v.y;
     }).join(' ');
 
+    // 数据多边形
     var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     poly.setAttribute('points', centerPts);
     poly.setAttribute('fill', accentSoft);
@@ -832,6 +839,7 @@
     poly.appendChild(anim);
     svg.appendChild(poly);
 
+    // 顶点圆点
     vertices.forEach(function(v) {
         var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', v.x);
@@ -850,6 +858,7 @@
         svg.appendChild(circle);
     });
 
+    // 维度标签
     var labelPositions = [
         { x: 150, y: 10, text: '攻击', anchor: 'middle' },
         { x: 266, y: 112, text: '防御', anchor: 'start' },
@@ -871,6 +880,7 @@
         svg.appendChild(text);
     });
 
+    // 数值标签（显示displayStats的值，攻击显示155）
     var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
     vertices.forEach(function(v, i) {
         var offset = 12;
@@ -899,3 +909,6 @@
     });
 })();
 </script>
+
+</body>
+</html>

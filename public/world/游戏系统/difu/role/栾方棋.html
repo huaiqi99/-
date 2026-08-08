@@ -538,15 +538,19 @@
                 container.removeChild(container.firstChild);
             }
 
+            // ---- 角色数据 ----
             var data = {
                 luan: {
-                    stats: [55, 62, 70, 75, 115, 125],
-                    labels: ['攻击', '防御', '速度', '控制', '辅助', '生存'],
+                    // 使用数值欺骗：绘制时用135，显示时标150
+                    drawStats: [60, 62, 70, 75, 80, 135],
+                    displayStats: [60, 62, 70, 75, 80, 150],
+                    labels: ['攻击', '防御', '速度', '控制', '范围', '增益'],
                     scale: 1.0
                 },
                 qin: {
-                    stats: [45, 20, 35, 5, 10, 15],
-                    labels: ['攻击', '防御', '速度', '控制', '辅助', '生存'],
+                    drawStats: [45, 20, 35, 5, 30, 10],
+                    displayStats: [45, 20, 35, 5, 30, 10],
+                    labels: ['攻击', '防御', '速度', '控制', '范围', '增益'],
                     scale: 1.5
                 }
             };
@@ -554,13 +558,14 @@
             var charData = data[tab];
             if (!charData) return;
 
-            var stats = charData.stats;
+            var drawStats = charData.drawStats;
+            var displayStats = charData.displayStats;
             var labels = charData.labels;
             var scale = charData.scale;
 
             var cx = 150, cy = 150, maxR = 120;
             var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('viewBox', '-15 -15 330 330');
+            svg.setAttribute('viewBox', '-18 -18 336 336');
             svg.setAttribute('width', '100%');
             svg.setAttribute('height', '100%');
 
@@ -599,14 +604,14 @@
                 svg.appendChild(line);
             });
 
-            // 顶点
-            var vertices = stats.map(function(val, i) {
+            // 顶点（用drawStats绘图，用displayStats显示）
+            var vertices = drawStats.map(function(val, i) {
                 var r = (val / 100) * maxR * scale;
                 var a = angles[i];
                 return {
                     x: cx + r * Math.sin(a),
                     y: cy - r * Math.cos(a),
-                    val: val
+                    val: displayStats[i]
                 };
             });
 
@@ -657,11 +662,11 @@
             // 维度标签
             var labelPositions = [
                 { x: 150, y: 10, text: '攻击', anchor: 'middle' },
-                { x: 264, y: 112, text: '防御', anchor: 'start' },
-                { x: 248, y: 206, text: '速度', anchor: 'start' },
+                { x: 266, y: 112, text: '防御', anchor: 'start' },
+                { x: 250, y: 206, text: '速度', anchor: 'start' },
                 { x: 150, y: 286, text: '控制', anchor: 'middle' },
-                { x: 52, y: 210, text: '辅助', anchor: 'end' },
-                { x: 36, y: 106, text: '生存', anchor: 'end' }
+                { x: 52, y: 210, text: '范围', anchor: 'end' },
+                { x: 34, y: 106, text: '增益', anchor: 'end' }
             ];
             labelPositions.forEach(function(lp) {
                 var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -676,7 +681,7 @@
                 svg.appendChild(text);
             });
 
-            // 数值标签（顶点偏移）
+            // 数值标签（显示displayStats的值）
             var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
             vertices.forEach(function(v, i) {
                 var offset = 12;
@@ -757,13 +762,13 @@
             <div class="card">
                 <div class="title"><span class="deco">✿</span> 详细数值</div>
                 <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击</span><span class="val b">55 C</span></div>
+                    <div class="attr-item"><span class="label">攻击</span><span class="val b">60 C</span></div>
                     <div class="attr-item"><span class="label">防御</span><span class="val b">62 B-</span></div>
                     <div class="attr-item"><span class="label">速度</span><span class="val a">70 A</span></div>
                     <div class="attr-item"><span class="label">射程</span><span class="val s">中/远程</span></div>
                     <div class="attr-item"><span class="label">控制</span><span class="val a">75 A</span></div>
-                    <div class="attr-item"><span class="label">单体伤害</span><span class="val b">55 C</span></div>
-                    <div class="attr-item"><span class="label">辅助</span><span class="val s">115 SS</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val a">80 A</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val s">150 SSS</span></div>
                     <div class="attr-item"><span class="label">生存</span><span class="val s">125 SS</span></div>
                     <div class="attr-item"><span class="label">操作难度</span><span class="val s">★★★★☆ 高</span></div>
                 </div>
@@ -928,8 +933,8 @@
                     <div class="attr-item"><span class="label">速度</span><span class="val b">35 F</span></div>
                     <div class="attr-item"><span class="label">射程</span><span class="val s">中</span></div>
                     <div class="attr-item"><span class="label">控制</span><span class="val b">5 E</span></div>
-                    <div class="attr-item"><span class="label">单体伤害</span><span class="val a">70 A</span></div>
-                    <div class="attr-item"><span class="label">辅助</span><span class="val b">10 E</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val b">30 D</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val b">10 E</span></div>
                     <div class="attr-item"><span class="label">生存</span><span class="val b">15 F</span></div>
                     <div class="attr-item"><span class="label">操作难度</span><span class="val s">★★★★★ 极高</span></div>
                 </div>
