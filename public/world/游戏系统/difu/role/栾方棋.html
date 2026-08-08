@@ -265,16 +265,17 @@
             aspect-ratio: 1/1;
         }
 
+        /* ===== 详细数值样式 ===== */
         .attr-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4px 16px;
+            gap: 2px 20px;
         }
         .attr-item {
             display: flex;
             justify-content: space-between;
             font-size: 0.85rem;
-            padding: 2px 0;
+            padding: 4px 0;
             border-bottom: 1px solid var(--border-card);
         }
         .attr-item .label {
@@ -284,29 +285,43 @@
             font-weight: 500;
             color: var(--text-primary);
         }
+        .attr-item .val.stars {
+            color: var(--accent);
+        }
+        /* 颜色评级 */
         .attr-item .val.s { color: var(--accent); font-weight: 700; }
         .attr-item .val.a { color: #e8b84a; font-weight: 600; }
         .attr-item .val.b { color: var(--text-muted); }
+        .attr-item .val.c { color: var(--text-muted); opacity: 0.7; }
+        .attr-item .val.d { color: var(--text-muted); opacity: 0.5; }
+        .attr-item .val.e { color: var(--text-muted); opacity: 0.3; }
+        .attr-item .val.f { color: var(--text-muted); opacity: 0.2; }
+        .attr-item .val.sss { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+        .attr-item .val.ss { color: var(--accent); font-weight: 700; }
 
-        .weapon-block {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            padding: 4px 0;
+        /* 角色标签 */
+        .role-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            color: #fff;
+            margin-left: 4px;
+            font-weight: 400;
+            vertical-align: middle;
         }
-        .weapon-block .name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .weapon-block .quote {
-            font-style: italic;
-            color: var(--text-muted);
-            padding-left: 12px;
-            border-left: 2px solid var(--accent);
-            margin-top: 4px;
-            font-size: 0.82rem;
-        }
+        .role-tag.luan { background: #b03a2a; }
+        .role-tag.qin { background: #b03a2a; }
+        .role-tag.huai { background: #2a6b8a; }
+        .role-tag.luo { background: #7b4b8a; }
+        .role-tag.wei { background: #c9a84b; }
+        [data-theme="dark"] .role-tag.luan { background: #b05a4a; }
+        [data-theme="dark"] .role-tag.qin { background: #b05a4a; }
+        [data-theme="dark"] .role-tag.huai { background: #4a8baa; }
+        [data-theme="dark"] .role-tag.luo { background: #9b6baa; }
+        [data-theme="dark"] .role-tag.wei { background: #dbb85c; }
 
+        /* ===== 技能组 ===== */
         .skill {
             border-bottom: 1px solid var(--border-card);
             padding: 10px 0;
@@ -343,6 +358,7 @@
             border-left: 2px solid var(--border-card);
         }
 
+        /* ===== 羁绊 ===== */
         .bond-section {
             margin-bottom: 12px;
         }
@@ -376,11 +392,6 @@
         .bond .desc .highlight {
             color: var(--accent);
         }
-        .bond .trigger {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
         .bond .quote {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -390,6 +401,7 @@
             border-left: 2px solid var(--border-card);
         }
 
+        /* ===== 语音 ===== */
         .voice-section {
             margin-bottom: 10px;
         }
@@ -432,20 +444,12 @@
             padding-left: 4px;
         }
 
+        /* ===== 制作人笔记 ===== */
         .note {
             font-size: 0.85rem;
             color: var(--text-secondary);
             line-height: 1.7;
             padding: 4px 0;
-        }
-        .note .quote-block {
-            background: var(--bg-card-alt);
-            border-left: 3px solid var(--accent);
-            padding: 10px 16px;
-            margin: 8px 0;
-            border-radius: var(--radius-sm);
-            font-style: italic;
-            color: var(--text-secondary);
         }
         .note .qa {
             padding: 6px 0;
@@ -472,6 +476,26 @@
             color: var(--text-secondary);
             margin-top: 8px;
             border-left: 3px solid var(--accent);
+        }
+
+        /* ===== 武器 ===== */
+        .weapon-block {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 4px 0;
+        }
+        .weapon-block .name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .weapon-block .quote {
+            font-style: italic;
+            color: var(--text-muted);
+            padding-left: 12px;
+            border-left: 2px solid var(--accent);
+            margin-top: 4px;
+            font-size: 0.82rem;
         }
 
         @media (max-width: 600px) {
@@ -509,7 +533,6 @@
             var newTheme = isDark ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
-            // 重绘当前雷达图
             if (typeof drawRadar === 'function') {
                 drawRadar(currentTab);
             }
@@ -530,7 +553,6 @@
             drawRadar(tab);
         }
 
-        // ---- 雷达图绘制 ----
         function drawRadar(tab) {
             var container = document.getElementById('radar-' + tab);
             if (!container) return;
@@ -538,10 +560,8 @@
                 container.removeChild(container.firstChild);
             }
 
-            // ---- 角色数据 ----
             var data = {
                 luan: {
-                    // 使用数值欺骗：绘制时用135，显示时标150
                     drawStats: [60, 62, 70, 75, 80, 135],
                     displayStats: [60, 62, 70, 75, 80, 150],
                     labels: ['攻击', '防御', '速度', '控制', '范围', '增益'],
@@ -573,7 +593,6 @@
                 return deg * Math.PI / 180;
             });
 
-            // 网格
             var layers = [0.3, 0.5, 0.7, 1.0];
             layers.forEach(function(ratio) {
                 var r = maxR * ratio;
@@ -589,7 +608,6 @@
                 svg.appendChild(poly);
             });
 
-            // 对角线
             angles.forEach(function(a) {
                 var x = cx + maxR * Math.sin(a);
                 var y = cy - maxR * Math.cos(a);
@@ -604,7 +622,6 @@
                 svg.appendChild(line);
             });
 
-            // 顶点（用drawStats绘图，用displayStats显示）
             var vertices = drawStats.map(function(val, i) {
                 var r = (val / 100) * maxR * scale;
                 var a = angles[i];
@@ -622,7 +639,6 @@
                 return v.x + ',' + v.y;
             }).join(' ');
 
-            // 数据多边形
             var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             poly.setAttribute('points', centerPts);
             poly.setAttribute('fill', 'var(--accent-soft)');
@@ -640,7 +656,6 @@
             poly.appendChild(anim);
             svg.appendChild(poly);
 
-            // 顶点圆点
             vertices.forEach(function(v) {
                 var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', v.x);
@@ -659,7 +674,6 @@
                 svg.appendChild(circle);
             });
 
-            // 维度标签
             var labelPositions = [
                 { x: 150, y: 10, text: '攻击', anchor: 'middle' },
                 { x: 266, y: 112, text: '防御', anchor: 'start' },
@@ -681,7 +695,6 @@
                 svg.appendChild(text);
             });
 
-            // 数值标签（显示displayStats的值）
             var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
             vertices.forEach(function(v, i) {
                 var offset = 12;
@@ -754,22 +767,29 @@
             </div>
         </div>
 
-<div class="card">
-    <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag luan">辅助 · 远程</span></div>
-    <div class="attr-grid">
-        <div class="attr-item"><span class="label">攻击力</span><span class="val">780</span></div>
-        <div class="attr-item"><span class="label">生命值</span><span class="val">13800</span></div>
-        <div class="attr-item"><span class="label">物理防御</span><span class="val">420</span></div>
-        <div class="attr-item"><span class="label">法术防御</span><span class="val">580</span></div>
-        <div class="attr-item"><span class="label">速度</span><span class="val">112</span></div>
-        <div class="attr-item"><span class="label">控制</span><span class="val a">A</span></div>
-        <div class="attr-item"><span class="label">范围</span><span class="val a">A</span></div>
-        <div class="attr-item"><span class="label">增益</span><span class="val sss">SSS</span></div>
-        <div class="attr-item"><span class="label">生存</span><span class="val s">S</span></div>
-        <div class="attr-item"><span class="label">操作难度</span><span class="val">★★★★☆</span></div>
-        <div class="attr-item"><span class="label">射程</span><span class="val">中/远程</span></div>
-    </div>
-</div>
+        <!-- 属性面板：雷达图 + 详细数值 两列 -->
+        <div class="row">
+            <div class="card">
+                <div class="title"><span class="deco">✿</span> 属性面板</div>
+                <div class="radar-wrap" id="radar-luan"></div>
+            </div>
+            <div class="card">
+                <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag luan">辅助 · 远程</span></div>
+                <div class="attr-grid">
+                    <div class="attr-item"><span class="label">攻击力</span><span class="val">780</span></div>
+                    <div class="attr-item"><span class="label">生命值</span><span class="val">13800</span></div>
+                    <div class="attr-item"><span class="label">物理防御</span><span class="val">420</span></div>
+                    <div class="attr-item"><span class="label">法术防御</span><span class="val">580</span></div>
+                    <div class="attr-item"><span class="label">速度</span><span class="val">112</span></div>
+                    <div class="attr-item"><span class="label">控制</span><span class="val a">A</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val a">A</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val sss">SSS</span></div>
+                    <div class="attr-item"><span class="label">生存</span><span class="val s">S</span></div>
+                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★★★☆</span></div>
+                    <div class="attr-item"><span class="label">射程</span><span class="val">中/远程</span></div>
+                </div>
+            </div>
+        </div>
 
         <div class="card">
             <div class="title"><span class="deco">✿</span> 本命武器 · 灵枢轮回木</div>
@@ -922,21 +942,22 @@
                 <div class="radar-wrap" id="radar-qin"></div>
             </div>
             <div class="card">
-    <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag qin">咒术师 · 单体爆发</span></div>
-    <div class="attr-grid">
-        <div class="attr-item"><span class="label">攻击力</span><span class="val">480</span></div>
-        <div class="attr-item"><span class="label">生命值</span><span class="val">4500</span></div>
-        <div class="attr-item"><span class="label">物理防御</span><span class="val">120</span></div>
-        <div class="attr-item"><span class="label">法术防御</span><span class="val">180</span></div>
-        <div class="attr-item"><span class="label">速度</span><span class="val">45</span></div>
-        <div class="attr-item"><span class="label">控制</span><span class="val e">E</span></div>
-        <div class="attr-item"><span class="label">范围</span><span class="val d">D</span></div>
-        <div class="attr-item"><span class="label">增益</span><span class="val e">E</span></div>
-        <div class="attr-item"><span class="label">生存</span><span class="val f">F</span></div>
-        <div class="attr-item"><span class="label">操作难度</span><span class="val">★★★★★</span></div>
-        <div class="attr-item"><span class="label">射程</span><span class="val">中</span></div>
-    </div>
-</div>
+                <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag qin">咒术师 · 单体爆发</span></div>
+                <div class="attr-grid">
+                    <div class="attr-item"><span class="label">攻击力</span><span class="val">480</span></div>
+                    <div class="attr-item"><span class="label">生命值</span><span class="val">4500</span></div>
+                    <div class="attr-item"><span class="label">物理防御</span><span class="val">120</span></div>
+                    <div class="attr-item"><span class="label">法术防御</span><span class="val">180</span></div>
+                    <div class="attr-item"><span class="label">速度</span><span class="val">45</span></div>
+                    <div class="attr-item"><span class="label">控制</span><span class="val e">E</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val d">D</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val e">E</span></div>
+                    <div class="attr-item"><span class="label">生存</span><span class="val f">F</span></div>
+                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★★★★</span></div>
+                    <div class="attr-item"><span class="label">射程</span><span class="val">中</span></div>
+                </div>
+            </div>
+        </div>
 
         <div class="card">
             <div class="title"><span class="deco">✿</span> 特殊机制 · 咒术条</div>
