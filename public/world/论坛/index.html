@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>北境茶馆 · 论坛</title>
   <style>
-    /* ========== CSS 变量 ========== */
     :root {
       --bg-body: #f7f4ef;
       --bg-card: #ffffff;
@@ -57,7 +56,6 @@
       flex-direction: column;
     }
 
-    /* ========== 顶栏 ========== */
     #topbar {
       max-width: 860px;
       margin: 0 auto;
@@ -126,7 +124,6 @@
       color: var(--text-primary);
     }
 
-    /* ========== 主容器 ========== */
     #app {
       max-width: 860px;
       margin: 0 auto;
@@ -135,7 +132,6 @@
       flex: 1;
     }
 
-    /* ========== 茶馆实况小条 ========== */
     .tavern-status {
       display: flex;
       gap: 20px;
@@ -159,27 +155,16 @@
       color: var(--text-secondary);
       font-weight: 500;
     }
-    .tavern-status .divider {
-      opacity: 0.3;
-    }
+    .tavern-status .divider { opacity: 0.3; }
     .tavern-status .saying {
       margin-left: auto;
       font-style: italic;
       color: var(--text-muted-light);
       font-size: 0.75rem;
     }
-    .tavern-status .saying::before {
-      content: '“';
-      color: var(--accent);
-      opacity: 0.5;
-    }
-    .tavern-status .saying::after {
-      content: '”';
-      color: var(--accent);
-      opacity: 0.5;
-    }
+    .tavern-status .saying::before { content: '“'; color: var(--accent); opacity: 0.5; }
+    .tavern-status .saying::after { content: '”'; color: var(--accent); opacity: 0.5; }
 
-    /* ========== 列表视图 ========== */
     #list-view .list-header {
       display: flex;
       justify-content: space-between;
@@ -188,16 +173,9 @@
       flex-wrap: wrap;
       gap: 8px;
     }
-    #list-view .list-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-    #list-view .list-header .count {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
+    #list-view .list-header h2 { font-size: 1.1rem; font-weight: 600; }
+    #list-view .list-header .count { font-size: 0.8rem; color: var(--text-muted); }
 
-    /* ---- 分类标签 + 搜索 ---- */
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
@@ -216,9 +194,7 @@
       transition: all var(--transition);
       font-family: inherit;
     }
-    .filter-bar .filter-tag:hover {
-      border-color: var(--text-muted);
-    }
+    .filter-bar .filter-tag:hover { border-color: var(--text-muted); }
     .filter-bar .filter-tag.active {
       background: var(--accent-soft);
       border-color: var(--accent);
@@ -242,14 +218,9 @@
       transition: border-color var(--transition);
       width: 140px;
     }
-    .filter-bar .search-box input:focus {
-      border-color: var(--accent);
-    }
-    .filter-bar .search-box input::placeholder {
-      color: var(--text-muted-light);
-    }
+    .filter-bar .search-box input:focus { border-color: var(--accent); }
+    .filter-bar .search-box input::placeholder { color: var(--text-muted-light); }
 
-    /* ---- 帖子卡片 ---- */
     .post-item {
       display: block;
       background: var(--bg-card);
@@ -274,12 +245,10 @@
     .post-item:nth-child(6) { animation-delay: 0.24s; }
     .post-item:nth-child(7) { animation-delay: 0.28s; }
     .post-item:nth-child(8) { animation-delay: 0.32s; }
-
     @keyframes card-in {
       0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-
     .post-item:hover {
       border-color: var(--accent);
       box-shadow: var(--shadow-md);
@@ -317,10 +286,7 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .post-item .meta .author {
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
+    .post-item .meta .author { color: var(--text-secondary); font-weight: 500; }
     .post-item .excerpt {
       font-size: 0.88rem;
       color: var(--text-secondary);
@@ -341,10 +307,7 @@
     .post-item .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
 
-    /* ========== 详情视图 ========== */
-    #detail-view {
-      display: none;
-    }
+    #detail-view { display: none; }
     #detail-view .back-link {
       display: inline-block;
       margin-bottom: 14px;
@@ -359,11 +322,7 @@
       padding: 0;
     }
     #detail-view .back-link:hover { color: var(--accent); }
-    #detail-view .detail-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
+    #detail-view .detail-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 6px; }
     #detail-view .detail-meta {
       font-size: 0.8rem;
       color: var(--text-muted);
@@ -391,7 +350,6 @@
     }
     #detail-view .detail-stats .num { color: var(--text-secondary); font-weight: 500; }
 
-    /* ========== 发帖按钮 ========== */
     .new-post-btn {
       position: fixed;
       bottom: 28px;
@@ -412,12 +370,8 @@
       justify-content: center;
       z-index: 100;
     }
-    .new-post-btn:hover {
-      transform: scale(1.06);
-      box-shadow: 0 8px 40px var(--accent-glow);
-    }
+    .new-post-btn:hover { transform: scale(1.06); }
 
-    /* ========== 发帖弹窗 ========== */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -440,11 +394,7 @@
       max-height: 90vh;
       overflow-y: auto;
     }
-    .modal-box .modal-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
+    .modal-box .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
     .modal-box .modal-close {
       float: right;
       background: none;
@@ -480,13 +430,8 @@
     }
     .modal-box input:focus,
     .modal-box select:focus,
-    .modal-box textarea:focus {
-      border-color: var(--accent);
-    }
-    .modal-box textarea {
-      resize: vertical;
-      min-height: 100px;
-    }
+    .modal-box textarea:focus { border-color: var(--accent); }
+    .modal-box textarea { resize: vertical; min-height: 100px; }
     .modal-box .submit-btn {
       margin-top: 16px;
       background: var(--accent);
@@ -502,15 +447,8 @@
     }
     .modal-box .submit-btn:hover { opacity: 0.85; }
 
-    /* ========== 空状态 ========== */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.9rem; }
 
-    /* ========== 响应式 ========== */
     @media (max-width: 600px) {
       body { padding: 0 10px; }
       #topbar { padding: 14px 0 10px 0; }
@@ -563,7 +501,6 @@
 
 <div id="app">
 
-  <!-- ====== 茶馆实况小条 ====== -->
   <div class="tavern-status" id="tavern-status">
     <span class="status-item">🔥 在线 <span class="num" id="online-num">47</span></span>
     <span class="divider">|</span>
@@ -573,15 +510,11 @@
     <span class="saying" id="saying-text">一壶茶，三两句闲话，便是人间好时节。</span>
   </div>
 
-  <!-- ====== 列表视图 ====== -->
   <div id="list-view">
-
     <div class="list-header">
       <h2>📋 热门讨论</h2>
       <span class="count" id="post-count">0 个帖子</span>
     </div>
-
-    <!-- 分类筛选 + 搜索 -->
     <div class="filter-bar">
       <button class="filter-tag active" data-filter="all">全部</button>
       <button class="filter-tag" data-filter="讨论">讨论</button>
@@ -592,12 +525,9 @@
         <input type="text" id="search-input" placeholder="🔍 搜索帖子..." />
       </div>
     </div>
-
-    <!-- 帖子容器 -->
     <div id="post-list"></div>
   </div>
 
-  <!-- ====== 详情视图 ====== -->
   <div id="detail-view">
     <button class="back-link" onclick="goBackToList()">← 返回列表</button>
     <div class="detail-title" id="detail-title"></div>
@@ -606,10 +536,8 @@
     <div class="detail-stats" id="detail-stats"></div>
   </div>
 
-  <!-- ====== 发帖按钮 ====== -->
   <button class="new-post-btn" id="new-post-btn" title="写新帖">✍️</button>
 
-  <!-- ====== 发帖弹窗 ====== -->
   <div class="modal-overlay" id="new-post-modal">
     <div class="modal-box">
       <button class="modal-close" id="modal-close">✕</button>
@@ -617,7 +545,6 @@
       <form id="new-post-form">
         <label for="post-title">标题</label>
         <input type="text" id="post-title" placeholder="取个吸引人的标题..." required />
-
         <label for="post-category">分类</label>
         <select id="post-category">
           <option value="讨论">讨论</option>
@@ -625,13 +552,10 @@
           <option value="树洞">树洞</option>
           <option value="同人">同人</option>
         </select>
-
         <label for="post-author">署名</label>
         <input type="text" id="post-author" placeholder="你的名字（或匿名）" value="匿名楼主" />
-
         <label for="post-content">内容</label>
         <textarea id="post-content" placeholder="写下你的想法..." required></textarea>
-
         <button type="submit" class="submit-btn">📨 发布帖子</button>
       </form>
     </div>
@@ -646,8 +570,6 @@
 
   const STORAGE_KEY = 'beijing_forum_posts';
 
-  // 默认帖子数据（预设帖子，跳转外部页面）
-  // externalLink 指向对应的静态 HTML 文件
   const DEFAULT_POSTS = [
     {
       id: 1,
@@ -711,7 +633,6 @@
     }
   ];
 
-  // 茶馆语录
   const SAYINGS = [
     '一壶茶，三两句闲话，便是人间好时节。',
     '北境的风冷，茶馆的灯暖。',
@@ -731,19 +652,22 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          // 把 DEFAULT_POSTS 里的 externalLink 补回去
+          const defaultMap = {};
+          DEFAULT_POSTS.forEach(p => { defaultMap[p.id] = p.externalLink; });
+          return parsed.map(p => ({
+            ...p,
+            externalLink: defaultMap[p.id] || null
+          }));
         }
       }
     } catch(e) {}
-    // 初始化默认数据
     savePosts(DEFAULT_POSTS);
     return DEFAULT_POSTS;
   }
 
   function savePosts(posts) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-    } catch(e) {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)); } catch(e) {}
   }
 
   function getNextId(posts) {
@@ -757,10 +681,9 @@
   let currentPosts = loadPosts();
   let currentFilter = 'all';
   let currentSearch = '';
-  let currentView = 'list'; // 'list' | 'detail'
+  let currentView = 'list';
   let currentDetailId = null;
 
-  // 今日发帖数
   function getTodayCount() {
     const today = new Date().toDateString();
     try {
@@ -784,26 +707,18 @@
   // ================================================================
 
   function render() {
-    if (currentView === 'detail') {
-      renderDetail();
-      return;
-    }
+    if (currentView === 'detail') { renderDetail(); return; }
     renderList();
   }
 
-  // ---- 列表 ----
   function renderList() {
     const container = document.getElementById('post-list');
     const countEl = document.getElementById('post-count');
 
     let filtered = currentPosts;
-
-    // 分类筛选
     if (currentFilter !== 'all') {
       filtered = filtered.filter(p => p.category === currentFilter);
     }
-
-    // 搜索
     if (currentSearch.trim()) {
       const q = currentSearch.trim().toLowerCase();
       filtered = filtered.filter(p =>
@@ -811,8 +726,6 @@
         p.author.toLowerCase().includes(q)
       );
     }
-
-    // 按日期排序（新帖在前）
     filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     countEl.textContent = filtered.length + ' 个帖子';
@@ -823,10 +736,7 @@
     }
 
     container.innerHTML = filtered.map(post => {
-      // 判断是否为外部链接帖子（预设帖子有 externalLink）
       const isExternal = post.externalLink && typeof post.externalLink === 'string';
-
-      // 卡片内容
       const cardContent = `
         <div class="title">
           ${post.title}
@@ -848,26 +758,18 @@
       `;
 
       if (isExternal) {
-        // 外部链接：渲染为 <a> 标签，跳转到对应的 .html 文件
         return `<a class="post-item" href="${post.externalLink}" target="_self">${cardContent}</a>`;
       } else {
-        // 本地帖子：渲染为 div，点击打开详情视图
         return `<div class="post-item" onclick="openDetail(${post.id})">${cardContent}</div>`;
       }
     }).join('');
   }
 
-  // ---- 详情 ----
   function renderDetail() {
     const post = currentPosts.find(p => p.id === currentDetailId);
-    if (!post) {
-      goBackToList();
-      return;
-    }
-
+    if (!post) { goBackToList(); return; }
     document.getElementById('list-view').style.display = 'none';
     document.getElementById('detail-view').style.display = 'block';
-
     document.getElementById('detail-title').textContent = post.title;
     document.getElementById('detail-meta').innerHTML = `
       <span>${post.author}</span>
@@ -884,7 +786,6 @@
     `;
   }
 
-  // ---- 视图切换 ----
   function openDetail(id) {
     currentDetailId = id;
     currentView = 'detail';
@@ -899,13 +800,10 @@
     render();
   }
 
-  function goHome() {
-    goBackToList();
-    return false;
-  }
+  function goHome() { goBackToList(); return false; }
 
   // ================================================================
-  //  工具函数
+  //  工具
   // ================================================================
 
   function formatNumber(n) {
@@ -926,7 +824,7 @@
   }
 
   // ================================================================
-  //  发帖功能
+  //  发帖
   // ================================================================
 
   function openNewPostModal() {
@@ -941,40 +839,30 @@
 
   function submitNewPost(e) {
     e.preventDefault();
-
     const title = document.getElementById('post-title').value.trim();
     const category = document.getElementById('post-category').value;
     const author = document.getElementById('post-author').value.trim() || '匿名楼主';
     const content = document.getElementById('post-content').value.trim();
-
     if (!title || !content) return;
 
     const newPost = {
       id: getNextId(currentPosts),
-      title: title,
-      category: category,
-      author: author,
+      title, category, author,
       date: new Date().toISOString().slice(0, 10),
-      content: content,
-      replies: 0,
-      likes: 0,
-      hot: false
+      content, replies: 0, likes: 0, hot: false
       // 新帖子没有 externalLink，属于本地帖子
     };
 
     currentPosts = [newPost, ...currentPosts];
     savePosts(currentPosts);
-
-    const todayCount = incrementTodayCount();
-    document.getElementById('today-num').textContent = todayCount;
-
+    document.getElementById('today-num').textContent = incrementTodayCount();
     closeNewPostModal();
     render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ================================================================
-  //  分类筛选 + 搜索
+  //  筛选 & 搜索
   // ================================================================
 
   function setupFilters() {
@@ -986,20 +874,16 @@
         render();
       });
     });
-
     const searchInput = document.getElementById('search-input');
-    let searchTimer;
+    let timer;
     searchInput.addEventListener('input', function() {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => {
-        currentSearch = this.value;
-        render();
-      }, 250);
+      clearTimeout(timer);
+      timer = setTimeout(() => { currentSearch = this.value; render(); }, 250);
     });
   }
 
   // ================================================================
-  //  茶馆实况模拟
+  //  茶馆实况
   // ================================================================
 
   function setupTavernStatus() {
