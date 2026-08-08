@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>魏元璟 · 角色卡</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #ece6de;
+            --border-card: #e4ddd4;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --accent: #c9a84b;
+            --accent-soft: rgba(201, 168, 75, 0.06);
+            --accent-soft-hover: rgba(201, 168, 75, 0.10);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.25s ease;
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-card-alt: #1e1b18;
+            --border-light: #35302a;
+            --border-card: #3a3530;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --accent: #dbb85c;
+            --accent-soft: rgba(219, 184, 92, 0.08);
+            --accent-soft-hover: rgba(219, 184, 92, 0.14);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        #topbar {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        #topbar .brand {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #topbar .brand span { color: var(--accent); }
+        #topbar .brand small {
+            font-weight: 400;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        #topbar .actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .theme-toggle:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        #app {
+            max-width: 960px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+        }
+
+        .hero-header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .hero-header .name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .hero-header .sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .hero-header .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .hero-header .meta .item .label {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .hero-header .meta .item .value {
+            font-weight: 500;
+        }
+        .hero-header .meta .item .value.accent {
+            color: var(--accent);
+        }
+        .stars {
+            color: #e8b84a;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .tags .tag {
+            font-size: 0.7rem;
+            background: var(--bg-card-alt);
+            padding: 2px 12px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-card);
+        }
+        .tags .tag.accent {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 700px) {
+            .row { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 18px 20px 20px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+        .card:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .card .title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .card .title .deco {
+            color: var(--accent);
+            margin-right: 4px;
+        }
+
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+            min-height: 320px;
+        }
+        .radar-wrap svg {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+
+        .attr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 16px;
+        }
+        .attr-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 2px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .attr-item .label {
+            color: var(--text-secondary);
+        }
+        .attr-item .val {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .attr-item .val.s { color: var(--accent); font-weight: 700; }
+        .attr-item .val.a { color: #e8b84a; font-weight: 600; }
+        .attr-item .val.b { color: var(--text-muted); }
+
+        .weapon-block {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 4px 0;
+        }
+        .weapon-block .name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .weapon-block .quote {
+            font-style: italic;
+            color: var(--text-muted);
+            padding-left: 12px;
+            border-left: 2px solid var(--accent);
+            margin-top: 4px;
+            font-size: 0.82rem;
+        }
+
+        .skill {
+            border-bottom: 1px solid var(--border-card);
+            padding: 10px 0;
+        }
+        .skill:last-child { border-bottom: none; }
+        .skill .name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .skill .name .type {
+            font-weight: 400;
+            font-size: 0.65rem;
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+        .skill .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .skill .desc .highlight {
+            color: var(--accent);
+        }
+        .skill .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+        .skill .sp-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding: 4px 10px;
+            background: var(--bg-card-alt);
+            border-radius: var(--radius-sm);
+            border-left: 2px solid var(--accent);
+        }
+
+        .bond-section {
+            margin-bottom: 12px;
+        }
+        .bond-section:last-child { margin-bottom: 0; }
+        .bond-section .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .bond-section .section-label .deco {
+            color: var(--accent);
+        }
+        .bond {
+            border-bottom: 1px solid var(--border-card);
+            padding: 8px 0;
+        }
+        .bond:last-child { border-bottom: none; }
+        .bond .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .bond .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .bond .desc .highlight {
+            color: var(--accent);
+        }
+        .bond .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+
+        .voice-section {
+            margin-bottom: 10px;
+        }
+        .voice-section:last-child { margin-bottom: 0; }
+        .voice-section .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .voice-section .section-label .deco {
+            color: var(--accent);
+        }
+        .voice-item {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .voice-item:last-child { border-bottom: none; }
+        .voice-item .scene {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .voice-item .line {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+        .voice-item .line .highlight {
+            color: var(--accent);
+        }
+        .voice-item .note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding-left: 4px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+        }
+        .note .qa {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .note .qa:last-child { border-bottom: none; }
+        .note .qa .q {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .note .qa .a {
+            color: var(--text-secondary);
+            padding-left: 16px;
+            line-height: 1.6;
+        }
+        .note .qa .a .highlight {
+            color: var(--accent);
+        }
+        .note .qa .a .player-line {
+            display: block;
+            padding: 2px 0;
+        }
+        .note .final {
+            background: var(--accent-soft);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        @media (max-width: 600px) {
+            #topbar { padding: 14px 0 10px 0; }
+            #topbar .brand { font-size: 0.95rem; }
+            .hero-header .name { font-size: 1.4rem; }
+            .card { padding: 14px 14px 16px 14px; }
+            .attr-grid { grid-template-columns: 1fr; }
+            .hero-header .meta { gap: 8px 14px; font-size: 0.8rem; }
+            .voice-item .line { font-size: 0.82rem; }
+            .card .title { font-size: 0.85rem; }
+            .bond-section .section-label,
+            .voice-section .section-label { font-size: 0.75rem; }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                var raw = localStorage.getItem('theme');
+                if (raw) {
+                    var parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+
+        function toggleTheme() {
+            var html = document.documentElement;
+            var isDark = html.getAttribute('data-theme') === 'dark';
+            var newTheme = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+        }
+    </script>
+</head>
+<body>
+
+<div id="topbar">
+    <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
+    <div class="actions">
+        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    </div>
+</div>
+
+<div id="app">
+
+    <div class="hero-header">
+        <div class="name">魏元璟</div>
+        <div class="sub">副C · 控制法师 · 浮空</div>
+        <div class="stars">★★★★★★</div>
+        <div class="meta">
+            <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
+            <span class="item"><span class="label">席位</span> <span class="value">第七席</span></span>
+        </div>
+        <div class="tags">
+            <span class="tag accent">主线</span>
+            <span class="tag">控制</span>
+            <span class="tag">副C</span>
+            <span class="tag">浮空</span>
+            <span class="tag">物法双修</span>
+        </div>
+    </div>
+
+    <!-- 属性面板 -->
+    <div class="row">
+        <div class="card">
+            <div class="title"><span class="deco">◈</span> 属性面板</div>
+            <div class="radar-wrap">
+                <svg viewBox="-25 -25 350 350" id="radar-chart"></svg>
+            </div>
+        </div>
+        <div class="card">
+            <div class="title"><span class="deco">◈</span> 详细数值</div>
+            <div class="attr-grid">
+                <div class="attr-item"><span class="label">攻击</span><span class="val a">75 A-</span></div>
+                <div class="attr-item"><span class="label">防御</span><span class="val b">55 C+</span></div>
+                <div class="attr-item"><span class="label">速度</span><span class="val a">72 A</span></div>
+                <div class="attr-item"><span class="label">射程</span><span class="val s">近/中</span></div>
+                <div class="attr-item"><span class="label">控制</span><span class="val s">115 SS</span></div>
+                <div class="attr-item"><span class="label">单体伤害</span><span class="val a">70 A-</span></div>
+                <div class="attr-item"><span class="label">群攻</span><span class="val a">85 S</span></div>
+                <div class="attr-item"><span class="label">辅助</span><span class="val b">55 B</span></div>
+                <div class="attr-item"><span class="label">生存</span><span class="val s">100 S</span></div>
+                <div class="attr-item"><span class="label">操作难度</span><span class="val a">★★★☆☆ 中等</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 本命武器 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 本命武器 · 对影</div>
+        <div class="weapon-block">
+            <div>魏元璟的本命武器是一对双刀，名唤「对影」。</div>
+            <div style="margin-top:4px;">刀身非金石所铸，而是罗修以九幽焰为引，取他一缕精魂凝练而成。双刀薄如蝉翼，近乎透明，挥动时泛出淡金色的流光，并舞之时如金波漾影。</div>
+            <div style="margin-top:4px;">因为连着魂魄，刀在人在，刀碎则魂伤。魏元璟最常用它，刀法承自罗修，却被他擅自加了宫廷刀舞的旋身与折枝。</div>
+            <div class="quote">罗修看完之后只说了四个字：“花里胡哨。”魏元璟回他：“好看就行。”</div>
+        </div>
+    </div>
+
+    <!-- 专属神器 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 专属神器 · 镇魂破虚引</div>
+        <div class="weapon-block">
+            <div>「镇魂破虚引」，天庭神器名录有载。玉质长笛，笛身刻有暗纹，平日里温润无华，吹奏时会泛起一层幽绿的微光。</div>
+            <div style="margin-top:4px;">此笛以音波为刃，声起时能驱散邪祟、打断敌方术法，甚至令听者短暂失神。魏元璟平时将它悬在腰间，多数时候只是当个好看的佩饰，遇事还是习惯拔刀。</div>
+            <div class="quote">“平时挂着好看，真要用的时候……算了，希望别再用到。”</div>
+        </div>
+    </div>
+
+    <!-- 特殊机制 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 特殊机制 · 浮空</div>
+        <div class="weapon-block">
+            <div>魏元璟吹奏摧城笛时进入浮空状态，持续至大招结束。</div>
+            <div style="margin-top:4px;">浮空期间：地面单位的近战攻击无法命中浮空状态的魏元璟；远程攻击与法术仍可正常命中。远程必杀可命中，近战必杀伤害降低 60%。</div>
+            <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">技能结束后，浮空状态解除。</div>
+        </div>
+    </div>
+
+    <!-- 技能组 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 技能组</div>
+
+        <div class="skill">
+            <div class="name">普攻 · 双刀·逐影 <span class="type">普攻</span></div>
+            <div class="desc">挥动双刀进行二段攻击，造成物理伤害。第二段伤害略高于第一段。若目标处于控制状态，每段伤害额外提升 10%。刀光掠过时，能看到淡金色的残影，像月光在水面上碎开。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">战技 · 双刀·连斩 <span class="type">战技</span></div>
+            <div class="desc">对单体敌人进行六段连续斩击，每段造成 65% 物理伤害，六段总伤害为 390%。若六段全部命中同一目标，最后一击附带 1 秒眩晕效果（对同一目标有内置冷却）。前五段斩击可被闪避或格挡，第六段为不可闪避的追斩。</div>
+            <div class="quote">刀法承自罗修，却被他擅自加了宫廷刀舞的旋身与折枝。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">必杀 · 镇魂·破虚引 <span class="type">必杀</span></div>
+            <div class="desc">吹响摧城笛，进入浮空状态，持续 3 秒。浮空期间每 0.5 秒释放一次音波，共 6 段，每段造成 70% 法术伤害，6 段总伤害为 420%。释放大招期间魏元璟无法移动、无法被近战攻击命中。</div>
+            <div class="desc" style="margin-top:4px;">音波覆盖全场，每次音波震颤时有 40% 概率对敌方单体施加「失魂」效果（目标下一回合无法行动），每段音波独立判定。大招结束落地后，魏元璟进入 1 秒硬直。</div>
+            <div class="quote">笛声响起时，全场敌人会短暂失神——不是因为音波的威力，是因为那声音太好听了，好听到让人忘了自己在打仗。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">被动 · 帝王·威仪 <span class="type">被动</span></div>
+            <div class="desc">魏元璟在场时，己方全体效果抵抗提升 10%。若罗修在场，额外提升 5%。天子威压，诸邪退避。</div>
+        </div>
+
+        <div class="skill">
+            <div class="name">被动 · 笛音·护主 <span class="type">被动</span></div>
+            <div class="desc">魏元璟每 3 回合获得一层「护主之音」护盾，持续 1 回合。护盾可吸收相当于自身最大生命值 15% 的伤害。浮空状态下护盾值翻倍。</div>
+            <div class="quote">摧城笛在认主之前就会保护他，认主之后更是如此。笛子护主，不需要理由。</div>
+        </div>
+    </div>
+
+    <!-- 羁绊效果 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 羁绊效果</div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 十年共饮</div>
+            <div class="bond">
+                <div class="name">与「罗修」同时出场时：</div>
+                <div class="desc">魏元璟的「帝王·威仪」效果中罗修在场额外提升 5%。魏元璟对处于控制状态的敌人造成伤害提升 15%。双方效果命中提升 10%。<div class="quote">“喝过十年酒，总得看着点。”</div></div>
+            </div>
+        </div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终五席</div>
+            <div class="bond">
+                <div class="name">与「林淮 · 栾方棋 · 罗修 · 程木栖」同时出场时：</div>
+                <div class="desc">全体攻击、防御、速度提升 8%。每回合开始时随机解除一名队友的控制效果。</div>
+            </div>
+        </div>
+
+        <div class="bond-section">
+            <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 莫逆·清音</div>
+            <div class="bond">
+                <div class="name">与「栾方棋」同时出场时：</div>
+                <div class="desc">双方速度提升 10%。魏元璟释放大招落地后，若生命值低于 50%，栾方棋自动为其恢复 15% 生命值（每场战斗触发 1 次）。两人共同在场时，全队异常状态抗性提升 8%。<div class="quote">“打完要一起喝酒吗？……我请你。”</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 彩蛋语音 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 彩蛋语音</div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与罗修同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">魏元璟：“出门让你带伞，果然忘了。罗首席的记性也就比鱼好那么一点。”<br>罗修：“晒晒太阳对身体好，璟殿下。”<br>魏元璟：“那你自己晒去吧，我走了。”</div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">罗修血量低于 30%</div>
+                <div class="line">魏元璟：“站我后面去，受伤了还往前冲，笨。”<br>罗修：“慌什么，这点伤还没你上次炸厨房严重。”<br>魏元璟：“你……！”（气得说不出话）</div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">罗修退场</div>
+                <div class="line">魏元璟：“……”<br>魏元璟：“你们真是活腻了。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与栾方棋同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">魏元璟：“打完要一起喝酒吗？或者去干点别的，去赌肆怎么样？”<br>栾方棋：“那个，元璟……我最近手头有点紧。”<br>魏元璟：“……我请你。”</div>
+            </div>
+            <div class="voice-item">
+                <div class="scene">栾方棋退场</div>
+                <div class="line">魏元璟：“……你倒下之前能不能说一声？我好有个心理准备。”<br>栾方棋：“没事没事，小伤。”<br><span class="note">实则死了。</span></div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">魏元璟：“那个，我最近新淘到一本新书，要看吗？”<br>林淮：“书名叫什么？”<br>魏元璟：“这里念出来不太好，回去和你说。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与程木栖同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">程木栖：“今天下午有一堂音律课，我走不开，得拜托你了。”<br>魏元璟：“……师姐，你上个月也是这么说的。”<br><span class="note">程木栖只是想偷懒而已。</span></div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与顾执同队</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">魏元璟：“那个，你还好吗？”<br>顾执：“我吗？多谢关心，我身体并无大碍。”<br>魏元璟：“哦……那你小心点。”</div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 与白禾川互为敌对</div>
+            <div class="voice-item">
+                <div class="scene">战斗开始</div>
+                <div class="line">白禾川：“昔年殿下于京城高台，丝竹并作，一舞惊鸿。如今线轴易主，倒也跳出了自己的步调。本君是该叹一声后生可畏，还是……惋惜那操线的手艺生疏了？”<br>魏元璟：“高台之舞，本宫早已忘干净了。倒是阁下，千年修行只习得一门控弦之术，偏生弦还总断。本宫劝你一句，狐狸精当久了，别真把自己当成拨弄乾坤的仙君。畜生就是畜生，披再多张皮，骨子里还是一股子臊味。”<br>白禾川：“……牙尖嘴利。”<br><span class="note">唯一能在言语上让白禾川吃瘪的人。</span></div>
+            </div>
+        </div>
+
+        <div class="voice-section">
+            <div class="section-label"><span class="deco">✦</span> 阵亡</div>
+            <div class="voice-item">
+                <div class="line">“……又一次。”</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 制作人笔记 -->
+    <div class="card">
+        <div class="title"><span class="deco">◈</span> 制作人笔记</div>
+        <div class="note">
+
+            <div class="qa">
+                <div class="q">关于控制</div>
+                <div class="a">有玩家发帖：“魏元璟控制115，全归终纪最有控制欲的男人，没被魏元璟控过的童年是不完整的童年。”<br><br>评论区最火的一条是：“罗修：我九幽焚天焰能烧穿地府。魏元璟：你能烧穿我的‘失魂’吗？”——笑死，罗修在外面是首席引渡人，回到家里是第十席。家庭弟位这一块，魏元璟拿捏得死死的。<br><br>更有玩家指出，魏元璟开大浮空吹笛的时候，罗修在地面被控得动不了，头上顶着眩晕图标，下面一行系统红字：“我说了让开点。”罗修倒是想动，他动不了。<br><br><span class="highlight">“罗修友伤20%烧队友，魏元璟控制115控全场。这夫妻俩一个放火一个控场，队友夹在中间，不知道该先死还是先晕。”</span><br><br>玩家建议将罗修和魏元璟的羁绊从“十年共饮”改为“十年共控”——罗修被控，魏元璟控人，十年了，罗修就没从眩晕里走出来过。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于镇魂破虚引</div>
+                <div class="a">摧城笛，原名「镇魂破虚引」，天庭神器名录有载，历任主人顾执、黎洛兰、白禾川皆不得善终，后归于罗修手中，沉寂多年。<br><br>最早它认的主人是顾执。顾执死后，笛子被交到他姐姐黎洛兰手中，黎洛兰死后又落到白禾川手里。白禾川死时，天命君没有收回此笛，于是它便一直留在罗修身边。罗修吹不响，也碰不得——神器有灵，无主之时，谁碰它都只是根普通的木棍。<br><br>和罗修成婚几年后，魏元璟在某日打扫书房不小心打翻了罗修收着笛子的檀木盒子。魏元璟吓了一跳，以为罗修会生气——毕竟这是顾执的遗物。但罗修只是看了一眼，说没事，让他放回去。魏元璟松了口气，还专门做了个新的架子，把笛子供得端端正正。<br><br>可那笛子总是莫名其妙地滚下来，一次两次是意外，三次四次便不是了。魏元璟再迟钝也察觉出不对，尤其是每次经过时，那笛子必定滚到他脚边，像是要他捡起来。<br><br>罗修看着这一幕，忽然明白了过来。魏元璟体内融着顾执的命格，笛子大概是把魏元璟错认成了顾执。<br><br>于是罗修把笛子拿起来，递到魏元璟手里，说：“你试试能不能吹响。”<br><br>魏元璟当然——吹不响。<br><br>而且自从那次之后，他夜里还老是做梦，梦见顾执和黎洛兰坐在一扇旧窗前，一个吹笛，一个斟酒，笛声呜咽，如泣如诉。魏元璟觉得真是见鬼了，白天把笛子丢进库房，第二天醒来，笛子又躺在枕边。他丢过河里，丢过火里，甚至试图拿给罗修烧掉，罗修没舍得，他便也作罢了，权当养了个认床的宠物。<br><br>直到那次出任务，他在一片桃花林里迷了路，撞上了林丛言。魏元璟当然打不过林丛言，几招下来就被逼到绝境，眼看一剑劈来，他下意识地拔出腰间笛子去挡，然而剑刃劈中笛身的那一刻，笛子忽然泛起一层幽绿的微光。<br><br>双方都愣了一下。笛子脱手滚落，恰逢桃林起风，满树花瓣被卷上半空，那笛子竟自己响了起来。<br><br>风穿过笛孔带出了一段残曲，那调子极轻极远，宛如叹息。一曲终了，绿光渐盛，笛身温润如玉，仿佛洗去了多年的尘埃。<br><br>魏元璟怔怔地捡起来，试探着放到唇边。这一次，笛声清越，应声而出。<br><br><span class="highlight">后来他想，那阵风大概是顾执最后留在世间的一点意志。桃花林是顾执的血肉所化，风是他的呼吸，曲是他的告别。</span><br><br>于是，他把笛子交给了魏元璟。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于罗修×魏元璟组合特效</div>
+                <div class="a">罗修在地上解放九幽焚天焰，全屏黑火吞噬战场；魏元璟在天上浮空吹奏镇魂破虚引，全屏绿光覆盖穹顶。一个点火，一个奏乐，史称“冥府夫妻混合双打”。<br><br>有网友逐帧录屏后发现了一个细节：当魏元璟浮空吹笛时，罗修脚下会自动浮现几朵暗金色的牡丹花特效，随着九幽焰的黑火明明灭灭，若隐若现。<br><br>“小情侣是这样的，一个放火一个开花，官方暗戳戳发糖。”<br><br><span class="highlight">最离谱的是，这牡丹花特效只有和罗修同队时才触发。</span>魏元璟和栾方棋同队吹笛时，地上长的是浮生花；和罗修同队时，地上开的才是牡丹。牡丹，花中之王，雍容华贵，对应魏元璟的气质。罗修一个玩黑火的糙汉脚下开牡丹花，这个反差让不少玩家直呼受不了。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于全屏特效闪退</div>
+                <div class="a">罗修开大（全屏黑火）+ 魏元璟开大（全屏绿光浮空）+ 栾方棋开大（浮生树全屏）= 三重大招同时释放，低端机直接闪退，高端机掉帧到PPT。有玩家发帖说：“我手机炸了，屏幕一黑，再亮起来的时候我已经在归终殿复活点了。”<br><br>官方紧急回应：正在修复特效叠加导致闪退的问题，建议玩家暂时避免同时释放多个全屏大招。<br><br>有网友调侃：“林淮：你们仨怎么孤立我？”——确实，林淮拿着他的银枪站在地上，看着满屏黑火绿光红白花瓣，他的枪只能戳面前这一个，而对面已经在三个全屏大招里死三回了。<br><br><span class="highlight">“有人猜程木栖的技能也是全屏，到时候罗修黑火+魏元璟绿光+栾方棋花海+程木栖琴音，四个全屏叠加，林淮就是唯一一个只能捅面前这一个的原始人。”</span><br><br>策划回应：在修了在修了（据说是给林淮也加个全屏，但被林淮拒绝了，他说他不需要全屏，只需要一枪）。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于组合对比：淮棋 vs 修璟</div>
+                <div class="a">社区公认，归终殿有两对官方盖章的顶级组合。<br><br>一对是林淮+栾方棋，手术刀式精准打击。林淮攻击155，单体爆发天花板，栾方棋顶级辅助，浮生树治疗增益拉满。一个负责杀，一个负责保，点谁谁死，保谁谁活。<br><br>另一对是罗修+魏元璟，轰炸机式地图炮洗地。罗修群攻95，九幽焚天焰全屏焚烧；魏元璟控制115，镇魂破虚引全屏控场+净化。一个负责烧，一个负责控，连闪避的机会都不给对面。<br><br><span class="highlight">“淮棋是外科手术，修璟是火力覆盖。一个讲究精准，一个讲究范围。一个杀一个保，一个烧一个控。”</span><br><br>更夸张的是机制上的互补：魏元璟浮空免疫林淮近战，罗修羁绊免疫魏元璟友伤（降到5%）。这夫妻俩互相包庇，机制上锁死了。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于浮空机制</div>
+                <div class="a">魏元璟浮空吹笛，地面近战打不着，这个机制让林淮玩家集体破防。<br><br>魏元璟浮空的时候，栾方棋的浮生树能打到他（树长高一点），罗修的火烧得到他（火会飞），程木栖的琴音覆盖得到他（音波无视高度），只有林淮，拿着他的枪，站在地上，像个原始人。有玩家建议给银枪加对空导弹，或者给林淮加个梯子，被官方回复了四个字：“林淮拒绝。”</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于防御55与生存100</div>
+                <div class="a">魏元璟防御55（C评级），但生存100（SS评级），全靠闪避和浮空机制撑着。<br><br><span class="highlight">“纸糊的防御，鬼魅的身法。打不中比打不动更恶心。”</span><br><br>最经典的场面是：对面魏元璟防御才55，林淮一刀下去——miss。再一刀——miss。魏元璟站在天上吹笛子，林淮连他衣角都碰不到。<br><br>有人做过伤害测试：林淮攻击155打魏元璟防御55，理论伤害是100，但实际打中率不到30%。<span class="highlight">“我攻击高，但我打不中他。这游戏平衡做得真好。”</span>——一位林淮玩家的肺腑之言。</div>
+            </div>
+
+            <div class="qa">
+                <div class="q">关于双刀「对影」</div>
+                <div class="a">有玩家逐帧对比了魏元璟和罗修的双刀动作模组，发现起手式几乎完全一致，只是魏元璟每一式都加了六个旋身和花手，把杀人技跳成了霓裳曲。<br><br>罗修亲手捏的刀，用的是自己九幽焰为引，取魏元璟一缕精魂凝练而成，刀在人在，刀碎魂伤——四舍五入是定情信物。<br><br><span class="highlight">玩家社区公认的说法是：“魏元璟用刀舞，罗修用刀砍。同一个师父教的刀法，审美差距怎么这么大。罗修一刀毙命，魏元璟转六个圈再一刀毙命——仪式感懂不懂？”</span><br><br>最离谱的是，魏元璟双刀挥动时会有淡金色流光，而罗修的刀是黑色火焰。一金一黑，一舞一杀，官方你告诉我这不是情侣配色？当然，罗修本人对此事的评价只有四个字：“花里胡哨。”</div>
+            </div>
+
+            <div class="final">
+                设计文档最后一页写着一句话：<br><br>
+                <span class="highlight">“他在天上控全场，他在地上烧全场。队友和敌人一起遭殃，只有他们彼此是安全的。”</span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- 雷达图 -->
+<!-- ============================================================ -->
+<script>
+(function() {
+    var drawStats = [75, 55, 72, 115, 85, 100];
+    var displayStats = [75, 55, 72, 115, 85, 100];
+    var labels = ['攻击', '防御', '速度', '控制', '群攻', '生存'];
+    var cx = 150, cy = 150, maxR = 120;
+    var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
+        return deg * Math.PI / 180;
+    });
+    var scale = 1.0;
+
+    var svg = document.getElementById('radar-chart');
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+
+    var layers = [0.3, 0.5, 0.7, 1.0];
+    layers.forEach(function(ratio) {
+        var r = maxR * ratio;
+        var pts = angles.map(function(a) {
+            return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a));
+        }).join(' ');
+        var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', pts);
+        poly.setAttribute('fill', 'none');
+        poly.setAttribute('stroke', 'var(--border-card)');
+        poly.setAttribute('stroke-width', ratio === 1.0 ? '0.8' : '0.5');
+        if (ratio !== 1.0) poly.setAttribute('stroke-dasharray', '4,4');
+        svg.appendChild(poly);
+    });
+
+    angles.forEach(function(a) {
+        var x = cx + maxR * Math.sin(a);
+        var y = cy - maxR * Math.cos(a);
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', 'var(--border-card)');
+        line.setAttribute('stroke-width', '0.4');
+        line.setAttribute('stroke-dasharray', '2,3');
+        svg.appendChild(line);
+    });
+
+    var vertices = drawStats.map(function(val, i) {
+        var r = (val / 100) * maxR * scale;
+        var a = angles[i];
+        return {
+            x: cx + r * Math.sin(a),
+            y: cy - r * Math.cos(a),
+            val: displayStats[i]
+        };
+    });
+
+    var centerPts = angles.map(function() {
+        return cx + ',' + cy;
+    }).join(' ');
+    var targetPts = vertices.map(function(v) {
+        return v.x + ',' + v.y;
+    }).join(' ');
+
+    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', centerPts);
+    poly.setAttribute('fill', 'var(--accent-soft)');
+    poly.setAttribute('stroke', 'var(--accent)');
+    poly.setAttribute('stroke-width', '2.5');
+    poly.setAttribute('stroke-linejoin', 'round');
+    var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    anim.setAttribute('attributeName', 'points');
+    anim.setAttribute('from', centerPts);
+    anim.setAttribute('to', targetPts);
+    anim.setAttribute('dur', '1.2s');
+    anim.setAttribute('fill', 'freeze');
+    anim.setAttribute('calcMode', 'spline');
+    anim.setAttribute('keySplines', '0.25 0.1 0.25 1');
+    poly.appendChild(anim);
+    svg.appendChild(poly);
+
+    vertices.forEach(function(v) {
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', v.x);
+        circle.setAttribute('cy', v.y);
+        circle.setAttribute('r', '3');
+        circle.setAttribute('fill', 'var(--accent)');
+        circle.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1s');
+        fade.setAttribute('fill', 'freeze');
+        circle.appendChild(fade);
+        svg.appendChild(circle);
+    });
+
+    var labelPositions = [
+        { x: 150, y: 10, text: '攻击', anchor: 'middle' },
+        { x: 264, y: 112, text: '防御', anchor: 'start' },
+        { x: 248, y: 206, text: '速度', anchor: 'start' },
+        { x: 150, y: 286, text: '控制', anchor: 'middle' },
+        { x: 52, y: 210, text: '群攻', anchor: 'end' },
+        { x: 36, y: 106, text: '生存', anchor: 'end' }
+    ];
+    labelPositions.forEach(function(lp) {
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', lp.x);
+        text.setAttribute('y', lp.y);
+        text.setAttribute('fill', 'var(--text-muted)');
+        text.setAttribute('font-size', '8');
+        text.setAttribute('font-weight', '400');
+        text.setAttribute('text-anchor', lp.anchor);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = lp.text;
+        svg.appendChild(text);
+    });
+
+    var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
+    vertices.forEach(function(v, i) {
+        var offset = 12;
+        var a = angles[i];
+        var dx = offset * Math.sin(a);
+        var dy = -offset * Math.cos(a);
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', v.x + dx);
+        text.setAttribute('y', v.y + dy);
+        text.setAttribute('fill', 'var(--accent)');
+        text.setAttribute('font-size', '9');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('text-anchor', anchorMap[i]);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = v.val;
+        text.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1.2s');
+        fade.setAttribute('fill', 'freeze');
+        text.appendChild(fade);
+        svg.appendChild(text);
+    });
+})();
+</script>
+
+</body>
+</html>
