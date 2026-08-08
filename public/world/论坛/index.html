@@ -214,7 +214,7 @@
     .filter-bar .search-box input:focus { border-color: var(--accent); }
     .filter-bar .search-box input::placeholder { color: var(--text-muted-light); }
 
-    /* ---- 预设帖子（硬编码） ---- */
+    /* ---- 帖子卡片（预设+动态共用） ---- */
     .post-item {
       display: block;
       background: var(--bg-card);
@@ -301,7 +301,7 @@
     .post-item .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
 
-    /* ---- 动态帖子（新发布的） ---- */
+    /* ---- 动态帖子（新发布的，点击打开详情） ---- */
     .post-item-dynamic {
       display: block;
       background: var(--bg-card);
@@ -367,6 +367,11 @@
     }
     .post-item-dynamic .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item-dynamic .stats .num { font-weight: 500; color: var(--text-secondary); }
+
+    .post-item-dynamic.hidden,
+    .post-item.hidden {
+      display: none;
+    }
 
     #detail-view { display: none; }
     #detail-view .back-link {
@@ -508,7 +513,7 @@
     }
     .modal-box .submit-btn:hover { opacity: 0.85; }
 
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.9rem; }
+    .empty-state { text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 0.9rem; }
 
     @media (max-width: 600px) {
       body { padding: 0 10px; }
@@ -572,12 +577,13 @@
   </div>
 
   <div id="list-view">
+
     <div class="list-header">
       <h2>📋 热门讨论</h2>
       <span class="count" id="post-count">5 个帖子</span>
     </div>
 
-    <!-- 分类筛选 + 搜索（仅对动态帖子生效） -->
+    <!-- 分类筛选 + 搜索 -->
     <div class="filter-bar">
       <button class="filter-tag active" data-filter="all">全部</button>
       <button class="filter-tag" data-filter="讨论">讨论</button>
@@ -589,102 +595,107 @@
       </div>
     </div>
 
-    <!-- ===== 预设帖子（硬编码，跳转外部页面） ===== -->
-    <a class="post-item" href="post/1.html">
-      <div class="title">
-        【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。
-        <span class="hot">🔥 热</span>
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span>·</span>
-        <span>2026-01-12</span>
-        <span>·</span>
-        <span>最后回复 3小时前</span>
-      </div>
-      <div class="excerpt">大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……</div>
-      <div class="stats">
-        <span>💬 <span class="num">99</span></span>
-        <span>👍 <span class="num">3.4k</span></span>
-      </div>
-    </a>
+    <!-- ===== 帖子容器（预设+动态都在这里） ===== -->
+    <div id="post-container">
 
-    <a class="post-item" href="post/2.html">
-      <div class="title">
-        【求助】历史系新来的特聘讲师是不是有点太离谱了？？
-        <span class="hot">🔥 热</span>
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span>·</span>
-        <span>2026-01-10</span>
-        <span>·</span>
-        <span>最后回复 1天前</span>
-      </div>
-      <div class="excerpt">我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。而且他讲到“祈雨仪式”的时候，说了一句：“其实有时候真的会下雨……”</div>
-      <div class="stats">
-        <span>💬 <span class="num">142</span></span>
-        <span>👍 <span class="num">5.6k</span></span>
-      </div>
-    </a>
+      <!-- 预设帖子：硬编码，有 href -->
+      <a class="post-item" href="post/1.html" data-category="讨论">
+        <div class="title">
+          【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。
+          <span class="hot">🔥 热</span>
+        </div>
+        <div class="meta">
+          <span class="author">匿名楼主</span>
+          <span>·</span>
+          <span>2026-01-12</span>
+          <span>·</span>
+          <span>最后回复 3小时前</span>
+        </div>
+        <div class="excerpt">大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……</div>
+        <div class="stats">
+          <span>💬 <span class="num">99</span></span>
+          <span>👍 <span class="num">3.4k</span></span>
+        </div>
+      </a>
 
-    <a class="post-item" href="post/3.html">
-      <div class="title">
-        【讨论】你们有没有发现《归途》的歌词……细思极恐？
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span>·</span>
-        <span>2026-01-08</span>
-        <span>·</span>
-        <span>最后回复 2天前</span>
-      </div>
-      <div class="excerpt">科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——风将你的名字吹向远方……</div>
-      <div class="stats">
-        <span>💬 <span class="num">49</span></span>
-        <span>👍 <span class="num">2.1k</span></span>
-      </div>
-    </a>
+      <a class="post-item" href="post/2.html" data-category="求助">
+        <div class="title">
+          【求助】历史系新来的特聘讲师是不是有点太离谱了？？
+          <span class="hot">🔥 热</span>
+        </div>
+        <div class="meta">
+          <span class="author">匿名楼主</span>
+          <span>·</span>
+          <span>2026-01-10</span>
+          <span>·</span>
+          <span>最后回复 1天前</span>
+        </div>
+        <div class="excerpt">我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。而且他讲到“祈雨仪式”的时候，说了一句：“其实有时候真的会下雨……”</div>
+        <div class="stats">
+          <span>💬 <span class="num">142</span></span>
+          <span>👍 <span class="num">5.6k</span></span>
+        </div>
+      </a>
 
-    <a class="post-item" href="post/4.html">
-      <div class="title">
-        【树洞】有没有人认识那个新来的历史教授？？我直接垂直入坑
-      </div>
-      <div class="meta">
-        <span class="author">匿名楼主</span>
-        <span>·</span>
-        <span>2026-01-05</span>
-        <span>·</span>
-        <span>最后回复 5天前</span>
-      </div>
-      <div class="excerpt">我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。那个教授！！长头发！！金眼睛！！高冷脸！！</div>
-      <div class="stats">
-        <span>💬 <span class="num">203</span></span>
-        <span>👍 <span class="num">8.9k</span></span>
-      </div>
-    </a>
+      <a class="post-item" href="post/3.html" data-category="讨论">
+        <div class="title">
+          【讨论】你们有没有发现《归途》的歌词……细思极恐？
+        </div>
+        <div class="meta">
+          <span class="author">匿名楼主</span>
+          <span>·</span>
+          <span>2026-01-08</span>
+          <span>·</span>
+          <span>最后回复 2天前</span>
+        </div>
+        <div class="excerpt">科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——风将你的名字吹向远方……</div>
+        <div class="stats">
+          <span>💬 <span class="num">49</span></span>
+          <span>👍 <span class="num">2.1k</span></span>
+        </div>
+      </a>
 
-    <a class="post-item" href="post/5.html">
-      <div class="title">
-        【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产
-        <span class="hot">🔥 热</span>
-      </div>
-      <div class="meta">
-        <span class="author">昭昭是我老婆</span>
-        <span>·</span>
-        <span>2025-12-28</span>
-        <span>·</span>
-        <span>最后回复 2周前</span>
-      </div>
-      <div class="excerpt">我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。我想让他去看医生，他又不肯。我该怎么办？急，在线等。</div>
-      <div class="stats">
-        <span>💬 <span class="num">312</span></span>
-        <span>👍 <span class="num">1.2w</span></span>
-      </div>
-    </a>
+      <a class="post-item" href="post/4.html" data-category="树洞">
+        <div class="title">
+          【树洞】有没有人认识那个新来的历史教授？？我直接垂直入坑
+        </div>
+        <div class="meta">
+          <span class="author">匿名楼主</span>
+          <span>·</span>
+          <span>2026-01-05</span>
+          <span>·</span>
+          <span>最后回复 5天前</span>
+        </div>
+        <div class="excerpt">我是文学院大二的，这学期有一门《千律州文明通史》，本来以为是水课随便选选，结果第一节课教授走进来的时候我整个人都坐直了。那个教授！！长头发！！金眼睛！！高冷脸！！</div>
+        <div class="stats">
+          <span>💬 <span class="num">203</span></span>
+          <span>👍 <span class="num">8.9k</span></span>
+        </div>
+      </a>
 
-    <!-- ===== 动态帖子容器（新发布的帖子放在这里） ===== -->
-    <div id="dynamic-posts"></div>
+      <a class="post-item" href="post/5.html" data-category="求助">
+        <div class="title">
+          【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产
+          <span class="hot">🔥 热</span>
+        </div>
+        <div class="meta">
+          <span class="author">昭昭是我老婆</span>
+          <span>·</span>
+          <span>2025-12-28</span>
+          <span>·</span>
+          <span>最后回复 2周前</span>
+        </div>
+        <div class="excerpt">我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。我想让他去看医生，他又不肯。我该怎么办？急，在线等。</div>
+        <div class="stats">
+          <span>💬 <span class="num">312</span></span>
+          <span>👍 <span class="num">1.2w</span></span>
+        </div>
+      </a>
+
+      <!-- 动态帖子由 JS 渲染到这里 -->
+      <div id="dynamic-posts"></div>
+
+    </div>
   </div>
 
   <div id="detail-view">
@@ -724,12 +735,11 @@
 
 <script>
   // ================================================================
-  //  新帖子数据管理（只处理用户发布的帖子）
+  //  数据
   // ================================================================
 
   const STORAGE_KEY = 'beijing_forum_dynamic_posts';
 
-  // 加载动态帖子
   function loadDynamicPosts() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -750,7 +760,7 @@
   }
 
   // ================================================================
-  //  状态管理
+  //  状态
   // ================================================================
 
   let dynamicPosts = loadDynamicPosts();
@@ -759,7 +769,6 @@
   let currentView = 'list';
   let currentDetailId = null;
 
-  // 今日发帖数
   function getTodayCount() {
     const today = new Date().toDateString();
     try {
@@ -780,17 +789,36 @@
   }
 
   // ================================================================
-  //  渲染函数
+  //  渲染
   // ================================================================
 
   function render() {
     if (currentView === 'detail') { renderDetail(); return; }
-    renderDynamicPosts();
+    renderPosts();
   }
 
-  function renderDynamicPosts() {
+  // 核心：筛选所有帖子（预设+动态）
+  function renderPosts() {
+    // 1. 预设帖子（.post-item）——通过 data-category 和标题筛选
+    const presetPosts = document.querySelectorAll('.post-item');
+    let visibleCount = 0;
+
+    presetPosts.forEach(el => {
+      const category = el.dataset.category || '';
+      const title = el.querySelector('.title')?.textContent || '';
+      const author = el.querySelector('.meta .author')?.textContent || '';
+      const matchCategory = currentFilter === 'all' || category === currentFilter;
+      const matchSearch = !currentSearch.trim() ||
+        title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+        author.toLowerCase().includes(currentSearch.toLowerCase());
+      const show = matchCategory && matchSearch;
+      el.classList.toggle('hidden', !show);
+      if (show) visibleCount++;
+    });
+
+    // 2. 动态帖子（.post-item-dynamic）——重新渲染
     const container = document.getElementById('dynamic-posts');
-    let filtered = dynamicPosts;
+    let filtered = [...dynamicPosts];
 
     if (currentFilter !== 'all') {
       filtered = filtered.filter(p => p.category === currentFilter);
@@ -802,33 +830,35 @@
         p.author.toLowerCase().includes(q)
       );
     }
-    filtered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+    filtered = filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (filtered.length === 0) {
       container.innerHTML = '';
-      return;
+    } else {
+      container.innerHTML = filtered.map(post => `
+        <div class="post-item-dynamic" onclick="openDetail(${post.id})">
+          <div class="title">
+            ${post.title}
+            <span class="category-tag">${post.category}</span>
+          </div>
+          <div class="meta">
+            <span class="author">${post.author}</span>
+            <span>·</span>
+            <span>${post.date}</span>
+            <span>·</span>
+            <span>刚刚发布</span>
+          </div>
+          <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
+          <div class="stats">
+            <span>💬 <span class="num">${post.replies}</span></span>
+            <span>👍 <span class="num">${post.likes}</span></span>
+          </div>
+        </div>
+      `).join('');
+      visibleCount += filtered.length;
     }
 
-    container.innerHTML = filtered.map(post => `
-      <div class="post-item-dynamic" onclick="openDetail(${post.id})">
-        <div class="title">
-          ${post.title}
-          <span class="category-tag">${post.category}</span>
-        </div>
-        <div class="meta">
-          <span class="author">${post.author}</span>
-          <span>·</span>
-          <span>${post.date}</span>
-          <span>·</span>
-          <span>刚刚发布</span>
-        </div>
-        <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
-        <div class="stats">
-          <span>💬 <span class="num">${post.replies}</span></span>
-          <span>👍 <span class="num">${post.likes}</span></span>
-        </div>
-      </div>
-    `).join('');
+    document.getElementById('post-count').textContent = visibleCount + ' 个帖子';
   }
 
   function renderDetail() {
@@ -907,7 +937,7 @@
   }
 
   // ================================================================
-  //  筛选 & 搜索
+  //  筛选 + 搜索
   // ================================================================
 
   function setupFilters() {
@@ -919,11 +949,15 @@
         render();
       });
     });
+
     const searchInput = document.getElementById('search-input');
     let timer;
     searchInput.addEventListener('input', function() {
       clearTimeout(timer);
-      timer = setTimeout(() => { currentSearch = this.value; render(); }, 250);
+      timer = setTimeout(() => {
+        currentSearch = this.value;
+        render();
+      }, 250);
     });
   }
 
@@ -948,16 +982,16 @@
 
     document.getElementById('today-num').textContent = getTodayCount();
 
+    const sayings = [
+      '一壶茶，三两句闲话，便是人间好时节。',
+      '北境的风冷，茶馆的灯暖。',
+      '说书人一拍惊堂木，满座俱静。',
+      '有些故事，喝着喝着就讲完了。',
+      '茶凉了可以续，人走了……也会回来。',
+      '这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'
+    ];
     const sayingEl = document.getElementById('saying-text');
     setInterval(() => {
-      const sayings = [
-        '一壶茶，三两句闲话，便是人间好时节。',
-        '北境的风冷，茶馆的灯暖。',
-        '说书人一拍惊堂木，满座俱静。',
-        '有些故事，喝着喝着就讲完了。',
-        '茶凉了可以续，人走了……也会回来。',
-        '这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'
-      ];
       const idx = Math.floor(Math.random() * sayings.length);
       sayingEl.textContent = sayings[idx];
     }, 12000);
