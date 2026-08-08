@@ -756,21 +756,19 @@
 <!-- ============================================================ -->
 <script>
 (function() {
-    // 绘图数值：攻击用135让图形完整显示在边框内
-    // 显示数值：攻击标签写155（视觉欺骗）
-    var drawStats = [135, 52, 120, 40, 35, 60];
-    var displayStats = [155, 52, 120, 40, 35, 60];
-    var labels = ['攻击', '防御', '速度', '控制', '群攻', '生存'];
+    var stats = [155, 52, 120, 40, 35, 10];
+    var labels = ['攻击', '防御', '速度', '控制', '范围', '增益'];
     var cx = 150, cy = 150, maxR = 120;
     var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
         return deg * Math.PI / 180;
     });
     var scale = 1.2;
+    var accent = 'var(--accent)';
+    var accentSoft = 'var(--accent-soft)';
 
-    var svg = document.getElementById('radar-chart');
+    var svg = document.getElementById('radar-huai');
     while (svg.firstChild) { svg.removeChild(svg.firstChild); }
 
-    // 网格
     var layers = [0.3, 0.5, 0.7, 1.0];
     layers.forEach(function(ratio) {
         var r = maxR * ratio;
@@ -786,7 +784,6 @@
         svg.appendChild(poly);
     });
 
-    // 对角线
     angles.forEach(function(a) {
         var x = cx + maxR * Math.sin(a);
         var y = cy - maxR * Math.cos(a);
@@ -801,14 +798,13 @@
         svg.appendChild(line);
     });
 
-    // 顶点
-    var vertices = drawStats.map(function(val, i) {
+    var vertices = stats.map(function(val, i) {
         var r = (val / 100) * maxR * scale;
         var a = angles[i];
         return {
             x: cx + r * Math.sin(a),
             y: cy - r * Math.cos(a),
-            val: displayStats[i]
+            val: val
         };
     });
 
@@ -819,11 +815,10 @@
         return v.x + ',' + v.y;
     }).join(' ');
 
-    // 数据多边形
     var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     poly.setAttribute('points', centerPts);
-    poly.setAttribute('fill', 'var(--accent-soft)');
-    poly.setAttribute('stroke', 'var(--accent)');
+    poly.setAttribute('fill', accentSoft);
+    poly.setAttribute('stroke', accent);
     poly.setAttribute('stroke-width', '2.5');
     poly.setAttribute('stroke-linejoin', 'round');
     var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
@@ -837,13 +832,12 @@
     poly.appendChild(anim);
     svg.appendChild(poly);
 
-    // 顶点圆点
     vertices.forEach(function(v) {
         var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', v.x);
         circle.setAttribute('cy', v.y);
         circle.setAttribute('r', '3');
-        circle.setAttribute('fill', 'var(--accent)');
+        circle.setAttribute('fill', accent);
         circle.setAttribute('opacity', '0');
         var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
         fade.setAttribute('attributeName', 'opacity');
@@ -856,14 +850,13 @@
         svg.appendChild(circle);
     });
 
-    // 维度标签
     var labelPositions = [
         { x: 150, y: 10, text: '攻击', anchor: 'middle' },
-        { x: 264, y: 112, text: '防御', anchor: 'start' },
-        { x: 248, y: 206, text: '速度', anchor: 'start' },
+        { x: 266, y: 112, text: '防御', anchor: 'start' },
+        { x: 250, y: 206, text: '速度', anchor: 'start' },
         { x: 150, y: 286, text: '控制', anchor: 'middle' },
-        { x: 52, y: 210, text: '群攻', anchor: 'end' },
-        { x: 36, y: 106, text: '生存', anchor: 'end' }
+        { x: 52, y: 210, text: '范围', anchor: 'end' },
+        { x: 34, y: 106, text: '增益', anchor: 'end' }
     ];
     labelPositions.forEach(function(lp) {
         var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -878,7 +871,6 @@
         svg.appendChild(text);
     });
 
-    // 数值标签
     var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
     vertices.forEach(function(v, i) {
         var offset = 12;
@@ -888,7 +880,7 @@
         var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', v.x + dx);
         text.setAttribute('y', v.y + dy);
-        text.setAttribute('fill', 'var(--accent)');
+        text.setAttribute('fill', accent);
         text.setAttribute('font-size', '9');
         text.setAttribute('font-weight', '600');
         text.setAttribute('text-anchor', anchorMap[i]);
@@ -907,6 +899,3 @@
     });
 })();
 </script>
-
-</body>
-</html>
