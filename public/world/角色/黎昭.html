@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黎昭 · 角色档案</title>
+  <style>
+    /* ============================================================
+       0. CSS 变量（日间模式：浅底 + 大量黑色元素 + 金点缀）
+    ============================================================ */
+    :root {
+      --bg-body: #f2ede8;
+      --bg-card: #ffffff;
+      --bg-card-alt: #f6f2ed;
+      --bg-black-soft: #e8e2dc;
+      --border-light: #1a1614;
+      --border-gold: #b8944a;
+      --text-primary: #1a1614;
+      --text-secondary: #3d3732;
+      --text-muted: #6f6760;
+      --gold: #b08a4a;
+      --gold-soft: rgba(176, 138, 74, 0.08);
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-avatar: 0 0 0 4px #1a1614, 0 0 0 8px rgba(176, 138, 74, 0.10);
+      --tag-bg: #f2ede8;
+      --tag-border: #1a1614;
+      --quote-bg: #f6f2ed;
+      --transition: 0.35s ease;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #0e0c0a;
+      --bg-card: #1a1614;
+      --bg-card-alt: #24201c;
+      --bg-black-soft: rgba(0,0,0,0.3);
+      --border-light: #2f2a26;
+      --border-gold: #c9a052;
+      --text-primary: #e6ddd4;
+      --text-secondary: #b0a69b;
+      --text-muted: #6f6760;
+      --gold: #c9a052;
+      --gold-soft: rgba(201, 160, 82, 0.08);
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+      --shadow-avatar: 0 0 0 4px #c9a052, 0 0 0 8px rgba(201, 160, 82, 0.08);
+      --tag-bg: #24201c;
+      --tag-border: #2f2a26;
+      --quote-bg: rgba(0,0,0,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .theme-toggle-wrap {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 100;
+    }
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 6px 14px 6px 12px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow);
+      letter-spacing: 0.3px;
+    }
+    .theme-toggle:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .profile {
+      max-width: 720px;
+      width: 100%;
+      background: var(--bg-card);
+      border: 2px solid var(--border-light);
+      border-radius: 12px;
+      padding: 32px 36px 28px 36px;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .profile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.6;
+      transition: opacity var(--transition);
+    }
+
+    /* ============================================================
+       5. 顶部 —— 修改为圆角矩形大图
+    ============================================================ */
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 22px;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 200px;
+      min-width: 200px;
+      height: 260px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 3px solid var(--border-light);
+      box-shadow: var(--shadow-avatar);
+      background: var(--bg-card-alt);
+      flex-shrink: 0;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;   /* 从头顶开始显示，脸一定在 */
+      display: block;
+    }
+    .avatar .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card-alt);
+      color: var(--gold);
+      font-size: 2.4rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+
+    .name-title {
+      flex: 1;
+      min-width: 0;
+      padding-top: 4px;
+    }
+    .name-title .name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 1px;
+      line-height: 1.2;
+      transition: color var(--transition);
+    }
+    .name-title .name .gold {
+      color: var(--gold);
+    }
+    .name-title .sub {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+    .name-title .sub .sep {
+      color: var(--text-muted);
+      margin: 0 6px;
+    }
+    .name-title .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .name-title .tags span {
+      font-size: 0.6rem;
+      padding: 2px 12px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-light);
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: var(--tag-bg);
+      transition: border-color var(--transition), color var(--transition), background var(--transition);
+    }
+    .name-title .tags span.gold-tag {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 24px;
+      margin: 18px 0 16px 0;
+      padding: 16px 0;
+      border-top: 2px solid var(--border-light);
+      border-bottom: 2px solid var(--border-light);
+      transition: border-color var(--transition);
+    }
+    .info-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.85rem;
+      padding: 2px 0;
+    }
+    .info-item .label {
+      color: var(--text-muted);
+      font-weight: 400;
+      min-width: 50px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .info-item .value {
+      color: var(--text-secondary);
+    }
+    .info-item .value .highlight {
+      color: var(--gold);
+    }
+
+    .section { margin-top: 16px; }
+    .section-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-primary);
+      font-weight: 700;
+      margin-bottom: 6px;
+      transition: color var(--transition);
+    }
+    .section-body {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .relation-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      margin-top: 4px;
+    }
+    .relation-list .rel {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .relation-list .rel .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-light);
+      opacity: 0.7;
+    }
+    .relation-list .rel .rel-label {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+    }
+
+    .items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .items .item {
+      font-size: 0.78rem;
+      padding: 2px 14px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 16px;
+      color: var(--text-secondary);
+      background: var(--bg-card-alt);
+      transition: border-color var(--transition), color var(--transition), background var(--transition);
+    }
+    .items .item .icon {
+      margin-right: 4px;
+      color: var(--gold);
+    }
+
+    .quote-block {
+      margin: 10px 0 4px 0;
+      padding: 12px 16px;
+      background: var(--quote-bg);
+      border-radius: 6px;
+      border-left: 4px solid var(--border-light);
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .quote-block .line {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.7;
+    }
+    .quote-block .line .gold {
+      color: var(--gold);
+      font-style: normal;
+    }
+    .quote-block .source {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-style: normal;
+    }
+
+    .footer-links {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 2px solid var(--border-light);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      transition: border-color var(--transition);
+    }
+    .footer-links a {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color var(--transition);
+      letter-spacing: 0.3px;
+    }
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+    .footer-links a .arrow {
+      color: var(--gold);
+      margin-right: 4px;
+    }
+
+    /* ============================================================
+       12. 响应式
+    ============================================================ */
+    @media (max-width: 600px) {
+      body { padding: 20px 12px; }
+      .profile { padding: 20px 16px 20px 16px; }
+      .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 14px;
+      }
+      .avatar {
+        width: 100%;
+        min-width: auto;
+        height: 300px;          /* 手机端大图 */
+      }
+      .avatar img {
+        object-position: top 10%; /* 稍微下移，避免头顶太空 */
+      }
+      .name-title { padding-top: 0; }
+      .name-title .name { font-size: 1.5rem; }
+      .name-title .tags { justify-content: center; }
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+      .info-item .label { min-width: 40px; }
+      .relation-list { gap: 4px 12px; }
+      .theme-toggle-wrap {
+        top: 12px;
+        right: 12px;
+      }
+      .theme-toggle {
+        padding: 4px 10px 4px 8px;
+        font-size: 0.65rem;
+      }
+    }
+    @media (max-width: 400px) {
+      .avatar { height: 260px; }
+      .name-title .name { font-size: 1.2rem; }
+    }
+  </style>
+  <script>
+    (function() {
+      try {
+        const raw = localStorage.getItem('theme');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+          }
+        }
+      } catch(e) {}
+    })();
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      if (newTheme === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.removeAttribute('data-theme');
+      }
+      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      const btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = newTheme === 'dark'
+          ? '<span class="icon">☀️</span> 日间'
+          : '<span class="icon">🌙</span> 夜间';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('themeBtn');
+      if (!btn) return;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = isDark
+        ? '<span class="icon">☀️</span> 日间'
+        : '<span class="icon">🌙</span> 夜间';
+    });
+  </script>
+<base target="_blank">
+</head>
+<body>
+
+  <div class="theme-toggle-wrap">
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">
+      <span class="icon">🌙</span> 夜间
+    </button>
+  </div>
+
+  <div class="profile">
+
+    <div class="profile-header">
+      <div class="avatar">
+        <img src="lizhao_avatar.png" alt="黎昭">
+        <!-- <div class="placeholder">黎</div> -->
+      </div>
+      <div class="name-title">
+        <div class="name">黎昭 <span class="gold">·</span></div>
+        <div class="sub">
+          烬影会首领 <span class="sep">|</span> Omega
+          <span class="sep">|</span> 通缉令上的金眼睛
+        </div>
+        <div class="tags">
+          <span class="gold-tag">烬影会</span>
+          <span>黑斗篷</span>
+          <span>北境</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">第二性别</span>
+        <span class="value">Omega（隐性·标记后激活）</span>
+      </div>
+      <div class="info-item">
+        <span class="label">标记</span>
+        <span class="value">阿列克谢·沃尔科夫</span>
+      </div>
+      <div class="info-item">
+        <span class="label">身份</span>
+        <span class="value">烬影会首领 · 前准神候选人</span>
+      </div>
+      <div class="info-item">
+        <span class="label">所属</span>
+        <span class="value">双冕北境 · 东城老街</span>
+      </div>
+      <div class="info-item">
+        <span class="label">标志物品</span>
+        <span class="value">黑斗篷 · 渡厄法杖</span>
+      </div>
+      <div class="info-item">
+        <span class="label">信息素</span>
+        <span class="value"><span class="highlight">血锈与蜜</span></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">关联人物</div>
+      <div class="relation-list">
+        <span class="rel"><span class="dot"></span> 阿列克谢 <span class="rel-label">· 标记·爱人</span></span>
+        <span class="rel"><span class="dot"></span> 科利亚 <span class="rel-label">· 盟友</span></span>
+        <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 相助者</span></span>
+        <span class="rel"><span class="dot"></span> 伊万 <span class="rel-label">· 军师</span></span>
+        <span class="rel"><span class="dot"></span> 雷科 <span class="rel-label">· 武力担当</span></span>
+        <span class="rel"><span class="dot"></span> 凝淼 <span class="rel-label">· 合作</span></span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">关键物品</div>
+      <div class="items">
+        <span class="item"><span class="icon">◈</span> 黑斗篷</span>
+        <span class="item"><span class="icon">◈</span> 渡厄法杖</span>
+        <span class="item"><span class="icon">◈</span> 金翎石（已当掉）</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">背景</div>
+      <div class="section-body">
+        曾是尘歌创造的"怀榆"复制体，作为准神候选人被培养。任务失败后被抛弃，流亡至北境。
+        阴差阳错成为烬影会首领，以铁腕与柔情庇护底层民众。
+        被阿列克谢标记后，隐性Omega体质暴露，发情期成为其最大软肋。
+        表面毒舌冷漠，实则重情重义，护短至极。
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">经典台词</div>
+      <div class="quote-block">
+        <div class="line">
+          "那你们就该老老实实待在下水道里啃泔水。<br>
+          爬出来干什么，晒太阳？<span class="gold">你们也配？</span>"
+        </div>
+        <div class="source">—— 对黑鼠帮左护法说</div>
+      </div>
+      <div class="quote-block">
+        <div class="line">
+          "<span class="gold">不就是被操了顿屁股疼两天吗，</span><br>
+          说得跟我要死了一样！"
+        </div>
+        <div class="source">—— 对雷科说</div>
+      </div>
+      <div class="quote-block">
+        <div class="line">
+          "站在岸上的人，总觉得淹死的是笨蛋。"
+        </div>
+        <div class="source">—— 发情期后自语</div>
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <a href="../论坛/"><span class="arrow">←</span> 北境茶馆</a>
+      <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
+      <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
+    </div>
+
+  </div>
+
+</body>
+</html>

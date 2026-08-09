@@ -18,6 +18,8 @@
       --text-muted-light: #b0aaa2;
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.08);
+      --gold: #b8944a;
+      --gold-soft: rgba(184, 148, 74, 0.12);
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
       --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
@@ -39,6 +41,8 @@
       --text-muted-light: #5a5550;
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.12);
+      --gold: #c9a052;
+      --gold-soft: rgba(201, 160, 82, 0.12);
       --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
       --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
@@ -193,6 +197,26 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+    /* ===== 显眼的「角色档案」标签 ===== */
+    .filter-bar .role-tag {
+     border-color: var(--gold);
+     color: var(--gold);
+     font-weight: 600;
+     background: var(--gold-soft);
+     transition: all var(--transition);
+     text-decoration: none;
+     font-size: 0.75rem;
+     padding: 3px 14px;
+     border-radius: 16px;
+     border: 1px solid var(--gold);
+     display: inline-block;
+    }
+    .filter-bar .role-tag:hover {
+     background: var(--gold);
+     color: #fff;
+     border-color: var(--gold);
+     transform: scale(1.03);
+    }
     .filter-bar .search-box {
       margin-left: auto;
       display: flex;
@@ -301,7 +325,7 @@
     .post-item .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
 
-    /* ---- 动态帖子（新发布的，点击打开详情） ---- */
+    /* ---- 动态帖子 ---- */
     .post-item-dynamic {
       display: block;
       background: var(--bg-card);
@@ -368,8 +392,8 @@
     .post-item-dynamic .stats span { display: flex; align-items: center; gap: 4px; }
     .post-item-dynamic .stats .num { font-weight: 500; color: var(--text-secondary); }
 
-    .post-item-dynamic.hidden,
-    .post-item.hidden {
+    .post-item.hidden,
+    .post-item-dynamic.hidden {
       display: none;
     }
 
@@ -551,6 +575,7 @@
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
     }
+    
   </script>
 </head>
 <body>
@@ -583,13 +608,15 @@
       <span class="count" id="post-count">5 个帖子</span>
     </div>
 
-    <!-- 分类筛选 + 搜索 -->
+    <!-- 分类筛选 + 角色入口 + 搜索 -->
     <div class="filter-bar">
       <button class="filter-tag active" data-filter="all">全部</button>
       <button class="filter-tag" data-filter="讨论">讨论</button>
       <button class="filter-tag" data-filter="求助">求助</button>
       <button class="filter-tag" data-filter="树洞">树洞</button>
       <button class="filter-tag" data-filter="同人">同人</button>
+      <!-- ===== 显眼的角色标签 ===== -->
+      <a class="filter-tag role-tag" href="../角色/黎昭.html">📖 角色档案</a>
       <div class="search-box">
         <input type="text" id="search-input" placeholder="🔍 搜索帖子..." />
       </div>
@@ -941,7 +968,7 @@
   // ================================================================
 
   function setupFilters() {
-    document.querySelectorAll('.filter-tag').forEach(btn => {
+    document.querySelectorAll('.filter-tag:not(.role-tag)').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
