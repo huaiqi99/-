@@ -3,27 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>怀榆 · 角色档案</title>
+  <title>科利亚 · 角色档案</title>
   <style>
     /* ============================================================
-       0. CSS 变量 · 白金调
+       0. CSS 变量 · 粉色调
     ============================================================ */
     :root {
       --bg-body: #f7f4ef;
       --bg-card: #ffffff;
       --bg-card-alt: #faf7f2;
-      --border-light: #dcd6ce;
-      --border-gold: #d4b896;
-      --text-primary: #2c2824;
-      --text-secondary: #5f5852;
-      --text-muted: #8f8780;
-      --gold: #c9b08a;
-      --gold-soft: rgba(201, 176, 138, 0.08);
-      --shadow: 0 4px 20px rgba(0,0,0,0.05);
-      --shadow-avatar: 0 0 0 4px rgba(201, 176, 138, 0.15), 0 4px 20px rgba(0,0,0,0.05);
-      --tag-bg: #faf7f2;
-      --tag-border: #d4b896;
-      --quote-bg: #faf7f2;
+      --border-light: #1a1614;
+      --border-pink: #c47a7a;
+      --border-gold: #b8944a;
+      --text-primary: #1a1614;
+      --text-secondary: #3d3732;
+      --text-muted: #6f6760;
+      --pink: #c47a7a;
+      --pink-soft: rgba(196, 122, 122, 0.08);
+      --gold: #b08a4a;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-avatar: 0 0 0 4px rgba(196, 122, 122, 0.15), 0 4px 20px rgba(0,0,0,0.05);
+      --tag-bg: #f2ede8;
+      --tag-border: #1a1614;
+      --quote-bg: #f6f2ed;
       --transition: 0.35s ease;
     }
 
@@ -32,16 +34,18 @@
       --bg-card: #24201c;
       --bg-card-alt: #2e2a26;
       --border-light: #3a3530;
+      --border-pink: #d48a8a;
       --border-gold: #c9a052;
       --text-primary: #e6ddd4;
       --text-secondary: #b0a69b;
       --text-muted: #6f6760;
+      --pink: #d48a8a;
+      --pink-soft: rgba(212, 138, 138, 0.08);
       --gold: #c9a052;
-      --gold-soft: rgba(201, 160, 82, 0.06);
       --shadow: 0 8px 32px rgba(0,0,0,0.5);
-      --shadow-avatar: 0 0 0 4px rgba(201, 160, 82, 0.08), 0 4px 20px rgba(0,0,0,0.4);
+      --shadow-avatar: 0 0 0 4px rgba(212, 138, 138, 0.12), 0 4px 20px rgba(0,0,0,0.4);
       --tag-bg: #2e2a26;
-      --tag-border: #c9a052;
+      --tag-border: #3a3530;
       --quote-bg: rgba(0,0,0,0.2);
     }
 
@@ -89,8 +93,8 @@
       text-decoration: none;
     }
     .float-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
+      border-color: var(--pink);
+      color: var(--pink);
     }
     .float-btn .icon { font-size: 0.9rem; }
 
@@ -98,7 +102,7 @@
       max-width: 720px;
       width: 100%;
       background: var(--bg-card);
-      border: 1px solid var(--border-gold);
+      border: 2px solid var(--border-pink);
       border-radius: 12px;
       padding: 32px 36px 28px 36px;
       box-shadow: var(--shadow);
@@ -113,9 +117,9 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0.5;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--pink), transparent);
+      opacity: 0.6;
       transition: opacity var(--transition);
     }
 
@@ -153,7 +157,7 @@
       align-items: center;
       justify-content: center;
       background: var(--bg-card-alt);
-      color: var(--gold);
+      color: var(--pink);
       font-size: 2.4rem;
       font-weight: 300;
       letter-spacing: 2px;
@@ -172,8 +176,8 @@
       line-height: 1.2;
       transition: color var(--transition);
     }
-    .name-title .name .gold {
-      color: var(--gold);
+    .name-title .name .pink {
+      color: var(--pink);
     }
     .name-title .sub {
       font-size: 0.85rem;
@@ -195,16 +199,16 @@
       font-size: 0.6rem;
       padding: 2px 12px;
       border-radius: 12px;
-      border: 1.5px solid var(--tag-border);
+      border: 1.5px solid var(--border-light);
       color: var(--text-secondary);
       letter-spacing: 0.5px;
       text-transform: uppercase;
       background: var(--tag-bg);
       transition: border-color var(--transition), color var(--transition), background var(--transition);
     }
-    .name-title .tags span.gold-tag {
-      border-color: var(--gold);
-      color: var(--gold);
+    .name-title .tags span.pink-tag {
+      border-color: var(--pink);
+      color: var(--pink);
     }
 
     /* ---- 状态卡 ---- */
@@ -213,7 +217,7 @@
       padding: 8px 14px;
       background: var(--bg-card-alt);
       border-radius: 8px;
-      border-left: 3px solid var(--gold);
+      border-left: 3px solid var(--pink);
       display: flex;
       flex-wrap: wrap;
       gap: 8px 20px;
@@ -237,7 +241,7 @@
       color: var(--text-secondary);
     }
     .status-card .item .value .highlight {
-      color: var(--gold);
+      color: var(--pink);
     }
     .status-card .impression {
       display: flex;
@@ -263,8 +267,8 @@
       gap: 8px 24px;
       margin: 16px 0 16px 0;
       padding: 16px 0;
-      border-top: 1px solid var(--border-gold);
-      border-bottom: 1px solid var(--border-gold);
+      border-top: 2px solid var(--border-pink);
+      border-bottom: 2px solid var(--border-pink);
       transition: border-color var(--transition);
     }
     .info-item {
@@ -286,7 +290,7 @@
       color: var(--text-secondary);
     }
     .info-item .value .highlight {
-      color: var(--gold);
+      color: var(--pink);
     }
 
     /* ---- 章节 ---- */
@@ -295,15 +299,24 @@
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--text-muted);
-      font-weight: 600;
+      color: var(--text-primary);
+      font-weight: 700;
       margin-bottom: 6px;
       transition: color var(--transition);
     }
-    .section-body {
+    .section-body p {
+      text-indent: 2em;
+      margin-bottom: 0.6em;
       font-size: 0.92rem;
       line-height: 1.8;
       color: var(--text-secondary);
+    }
+    .section-body p:last-child {
+      margin-bottom: 0;
+    }
+    .section-body .highlight {
+      color: var(--pink);
+      font-weight: 500;
     }
 
     /* ---- 关联人物 ---- */
@@ -325,8 +338,8 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--gold);
-      opacity: 0.5;
+      background: var(--pink);
+      opacity: 0.6;
     }
     .relation-list .rel .rel-label {
       color: var(--text-muted);
@@ -343,7 +356,7 @@
     .items .item {
       font-size: 0.78rem;
       padding: 2px 14px;
-      border: 1px solid var(--border-gold);
+      border: 1.5px solid var(--border-light);
       border-radius: 16px;
       color: var(--text-secondary);
       background: var(--bg-card-alt);
@@ -351,7 +364,7 @@
     }
     .items .item .icon {
       margin-right: 4px;
-      color: var(--gold);
+      color: var(--pink);
     }
 
     /* ---- 时间线 ---- */
@@ -371,7 +384,7 @@
     .timeline-item .time {
       font-size: 0.7rem;
       font-weight: 600;
-      color: var(--gold);
+      color: var(--pink);
       min-width: 88px;
       letter-spacing: 0.3px;
       padding-top: 1px;
@@ -383,7 +396,7 @@
       line-height: 1.6;
     }
     .timeline-item .desc .highlight {
-      color: var(--gold);
+      color: var(--pink);
       font-weight: 500;
     }
     .timeline-item::before {
@@ -392,8 +405,8 @@
       left: 96px;
       top: 10px;
       bottom: -10px;
-      width: 1px;
-      background: var(--border-gold);
+      width: 1.5px;
+      background: var(--border-pink);
       opacity: 0.2;
     }
     .timeline-item:last-child::before {
@@ -404,7 +417,7 @@
     .footer-links {
       margin-top: 20px;
       padding-top: 14px;
-      border-top: 1px solid var(--border-gold);
+      border-top: 2px solid var(--border-pink);
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
@@ -418,10 +431,10 @@
       letter-spacing: 0.3px;
     }
     .footer-links a:hover {
-      color: var(--gold);
+      color: var(--pink);
     }
     .footer-links a .arrow {
-      color: var(--gold);
+      color: var(--pink);
       margin-right: 4px;
     }
 
@@ -441,9 +454,7 @@
         height: auto;
         aspect-ratio: 200 / 260;
       }
-      .avatar img {
-        object-position: center center;
-      }
+      .avatar img { object-position: center center; }
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
@@ -476,7 +487,7 @@
       }
     }
     @media (max-width: 400px) {
-      .avatar { height: 260px; }
+      .avatar { aspect-ratio: 200 / 260; }
       .name-title .name { font-size: 1.2rem; }
     }
   </style>
@@ -526,8 +537,8 @@
 <body>
 
   <div class="float-group">
-    <a class="float-btn" href="../角色/">
-      <span class="icon">←</span> 返回
+    <a class="float-btn" href="../论坛/">
+      <span class="icon">←</span> 返回茶馆
     </a>
     <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
       <span class="icon">🌙</span> 夜间
@@ -538,35 +549,35 @@
 
     <div class="profile-header">
       <div class="avatar">
-        <img src="huaiyu_avatar.png" alt="怀榆" />
-        <!-- <div class="placeholder">榆</div> -->
+        <img src="kolia_avatar.png" alt="科利亚" />
+        <!-- <div class="placeholder">科</div> -->
       </div>
       <div class="name-title">
-        <div class="name">怀榆 <span class="gold">·</span></div>
+        <div class="name">科利亚 <span class="pink">·</span></div>
         <div class="sub">
-          前创世神 <span class="sep">|</span> 现已回归人间
-          <span class="sep">|</span> 大学讲师
+          教堂神父 <span class="sep">|</span> Omega
+          <span class="sep">|</span> 顶流演员
         </div>
         <div class="tags">
-          <span class="gold-tag">第四纪元</span>
-          <span>归墟之庭</span>
-          <span>永昼净土</span>
+          <span class="pink-tag">教堂</span>
+          <span>莫罗佐娃</span>
+          <span>蜂蜜</span>
         </div>
 
         <div class="status-card">
           <span class="item">
             <span class="label">状态</span>
-            <span class="value">回归·隐世</span>
+            <span class="value">已婚 · 隐退备孕</span>
           </span>
           <span class="item">
             <span class="label">所在地</span>
-            <span class="value">北境 · <span class="highlight">段深泉的公寓</span></span>
+            <span class="value">北境 · <span class="highlight">莫罗佐娃庄园</span></span>
           </span>
           <span class="item impression">
             <span class="label">印象</span>
-            <span class="pill">温柔但坚定</span>
-            <span class="pill">成熟可靠</span>
-            <span class="pill">爱得坦荡</span>
+            <span class="pill">甜言蜜语</span>
+            <span class="pill">人间清醒</span>
+            <span class="pill">被爱养得很好</span>
           </span>
         </div>
       </div>
@@ -574,60 +585,60 @@
 
     <div class="info-grid">
       <div class="info-item">
+        <span class="label">第二性别</span>
+        <span class="value">Omega</span>
+      </div>
+      <div class="info-item">
+        <span class="label">标记</span>
+        <span class="value">瓦伦蒂娜·莫罗佐娃</span>
+      </div>
+      <div class="info-item">
         <span class="label">身份</span>
-        <span class="value">创世神（已卸任） · 大学讲师</span>
-      </div>
-      <div class="info-item">
-        <span class="label">命定之人</span>
-        <span class="value">段深泉</span>
-      </div>
-      <div class="info-item">
-        <span class="label">位阶</span>
-        <span class="value">超越之神（凌驾于旧神之上）</span>
+        <span class="value">教堂神父 · 顶流演员</span>
       </div>
       <div class="info-item">
         <span class="label">所属</span>
-        <span class="value">千律州</span>
+        <span class="value">双冕北境 · 莫罗佐娃家族</span>
       </div>
       <div class="info-item">
-        <span class="label">持有权柄</span>
-        <span class="value">九重天权（即完整权柄）</span>
+        <span class="label">标志物品</span>
+        <span class="value">教堂十字架 · 结婚证</span>
       </div>
       <div class="info-item">
-        <span class="label">力量属性</span>
-        <span class="value"><span class="highlight">创生 · 净化 · 时空 · 毁灭 · 演化 · 禁锢 · 存续 · 易形 · 共鸣</span></span>
+        <span class="label">信息素</span>
+        <span class="value"><span class="highlight">蜂蜜 · 甜香</span></span>
       </div>
     </div>
 
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
-        <span class="rel"><span class="dot"></span> 段深泉 <span class="rel-label">· 爱人 · 命定之人</span></span>
-        <span class="rel"><span class="dot"></span> 黎昭 <span class="rel-label">· 弟弟 · 复制体</span></span>
-        <span class="rel"><span class="dot"></span> 科利亚 <span class="rel-label">· 朋友</span></span>
-        <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 朋友</span></span>
+        <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 爱人 · 标记</span></span>
+        <span class="rel"><span class="dot"></span> 黎昭 <span class="rel-label">· 挚友 · 盟友</span></span>
         <span class="rel"><span class="dot"></span> 阿列克谢 <span class="rel-label">· 朋友</span></span>
-        <span class="rel"><span class="dot"></span> 尘歌 <span class="rel-label">· 创造者 · 前敌</span></span>
+        <span class="rel"><span class="dot"></span> 怀榆 <span class="rel-label">· 朋友</span></span>
+        <span class="rel"><span class="dot"></span> 段深泉 <span class="rel-label">· 朋友</span></span>
+        <span class="rel"><span class="dot"></span> 雷科 <span class="rel-label">· 旧识</span></span>
       </div>
     </div>
 
     <div class="section">
       <div class="section-title">关键物品</div>
       <div class="items">
-        <span class="item"><span class="icon">◈</span> 九大权柄（全部神权）</span>
-        <span class="item"><span class="icon">◈</span> 渡厄法杖</span>
-        <span class="item"><span class="icon">◈</span> 记忆·法伊顿的遗痕</span>
+        <span class="item"><span class="icon">◈</span> 教堂十字架</span>
+        <span class="item"><span class="icon">◈</span> 结婚证（发布会展示过）</span>
+        <span class="item"><span class="icon">◈</span> 蜂蜜糖罐</span>
       </div>
     </div>
 
     <div class="section">
       <div class="section-title">背景</div>
       <div class="section-body">
-        <p>尘歌以旧神法伊顿为原型创造的“孩子”，被赋予“玩家”的身份与虚假的记忆锚点，用以承载光明之神“昭临”的权柄。</p>
-        <p>历经业焰之国、北境、时衍天宫、无垠根庭的数年游历，在黎昭被尘歌杀死后，怀榆终于直面了自己被安排的宿命。他走遍千律州，召集沿途所结识的朋友，制定弑神计划，最终在归墟之庭以“名字”为锚点，以诅咒杀死前创世神尘歌，取而代之，成为新一任创世神。</p>
-        <p>同年段深泉战死，怀榆于悲痛中将其复活，重置世界，开启第四纪元。</p>
-        <p>五百年后，他以“名字”为祈愿媒介，被黎昭及全世界的人召回，重新获得肉身。如今他暂居北境，在段深泉的公寓里，以大学讲师的身份过着平静的普通人生活。</p>
-        <p>经历了一切之后，他早已褪去了初入千律州时的轻慢与疏离，变得<span class="highlight">温柔、坚定、坦荡</span>——他不再需要伪装，因为他已经拥有了想要的一切。</p>
+        <p>北境下层区教堂的神父，表面虔诚，实则油滑通透。被瓦伦蒂娜从第二任金主手中买下，安置在教堂里，以神父身份维持体面。</p>
+        <p>他是黎昭在黑暗时期少有的助力者之一——帮助黎昭度过发情期，张罗相亲，在烬影会最落魄时收留其成员。他也知晓许多北境高层的秘密，只在认为必要的时刻才开口。</p>
+        <p>被前两任金主伤害至深，子宫受损，被断言难孕。瓦伦蒂娜是他的第三任主人，也是第一个把他当人看的人。</p>
+        <p>第四纪元重置后，他成为十八线小演员，被瓦伦蒂娜重新发现、捧红，两人从“包养”走向婚姻。在发布会上甩出结婚证，宣告“怀孕了，需要静养”，彻底逆转了上一世难产而死的命运。</p>
+        <p>这一世他没有死在产房里。他活得好好的，被养得很好，脸上有光，笑起来不再带着讨好。他给那段苦日子补上了一个圆满的句号。</p>
       </div>
     </div>
 
@@ -635,56 +646,48 @@
       <div class="section-title">关键事件</div>
       <div class="timeline">
         <div class="timeline-item">
-          <span class="time">第三纪元·501年</span>
-          <span class="desc">于<span class="highlight">归墟之庭</span>被尘歌创造，作为法伊顿的容器培养</span>
+          <span class="time">第三纪元·约510年</span>
+          <span class="desc">被卖入黑市，辗转两任金主之手，身心俱损</span>
         </div>
         <div class="timeline-item">
-          <span class="time">519年</span>
-          <span class="desc">离开归墟之庭，前往业焰之国，<span class="highlight">遇见段深泉</span>，系统强制绑定</span>
+          <span class="time">第三纪元·约515年</span>
+          <span class="desc">被<span class="highlight">瓦伦蒂娜买下</span>，安置在教堂，以神父身份存身</span>
         </div>
         <div class="timeline-item">
-          <span class="time">521年</span>
-          <span class="desc">因不明原因脱离主线，代行者接替其位置</span>
+          <span class="time">523-524年</span>
+          <span class="desc">帮助发情期的黎昭，暗中牵线瓦伦蒂娜与黎昭的合作</span>
         </div>
         <div class="timeline-item">
-          <span class="time">524年·春</span>
-          <span class="desc">系统重启，怀榆重返业焰之国，<span class="highlight">代行者时代落幕</span></span>
-        </div>
-        <div class="timeline-item">
-          <span class="time">524年·秋</span>
-          <span class="desc">进入<span class="highlight">祝焱的记忆空间</span>，窥见部分真相</span>
-        </div>
-        <div class="timeline-item">
-          <span class="time">527年·夏</span>
-          <span class="desc">离开时衍天宫，前往<span class="highlight">无垠根庭</span></span>
-        </div>
-        <div class="timeline-item">
-          <span class="time">528年·初</span>
-          <span class="desc">发现系统真相，<span class="highlight">黎昭被尘歌杀死</span>。离开无垠根庭，前往归墟之庭直面尘歌</span>
-        </div>
-        <div class="timeline-item">
-          <span class="time">528年·中</span>
-          <span class="desc">离开归墟之庭，通过<span class="highlight">鸿天断桥</span>前往永昼净土，取得法伊顿全部记忆</span>
-        </div>
-        <div class="timeline-item">
-          <span class="time">529年·初</span>
-          <span class="desc">返回业焰之国、北境、时衍天宫、无垠根庭，<span class="highlight">召集旧友</span>，制定弑神计划</span>
+          <span class="time">526年·冬</span>
+          <span class="desc">参与北境重组，在女皇退场后协助维持秩序</span>
         </div>
         <div class="timeline-item">
           <span class="time">529年·夏</span>
-          <span class="desc">前往归墟之庭，<span class="highlight">直面尘歌</span>，以名字为锚将其咒杀</span>
+          <span class="desc">参与<span class="highlight">弑神计划</span>，在归墟之庭之战中贡献助力</span>
         </div>
         <div class="timeline-item">
-          <span class="time">529年·夏</span>
-          <span class="desc">段深泉战死。怀榆取代尘歌成为<span class="highlight">新创世神</span>，复活段深泉，重置世界，开启第四纪元</span>
+          <span class="time">第四纪元·元年</span>
+          <span class="desc">世界重置，忘记前尘，以十八线小演员身份生活</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·520年</span>
-          <span class="desc">以名字为祈愿媒介，被黎昭及全世界的人<span class="highlight">召回</span>，重获肉身</span>
+          <span class="time">第四纪元·约5年</span>
+          <span class="desc">被瓦伦蒂娜再次找到，<span class="highlight">签约出道</span>，从龙套到顶流</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·520年</span>
-          <span class="desc">来到北境，暂居段深泉的公寓，<span class="highlight">以大学讲师的身份</span>生活至今</span>
+          <span class="time">第四纪元·约12年</span>
+          <span class="desc">被网络黑粉围攻，瓦伦蒂娜<span class="highlight">发布会甩结婚证</span>公开护妻，全网哗然</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·约13年</span>
+          <span class="desc">怀孕，<span class="highlight">推掉全部戏约</span>，安心养胎</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·约14年</span>
+          <span class="desc">产下一子，男性Omega。<span class="highlight">母子平安</span>，上一世的悲剧在这一世被彻底改写</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·至今</span>
+          <span class="desc">偶尔拍戏，偶尔去黎昭面馆吃面，<span class="highlight">过被爱包裹的日子</span></span>
         </div>
       </div>
     </div>
