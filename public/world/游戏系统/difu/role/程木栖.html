@@ -14,8 +14,9 @@
             --text-primary: #2c2c2c;
             --text-secondary: #4a4a4a;
             --text-muted: #8a8a8a;
-            --accent: #b03a2a;
-            --accent-soft: rgba(176, 58, 42, 0.06);
+            --accent: #2a8a6b;
+            --accent-soft: rgba(42, 138, 107, 0.06);
+            --accent-soft-hover: rgba(42, 138, 107, 0.10);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
             --radius: 14px;
@@ -32,8 +33,9 @@
             --text-primary: #cfc8c0;
             --text-secondary: #9a948c;
             --text-muted: #6a6560;
-            --accent: #b05a4a;
-            --accent-soft: rgba(176, 90, 74, 0.08);
+            --accent: #4aaa8b;
+            --accent-soft: rgba(74, 170, 139, 0.08);
+            --accent-soft-hover: rgba(74, 170, 139, 0.14);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
         }
@@ -121,41 +123,50 @@
         }
 
         .hero-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
             margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
         }
-        .hero-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--accent-soft);
-            border: 3px solid var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            font-weight: 600;
-            color: var(--accent);
-            flex-shrink: 0;
-        }
-        .hero-info .name {
-            font-size: 1.6rem;
+        .hero-header .name {
+            font-size: 1.8rem;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
-        .hero-info .sub {
+        .hero-header .sub {
             font-size: 0.95rem;
             color: var(--text-muted);
+            margin-top: 2px;
         }
-        .hero-info .tags {
+        .hero-header .meta {
             display: flex;
-            gap: 8px;
             flex-wrap: wrap;
+            gap: 12px 20px;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .hero-header .meta .item .label {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .hero-header .meta .item .value {
+            font-weight: 500;
+        }
+        .hero-header .meta .item .value.accent {
+            color: var(--accent);
+        }
+        .stars {
+            color: #e8b84a;
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
             margin-top: 4px;
         }
-        .hero-info .tags .tag {
+        .tags .tag {
             font-size: 0.7rem;
             background: var(--bg-card-alt);
             padding: 2px 12px;
@@ -163,162 +174,10 @@
             color: var(--text-secondary);
             border: 1px solid var(--border-card);
         }
-        .hero-info .tags .tag.accent {
+        .tags .tag.accent {
             background: var(--accent-soft);
             color: var(--accent);
             border-color: var(--accent);
-        }
-        .stars {
-            color: #e8b84a;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 700px) {
-            .row { grid-template-columns: 1fr; }
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius);
-            padding: 18px 20px 20px 20px;
-            box-shadow: var(--shadow-sm);
-        }
-        .card .title {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-        .card .title .badge {
-            font-weight: 400;
-            text-transform: none;
-            background: var(--accent-soft);
-            color: var(--accent);
-            font-size: 0.6rem;
-            padding: 1px 10px;
-            border-radius: 10px;
-            margin-left: 6px;
-        }
-
-        .radar-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 4px 0;
-        }
-        .radar-wrap svg {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            aspect-ratio: 1/1;
-        }
-
-        .attr-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 16px;
-        }
-        .attr-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            padding: 2px 0;
-            border-bottom: 1px solid var(--border-card);
-        }
-        .attr-item .label {
-            color: var(--text-secondary);
-        }
-        .attr-item .val {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .attr-item .val.s { color: var(--accent); font-weight: 700; }
-        .attr-item .val.a { color: #e8b84a; font-weight: 600; }
-        .attr-item .val.b { color: var(--text-muted); }
-
-        .skill {
-            border-bottom: 1px solid var(--border-card);
-            padding: 10px 0;
-        }
-        .skill:last-child { border-bottom: none; }
-        .skill .name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .skill .name .type {
-            font-weight: 400;
-            font-size: 0.65rem;
-            background: var(--bg-card-alt);
-            padding: 1px 10px;
-            border-radius: 10px;
-            color: var(--text-muted);
-        }
-        .skill .desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 2px;
-            line-height: 1.6;
-        }
-        .skill .quote {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-style: italic;
-            margin-top: 2px;
-            padding-left: 12px;
-            border-left: 2px solid var(--border-card);
-        }
-
-        .bond {
-            border-bottom: 1px solid var(--border-card);
-            padding: 10px 0;
-        }
-        .bond:last-child { border-bottom: none; }
-        .bond .name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .bond .desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 2px;
-            line-height: 1.6;
-        }
-        .bond .trigger {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .voice {
-            display: flex;
-            gap: 12px;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border-card);
-            font-size: 0.85rem;
-        }
-        .voice:last-child { border-bottom: none; }
-        .voice .scene {
-            font-weight: 500;
-            color: var(--text-secondary);
-            flex-shrink: 0;
-            min-width: 70px;
-        }
-        .voice .line {
-            color: var(--text-primary);
         }
 
         .sp-toggle {
@@ -350,25 +209,277 @@
         .sp-panel { display: none; }
         .sp-panel.active { display: block; }
 
-        .sp-desc-card {
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin-bottom: 20px;
+        }
+        @media (max-width: 700px) {
+            .row { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 18px 20px 20px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            transition: border-color var(--transition);
+        }
+        .card:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .card .title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .card .title .deco {
+            color: var(--accent);
+            margin-right: 4px;
+        }
+
+        .radar-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+            min-height: 320px;
+        }
+        .radar-wrap svg {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+
+        .attr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px 20px;
+        }
+        .attr-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .attr-item .label {
+            color: var(--text-secondary);
+        }
+        .attr-item .val {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .attr-item .val.stars { color: var(--accent); }
+        .attr-item .val.s { color: var(--accent); font-weight: 700; }
+        .attr-item .val.a { color: #e8b84a; font-weight: 600; }
+        .attr-item .val.b { color: var(--text-muted); }
+        .attr-item .val.c { color: var(--text-muted); opacity: 0.7; }
+        .attr-item .val.e { color: var(--text-muted); opacity: 0.5; }
+        .attr-item .val.sss { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+        .attr-item .val.ss { color: var(--accent); font-weight: 700; }
+
+        .weapon-block {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding: 4px 0;
+        }
+        .weapon-block .name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .weapon-block .quote {
+            font-style: italic;
+            color: var(--text-muted);
+            padding-left: 12px;
+            border-left: 2px solid var(--accent);
+            margin-top: 4px;
+            font-size: 0.82rem;
+        }
+
+        .skill {
+            border-bottom: 1px solid var(--border-card);
+            padding: 10px 0;
+        }
+        .skill:last-child { border-bottom: none; }
+        .skill .name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .skill .name .type {
+            font-weight: 400;
+            font-size: 0.65rem;
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            color: var(--text-muted);
+        }
+        .skill .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .skill .desc .highlight {
+            color: var(--accent);
+        }
+        .skill .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+
+        .bond-section {
+            margin-bottom: 12px;
+        }
+        .bond-section:last-child { margin-bottom: 0; }
+        .bond-section .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .bond-section .section-label .deco {
+            color: var(--accent);
+        }
+        .bond {
+            border-bottom: 1px solid var(--border-card);
+            padding: 8px 0;
+        }
+        .bond:last-child { border-bottom: none; }
+        .bond .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .bond .desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            line-height: 1.7;
+        }
+        .bond .desc .highlight {
+            color: var(--accent);
+        }
+        .bond .quote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border-card);
+        }
+
+        .voice-section {
+            margin-bottom: 10px;
+        }
+        .voice-section:last-child { margin-bottom: 0; }
+        .voice-section .section-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .voice-section .section-label .deco {
+            color: var(--accent);
+        }
+        .voice-item {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .voice-item:last-child { border-bottom: none; }
+        .voice-item .scene {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .voice-item .line {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+        .voice-item .line .highlight {
+            color: var(--accent);
+        }
+        .voice-item .note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            padding-left: 4px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+        }
+        .note .qa {
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-card);
+        }
+        .note .qa:last-child { border-bottom: none; }
+        .note .qa .q {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .note .qa .a {
+            color: var(--text-secondary);
+            padding-left: 16px;
+            line-height: 1.6;
+        }
+        .note .qa .a .highlight {
+            color: var(--accent);
+        }
+        .note .final {
+            background: var(--accent-soft);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            border-left: 3px solid var(--accent);
         }
 
         @media (max-width: 600px) {
             #topbar { padding: 14px 0 10px 0; }
             #topbar .brand { font-size: 0.95rem; }
-            .hero-avatar { width: 60px; height: 60px; font-size: 1.6rem; }
-            .hero-info .name { font-size: 1.3rem; }
+            .hero-header .name { font-size: 1.4rem; }
             .card { padding: 14px 14px 16px 14px; }
             .attr-grid { grid-template-columns: 1fr; }
+            .hero-header .meta { gap: 8px 14px; font-size: 0.8rem; }
+            .voice-item .line { font-size: 0.82rem; }
+            .card .title { font-size: 0.85rem; }
+            .bond-section .section-label,
+            .voice-section .section-label { font-size: 0.75rem; }
         }
     </style>
     <script>
         (function() {
             try {
-                const raw = localStorage.getItem('theme');
+                var raw = localStorage.getItem('theme');
                 if (raw) {
-                    const parsed = JSON.parse(raw);
+                    var parsed = JSON.parse(raw);
                     if (parsed && parsed.value === 'dark') {
                         document.documentElement.setAttribute('data-theme', 'dark');
                     } else if (parsed && parsed.value === 'light') {
@@ -377,13 +488,15 @@
                 }
             } catch(e) {}
         })();
+
         function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
+            var html = document.documentElement;
+            var isDark = html.getAttribute('data-theme') === 'dark';
+            var newTheme = isDark ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
         }
+
         function switchSP(form) {
             document.querySelectorAll('.sp-panel').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.sp-toggle button').forEach(el => el.classList.remove('active'));
@@ -393,10 +506,11 @@
     </script>
 </head>
 <body>
+
 <div id="topbar">
     <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
     <div class="actions">
-        <a class="back-btn" href="../index.html">← 返回图鉴</a>
+        <a class="back-btn" href="../list.html">← 返回列表</a>
         <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
     </div>
 </div>
@@ -404,311 +518,488 @@
 <div id="app">
 
     <div class="hero-header">
-        <div class="hero-avatar">程</div>
-        <div class="hero-info">
-            <div class="name">程木栖</div>
-            <div class="sub">首席时期 · 全能控场</div>
-            <div class="stars">★★★★★</div>
-            <div class="tags">
-                <span class="tag accent">SSR</span>
-                <span class="tag">控场</span>
-                <span class="tag">多面输出</span>
-                <span class="tag">近/中/远程</span>
-            </div>
+        <div class="name">程木栖</div>
+        <div class="sub">全能盾辅 · 二席 · 归终殿之盾</div>
+        <span class="stars" style="color: #e8b84a;">★★★★★★</span>
+        <div class="meta">
+            <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
+            <span class="item"><span class="label">席位</span> <span class="value">第二席</span></span>
+        </div>
+        <div class="tags">
+            <span class="tag accent">主线</span>
+            <span class="tag">盾辅</span>
+            <span class="tag">嘲讽</span>
+            <span class="tag">套盾</span>
+            <span class="tag">全能</span>
+            <span class="tag">自回血</span>
         </div>
     </div>
 
     <div class="sp-toggle">
-        <button class="active" data-sp="chief" onclick="switchSP('chief')">首席时期</button>
+        <button class="active" data-sp="shield" onclick="switchSP('shield')">二席时期</button>
         <button data-sp="medic" onclick="switchSP('medic')">医者时期 (SP)</button>
     </div>
 
-    <!-- ====== 首席时期 ====== -->
-    <div class="sp-panel active" id="sp-chief">
+    <!-- ====== 二席时期 · 盾辅 ====== -->
+    <div class="sp-panel active" id="sp-shield">
+
         <div class="row">
-            <!-- 雷达图 -->
             <div class="card">
-                <div class="title">属性面板</div>
+                <div class="title"><span class="deco">◈</span> 属性面板</div>
                 <div class="radar-wrap">
-                    <svg viewBox="0 0 300 300">
-                        <defs>
-                            <radialGradient id="radar-grad-chief">
-                                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.04"/>
-                                <stop offset="80%" stop-color="var(--accent)" stop-opacity="0.18"/>
-                            </radialGradient>
-                        </defs>
-                        <!-- 正六边形网格：中心(150,150)，半径依次 30/60/90/120 -->
-                        <!-- 顶点坐标 (150 + R*sin(60°), 150 - R*cos(60°)) 等 -->
-                        <!-- R=120 -->
-                        <polygon points="150,30 253.9,90 253.9,210 150,270 46.1,210 46.1,90"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.8"/>
-                        <!-- R=90 -->
-                        <polygon points="150,60 227.9,105 227.9,195 150,240 72.1,195 72.1,105"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.5" stroke-dasharray="4,4"/>
-                        <!-- R=60 -->
-                        <polygon points="150,90 201.9,120 201.9,180 150,210 98.1,180 98.1,120"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.5" stroke-dasharray="3,3"/>
-                        <!-- R=30 -->
-                        <polygon points="150,120 175.9,135 175.9,165 150,180 124.1,165 124.1,135"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <!-- 对角线 -->
-                        <line x1="150" y1="30" x2="150" y2="270" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <line x1="46.1" y1="90" x2="253.9" y2="210" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <line x1="253.9" y1="90" x2="46.1" y2="210" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <!-- 数据多边形：六个维度归一化到半径120，坐标 = (150 + val/100*120*sin60, 150 - val/100*120*cos60) -->
-                        <!-- 攻击85 → 85% 半径102 -->
-                        <!-- 防御80 → 80% 半径96 -->
-                        <!-- 控制82 → 82% 半径98.4 -->
-                        <!-- 群攻90 → 90% 半径108 -->
-                        <!-- 速度78 → 78% 半径93.6 -->
-                        <!-- 生存85 → 85% 半径102 -->
-                        <!-- 顺序：上(攻击) → 右上(防御) → 右下(控制) → 下(群攻) → 左下(速度) → 左上(生存) -->
-                        <polygon points="150,48 235.3,104 223.7,196 150,251 76.3,196 64.7,104"
-                                 fill="url(#radar-grad-chief)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
-                        <!-- 顶点标记 -->
-                        <circle cx="150" cy="48" r="3" fill="var(--accent)"/>
-                        <circle cx="235.3" cy="104" r="3" fill="var(--accent)"/>
-                        <circle cx="223.7" cy="196" r="3" fill="var(--accent)"/>
-                        <circle cx="150" cy="251" r="3" fill="var(--accent)"/>
-                        <circle cx="76.3" cy="196" r="3" fill="var(--accent)"/>
-                        <circle cx="64.7" cy="104" r="3" fill="var(--accent)"/>
-                        <!-- 标签 -->
-                        <text x="150" y="16" fill="var(--text-muted)" font-size="8" text-anchor="middle">攻击</text>
-                        <text x="262" y="106" fill="var(--text-muted)" font-size="8" text-anchor="start">防御</text>
-                        <text x="238" y="208" fill="var(--text-muted)" font-size="8" text-anchor="start">控制</text>
-                        <text x="150" y="288" fill="var(--text-muted)" font-size="8" text-anchor="middle">群攻</text>
-                        <text x="62" y="208" fill="var(--text-muted)" font-size="8" text-anchor="end">速度</text>
-                        <text x="38" y="106" fill="var(--text-muted)" font-size="8" text-anchor="end">生存</text>
-                        <!-- 数值标注 -->
-                        <text x="150" y="40" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="middle">85</text>
-                        <text x="242" y="102" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="start">80</text>
-                        <text x="230" y="202" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="start">82</text>
-                        <text x="150" y="264" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="middle">90</text>
-                        <text x="68" y="202" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="end">78</text>
-                        <text x="56" y="102" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="end">85</text>
-                    </svg>
+                    <svg viewBox="-25 -25 350 350" id="radar-svg-shield"></svg>
                 </div>
             </div>
-
-            <!-- 详细数值 -->
             <div class="card">
-                <div class="title">详细数值</div>
+                <div class="title"><span class="deco">◈</span> 详细数值</div>
                 <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击</span><span class="val s">85 S</span></div>
-                    <div class="attr-item"><span class="label">防御</span><span class="val a">80 A</span></div>
-                    <div class="attr-item"><span class="label">速度</span><span class="val a">78 A</span></div>
-                    <div class="attr-item"><span class="label">射程</span><span class="val s">近/中/远</span></div>
-                    <div class="attr-item"><span class="label">控制</span><span class="val s">82 S</span></div>
-                    <div class="attr-item"><span class="label">单体伤害</span><span class="val a">75 A</span></div>
-                    <div class="attr-item"><span class="label">群攻</span><span class="val s">90 S</span></div>
-                    <div class="attr-item"><span class="label">辅助</span><span class="val b">60 B</span></div>
-                    <div class="attr-item"><span class="label">生存</span><span class="val s">85 S</span></div>
-                    <div class="attr-item"><span class="label">操作难度</span><span class="val s">极高</span></div>
+                    <div class="attr-item"><span class="label">攻击力</span><span class="val e">350</span></div>
+                    <div class="attr-item"><span class="label">生命值</span><span class="val sss">18700</span></div>
+                    <div class="attr-item"><span class="label">物理防御</span><span class="val s">950</span></div>
+                    <div class="attr-item"><span class="label">法术防御</span><span class="val s">900</span></div>
+                    <div class="attr-item"><span class="label">速度</span><span class="val a">75</span></div>
+                    <div class="attr-item"><span class="label">控制</span><span class="val b">60</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val s">90</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val s">100</span></div>
+                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★☆☆☆</span></div>
+                    <div class="attr-item"><span class="label">射程</span><span class="val">近/中</span></div>
                 </div>
-                <div style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);">
-                    本命武器：古本 · 归江<br>
-                    <span style="font-size:0.75rem;">不需要专属神器。程师姐什么都会，什么都能当武器。</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" style="margin-bottom:20px;">
-            <div class="title">技能组</div>
-
-            <div class="skill">
-                <div class="name">普攻 · 随机应变 <span class="type">普攻</span></div>
-                <div class="desc">近战形态挥出剑气「归江·斩」；远程形态射出符印「归江·引」。形态可随时切换，普攻动作完全随机，连她自己都不知道下一招出什么。</div>
-                <div class="quote">“当年什么都学了一点的后果。”</div>
-            </div>
-
-            <div class="skill">
-                <div class="name">剑鸣·归江 <span class="type">小技能</span></div>
-                <div class="desc">以剑指划破空气，发出尖锐鸣响，对范围内敌人造成80%攻击力的伤害，并附加「震慑」效果——目标下次行动延迟0.5秒。</div>
-                <div class="quote">“剑鸣一响，连风都停了半拍。”</div>
-            </div>
-
-            <div class="skill">
-                <div class="name">百兵精通·归终 <span class="type">大招</span></div>
-                <div class="desc">短暂展现「全能精通」的巅峰状态：攻击模式切换为无CD随机普攻，每次普攻附带不同特效（减速/破甲/眩晕/灼烧），持续10秒。</div>
-                <div class="quote">“师姐当年到底学了多少东西？”</div>
-            </div>
-
-            <div class="skill">
-                <div class="name">师姐在呢 <span class="type">被动</span></div>
-                <div class="desc">当程木栖在场时，全体友军受到伤害减少5%。不是技能，是心理作用——有师姐在，弟子们觉得自己不会死。事实上也确实不会死，她一个人能把对面全控住。</div>
-            </div>
-        </div>
-
-        <div class="card" style="margin-bottom:20px;">
-            <div class="title">羁绊效果</div>
-
-            <div class="bond">
-                <div class="name">双人出战 · 程木栖 + 林淮</div>
-                <div class="desc">林淮获得「师姐护着」状态：防御+15%，受到伤害时额外回复5%生命值。程木栖获得「操心」状态：治疗量提升20%。</div>
-                <div class="trigger">触发条件：程木栖与林淮同时出战</div>
-            </div>
-
-            <div class="bond">
-                <div class="name">归终四席（程木栖 + 罗修 + 黎元开 + 林淮）</div>
-                <div class="desc">全队攻击+10%，防御+15%，速度+20%。罗修与黎元开同时在场时，敌方全体精神抗性-10%。</div>
-                <div class="trigger">触发条件：四席同时出战</div>
-            </div>
-
-            <div class="bond">
-                <div class="name">归终 · 五人同台（+ 来方机）</div>
-                <div class="desc">「归终·誓」效果：每30秒自动解除一次全体控制；全队异常抗性+18%；程木栖治疗溢出转化为护盾。</div>
-                <div class="trigger">触发条件：五人同时出战</div>
             </div>
         </div>
 
         <div class="card">
-            <div class="title">彩蛋语音</div>
-            <div class="voice"><span class="scene">战斗开始</span><span class="line">“嗯，都到了？那开始吧。”</span></div>
-            <div class="voice"><span class="scene">击败敌人</span><span class="line">“下一位。”</span></div>
-            <div class="voice"><span class="scene">队友重伤</span><span class="line">“别慌，我在。”</span></div>
-            <div class="voice"><span class="scene">触发大招</span><span class="line">“好久没打得这么齐了。”</span></div>
-            <div class="voice"><span class="scene">与罗修同队</span><span class="line">“罗修，你打慢点，演武场还没修好。”</span></div>
-            <div class="voice"><span class="scene">与林淮同队</span><span class="line">“小淮，别太拼了。”</span></div>
-            <div class="voice"><span class="scene">与黎元开同队</span><span class="line">“元开，你又在研究什么奇怪的东西？”</span></div>
+            <div class="title"><span class="deco">◈</span> 本命武器 · 古琴 · 归江</div>
+            <div class="weapon-block">
+                <div>程木栖的本命武器是一张古琴，名唤「归江」。</div>
+                <div style="margin-top:4px;">琴身以千年古木制成，弦丝取自忘川水精，音色沉郁浑厚，拨弦时能引动地脉之气。她平日悬于背上，遇事则解琴为盾，拨弦为刃，攻守一体。</div>
+                <div style="margin-top:4px;">作为曾经的归终殿首席，程木栖的杂学之广令人咋舌——琴中藏剑、袖里飞刀、符箓阵盘，无一不通。她本人对此的解释是：当年什么都学了一点，以备不时之需。</div>
+                <div class="quote">“师姐当年什么都学了一点的后果。”——林淮</div>
+            </div>
         </div>
+
+        <div class="card">
+            <div class="title"><span class="deco">◈</span> 特殊机制 · 归终·承伤</div>
+            <div class="weapon-block">
+                <div>程木栖拥有常态嘲讽能力，敌方任意单体技能有 <span class="highlight" style="color:var(--accent);font-weight:600;">30%</span> 概率优先锁定程木栖为目标。</div>
+                <div style="margin-top:4px;">同时，程木栖为队友施加的护盾在存在期间，会赋予该队友攻击力 +8%、防御力 +10% 的增益效果。</div>
+                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">归终殿最硬的盾，站着让你打都打不动。</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="title"><span class="deco">◈</span> 技能组</div>
+
+            <div class="skill">
+                <div class="name">普攻 · 杂学 <span class="type">普攻</span></div>
+                <div class="desc">程木栖随手从袖中摸出一件兵器进行攻击，造成物理伤害。每次普攻随机触发一种效果：匕首（附加流血，每回合掉血3%，持续2回合）、短剑（剑气穿透，无视目标20%防御）、符箓（降低目标5%攻击力，持续1回合）、阵盘（小范围溅射伤害，对相邻目标造成50%伤害）。伤害倍率不高，但花样百出。</div>
+                <div class="quote">“全能百科全书，她和罗修就是来炫耀的。”——某归终殿弟子</div>
+            </div>
+
+            <div class="skill">
+                <div class="name">战技 · 移花接木 <span class="type">战技</span></div>
+                <div class="desc">程木栖将自身当前生命值的 20% 转移给指定队友，为其恢复等量生命，自身获得「代偿」护盾（吸收量为转移量的 150%），持续 2 回合。该队友同时获得「庇护」：受到伤害降低 25%，持续 2 回合。</div>
+                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">不会回血的盾辅不是好二席——但她确实不会给队友回血，只会把自己的血分给你。</div>
+            </div>
+
+            <div class="skill">
+                <div class="name">必杀 · 归江·天音障 <span class="type">必杀</span></div>
+                <div class="desc">程木栖全力拨动琴弦，为全体队友施加「天音盾」（吸收量为程木栖最大生命值的 18%），持续 3 回合。护盾存在期间，队友攻击力 +10%，防御力 +15%。同时对敌方全体施加「弦伤」：每回合受到程木栖防御力 80% 的真实伤害，持续 3 回合。</div>
+                <div class="quote">既能套盾，又能让对面流血，这才是归终殿二席的排面。</div>
+            </div>
+
+            <div class="skill">
+                <div class="name">被动 · 枯荣 <span class="type">被动</span></div>
+                <div class="desc">程木栖每回合结束时，恢复自身已损失生命值的 12%。若当前生命值低于 30%，恢复量提升至 20%。</div>
+            </div>
+
+            <div class="skill">
+                <div class="name">被动 · 归终·引 <span class="type">被动</span></div>
+                <div class="desc">当程木栖受到攻击时，为全队生命值最低的队友施加 1 层「归终」：防御力 +5%，最多叠加 3 层。若该队友已持有程木栖施加的护盾，则额外清除 1 个负面状态。</div>
+                <div class="quote">挨打是为了让队友更强，这大概就是盾辅的觉悟。</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="title"><span class="deco">◈</span> 羁绊效果</div>
+
+            <div class="bond-section">
+                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 前后席</div>
+                <div class="bond">
+                    <div class="name">与「罗修」同时出场时：</div>
+                    <div class="desc">程木栖的「天音盾」护盾值额外提升 15%。罗修对处于「弦伤」流血状态的敌人伤害提升 15%。</div>
+                    <div class="quote">前任首席与现任首席，一个负责烧，一个负责扛。</div>
+                </div>
+            </div>
+
+            <div class="bond-section">
+                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终五席</div>
+                <div class="bond">
+                    <div class="name">与「林淮 · 栾方棋 · 罗修 · 魏元璟」同时出场时：</div>
+                    <div class="desc">全体攻击、防御、速度提升 8%。每回合开始时随机解除一名队友的控制效果。</div>
+                </div>
+            </div>
+
+            <div class="bond-section">
+                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 师姐在呢</div>
+                <div class="bond">
+                    <div class="name">与「林淮 / 栾方棋 / 黎元开」任意一人同队时：</div>
+                    <div class="desc">程木栖的常态嘲讽概率提升至 45%。该队友受到致命伤害时，程木栖立即为其承担该次伤害（每场战斗触发 1 次）。</div>
+                    <div class="quote">师姐在，你们就不会死。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 语音彩蛋占位 -->
+        <div class="card" style="margin-bottom:20px;">
+            <div class="title"><span class="deco">◈</span> 彩蛋语音</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);padding:8px 0;">
+                （待补充）
+            </div>
+        </div>
+
+        <!-- 制作人笔记占位 -->
+        <div class="card">
+            <div class="title"><span class="deco">◈</span> 制作人笔记</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);padding:8px 0;">
+                （待补充）
+            </div>
+        </div>
+
     </div>
 
     <!-- ====== SP医者时期 ====== -->
     <div class="sp-panel" id="sp-medic">
 
-        <!-- SP形态说明卡片 -->
-        <div class="card sp-desc-card">
+        <div class="card sp-desc-card" style="margin-bottom:20px;">
             <div class="title">SP形态 · 医者时期</div>
             <div style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;">
-                <p>所有输出技能被移除，取而代之的是全游戏最强的治疗能力。</p>
-                <p style="margin-top:4px;">技能CD极短，奶量极高，一口能奶满残血队友。</p>
-                <p style="margin-top:4px;font-style:italic;color:var(--text-muted);">“程师姐退役了，是不是以后都不能用战斗形态了？”<br>“可以用。剧情前期还是首席形态。后期有SP医者形态，奶量惊人。”</p>
+                <p>程木栖退役后转修医道，卸下二席的重担，将古琴「归江」的杀伐之音化为疗愈之律。</p>
+                <p style="margin-top:4px;">所有防御与嘲讽技能被移除，取而代之的是全归终殿最强的群体治疗与净化能力。</p>
+                <p style="margin-top:4px;">SP形态将在后续剧情中作为六星角色免费赠送。</p>
             </div>
         </div>
 
         <div class="row">
-            <!-- 雷达图 -->
             <div class="card">
-                <div class="title">属性面板 <span class="badge">SP</span></div>
+                <div class="title">属性面板 <span style="font-size:0.65rem;color:var(--text-muted);">(SP)</span></div>
                 <div class="radar-wrap">
-                    <svg viewBox="0 0 300 300">
-                        <defs>
-                            <radialGradient id="radar-grad-medic">
-                                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.04"/>
-                                <stop offset="80%" stop-color="var(--accent)" stop-opacity="0.18"/>
-                            </radialGradient>
-                        </defs>
-                        <!-- 正六边形网格 -->
-                        <polygon points="150,30 253.9,90 253.9,210 150,270 46.1,210 46.1,90"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.8"/>
-                        <polygon points="150,60 227.9,105 227.9,195 150,240 72.1,195 72.1,105"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.5" stroke-dasharray="4,4"/>
-                        <polygon points="150,90 201.9,120 201.9,180 150,210 98.1,180 98.1,120"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.5" stroke-dasharray="3,3"/>
-                        <polygon points="150,120 175.9,135 175.9,165 150,180 124.1,165 124.1,135"
-                                 fill="none" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <line x1="150" y1="30" x2="150" y2="270" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <line x1="46.1" y1="90" x2="253.9" y2="210" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <line x1="253.9" y1="90" x2="46.1" y2="210" stroke="var(--border-card)" stroke-width="0.4" stroke-dasharray="2,3"/>
-                        <!-- 数据多边形：防御70 速度60 辅助100 生存90 攻击20 控制0 -->
-                        <!-- 防御70 → 84 -->
-                        <!-- 速度60 → 72 -->
-                        <!-- 辅助100 → 120 -->
-                        <!-- 生存90 → 108 -->
-                        <!-- 攻击20 → 24 -->
-                        <!-- 控制0 → 0 -->
-                        <!-- 顺序：上(防御) 右上(速度) 右下(辅助) 下(生存) 左下(攻击) 左上(控制) -->
-                        <polygon points="150,66 228.1,112 237.0,192 150,251 106.3,196 45.7,112"
-                                 fill="url(#radar-grad-medic)" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
-                        <circle cx="150" cy="66" r="3" fill="var(--accent)"/>
-                        <circle cx="228.1" cy="112" r="3" fill="var(--accent)"/>
-                        <circle cx="237.0" cy="192" r="3" fill="var(--accent)"/>
-                        <circle cx="150" cy="251" r="3" fill="var(--accent)"/>
-                        <circle cx="106.3" cy="196" r="3" fill="var(--accent)"/>
-                        <circle cx="45.7" cy="112" r="3" fill="var(--accent)"/>
-                        <!-- 标签 -->
-                        <text x="150" y="16" fill="var(--text-muted)" font-size="8" text-anchor="middle">防御</text>
-                        <text x="262" y="112" fill="var(--text-muted)" font-size="8" text-anchor="start">速度</text>
-                        <text x="250" y="200" fill="var(--text-muted)" font-size="8" text-anchor="start">辅助</text>
-                        <text x="150" y="288" fill="var(--text-muted)" font-size="8" text-anchor="middle">生存</text>
-                        <text x="82" y="200" fill="var(--text-muted)" font-size="8" text-anchor="end">攻击</text>
-                        <text x="30" y="112" fill="var(--text-muted)" font-size="8" text-anchor="end">控制</text>
-                        <!-- 数值 -->
-                        <text x="150" y="56" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="middle">70</text>
-                        <text x="236" y="110" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="start">60</text>
-                        <text x="244" y="194" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="start">100</text>
-                        <text x="150" y="264" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="middle">90</text>
-                        <text x="98" y="194" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="end">20</text>
-                        <text x="38" y="110" fill="var(--accent)" font-size="9" font-weight="600" text-anchor="end">0</text>
-                    </svg>
+                    <svg viewBox="-25 -25 350 350" id="radar-svg-medic"></svg>
                 </div>
             </div>
-
-            <!-- 详细数值 -->
             <div class="card">
-                <div class="title">详细数值 <span class="badge">SP</span></div>
+                <div class="title">详细数值 <span style="font-size:0.65rem;color:var(--text-muted);">(SP)</span></div>
                 <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击</span><span class="val">20 E</span></div>
-                    <div class="attr-item"><span class="label">防御</span><span class="val a">70 A</span></div>
-                    <div class="attr-item"><span class="label">速度</span><span class="val b">60 B</span></div>
-                    <div class="attr-item"><span class="label">射程</span><span class="val">中</span></div>
-                    <div class="attr-item"><span class="label">控制</span><span class="val">0 —</span></div>
-                    <div class="attr-item"><span class="label">单体伤害</span><span class="val">10 E</span></div>
-                    <div class="attr-item"><span class="label">群攻</span><span class="val">5 E</span></div>
-                    <div class="attr-item"><span class="label">辅助</span><span class="val s">100 S</span></div>
-                    <div class="attr-item"><span class="label">生存</span><span class="val s">90 S</span></div>
-                    <div class="attr-item"><span class="label">操作难度</span><span class="val s">极高</span></div>
+                    <div class="attr-item"><span class="label">攻击力</span><span class="val e">280</span></div>
+                    <div class="attr-item"><span class="label">生命值</span><span class="val s">12000</span></div>
+                    <div class="attr-item"><span class="label">物理防御</span><span class="val a">550</span></div>
+                    <div class="attr-item"><span class="label">法术防御</span><span class="val a">600</span></div>
+                    <div class="attr-item"><span class="label">速度</span><span class="val b">65</span></div>
+                    <div class="attr-item"><span class="label">控制</span><span class="val c">40</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val s">95</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val ss">120</span></div>
+                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★☆☆☆☆</span></div>
+                    <div class="attr-item"><span class="label">射程</span><span class="val">远</span></div>
                 </div>
-                <div style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);">
-                    本命武器：无。她的医术就是最好的神器。
-                </div>
-            </div>
-        </div>
-
-        <div class="card" style="margin-bottom:20px;">
-            <div class="title">SP技能组</div>
-
-            <div class="skill">
-                <div class="name">普攻 · 投掷药包 <span class="type">普攻</span></div>
-                <div class="desc">朝队友或敌人投掷一个小药包。对队友：恢复5%生命值；对敌人：造成1点伤害并附加「药味」效果（无实际作用，就是沾一身药味）。</div>
-                <div class="quote">“程师姐说是在练习投掷精度。林淮说不用解释，我们都懂。”</div>
-            </div>
-
-            <div class="skill">
-                <div class="name">回春手 <span class="type">小技能</span></div>
-                <div class="desc">立即恢复一名友军35%生命值，并解除所有负面状态。冷却极短。</div>
-                <div class="quote">“手到病除，药到人活。”</div>
-            </div>
-
-            <div class="skill">
-                <div class="name">琴音·归终 <span class="type">大招</span></div>
-                <div class="desc">以琴音覆盖全场，全体友军恢复50%生命值并获得「余音」效果：持续恢复，每秒2%，持续10秒。</div>
-                <div class="quote">“好久没弹了，手生了。”</div>
-            </div>
-
-            <div class="skill">
-                <div class="name">医者本能 <span class="type">被动</span></div>
-                <div class="desc">当任意友军生命值低于30%时，程木栖的移动速度提升50%，技能冷却减半。她跑起来的时候罗修都追不上——因为罗修没有追的必要，程师姐是去救人的。</div>
             </div>
         </div>
 
         <div class="card">
-            <div class="title">SP羁绊效果</div>
-
-            <div class="bond">
-                <div class="name">医者·归终（程木栖 + 罗修 + 林淮）</div>
-                <div class="desc">程木栖对罗修、林淮的治疗效果额外提升30%。特殊语音触发概率提升至100%。</div>
-                <div class="trigger">触发条件：三人同时出战</div>
-            </div>
-
-            <div class="bond">
-                <div class="name">师姐还在呢</div>
-                <div class="desc">治疗溢出部分转化为护盾，持续10秒。上限为最大生命值的20%。</div>
-                <div class="trigger">触发条件：程木栖在场</div>
+            <div class="title"><span class="deco">◈</span> SP技能组 <span style="font-size:0.65rem;color:var(--text-muted);">(待实装)</span></div>
+            <div style="font-size:0.85rem;color:var(--text-muted);padding:8px 0;line-height:1.7;">
+                <p>SP程木栖将拥有全游戏最强的群体治疗与净化能力，所有技能围绕「琴音·疗愈」展开。</p>
+                <p style="margin-top:4px;">具体技能组与羁绊效果将在剧情实装后更新。</p>
             </div>
         </div>
+
     </div>
 
 </div>
+
+<!-- ============================================================ -->
+<!-- 雷达图脚本 -->
+<!-- ============================================================ -->
+<script>
+(function() {
+    // 二席时期雷达图：攻击55 防御135 速度75 控制60 范围90 增益100
+    var stats = [55, 135, 75, 60, 90, 100];
+    var labels = ['攻击', '防御', '速度', '控制', '范围', '增益'];
+    var cx = 150, cy = 150, maxR = 120;
+    var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
+        return deg * Math.PI / 180;
+    });
+    var accent = 'var(--accent)';
+    var accentSoft = 'var(--accent-soft)';
+
+    var svg = document.getElementById('radar-svg-shield');
+    if (!svg) return;
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+
+    var layers = [0.3, 0.5, 0.7, 1.0];
+    layers.forEach(function(ratio) {
+        var r = maxR * ratio;
+        var pts = angles.map(function(a) {
+            return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a));
+        }).join(' ');
+        var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', pts);
+        poly.setAttribute('fill', 'none');
+        poly.setAttribute('stroke', 'var(--border-card)');
+        poly.setAttribute('stroke-width', ratio === 1.0 ? '0.8' : '0.5');
+        if (ratio !== 1.0) poly.setAttribute('stroke-dasharray', '4,4');
+        svg.appendChild(poly);
+    });
+
+    angles.forEach(function(a) {
+        var x = cx + maxR * Math.sin(a);
+        var y = cy - maxR * Math.cos(a);
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', 'var(--border-card)');
+        line.setAttribute('stroke-width', '0.4');
+        line.setAttribute('stroke-dasharray', '2,3');
+        svg.appendChild(line);
+    });
+
+    var vertices = stats.map(function(val, i) {
+        var r = (val / 100) * maxR;
+        var a = angles[i];
+        return {
+            x: cx + r * Math.sin(a),
+            y: cy - r * Math.cos(a),
+            val: val
+        };
+    });
+
+    var centerPts = angles.map(function() {
+        return cx + ',' + cy;
+    }).join(' ');
+    var targetPts = vertices.map(function(v) {
+        return v.x + ',' + v.y;
+    }).join(' ');
+
+    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', centerPts);
+    poly.setAttribute('fill', accentSoft);
+    poly.setAttribute('stroke', accent);
+    poly.setAttribute('stroke-width', '2.5');
+    poly.setAttribute('stroke-linejoin', 'round');
+    var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    anim.setAttribute('attributeName', 'points');
+    anim.setAttribute('from', centerPts);
+    anim.setAttribute('to', targetPts);
+    anim.setAttribute('dur', '1.2s');
+    anim.setAttribute('fill', 'freeze');
+    anim.setAttribute('calcMode', 'spline');
+    anim.setAttribute('keySplines', '0.25 0.1 0.25 1');
+    poly.appendChild(anim);
+    svg.appendChild(poly);
+
+    vertices.forEach(function(v) {
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', v.x);
+        circle.setAttribute('cy', v.y);
+        circle.setAttribute('r', '3');
+        circle.setAttribute('fill', accent);
+        circle.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1s');
+        fade.setAttribute('fill', 'freeze');
+        circle.appendChild(fade);
+        svg.appendChild(circle);
+    });
+
+    var labelPositions = [
+        { x: 150, y: 10, text: '攻击', anchor: 'middle' },
+        { x: 266, y: 112, text: '防御', anchor: 'start' },
+        { x: 250, y: 206, text: '速度', anchor: 'start' },
+        { x: 150, y: 286, text: '控制', anchor: 'middle' },
+        { x: 52, y: 210, text: '范围', anchor: 'end' },
+        { x: 34, y: 106, text: '增益', anchor: 'end' }
+    ];
+    labelPositions.forEach(function(lp) {
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', lp.x);
+        text.setAttribute('y', lp.y);
+        text.setAttribute('fill', 'var(--text-muted)');
+        text.setAttribute('font-size', '8');
+        text.setAttribute('font-weight', '400');
+        text.setAttribute('text-anchor', lp.anchor);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = lp.text;
+        svg.appendChild(text);
+    });
+
+    var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
+    vertices.forEach(function(v, i) {
+        var offset = 12;
+        var a = angles[i];
+        var dx = offset * Math.sin(a);
+        var dy = -offset * Math.cos(a);
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', v.x + dx);
+        text.setAttribute('y', v.y + dy);
+        text.setAttribute('fill', accent);
+        text.setAttribute('font-size', '9');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('text-anchor', anchorMap[i]);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = v.val;
+        text.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1.2s');
+        fade.setAttribute('fill', 'freeze');
+        text.appendChild(fade);
+        svg.appendChild(text);
+    });
+})();
+
+// SP医者时期雷达图（简化版）
+(function() {
+    var stats = [28, 70, 65, 40, 95, 120];
+    var cx = 150, cy = 150, maxR = 120;
+    var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
+        return deg * Math.PI / 180;
+    });
+    var accent = 'var(--accent)';
+    var accentSoft = 'var(--accent-soft)';
+
+    var svg = document.getElementById('radar-svg-medic');
+    if (!svg) return;
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+
+    var layers = [0.3, 0.5, 0.7, 1.0];
+    layers.forEach(function(ratio) {
+        var r = maxR * ratio;
+        var pts = angles.map(function(a) {
+            return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a));
+        }).join(' ');
+        var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.setAttribute('points', pts);
+        poly.setAttribute('fill', 'none');
+        poly.setAttribute('stroke', 'var(--border-card)');
+        poly.setAttribute('stroke-width', ratio === 1.0 ? '0.8' : '0.5');
+        if (ratio !== 1.0) poly.setAttribute('stroke-dasharray', '4,4');
+        svg.appendChild(poly);
+    });
+
+    angles.forEach(function(a) {
+        var x = cx + maxR * Math.sin(a);
+        var y = cy - maxR * Math.cos(a);
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', cx);
+        line.setAttribute('y1', cy);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', 'var(--border-card)');
+        line.setAttribute('stroke-width', '0.4');
+        line.setAttribute('stroke-dasharray', '2,3');
+        svg.appendChild(line);
+    });
+
+    var vertices = stats.map(function(val, i) {
+        var r = (val / 100) * maxR;
+        var a = angles[i];
+        return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a), val: val };
+    });
+
+    var centerPts = angles.map(function() { return cx + ',' + cy; }).join(' ');
+    var targetPts = vertices.map(function(v) { return v.x + ',' + v.y; }).join(' ');
+
+    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', centerPts);
+    poly.setAttribute('fill', accentSoft);
+    poly.setAttribute('stroke', accent);
+    poly.setAttribute('stroke-width', '2.5');
+    poly.setAttribute('stroke-linejoin', 'round');
+    var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    anim.setAttribute('attributeName', 'points');
+    anim.setAttribute('from', centerPts);
+    anim.setAttribute('to', targetPts);
+    anim.setAttribute('dur', '1.2s');
+    anim.setAttribute('fill', 'freeze');
+    anim.setAttribute('calcMode', 'spline');
+    anim.setAttribute('keySplines', '0.25 0.1 0.25 1');
+    poly.appendChild(anim);
+    svg.appendChild(poly);
+
+    vertices.forEach(function(v) {
+        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', v.x);
+        circle.setAttribute('cy', v.y);
+        circle.setAttribute('r', '3');
+        circle.setAttribute('fill', accent);
+        circle.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1s');
+        fade.setAttribute('fill', 'freeze');
+        circle.appendChild(fade);
+        svg.appendChild(circle);
+    });
+
+    var labelPositions = [
+        { x: 150, y: 10, text: '攻击', anchor: 'middle' },
+        { x: 266, y: 112, text: '防御', anchor: 'start' },
+        { x: 250, y: 206, text: '速度', anchor: 'start' },
+        { x: 150, y: 286, text: '控制', anchor: 'middle' },
+        { x: 52, y: 210, text: '范围', anchor: 'end' },
+        { x: 34, y: 106, text: '增益', anchor: 'end' }
+    ];
+    labelPositions.forEach(function(lp) {
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', lp.x);
+        text.setAttribute('y', lp.y);
+        text.setAttribute('fill', 'var(--text-muted)');
+        text.setAttribute('font-size', '8');
+        text.setAttribute('font-weight', '400');
+        text.setAttribute('text-anchor', lp.anchor);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = lp.text;
+        svg.appendChild(text);
+    });
+
+    var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
+    vertices.forEach(function(v, i) {
+        var offset = 12;
+        var a = angles[i];
+        var dx = offset * Math.sin(a);
+        var dy = -offset * Math.cos(a);
+        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', v.x + dx);
+        text.setAttribute('y', v.y + dy);
+        text.setAttribute('fill', accent);
+        text.setAttribute('font-size', '9');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('text-anchor', anchorMap[i]);
+        text.setAttribute('dominant-baseline', 'central');
+        text.textContent = v.val;
+        text.setAttribute('opacity', '0');
+        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+        fade.setAttribute('attributeName', 'opacity');
+        fade.setAttribute('from', '0');
+        fade.setAttribute('to', '1');
+        fade.setAttribute('dur', '0.3s');
+        fade.setAttribute('begin', '1.2s');
+        fade.setAttribute('fill', 'freeze');
+        text.appendChild(fade);
+        svg.appendChild(text);
+    });
+})();
+</script>
+
 </body>
 </html>
