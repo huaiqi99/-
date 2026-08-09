@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>角色档案 · 墨境</title>
+  <style>
+    /* ============================================================
+       0. CSS 变量
+    ============================================================ */
+    :root {
+      --bg-body: #f7f4ef;
+      --bg-card: #ffffff;
+      --bg-card-alt: #faf7f2;
+      --border-light: #dcd6ce;
+      --border-gold: #d4b896;
+      --text-primary: #2c2824;
+      --text-secondary: #5f5852;
+      --text-muted: #8f8780;
+      --gold: #c9b08a;
+      --gold-soft: rgba(201, 176, 138, 0.08);
+      --gold-glow: rgba(201, 176, 138, 0.12);
+      --shadow: 0 4px 20px rgba(0,0,0,0.04);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
+      --transition: 0.3s ease;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #1a1816;
+      --bg-card: #24201c;
+      --bg-card-alt: #2e2a26;
+      --border-light: #3a3530;
+      --border-gold: #c9a052;
+      --text-primary: #e6ddd4;
+      --text-secondary: #b0a69b;
+      --text-muted: #6f6760;
+      --gold: #c9a052;
+      --gold-soft: rgba(201, 160, 82, 0.06);
+      --gold-glow: rgba(201, 160, 82, 0.10);
+      --shadow: 0 4px 20px rgba(0,0,0,0.25);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.45);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* ---- 顶栏 ---- */
+    #top {
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-light);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #top .title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    #top .title .gold {
+      color: var(--gold);
+    }
+
+    #top .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #top .actions a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 14px;
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      transition: all var(--transition);
+    }
+    #top .actions a:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    #top .actions .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    #top .actions .theme-toggle:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ---- 角色列表 ---- */
+    #list {
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+      padding-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ---- 角色卡片 ---- */
+    .role-card {
+      display: block;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 18px 22px;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all var(--transition);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: card-in 0.5s ease forwards;
+      position: relative;
+      overflow: hidden;
+    }
+    .role-card:nth-child(1) { animation-delay: 0.04s; }
+    .role-card:nth-child(2) { animation-delay: 0.08s; }
+    .role-card:nth-child(3) { animation-delay: 0.12s; }
+    .role-card:nth-child(4) { animation-delay: 0.16s; }
+
+    @keyframes card-in {
+      0% { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .role-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .role-card:hover {
+      border-color: var(--border-gold);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+    .role-card:hover::after {
+      opacity: 0.6;
+    }
+
+    .role-card .name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .role-card:hover .name {
+      color: var(--gold);
+    }
+
+    .role-card .tag {
+      font-size: 0.6rem;
+      font-weight: 400;
+      padding: 2px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-gold);
+      color: var(--text-muted);
+      background: var(--bg-card-alt);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      transition: border-color var(--transition), color var(--transition), background var(--transition);
+    }
+    .role-card:hover .tag {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .role-card .impression {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.6;
+      transition: color var(--transition);
+    }
+
+    .role-card .arrow {
+      float: right;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      opacity: 0.3;
+      transition: all var(--transition);
+      margin-top: 2px;
+    }
+    .role-card:hover .arrow {
+      opacity: 0.8;
+      color: var(--gold);
+      transform: translateX(4px);
+    }
+
+    /* ---- 底部 ---- */
+    #footer {
+      max-width: 720px;
+      margin: 24px auto 0 auto;
+      width: 100%;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ---- 响应式 ---- */
+    @media (max-width: 600px) {
+      body { padding: 20px 12px; }
+      #top .title { font-size: 1.1rem; }
+      #top .actions a { font-size: 0.7rem; padding: 3px 10px; }
+      #top .actions .theme-toggle { font-size: 0.65rem; padding: 3px 10px; }
+      #list { padding-top: 20px; gap: 10px; }
+      .role-card { padding: 14px 16px; }
+      .role-card .name { font-size: 1.05rem; }
+      .role-card .impression { font-size: 0.82rem; }
+    }
+    @media (max-width: 400px) {
+      .role-card .name { font-size: 0.95rem; }
+      .role-card .tag { font-size: 0.55rem; padding: 1px 10px; }
+    }
+  </style>
+  <script>
+    (function() {
+      try {
+        const raw = localStorage.getItem('theme');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (parsed && parsed.value === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+          }
+        }
+      } catch(e) {}
+    })();
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      if (newTheme === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.removeAttribute('data-theme');
+      }
+      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      const btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = newTheme === 'dark'
+          ? '<span class="icon">☀️</span> 日间'
+          : '<span class="icon">🌙</span> 夜间';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('themeBtn');
+      if (!btn) return;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = isDark
+        ? '<span class="icon">☀️</span> 日间'
+        : '<span class="icon">🌙</span> 夜间';
+    });
+  </script>
+</head>
+<body>
+
+  <div id="top">
+    <span class="title">📖 角色<span class="gold">档案</span></span>
+    <div class="actions">
+      <a href="../论坛/">← 返回茶馆</a>
+      <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()">🌓</button>
+    </div>
+  </div>
+
+  <div id="list">
+
+    <a class="role-card" href="黎昭.html">
+      <div class="name">
+        黎昭
+        <span class="tag">烬影会首领</span>
+      </div>
+      <div class="impression">“毒舌冷漠，实则重情重义。用一身黑斗篷藏起所有软肋。”</div>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="role-card" href="怀榆.html">
+      <div class="name">
+        怀榆
+        <span class="tag">前创世神 · 大学讲师</span>
+      </div>
+      <div class="impression">“温柔坚定，爱得坦荡。从世界背后走下来，住进人间烟火里。”</div>
+      <span class="arrow">→</span>
+    </a>
+
+  </div>
+
+  <div id="footer">
+    —— 点击卡片 · 翻阅一页人生 ——
+  </div>
+
+</body>
+</html>
