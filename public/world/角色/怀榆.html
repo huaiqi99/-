@@ -438,9 +438,12 @@
       .avatar {
         width: 100%;
         min-width: auto;
-        height: 300px;
+        height: auto;
+        aspect-ratio: 200 / 260;
       }
-      .avatar img { object-position: top 10%; }
+      .avatar img {
+        object-position: center center;
+      }
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
