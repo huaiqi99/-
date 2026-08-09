@@ -14,9 +14,9 @@
             --text-primary: #2c2c2c;
             --text-secondary: #4a4a4a;
             --text-muted: #8a8a8a;
-            --accent: #2a8a6b;
-            --accent-soft: rgba(42, 138, 107, 0.06);
-            --accent-soft-hover: rgba(42, 138, 107, 0.10);
+            --accent: #3a8a6b;
+            --accent-soft: rgba(58, 138, 107, 0.06);
+            --accent-soft-hover: rgba(58, 138, 107, 0.10);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
             --radius: 14px;
@@ -33,9 +33,9 @@
             --text-primary: #cfc8c0;
             --text-secondary: #9a948c;
             --text-muted: #6a6560;
-            --accent: #4aaa8b;
-            --accent-soft: rgba(74, 170, 139, 0.08);
-            --accent-soft-hover: rgba(74, 170, 139, 0.14);
+            --accent: #5aaa8b;
+            --accent-soft: rgba(90, 170, 139, 0.08);
+            --accent-soft-hover: rgba(90, 170, 139, 0.14);
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
         }
@@ -122,6 +122,40 @@
             padding: 20px 0 0 0;
         }
 
+        /* 切换按钮 */
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .tab-btn {
+            padding: 10px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            margin-bottom: -1px;
+        }
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
         .hero-header {
             margin-bottom: 20px;
             padding-bottom: 16px;
@@ -179,35 +213,6 @@
             color: var(--accent);
             border-color: var(--accent);
         }
-
-        .sp-toggle {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        .sp-toggle button {
-            padding: 6px 18px;
-            border-radius: 20px;
-            border: 1px solid var(--border-card);
-            background: transparent;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-        }
-        .sp-toggle button.active {
-            border-color: var(--accent);
-            background: var(--accent-soft);
-            color: var(--accent);
-        }
-        .sp-toggle button:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
-        .sp-panel { display: none; }
-        .sp-panel.active { display: block; }
 
         .row {
             display: grid;
@@ -277,14 +282,33 @@
             font-weight: 500;
             color: var(--text-primary);
         }
-        .attr-item .val.stars { color: var(--accent); }
+        .attr-item .val.stars {
+            color: var(--accent);
+        }
         .attr-item .val.s { color: var(--accent); font-weight: 700; }
         .attr-item .val.a { color: #e8b84a; font-weight: 600; }
         .attr-item .val.b { color: var(--text-muted); }
         .attr-item .val.c { color: var(--text-muted); opacity: 0.7; }
-        .attr-item .val.e { color: var(--text-muted); opacity: 0.5; }
-        .attr-item .val.sss { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+        .attr-item .val.d { color: var(--text-muted); opacity: 0.5; }
+        .attr-item .val.e { color: var(--text-muted); opacity: 0.3; }
+        .attr-item .val.f { color: var(--text-muted); opacity: 0.2; }
         .attr-item .val.ss { color: var(--accent); font-weight: 700; }
+        .attr-item .val.sss { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
+
+        .role-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            color: #fff;
+            margin-left: 4px;
+            font-weight: 400;
+            vertical-align: middle;
+        }
+        .role-tag.cheng { background: #3a8a6b; }
+        [data-theme="dark"] .role-tag.cheng { background: #5aaa8b; }
+        .role-tag.sp { background: #5a8a6b; }
+        [data-theme="dark"] .role-tag.sp { background: #7aaa8b; }
 
         .weapon-block {
             font-size: 0.85rem;
@@ -451,6 +475,10 @@
         .note .qa .a .highlight {
             color: var(--accent);
         }
+        .note .qa .a .player-line {
+            display: block;
+            padding: 2px 0;
+        }
         .note .final {
             background: var(--accent-soft);
             padding: 12px 16px;
@@ -459,6 +487,27 @@
             color: var(--text-secondary);
             margin-top: 8px;
             border-left: 3px solid var(--accent);
+        }
+
+        .sp-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            border: 2px dashed var(--border-card);
+            border-radius: var(--radius);
+        }
+        .sp-placeholder .icon {
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+        .sp-placeholder .label {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .sp-placeholder .desc {
+            font-size: 0.85rem;
         }
 
         @media (max-width: 600px) {
@@ -472,6 +521,7 @@
             .card .title { font-size: 0.85rem; }
             .bond-section .section-label,
             .voice-section .section-label { font-size: 0.75rem; }
+            .tab-btn { padding: 8px 16px; font-size: 0.8rem; }
         }
     </style>
     <script>
@@ -497,11 +547,15 @@
             localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
         }
 
-        function switchSP(form) {
-            document.querySelectorAll('.sp-panel').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sp-toggle button').forEach(el => el.classList.remove('active'));
-            document.getElementById('sp-' + form).classList.add('active');
-            document.querySelector('.sp-toggle button[data-sp="' + form + '"]').classList.add('active');
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.querySelector('.tab-btn[data-tab="' + tab + '"]').classList.add('active');
         }
     </script>
 </head>
@@ -517,119 +571,113 @@
 
 <div id="app">
 
-    <div class="hero-header">
-        <div class="name">程木栖</div>
-        <div class="sub">全能盾辅 · 二席 · 归终殿之盾</div>
-        <span class="stars" style="color: #e8b84a;">★★★★★★</span>
-        <div class="meta">
-            <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
-            <span class="item"><span class="label">席位</span> <span class="value">第二席</span></span>
-        </div>
-        <div class="tags">
-            <span class="tag accent">主线</span>
-            <span class="tag">盾辅</span>
-            <span class="tag">嘲讽</span>
-            <span class="tag">套盾</span>
-            <span class="tag">全能</span>
-            <span class="tag">自回血</span>
-        </div>
+    <!-- 切换按钮 -->
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="chief" onclick="switchTab('chief')">第二席 · 盾辅</button>
+        <button class="tab-btn" data-tab="sp" onclick="switchTab('sp')">SP · 医者</button>
     </div>
 
-    <div class="sp-toggle">
-        <button class="active" data-sp="shield" onclick="switchSP('shield')">二席时期</button>
-        <button data-sp="medic" onclick="switchSP('medic')">医者时期 (SP)</button>
-    </div>
+    <!-- ==================== 第二席形态 ==================== -->
+    <div class="tab-content active" id="tab-chief">
 
-    <!-- ====== 二席时期 · 盾辅 ====== -->
-    <div class="sp-panel active" id="sp-shield">
+        <div class="hero-header">
+            <div class="name">程木栖</div>
+            <div class="sub">坦克盾辅 · 嘲讽 · 全能精通</div>
+            <div class="stars" style="color: #3a8a6b;">★★★★★★</div>
+            <div class="meta">
+                <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
+                <span class="item"><span class="label">席位</span> <span class="value">第二席</span></span>
+            </div>
+            <div class="tags">
+                <span class="tag accent">主线</span>
+                <span class="tag">坦克</span>
+                <span class="tag">盾辅</span>
+                <span class="tag">嘲讽</span>
+                <span class="tag">近/中/远</span>
+            </div>
+        </div>
 
+        <!-- 属性面板 -->
         <div class="row">
             <div class="card">
-                <div class="title"><span class="deco">◈</span> 属性面板</div>
+                <div class="title"><span class="deco">◉</span> 属性面板</div>
                 <div class="radar-wrap">
-                    <svg viewBox="-25 -25 350 350" id="radar-svg-shield"></svg>
+                    <svg viewBox="-18 -18 336 336" id="radar-svg-chief"></svg>
                 </div>
             </div>
             <div class="card">
-                <div class="title"><span class="deco">◈</span> 详细数值</div>
+                <div class="title"><span class="deco">◉</span> 详细数值 <span class="role-tag cheng">坦克 · 近中远</span></div>
                 <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击力</span><span class="val e">350</span></div>
-                    <div class="attr-item"><span class="label">生命值</span><span class="val sss">18700</span></div>
-                    <div class="attr-item"><span class="label">物理防御</span><span class="val s">950</span></div>
-                    <div class="attr-item"><span class="label">法术防御</span><span class="val s">900</span></div>
-                    <div class="attr-item"><span class="label">速度</span><span class="val a">75</span></div>
-                    <div class="attr-item"><span class="label">控制</span><span class="val b">60</span></div>
-                    <div class="attr-item"><span class="label">范围</span><span class="val s">90</span></div>
-                    <div class="attr-item"><span class="label">增益</span><span class="val s">100</span></div>
+                    <div class="attr-item"><span class="label">攻击力</span><span class="val">850</span></div>
+                    <div class="attr-item"><span class="label">生命值</span><span class="val">18700</span></div>
+                    <div class="attr-item"><span class="label">物理防御</span><span class="val">980</span></div>
+                    <div class="attr-item"><span class="label">法术防御</span><span class="val">920</span></div>
+                    <div class="attr-item"><span class="label">速度</span><span class="val">105</span></div>
+                    <div class="attr-item"><span class="label">控制</span><span class="val a">A</span></div>
+                    <div class="attr-item"><span class="label">范围</span><span class="val b">B+</span></div>
+                    <div class="attr-item"><span class="label">增益</span><span class="val ss">SS</span></div>
+                    <div class="attr-item"><span class="label">生存</span><span class="val sss">SSS</span></div>
                     <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★☆☆☆</span></div>
-                    <div class="attr-item"><span class="label">射程</span><span class="val">近/中</span></div>
+                    <div class="attr-item"><span class="label">射程</span><span class="val">近/中/远</span></div>
                 </div>
             </div>
         </div>
 
+        <!-- 本命武器 -->
         <div class="card">
-            <div class="title"><span class="deco">◈</span> 本命武器 · 古琴 · 归江</div>
+            <div class="title"><span class="deco">◉</span> 本命武器 · 归江</div>
             <div class="weapon-block">
                 <div>程木栖的本命武器是一张古琴，名唤「归江」。</div>
                 <div style="margin-top:4px;">琴身以千年古木制成，弦丝取自忘川水精，音色沉郁浑厚，拨弦时能引动地脉之气。她平日悬于背上，遇事则解琴为盾，拨弦为刃，攻守一体。</div>
-                <div style="margin-top:4px;">作为曾经的归终殿首席，程木栖的杂学之广令人咋舌——琴中藏剑、袖里飞刀、符箓阵盘，无一不通。她本人对此的解释是：当年什么都学了一点，以备不时之需。</div>
-                <div class="quote">“师姐当年什么都学了一点的后果。”——林淮</div>
+                <div style="margin-top:4px;">作为曾经的归终殿首席，程木栖的杂学之广令人咋舌——琴中藏剑、袖里飞刀、符箓阵盘，无一不通。她本人对此的解释是：</div>
+                <div class="quote">“当年什么都学了一点，以备不时之需。”</div>
             </div>
         </div>
 
+        <!-- 特殊机制 -->
         <div class="card">
-            <div class="title"><span class="deco">◈</span> 特殊机制 · 归终·承伤</div>
+            <div class="title"><span class="deco">◉</span> 特殊机制 · 嘲讽与护盾</div>
             <div class="weapon-block">
-                <div>程木栖拥有常态嘲讽能力，敌方任意单体技能有 <span class="highlight" style="color:var(--accent);font-weight:600;">30%</span> 概率优先锁定程木栖为目标。</div>
-                <div style="margin-top:4px;">同时，程木栖为队友施加的护盾在存在期间，会赋予该队友攻击力 +8%、防御力 +10% 的增益效果。</div>
-                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">归终殿最硬的盾，站着让你打都打不动。</div>
+                <div><span class="highlight">常态嘲讽：</span>程木栖拥有常态嘲讽能力，敌方任意单体技能有 30% 概率优先锁定程木栖为目标。</div>
+                <div style="margin-top:8px;"><span class="highlight">护盾增益：</span>程木栖为队友施加的护盾在存在期间，会赋予该队友攻击力 +8%、防御力 +10% 的增益效果。</div>
             </div>
         </div>
 
+        <!-- 技能组 -->
         <div class="card">
-            <div class="title"><span class="deco">◈</span> 技能组</div>
+            <div class="title"><span class="deco">◉</span> 技能组</div>
 
             <div class="skill">
                 <div class="name">普攻 · 杂学 <span class="type">普攻</span></div>
-                <div class="desc">程木栖随手从袖中摸出一件兵器进行攻击，造成物理伤害。每次普攻随机触发一种效果：匕首（附加流血，每回合掉血3%，持续2回合）、短剑（剑气穿透，无视目标20%防御）、符箓（降低目标5%攻击力，持续1回合）、阵盘（小范围溅射伤害，对相邻目标造成50%伤害）。伤害倍率不高，但花样百出。</div>
+                <div class="desc">程木栖随手从袖中摸出一件兵器进行攻击，造成物理伤害。每次普攻随机触发一种效果：长枪（无视目标 15% 防御）、匕首（附加流血，每回合掉血 3%，持续 2 回合）、短剑（剑气穿透，无视目标 20% 防御）、符箓（降低目标 5% 攻击力，持续 1 回合）、阵盘（小范围溅射伤害，对相邻目标造成 50% 伤害）。伤害倍率不高，但花样百出。</div>
                 <div class="quote">“全能百科全书，她和罗修就是来炫耀的。”——某归终殿弟子</div>
             </div>
 
             <div class="skill">
                 <div class="name">战技 · 移花接木 <span class="type">战技</span></div>
                 <div class="desc">程木栖将自身当前生命值的 20% 转移给指定队友，为其恢复等量生命，自身获得「代偿」护盾（吸收量为转移量的 150%），持续 2 回合。该队友同时获得「庇护」：受到伤害降低 25%，持续 2 回合。</div>
-                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">不会回血的盾辅不是好二席——但她确实不会给队友回血，只会把自己的血分给你。</div>
+                <div class="quote">不会回血的盾辅不是好二席——但她确实不会给队友回血，只会把自己的血分给你。</div>
             </div>
 
             <div class="skill">
                 <div class="name">必杀 · 归江·天音障 <span class="type">必杀</span></div>
                 <div class="desc">程木栖全力拨动琴弦，为全体队友施加「天音盾」（吸收量为程木栖最大生命值的 18%），持续 3 回合。护盾存在期间，队友攻击力 +10%，防御力 +15%。同时对敌方全体施加「弦伤」：每回合受到程木栖防御力 80% 的真实伤害，持续 3 回合。</div>
-                <div class="quote">既能套盾，又能让对面流血，这才是归终殿二席的排面。</div>
             </div>
 
             <div class="skill">
                 <div class="name">被动 · 枯荣 <span class="type">被动</span></div>
-                <div class="desc">程木栖每回合结束时，恢复自身已损失生命值的 12%。若当前生命值低于 30%，恢复量提升至 20%。</div>
+                <div class="desc">程木栖每回合结束时，恢复自身已损失生命值的 10%。若当前生命值低于 30%，恢复量提升至 20%。</div>
             </div>
 
             <div class="skill">
                 <div class="name">被动 · 归终·引 <span class="type">被动</span></div>
                 <div class="desc">当程木栖受到攻击时，为全队生命值最低的队友施加 1 层「归终」：防御力 +5%，最多叠加 3 层。若该队友已持有程木栖施加的护盾，则额外清除 1 个负面状态。</div>
-                <div class="quote">挨打是为了让队友更强，这大概就是盾辅的觉悟。</div>
             </div>
         </div>
 
+        <!-- 羁绊效果 -->
         <div class="card">
-            <div class="title"><span class="deco">◈</span> 羁绊效果</div>
-
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 前后席</div>
-                <div class="bond">
-                    <div class="name">与「罗修」同时出场时：</div>
-                    <div class="desc">程木栖的「天音盾」护盾值额外提升 15%。罗修对处于「弦伤」流血状态的敌人伤害提升 15%。</div>
-                    <div class="quote">前任首席与现任首席，一个负责烧，一个负责扛。</div>
-                </div>
-            </div>
+            <div class="title"><span class="deco">◉</span> 羁绊效果</div>
 
             <div class="bond-section">
                 <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终五席</div>
@@ -640,74 +688,151 @@
             </div>
 
             <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 师姐在呢</div>
+                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 断弦·归终</div>
                 <div class="bond">
-                    <div class="name">与「林淮 / 栾方棋 / 黎元开」任意一人同队时：</div>
+                    <div class="name">与「罗修」同时出场时：</div>
+                    <div class="desc">程木栖的「天音盾」护盾值额外提升 15%。罗修对处于「弦伤」流血状态的敌人伤害提升 15%。<div class="quote">前任首席与现任首席，一个负责烧，一个负责扛。</div></div>
+                </div>
+            </div>
+
+            <div class="bond-section">
+                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终·共守</div>
+                <div class="bond">
+                    <div class="name">与「林淮 · 栾方棋 · 魏元璟」中任意两人同队时：</div>
                     <div class="desc">程木栖的常态嘲讽概率提升至 45%。该队友受到致命伤害时，程木栖立即为其承担该次伤害（每场战斗触发 1 次）。</div>
-                    <div class="quote">师姐在，你们就不会死。</div>
                 </div>
             </div>
         </div>
 
-        <!-- 语音彩蛋占位 -->
-        <div class="card" style="margin-bottom:20px;">
-            <div class="title"><span class="deco">◈</span> 彩蛋语音</div>
-            <div style="font-size:0.85rem;color:var(--text-muted);padding:8px 0;">
-                （待补充）
-            </div>
-        </div>
-
-        <!-- 制作人笔记占位 -->
+        <!-- 彩蛋语音 -->
         <div class="card">
-            <div class="title"><span class="deco">◈</span> 制作人笔记</div>
-            <div style="font-size:0.85rem;color:var(--text-muted);padding:8px 0;">
-                （待补充）
+            <div class="title"><span class="deco">◉</span> 彩蛋语音</div>
+
+            <div class="voice-section">
+                <div class="section-label"><span class="deco">✦</span> 与栾方棋同队</div>
+                <div class="voice-item">
+                    <div class="scene">战斗开始</div>
+                    <div class="line">程木栖安静地看了栾方棋一会儿。<br>栾方棋被盯得不自在：“师姐……在看什么？”<br>程木栖微微一笑：“在想那棵浮生树挪到归终殿之前，你头发还没这么长。浮生树长得好快，你也……一样。”<br>栾方棋：“……哈哈，是吗？”<br><span class="note">可是栾方棋都两百多岁了啊。</span></div>
+                </div>
+                <div class="voice-item">
+                    <div class="scene">栾方棋血量低于 30%</div>
+                    <div class="line">程木栖：“退后，师姐还没死，轮不到你拼命。”</div>
+                </div>
+            </div>
+
+            <div class="voice-section">
+                <div class="section-label"><span class="deco">✦</span> 与罗修同队</div>
+                <div class="voice-item">
+                    <div class="scene">战斗开始</div>
+                    <div class="line">程木栖：“又在散养新人？怪不得最近医馆里这么多哭鼻子的弟子。罗修，这次任务结束，新弟子的训练计划给我看看。”<br>罗修：“……嗯。”<br>程木栖：“别装听不见，三百年前你就这套。”<br><span class="note">程木栖和罗修为指导新弟子这件事争论了三百多年，最终结束于归终殿扩建之后。</span></div>
+                </div>
+                <div class="voice-item">
+                    <div class="scene">罗修退场</div>
+                    <div class="line">程木栖：“三百年了，你还是学不会惜命。首席的命是归终殿的，别擅自做主。”<br><span class="note">倒不是怪罪，职责所在，她总得看着点这个不省心的首席。</span></div>
+                </div>
+            </div>
+
+            <div class="voice-section">
+                <div class="section-label"><span class="deco">✦</span> 与魏元璟同队</div>
+                <div class="voice-item">
+                    <div class="scene">战斗开始</div>
+                    <div class="line">魏元璟：“程师姐，今日请多指教。”<br>程木栖：“不必紧张，按你自己的节奏来。我看过你的卷宗，很不错。”<br>魏元璟：“……谢谢师姐。”<br><span class="note">程木栖对这位三百年一遇的天才，向来只观察，不施压。</span></div>
+                </div>
+            </div>
+
+            <div class="voice-section">
+                <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
+                <div class="voice-item">
+                    <div class="scene">战斗开始</div>
+                    <div class="line">程木栖：“林淮，枪法又精进了。”<br>林淮：“师姐过奖。”<br>程木栖：“不过别总是冲在最前面，方棋等会儿又要担心了。”</div>
+                </div>
+            </div>
+
+            <div class="voice-section">
+                <div class="section-label"><span class="deco">✦</span> 与白禾川互为敌对</div>
+                <div class="voice-item">
+                    <div class="scene">战斗开始</div>
+                    <div class="line">白禾川：“哟，这不是当年琴都弹断了的……谁来着？”<br>程木栖：“阁下记性不好，手倒是挺利。可惜，断我琴的人，通常没什么好下场。”<br>白禾川：“……嘴硬。”</div>
+                </div>
+            </div>
+
+            <div class="voice-section">
+                <div class="section-label"><span class="deco">✦</span> 阵亡</div>
+                <div class="voice-item">
+                    <div class="line">“……该换把琴了。”</div>
+                </div>
             </div>
         </div>
 
+        <!-- 制作人笔记 -->
+        <div class="card">
+            <div class="title"><span class="deco">◉</span> 制作人笔记</div>
+            <div class="note">
+
+                <div class="qa">
+                    <div class="q">关于阵容补齐</div>
+                    <div class="a">程木栖上线当天，归终殿玩家集体松了口气，师姐的定位算是解了大伙的燃眉之急。<br><br>在此之前，归终殿的阵容堪称豪华：林淮单体爆发天花板，罗修全屏焚烧，栾方棋顶级辅助，魏元璟浮空控场——但四个人凑在一起，双抗最高的罗修也只有五六百，对面一个 AOE 砸下来，四条血条一起消失，连个缓冲的余地都没有。<br><br>而我们的程木栖师姐，足足 18700 的生命值，950 物防，900 法防，往那一站跟堵墙似的。<br><br>林淮玩家表示：我的林淮终于不是纸糊的了。<br><br><span class="highlight">一队五个人，终于凑齐了！归终殿战舰，启动！</span></div>
+                </div>
+
+                <div class="qa">
+                    <div class="q">关于“没有奶妈”的争议</div>
+                    <div class="a">但很快就有人发现了盲点：这队伍没有奶妈。栾方棋常态不奶，只有开大时才能回一口；魏元璟除了控制和那点可怜的输出，根本没有治疗能力。程木栖是盾辅，盾再厚，破了还是得掉血。<br><br>有人回复他：“盾奶自古不合体，又有盾又有奶，想要多少胜率自己填得了。”<br><br>这话虽然刺耳，但理确实是这个理。最终社区给程木栖下了定论：<span class="highlight">她是归终殿唯一一个‘活着就是贡献’的角色。</span>只要她还站在场上，全队就敢把输出拉满。</div>
+                </div>
+
+                <div class="qa">
+                    <div class="q">关于特效</div>
+                    <div class="a">策划紧急修复了之前三重全屏特效开大会闪退的 bug，现在不会闪退了，但大伙对程木栖的特效还是有一点畏惧之心——因为之前大家都猜测程木栖会是输出定位，毕竟剧情里程木栖大多数时候还是拿着把古琴在输出，结果策划做成了盾辅，居然莫名合理。<br><br>毕竟罗修和林淮双 C 的输出就很爆炸了，魏元璟副 C 的输出也够看，栾方棋再开个大直接全体升天，再叠下去该是互秒游戏了，出个盾辅恰好弥补了生存短板。<br><br>当程木栖的特效被解包出来后，有人松了口气，有人觉得遗憾。程木栖的特效实在是太素了，就是简单的白色音波，盾的特效也很低调，像没有一样。有玩家怀疑是策划被之前的闪退搞出了心理阴影，还有厨子连夜上书要求策划加强特效。策划顶不住压力直接宣布下版本特效升级，与此同时还爆出一个消息：<span class="highlight">归终殿角色并未出完，后续还会有更新。</span></div>
+                </div>
+
+                <div class="qa">
+                    <div class="q">关于建模</div>
+                    <div class="a">程木栖是开服以来第一个六星女角色。之前剧情只提到她在归终惊鸿榜排名第三，但建模一直是剪影。这次实装一放出来，玩家直呼“值了”。<br><br>她的气质偏清冷，眉目疏淡，站姿端正，像一棵长在医馆门口的青竹。但笑起来的时候眉眼会微微弯下去，那种反差让不少人表示“抽到程木栖之前我是不信一见钟情的”。<br><br><span class="highlight">“惊鸿榜第三？低了。这起码……第二是谁，魏元璟？那没事了，第一是谁，林淮？那……”</span></div>
+                </div>
+
+                <div class="qa">
+                    <div class="q">关于“杂学”</div>
+                    <div class="a">程木栖的普攻「杂学」随机触发长枪、匕首、短剑、符箓、阵盘五种效果，伤害不高但花样百出。<br><br>有玩家录了十分钟普攻合集，发现程木栖平均每十五秒换一种武器，匕首捅完换短剑，短剑挥完扔符箓，符箓烧完拍阵盘，全程不带重样的。最离谱的是，她扔长枪的动作比林淮还标准，画符的速度比栾方棋还快。<br><br>这女人到底学了多少东西？<br><br>有人去翻了设定，发现程木栖当首席的时候，归终殿的教材有一半是她编的。而罗修接手首席之后发现还要编教材，当场就崩溃了，抠了一晚上脑袋写出来了一页纸，被程木栖批注了整整五十条修改意见。对于新人的教学方式，两人更是争论了三百年。<br><br>栾方棋对此深有体会，每次跟着罗修一起出任务都是一场对运气、胆量、实力的综合考量。罗修往那一站跟人形天灾似的。<br><br>这一百年的苦日子也不是说忘就能忘的，虽说罗修平日没打过栾方棋，但对他造成的精神伤害却不在少数——包括但不限于教唆栾方棋一个人跳进河里对付黏糊糊湿哒哒的恶心水鬼；强迫他拿三四十斤的大砍刀去对付无头女尸；将他一个人关在充满怨鬼的房子里，不收完魂不准出来；以及把他画了几个月的符当纸片撒着玩，还告诉他当符修没前途，只能给剑修擦屁股……<br><br>栾方棋在罗修手下熬了一百年，精神损伤比肉体损伤还严重。<br><br>又一次，程木栖看到栾方棋整个人出任务回来后都焉巴巴的，直接去找罗修吵了一下午，最后各退一步——罗修同意不再强迫符修拿刀，程木栖同意不再往教材里加“首席教学失误案例”的附录。</div>
+                </div>
+
+                <div class="final">
+                    设计文档最后一页：<br><br>
+                    “程木栖是目前唯一一个脱离了首席职位之后还主动申请‘每周排班表’的角色。她说这样可以帮罗修分担文书压力，但据罗修透露，他至今没学会那张排班表的阅读方式。每次开会，他都只能假装看懂了，然后问程木栖下一步该做什么。”
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <!-- ====== SP医者时期 ====== -->
-    <div class="sp-panel" id="sp-medic">
+    <!-- ==================== SP 形态（占位） ==================== -->
+    <div class="tab-content" id="tab-sp">
 
-        <div class="card sp-desc-card" style="margin-bottom:20px;">
-            <div class="title">SP形态 · 医者时期</div>
-            <div style="font-size:0.88rem;color:var(--text-secondary);line-height:1.8;">
-                <p>程木栖退役后转修医道，卸下二席的重担，将古琴「归江」的杀伐之音化为疗愈之律。</p>
-                <p style="margin-top:4px;">所有防御与嘲讽技能被移除，取而代之的是全归终殿最强的群体治疗与净化能力。</p>
-                <p style="margin-top:4px;">SP形态将在后续剧情中作为六星角色免费赠送。</p>
+        <div class="hero-header">
+            <div class="name">程木栖 · SP</div>
+            <div class="sub">医者 · 纯治疗 · 退隐时期</div>
+            <div class="stars" style="color: #3a8a6b;">★★★★★★</div>
+            <div class="meta">
+                <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
+                <span class="item"><span class="label">状态</span> <span class="value">退隐 · 医馆主事</span></span>
+            </div>
+            <div class="tags">
+                <span class="tag accent">SP</span>
+                <span class="tag">治疗</span>
+                <span class="tag">辅助</span>
+                <span class="tag">生存</span>
             </div>
         </div>
 
-        <div class="row">
-            <div class="card">
-                <div class="title">属性面板 <span style="font-size:0.65rem;color:var(--text-muted);">(SP)</span></div>
-                <div class="radar-wrap">
-                    <svg viewBox="-25 -25 350 350" id="radar-svg-medic"></svg>
-                </div>
-            </div>
-            <div class="card">
-                <div class="title">详细数值 <span style="font-size:0.65rem;color:var(--text-muted);">(SP)</span></div>
-                <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击力</span><span class="val e">280</span></div>
-                    <div class="attr-item"><span class="label">生命值</span><span class="val s">12000</span></div>
-                    <div class="attr-item"><span class="label">物理防御</span><span class="val a">550</span></div>
-                    <div class="attr-item"><span class="label">法术防御</span><span class="val a">600</span></div>
-                    <div class="attr-item"><span class="label">速度</span><span class="val b">65</span></div>
-                    <div class="attr-item"><span class="label">控制</span><span class="val c">40</span></div>
-                    <div class="attr-item"><span class="label">范围</span><span class="val s">95</span></div>
-                    <div class="attr-item"><span class="label">增益</span><span class="val ss">120</span></div>
-                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★☆☆☆☆</span></div>
-                    <div class="attr-item"><span class="label">射程</span><span class="val">远</span></div>
-                </div>
-            </div>
+        <div class="sp-placeholder">
+            <div class="icon">◉</div>
+            <div class="label">—— 待实装 ——</div>
+            <div class="desc">程木栖的 SP 形态将在后续版本中实装，届时将开放全部技能、语音及专属剧情。</div>
         </div>
 
+        <!-- SP形态的制作人笔记占位 -->
         <div class="card">
-            <div class="title"><span class="deco">◈</span> SP技能组 <span style="font-size:0.65rem;color:var(--text-muted);">(待实装)</span></div>
-            <div style="font-size:0.85rem;color:var(--text-muted);padding:8px 0;line-height:1.7;">
-                <p>SP程木栖将拥有全游戏最强的群体治疗与净化能力，所有技能围绕「琴音·疗愈」展开。</p>
-                <p style="margin-top:4px;">具体技能组与羁绊效果将在剧情实装后更新。</p>
+            <div class="title"><span class="deco">◉</span> 制作人笔记 · SP</div>
+            <div style="padding:12px 0;color:var(--text-muted);font-style:italic;text-align:center;font-size:0.85rem;">
+                —— 待补 ——
             </div>
         </div>
 
@@ -716,21 +841,21 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- 雷达图脚本 -->
+<!-- 雷达图（第二席） -->
 <!-- ============================================================ -->
 <script>
 (function() {
-    // 二席时期雷达图：攻击55 防御135 速度75 控制60 范围90 增益100
-    var stats = [55, 135, 75, 60, 90, 100];
+    var stats = [55, 135, 65, 70, 60, 100];
     var labels = ['攻击', '防御', '速度', '控制', '范围', '增益'];
     var cx = 150, cy = 150, maxR = 120;
     var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
         return deg * Math.PI / 180;
     });
+    var scale = 1.0;
     var accent = 'var(--accent)';
     var accentSoft = 'var(--accent-soft)';
 
-    var svg = document.getElementById('radar-svg-shield');
+    var svg = document.getElementById('radar-svg-chief');
     if (!svg) return;
     while (svg.firstChild) { svg.removeChild(svg.firstChild); }
 
@@ -764,7 +889,7 @@
     });
 
     var vertices = stats.map(function(val, i) {
-        var r = (val / 100) * maxR;
+        var r = (val / 100) * maxR * scale;
         var a = angles[i];
         return {
             x: cx + r * Math.sin(a),
@@ -779,142 +904,6 @@
     var targetPts = vertices.map(function(v) {
         return v.x + ',' + v.y;
     }).join(' ');
-
-    var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-    poly.setAttribute('points', centerPts);
-    poly.setAttribute('fill', accentSoft);
-    poly.setAttribute('stroke', accent);
-    poly.setAttribute('stroke-width', '2.5');
-    poly.setAttribute('stroke-linejoin', 'round');
-    var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
-    anim.setAttribute('attributeName', 'points');
-    anim.setAttribute('from', centerPts);
-    anim.setAttribute('to', targetPts);
-    anim.setAttribute('dur', '1.2s');
-    anim.setAttribute('fill', 'freeze');
-    anim.setAttribute('calcMode', 'spline');
-    anim.setAttribute('keySplines', '0.25 0.1 0.25 1');
-    poly.appendChild(anim);
-    svg.appendChild(poly);
-
-    vertices.forEach(function(v) {
-        var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', v.x);
-        circle.setAttribute('cy', v.y);
-        circle.setAttribute('r', '3');
-        circle.setAttribute('fill', accent);
-        circle.setAttribute('opacity', '0');
-        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
-        fade.setAttribute('attributeName', 'opacity');
-        fade.setAttribute('from', '0');
-        fade.setAttribute('to', '1');
-        fade.setAttribute('dur', '0.3s');
-        fade.setAttribute('begin', '1s');
-        fade.setAttribute('fill', 'freeze');
-        circle.appendChild(fade);
-        svg.appendChild(circle);
-    });
-
-    var labelPositions = [
-        { x: 150, y: 10, text: '攻击', anchor: 'middle' },
-        { x: 266, y: 112, text: '防御', anchor: 'start' },
-        { x: 250, y: 206, text: '速度', anchor: 'start' },
-        { x: 150, y: 286, text: '控制', anchor: 'middle' },
-        { x: 52, y: 210, text: '范围', anchor: 'end' },
-        { x: 34, y: 106, text: '增益', anchor: 'end' }
-    ];
-    labelPositions.forEach(function(lp) {
-        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', lp.x);
-        text.setAttribute('y', lp.y);
-        text.setAttribute('fill', 'var(--text-muted)');
-        text.setAttribute('font-size', '8');
-        text.setAttribute('font-weight', '400');
-        text.setAttribute('text-anchor', lp.anchor);
-        text.setAttribute('dominant-baseline', 'central');
-        text.textContent = lp.text;
-        svg.appendChild(text);
-    });
-
-    var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
-    vertices.forEach(function(v, i) {
-        var offset = 12;
-        var a = angles[i];
-        var dx = offset * Math.sin(a);
-        var dy = -offset * Math.cos(a);
-        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', v.x + dx);
-        text.setAttribute('y', v.y + dy);
-        text.setAttribute('fill', accent);
-        text.setAttribute('font-size', '9');
-        text.setAttribute('font-weight', '600');
-        text.setAttribute('text-anchor', anchorMap[i]);
-        text.setAttribute('dominant-baseline', 'central');
-        text.textContent = v.val;
-        text.setAttribute('opacity', '0');
-        var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
-        fade.setAttribute('attributeName', 'opacity');
-        fade.setAttribute('from', '0');
-        fade.setAttribute('to', '1');
-        fade.setAttribute('dur', '0.3s');
-        fade.setAttribute('begin', '1.2s');
-        fade.setAttribute('fill', 'freeze');
-        text.appendChild(fade);
-        svg.appendChild(text);
-    });
-})();
-
-// SP医者时期雷达图（简化版）
-(function() {
-    var stats = [28, 70, 65, 40, 95, 120];
-    var cx = 150, cy = 150, maxR = 120;
-    var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
-        return deg * Math.PI / 180;
-    });
-    var accent = 'var(--accent)';
-    var accentSoft = 'var(--accent-soft)';
-
-    var svg = document.getElementById('radar-svg-medic');
-    if (!svg) return;
-    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
-
-    var layers = [0.3, 0.5, 0.7, 1.0];
-    layers.forEach(function(ratio) {
-        var r = maxR * ratio;
-        var pts = angles.map(function(a) {
-            return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a));
-        }).join(' ');
-        var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-        poly.setAttribute('points', pts);
-        poly.setAttribute('fill', 'none');
-        poly.setAttribute('stroke', 'var(--border-card)');
-        poly.setAttribute('stroke-width', ratio === 1.0 ? '0.8' : '0.5');
-        if (ratio !== 1.0) poly.setAttribute('stroke-dasharray', '4,4');
-        svg.appendChild(poly);
-    });
-
-    angles.forEach(function(a) {
-        var x = cx + maxR * Math.sin(a);
-        var y = cy - maxR * Math.cos(a);
-        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', cx);
-        line.setAttribute('y1', cy);
-        line.setAttribute('x2', x);
-        line.setAttribute('y2', y);
-        line.setAttribute('stroke', 'var(--border-card)');
-        line.setAttribute('stroke-width', '0.4');
-        line.setAttribute('stroke-dasharray', '2,3');
-        svg.appendChild(line);
-    });
-
-    var vertices = stats.map(function(val, i) {
-        var r = (val / 100) * maxR;
-        var a = angles[i];
-        return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a), val: val };
-    });
-
-    var centerPts = angles.map(function() { return cx + ',' + cy; }).join(' ');
-    var targetPts = vertices.map(function(v) { return v.x + ',' + v.y; }).join(' ');
 
     var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     poly.setAttribute('points', centerPts);
