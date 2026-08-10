@@ -6,23 +6,23 @@
   <title>瓦伦蒂娜 · 角色档案</title>
   <style>
     /* ============================================================
-       0. CSS 变量 · 玫瑰红调
+       0. CSS 变量 · 深红调
     ============================================================ */
     :root {
       --bg-body: #f7f4ef;
       --bg-card: #ffffff;
       --bg-card-alt: #faf7f2;
       --border-light: #1a1614;
-      --border-rose: #b85a5a;
+      --border-red: #8a2a2a;
       --border-gold: #b8944a;
       --text-primary: #1a1614;
       --text-secondary: #3d3732;
       --text-muted: #6f6760;
-      --rose: #b85a5a;
-      --rose-soft: rgba(184, 90, 90, 0.08);
+      --red: #8a2a2a;
+      --red-soft: rgba(138, 42, 42, 0.08);
       --gold: #b08a4a;
       --shadow: 0 4px 20px rgba(0,0,0,0.08);
-      --shadow-avatar: 0 0 0 4px rgba(184, 90, 90, 0.15), 0 4px 20px rgba(0,0,0,0.05);
+      --shadow-avatar: 0 0 0 4px rgba(138, 42, 42, 0.15), 0 4px 20px rgba(0,0,0,0.05);
       --tag-bg: #f2ede8;
       --tag-border: #1a1614;
       --quote-bg: #f6f2ed;
@@ -34,16 +34,16 @@
       --bg-card: #24201c;
       --bg-card-alt: #2e2a26;
       --border-light: #3a3530;
-      --border-rose: #c86a6a;
+      --border-red: #aa3a3a;
       --border-gold: #c9a052;
       --text-primary: #e6ddd4;
       --text-secondary: #b0a69b;
       --text-muted: #6f6760;
-      --rose: #c86a6a;
-      --rose-soft: rgba(200, 106, 106, 0.08);
+      --red: #aa3a3a;
+      --red-soft: rgba(170, 58, 58, 0.08);
       --gold: #c9a052;
       --shadow: 0 8px 32px rgba(0,0,0,0.5);
-      --shadow-avatar: 0 0 0 4px rgba(200, 106, 106, 0.12), 0 4px 20px rgba(0,0,0,0.4);
+      --shadow-avatar: 0 0 0 4px rgba(170, 58, 58, 0.12), 0 4px 20px rgba(0,0,0,0.4);
       --tag-bg: #2e2a26;
       --tag-border: #3a3530;
       --quote-bg: rgba(0,0,0,0.2);
@@ -93,8 +93,8 @@
       text-decoration: none;
     }
     .float-btn:hover {
-      border-color: var(--rose);
-      color: var(--rose);
+      border-color: var(--red);
+      color: var(--red);
     }
     .float-btn .icon { font-size: 0.9rem; }
 
@@ -102,7 +102,7 @@
       max-width: 720px;
       width: 100%;
       background: var(--bg-card);
-      border: 2px solid var(--border-rose);
+      border: 2px solid var(--border-red);
       border-radius: 12px;
       padding: 32px 36px 28px 36px;
       box-shadow: var(--shadow);
@@ -118,7 +118,7 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, transparent, var(--rose), transparent);
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
       opacity: 0.6;
       transition: opacity var(--transition);
     }
@@ -137,7 +137,7 @@
       height: 260px;
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid var(--border-gold);
+      border: 1px solid var(--border-red);
       box-shadow: var(--shadow-avatar);
       background: var(--bg-card-alt);
       flex-shrink: 0;
@@ -157,7 +157,7 @@
       align-items: center;
       justify-content: center;
       background: var(--bg-card-alt);
-      color: var(--rose);
+      color: var(--red);
       font-size: 2.4rem;
       font-weight: 300;
       letter-spacing: 2px;
@@ -176,8 +176,8 @@
       line-height: 1.2;
       transition: color var(--transition);
     }
-    .name-title .name .rose {
-      color: var(--rose);
+    .name-title .name .red {
+      color: var(--red);
     }
     .name-title .sub {
       font-size: 0.85rem;
@@ -206,9 +206,33 @@
       background: var(--tag-bg);
       transition: border-color var(--transition), color var(--transition), background var(--transition);
     }
-    .name-title .tags span.rose-tag {
-      border-color: var(--rose);
-      color: var(--rose);
+    .name-title .tags span.red-tag {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ---- 全名 ---- */
+    .fullname-block {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: var(--bg-card-alt);
+      border-radius: 6px;
+      border-left: 2px solid var(--red);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .fullname-block .label {
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+    .fullname-block .highlight {
+      color: var(--red);
     }
 
     /* ---- 状态卡 ---- */
@@ -217,7 +241,7 @@
       padding: 8px 14px;
       background: var(--bg-card-alt);
       border-radius: 8px;
-      border-left: 3px solid var(--rose);
+      border-left: 3px solid var(--red);
       display: flex;
       flex-wrap: wrap;
       gap: 8px 20px;
@@ -241,7 +265,7 @@
       color: var(--text-secondary);
     }
     .status-card .item .value .highlight {
-      color: var(--rose);
+      color: var(--red);
     }
     .status-card .impression {
       display: flex;
@@ -260,15 +284,15 @@
       transition: border-color var(--transition), color var(--transition), background var(--transition);
     }
 
-    /* ---- 信息网格 ---- */
+    /* ---- 信息网格：标签两端对齐 ---- */
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px 24px;
       margin: 16px 0 16px 0;
       padding: 16px 0;
-      border-top: 2px solid var(--border-rose);
-      border-bottom: 2px solid var(--border-rose);
+      border-top: 2px solid var(--border-red);
+      border-bottom: 2px solid var(--border-red);
       transition: border-color var(--transition);
     }
     .info-item {
@@ -281,16 +305,18 @@
     .info-item .label {
       color: var(--text-muted);
       font-weight: 400;
-      min-width: 50px;
+      min-width: 60px;
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-align: justify;
+      text-align-last: justify;
     }
     .info-item .value {
       color: var(--text-secondary);
     }
     .info-item .value .highlight {
-      color: var(--rose);
+      color: var(--red);
     }
 
     /* ---- 章节 ---- */
@@ -315,7 +341,7 @@
       margin-bottom: 0;
     }
     .section-body .highlight {
-      color: var(--rose);
+      color: var(--red);
       font-weight: 500;
     }
 
@@ -338,7 +364,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--rose);
+      background: var(--red);
       opacity: 0.6;
     }
     .relation-list .rel .rel-label {
@@ -346,7 +372,7 @@
       font-size: 0.7rem;
     }
 
-    /* ---- 关键物品 ---- */
+    /* ---- 关键物品：边框统一用红色 ---- */
     .items {
       display: flex;
       flex-wrap: wrap;
@@ -356,7 +382,7 @@
     .items .item {
       font-size: 0.78rem;
       padding: 2px 14px;
-      border: 1.5px solid var(--border-light);
+      border: 1.5px solid var(--border-red);
       border-radius: 16px;
       color: var(--text-secondary);
       background: var(--bg-card-alt);
@@ -364,7 +390,7 @@
     }
     .items .item .icon {
       margin-right: 4px;
-      color: var(--rose);
+      color: var(--red);
     }
 
     /* ---- 时间线 ---- */
@@ -384,7 +410,7 @@
     .timeline-item .time {
       font-size: 0.7rem;
       font-weight: 600;
-      color: var(--rose);
+      color: var(--red);
       min-width: 88px;
       letter-spacing: 0.3px;
       padding-top: 1px;
@@ -396,7 +422,7 @@
       line-height: 1.6;
     }
     .timeline-item .desc .highlight {
-      color: var(--rose);
+      color: var(--red);
       font-weight: 500;
     }
     .timeline-item::before {
@@ -406,7 +432,7 @@
       top: 10px;
       bottom: -10px;
       width: 1.5px;
-      background: var(--border-rose);
+      background: var(--border-red);
       opacity: 0.2;
     }
     .timeline-item:last-child::before {
@@ -417,7 +443,7 @@
     .footer-links {
       margin-top: 20px;
       padding-top: 14px;
-      border-top: 2px solid var(--border-rose);
+      border-top: 2px solid var(--border-red);
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
@@ -431,10 +457,10 @@
       letter-spacing: 0.3px;
     }
     .footer-links a:hover {
-      color: var(--rose);
+      color: var(--red);
     }
     .footer-links a .arrow {
-      color: var(--rose);
+      color: var(--red);
       margin-right: 4px;
     }
 
@@ -458,6 +484,7 @@
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
+      .fullname-block { text-align: left; }
       .status-card { justify-content: center; text-align: center; }
       .status-card .impression { justify-content: center; }
       .info-grid {
@@ -537,8 +564,8 @@
 <body>
 
   <div class="float-group">
-    <a class="float-btn" href="../论坛/">
-      <span class="icon">←</span> 返回茶馆
+    <a class="float-btn" href="../角色/">
+      <span class="icon">←</span> 返回
     </a>
     <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
       <span class="icon">🌙</span> 夜间
@@ -553,15 +580,21 @@
         <!-- <div class="placeholder">瓦</div> -->
       </div>
       <div class="name-title">
-        <div class="name">瓦伦蒂娜 <span class="rose">·</span></div>
+        <div class="name">瓦伦蒂娜 <span class="red">·</span></div>
         <div class="sub">
           莫罗佐夫家族长女 <span class="sep">|</span> Alpha
           <span class="sep">|</span> 女总裁
         </div>
         <div class="tags">
-          <span class="rose-tag">贵族</span>
+          <span class="red-tag">贵族</span>
           <span>科利亚的Alpha</span>
           <span>莫罗佐娃集团</span>
+        </div>
+
+        <!-- 全名 + 俄语名 -->
+        <div class="fullname-block">
+          <div><span class="label">中文全名</span> 瓦伦蒂娜·德米特里耶夫娜·莫罗佐娃</div>
+          <div><span class="label">俄语原名</span> <span class="highlight">Валентина Дмитриевна Морозова</span></div>
         </div>
 
         <div class="status-card">
@@ -589,7 +622,7 @@
         <span class="value">Alpha</span>
       </div>
       <div class="info-item">
-        <span class="label">标记</span>
+        <span class="label">爱人</span>
         <span class="value">科利亚·茨韦特科夫</span>
       </div>
       <div class="info-item">
@@ -613,7 +646,7 @@
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
-        <span class="rel"><span class="dot"></span> 科利亚 <span class="rel-label">· 爱人 · 标记</span></span>
+        <span class="rel"><span class="dot"></span> 科利亚 <span class="rel-label">· 爱人</span></span>
         <span class="rel"><span class="dot"></span> 黎昭 <span class="rel-label">· 相助者 · 朋友</span></span>
         <span class="rel"><span class="dot"></span> 阿列克谢 <span class="rel-label">· 同僚</span></span>
         <span class="rel"><span class="dot"></span> 怀榆 <span class="rel-label">· 朋友</span></span>
@@ -626,18 +659,18 @@
       <div class="items">
         <span class="item"><span class="icon">◈</span> 结婚证（发布会展示过）</span>
         <span class="item"><span class="icon">◈</span> 三座矿脉</span>
-        <span class="item"><span class="icon">◈</span> 蜂蜜咖啡（她的信息素）</span>
+        <span class="item"><span class="icon">◈</span> 蜂蜜咖啡</span>
       </div>
     </div>
 
     <div class="section">
       <div class="section-title">背景</div>
       <div class="section-body">
-        <p>莫罗佐夫家族的长女，手握三座矿脉与多条贸易线，北境老牌贵族中最年轻的掌权者。表面冷峻精明，在家族与利益间精准权衡。</p>
-        <p>从第二任金主手中买下科利亚，最初只当是“买了个漂亮玩意儿”。在豢养期间逐渐软化，从被科利亚的蜂蜜信息素吸引，到开始在意他的健康与意愿。在科利亚怀孕后打破家族联姻计划，将其接回庄园。</p>
-        <p>她是黎昭在黑暗时期少有的助力者之一——以宝石委托为名提供资金支持，间接帮助黎昭度过了最艰难的时期。但她的帮助始终建立在与科利亚的羁绊之上。</p>
-        <p>第四纪元重置后，她成为上市公司女总裁。再次遇见科利亚时，将他从十八线小演员一路捧红。在发布会上甩出结婚证，用一句“他怀孕了，需要静养”开团所有网黑。</p>
-        <p>这一世，她不需要联姻。她可以把科利亚光明正大地放在身边，看他站上舞台，看他被所有人看见。她依然喜欢喝咖啡，但杯子里偶尔会多一勺科利亚偷偷放进去的蜂蜜。</p>
+        <p>莫罗佐夫家族的长女，手握三座矿脉与多条贸易线，北境老牌贵族中最年轻的掌权者。同时也是在黎昭黑暗时期少有的助力者之一。</p>
+        <p>从第二任金主手中买下科利亚，最初只当是“买了个漂亮玩意儿”。在豢养期间逐渐软化，从被科利亚的蜂蜜信息素吸引，到开始在意他的健康与意愿。</p>
+        <p>因家族联姻被迫与科利亚分离，最后一次见面后科利亚意外怀孕。她与联姻对象协商达成三年表面婚姻的协议，但三年之约未满，科利亚在第一年将结束时因难产去世，留下一个孩子。瓦伦蒂娜在524年失去科利亚，526年和平离婚，恢复单身，此后未再娶妻，也再未爱上任何人。</p>
+        <p>529年，怀榆成神重置世界，开启第四纪元。</p>
+        <p>第四纪元约423年，瓦伦蒂娜降生，未保留前世记忆。约519年再次遇见科利亚，将他从十八线小演员一路捧红。520年科利亚怀孕，她在发布会上甩出结婚证，用一句“他怀孕了，需要静养”开团所有网黑。这一世，她不需要联姻，也不必再失去他。</p>
       </div>
     </div>
 
@@ -650,39 +683,51 @@
         </div>
         <div class="timeline-item">
           <span class="time">约515-523年</span>
-          <span class="desc">豢养科利亚三年，从宠物理智逐渐软化，<span class="highlight">开始在意他</span></span>
+          <span class="desc">豢养科利亚多年，逐渐软化，<span class="highlight">开始在意他</span></span>
         </div>
         <div class="timeline-item">
           <span class="time">523年</span>
           <span class="desc">为黎昭提供宝石委托资金，间接帮助烬影会度过危机</span>
         </div>
         <div class="timeline-item">
-          <span class="time">526年·冬</span>
-          <span class="desc">参与北境重组，在女皇退场后协助维持秩序</span>
+          <span class="time">523年·秋</span>
+          <span class="desc">因家族压力被迫联姻，与科利亚度过最后一夜</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">523年·冬</span>
+          <span class="desc">发现科利亚怀孕，与联姻对象达成协议：三年表面婚姻，各自私生活互不相干，三年后和平离婚</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">524年·春</span>
+          <span class="desc">科利亚难产去世，留一子。三年之约未满，瓦伦蒂娜失去一生挚爱</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">526年</span>
+          <span class="desc">三年表面婚姻期满，<span class="highlight">和平离婚</span>，恢复单身，此后未再娶妻</span>
         </div>
         <div class="timeline-item">
           <span class="time">529年·夏</span>
-          <span class="desc">参与<span class="highlight">弑神计划</span>，在归墟之庭之战中贡献资源与人力</span>
+          <span class="desc">怀榆成神，<span class="highlight">重置世界</span>，开启第四纪元</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·元年</span>
-          <span class="desc">世界重置，忘记前尘，以女总裁身份生活</span>
+          <span class="time">第四纪元·约423年</span>
+          <span class="desc">于正确的时间线<span class="highlight">降生</span>，未保留前世记忆</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约5年</span>
+          <span class="time">第四纪元·约519年</span>
           <span class="desc">再次遇见科利亚，<span class="highlight">签下合约</span>，将其捧红</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约12年</span>
+          <span class="time">第四纪元·约520年</span>
           <span class="desc">网络黑粉围攻科利亚，<span class="highlight">发布会甩结婚证</span>，公开开团</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约13年</span>
+          <span class="time">第四纪元·约520年</span>
           <span class="desc">科利亚怀孕，<span class="highlight">推掉其全部戏约</span>，养好身体再谈复出</span>
         </div>
         <div class="timeline-item">
           <span class="time">第四纪元·至今</span>
-          <span class="desc">一边管理集团，一边陪科利亚养胎，<span class="highlight">咖啡杯里多了蜂蜜</span></span>
+          <span class="desc">一边管理集团，一边陪科利亚养胎，<span class="highlight">这一世不必再失去</span></span>
         </div>
       </div>
     </div>
@@ -690,7 +735,6 @@
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
-      <a href="../论坛/"><span class="arrow">←</span> 北境茶馆</a>
     </div>
 
   </div>

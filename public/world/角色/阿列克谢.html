@@ -137,7 +137,7 @@
       height: 260px;
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid var(--border-gold);
+      border: 1px solid var(--border-blue);
       box-shadow: var(--shadow-avatar);
       background: var(--bg-card-alt);
       flex-shrink: 0;
@@ -211,6 +211,30 @@
       color: var(--blue);
     }
 
+    /* ---- 全名 ---- */
+    .fullname-block {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: var(--bg-card-alt);
+      border-radius: 6px;
+      border-left: 2px solid var(--blue);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .fullname-block .label {
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+    .fullname-block .highlight {
+      color: var(--blue);
+    }
+
     /* ---- 状态卡 ---- */
     .status-card {
       margin-top: 10px;
@@ -260,7 +284,7 @@
       transition: border-color var(--transition), color var(--transition), background var(--transition);
     }
 
-    /* ---- 信息网格 ---- */
+    /* ---- 信息网格：标签两端对齐 ---- */
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -281,10 +305,12 @@
     .info-item .label {
       color: var(--text-muted);
       font-weight: 400;
-      min-width: 50px;
+      min-width: 60px;
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-align: justify;
+      text-align-last: justify;
     }
     .info-item .value {
       color: var(--text-secondary);
@@ -346,7 +372,7 @@
       font-size: 0.7rem;
     }
 
-    /* ---- 关键物品 ---- */
+    /* ---- 关键物品：边框统一用蓝色 ---- */
     .items {
       display: flex;
       flex-wrap: wrap;
@@ -356,7 +382,7 @@
     .items .item {
       font-size: 0.78rem;
       padding: 2px 14px;
-      border: 1.5px solid var(--border-light);
+      border: 1.5px solid var(--border-blue);
       border-radius: 16px;
       color: var(--text-secondary);
       background: var(--bg-card-alt);
@@ -458,6 +484,7 @@
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
+      .fullname-block { text-align: left; }
       .status-card { justify-content: center; text-align: center; }
       .status-card .impression { justify-content: center; }
       .info-grid {
@@ -537,8 +564,8 @@
 <body>
 
   <div class="float-group">
-    <a class="float-btn" href="../论坛/">
-      <span class="icon">←</span> 返回茶馆
+    <a class="float-btn" href="../角色/">
+      <span class="icon">←</span> 返回
     </a>
     <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
       <span class="icon">🌙</span> 夜间
@@ -564,10 +591,16 @@
           <span>雷霆</span>
         </div>
 
+        <!-- 全名 + 俄语名 -->
+        <div class="fullname-block">
+          <div><span class="label">中文全名</span> 阿列克谢·彼得罗维奇·沃尔科夫</div>
+          <div><span class="label">俄语原名</span> <span class="highlight">Алексей Петрович Волков</span></div>
+        </div>
+
         <div class="status-card">
           <span class="item">
             <span class="label">状态</span>
-            <span class="value">现役 · 婚后</span>
+            <span class="value">现役 · 已婚</span>
           </span>
           <span class="item">
             <span class="label">所在地</span>
@@ -577,7 +610,7 @@
             <span class="label">印象</span>
             <span class="pill">铁面教官</span>
             <span class="pill">只对一人心软</span>
-            <span class="pill">论坛暴躁楼主</span>
+            <span class="pill">全世界只对一个人温柔</span>
           </span>
         </div>
       </div>
@@ -589,8 +622,8 @@
         <span class="value">Alpha</span>
       </div>
       <div class="info-item">
-        <span class="label">标记</span>
-        <span class="value">黎昭（已标记）</span>
+        <span class="label">爱人</span>
+        <span class="value">黎昭</span>
       </div>
       <div class="info-item">
         <span class="label">身份</span>
@@ -613,7 +646,7 @@
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
-        <span class="rel"><span class="dot"></span> 黎昭 <span class="rel-label">· 标记·爱人</span></span>
+        <span class="rel"><span class="dot"></span> 黎昭 <span class="rel-label">· 爱人</span></span>
         <span class="rel"><span class="dot"></span> 凝淼 <span class="rel-label">· 上下级</span></span>
         <span class="rel"><span class="dot"></span> 科利亚 <span class="rel-label">· 朋友</span></span>
         <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 同僚</span></span>
@@ -637,9 +670,8 @@
         <p>北境最年轻的军方高层，凝淼最信任的将领。出身沃尔科夫家族，从军多年，以铁腕治军闻名。</p>
         <p>在追查走私行动中误吸入催情剂，与同样中招的黎昭在猎人小屋相遇。标记黎昭后，激活了对方隐性的Omega体质，两人的关系从此从敌对走向纠缠。</p>
         <p>战场上冷酷果决，对信息素的控制力极强，却在黎昭面前屡屡失控。他会为了追捕黎昭而抄家砸店，也会在冰湖中把人捞出来用体温捂着跑回城。</p>
-        <p>凝淼退场后，北境进入神权真空期。他一边维持军务，一边保护黎昭不受混乱波及。</p>
-        <p>第四纪元重置后，他以军校教官的身份重新遇见黎昭——大一新生，军训，一眼看中。七年后，他成了那个在论坛里为“老婆不愿意怀孕”而暴躁求助的楼主。</p>
-        <p>如今他依然在军校带兵，但全北境都知道——那个训练场上能把人骂哭的铁面教官，回家系上围裙帮老婆洗碗时，连语气都会软三分。</p>
+        <p>凝淼退场后，北境进入神权真空期。他随黎昭前往时衍天宫，暗中协助怀榆查探真相；年末离开时衍天宫，随黎昭前往无垠根庭。528年初，黎昭被尘歌杀死，阿列克谢将其遗体带回双冕北境埋葬。</p>
+        <p>529年，怀榆成神重置世界，开启第四纪元。约491年，阿列克谢于正确的时间线降生。23岁时以军校教官身份遇见18岁的大一新生黎昭，一见钟情，纠缠四年后结婚，婚后定居东城老街，至今已三年。</p>
       </div>
     </div>
 
@@ -660,31 +692,39 @@
         </div>
         <div class="timeline-item">
           <span class="time">526年·冬</span>
-          <span class="desc">永叹岭事件中与怀榆、段深泉交手，在女皇退场后维持北境秩序</span>
+          <span class="desc">永叹岭事件中与怀榆、段深泉交手，在女皇退场后协助维持北境秩序</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">526-528年</span>
+          <span class="desc">随黎昭前往时衍天宫，<span class="highlight">暗中协助怀榆</span>；年末离开时衍天宫，随黎昭前往无垠根庭</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">528年·初</span>
+          <span class="desc">黎昭被尘歌杀死，阿列克谢将其遗体<span class="highlight">带回双冕北境埋葬</span></span>
         </div>
         <div class="timeline-item">
           <span class="time">529年·夏</span>
           <span class="desc">参与<span class="highlight">弑神计划</span>，在归墟之庭之战中协助怀榆</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·元年</span>
-          <span class="desc">世界重置，<span class="highlight">忘记前尘</span>，以军校教官的身份生活</span>
+          <span class="time">529年·夏</span>
+          <span class="desc">怀榆成神，<span class="highlight">重置世界</span>，开启第四纪元</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约5年</span>
-          <span class="desc">军训中遇到大一新生黎昭，<span class="highlight">一见钟情</span></span>
+          <span class="time">第四纪元·约491年</span>
+          <span class="desc">于正确的时间线<span class="highlight">降生</span>，未保留前世记忆</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约12年</span>
-          <span class="desc">与黎昭<span class="highlight">结婚</span>，婚后定居东城老街</span>
+          <span class="time">第四纪元·514年</span>
+          <span class="desc">23岁，以军校教官身份遇见18岁大一新生黎昭，<span class="highlight">一见钟情</span></span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约15年</span>
-          <span class="desc">因黎昭不愿怀孕而<span class="highlight">发帖求助</span>，被网友认出身份，成为论坛经典帖</span>
+          <span class="time">第四纪元·518年</span>
+          <span class="desc">纠缠四年后与黎昭<span class="highlight">结婚</span>，定居东城老街</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·至今</span>
-          <span class="desc">军校任教，面馆洗碗，<span class="highlight">继续做那个“全世界只对一个人温柔”的教官</span></span>
+          <span class="time">第四纪元·521年</span>
+          <span class="desc">结婚三年，军校任教，面馆帮忙，<span class="highlight">继续做那个全世界只对一个人温柔的教官</span></span>
         </div>
       </div>
     </div>
@@ -692,7 +732,6 @@
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
-      <a href="../论坛/"><span class="arrow">←</span> 北境茶馆</a>
     </div>
 
   </div>

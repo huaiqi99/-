@@ -98,7 +98,7 @@
       max-width: 720px;
       width: 100%;
       background: var(--bg-card);
-      border: 1px solid var(--border-gold);
+      border: 2px solid var(--border-gold);
       border-radius: 12px;
       padding: 32px 36px 28px 36px;
       box-shadow: var(--shadow);
@@ -113,7 +113,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 3px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
       opacity: 0.5;
       transition: opacity var(--transition);
@@ -263,8 +263,8 @@
       gap: 8px 24px;
       margin: 16px 0 16px 0;
       padding: 16px 0;
-      border-top: 1px solid var(--border-gold);
-      border-bottom: 1px solid var(--border-gold);
+      border-top: 2px solid var(--border-gold);
+      border-bottom: 2px solid var(--border-gold);
       transition: border-color var(--transition);
     }
     .info-item {
@@ -277,10 +277,12 @@
     .info-item .label {
       color: var(--text-muted);
       font-weight: 400;
-      min-width: 50px;
+      min-width: 60px;
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-align: justify;
+      text-align-last: justify;
     }
     .info-item .value {
       color: var(--text-secondary);
@@ -300,10 +302,19 @@
       margin-bottom: 6px;
       transition: color var(--transition);
     }
-    .section-body {
+    .section-body p {
+      text-indent: 2em;
+      margin-bottom: 0.6em;
       font-size: 0.92rem;
       line-height: 1.8;
       color: var(--text-secondary);
+    }
+    .section-body p:last-child {
+      margin-bottom: 0;
+    }
+    .section-body .highlight {
+      color: var(--gold);
+      font-weight: 500;
     }
 
     /* ---- 关联人物 ---- */
@@ -343,7 +354,7 @@
     .items .item {
       font-size: 0.78rem;
       padding: 2px 14px;
-      border: 1px solid var(--border-gold);
+      border: 1.5px solid var(--border-gold);
       border-radius: 16px;
       color: var(--text-secondary);
       background: var(--bg-card-alt);
@@ -392,7 +403,7 @@
       left: 96px;
       top: 10px;
       bottom: -10px;
-      width: 1px;
+      width: 1.5px;
       background: var(--border-gold);
       opacity: 0.2;
     }
@@ -404,7 +415,7 @@
     .footer-links {
       margin-top: 20px;
       padding-top: 14px;
-      border-top: 1px solid var(--border-gold);
+      border-top: 2px solid var(--border-gold);
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
@@ -476,7 +487,7 @@
       }
     }
     @media (max-width: 400px) {
-      .avatar { height: 260px; }
+      .avatar { aspect-ratio: 200 / 260; }
       .name-title .name { font-size: 1.2rem; }
     }
   </style>
@@ -692,7 +703,6 @@
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
-      <a href="../论坛/"><span class="arrow">←</span> 北境茶馆</a>
     </div>
 
   </div>

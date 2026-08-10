@@ -137,7 +137,7 @@
       height: 260px;
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid var(--border-gold);
+      border: 1px solid var(--border-pink);
       box-shadow: var(--shadow-avatar);
       background: var(--bg-card-alt);
       flex-shrink: 0;
@@ -211,6 +211,30 @@
       color: var(--pink);
     }
 
+    /* ---- 全名 ---- */
+    .fullname-block {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: var(--bg-card-alt);
+      border-radius: 6px;
+      border-left: 2px solid var(--pink);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .fullname-block .label {
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+    .fullname-block .highlight {
+      color: var(--pink);
+    }
+
     /* ---- 状态卡 ---- */
     .status-card {
       margin-top: 10px;
@@ -260,7 +284,7 @@
       transition: border-color var(--transition), color var(--transition), background var(--transition);
     }
 
-    /* ---- 信息网格 ---- */
+    /* ---- 信息网格：标签两端对齐 ---- */
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -281,10 +305,12 @@
     .info-item .label {
       color: var(--text-muted);
       font-weight: 400;
-      min-width: 50px;
+      min-width: 60px;
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-align: justify;
+      text-align-last: justify;
     }
     .info-item .value {
       color: var(--text-secondary);
@@ -346,7 +372,7 @@
       font-size: 0.7rem;
     }
 
-    /* ---- 关键物品 ---- */
+    /* ---- 关键物品：边框统一用粉色 ---- */
     .items {
       display: flex;
       flex-wrap: wrap;
@@ -356,7 +382,7 @@
     .items .item {
       font-size: 0.78rem;
       padding: 2px 14px;
-      border: 1.5px solid var(--border-light);
+      border: 1.5px solid var(--border-pink);
       border-radius: 16px;
       color: var(--text-secondary);
       background: var(--bg-card-alt);
@@ -458,6 +484,7 @@
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
+      .fullname-block { text-align: left; }
       .status-card { justify-content: center; text-align: center; }
       .status-card .impression { justify-content: center; }
       .info-grid {
@@ -537,8 +564,8 @@
 <body>
 
   <div class="float-group">
-    <a class="float-btn" href="../论坛/">
-      <span class="icon">←</span> 返回茶馆
+    <a class="float-btn" href="../角色/">
+      <span class="icon">←</span> 返回
     </a>
     <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
       <span class="icon">🌙</span> 夜间
@@ -562,6 +589,12 @@
           <span class="pink-tag">教堂</span>
           <span>莫罗佐娃</span>
           <span>蜂蜜</span>
+        </div>
+
+        <!-- 全名 + 俄语名 -->
+        <div class="fullname-block">
+          <div><span class="label">中文全名</span> 尼古拉·茨韦特科夫</div>
+          <div><span class="label">俄语原名</span> <span class="highlight">Николай Цветков</span></div>
         </div>
 
         <div class="status-card">
@@ -589,7 +622,7 @@
         <span class="value">Omega</span>
       </div>
       <div class="info-item">
-        <span class="label">标记</span>
+        <span class="label">爱人</span>
         <span class="value">瓦伦蒂娜·莫罗佐娃</span>
       </div>
       <div class="info-item">
@@ -613,7 +646,7 @@
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
-        <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 爱人 · 标记</span></span>
+        <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 爱人</span></span>
         <span class="rel"><span class="dot"></span> 黎昭 <span class="rel-label">· 挚友 · 盟友</span></span>
         <span class="rel"><span class="dot"></span> 阿列克谢 <span class="rel-label">· 朋友</span></span>
         <span class="rel"><span class="dot"></span> 怀榆 <span class="rel-label">· 朋友</span></span>
@@ -637,8 +670,8 @@
         <p>北境下层区教堂的神父，表面虔诚，实则油滑通透。被瓦伦蒂娜从第二任金主手中买下，安置在教堂里，以神父身份维持体面。</p>
         <p>他是黎昭在黑暗时期少有的助力者之一——帮助黎昭度过发情期，张罗相亲，在烬影会最落魄时收留其成员。他也知晓许多北境高层的秘密，只在认为必要的时刻才开口。</p>
         <p>被前两任金主伤害至深，子宫受损，被断言难孕。瓦伦蒂娜是他的第三任主人，也是第一个把他当人看的人。</p>
-        <p>第四纪元重置后，他成为十八线小演员，被瓦伦蒂娜重新发现、捧红，两人从“包养”走向婚姻。在发布会上甩出结婚证，宣告“怀孕了，需要静养”，彻底逆转了上一世难产而死的命运。</p>
-        <p>这一世他没有死在产房里。他活得好好的，被养得很好，脸上有光，笑起来不再带着讨好。他给那段苦日子补上了一个圆满的句号。</p>
+        <p>因家族联姻被迫与瓦伦蒂娜分离，最后一夜后意外怀孕。走投无路之下投靠黎昭，在黎昭的帮助下，瓦伦蒂娜得知消息后将其接回庄园，却在半年后因难产去世，留下一个孩子。</p>
+        <p>第四纪元重置后，他于约495年降生，未保留前世记忆。约519年被瓦伦蒂娜重新发现、签下合约，从十八线小演员一路捧红。520年怀孕，521年复出，举办全国巡演，以名字为锚点召唤回身为创世神的怀榆。</p>
       </div>
     </div>
 
@@ -658,36 +691,44 @@
           <span class="desc">帮助发情期的黎昭，暗中牵线瓦伦蒂娜与黎昭的合作</span>
         </div>
         <div class="timeline-item">
-          <span class="time">526年·冬</span>
-          <span class="desc">参与北境重组，在女皇退场后协助维持秩序</span>
+          <span class="time">523年</span>
+          <span class="desc">与瓦伦蒂娜<span class="highlight">一夜情</span>后意外怀孕，走投无路投靠黎昭</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">523年·秋</span>
+          <span class="desc">在黎昭帮助下，瓦伦蒂娜得知消息，被<span class="highlight">接回庄园</span></span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">524年·春</span>
+          <span class="desc">难产去世，留下一个孩子</span>
         </div>
         <div class="timeline-item">
           <span class="time">529年·夏</span>
-          <span class="desc">参与<span class="highlight">弑神计划</span>，在归墟之庭之战中贡献助力</span>
+          <span class="desc">怀榆成神，重置世界</span>，开启第四纪元</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·元年</span>
-          <span class="desc">世界重置，忘记前尘，以十八线小演员身份生活</span>
+          <span class="time">第四纪元·约495年</span>
+          <span class="desc">于正确的时间线<span class="highlight">降生</span>，未保留前世记忆</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约5年</span>
-          <span class="desc">被瓦伦蒂娜再次找到，<span class="highlight">签约出道</span>，从龙套到顶流</span>
+          <span class="time">第四纪元·约519年</span>
+          <span class="desc">被瓦伦蒂娜再次找到，签约出道，从龙套到顶流</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约12年</span>
-          <span class="desc">被网络黑粉围攻，瓦伦蒂娜<span class="highlight">发布会甩结婚证</span>公开护妻，全网哗然</span>
-        </div>
-        <div class="timeline-item">
-          <span class="time">第四纪元·约13年</span>
+          <span class="time">第四纪元·约520年</span>
           <span class="desc">怀孕，<span class="highlight">推掉全部戏约</span>，安心养胎</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第四纪元·约14年</span>
-          <span class="desc">产下一子，男性Omega。<span class="highlight">母子平安</span>，上一世的悲剧在这一世被彻底改写</span>
+          <span class="time">第四纪元·约520年</span>
+          <span class="desc">产下一子，母子平安，彻底改写前世悲剧结局</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·约521年</span>
+          <span class="desc">复出，举办全国巡演《归途》，<span class="highlight">以名字为锚点</span>召唤怀榆</span>
         </div>
         <div class="timeline-item">
           <span class="time">第四纪元·至今</span>
-          <span class="desc">偶尔拍戏，偶尔去黎昭面馆吃面，<span class="highlight">过被爱包裹的日子</span></span>
+          <span class="desc">偶尔拍戏，偶尔去黎昭面馆吃面，<span class="highlight">被爱包裹的日子</span></span>
         </div>
       </div>
     </div>
@@ -695,7 +736,6 @@
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
-      <a href="../论坛/"><span class="arrow">←</span> 北境茶馆</a>
     </div>
 
   </div>

@@ -63,9 +63,6 @@
       transition: background var(--transition), color var(--transition);
     }
 
-    /* ============================================================
-       右上角悬浮按钮组
-    ============================================================ */
     .float-group {
       position: fixed;
       top: 20px;
@@ -76,7 +73,6 @@
       gap: 8px;
       align-items: flex-end;
     }
-
     .float-btn {
       background: var(--bg-card);
       border: 1px solid var(--border-light);
@@ -98,13 +94,8 @@
       border-color: var(--gold);
       color: var(--gold);
     }
-    .float-btn .icon {
-      font-size: 0.9rem;
-    }
+    .float-btn .icon { font-size: 0.9rem; }
 
-    /* ============================================================
-       主卡片
-    ============================================================ */
     .profile {
       max-width: 720px;
       width: 100%;
@@ -130,9 +121,6 @@
       transition: opacity var(--transition);
     }
 
-    /* ============================================================
-       顶部：立绘 + 右侧信息
-    ============================================================ */
     .profile-header {
       display: flex;
       align-items: flex-start;
@@ -151,7 +139,6 @@
       background: var(--bg-card-alt);
       flex-shrink: 0;
       transition: border-color var(--transition), box-shadow var(--transition);
-      position: relative;
     }
     .avatar img {
       width: 100%;
@@ -221,9 +208,6 @@
       color: var(--gold);
     }
 
-    /* ============================================================
-       档案状态卡片（填充头像右侧空白）
-    ============================================================ */
     .status-card {
       margin-top: 10px;
       padding: 8px 14px;
@@ -273,7 +257,7 @@
     }
 
     /* ============================================================
-       信息网格
+       信息网格：标签等宽两端对齐
     ============================================================ */
     .info-grid {
       display: grid;
@@ -295,10 +279,12 @@
     .info-item .label {
       color: var(--text-muted);
       font-weight: 400;
-      min-width: 50px;
+      min-width: 60px;
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-align: justify;
+      text-align-last: justify;
     }
     .info-item .value {
       color: var(--text-secondary);
@@ -307,9 +293,6 @@
       color: var(--gold);
     }
 
-    /* ============================================================
-       章节
-    ============================================================ */
     .section { margin-top: 16px; }
     .section-title {
       font-size: 0.7rem;
@@ -320,15 +303,22 @@
       margin-bottom: 6px;
       transition: color var(--transition);
     }
-    .section-body {
+
+    .section-body p {
+      text-indent: 2em;
+      margin-bottom: 0.6em;
       font-size: 0.92rem;
       line-height: 1.8;
       color: var(--text-secondary);
     }
+    .section-body p:last-child {
+      margin-bottom: 0;
+    }
+    .section-body .highlight {
+      color: var(--gold);
+      font-weight: 500;
+    }
 
-    /* ============================================================
-       关联人物
-    ============================================================ */
     .relation-list {
       display: flex;
       flex-wrap: wrap;
@@ -355,9 +345,6 @@
       font-size: 0.7rem;
     }
 
-    /* ============================================================
-       关键物品
-    ============================================================ */
     .items {
       display: flex;
       flex-wrap: wrap;
@@ -378,9 +365,6 @@
       color: var(--gold);
     }
 
-    /* ============================================================
-       关键事件 · 时间线
-    ============================================================ */
     .timeline {
       margin-top: 4px;
       display: flex;
@@ -412,10 +396,6 @@
       color: var(--gold);
       font-weight: 500;
     }
-    .timeline-item .desc .muted {
-      color: var(--text-muted);
-      font-size: 0.78rem;
-    }
     .timeline-item::before {
       content: '';
       position: absolute;
@@ -430,9 +410,6 @@
       display: none;
     }
 
-    /* ============================================================
-       页脚
-    ============================================================ */
     .footer-links {
       margin-top: 20px;
       padding-top: 14px;
@@ -457,9 +434,6 @@
       margin-right: 4px;
     }
 
-    /* ============================================================
-       响应式
-    ============================================================ */
     @media (max-width: 600px) {
       body { padding: 20px 12px; }
       .profile { padding: 20px 16px 20px 16px; }
@@ -475,16 +449,11 @@
         height: auto;
         aspect-ratio: 200 / 260;
       }
-      .avatar img {
-        object-position: center center;
-      }
+      .avatar img { object-position: center center; }
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
-      .status-card {
-        justify-content: center;
-        text-align: center;
-      }
+      .status-card { justify-content: center; text-align: center; }
       .status-card .impression { justify-content: center; }
       .info-grid {
         grid-template-columns: 1fr;
@@ -492,7 +461,6 @@
       }
       .info-item .label { min-width: 40px; }
       .relation-list { gap: 4px 12px; }
-
       .timeline-item {
         flex-direction: column;
         gap: 2px;
@@ -502,10 +470,7 @@
         min-width: auto;
         font-size: 0.65rem;
       }
-      .timeline-item::before {
-        display: none;
-      }
-
+      .timeline-item::before { display: none; }
       .float-group {
         top: 12px;
         right: 12px;
@@ -517,7 +482,7 @@
       }
     }
     @media (max-width: 400px) {
-      .avatar { height: 260px; }
+      .avatar { aspect-ratio: 200 / 260; }
       .name-title .name { font-size: 1.2rem; }
     }
   </style>
@@ -566,9 +531,6 @@
 </head>
 <body>
 
-  <!-- ========================================================== -->
-  <!-- 右上角悬浮按钮组 -->
-  <!-- ========================================================== -->
   <div class="float-group">
     <a class="float-btn" href="../角色/">
       <span class="icon">←</span> 返回
@@ -578,12 +540,8 @@
     </button>
   </div>
 
-  <!-- ========================================================== -->
-  <!-- 主卡片 -->
-  <!-- ========================================================== -->
   <div class="profile">
 
-    <!-- 顶部 -->
     <div class="profile-header">
       <div class="avatar">
         <img src="lizhao_avatar.png" alt="黎昭">
@@ -593,7 +551,7 @@
         <div class="name">黎昭 <span class="gold">·</span></div>
         <div class="sub">
           烬影会首领 <span class="sep">|</span> Omega
-          <span class="sep">|</span> 通缉令上的金眼睛
+          <span class="sep">|</span> 通缉令上的大鱼
         </div>
         <div class="tags">
           <span class="gold-tag">烬影会</span>
@@ -601,11 +559,10 @@
           <span>北境</span>
         </div>
 
-        <!-- 档案状态卡片（新增） -->
         <div class="status-card">
           <span class="item">
             <span class="label">状态</span>
-            <span class="value">活跃</span>
+            <span class="value">回归·隐世</span>
           </span>
           <span class="item">
             <span class="label">所在地</span>
@@ -621,14 +578,14 @@
       </div>
     </div>
 
-    <!-- 信息网格 -->
+    <!-- 信息网格：标签两端对齐 -->
     <div class="info-grid">
       <div class="info-item">
         <span class="label">第二性别</span>
         <span class="value">Omega（隐性·标记后激活）</span>
       </div>
       <div class="info-item">
-        <span class="label">标记</span>
+        <span class="label">爱人</span>
         <span class="value">阿列克谢·沃尔科夫</span>
       </div>
       <div class="info-item">
@@ -641,7 +598,7 @@
       </div>
       <div class="info-item">
         <span class="label">标志物品</span>
-        <span class="value">黑斗篷 · 渡厄法杖</span>
+        <span class="value">黑斗篷 </span>
       </div>
       <div class="info-item">
         <span class="label">信息素</span>
@@ -649,20 +606,18 @@
       </div>
     </div>
 
-    <!-- 关联人物 -->
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
-        <span class="rel"><span class="dot"></span> 阿列克谢 <span class="rel-label">· 标记·爱人</span></span>
+        <span class="rel"><span class="dot"></span> 阿列克谢 <span class="rel-label">· 爱人</span></span>
         <span class="rel"><span class="dot"></span> 科利亚 <span class="rel-label">· 盟友</span></span>
         <span class="rel"><span class="dot"></span> 瓦伦蒂娜 <span class="rel-label">· 相助者</span></span>
         <span class="rel"><span class="dot"></span> 伊万 <span class="rel-label">· 军师</span></span>
         <span class="rel"><span class="dot"></span> 雷科 <span class="rel-label">· 武力担当</span></span>
-        <span class="rel"><span class="dot"></span> 凝淼 <span class="rel-label">· 合作</span></span>
+        <span class="rel"><span class="dot"></span> 怀榆 <span class="rel-label">· 兄长</span></span>
       </div>
     </div>
 
-    <!-- 关键物品 -->
     <div class="section">
       <div class="section-title">关键物品</div>
       <div class="items">
@@ -672,49 +627,79 @@
       </div>
     </div>
 
-    <!-- 背景 -->
     <div class="section">
       <div class="section-title">背景</div>
       <div class="section-body">
-        曾是尘歌创造的“怀榆”复制体，作为准神候选人被培养。任务失败后被抛弃，流亡至北境。
-        阴差阳错成为烬影会首领，以铁腕与柔情庇护底层民众。
-        被阿列克谢标记后，隐性Omega体质暴露，发情期成为其最大软肋。
-        表面毒舌冷漠，实则重情重义，护短至极。
+        <p>第三纪元521年，法伊顿容器怀榆脱离主线。尘歌以海水与创生权柄创造的造物，被赋予与怀榆相同的面容，以“二号容器”的身份接替其任务，前往业焰之国，尘歌临时变动任务，命令黎昭封印祝焱、屠戮维里迪姆家族。任务结束后被带往时衍天宫，却因性格偏离原型而遭到尘歌流放。</p>
+        <p>流亡至北境后，意外击败黑鼠帮左护法，被推举为新首领，将组织改名烬影会，以走私维生。被阿列克谢标记后，隐性Omega体质暴露，发情期成为其最大软肋。</p>
+        <p>在北境期间数次暗中观察怀榆，却因躲避尘歌的监视而拒绝直接接触。在系统休眠期与怀榆私下见面，暗示真相但点到即止。</p>
+        <p>弑神计划启动前，被尘歌杀死。怀榆成神后重置世界，开启第四纪元。五百年后，处于该时间线的黎昭诞生，是重置世界后唯一保留前世记忆的人。后续又以“名字”为媒介将身为创世神的怀榆召回。目前在东城老街开了一家面馆，与阿列克谢重新相遇、相爱、结婚。</p>
+        <p>表面毒舌冷漠，实则重情重义，护短至极。上一世的经历让他学会了珍惜，这一世性格相对沉稳。</p>
       </div>
     </div>
 
-    <!-- 关键事件 · 时间线 -->
     <div class="section">
       <div class="section-title">关键事件</div>
       <div class="timeline">
         <div class="timeline-item">
-          <span class="time">第一纪元·末</span>
-          <span class="desc">作为“怀榆”的复制体被<span class="highlight">尘歌</span>创造，列为准神候选人</span>
+          <span class="time">521年</span>
+          <span class="desc">怀榆脱离主线，尘歌返回归墟之庭，黎昭以“<span class="highlight">代行者</span>”身份被激活，接替任务</span>
         </div>
         <div class="timeline-item">
-          <span class="time">第三纪元·522年</span>
-          <span class="desc">任务失败，被尘歌抛弃，<span class="highlight">流亡</span>至北境</span>
+          <span class="time">521-524年</span>
+          <span class="desc">代行期间封印祝焱、屠戮维里迪姆家族，带段深泉前往时衍天宫后，被驱逐。</span>
         </div>
         <div class="timeline-item">
-          <span class="time">522年·秋</span>
-          <span class="desc">扎根北境地下区，以“黎昭”之名开始<span class="highlight">隐姓埋名</span>的生活</span>
+          <span class="time">524年</span>
+          <span class="desc">任务失败后被尘歌判定为“废品”，流放至北境。</span>
         </div>
         <div class="timeline-item">
-          <span class="time">523年·春</span>
-          <span class="desc">接手黑鼠帮，改名为<span class="highlight">烬影会</span>，成为首领</span>
+          <span class="time">524年·秋</span>
+          <span class="desc">扎根北境地下区，无姓名。</span>
         </div>
         <div class="timeline-item">
-          <span class="time">523年·冬</span>
-          <span class="desc">猎人小屋中与阿列克谢相遇，被<span class="highlight">标记</span>，Omega体质激活</span>
+          <span class="time">525年·春</span>
+          <span class="desc">接手黑鼠帮，改名为烬影会，成为首领</span>
         </div>
         <div class="timeline-item">
-          <span class="time">524年·初</span>
-          <span class="desc">Omega体质暴露，<span class="highlight">发情期</span>初次来袭，开始直面自身的秘密</span>
+          <span class="time">525年·冬</span>
+          <span class="desc">猎人小屋中与阿列克谢相遇，被标记</span>，Omega体质激活。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">526年·初</span>
+          <span class="desc">Omega体质暴露，<span class="highlight">发情期</span>初次来袭。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">526年</span>
+          <span class="desc">经历怀孕、流产之后，与阿列克谢纠缠不清，最终相爱，阿列克谢为其取名“黎昭”，彻底脱离“怀榆”的旧名。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">529年</span>
+          <span class="desc">与女皇凝淼成为合作关系，暗中观察怀榆，为其揭秘世界与系统的真相。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">528年·初</span>
+          <span class="desc">被尘歌发现行踪，杀死于无垠根庭。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">529年·夏</span>
+          <span class="desc">怀榆成神后将其重置世界，开启第四纪元。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·495年</span>
+          <span class="desc">处于正确时间线的黎昭降生，发现自己保留了前世的记忆，在保留记忆的情况下重活一次。结识科利亚、瓦伦蒂娜、雷科、伊万等。</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·520年</span>
+          <span class="desc">在东城老街开设<span class="highlight">昭记面馆</span>，与阿列克谢重逢、相爱、结婚，至今</span>
+        </div>
+        <div class="timeline-item">
+          <span class="time">第四纪元·520年</span>
+          <span class="desc">与长生种段深泉相遇。后以名字为祈愿媒介，将身为创世神的怀榆召回，十七重获肉身。</span>
         </div>
       </div>
     </div>
 
-    <!-- 页脚 -->
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
