@@ -6,23 +6,27 @@
   <title>角色档案 · 墨境</title>
   <style>
     /* ============================================================
-       0. CSS 变量
+       0. CSS 变量 · 角色印象色 + 基础色
     ============================================================ */
     :root {
       --bg-body: #f7f4ef;
       --bg-card: #ffffff;
       --bg-card-alt: #faf7f2;
       --border-light: #dcd6ce;
-      --border-gold: #d4b896;
       --text-primary: #2c2824;
       --text-secondary: #5f5852;
       --text-muted: #8f8780;
-      --gold: #c9b08a;
-      --gold-soft: rgba(201, 176, 138, 0.08);
-      --gold-glow: rgba(201, 176, 138, 0.12);
       --shadow: 0 4px 20px rgba(0,0,0,0.04);
       --shadow-hover: 0 8px 32px rgba(0,0,0,0.08);
-      --transition: 0.3s ease;
+      --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+      /* 角色印象色 */
+      --color-lizhao: #b08a4a;
+      --color-alex: #4a6a8a;
+      --color-kolia: #c47a7a;
+      --color-valentina: #8a2a2a;
+      --color-huaiyu: #c9b08a;
+      --color-duan: #7a5c8a;
     }
 
     [data-theme="dark"] {
@@ -30,15 +34,17 @@
       --bg-card: #24201c;
       --bg-card-alt: #2e2a26;
       --border-light: #3a3530;
-      --border-gold: #c9a052;
       --text-primary: #e6ddd4;
       --text-secondary: #b0a69b;
       --text-muted: #6f6760;
-      --gold: #c9a052;
-      --gold-soft: rgba(201, 160, 82, 0.06);
-      --gold-glow: rgba(201, 160, 82, 0.10);
       --shadow: 0 4px 20px rgba(0,0,0,0.25);
       --shadow-hover: 0 8px 32px rgba(0,0,0,0.45);
+      --color-lizhao: #c9a052;
+      --color-alex: #6a8aaa;
+      --color-kolia: #d48a8a;
+      --color-valentina: #aa3a3a;
+      --color-huaiyu: #c9a052;
+      --color-duan: #9a7aaa;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -64,18 +70,25 @@
       align-items: center;
       justify-content: space-between;
       padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 2px solid var(--border-light);
       flex-wrap: wrap;
       gap: 10px;
+      transition: border-color var(--transition);
     }
     #top .title {
       font-size: 1.3rem;
       font-weight: 600;
       color: var(--text-primary);
       letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     #top .title .gold {
-      color: var(--gold);
+      color: #b08a4a;
+    }
+    [data-theme="dark"] #top .title .gold {
+      color: #c9a052;
     }
 
     #top .actions {
@@ -88,17 +101,21 @@
       color: var(--text-muted);
       text-decoration: none;
       padding: 4px 14px;
-      border: 1px solid var(--border-light);
+      border: 1.5px solid var(--border-light);
       border-radius: 20px;
       transition: all var(--transition);
     }
     #top .actions a:hover {
-      border-color: var(--gold);
-      color: var(--gold);
+      border-color: #b08a4a;
+      color: #b08a4a;
+    }
+    [data-theme="dark"] #top .actions a:hover {
+      border-color: #c9a052;
+      color: #c9a052;
     }
     #top .actions .theme-toggle {
       background: transparent;
-      border: 1px solid var(--border-light);
+      border: 1.5px solid var(--border-light);
       border-radius: 20px;
       padding: 4px 12px;
       font-size: 0.75rem;
@@ -108,8 +125,12 @@
       font-family: inherit;
     }
     #top .actions .theme-toggle:hover {
-      border-color: var(--gold);
-      color: var(--gold);
+      border-color: #b08a4a;
+      color: #b08a4a;
+    }
+    [data-theme="dark"] #top .actions .theme-toggle:hover {
+      border-color: #c9a052;
+      color: #c9a052;
     }
 
     /* ---- 角色列表 ---- */
@@ -120,14 +141,14 @@
       padding-top: 28px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     /* ---- 角色卡片 ---- */
     .role-card {
       display: block;
       background: var(--bg-card);
-      border: 1px solid var(--border-light);
+      border: 1.5px solid var(--border-light);
       border-radius: 10px;
       padding: 18px 22px;
       text-decoration: none;
@@ -144,33 +165,78 @@
     .role-card:nth-child(2) { animation-delay: 0.08s; }
     .role-card:nth-child(3) { animation-delay: 0.12s; }
     .role-card:nth-child(4) { animation-delay: 0.16s; }
+    .role-card:nth-child(5) { animation-delay: 0.20s; }
+    .role-card:nth-child(6) { animation-delay: 0.24s; }
 
     @keyframes card-in {
       0% { opacity: 0; transform: translateY(12px); }
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    .role-card::after {
+    /* ---- 装饰线条（顶部彩色条 + 四角装饰） ---- */
+    .role-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      height: 3px;
+      background: var(--card-color, #b08a4a);
       opacity: 0;
       transition: opacity var(--transition);
     }
 
-    .role-card:hover {
-      border-color: var(--border-gold);
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-3px);
+    /* 四角装饰线 */
+    .role-card .corner {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-color: var(--border-light);
+      border-style: solid;
+      border-width: 0;
+      opacity: 0.3;
+      transition: all var(--transition);
+      pointer-events: none;
     }
-    .role-card:hover::after {
+    .role-card .corner-tl {
+      top: 8px;
+      left: 8px;
+      border-top-width: 2px;
+      border-left-width: 2px;
+    }
+    .role-card .corner-tr {
+      top: 8px;
+      right: 8px;
+      border-top-width: 2px;
+      border-right-width: 2px;
+    }
+    .role-card .corner-bl {
+      bottom: 8px;
+      left: 8px;
+      border-bottom-width: 2px;
+      border-left-width: 2px;
+    }
+    .role-card .corner-br {
+      bottom: 8px;
+      right: 8px;
+      border-bottom-width: 2px;
+      border-right-width: 2px;
+    }
+    .role-card:hover .corner {
+      border-color: var(--card-color, #b08a4a);
       opacity: 0.6;
     }
 
+    .role-card:hover {
+      border-color: var(--card-color, #b08a4a);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-4px);
+    }
+    .role-card:hover::before {
+      opacity: 1;
+    }
+
+    /* ---- 卡片内容 ---- */
     .role-card .name {
       font-size: 1.2rem;
       font-weight: 600;
@@ -182,7 +248,7 @@
       flex-wrap: wrap;
     }
     .role-card:hover .name {
-      color: var(--gold);
+      color: var(--card-color, #b08a4a);
     }
 
     .role-card .tag {
@@ -190,38 +256,44 @@
       font-weight: 400;
       padding: 2px 12px;
       border-radius: 12px;
-      border: 1px solid var(--border-gold);
+      border: 1.5px solid var(--border-light);
       color: var(--text-muted);
       background: var(--bg-card-alt);
       letter-spacing: 0.3px;
       text-transform: uppercase;
-      transition: border-color var(--transition), color var(--transition), background var(--transition);
+      transition: all var(--transition);
     }
     .role-card:hover .tag {
-      border-color: var(--gold);
-      color: var(--gold);
+      border-color: var(--card-color, #b08a4a);
+      color: var(--card-color, #b08a4a);
     }
 
     .role-card .impression {
       font-size: 0.88rem;
       color: var(--text-secondary);
-      margin-top: 4px;
+      margin-top: 6px;
       line-height: 1.6;
       transition: color var(--transition);
+      padding-right: 30px;
+    }
+    .role-card:hover .impression {
+      color: var(--text-secondary);
     }
 
     .role-card .arrow {
-      float: right;
-      font-size: 1.2rem;
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.3rem;
       color: var(--text-muted);
-      opacity: 0.3;
+      opacity: 0.2;
       transition: all var(--transition);
-      margin-top: 2px;
     }
     .role-card:hover .arrow {
       opacity: 0.8;
-      color: var(--gold);
-      transform: translateX(4px);
+      color: var(--card-color, #b08a4a);
+      transform: translateY(-50%) translateX(4px);
     }
 
     /* ---- 底部 ---- */
@@ -230,10 +302,11 @@
       margin: 24px auto 0 auto;
       width: 100%;
       padding-top: 16px;
-      border-top: 1px solid var(--border-light);
+      border-top: 2px solid var(--border-light);
       font-size: 0.75rem;
       color: var(--text-muted);
       text-align: center;
+      transition: border-color var(--transition);
     }
 
     /* ---- 响应式 ---- */
@@ -245,11 +318,18 @@
       #list { padding-top: 20px; gap: 10px; }
       .role-card { padding: 14px 16px; }
       .role-card .name { font-size: 1.05rem; }
-      .role-card .impression { font-size: 0.82rem; }
+      .role-card .impression { font-size: 0.82rem; padding-right: 20px; }
+      .role-card .arrow { right: 16px; font-size: 1.1rem; }
+      .role-card .corner { width: 12px; height: 12px; }
+      .role-card .corner-tl, .role-card .corner-tr { top: 6px; }
+      .role-card .corner-tl, .role-card .corner-bl { left: 6px; }
+      .role-card .corner-tr, .role-card .corner-br { right: 6px; }
+      .role-card .corner-bl, .role-card .corner-br { bottom: 6px; }
     }
     @media (max-width: 400px) {
       .role-card .name { font-size: 0.95rem; }
-      .role-card .tag { font-size: 0.55rem; padding: 1px 10px; }
+      .role-card .tag { font-size: 0.5rem; padding: 1px 8px; }
+      .role-card .impression { font-size: 0.78rem; }
     }
   </style>
   <script>
@@ -307,7 +387,12 @@
 
   <div id="list">
 
-    <a class="role-card" href="黎昭.html">
+    <!-- 黎昭 · 黑金 -->
+    <a class="role-card" href="黎昭.html" style="--card-color: var(--color-lizhao);">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
       <div class="name">
         黎昭
         <span class="tag">烬影会首领</span>
@@ -316,34 +401,54 @@
       <span class="arrow">→</span>
     </a>
 
-    <a class="role-card" href="阿列克谢.html">
+    <!-- 阿列克谢 · 蓝色 -->
+    <a class="role-card" href="阿列克谢.html" style="--card-color: var(--color-alex);">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
       <div class="name">
         阿列克谢
-        <span class="tag">前创世神 · 大学讲师</span>
+        <span class="tag">巡林铁卫指挥官</span>
       </div>
-      <div class="impression">“活了五百年，只等一个人。不记得来处，但记得要去哪。”</div>
+      <div class="impression">“铁面教官，唯独对一个人心软到没有原则。”</div>
       <span class="arrow">→</span>
     </a>
 
-    <a class="role-card" href="科利亚.html">
+    <!-- 科利亚 · 粉色 -->
+    <a class="role-card" href="科利亚.html" style="--card-color: var(--color-kolia);">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
       <div class="name">
         科利亚
-        <span class="tag">前创世神 · 大学讲师</span>
+        <span class="tag">教堂神父 · 顶流演员</span>
       </div>
-      <div class="impression">“活了五百年，只等一个人。不记得来处，但记得要去哪。”</div>
+      <div class="impression">“甜言蜜语，人间清醒。被爱养得很好，笑起来不再带着讨好。”</div>
       <span class="arrow">→</span>
     </a>
 
-    <a class="role-card" href="瓦伦蒂娜.html">
+    <!-- 瓦伦蒂娜 · 深红 -->
+    <a class="role-card" href="瓦伦蒂娜.html" style="--card-color: var(--color-valentina);">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
       <div class="name">
         瓦伦蒂娜
-        <span class="tag">前创世神 · 大学讲师</span>
+        <span class="tag">莫罗佐夫家族长女 · 女总裁</span>
       </div>
-      <div class="impression">“活了五百年，只等一个人。不记得来处，但记得要去哪。”</div>
+      <div class="impression">“冷峻精明，唯独对一个人倾尽所有温柔。”</div>
       <span class="arrow">→</span>
     </a>
 
-    <a class="role-card" href="怀榆.html">
+    <!-- 怀榆 · 白金 -->
+    <a class="role-card" href="怀榆.html" style="--card-color: var(--color-huaiyu);">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
       <div class="name">
         怀榆
         <span class="tag">前创世神 · 大学讲师</span>
@@ -352,12 +457,17 @@
       <span class="arrow">→</span>
     </a>
 
-    <a class="role-card" href="段深泉.html">
+    <!-- 段深泉 · 紫色 -->
+    <a class="role-card" href="段深泉.html" style="--card-color: var(--color-duan);">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
       <div class="name">
         段深泉
-        <span class="tag">前创世神 · 大学讲师</span>
+        <span class="tag">历史教授 · 长生种</span>
       </div>
-      <div class="impression">“活了五百年，只等一个人。不记得来处，但记得要去哪。”</div>
+      <div class="impression">“沉静如渊，活了五百年，只等一个人。”</div>
       <span class="arrow">→</span>
     </a>
 
