@@ -131,7 +131,8 @@
       margin-bottom: 12px;
     }
 
-    .avatar {
+    /* ===== 轮播 ===== */
+    .carousel {
       width: 200px;
       min-width: 200px;
       height: 260px;
@@ -141,16 +142,33 @@
       box-shadow: var(--shadow-avatar);
       background: var(--bg-card-alt);
       flex-shrink: 0;
+      position: relative;
       transition: border-color var(--transition), box-shadow var(--transition);
     }
-    .avatar img {
+    .carousel-track {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .carousel-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      z-index: 1;
+    }
+    .carousel-slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+    .carousel-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: top center;
       display: block;
     }
-    .avatar .placeholder {
+    .carousel-slide .placeholder {
       width: 100%;
       height: 100%;
       display: flex;
@@ -162,6 +180,54 @@
       font-weight: 300;
       letter-spacing: 2px;
     }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(0,0,0,0.2);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease, background 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      font-family: inherit;
+      line-height: 1;
+    }
+    .carousel:hover .carousel-btn { opacity: 1; }
+    .carousel-btn:hover { background: rgba(0,0,0,0.4); }
+    .carousel-btn.prev { left: 6px; }
+    .carousel-btn.next { right: 6px; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+    }
+    .carousel-dots .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      padding: 0;
+    }
+    .carousel-dots .dot.active { background: rgba(255,255,255,0.9); }
 
     .name-title {
       flex: 1;
@@ -284,7 +350,7 @@
       transition: border-color var(--transition), color var(--transition), background var(--transition);
     }
 
-    /* ---- 信息网格：标签两端对齐 ---- */
+    /* ---- 信息网格 ---- */
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -372,7 +438,7 @@
       font-size: 0.7rem;
     }
 
-    /* ---- 关键物品：边框统一用粉色 ---- */
+    /* ---- 关键物品 ---- */
     .items {
       display: flex;
       flex-wrap: wrap;
@@ -474,13 +540,13 @@
         text-align: center;
         gap: 14px;
       }
-      .avatar {
+      .carousel {
         width: 100%;
         min-width: auto;
         height: auto;
         aspect-ratio: 200 / 260;
       }
-      .avatar img { object-position: center center; }
+      .carousel-slide img { object-position: center center; }
       .name-title { padding-top: 0; }
       .name-title .name { font-size: 1.5rem; }
       .name-title .tags { justify-content: center; }
@@ -514,7 +580,7 @@
       }
     }
     @media (max-width: 400px) {
-      .avatar { aspect-ratio: 200 / 260; }
+      .carousel { aspect-ratio: 200 / 260; }
       .name-title .name { font-size: 1.2rem; }
     }
   </style>
@@ -559,6 +625,63 @@
         ? '<span class="icon">☀️</span> 日间'
         : '<span class="icon">🌙</span> 夜间';
     });
+
+    // ============================================================
+    //  轮播逻辑（科利亚专用）
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('.carousel-dots .dot');
+      const prevBtn = document.querySelector('.carousel-btn.prev');
+      const nextBtn = document.querySelector('.carousel-btn.next');
+      let current = 0;
+      const total = slides.length;
+      let interval = null;
+
+      function goTo(index) {
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        slides.forEach((el, i) => el.classList.toggle('active', i === index));
+        dots.forEach((el, i) => el.classList.toggle('active', i === index));
+        current = index;
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      function startAuto() {
+        if (total <= 1) return;
+        if (interval) clearInterval(interval);
+        interval = setInterval(next, 4000);
+      }
+
+      function stopAuto() {
+        if (interval) { clearInterval(interval); interval = null; }
+      }
+
+      if (prevBtn) prevBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); stopAuto(); prev(); startAuto();
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); stopAuto(); next(); startAuto();
+      });
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', function(e) {
+          e.stopPropagation(); stopAuto(); goTo(i); startAuto();
+        });
+      });
+
+      const carousel = document.querySelector('.carousel');
+      if (carousel) {
+        carousel.addEventListener('mouseenter', stopAuto);
+        carousel.addEventListener('mouseleave', startAuto);
+        carousel.addEventListener('touchstart', stopAuto);
+        carousel.addEventListener('touchend', startAuto);
+      }
+
+      if (total > 0) goTo(0);
+      startAuto();
+    });
   </script>
 </head>
 <body>
@@ -575,10 +698,27 @@
   <div class="profile">
 
     <div class="profile-header">
-      <div class="avatar">
-        <img src="kolia_avatar.png" alt="科利亚" />
-        <!-- <div class="placeholder">科</div> -->
+      <!-- ===== 轮播头像 ===== -->
+      <div class="carousel">
+        <div class="carousel-track">
+          <div class="carousel-slide active">
+            <img src="kolia_avatar.png" alt="科利亚 · 立绘1" />
+          </div>
+          <div class="carousel-slide">
+            <img src="kolia_avatar2.png" alt="科利亚 · 立绘2" />
+          </div>
+        </div>
+
+        <button class="carousel-btn prev">‹</button>
+        <button class="carousel-btn next">›</button>
+
+        <div class="carousel-dots">
+          <button class="dot active"></button>
+          <button class="dot"></button>
+        </div>
       </div>
+
+      <!-- ===== 右侧信息 ===== -->
       <div class="name-title">
         <div class="name">科利亚 <span class="pink">·</span></div>
         <div class="sub">
@@ -591,7 +731,6 @@
           <span>蜂蜜</span>
         </div>
 
-        <!-- 全名 + 俄语名 -->
         <div class="fullname-block">
           <div><span class="label">中文全名</span> 尼古拉·茨韦特科夫</div>
           <div><span class="label">俄语原名</span> <span class="highlight">Николай Цветков</span></div>
@@ -616,6 +755,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 信息网格 -->
+    <!-- ========================================================== -->
     <div class="info-grid">
       <div class="info-item">
         <span class="label">第二性别</span>
@@ -643,6 +785,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 关联人物 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
@@ -655,6 +800,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 关键物品 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">关键物品</div>
       <div class="items">
@@ -664,6 +812,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 背景 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">背景</div>
       <div class="section-body">
@@ -675,6 +826,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 关键事件 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">关键事件</div>
       <div class="timeline">
@@ -704,7 +858,7 @@
         </div>
         <div class="timeline-item">
           <span class="time">529年·夏</span>
-          <span class="desc">怀榆成神，重置世界</span>，开启第四纪元</span>
+          <span class="desc">怀榆成神，重置世界，开启第四纪元</span>
         </div>
         <div class="timeline-item">
           <span class="time">第四纪元·约495年</span>
@@ -733,6 +887,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 页脚 -->
+    <!-- ========================================================== -->
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>

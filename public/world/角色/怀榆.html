@@ -127,7 +127,8 @@
       margin-bottom: 12px;
     }
 
-    .avatar {
+    /* ---- 轮播容器（替换原来的 .avatar） ---- */
+    .carousel {
       width: 200px;
       min-width: 200px;
       height: 260px;
@@ -137,16 +138,35 @@
       box-shadow: var(--shadow-avatar);
       background: var(--bg-card-alt);
       flex-shrink: 0;
+      position: relative;
       transition: border-color var(--transition), box-shadow var(--transition);
     }
-    .avatar img {
+
+    .carousel-track {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .carousel-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      z-index: 1;
+    }
+    .carousel-slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+    .carousel-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: top center;
       display: block;
     }
-    .avatar .placeholder {
+    .carousel-slide .placeholder {
       width: 100%;
       height: 100%;
       display: flex;
@@ -159,6 +179,63 @@
       letter-spacing: 2px;
     }
 
+    /* ---- 左右箭头 ---- */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(0,0,0,0.2);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease, background 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      font-family: inherit;
+      line-height: 1;
+    }
+    .carousel:hover .carousel-btn {
+      opacity: 1;
+    }
+    .carousel-btn:hover {
+      background: rgba(0,0,0,0.4);
+    }
+    .carousel-btn.prev { left: 6px; }
+    .carousel-btn.next { right: 6px; }
+
+    /* ---- 底部圆点 ---- */
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 6px;
+    }
+    .carousel-dots .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      padding: 0;
+    }
+    .carousel-dots .dot.active {
+      background: rgba(255,255,255,0.9);
+    }
+
+    /* ---- 其余样式保持不变 ---- */
     .name-title {
       flex: 1;
       min-width: 0;
@@ -446,13 +523,13 @@
         text-align: center;
         gap: 14px;
       }
-      .avatar {
+      .carousel {
         width: 100%;
         min-width: auto;
         height: auto;
         aspect-ratio: 200 / 260;
       }
-      .avatar img {
+      .carousel-slide img {
         object-position: center center;
       }
       .name-title { padding-top: 0; }
@@ -487,11 +564,14 @@
       }
     }
     @media (max-width: 400px) {
-      .avatar { aspect-ratio: 200 / 260; }
+      .carousel { aspect-ratio: 200 / 260; }
       .name-title .name { font-size: 1.2rem; }
     }
   </style>
   <script>
+    // ============================================================
+    //  主题切换
+    // ============================================================
     (function() {
       try {
         const raw = localStorage.getItem('theme');
@@ -532,6 +612,87 @@
         ? '<span class="icon">☀️</span> 日间'
         : '<span class="icon">🌙</span> 夜间';
     });
+
+    // ============================================================
+    //  轮播逻辑
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('.carousel-dots .dot');
+      const prevBtn = document.querySelector('.carousel-btn.prev');
+      const nextBtn = document.querySelector('.carousel-btn.next');
+      let current = 0;
+      const total = slides.length;
+      let interval = null;
+
+      function goTo(index) {
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
+        slides.forEach((el, i) => {
+          el.classList.toggle('active', i === index);
+        });
+        dots.forEach((el, i) => {
+          el.classList.toggle('active', i === index);
+        });
+        current = index;
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      function startAuto() {
+        if (total <= 1) return;
+        if (interval) clearInterval(interval);
+        interval = setInterval(next, 4000);
+      }
+
+      function stopAuto() {
+        if (interval) {
+          clearInterval(interval);
+          interval = null;
+        }
+      }
+
+      // 事件绑定
+      if (prevBtn) prevBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        stopAuto();
+        prev();
+        startAuto();
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        stopAuto();
+        next();
+        startAuto();
+      });
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', function(e) {
+          e.stopPropagation();
+          stopAuto();
+          goTo(i);
+          startAuto();
+        });
+      });
+
+      // 悬停暂停
+      const carousel = document.querySelector('.carousel');
+      if (carousel) {
+        carousel.addEventListener('mouseenter', stopAuto);
+        carousel.addEventListener('mouseleave', startAuto);
+        // 触摸设备：点击时暂停
+        carousel.addEventListener('touchstart', function() {
+          stopAuto();
+        });
+        carousel.addEventListener('touchend', function() {
+          startAuto();
+        });
+      }
+
+      // 初始化
+      if (total > 0) goTo(0);
+      startAuto();
+    });
   </script>
 </head>
 <body>
@@ -548,10 +709,43 @@
   <div class="profile">
 
     <div class="profile-header">
-      <div class="avatar">
-        <img src="huaiyu_avatar.jpg" alt="怀榆" />
-        <!-- <div class="placeholder">榆</div> -->
+      <!-- ========== 轮播头像 ========== -->
+      <div class="carousel" id="carousel">
+        <div class="carousel-track">
+
+          <div class="carousel-slide active">
+            <img src="huaiyu_avatar.jpg" alt="怀榆 · 立绘1" />
+          </div>
+          <div class="carousel-slide">
+            <img src="huaiyu_avatar2.png" alt="怀榆 · 立绘2" />
+          </div>
+          <div class="carousel-slide">
+            <img src="huaiyu_avatar_3.png" alt="怀榆 · 立绘3" />
+          </div>
+
+          <!-- 如果你只有2张，删除上面第三个 div 即可 -->
+          <!-- 如果暂时没有图，用下方占位替代，注释掉 img 行即可 -->
+          <!--
+          <div class="carousel-slide">
+            <div class="placeholder">榆</div>
+          </div>
+          -->
+
+        </div>
+
+        <!-- 左右箭头 -->
+        <button class="carousel-btn prev" aria-label="上一张">‹</button>
+        <button class="carousel-btn next" aria-label="下一张">›</button>
+
+        <!-- 底部圆点 -->
+        <div class="carousel-dots">
+          <button class="dot active" aria-label="第1张"></button>
+          <button class="dot" aria-label="第2张"></button>
+          <button class="dot" aria-label="第3张"></button>
+        </div>
       </div>
+
+      <!-- ========== 右侧信息 ========== -->
       <div class="name-title">
         <div class="name">怀榆 <span class="gold">·</span></div>
         <div class="sub">
@@ -583,6 +777,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 信息网格 -->
+    <!-- ========================================================== -->
     <div class="info-grid">
       <div class="info-item">
         <span class="label">身份</span>
@@ -610,6 +807,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 关联人物 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">关联人物</div>
       <div class="relation-list">
@@ -622,6 +822,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 关键物品 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">关键物品</div>
       <div class="items">
@@ -631,6 +834,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 背景 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">背景</div>
       <div class="section-body">
@@ -642,6 +848,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 关键事件 -->
+    <!-- ========================================================== -->
     <div class="section">
       <div class="section-title">关键事件</div>
       <div class="timeline">
@@ -700,6 +909,9 @@
       </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- 页脚 -->
+    <!-- ========================================================== -->
     <div class="footer-links">
       <a href="../relation/beijin/"><span class="arrow">✦</span> 星图</a>
       <a href="../beijin/"><span class="arrow">◈</span> 世界观</a>
