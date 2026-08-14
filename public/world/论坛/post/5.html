@@ -51,79 +51,41 @@
       flex-direction: column;
       padding: 0 16px;
     }
-    #topbar {
-      max-width: 820px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 20px 0 12px 0;
+
+    /* ===== 右上角悬浮组 ===== */
+    .float-group {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 100;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-light);
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 8px;
+      align-items: flex-end;
     }
-    #topbar .brand {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #topbar .brand span { color: var(--accent); }
-    #topbar .brand small {
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-left: 4px;
-    }
-    #topbar .actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    #topbar .actions a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-    }
-    #topbar .actions a:hover { color: var(--accent); }
-    .back-btn {
-      padding: 4px 14px;
-      border-radius: 18px;
+    .float-btn {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      background: transparent;
-      font-size: 0.78rem;
+      border-radius: 24px;
+      padding: 6px 14px 6px 12px;
+      font-size: 0.7rem;
       color: var(--text-secondary);
       cursor: pointer;
       transition: all var(--transition);
       font-family: inherit;
-      text-decoration: none;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      letter-spacing: 0.3px;
+      text-decoration: none;
     }
-    .back-btn:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
+    .float-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
-    .theme-toggle {
-      background: transparent;
-      border: 1px solid var(--border-light);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
-    }
-    .theme-toggle:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
+    .float-btn .icon { font-size: 0.9rem; }
+
     #app {
       max-width: 820px;
       margin: 0 auto;
@@ -131,6 +93,8 @@
       padding: 20px 0 40px 0;
       flex: 1;
     }
+
+    /* ===== 面包屑 ===== */
     .back-bar {
       display: flex;
       align-items: center;
@@ -142,7 +106,11 @@
       font-size: 0.8rem;
       color: var(--text-muted-light);
     }
-    .back-bar .breadcrumb span { color: var(--text-secondary); }
+    .back-bar .breadcrumb span {
+      color: var(--text-secondary);
+    }
+
+    /* ===== 楼层 ===== */
     .floor {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
@@ -261,17 +229,29 @@
       font-weight: 500;
       margin-left: 4px;
     }
+
+    /* ===== 响应式 ===== */
     @media (max-width: 600px) {
       body { padding: 0 10px; }
-      #topbar { padding: 14px 0 10px 0; }
-      #topbar .brand { font-size: 0.95rem; }
       #app { padding: 14px 0 30px 0; }
       .floor { padding: 14px 14px; }
       .floor .body { font-size: 0.88rem; }
       .back-bar { flex-wrap: wrap; }
+      .float-group {
+        top: 12px;
+        right: 12px;
+        gap: 6px;
+      }
+      .float-btn {
+        padding: 4px 10px 4px 8px;
+        font-size: 0.65rem;
+      }
     }
   </style>
   <script>
+    // ============================================================
+    //  主题切换（与怀榆.html 保持一致）
+    // ============================================================
     (function() {
       try {
         const raw = localStorage.getItem('theme');
@@ -285,25 +265,50 @@
         }
       } catch(e) {}
     })();
+
     function toggleTheme() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
       const newTheme = isDark ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
+      if (newTheme === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.removeAttribute('data-theme');
+      }
       localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      const btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = newTheme === 'dark'
+          ? '<span class="icon">☀️</span> 日间'
+          : '<span class="icon">🌙</span> 夜间';
+      }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('themeBtn');
+      if (!btn) return;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = isDark
+        ? '<span class="icon">☀️</span> 日间'
+        : '<span class="icon">🌙</span> 夜间';
+    });
   </script>
 </head>
 <body>
-<div id="topbar">
-  <a class="brand" href="#">🍵 北境茶馆 <small>· 帖子</small></a>
-  <div class="actions">
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+  <!-- ===== 右上角悬浮组 ===== -->
+  <div class="float-group">
+    <a class="float-btn" href="../index.html">
+      <span class="icon">←</span> 返回列表
+    </a>
+    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+      <span class="icon">🌙</span> 夜间
+    </button>
   </div>
-</div>
+
 <div id="app">
+  <!-- ===== 面包屑（仅保留位置信息） ===== -->
   <div class="back-bar">
-    <a class="back-btn" href="../index.html">← 返回列表</a>
     <span class="breadcrumb">北境茶馆 · <span>老婆不愿意怀孕怎么办</span></span>
   </div>
 
@@ -631,7 +636,7 @@
     <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 45-53：私聊换帖（用简短楼层示意） ========== -->
+  <!-- ========== 45-53：私聊换帖 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:15</div></div><span class="floor-num">#45</span></div>
     <div class="body">细嗦。</div>
@@ -653,7 +658,7 @@
     <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 49-70：大量水楼（用省略号示意） ========== -->
+  <!-- ========== 49-70：大量水楼 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:20</div></div><span class="floor-num">#49</span></div>
     <div class="body">蹲。</div>
@@ -878,42 +883,42 @@
     <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 84 ========== -->
+  <!-- ========== 86 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:58</div></div><span class="floor-num">#86</span></div>
     <div class="body">官网能查到啊，去搜了一下。</div>
     <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 85 ========== -->
+  <!-- ========== 87 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 19:00</div></div><span class="floor-num">#87</span></div>
     <div class="body">……</div>
     <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 86 ========== -->
+  <!-- ========== 88 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:02</div></div><span class="floor-num">#88</span></div>
     <div class="body">别删！！我们还没磕够呢！！</div>
     <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 87 ========== -->
+  <!-- ========== 89 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:03</div></div><span class="floor-num">#89</span></div>
     <div class="body">别删帖啊！！你老婆的面馆我们还要去吃的！！</div>
     <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 88 ========== -->
+  <!-- ========== 90 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:05</div></div><span class="floor-num">#90</span></div>
     <div class="body">楼主你老婆那么漂亮，你忍心让人家一个人守店吗？赶紧回家吧。</div>
     <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 89：阿列克谢妥协 ========== -->
+  <!-- ========== 91：阿列克谢妥协 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 19:10</div></div><span class="floor-num">#91</span></div>
     <div class="body">
@@ -922,7 +927,7 @@
     <div class="actions"><button>👍 3.2k</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 90：尾声 ========== -->
+  <!-- ========== 92 ========== -->
   <div class="floor">
     <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:15</div></div><span class="floor-num">#92</span></div>
     <div class="body">快去吧！记得买束花！</div>
@@ -934,7 +939,7 @@
     <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:20</div></div><span class="floor-num">#92</span></div>
+    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:20</div></div><span class="floor-num">#94</span></div>
     <div class="body">散了散了，人家接老婆下班去了。</div>
     <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
   </div>

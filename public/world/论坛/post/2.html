@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>新来的特聘讲师 · 北境茶馆</title>
+  <title>【树洞】我们学校那位新来的特聘讲师，到底是什么来头？· 北境茶馆</title>
   <style>
     :root {
       --bg-body: #f7f4ef;
@@ -51,79 +51,41 @@
       flex-direction: column;
       padding: 0 16px;
     }
-    #topbar {
-      max-width: 820px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 20px 0 12px 0;
+
+    /* ===== 右上角悬浮组 ===== */
+    .float-group {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 100;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-light);
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 8px;
+      align-items: flex-end;
     }
-    #topbar .brand {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #topbar .brand span { color: var(--accent); }
-    #topbar .brand small {
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-left: 4px;
-    }
-    #topbar .actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    #topbar .actions a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-    }
-    #topbar .actions a:hover { color: var(--accent); }
-    .back-btn {
-      padding: 4px 14px;
-      border-radius: 18px;
+    .float-btn {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      background: transparent;
-      font-size: 0.78rem;
+      border-radius: 24px;
+      padding: 6px 14px 6px 12px;
+      font-size: 0.7rem;
       color: var(--text-secondary);
       cursor: pointer;
       transition: all var(--transition);
       font-family: inherit;
-      text-decoration: none;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      letter-spacing: 0.3px;
+      text-decoration: none;
     }
-    .back-btn:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
+    .float-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
-    .theme-toggle {
-      background: transparent;
-      border: 1px solid var(--border-light);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
-    }
-    .theme-toggle:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
+    .float-btn .icon { font-size: 0.9rem; }
+
     #app {
       max-width: 820px;
       margin: 0 auto;
@@ -131,6 +93,8 @@
       padding: 20px 0 40px 0;
       flex: 1;
     }
+
+    /* ===== 面包屑 ===== */
     .back-bar {
       display: flex;
       align-items: center;
@@ -142,7 +106,11 @@
       font-size: 0.8rem;
       color: var(--text-muted-light);
     }
-    .back-bar .breadcrumb span { color: var(--text-secondary); }
+    .back-bar .breadcrumb span {
+      color: var(--text-secondary);
+    }
+
+    /* ===== 楼层 ===== */
     .floor {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
@@ -179,6 +147,29 @@
       color: var(--accent);
       border-color: var(--accent);
     }
+    .floor .avatar.lz-avatar {
+      background: #2c5a6a;
+      color: #fff;
+      border-color: #2c5a6a;
+    }
+    [data-theme="dark"] .floor .avatar.lz-avatar {
+      background: #4a7a8a;
+      border-color: #4a7a8a;
+    }
+    .floor .avatar.special {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    .floor .avatar.verified {
+      background: #6a7a5a;
+      color: #fff;
+      border-color: #6a7a5a;
+    }
+    [data-theme="dark"] .floor .avatar.verified {
+      background: #8a9a7a;
+      border-color: #8a9a7a;
+    }
     .floor .info {
       flex: 1;
       min-width: 0;
@@ -198,6 +189,17 @@
       color: var(--accent);
       padding: 1px 8px;
       border-radius: 10px;
+    }
+    .floor .info .name .verify-badge {
+      font-size: 0.55rem;
+      font-weight: 400;
+      background: #6a7a5a;
+      color: #fff;
+      padding: 1px 8px;
+      border-radius: 10px;
+    }
+    [data-theme="dark"] .floor .info .name .verify-badge {
+      background: #8a9a7a;
     }
     .floor .info .time {
       font-size: 0.7rem;
@@ -251,17 +253,29 @@
       color: var(--accent);
       background: var(--accent-soft);
     }
+
+    /* ===== 响应式 ===== */
     @media (max-width: 600px) {
       body { padding: 0 10px; }
-      #topbar { padding: 14px 0 10px 0; }
-      #topbar .brand { font-size: 0.95rem; }
       #app { padding: 14px 0 30px 0; }
       .floor { padding: 14px 14px; }
       .floor .body { font-size: 0.88rem; }
       .back-bar { flex-wrap: wrap; }
+      .float-group {
+        top: 12px;
+        right: 12px;
+        gap: 6px;
+      }
+      .float-btn {
+        padding: 4px 10px 4px 8px;
+        font-size: 0.65rem;
+      }
     }
   </style>
   <script>
+    // ============================================================
+    //  主题切换（与怀榆.html 保持一致）
+    // ============================================================
     (function() {
       try {
         const raw = localStorage.getItem('theme');
@@ -275,381 +289,758 @@
         }
       } catch(e) {}
     })();
+
     function toggleTheme() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
       const newTheme = isDark ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
+      if (newTheme === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.removeAttribute('data-theme');
+      }
       localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      const btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = newTheme === 'dark'
+          ? '<span class="icon">☀️</span> 日间'
+          : '<span class="icon">🌙</span> 夜间';
+      }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('themeBtn');
+      if (!btn) return;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      btn.innerHTML = isDark
+        ? '<span class="icon">☀️</span> 日间'
+        : '<span class="icon">🌙</span> 夜间';
+    });
   </script>
 </head>
 <body>
-<div id="topbar">
-  <a class="brand" href="#">🍵 北境茶馆 <small>· 帖子</small></a>
-  <div class="actions">
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+  <!-- ===== 右上角悬浮组 ===== -->
+  <div class="float-group">
+    <a class="float-btn" href="../index.html">
+      <span class="icon">←</span> 返回列表
+    </a>
+    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+      <span class="icon">🌙</span> 夜间
+    </button>
   </div>
-</div>
+
 <div id="app">
+  <!-- ===== 面包屑（仅保留位置信息） ===== -->
   <div class="back-bar">
-    <a class="back-btn" href="../index.html">← 返回列表</a>
-    <span class="breadcrumb">北境茶馆 · <span>新来的特聘讲师</span></span>
+    <span class="breadcrumb">北境茶馆 · <span>【树洞】我们学校那位新来的特聘讲师，到底是什么来头？</span></span>
   </div>
 
   <!-- ========== 楼主 ========== -->
   <div class="floor lz">
     <div class="head">
-      <div class="avatar accent">楼</div>
+      <div class="avatar lz-avatar">师</div>
       <div class="info">
-        <div class="name">匿名楼主 <span class="badge">楼主</span></div>
-        <div class="time">2026-01-10 09:17</div>
+        <div class="name">听雨斋 <span class="badge">楼主</span></div>
+        <div class="time">2026-03-10 20:30</div>
       </div>
       <span class="floor-num">#1</span>
     </div>
     <div class="body">
-      我朋友选了他的《古代祭祀文化与信仰体系》，说他一节课讲下来没看过讲稿，全程像在回忆自己亲身经历过的事情。而且他讲到“祈雨仪式”的时候，说了一句：<br><br>
-      <b>“其实有时候真的会下雨，不是因为仪式本身，是因为那时候的人太想让它下了，信念够深的话，世界会回应你。”</b><br><br>
-      我朋友说当时教室里安静得能听见针掉在地上的声音。<br><br>
-      而且这人长得是真的好看……但不是那种“好看得很有攻击性”的类型，是那种“你看着他讲课，会觉得他好像来自另一个时代”的感觉。棕色长发，浅金色的眼睛，声音很温和，但讲的东西让人后背发凉。<br><br>
-      有没有人知道他是谁啊？？履历上干干净净的，怎么感觉他不像这个时代的人？
+      我是本校老师，不是学生，所以有些事情比学生知道的多一点。但这件事我越想越觉得不对劲。<br><br>
+      事情是这样的，去年年底我们学校来了位特聘讲师，教古代史的，叫怀榆。你们可能听说过，因为段深泉教授亲自介绍进来的，当时大家都以为是段教授的关系户，没太当回事。<br><br>
+      但问题出在这儿，这位怀老师来了之后，我们这边有些人（我就不点名了）不太客气，可能是觉得他是靠走后门进来的，明里暗里有些排挤。怀老师本人好像完全没察觉，别人说什么他都笑眯眯的，甚至有人故意给他安排特别累的课时，他还觉得是“信任他”。我当时就觉得这人是不是太迟钝了，但也没多想。<br><br>
+      后来这件事让段教授知道了，具体怎么知道的我不清楚，但段教授去找了校长反映。校长当时的态度据说是“嗯嗯嗯好好好我处理一下”，其实根本没当回事。我们校长的作风你们也知道，只要不出大事，他才懒得管。<br><br>
+      结果第二天，注意，就第二天，校长在演讲的时候接了个电话。<br><br>
+      当时他正在台上讲话，手机响了，他看了一眼屏幕，脸直接就白了。他走到旁边接了几分钟，回来之后后半段演讲全是糊弄过去的。我当时坐在台下第二排，看得清清楚楚。<br><br>
+      第三天，校长被调走了。调令下来得特别快，快到所有人都没反应过来。新校长第三天就来报到了，然后在第一次教职工大会上专门强调了一句——“同事之间要和睦相处，不要搞小团体。”<br><br>
+      你们品品。
     </div>
     <div class="actions">
-      <button>👍 5.6k</button>
+      <button>👍 3.2k</button>
       <button>💬 回复</button>
       <button>⭐ 收藏</button>
     </div>
   </div>
 
-  <!-- 2 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 09:35</div></div><span class="floor-num">#2</span></div>
-    <div class="body">我上了！！我真的上了！！他不是在讲课，他是在带我们参观他的记忆。那种“我好像当时就在场”的感觉真的太强了。讲到大寂灭的时候他停了一下，说：“那个时代的人知道自己活不过冬天，但还是种了树。”我当时差点哭出来。</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 3 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 09:50</div></div><span class="floor-num">#3</span></div>
-    <div class="body">但他上课不用PPT你敢信？？他就带一张手写的提纲，往讲台上一放，然后就开始讲。讲到一半他突然停下来，问：“这个投影仪怎么开来着？”</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 4 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 10:05</div></div><span class="floor-num">#4</span></div>
-    <div class="body">笑死，我第二节课去旁听的时候他也问了同样的问题，然后前排一个男生说“教授你按那个红色的按钮”，他按了，没反应，又按了一下，抬头说：“它不理我。”整个教室笑了五分钟，他站在讲台上也跟着笑，那个笑我真的不行了……</div>
-    <div class="actions"><button>👍 2.1k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 5 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 10:20</div></div><span class="floor-num">#5</span></div>
-    <div class="body">他不是不会用投影仪的问题，他是真的不会用现代设备。我听他助教说，学校给他配了台新电脑，他第一天打开之后盯着桌面看了很久，然后问：“这个图标为什么会动？”</div>
-    <div class="actions"><button>👍 3.4k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 6 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 10:35</div></div><span class="floor-num">#6</span></div>
-    <div class="body">回5L，那个图标是回收站吧？？他是不是把回收站当什么活物了？？</div>
-    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 7 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 10:50</div></div><span class="floor-num">#7</span></div>
-    <div class="body">段深泉不是他对象吗？对象不教他？</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 8 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 11:05</div></div><span class="floor-num">#8</span></div>
-    <div class="body">段教授教了，但怀老师说“它按钮太多了”。段教授说“就一个红色的”。怀老师说“红色的也分好几种红”……然后段教授不说话了。我笑到打鸣。</div>
-    <div class="actions"><button>👍 4.5k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 9 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 11:20</div></div><span class="floor-num">#9</span></div>
-    <div class="body">“红色的也分好几种红”……这人是不是真的色盲啊？？还是说他在逗段教授？</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 10 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 11:40</div></div><span class="floor-num">#10</span></div>
-    <div class="body">回9L，我觉得他不是色盲，他可能就是……没见过红色的按钮？感觉他对现代科技有一种“我认识这个东西但我不认识它怎么用”的断层感，像是从很远的地方刚回来一样。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 11 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 12:00</div></div><span class="floor-num">#11</span></div>
-    <div class="body">但你们不觉得他讲课是真的好吗？那种好不是“知识渊博”的好，是“他讲的东西，好像他真的看见过”。他描述古代祭祀仪式的时候，连祭司穿什么颜色的衣服、用什么材质的器皿都能说得清清楚楚。这不是看书能看出来的。</div>
-    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 12 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 12:20</div></div><span class="floor-num">#12</span></div>
-    <div class="body">我查了他的资料，履历上干干净净的，本科硕士博士都在国内，没有海外经历。但他讲千律州古代史的时候，那种熟悉感真的不像普通人。尤其是他讲“大寂灭”的时候，语气很轻，但我总觉得他好像经历过一样。</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 13 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 12:40</div></div><span class="floor-num">#13</span></div>
-    <div class="body">他不像在讲历史，像在回忆。</div>
-    <div class="actions"><button>👍 3.4k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 14 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 13:00</div></div><span class="floor-num">#14</span></div>
-    <div class="body">而且他不看讲稿，全程脱稿，但每一句话都像提前演练过无数遍一样流畅。他不是在背诵，他是在“讲述”。那种感觉真的很奇妙。</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 15 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 13:20</div></div><span class="floor-num">#15</span></div>
-    <div class="body">有次他讲到“祈雨仪式”的时候，忽然沉默了一会儿，然后说：“其实那些祭司知道雨不会来，但他们还是要做。因为如果连他们都不做了，村民就会彻底绝望。”我当时在第三排，感觉他说的不是祭司，是某个人。</div>
-    <div class="actions"><button>👍 2.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 16 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 13:40</div></div><span class="floor-num">#16</span></div>
-    <div class="body">某个人？谁啊？</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 17 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 14:00</div></div><span class="floor-num">#17</span></div>
-    <div class="body">回16L，不知道，但他讲完之后看了窗外一眼，那个眼神我记到现在。不是“我看风景”的眼神，是“我在等什么人”的眼神。</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 18 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 14:20</div></div><span class="floor-num">#18</span></div>
-    <div class="body">他到底是谁啊？？一个特聘讲师，履历干净得像张白纸，但讲东西像活了几百年。这合理吗？？</div>
-    <div class="actions"><button>👍 2.1k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 19 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 14:40</div></div><span class="floor-num">#19</span></div>
-    <div class="body">我听说他是段深泉“特殊引进”的，就是那种“我对象想来讲课所以我来安排一下”的路子。不过他能讲得这么好，说明段教授的眼光是真的毒。</div>
-    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 20 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 15:00</div></div><span class="floor-num">#20</span></div>
-    <div class="body">我看他不是“讲得好”，他是“记得清楚”。他讲那些仪式细节的时候，连祭司穿什么颜色的衣服、用什么材质的器皿都说得出来，那种细节不是看书能看出来的。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 21 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 15:20</div></div><span class="floor-num">#21</span></div>
-    <div class="body">你们别神化他了好不好，他就是个特聘讲师，可能以前做过相关工作呢。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 22 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 15:40</div></div><span class="floor-num">#22</span></div>
-    <div class="body">做过相关工作？做什么工作？给人祈雨吗？</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 23 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 16:00</div></div><span class="floor-num">#23</span></div>
-    <div class="body">说不定呢（笑）</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 24 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 16:20</div></div><span class="floor-num">#24</span></div>
-    <div class="body">我比较好奇他和段深泉是怎么认识的。两个历史系的人，一个高冷一个温和，怎么就凑到一起了？</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 25 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 16:40</div></div><span class="floor-num">#25</span></div>
-    <div class="body">我有一次看到他们两个在校园里散步，怀老师在指一棵树，段教授在旁边看他，那个眼神……不是“我在听你说话”的眼神，是“我在看你说话”的眼神。这两个人之间有一种“我们已经认识很久了”的气场。</div>
-    <div class="actions"><button>👍 3.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 26 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 17:00</div></div><span class="floor-num">#26</span></div>
-    <div class="body">认识很久？怀老师履历上可没写他和段教授有交集啊。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 27 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 17:20</div></div><span class="floor-num">#27</span></div>
-    <div class="body">履历是给外人看的。他们俩之间的事，大概只有他们自己知道。</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 28 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 17:40</div></div><span class="floor-num">#28</span></div>
-    <div class="body">所以怀老师到底会不会用手机了？</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 29 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 18:00</div></div><span class="floor-num">#29</span></div>
-    <div class="body">会了。前两周段教授给他换了一个最简单的老人机，他就只用来接电话和收短信。他说：“这个好用，因为它不会一直响。”</div>
-    <div class="actions"><button>👍 2.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 30 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 18:20</div></div><span class="floor-num">#30</span></div>
-    <div class="body">老人机？？？堂堂大学讲师用老人机？？？</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 31 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 18:40</div></div><span class="floor-num">#31</span></div>
-    <div class="body">他说按键比触屏好按。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 32 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 19:00</div></div><span class="floor-num">#32</span></div>
-    <div class="body">我无话可说了，这就是神和人的区别吗。</div>
-    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 33 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 19:20</div></div><span class="floor-num">#33</span></div>
-    <div class="body">但他真的教得很好。我室友说，如果以后他不开课了，他就不选历史系的课了。</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 34 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 19:40</div></div><span class="floor-num">#34</span></div>
-    <div class="body">别急，他下学期好像要开一门《神话与文明中的“归来”叙事》——据说是段教授建议的，主题是“等了很久终于等到的那种归来”。</div>
-    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 35 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 20:00</div></div><span class="floor-num">#35</span></div>
-    <div class="body">段教授建议的？？他是不是在暗示什么？？</div>
-    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 36 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 20:20</div></div><span class="floor-num">#36</span></div>
-    <div class="body">暗示什么？暗示他等怀老师等了很久？</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 37 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 20:40</div></div><span class="floor-num">#37</span></div>
-    <div class="body">我不管了，我下学期必选。我要坐在第一排看怀老师开投影仪。</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 38 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 21:00</div></div><span class="floor-num">#38</span></div>
-    <div class="body">也看他讲祈雨仪式讲到一半突然沉默，然后说：“其实那时候的人，不是真的相信雨会来，是相信如果他们不做点什么，雨就永远不会来了。”</div>
-    <div class="actions"><button>👍 2.8k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- 39 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 21:20</div></div><span class="floor-num">#39</span></div>
-    <div class="body">好的，这节课我也去。</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
-  </div>
-
-  <!-- ========== 第40楼：段深泉本人回复 ========== -->
+  <!-- ========== 2 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar accent">✦</div>
-      <div class="info">
-        <div class="name">榆叶落了 <span class="badge">🔹 特殊</span></div>
-        <div class="time">2026-01-10 21:45</div>
-      </div>
-      <span class="floor-num">#40</span>
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:35</div></div>
+      <span class="floor-num">#2</span>
     </div>
-    <div class="body">谢谢你们喜欢他的课。他也喜欢给你们上。</div>
-    <div class="actions">
-      <button>👍 1.2w</button>
-      <button>💬 回复</button>
-    </div>
-  </div>
-
-  <!-- 41 -->
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 21:50</div></div><span class="floor-num">#41</span></div>
-    <div class="body">段教授？？？段教授你也在看这个帖子？？</div>
+    <div class="body">……所以那个电话是谁打的？</div>
     <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
   </div>
 
-  <!-- 42 -->
+  <!-- ========== 3 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 21:55</div></div><span class="floor-num">#42</span></div>
-    <div class="body">段教授你是在替怀老师看学生评价吗？？</div>
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:36</div></div>
+      <span class="floor-num">#3</span>
+    </div>
+    <div class="body">楼主你确定是那个电话导致调走的？也可能是巧合吧？</div>
+    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 4 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar lz-avatar">师</div>
+      <div class="info"><div class="name">听雨斋 <span class="badge">楼主</span></div><div class="time">2026-03-10 20:38</div></div>
+      <span class="floor-num">#4</span>
+    </div>
+    <div class="body">回3L，我也想过是巧合。但后来我去问了一个行政那边的熟人，他说调令确实是“上面直接下来的”，不是学校内部能决定的那种。而且——调令下来的时间，和那个电话的时间，前后不超过三个小时。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 5 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:40</div></div>
+      <span class="floor-num">#5</span>
+    </div>
+    <div class="body">市长？你觉得是市长打的？</div>
+    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 6 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar lz-avatar">师</div>
+      <div class="info"><div class="name">听雨斋 <span class="badge">楼主</span></div><div class="time">2026-03-10 20:42</div></div>
+      <span class="floor-num">#6</span>
+    </div>
+    <div class="body">回5L，我不知道是谁打的，但能让校长当场脸白的电话，级别肯定不低。</div>
     <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
   </div>
 
-  <!-- 43 -->
+  <!-- ========== 7 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 22:00</div></div><span class="floor-num">#43</span></div>
-    <div class="body">我嗑到了，我真的嗑到了。</div>
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:45</div></div>
+      <span class="floor-num">#7</span>
+    </div>
+    <div class="body">所以重点不是校长被调走，是那位怀老师到底是什么背景？段深泉介绍进来的，段深泉本人背景就是一片空白，大家只知道他是政府直调的教授，没人知道他具体的履历。但这次的事情说明，段深泉的背景可能比我们想的还要深。</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 8 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:48</div></div>
+      <span class="floor-num">#8</span>
+    </div>
+    <div class="body">我插一句，我是学生，之前选过怀老师的课。他讲课挺好的，人也很和气，完全看不出有什么背景。而且他真的……挺单纯的，学生说他什么他都信，有时候别人在逗他他都听不出来。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 9 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:50</div></div>
+      <span class="floor-num">#9</span>
+    </div>
+    <div class="body">回8L，这就是最奇怪的地方，一个有背景的人，怎么可能这么天真？他不是装的，他是真的不知道别人在排挤他。如果真有背景，他家里人或者朋友应该会提醒他吧？</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 10 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:52</div></div>
+      <span class="floor-num">#10</span>
+    </div>
+    <div class="body">除非他的背景不是家里人，而是段深泉。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 11 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:55</div></div>
+      <span class="floor-num">#11</span>
+    </div>
+    <div class="body">段深泉帮他出头，然后段深泉一个电话就搞定了一个校长？段深泉到底是谁啊？</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 12 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 20:58</div></div>
+      <span class="floor-num">#12</span>
+    </div>
+    <div class="body">我查过段深泉的公开资料，什么都没有。没有出生年月，没有籍贯，没有家庭背景，没有学历履历。他就像凭空出现的，直接被安排到我们学校当教授。我当时就觉得不正常，但没人敢深挖。</div>
     <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
   </div>
 
-   <!-- ========== 第43楼（保留，之后所有回复到此为止） ========== -->
+  <!-- ========== 13 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2026-01-10 22:00</div></div><span class="floor-num">#43</span></div>
-    <div class="body">我嗑到了，我真的嗑到了。</div>
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:00</div></div>
+      <span class="floor-num">#13</span>
+    </div>
+    <div class="body">那怀榆呢？他是什么背景？</div>
+    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 14 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar lz-avatar">师</div>
+      <div class="info"><div class="name">听雨斋 <span class="badge">楼主</span></div><div class="time">2026-03-10 21:02</div></div>
+      <span class="floor-num">#14</span>
+    </div>
+    <div class="body">怀榆的背景更干净。干净到像一张白纸。我当时试着查过他的入职信息——空白。什么都没有。</div>
+    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 15 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:05</div></div>
+      <span class="floor-num">#15</span>
+    </div>
+    <div class="body">两个背景空白的人，一个被政府直调当教授，一个被人欺负之后三天内校长被调走。这俩人是来教书的还是来炸学校的？</div>
+    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 16 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:08</div></div>
+      <span class="floor-num">#16</span>
+    </div>
+    <div class="body">你们记不记得去年年底有一段时间，学校门口经常停着几辆黑车？我当时还以为是上面来视察，但视察完就走了，那些车连续停了一周左右。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 17 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:10</div></div>
+      <span class="floor-num">#17</span>
+    </div>
+    <div class="body">怀榆入职的时候，好像就是那段时间。</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 18 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:12</div></div>
+      <span class="floor-num">#18</span>
+    </div>
+    <div class="body">……所以那些车是来“送”他入职的？然后他的人一直在附近？</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 19 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:15</div></div>
+      <span class="floor-num">#19</span>
+    </div>
+    <div class="body">我现在觉得怀老师不知道那些事情也挺好的。他要是知道有人因为他被调走了，他大概会很难过。</div>
     <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
   </div>
 
-  <!-- ========== 后记（旁白/叙事，非回复楼层） ========== -->
-  <div style="
-    margin-top: 24px;
-    padding: 16px 20px;
-    border-top: 1px solid var(--border-card);
-    color: var(--text-muted-light);
-    font-size: 0.85rem;
-    line-height: 1.8;
-    font-style: italic;
-  ">
-    <p style="margin: 0;">而那个ID再也没有回复过。</p>
-    <p style="margin: 4px 0 0 0;">
-      但当晚，怀老师的课上，他讲完一个段落后，忽然说了一句：
-      <span style="color: var(--text-secondary); font-style: normal;">“有人跟我说，你们挺喜欢这门课的，那我下次试着把投影仪学会。”</span>
-    </p>
-    <p style="margin: 4px 0 0 0;">
-      全班安静了一秒，然后哄堂大笑。坐在最后一排角落里的段深泉，低头翻了一页书，嘴角动了一下。
-    </p>
+  <!-- ========== 20 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:18</div></div>
+      <span class="floor-num">#20</span>
+    </div>
+    <div class="body">你们说的那些车，我有印象。当时有人在校门口拍了照片发过帖子，但很快就被删了。我当时以为是违规停车，现在想想……</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 21 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:20</div></div>
+      <span class="floor-num">#21</span>
+    </div>
+    <div class="body">那我先说明一点：不管怀榆是什么背景，他本人确实没有任何架子。我上过他一学期的课，他连迟到都不会，作业批得很认真，下课会留在教室里给学生解答问题。他不是那种“有关系进来混日子”的人。他真的是来教书的。</div>
+    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 22 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:22</div></div>
+      <span class="floor-num">#22</span>
+    </div>
+    <div class="body">有能力的人，再加上有关系，那确实没人敢惹了。</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 23 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:25</div></div>
+      <span class="floor-num">#23</span>
+    </div>
+    <div class="body">我还是好奇那个电话是谁打的。</div>
+    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 24 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:28</div></div>
+      <span class="floor-num">#24</span>
+    </div>
+    <div class="body">我有个朋友在市政那边工作，他之前提过一句“前阵子市里开了好几个会，内容不清楚，但级别很高”。我当时没当回事，现在看来可能和这件事有关。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 25 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:30</div></div>
+      <span class="floor-num">#25</span>
+    </div>
+    <div class="body">一个大学老师的入职，需要市里开会讨论？你们是不是想太多了。</div>
+    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 26 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:32</div></div>
+      <span class="floor-num">#26</span>
+    </div>
+    <div class="body">不需要开会，但可能有人开会的时候提了一句“我们市来了个人，你们照顾一下”。然后下面的人就紧张了。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 27 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:35</div></div>
+      <span class="floor-num">#27</span>
+    </div>
+    <div class="body">你们把这件事说得越来越大了……我都开始害怕了。</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 28 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar verified">官</div>
+      <div class="info">
+        <div class="name">小满 <span class="verify-badge">✓ 认证</span></div>
+        <div class="time">2026-03-10 21:38</div>
+      </div>
+      <span class="floor-num">#28</span>
+    </div>
+    <div class="body">我来说一句。我爸是副市长。去年年底确实有一段时间他在外面开了好几天的会，连我生日都没回来。我问他开什么会，他说“上面下来的事，不该问的别问”。我当时觉得他在敷衍我，现在看到这个帖子……我开始怀疑了。</div>
+    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 29 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:40</div></div>
+      <span class="floor-num">#29</span>
+    </div>
+    <div class="body">……楼上你这是真官二代啊。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 30 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar verified">官</div>
+      <div class="info">
+        <div class="name">小满 <span class="verify-badge">✓ 认证</span></div>
+        <div class="time">2026-03-10 21:41</div>
+      </div>
+      <span class="floor-num">#30</span>
+    </div>
+    <div class="body">回29L，我爸不是正职，是副的。但那个会他确实去了，而且回来之后心情很奇怪，不是高兴也不是不高兴，就是那种……很累但很谨慎的表情。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 31 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:43</div></div>
+      <span class="floor-num">#31</span>
+    </div>
+    <div class="body">那你知道这个会和你爸说了什么吗？</div>
+    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 32 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar verified">官</div>
+      <div class="info">
+        <div class="name">小满 <span class="verify-badge">✓ 认证</span></div>
+        <div class="time">2026-03-10 21:45</div>
+      </div>
+      <span class="floor-num">#32</span>
+    </div>
+    <div class="body">回31L，不知道，他从来不跟我说工作上的事。但我可以帮你们打听一下有没有“关于某位讲师”的指示。不过我话说在前面，如果这件事真的很敏感，我可能什么都打听不到。</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 33 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:48</div></div>
+      <span class="floor-num">#33</span>
+    </div>
+    <div class="body">别打听！你别给自己找麻烦。我们就是吃个瓜，没必要把你爸也卷进来。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 34 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:50</div></div>
+      <span class="floor-num">#34</span>
+    </div>
+    <div class="body">同意楼上。这件事大家心里有数就行了，别再深挖了。</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 35 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar lz-avatar">师</div>
+      <div class="info"><div class="name">听雨斋 <span class="badge">楼主</span></div><div class="time">2026-03-10 21:52</div></div>
+      <span class="floor-num">#35</span>
+    </div>
+    <div class="body">那我最后说一句，新来的校长第一件事就是强调和睦相处，第二件事就是给怀老师安排了一个单独的办公室。你知道我们学校办公室多紧张吗？副教授都是两个人一间，怀老师一个人一间，还带窗。</div>
+    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 36 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:55</div></div>
+      <span class="floor-num">#36</span>
+    </div>
+    <div class="body">……这已经不是暗示了，这是明示。</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 37 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 21:58</div></div>
+      <span class="floor-num">#37</span>
+    </div>
+    <div class="body">我现在很好奇，段深泉当初是怎么“介绍”怀榆进来的？他说的那句“我有个朋友想来讲课”，到底是真的“朋友”，还是“上面让我带进来的人”？</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 38 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:00</div></div>
+      <span class="floor-num">#38</span>
+    </div>
+    <div class="body">我猜段深泉自己也不知道那么多。他可能只是帮人办件事，但他帮的那个人，级别比他想象的还要高。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 39 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:02</div></div>
+      <span class="floor-num">#39</span>
+    </div>
+    <div class="body">那怀榆自己知道吗？</div>
+    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 40 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar lz-avatar">师</div>
+      <div class="info"><div class="name">听雨斋 <span class="badge">楼主</span></div><div class="time">2026-03-10 22:05</div></div>
+      <span class="floor-num">#40</span>
+    </div>
+    <div class="body">我觉得他不知道。他连被人欺负了都不当回事，他能知道什么？</div>
+    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 41 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:08</div></div>
+      <span class="floor-num">#41</span>
+    </div>
+    <div class="body">我现在有点心疼他了。一个人被安排到一个完全陌生的环境里，被人排挤了也不知道，然后自己的事情被上面处理了，他可能到现在都不知道发生了什么。</div>
+    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 42 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:10</div></div>
+      <span class="floor-num">#42</span>
+    </div>
+    <div class="body">他可能只是“上面说要好好照顾的人”，但没人告诉他为什么。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 43 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:12</div></div>
+      <span class="floor-num">#43</span>
+    </div>
+    <div class="body">那他现在知道了没？校长调走这么大一件事，他总该有所察觉吧？</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 44 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:15</div></div>
+      <span class="floor-num">#44</span>
+    </div>
+    <div class="body">我猜他知道了，但段深泉可能会跟他说“别在意，正常人事调动”。毕竟段深泉是那个会替他出头、然后又替他瞒着的人。</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 45 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:18</div></div>
+      <span class="floor-num">#45</span>
+    </div>
+    <div class="body">这俩人到底什么关系啊……段深泉帮他出头，帮他瞒着，还天天一起上下班。他们是住在一起吗？</div>
+    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 46 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:20</div></div>
+      <span class="floor-num">#46</span>
+    </div>
+    <div class="body">我上次看到他们一起在超市买菜，段深泉推车，怀榆在旁边挑东西，两个人还商量晚上吃什么。这已经不是普通同事的关系了。</div>
+    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 47 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:22</div></div>
+      <span class="floor-num">#47</span>
+    </div>
+    <div class="body">所以段深泉帮怀榆出头，是因为他们住在一起？</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 48 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:25</div></div>
+      <span class="floor-num">#48</span>
+    </div>
+    <div class="body">我觉得顺序反了，段深泉帮他出头，是因为他在乎他。住不住在一起只是结果。</div>
+    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 49 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:28</div></div>
+      <span class="floor-num">#49</span>
+    </div>
+    <div class="body">所以结论就是——怀老师有背景，段深泉有更大的背景，但怀老师自己不知道，段深泉替他兜着，然后上面直接把校长端了。现在我们学校所有人都知道怀老师不能惹，只有怀老师自己不知道。</div>
+    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 50 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:30</div></div>
+      <span class="floor-num">#50</span>
+    </div>
+    <div class="body">这不就是“你被欺负了，我替你摆平，但我不告诉你”的故事吗。某种程度上也挺好磕的。</div>
+    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 51 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:32</div></div>
+      <span class="floor-num">#51</span>
+    </div>
+    <div class="body">好磕归好磕，但我以后见到怀老师肯定毕恭毕敬的。我可不想被调走。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 52 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:35</div></div>
+      <span class="floor-num">#52</span>
+    </div>
+    <div class="body">那你最好也对他笑一笑，因为他对谁都笑。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 53 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:38</div></div>
+      <span class="floor-num">#53</span>
+    </div>
+    <div class="body">我就是觉得离谱，一个人被人欺负了不知道，被人保护了不知道，被人安排工作不知道，被人调走校长也不知道。他到底活在一个什么样的世界里啊。</div>
+    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 54 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:40</div></div>
+      <span class="floor-num">#54</span>
+    </div>
+    <div class="body">一个被段深泉保护得很好的世界里。</div>
+    <div class="actions"><button>👍 2.1k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 55 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:42</div></div>
+      <span class="floor-num">#55</span>
+    </div>
+    <div class="body">好了好了，别把帖子搞得太沉重了。我们现在知道的是，怀老师是好人，段教授是好人，校长走了，新校长来了，大家和睦相处。事情已经解决了，没什么好担心的。</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 56 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:45</div></div>
+      <span class="floor-num">#56</span>
+    </div>
+    <div class="body">我只有一个问题，以后我能不能对怀老师笑一笑，然后蹭一顿饭？</div>
+    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 57 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:48</div></div>
+      <span class="floor-num">#57</span>
+    </div>
+    <div class="body">你可以笑，但他不会请你吃饭。他只会请你吃糖。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 58 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:50</div></div>
+      <span class="floor-num">#58</span>
+    </div>
+    <div class="body">他真的有糖？我上次路过他办公室，他给了我一颗蜂蜜糖。我当时还以为他发错了。</div>
+    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 59 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:52</div></div>
+      <span class="floor-num">#59</span>
+    </div>
+    <div class="body">那不是发错了，他就是那样的人。见人就给糖。</div>
+    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 60 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:55</div></div>
+      <span class="floor-num">#60</span>
+    </div>
+    <div class="body">好了我决定了，以后见到怀老师就笑，见到段教授就鞠躬。</div>
+    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 61 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 22:58</div></div>
+      <span class="floor-num">#61</span>
+    </div>
+    <div class="body">你最好两个都笑。</div>
+    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+  </div>
+
+  <!-- ========== 62 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar">匿</div>
+      <div class="info"><div class="name">匿名用户</div><div class="time">2026-03-10 23:00</div></div>
+      <span class="floor-num">#62</span>
+    </div>
+    <div class="body">好好好，两个都笑。</div>
+    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
   </div>
 
 </div>
