@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>归终殿 · 惊鸿榜讨论</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #ece6de;
+            --border-card: #d5cdc4;   /* 加深了默认边框色 */
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --text-muted-light: #b0aaa2;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --radius-sm: 6px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.25s ease;
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-card-alt: #1e1b18;
+            --border-light: #35302a;
+            --border-card: #4a443e;   /* 深色模式下也更明显 */
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --text-muted-light: #5a5550;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0 16px;
+        }
+
+        /* ===== 右上角悬浮组 ===== */
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+        .float-btn:hover {
+            border-color: var(--accent, #b03a2a);
+            color: var(--accent, #b03a2a);
+        }
+        .float-btn .icon { font-size: 0.9rem; }
+
+        /* ===== 容器 ===== */
+        #app {
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 40px 0;
+            flex: 1;
+        }
+
+        /* ===== 面包屑 ===== */
+        .back-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .back-bar .breadcrumb {
+            font-size: 0.8rem;
+            color: var(--text-muted-light);
+        }
+        .back-bar .breadcrumb span {
+            color: var(--text-secondary);
+        }
+
+        /* ===== 帖子 ===== */
+        .thread {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        .thread-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .thread-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted-light);
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 12px;
+        }
+
+        /* ===== 楼层 ===== */
+        .floor {
+            padding: 12px 0 10px 0;
+            margin-bottom: 12px;               /* 加大了楼层间距 */
+            border-bottom: 2px solid var(--border-card); /* 加粗分割线 */
+        }
+        .floor:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .floor.lz {
+            padding-top: 0;
+        }
+
+        .floor .head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        /* ===== 头像系统 ===== */
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+            border: 2px solid var(--av-border, #ccc);
+            background: var(--av-bg, #f0f0f0);
+            color: var(--av-text, #888);
+            transition: border-color var(--transition), background var(--transition);
+        }
+        /* 栾方棋 (红) */
+        .av-luan { --av-border: #b03a2a; --av-bg: rgba(176, 58, 42, 0.08); --av-text: #b03a2a; }
+        .av-luan-d { --av-border: #b03a2a; --av-bg: rgba(176, 58, 42, 0.04); --av-text: #b03a2a; }
+        /* 林淮 (蓝绿) */
+        .av-huai { --av-border: #2a6b8a; --av-bg: rgba(42, 107, 138, 0.08); --av-text: #2a6b8a; }
+        .av-huai-d { --av-border: #2a6b8a; --av-bg: rgba(42, 107, 138, 0.04); --av-text: #2a6b8a; }
+        /* 罗修 (紫) */
+        .av-luo { --av-border: #7b4b8a; --av-bg: rgba(123, 75, 138, 0.08); --av-text: #7b4b8a; }
+        .av-luo-d { --av-border: #7b4b8a; --av-bg: rgba(123, 75, 138, 0.04); --av-text: #7b4b8a; }
+        /* 魏元璟 (金) */
+        .av-wei { --av-border: #c9a84b; --av-bg: rgba(201, 168, 75, 0.08); --av-text: #c9a84b; }
+        .av-wei-d { --av-border: #c9a84b; --av-bg: rgba(201, 168, 75, 0.04); --av-text: #c9a84b; }
+        /* 程木栖 (青绿) */
+        .av-cheng { --av-border: #5a8a7a; --av-bg: rgba(90, 138, 122, 0.08); --av-text: #5a8a7a; }
+        .av-cheng-d { --av-border: #5a8a7a; --av-bg: rgba(90, 138, 122, 0.04); --av-text: #5a8a7a; }
+        /* 中立 / 通用 */
+        .av-neutral { --av-border: #b0aaa2; --av-bg: rgba(176, 170, 162, 0.06); --av-text: #8a8a8a; }
+        /* 深色模式适配 */
+        [data-theme="dark"] .av-luan { --av-border: #b05a4a; --av-bg: rgba(176, 90, 74, 0.12); --av-text: #b05a4a; }
+        [data-theme="dark"] .av-luan-d { --av-border: #b05a4a; --av-bg: rgba(176, 90, 74, 0.06); --av-text: #b05a4a; }
+        [data-theme="dark"] .av-huai { --av-border: #4a8baa; --av-bg: rgba(74, 139, 170, 0.12); --av-text: #4a8baa; }
+        [data-theme="dark"] .av-huai-d { --av-border: #4a8baa; --av-bg: rgba(74, 139, 170, 0.06); --av-text: #4a8baa; }
+        [data-theme="dark"] .av-luo { --av-border: #9b6baa; --av-bg: rgba(155, 107, 170, 0.12); --av-text: #9b6baa; }
+        [data-theme="dark"] .av-luo-d { --av-border: #9b6baa; --av-bg: rgba(155, 107, 170, 0.06); --av-text: #9b6baa; }
+        [data-theme="dark"] .av-wei { --av-border: #dbb85c; --av-bg: rgba(219, 184, 92, 0.12); --av-text: #dbb85c; }
+        [data-theme="dark"] .av-wei-d { --av-border: #dbb85c; --av-bg: rgba(219, 184, 92, 0.06); --av-text: #dbb85c; }
+        [data-theme="dark"] .av-cheng { --av-border: #6a9a8a; --av-bg: rgba(106, 154, 138, 0.12); --av-text: #6a9a8a; }
+        [data-theme="dark"] .av-cheng-d { --av-border: #6a9a8a; --av-bg: rgba(106, 154, 138, 0.06); --av-text: #6a9a8a; }
+
+        .floor .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .floor .info .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .floor .info .name .badge {
+            font-size: 0.6rem;
+            font-weight: 400;
+            background: var(--bg-card-alt);
+            color: var(--text-muted);
+            padding: 1px 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-card);
+        }
+        .floor .info .name .badge.special {
+            background: var(--accent-soft, rgba(176, 58, 42, 0.08));
+            color: var(--accent, #b03a2a);
+            border-color: var(--accent, #b03a2a);
+        }
+        .floor .info .time {
+            font-size: 0.7rem;
+            color: var(--text-muted-light);
+        }
+        .floor .floor-num {
+            font-size: 0.7rem;
+            color: var(--text-muted-light);
+            font-weight: 400;
+            flex-shrink: 0;
+        }
+        .floor .body {
+            font-size: 0.92rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            word-break: break-word;
+        }
+        .floor .body .quote {
+            background: var(--bg-card-alt);
+            border-left: 3px solid var(--border-card);
+            padding: 8px 14px;
+            margin: 8px 0;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .floor .actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 16px;
+            font-size: 0.75rem;
+            color: var(--text-muted-light);
+        }
+        .floor .actions button {
+            background: transparent;
+            border: none;
+            color: var(--text-muted-light);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all var(--transition);
+        }
+        .floor .actions button:hover {
+            color: var(--text-secondary);
+            background: var(--bg-card-alt);
+        }
+
+        /* ===== 楼中楼 ===== */
+        .nested {
+            margin-left: 24px;
+            padding-left: 16px;
+            border-left: 2px solid var(--border-card);
+        }
+        .nested .floor {
+            border-bottom: 2px solid var(--border-light);
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+        .nested .floor:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 600px) {
+            body { padding: 0 10px; }
+            #app { padding: 14px 0 30px 0; }
+            .thread { padding: 14px 14px; }
+            .floor .body { font-size: 0.88rem; }
+            .back-bar { flex-wrap: wrap; }
+            .float-group {
+                top: 12px;
+                right: 12px;
+                gap: 6px;
+            }
+            .float-btn {
+                padding: 4px 10px 4px 8px;
+                font-size: 0.65rem;
+            }
+            .nested {
+                margin-left: 12px;
+                padding-left: 10px;
+            }
+            .avatar {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark'
+                    ? '<span class="icon">☀️</span> 日间'
+                    : '<span class="icon">🌙</span> 夜间';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('themeBtn');
+            if (!btn) return;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            btn.innerHTML = isDark
+                ? '<span class="icon">☀️</span> 日间'
+                : '<span class="icon">🌙</span> 夜间';
+        });
+    </script>
+</head>
+<body>
+
+    <!-- ===== 右上角悬浮组 ===== -->
+    <div class="float-group">
+        <a class="float-btn" href="#"><span class="icon">←</span> 返回列表</a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
+    </div>
+
+    <div id="app">
+        <!-- ===== 面包屑 ===== -->
+        <div class="back-bar">
+            <span class="breadcrumb">归终殿 · <span>惊鸿榜讨论</span></span>
+        </div>
+
+        <!-- ===== 帖子主体 ===== -->
+        <div class="thread">
+            <div class="thread-title">【惊鸿榜】归终殿美貌排名大曝光！首席身材照流出？？</div>
+            <div class="thread-meta">
+                <span>📌 楼主 · 符修院小师妹</span>
+                <span>🕒 2026-08-14 19:47</span>
+                <span>👁 2.3w</span>
+                <span>💬 156</span>
+                <span>🔥 热</span>
+            </div>
+
+            <!-- ===== 1楼 · 楼主 ===== -->
+            <div class="floor lz"><div class="head"><div class="avatar av-luan-d">符</div><div class="info"><div class="name">符修院小师妹</div><div class="time">2026-08-14 19:47</div></div><span class="floor-num">#1</span></div>
+            <div class="body">
+                家人们谁懂啊！！<br>
+                归终殿弟子私下搞了个「惊鸿榜」投票，本来只是闹着玩的，结果票数出来我直接笑死——<br><br>
+                <strong>🏆 第一名：林淮（淮大人）</strong><br>
+                票数断层第一，描述栏写着 “造物主最偏心的一笔” 哈哈哈哈确实，那张脸真的离谱。<br><br>
+                <strong>🥈 第二名：魏元璟（璟大人）</strong><br>
+                票数紧随其后，评价是 “矜贵旖丽帝王花，发香胜脂粉” 笑死，哪位姐妹写的，太会了。<br><br>
+                <strong>🥉 第三名：程木栖（前第二席，现栖梧馆主事）</strong><br>
+                温温柔柔的木栖姐姐，票数意外地高，评价是 “素净如兰，药香沁人”，旁边还被人画了一朵小兰花，可爱死了。<br><br>
+                <strong>第四名：罗修（首席大人）</strong><br>
+                本来票数一般般，结果！不知道谁偷拍了首席大人在璟大人院子里光着膀子的留影石！！那身材——嘶——（捂脸）<br>
+                票数直接飙升，目前和棋大人打得难解难分。<br><br>
+                <strong>第五名：栾方棋（棋大人）</strong><br>
+                本来被说“白发显老气”，符修院大师兄直接掏出了当年棋大人一夜白头的留影石——<br>
+                白发如雪，坐在浮生树上，简直跟谪仙一样！<br>
+                现在票数疯狂上涨，已经快反超首席了哈哈哈哈。<br><br>
+                所以问题来了：<strong>首席大人到底什么时候和璟大人成亲？？</strong> 弟子们都等着喝喜酒呢！
+            </div>
+            <div class="actions"><button>❤ 467</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 2楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-huai-d">枪</div><div class="info"><div class="name">枪阁小师弟</div><div class="time">2026-08-14 20:02</div></div><span class="floor-num">#2</span></div>
+            <div class="body">笑死，淮大人第一毫无悬念。我们枪阁全体师兄弟一致认为，淮大人那张脸就应该被供起来每天瞻仰。但是！！首席大人那个身材照我是真没绷住，谁拍的？太勇了，首席大人没把留影石直接捏碎吧？😂</div>
+            <div class="actions"><button>❤ 203</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 3楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-wei-d">璟</div><div class="info"><div class="name">璟大人后援会</div><div class="time">2026-08-14 20:15</div></div><span class="floor-num">#3</span></div>
+            <div class="body">璟大人第二实至名归好吗！！什么叫“发香胜脂粉”？？那是皇家御用熏香！没品位的家伙！不过……首席大人那个身材照……我反复看了八百遍……（小声）首席大人身材确实好，而且那可是在璟大人院子里拍的！！四舍五入等于官宣了吧！！🤤</div>
+            <div class="actions"><button>❤ 189</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 4楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-luan-d">符</div><div class="info"><div class="name">符修院大师兄</div><div class="time">2026-08-14 20:34</div></div><span class="floor-num">#4</span></div>
+            <div class="body">
+                我来补充一下棋大人的白发神图！<br>
+                那张图是京城之战后，棋大人一夜白头，在浮生树上修养时被路过的弟子拍到的。<br>
+                那时候棋大人刚用自己一半的命把淮大人从鬼门关拉回来，整个人虚弱得不行，但还是坐在树上看着淮大人的方向。<br>
+                <strong>白发不是显老，是献祭，是神性，是爱！</strong><br>
+                说显老的人真的没有心。😭
+                <div class="quote">引用 #1 符修院小师妹：<br>“白发如雪，坐在浮生树上，简直跟谪仙一样”</div>
+                对！就是这个感觉！<br>
+                所以请大家都去投棋大人一票！！让他超过首席！！（被首席打飞）
+            </div>
+            <div class="actions"><button>❤ 312</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 5楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-luo-d">刀</div><div class="info"><div class="name">首席门下第一刀</div><div class="time">2026-08-14 20:52</div></div><span class="floor-num">#5</span></div>
+            <div class="body">
+                你们别闹了，首席大人已经知道这个榜单了。<br>
+                就在刚才，他路过公示栏，看到那堆投票，脸都黑了。<br>
+                然后——<strong>他把榜单收缴了。</strong><br>
+                还说了句：“都滚去修炼！再敢胡闹，统统加训！”<br>
+                但是！！他没有否认成亲的事！！有人问他什么时候和璟大人成亲，他居然没骂人！！<br>
+                <strong>首席大人耳朵红了！！我亲眼所见！！</strong><br>
+                所以喜酒有希望了！！🎉🎉
+            </div>
+            <div class="actions"><button>❤ 456</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 6楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-cheng-d">药</div><div class="info"><div class="name">栖梧馆小药童</div><div class="time">2026-08-14 21:10</div></div><span class="floor-num">#6</span></div>
+            <div class="body">等等，没人讨论程师姐吗！！程师姐第三诶！虽然她本人好像不太在意，但我觉得她超好看！！那种温温柔柔的、坐诊的时候认真把脉、偶尔弹琴的样子——<strong>“素净如兰，药香沁人”</strong> 这句写得也太准了吧！而且她手受伤之后还在坚持给引渡人治伤，医馆的凝心草都是她一棵一棵种的。程师姐值得！！💚</div>
+            <div class="actions"><button>❤ 178</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 7楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-neutral">渡</div><div class="info"><div class="name">忘川摆渡人</div><div class="time">2026-08-14 21:40</div></div><span class="floor-num">#7</span></div>
+            <div class="body">
+                说到首席和璟大人，我给你们爆个料。<br>
+                你们知道璟大人以前叫「念安」吗？<br>
+                那时候他什么都不记得，懵懵懂懂的，天天跟在首席后面喊“师父”。<br>
+                首席表面上冷冰冰的，其实每天晚上都会去他屋里，给他盖被子。<br>
+                有一次念安做噩梦，抱着枕头去找首席，首席什么都没说，直接掀开被子让他钻进去了。<br>
+                <strong>——那可是首席啊！！那个脾气暴躁、一言不合就拔刀的首席！！</strong><br>
+                后来璟大人恢复记忆了，就不叫师父了，开始跟首席斗嘴。<br>
+                但首席还是会在半夜去他院子里，看看他有没有踢被子。<br>
+                😭 这不是爱是什么！！
+            </div>
+            <div class="actions"><button>❤ 523</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 8楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-luo-d">刀</div><div class="info"><div class="name">首席门下第二刀</div><div class="time">2026-08-14 22:05</div></div><span class="floor-num">#8</span></div>
+            <div class="body">
+                楼上说的我作证。<br>
+                有一次我值夜，路过璟大人院子，看见首席坐在屋顶上喝酒。<br>
+                我寻思大半夜的首席怎么不睡觉，就多看了一眼——<br>
+                结果发现他一边喝酒，一边看着璟大人屋里的灯。<br>
+                灯灭了，他才走的。<br>
+                <strong>首席大人，您到底知不知道什么叫“直接进去”啊？！</strong><br>
+                后来有一次璟大人受伤，昏迷了三天，首席就守在床边三天没合眼。<br>
+                林淮大人来看璟大人的时候说了一句话，我记到现在：<br>
+                <div class="quote">“罗修这个人，大概只有人死了才会知道珍惜。但你要是真的死了，那只会沦为第二个顾执。”</div>
+                然后首席就……开始主动了。<br>
+                给璟大人上药、教他刀法、陪他喝酒。<br>
+                再后来，他们就成亲了。<br>
+                <strong>所以喜酒是真的喝上了！！</strong> 🍶
+            </div>
+            <div class="actions"><button>❤ 678</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 9楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-neutral">桃</div><div class="info"><div class="name">桃林听风客</div><div class="time">2026-08-14 22:30</div></div><span class="floor-num">#9</span></div>
+            <div class="body">
+                你们都在嗑首席和璟大人，没人提那片桃林吗？<br>
+                林丛言守着的桃林，是顾执死后留下来的。<br>
+                当年顾执死在林丛言怀里，魂魄消散，骨血化作桃林，花开花落，永不结果。<br>
+                林丛言穿了一辈子白衣，就守在那儿，哪也不去。<br>
+                后来罗修带着念安去找他，他一眼就认出——“他不是顾执”。<br>
+                他说：“顾执根本就不想活，不想再见到我。”<br>
+                然后转身走进了桃林深处。<br>
+                我当时站在远处看，觉得那个背影……真的好孤独。<br>
+                他爱顾执吗？<strong>爱。但他不配得到顾执的爱，他自己也知道。</strong><br>
+                所以他不出现，不打扰，只是守着。<br>
+                这份爱，太苦了。
+            </div>
+            <div class="actions"><button>❤ 398</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 10楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-luan-d">愿</div><div class="info"><div class="name">浮生树下许愿人</div><div class="time">2026-08-14 22:55</div></div><span class="floor-num">#10</span></div>
+            <div class="body">只有我想嗑棋大人和淮大人的婚后日常吗！！淮大人表面冷冰冰的，其实超级宠！！棋大人不想喝药，淮大人就帮他偷偷倒进花盆里，结果被程师姐抓包，两个人一起挨骂。符修院的弟子喊棋大人“师娘”，棋大人脸红得跟什么似的，淮大人就在旁边笑！！那可是淮大人啊！！那个从来不笑的淮大人！！而且他们俩出任务永远是并肩走，淮大人永远走在棋大人外侧，帮他挡着所有的风。<strong>两百年的等待，换来了这一世的相守。</strong>值了。</div>
+            <div class="actions"><button>❤ 534</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 11楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-wei-d">酒</div><div class="info"><div class="name">酆都酒鬼</div><div class="time">2026-08-14 23:18</div></div><span class="floor-num">#11</span></div>
+            <div class="body">等一下，没人提那个“春药”事件吗？？据说是棋大人出的馊主意，要给首席下春药让他开窍。结果璟大人当场社死，红着脸跑了。哈哈哈哈哈哈！！！然后第二天首席就去给璟大人送药了，还亲自给他包扎。只能说——<strong>棋大人，您这馊主意，好像还真有点用？？</strong> 🤣</div>
+            <div class="actions"><button>❤ 289</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 12楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-neutral">轮</div><div class="info"><div class="name">轮回井看门人</div><div class="time">2026-08-15 00:02</div></div><span class="floor-num">#12</span></div>
+            <div class="body">
+                今晚的帖子看得我又哭又笑。<br>
+                从一开始的惊鸿榜八卦，到首席和璟大人的往事，再到林丛言的桃林……<br>
+                忽然觉得，归终殿里的每一个人，都有自己的故事。<br>
+                有的人等了两百年才等到重逢（棋&淮），<br>
+                有的人用十年才学会接受（首席&璟），<br>
+                有的人守着桃林一辈子不离开（林丛言），<br>
+                有的人到死都不知道自己算不算“活着”（冉舟）。<br>
+                <strong>但最后，他们都找到了自己的答案。</strong><br>
+                棋大人和淮大人成亲了，首席和璟大人也成亲了。<br>
+                浮生树还在开花，忘川河还在流。<br>
+                归终殿的弟子们还在八卦。<br>
+                真好。<br>🌙
+            </div>
+            <div class="actions"><button>❤ 892</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 13楼 ===== -->
+            <div class="floor"><div class="head"><div class="avatar av-neutral">藏</div><div class="info"><div class="name">藏经阁扫地僧</div><div class="time">2026-08-15 00:30</div></div><span class="floor-num">#13</span></div>
+            <div class="body">楼上说得太好了。我在地府待了快三百年，看过太多生离死别。但归终殿这些人，是唯一让我觉得——<strong>就算命运再残酷，爱也总能找到自己的路。</strong>哪怕绕远一点，哪怕多等两百年。只要还活着，就还有希望。晚安，各位。</div>
+            <div class="actions"><button>❤ 421</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 14楼 楼中楼 ===== -->
+            <div class="nested">
+                <div class="floor" style="border-bottom: none; padding-top: 10px;"><div class="head"><div class="avatar av-neutral">渡</div><div class="info"><div class="name" style="font-size:0.85rem;">忘川摆渡人</div><div class="time" style="font-size:0.7rem;">2026-08-15 00:38</div></div><span class="floor-num" style="font-size:0.7rem;">#14</span></div>
+                <div class="body" style="font-size:0.85rem;">
+                    回复 #13 藏经阁扫地僧：<br>
+                    说得真好。“爱总能找到自己的路。”<br>
+                    我想起棋大人说过一句话：<br>
+                    <div class="quote">“如果林淮没有醒过来，那我就不去轮回了。就陪他一起走吧，去了哪里，变成什么样，都不重要。”</div>
+                    我当时听到这句话，哭了好久。这大概就是爱吧。
+                </div>
+                <div class="actions"><button>❤ 267</button><button>💬 回复</button></div></div>
+            </div>
+
+            <!-- ===== 15楼 楼主结帖 ===== -->
+            <div class="floor" style="border-bottom: none; padding-bottom: 4px;"><div class="head"><div class="avatar av-luan-d">符</div><div class="info"><div class="name">符修院小师妹</div><div class="time">2026-08-15 01:15</div></div><span class="floor-num">#15</span></div>
+            <div class="body">
+                深夜追完所有回复，眼睛哭肿了。<br>
+                谢谢大家分享这些故事。<br>
+                归终殿的每一个人，都在用自己的方式爱着。<br>
+                棋大人和淮大人，首席和璟大人，程师姐，还有那些已经离开的人……<br>
+                他们的故事会一直传下去的。<br>
+                就像浮生树一样，生生不息。<br>
+                <strong>晚安，归终殿。</strong><br>🌿
+            </div>
+            <div class="actions"><button>❤ 523</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 16楼 栾方棋本人下场 ===== -->
+            <div class="floor" style="border-top: 2px solid var(--border-card); padding-top: 16px; margin-top: 4px;"><div class="head"><div class="avatar av-luan">✿</div><div class="info"><div class="name">栾方棋 <span class="badge special">第五席</span></div><div class="time">2026-08-15 01:30</div></div><span class="floor-num">#16</span></div>
+            <div class="body">你们也早点睡。晚安。</div>
+            <div class="actions"><button>❤ 8.7w</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 17楼 林淮本人下场 ===== -->
+            <div class="floor" style="border-top: 2px solid var(--border-card); padding-top: 16px; margin-top: 4px;"><div class="head"><div class="avatar av-huai">✦</div><div class="info"><div class="name">林淮 <span class="badge special">第二席</span></div><div class="time">2026-08-15 01:32</div></div><span class="floor-num">#17</span></div>
+            <div class="body">……</div>
+            <div class="actions"><button>❤ 9.2w</button><button>💬 回复</button></div></div>
+
+            <!-- ===== 18楼 程木栖本人下场 ===== -->
+            <div class="floor" style="border-top: 2px solid var(--border-card); padding-top: 16px; margin-top: 4px; border-bottom: none; padding-bottom: 4px;"><div class="head"><div class="avatar av-cheng">◉</div><div class="info"><div class="name">程木栖 <span class="badge special">栖梧馆</span></div><div class="time">2026-08-15 01:40</div></div><span class="floor-num">#18</span></div>
+            <div class="body">医馆明早还要开门。都别熬了。</div>
+            <div class="actions"><button>❤ 3.4w</button><button>💬 回复</button></div></div>
+
+        </div><!-- /thread -->
+    </div><!-- /app -->
+
+</body>
+</html>
