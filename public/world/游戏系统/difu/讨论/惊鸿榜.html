@@ -16,14 +16,12 @@
             --text-muted: #8a8a8a;
             --text-muted-light: #b0aaa2;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
             --radius: 12px;
             --radius-sm: 6px;
             --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             --transition: 0.25s ease;
             --accent: #b03a2a;
             --accent-soft: rgba(176, 58, 42, 0.06);
-            /* 印象色 — 低饱和度版用于投票条 */
             --color-luan: #b05a4a;
             --color-huai: #4a7a8a;
             --color-jing: #b89a4a;
@@ -40,8 +38,6 @@
             --text-secondary: #9a948c;
             --text-muted: #6a6560;
             --text-muted-light: #5a5550;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
             --accent: #b05a4a;
             --accent-soft: rgba(176, 90, 74, 0.08);
             --color-luan: #b06a5a;
@@ -132,8 +128,8 @@
 
         /* ===== 楼层 ===== */
         .floor {
-            padding: 12px 0 10px 0;
-            margin-bottom: 12px;
+            padding: 6px 0 8px 0;
+            margin-bottom: 6px;
             border-bottom: 2px solid var(--border-card);
         }
         .floor:last-child {
@@ -147,8 +143,8 @@
         .floor .head {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 6px;
+            gap: 10px;
+            margin-bottom: 4px;
         }
 
         /* ===== 头像系统 ===== */
@@ -250,7 +246,7 @@
             color: var(--text-muted);
         }
         .floor .actions {
-            margin-top: 8px;
+            margin-top: 6px;
             display: flex;
             gap: 16px;
             font-size: 0.75rem;
@@ -277,8 +273,8 @@
 
         /* ===== 横幅 ===== */
         .banner-wrap {
-            margin: 8px 0;
-            padding: 12px 16px;
+            margin: 6px 0;
+            padding: 10px 14px;
             border-radius: var(--radius-sm);
             text-align: center;
             position: relative;
@@ -332,12 +328,12 @@
         .poll-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 6px 0 10px 0;
+            margin: 4px 0 8px 0;
             font-size: 0.85rem;
         }
         .poll-table th,
         .poll-table td {
-            padding: 4px 6px;
+            padding: 3px 6px;
             text-align: left;
             border-bottom: 1px solid var(--border-light);
         }
@@ -351,6 +347,7 @@
             text-align: right;
             font-weight: 500;
             color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
         }
         .poll-table tr:last-child td {
             border-bottom: none;
@@ -358,8 +355,9 @@
         .poll-table .rank {
             color: var(--text-muted-light);
             font-size: 0.75rem;
-            width: 28px;
+            width: 30px;
             text-align: center;
+            white-space: nowrap;
         }
         .poll-table .name-cell {
             font-weight: 500;
@@ -367,30 +365,32 @@
         }
 
         .poll-bar {
-            margin: 6px 0 4px 0;
+            margin: 4px 0 2px 0;
         }
         .poll-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
+            gap: 6px;
+            margin-bottom: 3px;
             font-size: 0.8rem;
+            flex-wrap: nowrap;
         }
         .poll-item .label {
-            width: 68px;
+            width: 60px;
             flex-shrink: 0;
             color: var(--text-secondary);
             font-weight: 500;
             font-size: 0.75rem;
+            white-space: nowrap;
         }
         .poll-item .track {
             flex: 1;
+            min-width: 30px;
             height: 10px;
             background: var(--bg-card-alt);
             border-radius: 5px;
             overflow: hidden;
             border: 1px solid var(--border-card);
-            min-width: 40px;
         }
         .poll-item .fill {
             height: 100%;
@@ -405,11 +405,13 @@
         .poll-item .fill.luo { background: var(--color-luo); }
         .poll-item .fill.other { background: var(--text-muted-light); opacity: 0.5; }
         .poll-item .pct {
-            width: 38px;
+            width: 44px;
             text-align: right;
             font-size: 0.7rem;
             color: var(--text-muted);
             flex-shrink: 0;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
         }
         .poll-note {
             font-size: 0.65rem;
@@ -434,22 +436,43 @@
                 font-size: 0.65rem;
             }
             .avatar {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
+                width: 34px;
+                height: 34px;
+                font-size: 13px;
             }
-            .poll-item .label { width: 52px; font-size: 0.7rem; }
-            .poll-item .pct { width: 32px; font-size: 0.65rem; }
+            .poll-item .label {
+                width: 48px;
+                font-size: 0.7rem;
+            }
+            .poll-item .pct {
+                width: 36px;
+                font-size: 0.65rem;
+            }
+            .poll-item .track {
+                min-width: 24px;
+                height: 8px;
+            }
             .poll-table { font-size: 0.78rem; }
             .poll-table th { font-size: 0.65rem; }
+            .poll-table .rank { width: 26px; font-size: 0.7rem; }
             .banner-wrap .main { font-size: 0.85rem; }
             .banner-wrap .sub { font-size: 0.7rem; }
         }
         @media (max-width: 420px) {
-            .poll-item .label { width: 44px; font-size: 0.65rem; }
-            .poll-item .pct { width: 28px; font-size: 0.6rem; }
-            .poll-item .track { height: 8px; }
-            .poll-table td, .poll-table th { padding: 3px 4px; }
+            .poll-item .label {
+                width: 40px;
+                font-size: 0.65rem;
+            }
+            .poll-item .pct {
+                width: 30px;
+                font-size: 0.6rem;
+            }
+            .poll-item .track {
+                height: 7px;
+                min-width: 18px;
+            }
+            .poll-table td, .poll-table th { padding: 2px 4px; }
+            .poll-table .rank { width: 22px; font-size: 0.65rem; }
         }
     </style>
     <script>
@@ -499,7 +522,7 @@
 
     <!-- ===== 右上角悬浮组 ===== -->
     <div class="float-group">
-        <a class="float-btn" href=../index.html"">
+        <a class="float-btn" href="../index.html">
             <span class="icon">←</span> 返回列表
         </a>
         <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
@@ -540,13 +563,17 @@
                     昨日我在院内小范围试了试，反响尚可，今日便发到议事玉牒上，请诸位同门共投。<br><br>
                     投票之法：在下方以魂力勾选三位大人之名，每人限勾三处，多者作废。<br><br>
                     以下是截至此刻的初计票数（仅符修院及周边几院参与，尚不能作数，只供诸位一观）：<br><br>
-                    <strong>初计票数（样本约百人）</strong><br>
-                    林淮（第二席）43 票<br>
-                    魏元璟（第十席）26 票<br>
-                    程木栖（栖梧馆）18 票<br>
-                    罗修（首席）14 票<br>
-                    栾方棋（第五席）12 票<br>
-                    其余席次合计约30 票<br><br>
+
+                    <table class="poll-table">
+                        <tr><th class="rank">名次</th><th>姓名</th><th>票数</th></tr>
+                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>43</td></tr>
+                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>26</td></tr>
+                        <tr><td class="rank">3</td><td class="name-cell">程木栖（栖梧馆）</td><td>18</td></tr>
+                        <tr><td class="rank">4</td><td class="name-cell">罗修（首席）</td><td>14</td></tr>
+                        <tr><td class="rank">5</td><td class="name-cell">栾方棋（第五席）</td><td>12</td></tr>
+                        <tr><td class="rank">—</td><td class="name-cell">其余席次</td><td>约30</td></tr>
+                    </table>
+
                     <div class="poll-bar">
                         <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:40%;"></div></div><span class="pct">约四成</span></div>
                         <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:25%;"></div></div><span class="pct">约二成五</span></div>
@@ -563,15 +590,15 @@
                     ——符·小师妹 顿首
                 </div>
                 <div class="actions">
-                    <button>♡ 467</button>
-                    <button>↩ 回复</button>
+                    <button>♥︎ 467</button>
+                    <button>↩︎ 回复</button>
                 </div>
             </div>
 
             <!-- 2楼 -->
             <div class="floor">
                 <div class="head">
-                    <div class="avatar av-gray">某</div>
+                    <div class="avatar av-gray">杂</div>
                     <div class="info">
                         <div class="name">杂役·阿七</div>
                         <div class="time">辰时四刻</div>
@@ -579,7 +606,7 @@
                     <span class="floor-num">#2</span>
                 </div>
                 <div class="body">还有这种投票？被首席大人看到了不好吧？</div>
-                <div class="actions"><button>♡ 23</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 23</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 3楼 -->
@@ -593,7 +620,7 @@
                     <span class="floor-num">#3</span>
                 </div>
                 <div class="body">没关系的，不是什么犯大忌的事，首席不会管的。我先投程师姐一票，她最近在医馆忙得脚不沾地，我看着都心疼。</div>
-                <div class="actions"><button>♡ 45</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 45</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 4楼 -->
@@ -607,7 +634,7 @@
                     <span class="floor-num">#4</span>
                 </div>
                 <div class="body">楼上的同门谢谢你！！程师姐真的很好很好很好，她坐诊的时候特别认真，给弟子治伤从不会不耐烦。我也投了程师姐一票。那个……如果大家还没想好第三票给谁的话，投程师姐好不好？投了的同门，可以来医馆领一朵我亲手压的干花……虽然不值什么，但是很好看。</div>
-                <div class="actions"><button>♡ 78</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 78</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 5楼 -->
@@ -621,7 +648,7 @@
                     <span class="floor-num">#5</span>
                 </div>
                 <div class="body">哈哈哈你是栖梧馆的蔡可师妹吗？那我必须要领这朵小花花了，给程师姐投一票！🌸</div>
-                <div class="actions"><button>♡ 32</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 32</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 6楼 -->
@@ -635,7 +662,7 @@
                     <span class="floor-num">#6</span>
                 </div>
                 <div class="body">不过蔡可师妹，那花是医馆种的，还是后山采的？</div>
-                <div class="actions"><button>♡ 12</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 12</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 7楼 -->
@@ -649,7 +676,7 @@
                     <span class="floor-num">#7</span>
                 </div>
                 <div class="body">有后山摘的，也有在浮生树下捡的浮生花，晾干了可以入药，也可以留着赏玩。</div>
-                <div class="actions"><button>♡ 18</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 18</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 8楼 · 符修院大师兄横幅 -->
@@ -673,7 +700,7 @@
                         <span class="highlight">（投其他大人者也可享受九八折友情价——你们稍微考虑一下棋大人嘛）</span></div>
                     </div>
                 </div>
-                <div class="actions"><button>♡ 234</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 234</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 9楼 -->
@@ -687,7 +714,7 @@
                     <span class="floor-num">#9</span>
                 </div>
                 <div class="body">我去？！符修院是不是疯了？九折券？栾方棋亲笔符纸优先预订？大师兄你没在开玩笑吧？</div>
-                <div class="actions"><button>♡ 56</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 56</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 10楼 -->
@@ -705,7 +732,7 @@
                     而其中除了棋大人的最难买，便是我符修院大师兄所绘。今日投棋大人一票，凭此帖拓印找我领九折券，绝不食言！
                     <div style="margin-top:4px;color:var(--text-muted);font-size:0.8rem;">（投票进度条上栾方棋的票数肉眼可见地跳了一小截）</div>
                 </div>
-                <div class="actions"><button>♡ 167</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 167</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 11楼 -->
@@ -719,7 +746,7 @@
                     <span class="floor-num">#11</span>
                 </div>
                 <div class="body">我去，捡到大便宜了！我投我投，算我一个！</div>
-                <div class="actions"><button>♡ 34</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 34</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 12楼 · 璟大人后援会横幅 -->
@@ -743,7 +770,7 @@
                         <span class="highlight">十两够你在人间吃十顿好的，魂珠够你淬炼武器三年</span></div>
                     </div>
                 </div>
-                <div class="actions"><button>♡ 312</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 312</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 13楼 -->
@@ -757,7 +784,7 @@
                     <span class="floor-num">#13</span>
                 </div>
                 <div class="body">……你？？</div>
-                <div class="actions"><button>♡ 78</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 78</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 14楼 -->
@@ -771,7 +798,7 @@
                     <span class="floor-num">#14</span>
                 </div>
                 <div class="body">十两？中品魂珠？？这位同门你家里是开钱庄的吗？？</div>
-                <div class="actions"><button>♡ 56</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 56</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 15楼 -->
@@ -785,7 +812,7 @@
                     <span class="floor-num">#15</span>
                 </div>
                 <div class="body">你不用管我哪来的钱，你只需要知道投璟大人就能拿钱，划算不划算你自己算。</div>
-                <div class="actions"><button>♡ 189</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 189</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 16楼 -->
@@ -799,7 +826,7 @@
                     <span class="floor-num">#16</span>
                 </div>
                 <div class="body">等等，这成何体统！你们这样选出来的到底是颜值第一，还是财富第一？罗首席和林大人那边怎么没人说话？</div>
-                <div class="actions"><button>♡ 45</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 45</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 17楼 -->
@@ -813,7 +840,7 @@
                     <span class="floor-num">#17</span>
                 </div>
                 <div class="body">别提了，归终殿两大著名穷鬼派系：我们枪阁和刀堂。枪阁平日保养长枪灵器就要花去大半月例，哪像符修院那样有商机？而且淮大人根本不需要拉票，往那儿一站便是第一。倒是首席大人……刀堂确实揭不开锅了。</div>
-                <div class="actions"><button>♡ 123</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 123</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 18楼 -->
@@ -827,7 +854,7 @@
                     <span class="floor-num">#18</span>
                 </div>
                 <div class="body">就是就是，首席大人门下穷得叮当响，哪有余钱搞这些。</div>
-                <div class="actions"><button>♡ 67</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 67</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 19楼 -->
@@ -841,7 +868,7 @@
                     <span class="floor-num">#19</span>
                 </div>
                 <div class="body">诸位稍安勿躁。前面的就算了，毕竟是我没提前说清规矩。但从现在开始，帖中严禁买卖票数、以物易票。若再发现，直接取消当日投票资格。诸位都是归终殿弟子，这点公允还是要守的。</div>
-                <div class="actions"><button>♡ 234</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 234</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 20楼 -->
@@ -855,7 +882,7 @@
                     <span class="floor-num">#20</span>
                 </div>
                 <div class="body">楼主发话了，那便文斗吧。</div>
-                <div class="actions"><button>♡ 45</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 45</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 21楼 -->
@@ -869,7 +896,7 @@
                     <span class="floor-num">#21</span>
                 </div>
                 <div class="body">正合我意。</div>
-                <div class="actions"><button>♡ 34</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 34</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 22楼 · 璟派应援词 -->
@@ -883,7 +910,7 @@
                     <span class="floor-num">#22</span>
                 </div>
                 <div class="body">璟大人者，归终之玉树也。其姿如孤松临雪，其目似寒潭映星。行时衣袂不染尘，立时周遭自生辉。曾为九五之尊，却不矜不伐；今为引渡之人，仍端方自持。偶一轻笑，满堂生春。请支持我们璟大人，谢谢！</div>
-                <div class="actions"><button>♡ 289</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 289</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 23楼 · 符修院应援词 -->
@@ -897,7 +924,7 @@
                     <span class="floor-num">#23</span>
                 </div>
                 <div class="body">棋大人者，天地之灵秀所钟也。昔年京城大劫，生灵涂炭，棋大人以身为祭，燃烧本源，一夜白头，护佑万千生魂。其黑发之时，温润如玉，眉目清朗，如春风化雨；其白发之后，神性昭然，圣洁无瑕，似谪仙临尘。执符笔则山河静，抚琴弦则鬼神安。待人宽厚，授业谆谆，凡有所问，必有所答。其姿非止于皮相，乃魂魄之光辉，舍己之伟岸。投棋大人者，非独赏其容，更是敬其德，仰其行，慕其风骨也！</div>
-                <div class="actions"><button>♡ 345</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 345</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 24楼 -->
@@ -911,7 +938,7 @@
                     <span class="floor-num">#24</span>
                 </div>
                 <div class="body">…………</div>
-                <div class="actions"><button>♡ 67</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 67</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 25楼 -->
@@ -925,7 +952,7 @@
                     <span class="floor-num">#25</span>
                 </div>
                 <div class="body">…………</div>
-                <div class="actions"><button>♡ 45</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 45</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 26楼 -->
@@ -939,7 +966,7 @@
                     <span class="floor-num">#26</span>
                 </div>
                 <div class="body">……你们符修院和那位璟大人后援会的同门，写东西都这么厉害的吗？他们到底在说什么？我每个字都认识，连在一起就完全听不懂了。</div>
-                <div class="actions"><button>♡ 78</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 78</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 27楼 -->
@@ -953,7 +980,7 @@
                     <span class="floor-num">#27</span>
                 </div>
                 <div class="body">别说了，我也没看懂。什么叫“其姿如孤松临雪”？什么叫“天地之灵秀所钟也”？你就说他长啥样吧。</div>
-                <div class="actions"><button>♡ 123</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 123</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 28楼 -->
@@ -967,7 +994,7 @@
                     <span class="floor-num">#28</span>
                 </div>
                 <div class="body">……姿容昳丽，气质矜贵，如明珠在侧，熠熠生辉。</div>
-                <div class="actions"><button>♡ 167</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 167</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 29楼 -->
@@ -981,7 +1008,7 @@
                     <span class="floor-num">#29</span>
                 </div>
                 <div class="body">……眉目清朗，轮廓温润，如春风化雨一般。</div>
-                <div class="actions"><button>♡ 189</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 189</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 30楼 -->
@@ -995,7 +1022,7 @@
                     <span class="floor-num">#30</span>
                 </div>
                 <div class="body">你们这个“者”来“者”去的，我真是……算了，不过你这么一说我好像想起来了，那个棋大人是不是那个看起来脾气很好的人？</div>
-                <div class="actions"><button>♡ 56</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 56</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 31楼 -->
@@ -1009,7 +1036,7 @@
                     <span class="floor-num">#31</span>
                 </div>
                 <div class="body">……对。就是那个看起来脾气很好的人。</div>
-                <div class="actions"><button>♡ 78</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 78</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 32楼 -->
@@ -1023,7 +1050,7 @@
                     <span class="floor-num">#32</span>
                 </div>
                 <div class="body">早说嘛，写这么长干嘛，我投了。</div>
-                <div class="actions"><button>♡ 45</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 45</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 33楼 -->
@@ -1037,7 +1064,7 @@
                     <span class="floor-num">#33</span>
                 </div>
                 <div class="body">……虽然表述方式朴实了一些，但意图是好的，我替棋大人谢谢这位同门。</div>
-                <div class="actions"><button>♡ 34</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 34</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 34楼 -->
@@ -1051,7 +1078,7 @@
                     <span class="floor-num">#34</span>
                 </div>
                 <div class="body">不客气，你那个八折券还有吗？</div>
-                <div class="actions"><button>♡ 23</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 23</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 35楼 -->
@@ -1065,7 +1092,7 @@
                     <span class="floor-num">#35</span>
                 </div>
                 <div class="body">私下说，私下说。</div>
-                <div class="actions"><button>♡ 56</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 56</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 36楼 -->
@@ -1079,7 +1106,7 @@
                     <span class="floor-num">#36</span>
                 </div>
                 <div class="body">我听到了，私下也不行。</div>
-                <div class="actions"><button>♡ 89</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 89</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 37楼 -->
@@ -1093,7 +1120,7 @@
                     <span class="floor-num">#37</span>
                 </div>
                 <div class="body">……好的。</div>
-                <div class="actions"><button>♡ 34</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 34</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 38楼 -->
@@ -1107,7 +1134,7 @@
                     <span class="floor-num">#38</span>
                 </div>
                 <div class="body">话说回来，拉了这么久的票，你们看进度条，第一还是林淮啊。淮大人那个票数真的稳如泰山。大家嘴上说着这个好看那个好看，身体还是很诚实的。</div>
-                <div class="actions"><button>♡ 123</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 123</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 39楼 -->
@@ -1121,7 +1148,7 @@
                     <span class="floor-num">#39</span>
                 </div>
                 <div class="body">那确实，之前淮大人可是公认的归终殿第一美人，据说棋大人就是为此……咳咳，大家都懂吧，两位大人都成亲这么多年了。</div>
-                <div class="actions"><button>♡ 178</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 178</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 40楼 -->
@@ -1135,7 +1162,7 @@
                     <span class="floor-num">#40</span>
                 </div>
                 <div class="body">懂的懂的。不过说起来，怎么很少看到给罗首席拉票的？刀堂的人呢？</div>
-                <div class="actions"><button>♡ 56</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 56</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 41楼 -->
@@ -1149,7 +1176,7 @@
                     <span class="floor-num">#41</span>
                 </div>
                 <div class="body">刀修院的人？三分之一和枪阁一样，是拿刀的手拿不动笔的，楼里那些板板正正说"给首席投一票"的就是我们；三分之一是战斗狂，觉得这种投票无聊得很，不在乎；还有三分之一……是穷鬼，被符修院和砺锋阁的折扣魂珠吸走了。</div>
-                <div class="actions"><button>♡ 234</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 234</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 42楼 -->
@@ -1163,7 +1190,7 @@
                     <span class="floor-num">#42</span>
                 </div>
                 <div class="body">张师兄这话糙了点，但确实是实情。</div>
-                <div class="actions"><button>♡ 67</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 67</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- 43楼 -->
@@ -1177,7 +1204,7 @@
                     <span class="floor-num">#43</span>
                 </div>
                 <div class="body">首席大人不需要拉票！那种从战场上杀出来的威严，懂的人自然懂！</div>
-                <div class="actions"><button>♡ 156</button><button>↩ 回复</button></div>
+                <div class="actions"><button>♥︎ 156</button><button>↩︎ 回复</button></div>
             </div>
 
             <!-- ============================================================ -->
@@ -1196,7 +1223,7 @@
                     <strong>【第一日最终统计】</strong><br>
                     共收得投笺两千一百八十六笺。<br><br>
                     <table class="poll-table">
-                        <tr><th>名次</th><th>姓名</th><th>票数</th></tr>
+                        <tr><th class="rank">名次</th><th>姓名</th><th>票数</th></tr>
                         <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>523</td></tr>
                         <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>391</td></tr>
                         <tr><td class="rank">3</td><td class="name-cell">栾方棋（第五席）</td><td>348</td></tr>
@@ -1219,8 +1246,8 @@
                     另，今日争得凶的几位同门，夜里莫要打架。
                 </div>
                 <div class="actions">
-                    <button>♡ 567</button>
-                    <button>↩ 回复</button>
+                    <button>♥︎ 567</button>
+                    <button>↩︎ 回复</button>
                 </div>
             </div>
 
