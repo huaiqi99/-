@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>归终殿 · 惊鸿榜后续</title>
+    <style>
+        :root {
+            --bg-body: #f7f4ef;
+            --bg-card: #ffffff;
+            --bg-chat-left: #f0ece6;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --border-light: #ece6de;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --transition: 0.3s ease;
+            --color-luan: #b03a2a;
+            --color-luan-bg: rgba(176, 58, 42, 0.08);
+            --color-huai: #2a6b8a;
+            --color-huai-bg: rgba(42, 107, 138, 0.08);
+            --color-cheng: #5a8a7a;
+            --color-cheng-bg: rgba(90, 138, 122, 0.08);
+            --color-luo: #7b4b8a;
+            --color-luo-bg: rgba(123, 75, 138, 0.08);
+            --color-jing: #c9a84b;
+            --color-jing-bg: rgba(201, 168, 75, 0.08);
+        }
+        [data-theme="dark"] {
+            --bg-body: #181614;
+            --bg-card: #24201c;
+            --bg-chat-left: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #9a948c;
+            --text-muted: #6a6560;
+            --border-light: #35302a;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --color-luan: #b05a4a;
+            --color-luan-bg: rgba(176, 90, 74, 0.10);
+            --color-huai: #4a8baa;
+            --color-huai-bg: rgba(74, 139, 170, 0.10);
+            --color-cheng: #6a9a8a;
+            --color-cheng-bg: rgba(106, 154, 138, 0.10);
+            --color-luo: #9b6baa;
+            --color-luo-bg: rgba(155, 107, 170, 0.10);
+            --color-jing: #dbb85c;
+            --color-jing-bg: rgba(219, 184, 92, 0.10);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+        .float-btn:hover {
+            border-color: #b03a2a;
+            color: #b03a2a;
+        }
+        .float-btn .icon { font-size: 0.9rem; }
+
+        #app {
+            max-width: 680px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+        .page-title .deco { color: #b03a2a; margin: 0 4px; }
+
+        .chat-window {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 520px;
+            max-height: 70vh;
+            transition: border-color var(--transition);
+        }
+        .chat-window:hover { border-color: #b03a2a; }
+
+        .chat-titlebar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+            background: var(--bg-card);
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .chat-titlebar .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-titlebar .left .dots {
+            display: flex;
+            gap: 4px;
+        }
+        .chat-titlebar .left .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-light);
+        }
+        .chat-titlebar .left .dot.r { background: #e05a4a; }
+        .chat-titlebar .left .dot.y { background: #e8b84a; }
+        .chat-titlebar .left .dot.g { background: #5aaa6a; }
+        .chat-titlebar .title-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+        .chat-titlebar .title-text .names {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .chat-titlebar .title-text .names .av {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .chat-titlebar .title-text .names .av.a { color: var(--color-luan); }
+        .chat-titlebar .title-text .names .av.b { color: var(--color-huai); }
+        .chat-titlebar .title-text .names .av.c { color: var(--color-cheng); }
+        .chat-titlebar .title-text .names .av.d { color: var(--color-luo); }
+        .chat-titlebar .title-text .names .av.e { color: var(--color-jing); }
+        .chat-titlebar .title-text .names .arrow {
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            margin: 0 2px;
+        }
+
+        .chat-tabs {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .chat-tab {
+            padding: 4px 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+        .chat-tab:hover {
+            border-color: var(--text-muted);
+            color: var(--text-secondary);
+        }
+        .chat-tab.active {
+            border-color: #b03a2a;
+            color: #b03a2a;
+            background: rgba(176, 58, 42, 0.06);
+        }
+        .chat-tab .sym { margin-right: 2px; }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-height: 100px;
+            scroll-behavior: smooth;
+        }
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--bg-card-alt);
+            border-radius: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        .msg {
+            max-width: 78%;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            word-break: break-word;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .msg.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .msg.left {
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .msg.right {
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-panel.huaiqi .msg.left {
+            background: var(--color-luan-bg);
+            color: var(--color-luan);
+        }
+        .chat-panel.huaiqi .msg.right {
+            background: var(--color-huai-bg);
+            color: var(--color-huai);
+        }
+        .chat-panel.xiujing .msg.left {
+            background: var(--color-luo-bg);
+            color: var(--color-luo);
+        }
+        .chat-panel.xiujing .msg.right {
+            background: var(--color-jing-bg);
+            color: var(--color-jing);
+        }
+        .chat-panel.muqi .msg.left {
+            background: var(--color-cheng-bg);
+            color: var(--color-cheng);
+        }
+        .chat-panel.muqi .msg.right {
+            background: var(--color-cheng-bg);
+            color: var(--color-cheng);
+        }
+
+        .chat-footer {
+            padding: 8px 16px 10px 16px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+        }
+        .chat-footer .input-placeholder {
+            flex: 1;
+            padding: 4px 12px;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg-card-alt);
+            cursor: default;
+            user-select: none;
+        }
+        .chat-footer .send-placeholder {
+            padding: 4px 14px;
+            border-radius: 16px;
+            border: none;
+            background: var(--border-light);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: default;
+            user-select: none;
+        }
+
+        .chat-panel {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        .chat-panel.active {
+            display: flex;
+        }
+        .chat-panel .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 0 10px 30px 10px; }
+            #app { padding: 14px 0 0 0; }
+            .chat-window { height: 460px; max-height: 75vh; }
+            .chat-titlebar { padding: 8px 12px; }
+            .chat-titlebar .left .dot { width: 8px; height: 8px; }
+            .chat-titlebar .title-text { font-size: 0.7rem; }
+            .chat-tab { font-size: 0.6rem; padding: 3px 8px; }
+            .chat-messages { padding: 10px 12px 8px 12px; }
+            .msg { font-size: 0.8rem; max-width: 85%; padding: 5px 10px; }
+            .chat-footer { padding: 6px 12px 8px 12px; }
+            .chat-footer .input-placeholder { font-size: 0.65rem; padding: 3px 10px; }
+            .chat-footer .send-placeholder { font-size: 0.6rem; padding: 3px 10px; }
+        }
+        @media (max-width: 420px) {
+            .chat-window { height: 400px; max-height: 80vh; }
+            .chat-titlebar .left .dot { display: none; }
+            .chat-tab { font-size: 0.55rem; padding: 2px 6px; }
+            .chat-titlebar .title-text .names .av { font-size: 0.6rem; }
+        }
+    </style>
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch(e) {}
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark'
+                    ? '<span class="icon">☀️</span> 日间'
+                    : '<span class="icon">🌙</span> 夜间';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('themeBtn');
+            if (!btn) return;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            btn.innerHTML = isDark
+                ? '<span class="icon">☀️</span> 日间'
+                : '<span class="icon">🌙</span> 夜间';
+        });
+    </script>
+</head>
+<body>
+
+    <div class="float-group">
+        <a class="float-btn" href="#">
+            <span class="icon">←</span> 返回列表
+        </a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
+    </div>
+
+    <div id="app">
+
+        <div class="page-title">
+            <span class="deco">✦</span> 归终殿 · 惊鸿榜后日谈 <span class="deco">✦</span>
+        </div>
+
+        <div class="chat-window">
+
+            <div class="chat-titlebar">
+                <div class="left">
+                    <div class="dots">
+                        <span class="dot r"></span>
+                        <span class="dot y"></span>
+                        <span class="dot g"></span>
+                    </div>
+                    <span class="title-text" id="titleText">
+                        <span class="names">
+                            <span class="av a">✿</span>
+                            <span class="arrow">·</span>
+                            <span class="av b">✦</span>
+                        </span>
+                    </span>
+                </div>
+                <div class="chat-tabs">
+                    <button class="chat-tab active" data-panel="huaiqi" onclick="switchPanel('huaiqi')">
+                        <span class="sym">✿</span>淮棋
+                    </button>
+                    <button class="chat-tab" data-panel="xiujing" onclick="switchPanel('xiujing')">
+                        <span class="sym">◈</span>修璟
+                    </button>
+                    <button class="chat-tab" data-panel="muqi" onclick="switchPanel('muqi')">
+                        <span class="sym">◉</span>木栖
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-panel huaiqi active" id="panel-huaiqi">
+                <div class="chat-messages" id="msgs-huaiqi"></div>
+            </div>
+
+            <div class="chat-panel xiujing" id="panel-xiujing">
+                <div class="chat-messages" id="msgs-xiujing"></div>
+            </div>
+
+            <div class="chat-panel muqi" id="panel-muqi">
+                <div class="chat-messages" id="msgs-muqi"></div>
+            </div>
+
+            <div class="chat-footer">
+                <span class="input-placeholder">输入消息…</span>
+                <span class="send-placeholder">发送</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const chatData = {
+            huaiqi: {
+                title: { left: '✿', right: '✦', label: '淮棋' },
+                messages: [
+                    { side: 'left', text: '林淮，你看到那个榜了吗？' },
+                    { side: 'right', text: '嗯。' },
+                    { side: 'left', text: '你第一诶。' },
+                    { side: 'right', text: '无聊。' },
+                    { side: 'left', text: '我怎么觉得你有点高兴？' },
+                    { side: 'right', text: '……没有。' },
+                    { side: 'left', text: '你明明嘴角都翘了。' },
+                    { side: 'right', text: '你看错了。' },
+                    { side: 'left', text: '行吧行吧，你说没有就没有。反正我看到你名字在第一的时候，还挺开心的。' },
+                    { side: 'right', text: '嗯。' },
+                ]
+            },
+            xiujing: {
+                title: { left: '❖', right: '◈', label: '修璟' },
+                messages: [
+                    { side: 'left', text: '听说你今天被弟子堵了？' },
+                    { side: 'right', text: '……消息传得这么快？' },
+                    { side: 'left', text: '我后援会的人第一时间就转给我了。' },
+                    { side: 'right', text: '后援会？' },
+                    { side: 'left', text: '你不知道？归终殿有个"璟大人后援会"，带头的是个很有钱的女弟子。' },
+                    { side: 'right', text: '……我现在知道了。' },
+                    { side: 'left', text: '榜上我第二，你第四。' },
+                    { side: 'right', text: '……你想说什么？' },
+                    { side: 'left', text: '没什么。就是觉得挺好的。' },
+                    { side: 'right', text: '……嗯。' },
+                ]
+            },
+            muqi: {
+                title: { left: '◉', right: '◉', label: '木栖' },
+                messages: [
+                    { side: 'left', text: '师姐师姐你第三！！！' },
+                    { side: 'right', text: '……什么第三？' },
+                    { side: 'left', text: '惊鸿榜！你第三！' },
+                    { side: 'right', text: '……你们还真的搞了投票？我还以为蔡可你只是说着玩的。' },
+                    { side: 'left', text: '大家都在投！你比首席还高！' },
+                    { side: 'right', text: '罗修知道这事吗？' },
+                    { side: 'left', text: '他知道……他还被弟子当面问什么时候和璟大人成亲。' },
+                    { side: 'right', text: '……这群年轻人。' },
+                    { side: 'left', text: '师姐你是不是有点高兴？你嘴角动了！' },
+                    { side: 'right', text: '……没有。药杵拿稳。' },
+                ]
+            }
+        };
+
+        const panelStates = {
+            huaiqi: { index: 0, done: false },
+            xiujing: { index: 0, done: false },
+            muqi: { index: 0, done: false },
+        };
+
+        let currentPanel = 'huaiqi';
+
+        function renderPanel(panelKey) {
+            const data = chatData[panelKey];
+            const container = document.getElementById('msgs-' + panelKey);
+            if (!container) return;
+            container.innerHTML = '';
+            data.messages.forEach((msg) => {
+                const el = document.createElement('div');
+                el.className = `msg ${msg.side}`;
+                el.textContent = msg.text;
+                container.appendChild(el);
+            });
+            panelStates[panelKey].index = 0;
+            panelStates[panelKey].done = false;
+            const allMsgs = container.querySelectorAll('.msg');
+            if (allMsgs.length > 0) {
+                allMsgs[0].classList.add('show');
+                panelStates[panelKey].index = 1;
+            }
+        }
+
+        function loadNextMessage(panelKey) {
+            const state = panelStates[panelKey];
+            if (state.done) return;
+            const container = document.getElementById('msgs-' + panelKey);
+            if (!container) return;
+            const allMsgs = container.querySelectorAll('.msg');
+            if (state.index >= allMsgs.length) {
+                state.done = true;
+                return;
+            }
+            allMsgs[state.index].classList.add('show');
+            state.index++;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function switchPanel(panelKey) {
+            if (panelKey === currentPanel) return;
+            document.querySelectorAll('.chat-panel').forEach(el => el.classList.remove('active'));
+            document.getElementById('panel-' + panelKey).classList.add('active');
+            document.querySelectorAll('.chat-tab').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.panel === panelKey) el.classList.add('active');
+            });
+            const data = chatData[panelKey];
+            const titleEl = document.getElementById('titleText');
+            if (titleEl && data) {
+                const leftSym = data.title.left;
+                const rightSym = data.title.right;
+                let colorClass = '';
+                if (panelKey === 'huaiqi') colorClass = 'a b';
+                else if (panelKey === 'xiujing') colorClass = 'd e';
+                else if (panelKey === 'muqi') colorClass = 'c c';
+                const colors = colorClass.split(' ');
+                titleEl.innerHTML = `
+                    <span class="names">
+                        <span class="av ${colors[0]}">${leftSym}</span>
+                        <span class="arrow">·</span>
+                        <span class="av ${colors[1]}">${rightSym}</span>
+                        <span style="font-weight:400;color:var(--text-muted);font-size:0.65rem;margin-left:4px;">${data.title.label}</span>
+                    </span>
+                `;
+            }
+            currentPanel = panelKey;
+            const container = document.getElementById('msgs-' + panelKey);
+            if (container && container.children.length === 0) {
+                renderPanel(panelKey);
+            } else {
+                const msgsContainer = document.querySelector(`#panel-${panelKey} .chat-messages`);
+                if (msgsContainer) msgsContainer.scrollTop = msgsContainer.scrollHeight;
+            }
+        }
+
+        function initAllPanels() {
+            ['huaiqi', 'xiujing', 'muqi'].forEach(key => {
+                renderPanel(key);
+                const container = document.getElementById('msgs-' + key);
+                if (container) {
+                    const msgs = container.querySelectorAll('.msg');
+                    msgs.forEach((el, i) => { if (i > 0) el.classList.remove('show'); });
+                    panelStates[key].index = 1;
+                    container.scrollTop = 0;
+                }
+            });
+            switchPanel('huaiqi');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initAllPanels();
+            document.querySelectorAll('.chat-panel .chat-messages').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    if (e.target.closest('.msg')) return;
+                    const panel = this.closest('.chat-panel');
+                    if (!panel) return;
+                    const id = panel.id.replace('panel-', '');
+                    loadNextMessage(id);
+                });
+            });
+        });
+
+        window.switchPanel = switchPanel;
+    </script>
+
+</body>
+</html>
