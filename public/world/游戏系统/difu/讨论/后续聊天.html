@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>归终殿 · 惊鸿榜后续</title>
     <style>
         :root {
@@ -12,6 +12,7 @@
             --text-primary: #2c2c2c;
             --text-secondary: #4a4a4a;
             --text-muted: #8a8a8a;
+            --text-white: #ffffff;
             --border-light: #ece6de;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --radius: 12px;
@@ -35,6 +36,7 @@
             --text-primary: #cfc8c0;
             --text-secondary: #9a948c;
             --text-muted: #6a6560;
+            --text-white: #f0ece6;
             --border-light: #35302a;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
             --color-luan: #b05a4a;
@@ -56,35 +58,36 @@
             transition: background var(--transition), color var(--transition);
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            padding: 0 16px 40px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 0 16px;
         }
 
+        /* ===== 右上角悬浮组 ===== */
         .float-group {
             position: fixed;
-            top: 20px;
-            right: 24px;
+            top: 16px;
+            right: 20px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             align-items: flex-end;
         }
         .float-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.7rem;
+            border-radius: 20px;
+            padding: 4px 12px 4px 10px;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all var(--transition);
             font-family: inherit;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             box-shadow: var(--shadow-sm);
             letter-spacing: 0.3px;
             text-decoration: none;
@@ -93,28 +96,35 @@
             border-color: #b03a2a;
             color: #b03a2a;
         }
-        .float-btn .icon { font-size: 0.9rem; }
+        .float-btn .icon { font-size: 0.8rem; }
 
         #app {
-            max-width: 680px;
+            max-width: 860px;
             margin: 0 auto;
             width: 100%;
-            padding: 20px 0 0 0;
+            padding: 12px 0 0 0;
             flex: 1;
             display: flex;
             flex-direction: column;
+            height: 100vh;
+            max-height: 100vh;
         }
 
         .page-title {
             text-align: center;
             font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             color: var(--text-primary);
             letter-spacing: 0.5px;
+            flex-shrink: 0;
         }
-        .page-title .deco { color: #b03a2a; margin: 0 4px; }
+        .page-title .deco {
+            color: #b03a2a;
+            margin: 0 4px;
+        }
 
+        /* ===== 聊天窗口 ===== */
         .chat-window {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
@@ -123,27 +133,33 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 520px;
-            max-height: 70vh;
+            flex: 1;
+            min-height: 0;
             transition: border-color var(--transition);
+            height: 100%;
+            max-height: 100%;
         }
-        .chat-window:hover { border-color: #b03a2a; }
+        .chat-window:hover {
+            border-color: #b03a2a;
+        }
 
+        /* ===== 标题栏 ===== */
         .chat-titlebar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-bottom: 1px solid var(--border-light);
             flex-shrink: 0;
             background: var(--bg-card);
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
         .chat-titlebar .left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex-shrink: 0;
         }
         .chat-titlebar .left .dots {
             display: flex;
@@ -162,15 +178,15 @@
             font-size: 0.8rem;
             font-weight: 500;
             color: var(--text-secondary);
-            margin-left: 4px;
+            white-space: nowrap;
         }
         .chat-titlebar .title-text .names {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         .chat-titlebar .title-text .names .av {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
         .chat-titlebar .title-text .names .av.a { color: var(--color-luan); }
@@ -180,45 +196,57 @@
         .chat-titlebar .title-text .names .av.e { color: var(--color-jing); }
         .chat-titlebar .title-text .names .arrow {
             color: var(--text-muted);
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             margin: 0 2px;
         }
+        .chat-titlebar .title-text .label {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            margin-left: 4px;
+        }
 
+        /* ===== 切换标签（放在标题栏中间） ===== */
         .chat-tabs {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-shrink: 0;
+            background: var(--bg-card-alt);
+            border-radius: 16px;
+            padding: 2px;
+            border: 1px solid var(--border-light);
         }
         .chat-tab {
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 14px;
-            border: 1px solid var(--border-light);
+            border: none;
             background: transparent;
             color: var(--text-muted);
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             cursor: pointer;
             transition: all var(--transition);
             font-family: inherit;
+            white-space: nowrap;
         }
         .chat-tab:hover {
-            border-color: var(--text-muted);
             color: var(--text-secondary);
         }
         .chat-tab.active {
-            border-color: #b03a2a;
+            background: var(--bg-card);
             color: #b03a2a;
-            background: rgba(176, 58, 42, 0.06);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
         .chat-tab .sym { margin-right: 2px; }
 
+        /* ===== 消息区域 ===== */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 14px 16px 10px 16px;
+            padding: 12px 14px 8px 14px;
             display: flex;
             flex-direction: column;
             gap: 4px;
-            min-height: 100px;
+            min-height: 60px;
             scroll-behavior: smooth;
         }
         .chat-messages::-webkit-scrollbar {
@@ -236,9 +264,10 @@
             background: var(--text-muted);
         }
 
+        /* ===== 消息气泡 ===== */
         .msg {
             max-width: 78%;
-            padding: 6px 12px;
+            padding: 5px 12px;
             border-radius: 12px;
             font-size: 0.85rem;
             line-height: 1.7;
@@ -260,6 +289,7 @@
             border-bottom-right-radius: 4px;
         }
 
+        /* ===== 各对话配色 ===== */
         .chat-panel.huaiqi .msg.left {
             background: var(--color-luan-bg);
             color: var(--color-luan);
@@ -285,12 +315,28 @@
             color: var(--color-cheng);
         }
 
+        /* ===== 面板容器 ===== */
+        .chat-panel {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        .chat-panel.active {
+            display: flex;
+        }
+        .chat-panel .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* ===== 底部输入栏（固定） ===== */
         .chat-footer {
-            padding: 8px 16px 10px 16px;
+            padding: 6px 14px 8px 14px;
             border-top: 1px solid var(--border-light);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
             background: var(--bg-card);
         }
@@ -316,39 +362,143 @@
             user-select: none;
         }
 
-        .chat-panel {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-        }
-        .chat-panel.active {
-            display: flex;
-        }
-        .chat-panel .chat-messages {
-            flex: 1;
-            overflow-y: auto;
+        /* ===== 响应式 ===== */
+        @media (min-width: 768px) {
+            #app {
+                padding: 16px 0 20px 0;
+                height: 90vh;
+                max-height: 720px;
+            }
+            .chat-window {
+                height: 100%;
+                max-height: 100%;
+            }
+            .chat-titlebar {
+                padding: 10px 18px;
+            }
+            .chat-messages {
+                padding: 14px 18px 10px 18px;
+            }
+            .msg {
+                font-size: 0.88rem;
+                max-width: 70%;
+            }
+            .float-group {
+                top: 20px;
+                right: 24px;
+            }
+            .float-btn {
+                padding: 6px 14px 6px 12px;
+                font-size: 0.7rem;
+            }
+            .chat-tab {
+                font-size: 0.7rem;
+                padding: 4px 14px;
+            }
         }
 
-        @media (max-width: 600px) {
-            body { padding: 0 10px 30px 10px; }
-            #app { padding: 14px 0 0 0; }
-            .chat-window { height: 460px; max-height: 75vh; }
-            .chat-titlebar { padding: 8px 12px; }
-            .chat-titlebar .left .dot { width: 8px; height: 8px; }
-            .chat-titlebar .title-text { font-size: 0.7rem; }
-            .chat-tab { font-size: 0.6rem; padding: 3px 8px; }
-            .chat-messages { padding: 10px 12px 8px 12px; }
-            .msg { font-size: 0.8rem; max-width: 85%; padding: 5px 10px; }
-            .chat-footer { padding: 6px 12px 8px 12px; }
-            .chat-footer .input-placeholder { font-size: 0.65rem; padding: 3px 10px; }
-            .chat-footer .send-placeholder { font-size: 0.6rem; padding: 3px 10px; }
+        @media (max-width: 767px) {
+            body {
+                padding: 0 6px;
+            }
+            #app {
+                padding: 6px 0 0 0;
+                height: 100vh;
+                max-height: 100vh;
+            }
+            .chat-window {
+                border-radius: 10px;
+                height: 100%;
+                max-height: 100%;
+            }
+            .chat-titlebar {
+                padding: 6px 10px;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .chat-titlebar .left .dots {
+                display: none;
+            }
+            .chat-titlebar .left .title-text {
+                font-size: 0.7rem;
+            }
+            .chat-titlebar .left .title-text .names .av {
+                font-size: 0.65rem;
+            }
+            .chat-tabs {
+                padding: 2px;
+                border-radius: 12px;
+                flex-shrink: 1;
+                min-width: 0;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .chat-tab {
+                font-size: 0.55rem;
+                padding: 2px 8px;
+                white-space: nowrap;
+            }
+            .chat-tab .sym {
+                margin-right: 1px;
+            }
+            .chat-messages {
+                padding: 8px 10px 6px 10px;
+            }
+            .msg {
+                font-size: 0.78rem;
+                max-width: 85%;
+                padding: 4px 10px;
+            }
+            .chat-footer {
+                padding: 4px 10px 6px 10px;
+            }
+            .chat-footer .input-placeholder {
+                font-size: 0.65rem;
+                padding: 3px 10px;
+            }
+            .chat-footer .send-placeholder {
+                font-size: 0.6rem;
+                padding: 3px 10px;
+            }
+            /* 手机端悬浮按钮更小 */
+            .float-group {
+                top: 8px;
+                right: 10px;
+                gap: 4px;
+            }
+            .float-btn {
+                padding: 3px 8px 3px 6px;
+                font-size: 0.55rem;
+                border-radius: 16px;
+            }
+            .float-btn .icon {
+                font-size: 0.7rem;
+            }
+            .page-title {
+                font-size: 0.8rem;
+                margin-bottom: 6px;
+            }
         }
-        @media (max-width: 420px) {
-            .chat-window { height: 400px; max-height: 80vh; }
-            .chat-titlebar .left .dot { display: none; }
-            .chat-tab { font-size: 0.55rem; padding: 2px 6px; }
-            .chat-titlebar .title-text .names .av { font-size: 0.6rem; }
+
+        @media (max-width: 400px) {
+            .chat-tab {
+                font-size: 0.5rem;
+                padding: 2px 6px;
+            }
+            .chat-titlebar .left .title-text {
+                font-size: 0.6rem;
+            }
+            .chat-titlebar .left .title-text .names .av {
+                font-size: 0.55rem;
+            }
+            .chat-titlebar .left .title-text .label {
+                display: none;
+            }
+            .msg {
+                font-size: 0.72rem;
+                max-width: 90%;
+                padding: 3px 8px;
+            }
         }
     </style>
     <script>
@@ -397,11 +547,11 @@
 <body>
 
     <div class="float-group">
-        <a class="float-btn" href="#">
-            <span class="icon">←</span> 返回列表
+        <a class="float-btn" href="../index.html">
+            <span class="icon">←</span> 返回
         </a>
         <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-            <span class="icon">🌙</span> 夜间
+            <span class="icon">🌙</span>
         </button>
     </div>
 
@@ -411,8 +561,10 @@
             <span class="deco">✦</span> 归终殿 · 惊鸿榜后日谈 <span class="deco">✦</span>
         </div>
 
+        <!-- ===== 聊天窗口 ===== -->
         <div class="chat-window">
 
+            <!-- 标题栏 -->
             <div class="chat-titlebar">
                 <div class="left">
                     <div class="dots">
@@ -425,6 +577,7 @@
                             <span class="av a">✿</span>
                             <span class="arrow">·</span>
                             <span class="av b">✦</span>
+                            <span class="label">淮棋</span>
                         </span>
                     </span>
                 </div>
@@ -439,20 +592,25 @@
                         <span class="sym">◉</span>木栖
                     </button>
                 </div>
+                <div style="width:20px;flex-shrink:0;"></div>
             </div>
 
+            <!-- ===== 面板1：淮棋 ===== -->
             <div class="chat-panel huaiqi active" id="panel-huaiqi">
                 <div class="chat-messages" id="msgs-huaiqi"></div>
             </div>
 
+            <!-- ===== 面板2：修璟 ===== -->
             <div class="chat-panel xiujing" id="panel-xiujing">
                 <div class="chat-messages" id="msgs-xiujing"></div>
             </div>
 
+            <!-- ===== 面板3：木栖 ===== -->
             <div class="chat-panel muqi" id="panel-muqi">
                 <div class="chat-messages" id="msgs-muqi"></div>
             </div>
 
+            <!-- 底部 -->
             <div class="chat-footer">
                 <span class="input-placeholder">输入消息…</span>
                 <span class="send-placeholder">发送</span>
@@ -463,6 +621,10 @@
     </div>
 
     <script>
+        // ================================================================
+        //  对话数据
+        // ================================================================
+
         const chatData = {
             huaiqi: {
                 title: { left: '✿', right: '✦', label: '淮棋' },
@@ -511,6 +673,10 @@
             }
         };
 
+        // ================================================================
+        //  状态
+        // ================================================================
+
         const panelStates = {
             huaiqi: { index: 0, done: false },
             xiujing: { index: 0, done: false },
@@ -519,19 +685,28 @@
 
         let currentPanel = 'huaiqi';
 
+        // ================================================================
+        //  渲染函数
+        // ================================================================
+
         function renderPanel(panelKey) {
             const data = chatData[panelKey];
             const container = document.getElementById('msgs-' + panelKey);
             if (!container) return;
+
             container.innerHTML = '';
-            data.messages.forEach((msg) => {
+
+            data.messages.forEach((msg, i) => {
                 const el = document.createElement('div');
                 el.className = `msg ${msg.side}`;
                 el.textContent = msg.text;
+                el.dataset.index = i;
                 container.appendChild(el);
             });
+
             panelStates[panelKey].index = 0;
             panelStates[panelKey].done = false;
+
             const allMsgs = container.querySelectorAll('.msg');
             if (allMsgs.length > 0) {
                 allMsgs[0].classList.add('show');
@@ -539,34 +714,28 @@
             }
         }
 
-        function loadNextMessage(panelKey) {
-            const state = panelStates[panelKey];
-            if (state.done) return;
-            const container = document.getElementById('msgs-' + panelKey);
-            if (!container) return;
-            const allMsgs = container.querySelectorAll('.msg');
-            if (state.index >= allMsgs.length) {
-                state.done = true;
-                return;
-            }
-            allMsgs[state.index].classList.add('show');
-            state.index++;
-            container.scrollTop = container.scrollHeight;
-        }
+        // ================================================================
+        //  面板切换
+        // ================================================================
 
         function switchPanel(panelKey) {
             if (panelKey === currentPanel) return;
-            document.querySelectorAll('.chat-panel').forEach(el => el.classList.remove('active'));
+
+            document.querySelectorAll('.chat-panel').forEach(el => {
+                el.classList.remove('active');
+            });
             document.getElementById('panel-' + panelKey).classList.add('active');
+
             document.querySelectorAll('.chat-tab').forEach(el => {
                 el.classList.remove('active');
-                if (el.dataset.panel === panelKey) el.classList.add('active');
+                if (el.dataset.panel === panelKey) {
+                    el.classList.add('active');
+                }
             });
+
             const data = chatData[panelKey];
             const titleEl = document.getElementById('titleText');
             if (titleEl && data) {
-                const leftSym = data.title.left;
-                const rightSym = data.title.right;
                 let colorClass = '';
                 if (panelKey === 'huaiqi') colorClass = 'a b';
                 else if (panelKey === 'xiujing') colorClass = 'd e';
@@ -574,51 +743,87 @@
                 const colors = colorClass.split(' ');
                 titleEl.innerHTML = `
                     <span class="names">
-                        <span class="av ${colors[0]}">${leftSym}</span>
+                        <span class="av ${colors[0]}">${data.title.left}</span>
                         <span class="arrow">·</span>
-                        <span class="av ${colors[1]}">${rightSym}</span>
-                        <span style="font-weight:400;color:var(--text-muted);font-size:0.65rem;margin-left:4px;">${data.title.label}</span>
+                        <span class="av ${colors[1]}">${data.title.right}</span>
+                        <span class="label">${data.title.label}</span>
                     </span>
                 `;
             }
+
             currentPanel = panelKey;
+
             const container = document.getElementById('msgs-' + panelKey);
             if (container && container.children.length === 0) {
                 renderPanel(panelKey);
             } else {
                 const msgsContainer = document.querySelector(`#panel-${panelKey} .chat-messages`);
-                if (msgsContainer) msgsContainer.scrollTop = msgsContainer.scrollHeight;
+                if (msgsContainer) {
+                    msgsContainer.scrollTop = msgsContainer.scrollHeight;
+                }
             }
         }
 
+        // ================================================================
+        //  加载下一条消息
+        // ================================================================
+
+        function loadNextMessage(panelKey) {
+            const state = panelStates[panelKey];
+            if (state.done) return;
+
+            const container = document.getElementById('msgs-' + panelKey);
+            if (!container) return;
+
+            const allMsgs = container.querySelectorAll('.msg');
+            if (state.index >= allMsgs.length) {
+                state.done = true;
+                return;
+            }
+
+            allMsgs[state.index].classList.add('show');
+            state.index++;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+
         function initAllPanels() {
-            ['huaiqi', 'xiujing', 'muqi'].forEach(key => {
+            const panels = ['huaiqi', 'xiujing', 'muqi'];
+            panels.forEach(key => {
                 renderPanel(key);
                 const container = document.getElementById('msgs-' + key);
                 if (container) {
                     const msgs = container.querySelectorAll('.msg');
-                    msgs.forEach((el, i) => { if (i > 0) el.classList.remove('show'); });
+                    msgs.forEach((el, i) => {
+                        if (i > 0) el.classList.remove('show');
+                    });
                     panelStates[key].index = 1;
                     container.scrollTop = 0;
                 }
+                // 滚动加载
+                container.addEventListener('scroll', function() {
+                    const threshold = 20;
+                    const atBottom = this.scrollHeight - this.scrollTop - this.clientHeight <= threshold;
+                    if (atBottom) {
+                        loadNextMessage(key);
+                    }
+                });
+                // 点击空白区域加载
+                container.addEventListener('click', function(e) {
+                    if (e.target.closest('.msg')) return;
+                    loadNextMessage(key);
+                });
             });
+
             switchPanel('huaiqi');
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initAllPanels();
-            document.querySelectorAll('.chat-panel .chat-messages').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    if (e.target.closest('.msg')) return;
-                    const panel = this.closest('.chat-panel');
-                    if (!panel) return;
-                    const id = panel.id.replace('panel-', '');
-                    loadNextMessage(id);
-                });
-            });
-        });
-
         window.switchPanel = switchPanel;
+
+        document.addEventListener('DOMContentLoaded', initAllPanels);
     </script>
 
 </body>
