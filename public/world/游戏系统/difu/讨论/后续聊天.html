@@ -9,7 +9,6 @@
             --bg-body: #f7f4ef;
             --bg-card: #ffffff;
             --bg-card-alt: #f5f2ee;
-            --bg-chat-left: #f0ece6;
             --text-primary: #2c2c2c;
             --text-secondary: #4a4a4a;
             --text-muted: #8a8a8a;
@@ -29,29 +28,28 @@
             --color-jing: #c9a84b;
             --color-jing-bg: rgba(201,168,75,0.08);
             --color-zheng: #b87333;
-            --color-zheng-bg: rgba(184,115,51,0.10);
+            --color-zheng-bg: rgba(184,115,51,0.08);
         }
         [data-theme="dark"] {
             --bg-body: #181614;
             --bg-card: #24201c;
             --bg-card-alt: #2d2824;
-            --bg-chat-left: #2d2824;
             --text-primary: #cfc8c0;
             --text-secondary: #9a948c;
             --text-muted: #6a6560;
             --border-light: #35302a;
-            --color-luan: #b05a4a;
-            --color-luan-bg: rgba(176,90,74,0.10);
-            --color-huai: #4a8baa;
-            --color-huai-bg: rgba(74,139,170,0.10);
-            --color-cheng: #6a9a8a;
-            --color-cheng-bg: rgba(106,154,138,0.10);
-            --color-luo: #9b6baa;
-            --color-luo-bg: rgba(155,107,170,0.10);
-            --color-jing: #dbb85c;
-            --color-jing-bg: rgba(219,184,92,0.10);
-            --color-zheng: #d48a4a;
-            --color-zheng-bg: rgba(212,138,74,0.12);
+            --color-luan: #d06050;
+            --color-luan-bg: rgba(208,96,80,0.12);
+            --color-huai: #5a9aba;
+            --color-huai-bg: rgba(90,154,186,0.12);
+            --color-cheng: #7aaa9a;
+            --color-cheng-bg: rgba(122,170,154,0.12);
+            --color-luo: #a07ab0;
+            --color-luo-bg: rgba(160,122,176,0.12);
+            --color-jing: #e0c070;
+            --color-jing-bg: rgba(224,192,112,0.12);
+            --color-zheng: #d09050;
+            --color-zheng-bg: rgba(208,144,80,0.12);
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -64,7 +62,6 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding: 0;
         }
 
         .float-group {
@@ -104,8 +101,6 @@
             height: 100dvh;
             display: flex;
             flex-direction: column;
-            flex: 1;
-            padding: 0;
         }
 
         .chat-window {
@@ -118,21 +113,18 @@
             flex: 1;
             min-height: 0;
             overflow: hidden;
-            margin: 12px 16px 16px 16px;
-            height: calc(100vh - 28px);
-            height: calc(100dvh - 28px);
+            margin: 12px 16px 16px;
         }
 
         .chat-titlebar {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px 16px 8px 16px;
+            padding: 10px 16px 8px;
             border-bottom: 1px solid var(--border-light);
             flex-shrink: 0;
             background: var(--bg-card);
             gap: 6px;
-            min-height: 56px;
         }
         .chat-titlebar .top-row {
             display: flex;
@@ -144,13 +136,11 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-shrink: 0;
         }
         .chat-titlebar .left .dots { display: flex; gap: 5px; }
         .chat-titlebar .left .dot {
             width: 11px; height: 11px;
             border-radius: 50%;
-            background: var(--border-light);
         }
         .chat-titlebar .left .dot.r { background: #e05a4a; }
         .chat-titlebar .left .dot.y { background: #e8b84a; }
@@ -159,7 +149,6 @@
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--text-secondary);
-            white-space: nowrap;
         }
         .chat-titlebar .title-text .names {
             display: flex;
@@ -181,7 +170,7 @@
             font-size: 0.6rem;
             margin: 0 2px;
         }
-        .chat-titlebar .right-placeholder { width: 48px; flex-shrink: 0; }
+        .chat-titlebar .right-placeholder { width: 48px; }
 
         .chat-tabs {
             display: flex;
@@ -191,7 +180,6 @@
             padding: 3px;
             border-radius: 20px;
             border: 1px solid var(--border-light);
-            margin: 0 auto;
         }
         .chat-tab {
             padding: 4px 16px;
@@ -217,72 +205,82 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 14px 18px 12px 18px;
+            padding: 14px 18px 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            min-height: 60px;
+            gap: 4px;
             scroll-behavior: smooth;
-            background: var(--bg-card);
         }
         .chat-messages::-webkit-scrollbar { width: 4px; }
         .chat-messages::-webkit-scrollbar-track { background: var(--bg-card-alt); border-radius: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
 
+        .msg-unit {
+            max-width: 78%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            pointer-events: none;
+        }
+        .msg-unit.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .msg-unit.left { align-self: flex-start; }
+        .msg-unit.right { align-self: flex-end; }
+        .msg-unit.right .msg-name {
+            align-self: flex-end;
+            padding-right: 4px;
+        }
+        .msg-unit.left .msg-name {
+            align-self: flex-start;
+            padding-left: 4px;
+        }
         .msg-name {
             font-size: 0.7rem;
             color: var(--text-muted);
             margin-bottom: 1px;
-            padding-left: 4px;
-            align-self: flex-start;
-            max-width: 78%;
             line-height: 1.4;
         }
-        .msg {
-            max-width: 78%;
+        .msg-bubble {
             padding: 9px 16px;
             border-radius: 18px;
             font-size: 1rem;
             line-height: 1.7;
             word-break: break-word;
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity 0.35s ease, transform 0.35s ease;
         }
-        .msg.show { opacity: 1; transform: translateY(0); }
-        .msg.left {
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            background: var(--bg-chat-left);
-            color: var(--text-secondary);
-        }
-        .msg.right {
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
+        .msg-unit.left .msg-bubble { border-bottom-left-radius: 4px; }
+        .msg-unit.right .msg-bubble { border-bottom-right-radius: 4px; }
 
-        .chat-panel.huaiqi .msg.left { background: var(--color-luan-bg); color: var(--color-luan); }
-        .chat-panel.huaiqi .msg.right { background: var(--color-huai-bg); color: var(--color-huai); }
-        .chat-panel.xiujing .msg.left { background: var(--color-jing-bg); color: var(--color-jing); }
-        .chat-panel.xiujing .msg.right { background: var(--color-luo-bg); color: var(--color-luo); }
-        .chat-panel.muqi .msg.left,
-        .chat-panel.muqi .msg.right { background: var(--color-cheng-bg); color: var(--color-cheng); }
-        .chat-panel.fuxiu .msg.left { background: var(--bg-chat-left); color: var(--text-secondary); }
-        .chat-panel.fuxiu .msg.right { background: var(--color-zheng-bg); color: var(--color-zheng); }
+        /* 私聊印象色 */
+        .chat-panel.huaiqi .msg-unit.sender-luan .msg-bubble { background: var(--color-luan-bg); color: var(--color-luan); }
+        .chat-panel.huaiqi .msg-unit.sender-huai .msg-bubble { background: var(--color-huai-bg); color: var(--color-huai); }
+        .chat-panel.xiujing .msg-unit.sender-jing .msg-bubble { background: var(--color-jing-bg); color: var(--color-jing); }
+        .chat-panel.xiujing .msg-unit.sender-luo .msg-bubble { background: var(--color-luo-bg); color: var(--color-luo); }
+        .chat-panel.muqi .msg-unit.sender-cheng .msg-bubble { background: var(--color-cheng-bg); color: var(--color-cheng); }
+        .chat-panel.muqi .msg-unit.sender-ke .msg-bubble { background: rgba(138,138,138,0.15); color: #6a6a6a; }
+
+        /* 群聊各人颜色 */
+        .chat-panel.fuxiu .msg-unit.sender-zheng .msg-bubble { background: var(--color-zheng-bg); color: var(--color-zheng); }
+        .chat-panel.fuxiu .msg-unit.sender-zhou .msg-bubble { background: rgba(90,122,154,0.08); color: #4a6a8a; }
+        .chat-panel.fuxiu .msg-unit.sender-chen .msg-bubble { background: rgba(90,154,122,0.08); color: #4a8a6a; }
+        .chat-panel.fuxiu .msg-unit.sender-li .msg-bubble { background: rgba(138,122,154,0.08); color: #7a5a8a; }
+        .chat-panel.fuxiu .msg-unit.sender-zhao .msg-bubble { background: rgba(154,122,122,0.08); color: #8a5a5a; }
 
         .chat-panel { display: none; flex-direction: column; flex: 1; min-height: 0; }
         .chat-panel.active { display: flex; }
-        .chat-panel .chat-messages { flex: 1; overflow-y: auto; }
 
         .chat-footer {
-            padding: 10px 18px 12px 18px;
+            padding: 10px 18px 12px;
             border-top: 1px solid var(--border-light);
             display: flex;
             align-items: center;
             gap: 12px;
             flex-shrink: 0;
             background: var(--bg-card);
-            min-height: 54px;
         }
         .chat-footer .input-placeholder {
             flex: 1;
@@ -292,7 +290,6 @@
             font-size: 0.9rem;
             color: var(--text-muted);
             background: var(--bg-card-alt);
-            cursor: default;
             user-select: none;
         }
         .chat-footer .send-placeholder {
@@ -302,64 +299,60 @@
             background: var(--border-light);
             color: var(--text-muted);
             font-size: 0.85rem;
-            cursor: default;
             user-select: none;
         }
 
         @media (min-width: 769px) {
-            .chat-window { margin: 16px 20px 20px 20px; max-height: 820px; }
-            .chat-titlebar { padding: 12px 24px 10px 24px; min-height: 60px; }
+            .chat-window { margin: 16px 20px 20px; max-height: 820px; }
+            .chat-titlebar { padding: 12px 24px 10px; }
             .chat-tab { padding: 5px 20px; font-size: 0.78rem; }
-            .chat-messages { padding: 16px 24px 14px 24px; gap: 6px; }
-            .msg { font-size: 0.95rem; padding: 9px 18px; max-width: 72%; }
-            .chat-footer { padding: 12px 24px 14px 24px; min-height: 60px; }
+            .chat-messages { padding: 16px 24px 14px; }
+            .msg-unit { max-width: 72%; }
+            .msg-bubble { font-size: 0.95rem; padding: 9px 18px; }
+            .chat-footer { padding: 12px 24px 14px; }
             .float-group { top: 20px; right: 28px; gap: 8px; }
-            .float-btn { padding: 6px 16px 6px 12px; font-size: 0.7rem; }
-            .msg { border-radius: 18px; }
-            .msg.left { border-bottom-left-radius: 4px; }
-            .msg.right { border-bottom-right-radius: 4px; }
+            .float-btn { padding: 6px 16px 6px 12px; }
         }
 
         @media (max-width: 768px) {
-            body { padding: 0; overflow: hidden; }
             .float-group { top: 10px; right: 12px; gap: 5px; }
-            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; border-radius: 18px; }
+            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
             .float-btn .icon { font-size: 0.7rem; }
-            #app { max-width: 100%; padding: 0; }
-            .chat-window { border-radius: 0; border: none; margin: 0; height: 100vh; height: 100dvh; width: 100%; box-shadow: none; }
-            .chat-titlebar { padding: 10px 14px 8px 14px; min-height: 52px; gap: 6px; }
+            #app { max-width: 100%; }
+            .chat-window { border-radius: 0; border: none; margin: 0; height: 100vh; height: 100dvh; box-shadow: none; }
+            .chat-titlebar { padding: 10px 14px 8px; min-height: 52px; }
             .chat-titlebar .title-text { font-size: 0.8rem; }
             .chat-titlebar .title-text .names .av { font-size: 0.75rem; }
             .chat-titlebar .left .dots { gap: 4px; }
             .chat-titlebar .left .dot { width: 10px; height: 10px; }
             .chat-titlebar .right-placeholder { width: 40px; }
-            .chat-tabs { padding: 3px; gap: 3px; border-radius: 18px; }
-            .chat-tab { padding: 4px 14px; font-size: 0.65rem; border-radius: 13px; }
-            .chat-messages { padding: 12px 14px 10px 14px; gap: 10px; }
-            .msg { font-size: 1rem; padding: 8px 15px; max-width: 84%; border-radius: 16px; }
-            .msg.left { border-bottom-left-radius: 4px; }
-            .msg.right { border-bottom-right-radius: 4px; }
-            .chat-footer { padding: 8px 14px 10px 14px; min-height: 50px; gap: 10px; }
-            .chat-footer .input-placeholder { font-size: 0.85rem; padding: 7px 14px; border-radius: 20px; }
-            .chat-footer .send-placeholder { font-size: 0.8rem; padding: 7px 16px; border-radius: 20px; }
+            .chat-tabs { padding: 3px; gap: 3px; }
+            .chat-tab { padding: 4px 14px; font-size: 0.65rem; }
+            .chat-messages { padding: 12px 14px 10px; }
+            .msg-unit { max-width: 84%; }
+            .msg-bubble { font-size: 1rem; padding: 8px 15px; }
+            .chat-footer { padding: 8px 14px 10px; min-height: 50px; }
+            .chat-footer .input-placeholder { font-size: 0.85rem; padding: 7px 14px; }
+            .chat-footer .send-placeholder { font-size: 0.8rem; padding: 7px 16px; }
         }
 
         @media (max-width: 420px) {
-            .chat-titlebar { padding: 8px 10px 6px 10px; min-height: 48px; gap: 4px; }
+            .chat-titlebar { padding: 8px 10px 6px; min-height: 48px; }
             .chat-titlebar .left .dots { display: none; }
             .chat-titlebar .title-text { font-size: 0.75rem; }
             .chat-titlebar .title-text .names .av { font-size: 0.7rem; }
             .chat-titlebar .right-placeholder { width: 32px; }
             .chat-tabs { padding: 2px; gap: 2px; }
-            .chat-tab { padding: 3px 10px; font-size: 0.6rem; border-radius: 11px; }
+            .chat-tab { padding: 3px 10px; font-size: 0.6rem; }
             .chat-tab .sym { font-size: 0.55rem; }
-            .chat-messages { padding: 10px 10px 8px 10px; gap: 8px; }
-            .msg { font-size: 0.95rem; padding: 7px 12px; max-width: 88%; border-radius: 14px; }
-            .chat-footer { padding: 6px 10px 8px 10px; min-height: 44px; gap: 8px; }
-            .chat-footer .input-placeholder { font-size: 0.78rem; padding: 6px 12px; border-radius: 18px; }
-            .chat-footer .send-placeholder { font-size: 0.72rem; padding: 6px 12px; border-radius: 18px; }
+            .chat-messages { padding: 10px 10px 8px; }
+            .msg-unit { max-width: 88%; }
+            .msg-bubble { font-size: 0.95rem; padding: 7px 12px; }
+            .chat-footer { padding: 6px 10px 8px; min-height: 44px; }
+            .chat-footer .input-placeholder { font-size: 0.78rem; padding: 6px 12px; }
+            .chat-footer .send-placeholder { font-size: 0.72rem; padding: 6px 12px; }
             .float-group { top: 6px; right: 8px; gap: 4px; }
-            .float-btn { padding: 3px 8px 3px 6px; font-size: 0.5rem; border-radius: 14px; }
+            .float-btn { padding: 3px 8px 3px 6px; font-size: 0.5rem; }
             .float-btn .icon { font-size: 0.6rem; }
         }
     </style>
@@ -371,8 +364,6 @@
                     const parsed = JSON.parse(raw);
                     if (parsed && parsed.value === 'dark') {
                         document.documentElement.setAttribute('data-theme', 'dark');
-                    } else if (parsed && parsed.value === 'light') {
-                        document.documentElement.removeAttribute('data-theme');
                     }
                 }
             } catch(e) {}
@@ -397,6 +388,7 @@
             }
         });
     </script>
+<base target="_blank">
 </head>
 <body>
 
@@ -438,205 +430,204 @@
     <script>
         const chatData = {
             huaiqi: {
-                title: { left: '✿', right: '✦', label: '淮棋' },
+                title: { left: '✿', right: '✦', colors: 'a b' },
                 messages: [
-                    { side: 'left', name: '卿卿', text: '林淮，你看这个。' },
-                    { side: 'left', name: '卿卿', text: '【发送了一张图：归终惊鸿榜拓印】' },
-                    { side: 'right', text: '无聊。' },
-                    { side: 'left', name: '卿卿', text: '你排第一呢。"造物主最偏心的一笔"，证明弟子们还是很认可你的，不值得庆祝一下？' },
-                    { side: 'right', text: '你排第几？' },
-                    { side: 'left', name: '卿卿', text: '……第五。' },
-                    { side: 'right', text: '那这个榜没什么可看的。' },
-                    { side: 'left', name: '卿卿', text: '……又说这种话。' },
-                    { side: 'right', text: '过来。' },
-                    { side: 'left', name: '卿卿', text: '去哪？' },
-                    { side: 'right', text: '我院里。' },
-                    { side: 'left', name: '卿卿', text: '现在？天还没黑。' },
-                    { side: 'right', text: '现在。' },
-                    { side: 'left', name: '卿卿', text: '……好好好，我马上去。' }
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '林淮，你看这个。' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '【发送了一张图：归终惊鸿榜拓印】' },
+                    { side: 'right', sender: 'huai', text: '无聊。' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '你排第一呢。"造物主最偏心的一笔"，证明弟子们还是很认可你的，不值得庆祝一下？' },
+                    { side: 'right', sender: 'huai', text: '你排第几？' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '……第五。' },
+                    { side: 'right', sender: 'huai', text: '那这个榜没什么可看的。' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '……又说这种话。' },
+                    { side: 'right', sender: 'huai', text: '过来。' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '去哪？' },
+                    { side: 'right', sender: 'huai', text: '我院里。' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '现在？天还没黑。' },
+                    { side: 'right', sender: 'huai', text: '现在。' },
+                    { side: 'left', sender: 'luan', name: '卿卿', text: '……好好好，我马上去。' }
                 ]
             },
             xiujing: {
-                title: { left: '◈', right: '❖', label: '修璟' },
+                title: { left: '◈', right: '❖', colors: 'e d' },
                 messages: [
-                    { side: 'right', text: '在寝殿？' },
-                    { side: 'left', name: '璟殿下', text: '批卷宗，有话快说。' },
-                    { side: 'right', text: '【发送了一张图：归终惊鸿榜拓印】' },
-                    { side: 'left', name: '璟殿下', text: '……这是什么？' },
-                    { side: 'right', text: '那帮弟子私底下弄的选美大赛，你可排第二呢。' },
-                    { side: 'left', name: '璟殿下', text: '哼，无聊的东西。' },
-                    { side: 'left', name: '璟殿下', text: '不过那些小字都是什么？发香胜脂粉？？谁写的，拿孤的头发和脂粉比较，简直不知所谓！' },
-                    { side: 'right', text: '我倒觉得这弟子说得没错，你身上哪里都香。' },
-                    { side: 'left', name: '璟殿下', text: '说什么屁话呢，以为谁都像你一样身上一股煞气。' },
-                    { side: 'right', text: '是是是，璟殿下九五至尊，一身正气，像我这种满身煞气的，只合给殿下当个门神，驱邪避鬼。' },
-                    { side: 'right', text: '可是殿下，门神也分镇宅的和镇宫的。我给殿下当了这么多年门神，殿下是不是该给我个名分了？' },
-                    { side: 'left', name: '璟殿下', text: '……什么名分？' },
-                    { side: 'right', text: '今日有位弟子当面问我，何时能喝上首席与璟殿下的喜酒。我琢磨着，殿下从前登基时我没赶上，如今殿下退位了，我替殿下立个后，不过分吧？' },
-                    { side: 'left', name: '璟殿下', text: '油嘴滑舌……你怎么答的？' },
-                    { side: 'right', text: '能怎么答，这得看殿下愿不愿给我这个名分才行。怎么，你现在要听我的答复，还是你的答复？' },
-                    { side: 'left', name: '璟殿下', text: '谁要听你那些浑话。' },
-                    { side: 'right', text: '那我便当殿下默许了。我现在过来？' },
-                    { side: 'left', name: '璟殿下', text: '……' },
-                    { side: 'left', name: '璟殿下', text: '随你。' },
-                    { side: 'right', text: '好。' }
+                    { side: 'right', sender: 'luo', text: '在寝殿？' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '批卷宗，有话快说。' },
+                    { side: 'right', sender: 'luo', text: '【发送了一张图：归终惊鸿榜拓印】' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '……这是什么？' },
+                    { side: 'right', sender: 'luo', text: '那帮弟子私底下弄的选美大赛，你可排第二呢。' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '哼，无聊的东西。' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '不过那些小字都是什么？发香胜脂粉？？谁写的，拿孤的头发和脂粉比较，简直不知所谓！' },
+                    { side: 'right', sender: 'luo', text: '我倒觉得这弟子说得没错，你身上哪里都香。' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '说什么屁话呢，以为谁都像你一样身上一股煞气。' },
+                    { side: 'right', sender: 'luo', text: '是是是，璟殿下九五至尊，一身正气，像我这种满身煞气的，只合给殿下当个门神，驱邪避鬼。' },
+                    { side: 'right', sender: 'luo', text: '可是殿下，门神也分镇宅的和镇宫的。我给殿下当了这么多年门神，殿下是不是该给我个名分了？' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '……什么名分？' },
+                    { side: 'right', sender: 'luo', text: '今日有位弟子当面问我，何时能喝上首席与璟殿下的喜酒。我琢磨着，殿下从前登基时我没赶上，如今殿下退位了，我替殿下立个后，不过分吧？' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '油嘴滑舌……你怎么答的？' },
+                    { side: 'right', sender: 'luo', text: '能怎么答，这得看殿下愿不愿给我这个名分才行。怎么，你现在要听我的答复，还是你的答复？' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '谁要听你那些浑话。' },
+                    { side: 'right', sender: 'luo', text: '那我便当殿下默许了。我现在过来？' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '……' },
+                    { side: 'left', sender: 'jing', name: '璟殿下', text: '随你。' },
+                    { side: 'right', sender: 'luo', text: '好。' }
                 ]
             },
             muqi: {
-                title: { left: '◉', right: '◉', label: '木栖' },
+                title: { left: '◉', right: '◉', colors: 'c c' },
                 messages: [
-                    { side: 'left', name: '可可', text: '师姐师姐！你看这个！' },
-                    { side: 'left', name: '可可', text: '【发送了一张图：归终惊鸿榜拓印】' },
-                    { side: 'right', text: '又去挤榜了？' },
-                    { side: 'left', name: '可可', text: '什么叫挤，我光明正大去看的！师姐你排第三，那朵小兰花还是我画的。' },
-                    { side: 'right', text: '知道了，画得很好。' },
-                    { side: 'left', name: '可可', text: '还有还有——师姐你猜我今天还看到什么了？首席大人被人堵在廊下问什么时候跟璟大人成亲，他没说话，这事是不是马上就要成了？' },
-                    { side: 'right', text: '你一天到晚都在看什么？' },
-                    { side: 'left', name: '可可', text: '我在替师姐观察局势，师姐你就不好奇吗？' },
-                    { side: 'right', text: '我好奇你今天的药材磨完了没有。去吧，别在这杵着了。' },
-                    { side: 'left', name: '可可', text: '师姐，你一点都不关心首席大人的终身大事吗？' },
-                    { side: 'right', text: '他成亲又不请我喝喜酒，我关心有什么用。倒是你，再不去研磨，今晚的药浴别想泡了。' },
-                    { side: 'left', name: '可可', text: '……师姐你太无情了！' },
-                    { side: 'right', text: '无情的人可不会收你的兰花，走了。' },
-                    { side: 'left', name: '可可', text: '师姐等等！' }
+                    { side: 'left', sender: 'ke', name: '可可', text: '师姐师姐！你看这个！' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '【发送了一张图：归终惊鸿榜拓印】' },
+                    { side: 'right', sender: 'cheng', text: '又去挤榜了？' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '什么叫挤，我光明正大去看的！师姐你排第三，那朵小兰花还是我画的。' },
+                    { side: 'right', sender: 'cheng', text: '知道了，画得很好。' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '还有还有——师姐你猜我今天还看到什么了？首席大人被人堵在廊下问什么时候跟璟大人成亲，他没说话，这事是不是马上就要成了？' },
+                    { side: 'right', sender: 'cheng', text: '你一天到晚都在看什么？' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '我在替师姐观察局势，师姐你就不好奇吗？' },
+                    { side: 'right', sender: 'cheng', text: '我好奇你今天的药材磨完了没有。去吧，别在这杵着了。' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '师姐，你一点都不关心首席大人的终身大事吗？' },
+                    { side: 'right', sender: 'cheng', text: '他成亲又不请我喝喜酒，我关心有什么用。倒是你，再不去研磨，今晚的药浴别想泡了。' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '……师姐你太无情了！' },
+                    { side: 'right', sender: 'cheng', text: '无情的人可不会收你的兰花，走了。' },
+                    { side: 'left', sender: 'ke', name: '可可', text: '师姐等等！' }
                 ]
             },
             fuxiu: {
-                title: { left: '✦', right: '✦', label: '符修院' },
+                title: { left: '✦', right: '✦', colors: 'z z' },
                 messages: [
-                    { side: 'right', text: '棋大人第五！只差十四笺！十四笺啊！要是首席大人晚来半个时辰……' },
-                    { side: 'left', name: '周宁', text: '郑师兄，首席大人已经发话了，此事到此为止。再说棋大人自己都说了"高了"，你何必执着。' },
-                    { side: 'right', text: '高了？哪里高了！分明是低了！你们看看前面都是谁？淮大人断层第一没法比，璟大人第二有帝王光环加身，程师姐第三靠温润气质，首席大人第四……首席大人第四靠的是腹肌！腹肌！我们棋大人靠的是神性！是牺牲！这能一样吗？' },
-                    { side: 'left', name: '陈墨', text: '郑师兄，你小声点，这话传出去又要被首席大人加训。' },
-                    { side: 'right', text: '我怕他？我……我当然怕。但我就是不服！白发图都放出去了，效果刚起来，票数眼瞅着要涨，他早不来晚不来，偏偏这时候来锁帖！' },
-                    { side: 'left', name: '李砚', text: '不过话说回来，首席大人今日那反应，到底是生气还是不生气？我看他看榜单的时候，看到璟大人排第二，嘴角明明动了一下。' },
-                    { side: 'left', name: '陈墨', text: '我也感觉到了。而且他说"没什么好生气的"，语气很平淡，不像动怒。' },
-                    { side: 'right', text: '那是因为他排第四！他靠一张腹肌图从第五杀到第四，差点超过程师姐，他当然不生气！' },
-                    { side: 'left', name: '周宁', text: '郑师兄，这话可别让首席大人听见。还有，你昨日拉横幅说九折券，今日可还有弟子来领？' },
-                    { side: 'right', text: '……有。刀修院那几个墙头草，领券的时候倒是积极。' },
-                    { side: 'left', name: '李砚', text: '大师兄，你昨日那横幅可是横跨半张玉牒，全殿都看见了。现在帖子锁了，你怎么分辨谁投了谁没投？' },
-                    { side: 'right', text: '我凭眼缘！看着顺眼的就给，不顺眼的……也给。我符修院郑和做生意童叟无欺，答应了的就得兑现。但你们想想，要是棋大人进了前三，这券我给的也心甘情愿。现在第五……' },
-                    { side: 'left', name: '赵篆', text: '其实我觉得第五很好了……毕竟前十席里，棋大人平日最不爱出风头。' },
-                    { side: 'right', text: '你懂什么！不争不抢那是棋大人的品格，我们当弟子的不能也跟着不争！该争取的就得争取！' },
-                    { side: 'left', name: '周宁', text: '郑师兄说得有理，但此事已了，再争无益。倒是你们，谁把拓印版送去给棋大人看了？' },
-                    { side: 'left', name: '李砚', text: '我送去了。棋大人接过来看了一眼，笑着说"高了"，然后随手放在案上，继续画他的聚灵符了。' },
-                    { side: 'right', text: '他就这反应？！' },
-                    { side: 'left', name: '李砚', text: '就这反应。倒是淮大人，从里屋出来，瞥见那张拓印纸，直接拿起来折了折，似乎想扔，又看了眼棋大人，最后塞进了袖子里。' },
-                    { side: 'right', text: '……淮大人这是？' },
-                    { side: 'left', name: '陈墨', text: '淮大人估计觉得无聊，但棋大人没扔，他也就没真扔。' },
-                    { side: 'right', text: '哼，淮大人那性子，确实像会干出这种事的人。不过拓印版上那句"白发惊鸿，黑发少年"，可是我找人写的，淮大人要是看了，也该知道棋大人的好。' },
-                    { side: 'left', name: '周宁', text: '淮大人看了，只说了四个字。' },
-                    { side: 'right', text: '哪四个字？' },
-                    { side: 'left', name: '周宁', text: '"不及我妻。"' },
-                    { side: 'right', text: '……' },
-                    { side: 'left', name: '陈墨', text: '……' },
-                    { side: 'left', name: '李砚', text: '……行吧，这很淮大人。' },
-                    { side: 'left', name: '赵篆', text: '那、那咱们还继续讨论惊鸿榜吗？' },
-                    { side: 'right', text: '讨论什么！帖子都锁了！我现在只关心一件事——' },
-                    { side: 'left', name: '李砚', text: '什么？' },
-                    { side: 'right', text: '首席大人到底什么时候和璟大人成亲？他今日没否认，是不是意味着喜酒快了？要是喜酒摆在符修院隔壁，我能不能去蹭一杯？' },
-                    { side: 'left', name: '周宁', text: '郑师兄，你刚才不是还说"谁管他成不成亲"吗？' },
-                    { side: 'right', text: '此一时彼一时！棋大人的事告一段落了，八卦一下怎么了？再说，首席大人要是真成亲，咱们符修院是不是该备一份贺礼？送什么好？送符纸？送聚灵阵？' },
-                    { side: 'left', name: '陈墨', text: '送符纸？首席大人成亲，你送符纸？' },
-                    { side: 'right', text: '那送什么！棋大人画的百年好合符？不行，太俗。早生贵子符？更俗！' },
-                    { side: 'left', name: '李砚', text: '郑师兄，你冷静点。首席大人还没说要成亲呢。' },
-                    { side: 'right', text: '他今日那反应，跟默认有什么区别？耳朵都红了！我亲眼看见的！虽然是在玉牒上看见的，但那也是看见！' },
-                    { side: 'left', name: '赵篆', text: '郑师兄，你的魂力波动又乱了……' },
-                    { side: 'right', text: '我激动！不行吗？！算了，不说了，我去给棋大人研墨了。你们该画符的画符，该修炼的修炼，别在这儿闲着了！' },
-                    { side: 'left', name: '周宁', text: '郑师兄，你的九折券还发吗？' },
-                    { side: 'right', text: '发！当然发！明日巳时，符修院正堂，凭拓印图领取，过时不候！' },
-                    { side: 'left', name: '陈墨', text: '……大师兄真是，来去如风。' },
-                    { side: 'left', name: '李砚', text: '不过咱们符修院，是不是该把"白发仙人图"的拓印多备几份？我看医馆、枪阁都有人来问。' },
-                    { side: 'left', name: '周宁', text: '备吧，但别拿出去卖，棋大人知道了会不高兴的。' },
-                    { side: 'left', name: '陈墨', text: '那送？' },
-                    { side: 'left', name: '周宁', text: '送。只送，不卖。这是规矩。' },
-                    { side: 'left', name: '赵篆', text: '小师妹，你明明也投了淮大人一票，怎么做到这么公正的？' },
-                    { side: 'left', name: '周宁', text: '我投淮大人，是因为确实好看。但我管这帖子，就得一碗水端平。好了，散了吧，明日还要早起画符呢。' },
-                    { side: 'left', name: '李砚', text: '散了散了。对了陈墨，你那张棋大人黑发旧照，能不能借我描摹一幅？' },
-                    { side: 'left', name: '陈墨', text: '你自己去求棋大人。' },
-                    { side: 'left', name: '李砚', text: '……我不敢。' },
-                    { side: 'left', name: '陈墨', text: '我也不敢。' }
+                    { side: 'right', sender: 'zheng', text: '棋大人第五！只差十四笺！十四笺啊！要是首席大人晚来半个时辰……' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '郑师兄，首席大人已经发话了，此事到此为止。再说棋大人自己都说了"高了"，你何必执着。' },
+                    { side: 'right', sender: 'zheng', text: '高了？哪里高了！分明是低了！你们看看前面都是谁？淮大人断层第一没法比，璟大人第二有帝王光环加身，程师姐第三靠温润气质，首席大人第四……首席大人第四靠的是腹肌！腹肌！我们棋大人靠的是神性！是牺牲！这能一样吗？' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '郑师兄，你小声点，这话传出去又要被首席大人加训。' },
+                    { side: 'right', sender: 'zheng', text: '我怕他？我……我当然怕。但我就是不服！白发图都放出去了，效果刚起来，票数眼瞅着要涨，他早不来晚不来，偏偏这时候来锁帖！' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '不过话说回来，首席大人今日那反应，到底是生气还是不生气？我看他看榜单的时候，看到璟大人排第二，嘴角明明动了一下。' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '我也感觉到了。而且他说"没什么好生气的"，语气很平淡，不像动怒。' },
+                    { side: 'right', sender: 'zheng', text: '那是因为他排第四！他靠一张腹肌图从第五杀到第四，差点超过程师姐，他当然不生气！' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '郑师兄，这话可别让首席大人听见。还有，你昨日拉横幅说九折券，今日可还有弟子来领？' },
+                    { side: 'right', sender: 'zheng', text: '……有。刀修院那几个墙头草，领券的时候倒是积极。' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '大师兄，你昨日那横幅可是横跨半张玉牒，全殿都看见了。现在帖子锁了，你怎么分辨谁投了谁没投？' },
+                    { side: 'right', sender: 'zheng', text: '我凭眼缘！看着顺眼的就给，不顺眼的……也给。我符修院郑和做生意童叟无欺，答应了的就得兑现。但你们想想，要是棋大人进了前三，这券我给的也心甘情愿。现在第五……' },
+                    { side: 'left', sender: 'zhao', name: '赵篆', text: '其实我觉得第五很好了……毕竟前十席里，棋大人平日最不爱出风头。' },
+                    { side: 'right', sender: 'zheng', text: '你懂什么！不争不抢那是棋大人的品格，我们当弟子的不能也跟着不争！该争取的就得争取！' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '郑师兄说得有理，但此事已了，再争无益。倒是你们，谁把拓印版送去给棋大人看了？' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '我送去了。棋大人接过来看了一眼，笑着说"高了"，然后随手放在案上，继续画他的聚灵符了。' },
+                    { side: 'right', sender: 'zheng', text: '他就这反应？！' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '就这反应。倒是淮大人，从里屋出来，瞥见那张拓印纸，直接拿起来折了折，似乎想扔，又看了眼棋大人，最后塞进了袖子里。' },
+                    { side: 'right', sender: 'zheng', text: '……淮大人这是？' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '淮大人估计觉得无聊，但棋大人没扔，他也就没真扔。' },
+                    { side: 'right', sender: 'zheng', text: '哼，淮大人那性子，确实像会干出这种事的人。不过拓印版上那句"白发惊鸿，黑发少年"，可是我找人写的，淮大人要是看了，也该知道棋大人的好。' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '淮大人看了，只说了四个字。' },
+                    { side: 'right', sender: 'zheng', text: '哪四个字？' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '"不及我妻。"' },
+                    { side: 'right', sender: 'zheng', text: '……' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '……' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '……行吧，这很淮大人。' },
+                    { side: 'left', sender: 'zhao', name: '赵篆', text: '那、那咱们还继续讨论惊鸿榜吗？' },
+                    { side: 'right', sender: 'zheng', text: '讨论什么！帖子都锁了！我现在只关心一件事——' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '什么？' },
+                    { side: 'right', sender: 'zheng', text: '首席大人到底什么时候和璟大人成亲？他今日没否认，是不是意味着喜酒快了？要是喜酒摆在符修院隔壁，我能不能去蹭一杯？' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '郑师兄，你刚才不是还说"谁管他成不成亲"吗？' },
+                    { side: 'right', sender: 'zheng', text: '此一时彼一时！棋大人的事告一段落了，八卦一下怎么了？再说，首席大人要是真成亲，咱们符修院是不是该备一份贺礼？送什么好？送符纸？送聚灵阵？' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '送符纸？首席大人成亲，你送符纸？' },
+                    { side: 'right', sender: 'zheng', text: '那送什么！棋大人画的百年好合符？不行，太俗。早生贵子符？更俗！' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '郑师兄，你冷静点。首席大人还没说要成亲呢。' },
+                    { side: 'right', sender: 'zheng', text: '他今日那反应，跟默认有什么区别？耳朵都红了！我亲眼看见的！虽然是在玉牒上看见的，但那也是看见！' },
+                    { side: 'left', sender: 'zhao', name: '赵篆', text: '郑师兄，你的魂力波动又乱了……' },
+                    { side: 'right', sender: 'zheng', text: '我激动！不行吗？！算了，不说了，我去给棋大人研墨了。你们该画符的画符，该修炼的修炼，别在这儿闲着了！' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '郑师兄，你的九折券还发吗？' },
+                    { side: 'right', sender: 'zheng', text: '发！当然发！明日巳时，符修院正堂，凭拓印图领取，过时不候！' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '……大师兄真是，来去如风。' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '不过咱们符修院，是不是该把"白发仙人图"的拓印多备几份？我看医馆、枪阁都有人来问。' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '备吧，但别拿出去卖，棋大人知道了会不高兴的。' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '那送？' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '送。只送，不卖。这是规矩。' },
+                    { side: 'left', sender: 'zhao', name: '赵篆', text: '小师妹，你明明也投了淮大人一票，怎么做到这么公正的？' },
+                    { side: 'left', sender: 'zhou', name: '周宁', text: '我投淮大人，是因为确实好看。但我管这帖子，就得一碗水端平。好了，散了吧，明日还要早起画符呢。' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '散了散了。对了陈墨，你那张棋大人黑发旧照，能不能借我描摹一幅？' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '你自己去求棋大人。' },
+                    { side: 'left', sender: 'li', name: '李砚', text: '……我不敢。' },
+                    { side: 'left', sender: 'chen', name: '陈墨', text: '我也不敢。' }
                 ]
             }
         };
 
-        const panelStates = { huaiqi: { idx: 0, done: false }, xiujing: { idx: 0, done: false }, muqi: { idx: 0, done: false }, fuxiu: { idx: 0, done: false } };
+        const panelStates = {};
         let currentPanel = 'huaiqi';
 
         function renderPanel(key) {
             const container = document.getElementById('msgs-' + key);
-            if (!container) return;
-            container.innerHTML = '';
-            chatData[key].messages.forEach((msg, i) => {
+            if (!container || container.children.length > 0) return;
+
+            const data = chatData[key];
+            data.messages.forEach(msg => {
+                const unit = document.createElement('div');
+                unit.className = 'msg-unit ' + msg.side + ' sender-' + msg.sender;
                 if (msg.name) {
-                    const nameEl = document.createElement('div');
-                    nameEl.className = 'msg-name';
-                    nameEl.textContent = msg.name;
-                    container.appendChild(nameEl);
+                    unit.innerHTML = '<div class="msg-name">' + msg.name + '</div>';
                 }
-                const el = document.createElement('div');
-                el.className = 'msg ' + msg.side;
-                el.textContent = msg.text;
-                container.appendChild(el);
+                unit.innerHTML += '<div class="msg-bubble">' + msg.text + '</div>';
+                container.appendChild(unit);
             });
-            panelStates[key].idx = 0;
-            panelStates[key].done = false;
-            const msgs = container.querySelectorAll('.msg');
-            if (msgs.length) { msgs[0].classList.add('show'); panelStates[key].idx = 1; }
+
+            panelStates[key] = { idx: 0, done: false };
+            const units = container.querySelectorAll('.msg-unit');
+            if (units.length > 0) {
+                units[0].classList.add('show');
+                panelStates[key].idx = 1;
+            }
         }
 
         function switchPanel(key) {
             if (key === currentPanel) return;
+
             document.querySelectorAll('.chat-panel').forEach(el => el.classList.remove('active'));
             document.getElementById('panel-' + key).classList.add('active');
             document.querySelectorAll('.chat-tab').forEach(el => el.classList.remove('active'));
             document.querySelector('.chat-tab[data-panel="' + key + '"]').classList.add('active');
 
             const data = chatData[key];
-            const titleEl = document.getElementById('titleText');
-            if (titleEl) {
-                const colorMap = { huaiqi: 'a b', xiujing: 'e d', muqi: 'c c', fuxiu: 'z z' };
-                const colors = colorMap[key].split(' ');
-                titleEl.innerHTML = `<span class="names"><span class="av ${colors[0]}">${data.title.left}</span><span class="arrow">·</span><span class="av ${colors[1]}">${data.title.right}</span></span>`;
-            }
+            const colors = data.title.colors.split(' ');
+            document.getElementById('titleText').innerHTML =
+                '<span class="names"><span class="av ' + colors[0] + '">' + data.title.left +
+                '</span><span class="arrow">·</span><span class="av ' + colors[1] + '">' + data.title.right + '</span></span>';
+
             currentPanel = key;
-            const container = document.getElementById('msgs-' + key);
-            if (container && container.children.length === 0) renderPanel(key);
-            else { const mc = document.querySelector('#panel-' + key + ' .chat-messages'); if (mc) mc.scrollTop = mc.scrollHeight; }
+            renderPanel(key);
+
+            // 切换到顶部，不是底部
+            const mc = document.querySelector('#panel-' + key + ' .chat-messages');
+            if (mc) mc.scrollTop = 0;
         }
 
         function loadNext(key) {
             const state = panelStates[key];
-            if (state.done) return;
+            if (!state || state.done) return;
+
             const container = document.getElementById('msgs-' + key);
-            if (!container) return;
-            const msgs = container.querySelectorAll('.msg');
-            if (state.idx >= msgs.length) { state.done = true; return; }
-            msgs[state.idx].classList.add('show');
+            const units = container.querySelectorAll('.msg-unit');
+            if (state.idx >= units.length) {
+                state.done = true;
+                return;
+            }
+
+            const newUnit = units[state.idx];
+            newUnit.classList.add('show');
             state.idx++;
-            container.scrollTop = container.scrollHeight;
+
+            // 仅当新消息被遮挡时才滚动到可见位置
+            const containerRect = container.getBoundingClientRect();
+            const unitRect = newUnit.getBoundingClientRect();
+            if (unitRect.bottom > containerRect.bottom - 10) {
+                newUnit.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
         function initAll() {
-            ['huaiqi', 'xiujing', 'muqi', 'fuxiu'].forEach(key => {
+            Object.keys(chatData).forEach(key => {
                 renderPanel(key);
-                const container = document.getElementById('msgs-' + key);
-                container.addEventListener('scroll', function() {
-                    const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight <= 20;
-                    if (atBottom) loadNext(key);
-                });
-                const msgs = container.querySelectorAll('.msg');
-                msgs.forEach((el, i) => { if (i > 0) el.classList.remove('show'); });
-                panelStates[key].idx = 1;
-                container.scrollTop = 0;
+                document.getElementById('msgs-' + key).addEventListener('click', () => loadNext(key));
             });
             switchPanel('huaiqi');
-            document.querySelectorAll('.chat-panel .chat-messages').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    if (e.target.closest('.msg')) return;
-                    const id = this.closest('.chat-panel').id.replace('panel-', '');
-                    loadNext(id);
-                });
-            });
         }
 
         window.switchPanel = switchPanel;
