@@ -57,37 +57,38 @@
             color: var(--text-primary);
             transition: background var(--transition), color var(--transition);
             -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            padding: 0 16px;
-            overflow: hidden;
+            padding: 0;
         }
 
         /* ===== 右上角悬浮组 ===== */
         .float-group {
             position: fixed;
-            top: 20px;
-            right: 24px;
+            top: 16px;
+            right: 20px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             align-items: flex-end;
         }
         .float-btn {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
             border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.7rem;
+            padding: 5px 12px 5px 10px;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all var(--transition);
             font-family: inherit;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             box-shadow: var(--shadow-sm);
             text-decoration: none;
         }
@@ -95,18 +96,19 @@
             border-color: var(--color-luan);
             color: var(--color-luan);
         }
-        .float-btn .icon { font-size: 0.9rem; }
+        .float-btn .icon { font-size: 0.8rem; }
 
         /* ===== 主容器 ===== */
         #app {
             max-width: 800px;
             margin: 0 auto;
             width: 100%;
-            flex: 1;
+            height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
-            padding: 16px 0 0 0;
-            min-height: 0;
+            padding: 0;
+            flex: 1;
         }
 
         /* ===== 聊天窗口 ===== */
@@ -121,6 +123,9 @@
             min-height: 0;
             overflow: hidden;
             transition: border-color var(--transition);
+            margin: 12px 16px 16px 16px;
+            height: calc(100vh - 28px);
+            height: calc(100dvh - 28px);
         }
         .chat-window:hover {
             border-color: var(--color-luan);
@@ -129,15 +134,20 @@
         /* ===== 顶部标题栏 ===== */
         .chat-titlebar {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 10px 16px;
+            padding: 8px 16px 6px 16px;
             border-bottom: 1px solid var(--border-light);
             flex-shrink: 0;
             background: var(--bg-card);
-            gap: 8px;
-            flex-wrap: nowrap;
+            gap: 6px;
             min-height: 52px;
+        }
+        .chat-titlebar .top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
         .chat-titlebar .left {
             display: flex;
@@ -162,7 +172,7 @@
             font-size: 0.8rem;
             font-weight: 500;
             color: var(--text-secondary);
-            margin-left: 4px;
+            margin-left: 2px;
             white-space: nowrap;
         }
         .chat-titlebar .title-text .names {
@@ -184,19 +194,24 @@
             font-size: 0.6rem;
             margin: 0 2px;
         }
+        .chat-titlebar .right-placeholder {
+            width: 48px;
+            flex-shrink: 0;
+        }
 
-        /* ===== 对话切换按钮（顶部中间） ===== */
+        /* ===== 对话切换按钮（标题栏下方） ===== */
         .chat-tabs {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-shrink: 0;
             background: var(--bg-card-alt);
             padding: 3px;
             border-radius: 18px;
             border: 1px solid var(--border-light);
+            margin: 0 auto;
         }
         .chat-tab {
-            padding: 4px 14px;
+            padding: 3px 14px;
             border-radius: 14px;
             border: none;
             background: transparent;
@@ -217,11 +232,6 @@
             border: 1px solid var(--border-light);
         }
         .chat-tab .sym { margin-right: 2px; }
-
-        .chat-titlebar .right {
-            flex-shrink: 0;
-            width: 48px;
-        }
 
         /* ===== 消息区域 ===== */
         .chat-messages {
@@ -255,7 +265,7 @@
             max-width: 80%;
             padding: 8px 14px;
             border-radius: 16px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.7;
             word-break: break-word;
             opacity: 0;
@@ -288,14 +298,14 @@
             color: var(--color-huai);
         }
 
-        /* 修璟：罗修(左) ↔ 魏元璟(右) —— 已修正颜色 */
+        /* 修璟：魏元璟(左·金) ↔ 罗修(右·紫) —— 已修正 */
         .chat-panel.xiujing .msg.left {
-            background: var(--color-luo-bg);
-            color: var(--color-luo);
-        }
-        .chat-panel.xiujing .msg.right {
             background: var(--color-jing-bg);
             color: var(--color-jing);
+        }
+        .chat-panel.xiujing .msg.right {
+            background: var(--color-luo-bg);
+            color: var(--color-luo);
         }
 
         /* 木栖：程木栖(左) ↔ 蔡可(右) */
@@ -356,52 +366,103 @@
             user-select: none;
         }
 
-        /* ===== 电脑端（默认） ===== */
-        #app {
-            max-width: 720px;
-            padding: 16px 0 0 0;
-            height: 92vh;
-            max-height: 700px;
-        }
-        .chat-window {
-            height: 100%;
-        }
-        .msg {
-            font-size: 0.9rem;
-            padding: 8px 14px;
+        /* ===== 电脑端 ===== */
+        @media (min-width: 769px) {
+            .chat-window {
+                margin: 16px 20px 20px 20px;
+                height: calc(100vh - 36px);
+                height: calc(100dvh - 36px);
+                max-height: 820px;
+                border-radius: var(--radius);
+                border: 1px solid var(--border-light);
+            }
+            .chat-titlebar {
+                padding: 10px 20px 8px 20px;
+                min-height: 56px;
+            }
+            .chat-tabs {
+                padding: 4px;
+                gap: 4px;
+            }
+            .chat-tab {
+                padding: 4px 18px;
+                font-size: 0.75rem;
+            }
+            .chat-messages {
+                padding: 14px 20px 12px 20px;
+            }
+            .msg {
+                font-size: 0.95rem;
+                padding: 8px 16px;
+                max-width: 75%;
+            }
+            .chat-footer {
+                padding: 10px 20px 12px 20px;
+                min-height: 56px;
+            }
+            .chat-footer .input-placeholder {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+            .chat-footer .send-placeholder {
+                font-size: 0.85rem;
+                padding: 8px 20px;
+            }
+            .float-group {
+                top: 20px;
+                right: 28px;
+                gap: 8px;
+            }
+            .float-btn {
+                padding: 6px 16px 6px 12px;
+                font-size: 0.7rem;
+            }
+            .float-btn .icon { font-size: 0.9rem; }
         }
 
-        /* ===== 手机端全屏 ===== */
+        /* ===== 手机端 ===== */
         @media (max-width: 768px) {
             body {
                 padding: 0;
                 overflow: hidden;
             }
             .float-group {
-                top: 10px;
-                right: 12px;
-                gap: 6px;
+                top: 8px;
+                right: 10px;
+                gap: 4px;
             }
             .float-btn {
-                padding: 4px 10px 4px 8px;
-                font-size: 0.6rem;
+                padding: 3px 8px 3px 6px;
+                font-size: 0.55rem;
+                border-radius: 16px;
             }
+            .float-btn .icon { font-size: 0.65rem; }
             #app {
                 max-width: 100%;
                 padding: 0;
                 height: 100vh;
                 height: 100dvh;
-                max-height: none;
             }
             .chat-window {
                 border-radius: 0;
                 border: none;
-                height: 100%;
+                margin: 0;
+                height: 100vh;
+                height: 100dvh;
                 width: 100%;
+                box-shadow: none;
             }
             .chat-titlebar {
-                padding: 8px 12px;
-                min-height: 48px;
+                padding: 6px 10px 4px 10px;
+                min-height: 44px;
+                gap: 4px;
+            }
+            .chat-titlebar .top-row {
+                min-height: 28px;
+            }
+            .chat-titlebar .left .dots {
+                display: flex;
+                gap: 3px;
             }
             .chat-titlebar .left .dot {
                 width: 8px;
@@ -413,51 +474,54 @@
             .chat-titlebar .title-text .names .av {
                 font-size: 0.65rem;
             }
+            .chat-titlebar .right-placeholder {
+                width: 36px;
+            }
             .chat-tabs {
-                gap: 2px;
                 padding: 2px;
+                gap: 2px;
+                border-radius: 14px;
             }
             .chat-tab {
-                padding: 3px 10px;
+                padding: 2px 10px;
                 font-size: 0.6rem;
+                border-radius: 12px;
             }
             .chat-tab .sym {
                 margin-right: 1px;
             }
             .chat-messages {
-                padding: 10px 12px 8px 12px;
+                padding: 8px 10px 6px 10px;
                 gap: 3px;
             }
             .msg {
-                font-size: 0.88rem;
-                padding: 6px 12px;
+                font-size: 0.95rem;
+                padding: 7px 13px;
                 max-width: 85%;
                 border-radius: 14px;
             }
             .chat-footer {
-                padding: 6px 12px 8px 12px;
+                padding: 5px 10px 7px 10px;
                 min-height: 44px;
                 gap: 8px;
             }
             .chat-footer .input-placeholder {
                 font-size: 0.8rem;
                 padding: 5px 12px;
+                border-radius: 18px;
             }
             .chat-footer .send-placeholder {
                 font-size: 0.75rem;
                 padding: 5px 14px;
-            }
-            .chat-titlebar .right {
-                display: none;
+                border-radius: 18px;
             }
         }
 
-        /* 小屏手机进一步调整 */
+        /* 小屏手机 */
         @media (max-width: 420px) {
             .chat-titlebar {
-                padding: 6px 8px;
-                min-height: 40px;
-                flex-wrap: nowrap;
+                padding: 4px 8px 3px 8px;
+                min-height: 38px;
             }
             .chat-titlebar .left .dots {
                 display: none;
@@ -465,30 +529,60 @@
             .chat-titlebar .title-text {
                 font-size: 0.6rem;
             }
+            .chat-titlebar .title-text .names .av {
+                font-size: 0.55rem;
+            }
+            .chat-titlebar .right-placeholder {
+                width: 28px;
+            }
+            .chat-tabs {
+                padding: 2px;
+                gap: 1px;
+            }
             .chat-tab {
                 padding: 2px 8px;
-                font-size: 0.55rem;
+                font-size: 0.5rem;
+                border-radius: 10px;
+            }
+            .chat-tab .sym {
+                font-size: 0.5rem;
             }
             .chat-messages {
                 padding: 6px 8px 4px 8px;
+                gap: 2px;
             }
             .msg {
-                font-size: 0.82rem;
+                font-size: 0.9rem;
                 padding: 5px 10px;
                 max-width: 90%;
+                border-radius: 12px;
             }
             .chat-footer {
-                padding: 4px 8px 6px 8px;
-                min-height: 38px;
+                padding: 4px 8px 5px 8px;
+                min-height: 36px;
+                gap: 6px;
             }
             .chat-footer .input-placeholder {
                 font-size: 0.7rem;
                 padding: 4px 10px;
+                border-radius: 14px;
             }
             .chat-footer .send-placeholder {
                 font-size: 0.65rem;
                 padding: 4px 10px;
+                border-radius: 14px;
             }
+            .float-group {
+                top: 4px;
+                right: 6px;
+                gap: 3px;
+            }
+            .float-btn {
+                padding: 2px 6px 2px 5px;
+                font-size: 0.5rem;
+                border-radius: 12px;
+            }
+            .float-btn .icon { font-size: 0.55rem; }
         }
     </style>
     <script>
@@ -551,19 +645,22 @@
 
             <!-- ===== 标题栏 ===== -->
             <div class="chat-titlebar">
-                <div class="left">
-                    <div class="dots">
-                        <span class="dot r"></span>
-                        <span class="dot y"></span>
-                        <span class="dot g"></span>
-                    </div>
-                    <span class="title-text" id="titleText">
-                        <span class="names">
-                            <span class="av a">✿</span>
-                            <span class="arrow">·</span>
-                            <span class="av b">✦</span>
+                <div class="top-row">
+                    <div class="left">
+                        <div class="dots">
+                            <span class="dot r"></span>
+                            <span class="dot y"></span>
+                            <span class="dot g"></span>
+                        </div>
+                        <span class="title-text" id="titleText">
+                            <span class="names">
+                                <span class="av a">✿</span>
+                                <span class="arrow">·</span>
+                                <span class="av b">✦</span>
+                            </span>
                         </span>
-                    </span>
+                    </div>
+                    <div class="right-placeholder"></div>
                 </div>
 
                 <div class="chat-tabs">
@@ -577,8 +674,6 @@
                         <span class="sym">◉</span>木栖
                     </button>
                 </div>
-
-                <div class="right"></div>
             </div>
 
             <!-- ===== 面板1：淮棋 ===== -->
@@ -628,7 +723,8 @@
                 ]
             },
             xiujing: {
-                title: { left: '❖', right: '◈', label: '修璟' },
+                // 魏元璟（左·金）↔ 罗修（右·紫）
+                title: { left: '◈', right: '❖', label: '修璟' },
                 messages: [
                     { side: 'left', text: '听说你今天被弟子堵了？' },
                     { side: 'right', text: '……消息传得这么快？' },
@@ -670,7 +766,6 @@
         };
 
         let currentPanel = 'huaiqi';
-        let allRendered = false;
 
         // ================================================================
         //  渲染函数
@@ -726,7 +821,7 @@
                 const rightSym = data.title.right;
                 let colorClass = '';
                 if (panelKey === 'huaiqi') colorClass = 'a b';
-                else if (panelKey === 'xiujing') colorClass = 'd e';
+                else if (panelKey === 'xiujing') colorClass = 'e d';
                 else if (panelKey === 'muqi') colorClass = 'c c';
                 const colors = colorClass.split(' ');
                 titleEl.innerHTML = `
@@ -753,7 +848,7 @@
         }
 
         // ================================================================
-        //  加载下一条消息（点击或滚动触发）
+        //  加载下一条消息
         // ================================================================
 
         function loadNextMessage(panelKey) {
