@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>归终殿 · 惊鸿榜后续</title>
     <style>
-        /* ===== 全局重置 & 主题 ===== */
         :root {
             --bg-body: #f7f4ef;
             --bg-card: #ffffff;
@@ -18,17 +17,16 @@
             --radius: 12px;
             --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
             --transition: 0.3s ease;
-            /* 印象色 */
             --color-luan: #b03a2a;
-            --color-luan-bg: rgba(176, 58, 42, 0.08);
+            --color-luan-bg: rgba(176,58,42,0.08);
             --color-huai: #2a6b8a;
-            --color-huai-bg: rgba(42, 107, 138, 0.08);
+            --color-huai-bg: rgba(42,107,138,0.08);
             --color-cheng: #5a8a7a;
-            --color-cheng-bg: rgba(90, 138, 122, 0.08);
+            --color-cheng-bg: rgba(90,138,122,0.08);
             --color-luo: #7b4b8a;
-            --color-luo-bg: rgba(123, 75, 138, 0.08);
+            --color-luo-bg: rgba(123,75,138,0.08);
             --color-jing: #c9a84b;
-            --color-jing-bg: rgba(201, 168, 75, 0.08);
+            --color-jing-bg: rgba(201,168,75,0.08);
         }
         [data-theme="dark"] {
             --bg-body: #181614;
@@ -38,25 +36,23 @@
             --text-secondary: #9a948c;
             --text-muted: #6a6560;
             --border-light: #35302a;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
             --color-luan: #b05a4a;
-            --color-luan-bg: rgba(176, 90, 74, 0.10);
+            --color-luan-bg: rgba(176,90,74,0.10);
             --color-huai: #4a8baa;
-            --color-huai-bg: rgba(74, 139, 170, 0.10);
+            --color-huai-bg: rgba(74,139,170,0.10);
             --color-cheng: #6a9a8a;
-            --color-cheng-bg: rgba(106, 154, 138, 0.10);
+            --color-cheng-bg: rgba(106,154,138,0.10);
             --color-luo: #9b6baa;
-            --color-luo-bg: rgba(155, 107, 170, 0.10);
+            --color-luo-bg: rgba(155,107,170,0.10);
             --color-jing: #dbb85c;
-            --color-jing-bg: rgba(219, 184, 92, 0.10);
+            --color-jing-bg: rgba(219,184,92,0.10);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: var(--font);
             background: var(--bg-body);
             color: var(--text-primary);
             transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
@@ -65,7 +61,6 @@
             padding: 0;
         }
 
-        /* ===== 右上角悬浮组 ===== */
         .float-group {
             position: fixed;
             top: 16px;
@@ -92,13 +87,9 @@
             box-shadow: var(--shadow-sm);
             text-decoration: none;
         }
-        .float-btn:hover {
-            border-color: var(--color-luan);
-            color: var(--color-luan);
-        }
+        .float-btn:hover { border-color: var(--color-luan); color: var(--color-luan); }
         .float-btn .icon { font-size: 0.8rem; }
 
-        /* ===== 主容器 ===== */
         #app {
             max-width: 800px;
             margin: 0 auto;
@@ -107,11 +98,10 @@
             height: 100dvh;
             display: flex;
             flex-direction: column;
-            padding: 0;
             flex: 1;
+            padding: 0;
         }
 
-        /* ===== 聊天窗口 ===== */
         .chat-window {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
@@ -122,16 +112,11 @@
             flex: 1;
             min-height: 0;
             overflow: hidden;
-            transition: border-color var(--transition);
             margin: 12px 16px 16px 16px;
             height: calc(100vh - 28px);
             height: calc(100dvh - 28px);
         }
-        .chat-window:hover {
-            border-color: var(--color-luan);
-        }
 
-        /* ===== 顶部标题栏 ===== */
         .chat-titlebar {
             display: flex;
             flex-direction: column;
@@ -155,13 +140,9 @@
             gap: 8px;
             flex-shrink: 0;
         }
-        .chat-titlebar .left .dots {
-            display: flex;
-            gap: 4px;
-        }
+        .chat-titlebar .left .dots { display: flex; gap: 4px; }
         .chat-titlebar .left .dot {
-            width: 10px;
-            height: 10px;
+            width: 10px; height: 10px;
             border-radius: 50%;
             background: var(--border-light);
         }
@@ -172,7 +153,6 @@
             font-size: 0.8rem;
             font-weight: 500;
             color: var(--text-secondary);
-            margin-left: 2px;
             white-space: nowrap;
         }
         .chat-titlebar .title-text .names {
@@ -194,12 +174,8 @@
             font-size: 0.6rem;
             margin: 0 2px;
         }
-        .chat-titlebar .right-placeholder {
-            width: 48px;
-            flex-shrink: 0;
-        }
+        .chat-titlebar .right-placeholder { width: 48px; flex-shrink: 0; }
 
-        /* ===== 对话切换按钮（标题栏下方） ===== */
         .chat-tabs {
             display: flex;
             gap: 3px;
@@ -222,9 +198,7 @@
             font-family: inherit;
             white-space: nowrap;
         }
-        .chat-tab:hover {
-            color: var(--text-secondary);
-        }
+        .chat-tab:hover { color: var(--text-secondary); }
         .chat-tab.active {
             background: var(--bg-card);
             color: var(--color-luan);
@@ -233,7 +207,6 @@
         }
         .chat-tab .sym { margin-right: 2px; }
 
-        /* ===== 消息区域 ===== */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -245,22 +218,10 @@
             scroll-behavior: smooth;
             background: var(--bg-card);
         }
-        .chat-messages::-webkit-scrollbar {
-            width: 4px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: var(--bg-card-alt);
-            border-radius: 4px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--border-light);
-            border-radius: 4px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: var(--bg-card-alt); border-radius: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
 
-        /* ===== 消息气泡 ===== */
         .msg {
             max-width: 80%;
             padding: 8px 14px;
@@ -272,11 +233,7 @@
             transform: translateY(8px);
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
-        .msg.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+        .msg.show { opacity: 1; transform: translateY(0); }
         .msg.left {
             align-self: flex-start;
             border-bottom-left-radius: 4px;
@@ -288,52 +245,17 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* 淮棋：栾方棋(左) ↔ 林淮(右) */
-        .chat-panel.huaiqi .msg.left {
-            background: var(--color-luan-bg);
-            color: var(--color-luan);
-        }
-        .chat-panel.huaiqi .msg.right {
-            background: var(--color-huai-bg);
-            color: var(--color-huai);
-        }
+        .chat-panel.huaiqi .msg.left { background: var(--color-luan-bg); color: var(--color-luan); }
+        .chat-panel.huaiqi .msg.right { background: var(--color-huai-bg); color: var(--color-huai); }
+        .chat-panel.xiujing .msg.left { background: var(--color-jing-bg); color: var(--color-jing); }
+        .chat-panel.xiujing .msg.right { background: var(--color-luo-bg); color: var(--color-luo); }
+        .chat-panel.muqi .msg.left,
+        .chat-panel.muqi .msg.right { background: var(--color-cheng-bg); color: var(--color-cheng); }
 
-        /* 修璟：魏元璟(左·金) ↔ 罗修(右·紫) —— 已修正 */
-        .chat-panel.xiujing .msg.left {
-            background: var(--color-jing-bg);
-            color: var(--color-jing);
-        }
-        .chat-panel.xiujing .msg.right {
-            background: var(--color-luo-bg);
-            color: var(--color-luo);
-        }
+        .chat-panel { display: none; flex-direction: column; flex: 1; min-height: 0; }
+        .chat-panel.active { display: flex; }
+        .chat-panel .chat-messages { flex: 1; overflow-y: auto; }
 
-        /* 木栖：程木栖(左) ↔ 蔡可(右) */
-        .chat-panel.muqi .msg.left {
-            background: var(--color-cheng-bg);
-            color: var(--color-cheng);
-        }
-        .chat-panel.muqi .msg.right {
-            background: var(--color-cheng-bg);
-            color: var(--color-cheng);
-        }
-
-        /* ===== 面板切换 ===== */
-        .chat-panel {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-        }
-        .chat-panel.active {
-            display: flex;
-        }
-        .chat-panel .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        /* ===== 底部输入栏 ===== */
         .chat-footer {
             padding: 8px 16px 10px 16px;
             border-top: 1px solid var(--border-light);
@@ -366,227 +288,60 @@
             user-select: none;
         }
 
-        /* ===== 电脑端 ===== */
         @media (min-width: 769px) {
-            .chat-window {
-                margin: 16px 20px 20px 20px;
-                height: calc(100vh - 36px);
-                height: calc(100dvh - 36px);
-                max-height: 820px;
-                border-radius: var(--radius);
-                border: 1px solid var(--border-light);
-            }
-            .chat-titlebar {
-                padding: 10px 20px 8px 20px;
-                min-height: 56px;
-            }
-            .chat-tabs {
-                padding: 4px;
-                gap: 4px;
-            }
-            .chat-tab {
-                padding: 4px 18px;
-                font-size: 0.75rem;
-            }
-            .chat-messages {
-                padding: 14px 20px 12px 20px;
-            }
-            .msg {
-                font-size: 0.95rem;
-                padding: 8px 16px;
-                max-width: 75%;
-            }
-            .chat-footer {
-                padding: 10px 20px 12px 20px;
-                min-height: 56px;
-            }
-            .chat-footer .input-placeholder {
-                font-size: 0.9rem;
-                padding: 8px 16px;
-            }
-            .chat-footer .send-placeholder {
-                font-size: 0.85rem;
-                padding: 8px 20px;
-            }
-            .float-group {
-                top: 20px;
-                right: 28px;
-                gap: 8px;
-            }
-            .float-btn {
-                padding: 6px 16px 6px 12px;
-                font-size: 0.7rem;
-            }
-            .float-btn .icon { font-size: 0.9rem; }
+            .chat-window { margin: 16px 20px 20px 20px; max-height: 820px; }
+            .chat-titlebar { padding: 10px 20px 8px 20px; min-height: 56px; }
+            .chat-tab { padding: 4px 18px; font-size: 0.75rem; }
+            .chat-messages { padding: 14px 20px 12px 20px; }
+            .msg { font-size: 0.95rem; padding: 8px 16px; max-width: 75%; }
+            .chat-footer { padding: 10px 20px 12px 20px; min-height: 56px; }
+            .float-group { top: 20px; right: 28px; gap: 8px; }
+            .float-btn { padding: 6px 16px 6px 12px; font-size: 0.7rem; }
         }
 
-        /* ===== 手机端 ===== */
         @media (max-width: 768px) {
-            body {
-                padding: 0;
-                overflow: hidden;
-            }
-            .float-group {
-                top: 8px;
-                right: 10px;
-                gap: 4px;
-            }
-            .float-btn {
-                padding: 3px 8px 3px 6px;
-                font-size: 0.55rem;
-                border-radius: 16px;
-            }
+            body { padding: 0; overflow: hidden; }
+            .float-group { top: 8px; right: 10px; gap: 4px; }
+            .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 16px; }
             .float-btn .icon { font-size: 0.65rem; }
-            #app {
-                max-width: 100%;
-                padding: 0;
-                height: 100vh;
-                height: 100dvh;
-            }
-            .chat-window {
-                border-radius: 0;
-                border: none;
-                margin: 0;
-                height: 100vh;
-                height: 100dvh;
-                width: 100%;
-                box-shadow: none;
-            }
-            .chat-titlebar {
-                padding: 6px 10px 4px 10px;
-                min-height: 44px;
-                gap: 4px;
-            }
-            .chat-titlebar .top-row {
-                min-height: 28px;
-            }
-            .chat-titlebar .left .dots {
-                display: flex;
-                gap: 3px;
-            }
-            .chat-titlebar .left .dot {
-                width: 8px;
-                height: 8px;
-            }
-            .chat-titlebar .title-text {
-                font-size: 0.7rem;
-            }
-            .chat-titlebar .title-text .names .av {
-                font-size: 0.65rem;
-            }
-            .chat-titlebar .right-placeholder {
-                width: 36px;
-            }
-            .chat-tabs {
-                padding: 2px;
-                gap: 2px;
-                border-radius: 14px;
-            }
-            .chat-tab {
-                padding: 2px 10px;
-                font-size: 0.6rem;
-                border-radius: 12px;
-            }
-            .chat-tab .sym {
-                margin-right: 1px;
-            }
-            .chat-messages {
-                padding: 8px 10px 6px 10px;
-                gap: 3px;
-            }
-            .msg {
-                font-size: 0.95rem;
-                padding: 7px 13px;
-                max-width: 85%;
-                border-radius: 14px;
-            }
-            .chat-footer {
-                padding: 5px 10px 7px 10px;
-                min-height: 44px;
-                gap: 8px;
-            }
-            .chat-footer .input-placeholder {
-                font-size: 0.8rem;
-                padding: 5px 12px;
-                border-radius: 18px;
-            }
-            .chat-footer .send-placeholder {
-                font-size: 0.75rem;
-                padding: 5px 14px;
-                border-radius: 18px;
-            }
+            #app { max-width: 100%; padding: 0; }
+            .chat-window { border-radius: 0; border: none; margin: 0; height: 100vh; height: 100dvh; width: 100%; box-shadow: none; }
+            .chat-titlebar { padding: 6px 10px 4px 10px; min-height: 44px; gap: 4px; }
+            .chat-titlebar .title-text { font-size: 0.7rem; }
+            .chat-titlebar .title-text .names .av { font-size: 0.65rem; }
+            .chat-titlebar .right-placeholder { width: 36px; }
+            .chat-tabs { padding: 2px; gap: 2px; border-radius: 14px; }
+            .chat-tab { padding: 2px 10px; font-size: 0.6rem; border-radius: 12px; }
+            .chat-messages { padding: 8px 10px 6px 10px; gap: 3px; }
+            .msg { font-size: 0.95rem; padding: 7px 13px; max-width: 85%; border-radius: 14px; }
+            .chat-footer { padding: 5px 10px 7px 10px; min-height: 44px; gap: 8px; }
+            .chat-footer .input-placeholder { font-size: 0.8rem; padding: 5px 12px; border-radius: 18px; }
+            .chat-footer .send-placeholder { font-size: 0.75rem; padding: 5px 14px; border-radius: 18px; }
+            .chat-titlebar .left .dots { display: flex; gap: 3px; }
+            .chat-titlebar .left .dot { width: 8px; height: 8px; }
         }
 
-        /* 小屏手机 */
         @media (max-width: 420px) {
-            .chat-titlebar {
-                padding: 4px 8px 3px 8px;
-                min-height: 38px;
-            }
-            .chat-titlebar .left .dots {
-                display: none;
-            }
-            .chat-titlebar .title-text {
-                font-size: 0.6rem;
-            }
-            .chat-titlebar .title-text .names .av {
-                font-size: 0.55rem;
-            }
-            .chat-titlebar .right-placeholder {
-                width: 28px;
-            }
-            .chat-tabs {
-                padding: 2px;
-                gap: 1px;
-            }
-            .chat-tab {
-                padding: 2px 8px;
-                font-size: 0.5rem;
-                border-radius: 10px;
-            }
-            .chat-tab .sym {
-                font-size: 0.5rem;
-            }
-            .chat-messages {
-                padding: 6px 8px 4px 8px;
-                gap: 2px;
-            }
-            .msg {
-                font-size: 0.9rem;
-                padding: 5px 10px;
-                max-width: 90%;
-                border-radius: 12px;
-            }
-            .chat-footer {
-                padding: 4px 8px 5px 8px;
-                min-height: 36px;
-                gap: 6px;
-            }
-            .chat-footer .input-placeholder {
-                font-size: 0.7rem;
-                padding: 4px 10px;
-                border-radius: 14px;
-            }
-            .chat-footer .send-placeholder {
-                font-size: 0.65rem;
-                padding: 4px 10px;
-                border-radius: 14px;
-            }
-            .float-group {
-                top: 4px;
-                right: 6px;
-                gap: 3px;
-            }
-            .float-btn {
-                padding: 2px 6px 2px 5px;
-                font-size: 0.5rem;
-                border-radius: 12px;
-            }
+            .chat-titlebar { padding: 4px 8px 3px 8px; min-height: 38px; }
+            .chat-titlebar .left .dots { display: none; }
+            .chat-titlebar .title-text { font-size: 0.6rem; }
+            .chat-titlebar .title-text .names .av { font-size: 0.55rem; }
+            .chat-titlebar .right-placeholder { width: 28px; }
+            .chat-tabs { padding: 2px; gap: 1px; }
+            .chat-tab { padding: 2px 8px; font-size: 0.5rem; border-radius: 10px; }
+            .chat-tab .sym { font-size: 0.5rem; }
+            .chat-messages { padding: 6px 8px 4px 8px; gap: 2px; }
+            .msg { font-size: 0.9rem; padding: 5px 10px; max-width: 90%; border-radius: 12px; }
+            .chat-footer { padding: 4px 8px 5px 8px; min-height: 36px; gap: 6px; }
+            .chat-footer .input-placeholder { font-size: 0.7rem; padding: 4px 10px; border-radius: 14px; }
+            .chat-footer .send-placeholder { font-size: 0.65rem; padding: 4px 10px; border-radius: 14px; }
+            .float-group { top: 4px; right: 6px; gap: 3px; }
+            .float-btn { padding: 2px 6px 2px 5px; font-size: 0.5rem; border-radius: 12px; }
             .float-btn .icon { font-size: 0.55rem; }
         }
     </style>
     <script>
-        (function() {
+        (function(){
             try {
                 const raw = localStorage.getItem('theme');
                 if (raw) {
@@ -604,108 +359,58 @@
             const html = document.documentElement;
             const isDark = html.getAttribute('data-theme') === 'dark';
             const newTheme = isDark ? 'light' : 'dark';
-            if (newTheme === 'dark') {
-                html.setAttribute('data-theme', 'dark');
-            } else {
-                html.removeAttribute('data-theme');
-            }
+            html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
             const btn = document.getElementById('themeBtn');
             if (btn) {
-                btn.innerHTML = newTheme === 'dark'
-                    ? '<span class="icon">☀️</span> 日间'
-                    : '<span class="icon">🌙</span> 夜间';
+                btn.innerHTML = newTheme === 'dark' ? '<span class="icon">☀️</span> 日间' : '<span class="icon">🌙</span> 夜间';
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('themeBtn');
-            if (!btn) return;
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            btn.innerHTML = isDark
-                ? '<span class="icon">☀️</span> 日间'
-                : '<span class="icon">🌙</span> 夜间';
+            if (btn) {
+                btn.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark' ? '<span class="icon">☀️</span> 日间' : '<span class="icon">🌙</span> 夜间';
+            }
         });
     </script>
 </head>
 <body>
 
     <div class="float-group">
-        <a class="float-btn" href="../index.html">
-            <span class="icon">←</span> 返回
-        </a>
-        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-            <span class="icon">🌙</span> 夜间
-        </button>
+        <a class="float-btn" href="./index.html"><span class="icon">←</span> 返回</a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
     </div>
 
     <div id="app">
-
         <div class="chat-window">
-
-            <!-- ===== 标题栏 ===== -->
             <div class="chat-titlebar">
                 <div class="top-row">
                     <div class="left">
-                        <div class="dots">
-                            <span class="dot r"></span>
-                            <span class="dot y"></span>
-                            <span class="dot g"></span>
-                        </div>
-                        <span class="title-text" id="titleText">
-                            <span class="names">
-                                <span class="av a">✿</span>
-                                <span class="arrow">·</span>
-                                <span class="av b">✦</span>
-                            </span>
-                        </span>
+                        <div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+                        <span class="title-text" id="titleText"><span class="names"><span class="av a">✿</span><span class="arrow">·</span><span class="av b">✦</span></span></span>
                     </div>
                     <div class="right-placeholder"></div>
                 </div>
-
                 <div class="chat-tabs">
-                    <button class="chat-tab active" data-panel="huaiqi" onclick="switchPanel('huaiqi')">
-                        <span class="sym">✿</span>淮棋
-                    </button>
-                    <button class="chat-tab" data-panel="xiujing" onclick="switchPanel('xiujing')">
-                        <span class="sym">◈</span>修璟
-                    </button>
-                    <button class="chat-tab" data-panel="muqi" onclick="switchPanel('muqi')">
-                        <span class="sym">◉</span>木栖
-                    </button>
+                    <button class="chat-tab active" data-panel="huaiqi" onclick="switchPanel('huaiqi')"><span class="sym">✿</span>淮棋</button>
+                    <button class="chat-tab" data-panel="xiujing" onclick="switchPanel('xiujing')"><span class="sym">◈</span>修璟</button>
+                    <button class="chat-tab" data-panel="muqi" onclick="switchPanel('muqi')"><span class="sym">◉</span>木栖</button>
                 </div>
             </div>
 
-            <!-- ===== 面板1：淮棋 ===== -->
-            <div class="chat-panel huaiqi active" id="panel-huaiqi">
-                <div class="chat-messages" id="msgs-huaiqi"></div>
-            </div>
+            <div class="chat-panel huaiqi active" id="panel-huaiqi"><div class="chat-messages" id="msgs-huaiqi"></div></div>
+            <div class="chat-panel xiujing" id="panel-xiujing"><div class="chat-messages" id="msgs-xiujing"></div></div>
+            <div class="chat-panel muqi" id="panel-muqi"><div class="chat-messages" id="msgs-muqi"></div></div>
 
-            <!-- ===== 面板2：修璟 ===== -->
-            <div class="chat-panel xiujing" id="panel-xiujing">
-                <div class="chat-messages" id="msgs-xiujing"></div>
-            </div>
-
-            <!-- ===== 面板3：木栖 ===== -->
-            <div class="chat-panel muqi" id="panel-muqi">
-                <div class="chat-messages" id="msgs-muqi"></div>
-            </div>
-
-            <!-- ===== 底部输入栏 ===== -->
             <div class="chat-footer">
                 <span class="input-placeholder">输入消息…</span>
                 <span class="send-placeholder">发送</span>
             </div>
-
         </div>
-
     </div>
 
     <script>
-        // ================================================================
-        //  对话数据
-        // ================================================================
-
         const chatData = {
             huaiqi: {
                 title: { left: '✿', right: '✦', label: '淮棋' },
@@ -723,7 +428,6 @@
                 ]
             },
             xiujing: {
-                // 魏元璟（左·金）↔ 罗修（右·紫）
                 title: { left: '◈', right: '❖', label: '修璟' },
                 messages: [
                     { side: 'left', text: '听说你今天被弟子堵了？' },
@@ -755,172 +459,82 @@
             }
         };
 
-        // ================================================================
-        //  状态
-        // ================================================================
-
-        const panelStates = {
-            huaiqi: { index: 0, done: false },
-            xiujing: { index: 0, done: false },
-            muqi: { index: 0, done: false },
-        };
-
+        const panelStates = { huaiqi: { idx: 0, done: false }, xiujing: { idx: 0, done: false }, muqi: { idx: 0, done: false } };
         let currentPanel = 'huaiqi';
 
-        // ================================================================
-        //  渲染函数
-        // ================================================================
-
-        function renderPanel(panelKey) {
-            const data = chatData[panelKey];
-            const container = document.getElementById('msgs-' + panelKey);
+        function renderPanel(key) {
+            const container = document.getElementById('msgs-' + key);
             if (!container) return;
             container.innerHTML = '';
-
-            data.messages.forEach((msg, i) => {
+            chatData[key].messages.forEach((msg, i) => {
                 const el = document.createElement('div');
-                el.className = `msg ${msg.side}`;
+                el.className = 'msg ' + msg.side;
                 el.textContent = msg.text;
-                el.dataset.index = i;
                 container.appendChild(el);
             });
-
-            panelStates[panelKey].index = 0;
-            panelStates[panelKey].done = false;
-
-            const allMsgs = container.querySelectorAll('.msg');
-            if (allMsgs.length > 0) {
-                allMsgs[0].classList.add('show');
-                panelStates[panelKey].index = 1;
-            }
+            panelStates[key].idx = 0;
+            panelStates[key].done = false;
+            const msgs = container.querySelectorAll('.msg');
+            if (msgs.length) { msgs[0].classList.add('show'); panelStates[key].idx = 1; }
         }
 
-        // ================================================================
-        //  面板切换
-        // ================================================================
+        function switchPanel(key) {
+            if (key === currentPanel) return;
+            document.querySelectorAll('.chat-panel').forEach(el => el.classList.remove('active'));
+            document.getElementById('panel-' + key).classList.add('active');
+            document.querySelectorAll('.chat-tab').forEach(el => el.classList.remove('active'));
+            document.querySelector('.chat-tab[data-panel="' + key + '"]').classList.add('active');
 
-        function switchPanel(panelKey) {
-            if (panelKey === currentPanel) return;
-
-            document.querySelectorAll('.chat-panel').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.getElementById('panel-' + panelKey).classList.add('active');
-
-            document.querySelectorAll('.chat-tab').forEach(el => {
-                el.classList.remove('active');
-                if (el.dataset.panel === panelKey) {
-                    el.classList.add('active');
-                }
-            });
-
-            const data = chatData[panelKey];
+            const data = chatData[key];
             const titleEl = document.getElementById('titleText');
-            if (titleEl && data) {
-                const leftSym = data.title.left;
-                const rightSym = data.title.right;
-                let colorClass = '';
-                if (panelKey === 'huaiqi') colorClass = 'a b';
-                else if (panelKey === 'xiujing') colorClass = 'e d';
-                else if (panelKey === 'muqi') colorClass = 'c c';
-                const colors = colorClass.split(' ');
-                titleEl.innerHTML = `
-                    <span class="names">
-                        <span class="av ${colors[0]}">${leftSym}</span>
-                        <span class="arrow">·</span>
-                        <span class="av ${colors[1]}">${rightSym}</span>
-                        <span style="font-weight:400;color:var(--text-muted);font-size:0.65rem;margin-left:4px;">${data.title.label}</span>
-                    </span>
-                `;
+            if (titleEl) {
+                const colorMap = { huaiqi: 'a b', xiujing: 'e d', muqi: 'c c' };
+                const colors = colorMap[key].split(' ');
+                titleEl.innerHTML = `<span class="names"><span class="av ${colors[0]}">${data.title.left}</span><span class="arrow">·</span><span class="av ${colors[1]}">${data.title.right}</span></span>`;
             }
-
-            currentPanel = panelKey;
-
-            const container = document.getElementById('msgs-' + panelKey);
-            if (container && container.children.length === 0) {
-                renderPanel(panelKey);
-            } else {
-                const msgsContainer = document.querySelector(`#panel-${panelKey} .chat-messages`);
-                if (msgsContainer) {
-                    msgsContainer.scrollTop = msgsContainer.scrollHeight;
-                }
-            }
+            currentPanel = key;
+            const container = document.getElementById('msgs-' + key);
+            if (container && container.children.length === 0) renderPanel(key);
+            else { const mc = document.querySelector('#panel-' + key + ' .chat-messages'); if (mc) mc.scrollTop = mc.scrollHeight; }
         }
 
-        // ================================================================
-        //  加载下一条消息
-        // ================================================================
-
-        function loadNextMessage(panelKey) {
-            const state = panelStates[panelKey];
+        function loadNext(key) {
+            const state = panelStates[key];
             if (state.done) return;
-
-            const container = document.getElementById('msgs-' + panelKey);
+            const container = document.getElementById('msgs-' + key);
             if (!container) return;
-
-            const allMsgs = container.querySelectorAll('.msg');
-            if (state.index >= allMsgs.length) {
-                state.done = true;
-                return;
-            }
-
-            allMsgs[state.index].classList.add('show');
-            state.index++;
-
+            const msgs = container.querySelectorAll('.msg');
+            if (state.idx >= msgs.length) { state.done = true; return; }
+            msgs[state.idx].classList.add('show');
+            state.idx++;
             container.scrollTop = container.scrollHeight;
         }
 
-        function setupScrollLoad(panelKey) {
-            const container = document.getElementById('msgs-' + panelKey);
-            if (!container) return;
-
-            container.addEventListener('scroll', function() {
-                const threshold = 20;
-                const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight <= threshold;
-                if (atBottom) {
-                    loadNextMessage(panelKey);
-                }
-            });
-        }
-
-        // ================================================================
-        //  初始化
-        // ================================================================
-
-        function initAllPanels() {
-            const panels = ['huaiqi', 'xiujing', 'muqi'];
-            panels.forEach(key => {
+        function initAll() {
+            ['huaiqi', 'xiujing', 'muqi'].forEach(key => {
                 renderPanel(key);
-                setupScrollLoad(key);
                 const container = document.getElementById('msgs-' + key);
-                if (container) {
-                    const msgs = container.querySelectorAll('.msg');
-                    msgs.forEach((el, i) => {
-                        if (i > 0) el.classList.remove('show');
-                    });
-                    panelStates[key].index = 1;
-                    container.scrollTop = 0;
-                }
+                container.addEventListener('scroll', function() {
+                    const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight <= 20;
+                    if (atBottom) loadNext(key);
+                });
+                const msgs = container.querySelectorAll('.msg');
+                msgs.forEach((el, i) => { if (i > 0) el.classList.remove('show'); });
+                panelStates[key].idx = 1;
+                container.scrollTop = 0;
             });
             switchPanel('huaiqi');
-        }
-
-        window.switchPanel = switchPanel;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initAllPanels();
-
             document.querySelectorAll('.chat-panel .chat-messages').forEach(el => {
                 el.addEventListener('click', function(e) {
                     if (e.target.closest('.msg')) return;
-                    const panel = this.closest('.chat-panel');
-                    if (!panel) return;
-                    const id = panel.id.replace('panel-', '');
-                    loadNextMessage(id);
+                    const id = this.closest('.chat-panel').id.replace('panel-', '');
+                    loadNext(id);
                 });
             });
-        });
-    </script>
+        }
 
+        window.switchPanel = switchPanel;
+        document.addEventListener('DOMContentLoaded', initAll);
+    </script>
 </body>
 </html>
