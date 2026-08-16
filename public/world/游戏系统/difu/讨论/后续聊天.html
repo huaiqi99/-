@@ -8,6 +8,7 @@
         :root {
             --bg-body: #f7f4ef;
             --bg-card: #ffffff;
+            --bg-card-alt: #f5f2ee;
             --bg-chat-left: #f0ece6;
             --text-primary: #2c2c2c;
             --text-secondary: #4a4a4a;
@@ -27,10 +28,13 @@
             --color-luo-bg: rgba(123,75,138,0.08);
             --color-jing: #c9a84b;
             --color-jing-bg: rgba(201,168,75,0.08);
+            --color-zheng: #b87333;
+            --color-zheng-bg: rgba(184,115,51,0.10);
         }
         [data-theme="dark"] {
             --bg-body: #181614;
             --bg-card: #24201c;
+            --bg-card-alt: #2d2824;
             --bg-chat-left: #2d2824;
             --text-primary: #cfc8c0;
             --text-secondary: #9a948c;
@@ -46,6 +50,8 @@
             --color-luo-bg: rgba(155,107,170,0.10);
             --color-jing: #dbb85c;
             --color-jing-bg: rgba(219,184,92,0.10);
+            --color-zheng: #d48a4a;
+            --color-zheng-bg: rgba(212,138,74,0.12);
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -169,6 +175,7 @@
         .chat-titlebar .title-text .names .av.c { color: var(--color-cheng); }
         .chat-titlebar .title-text .names .av.d { color: var(--color-luo); }
         .chat-titlebar .title-text .names .av.e { color: var(--color-jing); }
+        .chat-titlebar .title-text .names .av.z { color: var(--color-zheng); }
         .chat-titlebar .title-text .names .arrow {
             color: var(--text-muted);
             font-size: 0.6rem;
@@ -222,6 +229,15 @@
         .chat-messages::-webkit-scrollbar-track { background: var(--bg-card-alt); border-radius: 4px; }
         .chat-messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
 
+        .msg-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 1px;
+            padding-left: 4px;
+            align-self: flex-start;
+            max-width: 78%;
+            line-height: 1.4;
+        }
         .msg {
             max-width: 78%;
             padding: 9px 16px;
@@ -251,6 +267,8 @@
         .chat-panel.xiujing .msg.right { background: var(--color-luo-bg); color: var(--color-luo); }
         .chat-panel.muqi .msg.left,
         .chat-panel.muqi .msg.right { background: var(--color-cheng-bg); color: var(--color-cheng); }
+        .chat-panel.fuxiu .msg.left { background: var(--bg-chat-left); color: var(--text-secondary); }
+        .chat-panel.fuxiu .msg.right { background: var(--color-zheng-bg); color: var(--color-zheng); }
 
         .chat-panel { display: none; flex-direction: column; flex: 1; min-height: 0; }
         .chat-panel.active { display: flex; }
@@ -288,7 +306,6 @@
             user-select: none;
         }
 
-        /* ===== 电脑端 ===== */
         @media (min-width: 769px) {
             .chat-window { margin: 16px 20px 20px 20px; max-height: 820px; }
             .chat-titlebar { padding: 12px 24px 10px 24px; min-height: 60px; }
@@ -303,7 +320,6 @@
             .msg.right { border-bottom-right-radius: 4px; }
         }
 
-        /* ===== 手机端（全屏舒适版） ===== */
         @media (max-width: 768px) {
             body { padding: 0; overflow: hidden; }
             .float-group { top: 10px; right: 12px; gap: 5px; }
@@ -328,7 +344,6 @@
             .chat-footer .send-placeholder { font-size: 0.8rem; padding: 7px 16px; border-radius: 20px; }
         }
 
-        /* ===== 小屏手机（>380px 保持舒适） ===== */
         @media (max-width: 420px) {
             .chat-titlebar { padding: 8px 10px 6px 10px; min-height: 48px; gap: 4px; }
             .chat-titlebar .left .dots { display: none; }
@@ -404,12 +419,14 @@
                     <button class="chat-tab active" data-panel="huaiqi" onclick="switchPanel('huaiqi')"><span class="sym">✿</span>淮棋</button>
                     <button class="chat-tab" data-panel="xiujing" onclick="switchPanel('xiujing')"><span class="sym">◈</span>修璟</button>
                     <button class="chat-tab" data-panel="muqi" onclick="switchPanel('muqi')"><span class="sym">◉</span>木栖</button>
+                    <button class="chat-tab" data-panel="fuxiu" onclick="switchPanel('fuxiu')"><span class="sym">✦</span>符修院</button>
                 </div>
             </div>
 
             <div class="chat-panel huaiqi active" id="panel-huaiqi"><div class="chat-messages" id="msgs-huaiqi"></div></div>
             <div class="chat-panel xiujing" id="panel-xiujing"><div class="chat-messages" id="msgs-xiujing"></div></div>
             <div class="chat-panel muqi" id="panel-muqi"><div class="chat-messages" id="msgs-muqi"></div></div>
+            <div class="chat-panel fuxiu" id="panel-fuxiu"><div class="chat-messages" id="msgs-fuxiu"></div></div>
 
             <div class="chat-footer">
                 <span class="input-placeholder">输入消息…</span>
@@ -423,51 +440,126 @@
             huaiqi: {
                 title: { left: '✿', right: '✦', label: '淮棋' },
                 messages: [
-                    { side: 'left', text: '林淮，你看到那个榜了吗？' },
-                    { side: 'right', text: '嗯。' },
-                    { side: 'left', text: '你第一诶。' },
+                    { side: 'left', name: '卿卿', text: '林淮，你看这个。' },
+                    { side: 'left', name: '卿卿', text: '【发送了一张图：归终惊鸿榜拓印】' },
                     { side: 'right', text: '无聊。' },
-                    { side: 'left', text: '我怎么觉得你有点高兴？' },
-                    { side: 'right', text: '……没有。' },
-                    { side: 'left', text: '你明明嘴角都翘了。' },
-                    { side: 'right', text: '你看错了。' },
-                    { side: 'left', text: '行吧行吧，你说没有就没有。反正我看到你名字在第一的时候，还挺开心的。' },
-                    { side: 'right', text: '嗯。' },
+                    { side: 'left', name: '卿卿', text: '你排第一呢。"造物主最偏心的一笔"，证明弟子们还是很认可你的，不值得庆祝一下？' },
+                    { side: 'right', text: '你排第几？' },
+                    { side: 'left', name: '卿卿', text: '……第五。' },
+                    { side: 'right', text: '那这个榜没什么可看的。' },
+                    { side: 'left', name: '卿卿', text: '……又说这种话。' },
+                    { side: 'right', text: '过来。' },
+                    { side: 'left', name: '卿卿', text: '去哪？' },
+                    { side: 'right', text: '我院里。' },
+                    { side: 'left', name: '卿卿', text: '现在？天还没黑。' },
+                    { side: 'right', text: '现在。' },
+                    { side: 'left', name: '卿卿', text: '……好好好，我马上去。' }
                 ]
             },
             xiujing: {
                 title: { left: '◈', right: '❖', label: '修璟' },
                 messages: [
-                    { side: 'left', text: '听说你今天被弟子堵了？' },
-                    { side: 'right', text: '……消息传得这么快？' },
-                    { side: 'left', text: '我后援会的人第一时间就转给我了。' },
-                    { side: 'right', text: '后援会？' },
-                    { side: 'left', text: '你不知道？归终殿有个"璟大人后援会"，带头的是个很有钱的女弟子。' },
-                    { side: 'right', text: '……我现在知道了。' },
-                    { side: 'left', text: '榜上我第二，你第四。' },
-                    { side: 'right', text: '……你想说什么？' },
-                    { side: 'left', text: '没什么。就是觉得挺好的。' },
-                    { side: 'right', text: '……嗯。' },
+                    { side: 'right', text: '在寝殿？' },
+                    { side: 'left', name: '璟殿下', text: '批卷宗，有话快说。' },
+                    { side: 'right', text: '【发送了一张图：归终惊鸿榜拓印】' },
+                    { side: 'left', name: '璟殿下', text: '……这是什么？' },
+                    { side: 'right', text: '那帮弟子私底下弄的选美大赛，你可排第二呢。' },
+                    { side: 'left', name: '璟殿下', text: '哼，无聊的东西。' },
+                    { side: 'left', name: '璟殿下', text: '不过那些小字都是什么？发香胜脂粉？？谁写的，拿孤的头发和脂粉比较，简直不知所谓！' },
+                    { side: 'right', text: '我倒觉得这弟子说得没错，你身上哪里都香。' },
+                    { side: 'left', name: '璟殿下', text: '说什么屁话呢，以为谁都像你一样身上一股煞气。' },
+                    { side: 'right', text: '是是是，璟殿下九五至尊，一身正气，像我这种满身煞气的，只合给殿下当个门神，驱邪避鬼。' },
+                    { side: 'right', text: '可是殿下，门神也分镇宅的和镇宫的。我给殿下当了这么多年门神，殿下是不是该给我个名分了？' },
+                    { side: 'left', name: '璟殿下', text: '……什么名分？' },
+                    { side: 'right', text: '今日有位弟子当面问我，何时能喝上首席与璟殿下的喜酒。我琢磨着，殿下从前登基时我没赶上，如今殿下退位了，我替殿下立个后，不过分吧？' },
+                    { side: 'left', name: '璟殿下', text: '油嘴滑舌……你怎么答的？' },
+                    { side: 'right', text: '能怎么答，这得看殿下愿不愿给我这个名分才行。怎么，你现在要听我的答复，还是你的答复？' },
+                    { side: 'left', name: '璟殿下', text: '谁要听你那些浑话。' },
+                    { side: 'right', text: '那我便当殿下默许了。我现在过来？' },
+                    { side: 'left', name: '璟殿下', text: '……' },
+                    { side: 'left', name: '璟殿下', text: '随你。' },
+                    { side: 'right', text: '好。' }
                 ]
             },
             muqi: {
                 title: { left: '◉', right: '◉', label: '木栖' },
                 messages: [
-                    { side: 'left', text: '师姐师姐你第三！！！' },
-                    { side: 'right', text: '……什么第三？' },
-                    { side: 'left', text: '惊鸿榜！你第三！' },
-                    { side: 'right', text: '……你们还真的搞了投票？我还以为蔡可你只是说着玩的。' },
-                    { side: 'left', text: '大家都在投！你比首席还高！' },
-                    { side: 'right', text: '罗修知道这事吗？' },
-                    { side: 'left', text: '他知道……他还被弟子当面问什么时候和璟大人成亲。' },
-                    { side: 'right', text: '……这群年轻人。' },
-                    { side: 'left', text: '师姐你是不是有点高兴？你嘴角动了！' },
-                    { side: 'right', text: '……没有。药杵拿稳。' },
+                    { side: 'left', name: '可可', text: '师姐师姐！你看这个！' },
+                    { side: 'left', name: '可可', text: '【发送了一张图：归终惊鸿榜拓印】' },
+                    { side: 'right', text: '又去挤榜了？' },
+                    { side: 'left', name: '可可', text: '什么叫挤，我光明正大去看的！师姐你排第三，那朵小兰花还是我画的。' },
+                    { side: 'right', text: '知道了，画得很好。' },
+                    { side: 'left', name: '可可', text: '还有还有——师姐你猜我今天还看到什么了？首席大人被人堵在廊下问什么时候跟璟大人成亲，他没说话，这事是不是马上就要成了？' },
+                    { side: 'right', text: '你一天到晚都在看什么？' },
+                    { side: 'left', name: '可可', text: '我在替师姐观察局势，师姐你就不好奇吗？' },
+                    { side: 'right', text: '我好奇你今天的药材磨完了没有。去吧，别在这杵着了。' },
+                    { side: 'left', name: '可可', text: '师姐，你一点都不关心首席大人的终身大事吗？' },
+                    { side: 'right', text: '他成亲又不请我喝喜酒，我关心有什么用。倒是你，再不去研磨，今晚的药浴别想泡了。' },
+                    { side: 'left', name: '可可', text: '……师姐你太无情了！' },
+                    { side: 'right', text: '无情的人可不会收你的兰花，走了。' },
+                    { side: 'left', name: '可可', text: '师姐等等！' }
+                ]
+            },
+            fuxiu: {
+                title: { left: '✦', right: '✦', label: '符修院' },
+                messages: [
+                    { side: 'right', text: '棋大人第五！只差十四笺！十四笺啊！要是首席大人晚来半个时辰……' },
+                    { side: 'left', name: '周宁', text: '郑师兄，首席大人已经发话了，此事到此为止。再说棋大人自己都说了"高了"，你何必执着。' },
+                    { side: 'right', text: '高了？哪里高了！分明是低了！你们看看前面都是谁？淮大人断层第一没法比，璟大人第二有帝王光环加身，程师姐第三靠温润气质，首席大人第四……首席大人第四靠的是腹肌！腹肌！我们棋大人靠的是神性！是牺牲！这能一样吗？' },
+                    { side: 'left', name: '陈墨', text: '郑师兄，你小声点，这话传出去又要被首席大人加训。' },
+                    { side: 'right', text: '我怕他？我……我当然怕。但我就是不服！白发图都放出去了，效果刚起来，票数眼瞅着要涨，他早不来晚不来，偏偏这时候来锁帖！' },
+                    { side: 'left', name: '李砚', text: '不过话说回来，首席大人今日那反应，到底是生气还是不生气？我看他看榜单的时候，看到璟大人排第二，嘴角明明动了一下。' },
+                    { side: 'left', name: '陈墨', text: '我也感觉到了。而且他说"没什么好生气的"，语气很平淡，不像动怒。' },
+                    { side: 'right', text: '那是因为他排第四！他靠一张腹肌图从第五杀到第四，差点超过程师姐，他当然不生气！' },
+                    { side: 'left', name: '周宁', text: '郑师兄，这话可别让首席大人听见。还有，你昨日拉横幅说九折券，今日可还有弟子来领？' },
+                    { side: 'right', text: '……有。刀修院那几个墙头草，领券的时候倒是积极。' },
+                    { side: 'left', name: '李砚', text: '大师兄，你昨日那横幅可是横跨半张玉牒，全殿都看见了。现在帖子锁了，你怎么分辨谁投了谁没投？' },
+                    { side: 'right', text: '我凭眼缘！看着顺眼的就给，不顺眼的……也给。我符修院郑和做生意童叟无欺，答应了的就得兑现。但你们想想，要是棋大人进了前三，这券我给的也心甘情愿。现在第五……' },
+                    { side: 'left', name: '赵篆', text: '其实我觉得第五很好了……毕竟前十席里，棋大人平日最不爱出风头。' },
+                    { side: 'right', text: '你懂什么！不争不抢那是棋大人的品格，我们当弟子的不能也跟着不争！该争取的就得争取！' },
+                    { side: 'left', name: '周宁', text: '郑师兄说得有理，但此事已了，再争无益。倒是你们，谁把拓印版送去给棋大人看了？' },
+                    { side: 'left', name: '李砚', text: '我送去了。棋大人接过来看了一眼，笑着说"高了"，然后随手放在案上，继续画他的聚灵符了。' },
+                    { side: 'right', text: '他就这反应？！' },
+                    { side: 'left', name: '李砚', text: '就这反应。倒是淮大人，从里屋出来，瞥见那张拓印纸，直接拿起来折了折，似乎想扔，又看了眼棋大人，最后塞进了袖子里。' },
+                    { side: 'right', text: '……淮大人这是？' },
+                    { side: 'left', name: '陈墨', text: '淮大人估计觉得无聊，但棋大人没扔，他也就没真扔。' },
+                    { side: 'right', text: '哼，淮大人那性子，确实像会干出这种事的人。不过拓印版上那句"白发惊鸿，黑发少年"，可是我找人写的，淮大人要是看了，也该知道棋大人的好。' },
+                    { side: 'left', name: '周宁', text: '淮大人看了，只说了四个字。' },
+                    { side: 'right', text: '哪四个字？' },
+                    { side: 'left', name: '周宁', text: '"不及我妻。"' },
+                    { side: 'right', text: '……' },
+                    { side: 'left', name: '陈墨', text: '……' },
+                    { side: 'left', name: '李砚', text: '……行吧，这很淮大人。' },
+                    { side: 'left', name: '赵篆', text: '那、那咱们还继续讨论惊鸿榜吗？' },
+                    { side: 'right', text: '讨论什么！帖子都锁了！我现在只关心一件事——' },
+                    { side: 'left', name: '李砚', text: '什么？' },
+                    { side: 'right', text: '首席大人到底什么时候和璟大人成亲？他今日没否认，是不是意味着喜酒快了？要是喜酒摆在符修院隔壁，我能不能去蹭一杯？' },
+                    { side: 'left', name: '周宁', text: '郑师兄，你刚才不是还说"谁管他成不成亲"吗？' },
+                    { side: 'right', text: '此一时彼一时！棋大人的事告一段落了，八卦一下怎么了？再说，首席大人要是真成亲，咱们符修院是不是该备一份贺礼？送什么好？送符纸？送聚灵阵？' },
+                    { side: 'left', name: '陈墨', text: '送符纸？首席大人成亲，你送符纸？' },
+                    { side: 'right', text: '那送什么！棋大人画的百年好合符？不行，太俗。早生贵子符？更俗！' },
+                    { side: 'left', name: '李砚', text: '郑师兄，你冷静点。首席大人还没说要成亲呢。' },
+                    { side: 'right', text: '他今日那反应，跟默认有什么区别？耳朵都红了！我亲眼看见的！虽然是在玉牒上看见的，但那也是看见！' },
+                    { side: 'left', name: '赵篆', text: '郑师兄，你的魂力波动又乱了……' },
+                    { side: 'right', text: '我激动！不行吗？！算了，不说了，我去给棋大人研墨了。你们该画符的画符，该修炼的修炼，别在这儿闲着了！' },
+                    { side: 'left', name: '周宁', text: '郑师兄，你的九折券还发吗？' },
+                    { side: 'right', text: '发！当然发！明日巳时，符修院正堂，凭拓印图领取，过时不候！' },
+                    { side: 'left', name: '陈墨', text: '……大师兄真是，来去如风。' },
+                    { side: 'left', name: '李砚', text: '不过咱们符修院，是不是该把"白发仙人图"的拓印多备几份？我看医馆、枪阁都有人来问。' },
+                    { side: 'left', name: '周宁', text: '备吧，但别拿出去卖，棋大人知道了会不高兴的。' },
+                    { side: 'left', name: '陈墨', text: '那送？' },
+                    { side: 'left', name: '周宁', text: '送。只送，不卖。这是规矩。' },
+                    { side: 'left', name: '赵篆', text: '小师妹，你明明也投了淮大人一票，怎么做到这么公正的？' },
+                    { side: 'left', name: '周宁', text: '我投淮大人，是因为确实好看。但我管这帖子，就得一碗水端平。好了，散了吧，明日还要早起画符呢。' },
+                    { side: 'left', name: '李砚', text: '散了散了。对了陈墨，你那张棋大人黑发旧照，能不能借我描摹一幅？' },
+                    { side: 'left', name: '陈墨', text: '你自己去求棋大人。' },
+                    { side: 'left', name: '李砚', text: '……我不敢。' },
+                    { side: 'left', name: '陈墨', text: '我也不敢。' }
                 ]
             }
         };
 
-        const panelStates = { huaiqi: { idx: 0, done: false }, xiujing: { idx: 0, done: false }, muqi: { idx: 0, done: false } };
+        const panelStates = { huaiqi: { idx: 0, done: false }, xiujing: { idx: 0, done: false }, muqi: { idx: 0, done: false }, fuxiu: { idx: 0, done: false } };
         let currentPanel = 'huaiqi';
 
         function renderPanel(key) {
@@ -475,6 +567,12 @@
             if (!container) return;
             container.innerHTML = '';
             chatData[key].messages.forEach((msg, i) => {
+                if (msg.name) {
+                    const nameEl = document.createElement('div');
+                    nameEl.className = 'msg-name';
+                    nameEl.textContent = msg.name;
+                    container.appendChild(nameEl);
+                }
                 const el = document.createElement('div');
                 el.className = 'msg ' + msg.side;
                 el.textContent = msg.text;
@@ -496,7 +594,7 @@
             const data = chatData[key];
             const titleEl = document.getElementById('titleText');
             if (titleEl) {
-                const colorMap = { huaiqi: 'a b', xiujing: 'e d', muqi: 'c c' };
+                const colorMap = { huaiqi: 'a b', xiujing: 'e d', muqi: 'c c', fuxiu: 'z z' };
                 const colors = colorMap[key].split(' ');
                 titleEl.innerHTML = `<span class="names"><span class="av ${colors[0]}">${data.title.left}</span><span class="arrow">·</span><span class="av ${colors[1]}">${data.title.right}</span></span>`;
             }
@@ -519,7 +617,7 @@
         }
 
         function initAll() {
-            ['huaiqi', 'xiujing', 'muqi'].forEach(key => {
+            ['huaiqi', 'xiujing', 'muqi', 'fuxiu'].forEach(key => {
                 renderPanel(key);
                 const container = document.getElementById('msgs-' + key);
                 container.addEventListener('scroll', function() {
