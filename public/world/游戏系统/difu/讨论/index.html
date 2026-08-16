@@ -52,7 +52,6 @@
             flex-direction: column;
         }
 
-        /* ===== 右上角悬浮组 ===== */
         .float-group {
             position: fixed;
             top: 20px;
@@ -86,7 +85,6 @@
         }
         .float-btn .icon { font-size: 0.9rem; }
 
-        /* ===== 容器 ===== */
         #app {
             max-width: 780px;
             margin: 0 auto;
@@ -95,7 +93,6 @@
             flex: 1;
         }
 
-        /* ===== 页眉 ===== */
         .page-header {
             margin-bottom: 24px;
             padding-bottom: 14px;
@@ -116,7 +113,6 @@
             margin-top: 2px;
         }
 
-        /* ===== 分类标签 ===== */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -142,7 +138,6 @@
         }
         .filter-tag .sym { margin-right: 4px; }
 
-        /* ===== 帖子卡片 ===== */
         .post-list {
             display: flex;
             flex-direction: column;
@@ -168,6 +163,7 @@
         .post-card:nth-child(4) { animation-delay: 0.16s; }
         .post-card:nth-child(5) { animation-delay: 0.20s; }
         .post-card:nth-child(6) { animation-delay: 0.24s; }
+        .post-card:nth-child(7) { animation-delay: 0.28s; }
         @keyframes fade-in {
             0% { opacity: 0; transform: translateY(6px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -187,7 +183,10 @@
         .post-card .head .title {
             font-size: 1rem;
             font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none;
         }
+        .post-card .head .title:hover { color: var(--accent); }
         .post-card .head .tag {
             font-size: 0.6rem;
             padding: 1px 10px;
@@ -240,12 +239,36 @@
             color: var(--text-secondary);
         }
 
-        /* ===== 隐藏 ===== */
+        .post-card .action {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .post-card .action-btn {
+            font-size: 0.78rem;
+            padding: 5px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-card);
+            background: var(--bg-card-alt);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .post-card .action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
         .post-card.hidden {
             display: none;
         }
 
-        /* ===== 空状态 ===== */
         .empty-state {
             text-align: center;
             padding: 32px 0;
@@ -259,7 +282,6 @@
             color: var(--text-muted-light);
         }
 
-        /* ===== 响应式 ===== */
         @media (max-width: 600px) {
             body { padding: 0 10px; }
             #app { padding: 16px 0 30px 0; }
@@ -319,10 +341,10 @@
                 : '<span class="icon">🌙</span> 夜间';
         });
     </script>
+<base target="_blank">
 </head>
 <body>
 
-    <!-- ===== 右上角悬浮组 ===== -->
     <div class="float-group">
         <a class="float-btn" href="../index.html">
             <span class="icon">←</span> 返回首页
@@ -334,13 +356,11 @@
 
     <div id="app">
 
-        <!-- ===== 页眉 ===== -->
         <div class="page-header">
             <div class="title"><span class="deco">✦</span>归终殿 · 讨论区</div>
             <div class="sub">❀ 炉火正旺 · 共 7 个话题</div>
         </div>
 
-        <!-- ===== 分类标签 ===== -->
         <div class="filter-bar" id="filterBar">
             <button class="filter-tag active" data-filter="all"><span class="sym">❖</span>全部</button>
             <button class="filter-tag" data-filter="战力"><span class="sym">⚔</span>战力</button>
@@ -350,28 +370,28 @@
             <button class="filter-tag" data-filter="闲聊"><span class="sym">◉</span>闲聊</button>
         </div>
 
-        <!-- ===== 帖子列表 ===== -->
         <div class="post-list" id="postList">
 
-            <!-- 1 -->
-            <a class="post-card" href="惊鸿榜.html" data-category="八卦">
+            <div class="post-card" data-category="八卦">
                 <div class="head">
-                    <span class="title">【惊鸿榜】归终殿美貌排名大曝光！首席身材照流出？？</span>
+                    <a class="title" href="惊鸿榜.html">【归终帖】惊鸿榜七日投票纪事</a>
                     <span class="tag hot">🔥 热</span>
                 </div>
                 <div class="meta">
                     <span class="author">符修院小师妹</span>
                     <span>·</span>
-                    <span>2026-08-14</span>
+                    <span>甲辰年·秋·初五日</span>
                 </div>
-                <div class="excerpt">家人们谁懂啊！！归终殿弟子私下搞了个「惊鸿榜」投票，本来只是闹着玩的，结果票数出来我直接笑死——林淮断层第一，魏元璟第二，程木栖第三，罗修和栾方棋打得难解难分……</div>
+                <div class="excerpt">归终殿弟子借玉牒发起惊鸿榜投票，七日为期，每日三笺，列十一人于榜。林淮断层第一，魏元璟、程木栖、栾方棋、罗修诸位大人名次胶着。至第六日，首席大人亲至公示栏，榜单遂止……</div>
                 <div class="foot">
                     <span>💬 <span class="num">156</span></span>
                     <span>❤ <span class="num">2.3w</span></span>
                 </div>
-            </a>
+                <div class="action">
+                    <a class="action-btn" href="./后续聊天.html">→ 查看诸位大人得知榜单后的反应</a>
+                </div>
+            </div>
 
-            <!-- 2 -->
             <a class="post-card" href="讨论/战力分析.html" data-category="战力">
                 <div class="head">
                     <span class="title">林淮 vs 罗修，正面交锋谁赢？认真分析</span>
@@ -389,7 +409,6 @@
                 </div>
             </a>
 
-            <!-- 3 -->
             <a class="post-card" href="讨论/浮生树起源.html" data-category="剧情">
                 <div class="head">
                     <span class="title">浮生树起源的三种假说：天命君、楚迟、栾方棋</span>
@@ -406,7 +425,6 @@
                 </div>
             </a>
 
-            <!-- 4 -->
             <a class="post-card" href="讨论/首席成亲.html" data-category="八卦">
                 <div class="head">
                     <span class="title">首席和璟大人到底什么时候成亲？在线等，急</span>
@@ -424,7 +442,6 @@
                 </div>
             </a>
 
-            <!-- 5 -->
             <a class="post-card" href="讨论/秦墨予同人.html" data-category="同人">
                 <div class="head">
                     <span class="title">【同人】如果秦墨予没有疯：浮生一粟的另一种可能</span>
@@ -441,10 +458,9 @@
                 </div>
             </a>
 
-            <!-- 6 -->
             <a class="post-card" href="讨论/冉舟人偶.html" data-category="剧情">
                 <div class="head">
-                    <span class="title">冉舟到底算不算“活着”？重看青丘之战的感想</span>
+                    <span class="title">冉舟到底算不算"活着"？重看青丘之战的感想</span>
                 </div>
                 <div class="meta">
                     <span class="author">忘川摆渡人</span>
@@ -458,7 +474,6 @@
                 </div>
             </a>
 
-            <!-- 7 -->
             <a class="post-card" href="讨论/白禾川和秦雨令.html" data-category="剧情">
                 <div class="head">
                     <span class="title">白禾川与秦雨令：一场持续两百年的单向执念</span>
@@ -478,7 +493,6 @@
 
         </div>
 
-        <!-- ===== 空状态（JS控制显示） ===== -->
         <div class="empty-state" id="emptyState" style="display:none;">
             <span class="sym">❀</span>
             没有匹配的帖子<br>
@@ -488,7 +502,6 @@
     </div>
 
     <script>
-        // ===== 分类筛选 =====
         const filterTags = document.querySelectorAll('.filter-tag');
         const postCards = document.querySelectorAll('.post-card');
         const emptyState = document.getElementById('emptyState');
@@ -512,14 +525,12 @@
                 if (show) visible++;
             });
             emptyState.style.display = visible === 0 ? 'block' : 'none';
-            // 更新帖子数量
             const sub = document.querySelector('.page-header .sub');
             if (sub) {
                 sub.textContent = '❀ 炉火正旺 · 共 ' + visible + ' 个话题';
             }
         }
 
-        // 初始渲染
         applyFilter();
     </script>
 
