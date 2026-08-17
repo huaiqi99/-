@@ -148,7 +148,6 @@
             background: var(--bg-card);
             border: 1px solid var(--border-card);
             border-radius: var(--radius);
-            padding: 16px 20px;
             text-decoration: none;
             color: var(--text-primary);
             transition: all var(--transition);
@@ -156,6 +155,8 @@
             animation: fade-in 0.3s ease forwards;
             opacity: 0;
             transform: translateY(6px);
+            cursor: pointer;
+            overflow: hidden;
         }
         .post-card:nth-child(1) { animation-delay: 0.04s; }
         .post-card:nth-child(2) { animation-delay: 0.08s; }
@@ -173,6 +174,12 @@
             box-shadow: var(--shadow-md);
             transform: translateY(-2px);
         }
+        .post-card .body {
+            display: block;
+            padding: 16px 20px;
+            text-decoration: none;
+            color: inherit;
+        }
         .post-card .head {
             display: flex;
             align-items: center;
@@ -183,10 +190,7 @@
         .post-card .head .title {
             font-size: 1rem;
             font-weight: 500;
-            color: var(--text-primary);
-            text-decoration: none;
         }
-        .post-card .head .title:hover { color: var(--accent); }
         .post-card .head .tag {
             font-size: 0.6rem;
             padding: 1px 10px;
@@ -239,14 +243,16 @@
             color: var(--text-secondary);
         }
 
-        .post-card .action {
-            margin-top: 10px;
+        .post-card .action-bar {
+            padding: 0 20px 14px;
             display: flex;
             justify-content: flex-end;
+            border-top: 1px solid var(--border-light);
+            margin-top: 0;
         }
         .post-card .action-btn {
             font-size: 0.78rem;
-            padding: 5px 16px;
+            padding: 6px 16px;
             border-radius: 16px;
             border: 1px solid var(--border-card);
             background: var(--bg-card-alt);
@@ -258,6 +264,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            margin-top: 10px;
         }
         .post-card .action-btn:hover {
             border-color: var(--accent);
@@ -285,7 +292,8 @@
         @media (max-width: 600px) {
             body { padding: 0 10px; }
             #app { padding: 16px 0 30px 0; }
-            .post-card { padding: 14px 16px; }
+            .post-card .body { padding: 14px 16px; }
+            .post-card .action-bar { padding: 0 16px 12px; }
             .post-card .head .title { font-size: 0.92rem; }
             .page-header .title { font-size: 1.2rem; }
             .float-group {
@@ -372,122 +380,143 @@
 
         <div class="post-list" id="postList">
 
-            <div class="post-card" data-category="八卦">
-                <div class="head">
-                    <a class="title" href="惊鸿榜.html">【归终帖】惊鸿榜七日投票纪事</a>
-                    <span class="tag hot">🔥 热</span>
+            <!-- 1 -->
+            <div class="post-card" data-category="八卦" onclick="location.href='惊鸿榜.html'">
+                <div class="body">
+                    <div class="head">
+                        <span class="title">【归终帖】惊鸿榜七日投票纪事</span>
+                        <span class="tag hot">🔥 热</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">符修院小师妹</span>
+                        <span>·</span>
+                        <span>甲辰年·秋·初五日</span>
+                    </div>
+                    <div class="excerpt">归终殿弟子借玉牒发起惊鸿榜投票，七日为期，每日三笺，列十一人于榜。林淮断层第一，魏元璟、程木栖、栾方棋、罗修诸位大人名次胶着。至第六日，首席大人亲至公示栏，榜单遂止……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">156</span></span>
+                        <span>❤ <span class="num">2.3w</span></span>
+                    </div>
                 </div>
-                <div class="meta">
-                    <span class="author">符修院小师妹</span>
-                    <span>·</span>
-                    <span>甲辰年·秋·初五日</span>
-                </div>
-                <div class="excerpt">归终殿弟子借玉牒发起惊鸿榜投票，七日为期，每日三笺，列十一人于榜。林淮断层第一，魏元璟、程木栖、栾方棋、罗修诸位大人名次胶着。至第六日，首席大人亲至公示栏，榜单遂止……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">156</span></span>
-                    <span>❤ <span class="num">2.3w</span></span>
-                </div>
-                <div class="action">
-                    <a class="action-btn" href="./后续聊天.html">→ 查看诸位大人得知榜单后的反应</a>
+                <div class="action-bar">
+                    <a class="action-btn" href="./后续聊天.html" onclick="event.stopPropagation()">→ 查看诸位大人得知榜单后的反应</a>
                 </div>
             </div>
 
+            <!-- 2 -->
             <a class="post-card" href="讨论/战力分析.html" data-category="战力">
-                <div class="head">
-                    <span class="title">林淮 vs 罗修，正面交锋谁赢？认真分析</span>
-                    <span class="tag hot">🔥 热</span>
-                </div>
-                <div class="meta">
-                    <span class="author">枪阁小师弟</span>
-                    <span>·</span>
-                    <span>2026-08-12</span>
-                </div>
-                <div class="excerpt">抛开剧情滤镜，纯战力向。林淮攻击力 155，速度 120，属于一击必杀型；罗修防御力 95，速度 90，但鬼修法术和引魂刀双修……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">89</span></span>
-                    <span>❤ <span class="num">1.1w</span></span>
+                <div class="body">
+                    <div class="head">
+                        <span class="title">林淮 vs 罗修，正面交锋谁赢？认真分析</span>
+                        <span class="tag hot">🔥 热</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">枪阁小师弟</span>
+                        <span>·</span>
+                        <span>2026-08-12</span>
+                    </div>
+                    <div class="excerpt">抛开剧情滤镜，纯战力向。林淮攻击力 155，速度 120，属于一击必杀型；罗修防御力 95，速度 90，但鬼修法术和引魂刀双修……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">89</span></span>
+                        <span>❤ <span class="num">1.1w</span></span>
+                    </div>
                 </div>
             </a>
 
+            <!-- 3 -->
             <a class="post-card" href="讨论/浮生树起源.html" data-category="剧情">
-                <div class="head">
-                    <span class="title">浮生树起源的三种假说：天命君、楚迟、栾方棋</span>
-                </div>
-                <div class="meta">
-                    <span class="author">藏经阁扫地僧</span>
-                    <span>·</span>
-                    <span>2026-08-10</span>
-                </div>
-                <div class="excerpt">关于浮生树的来历，剧情里给了很多线索但没明说。我整理了一下目前主流的三种解释：1. 天命君创造说 2. 楚迟化身说 3. 栾方棋因果闭环说……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">67</span></span>
-                    <span>❤ <span class="num">8.7k</span></span>
+                <div class="body">
+                    <div class="head">
+                        <span class="title">浮生树起源的三种假说：天命君、楚迟、栾方棋</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">藏经阁扫地僧</span>
+                        <span>·</span>
+                        <span>2026-08-10</span>
+                    </div>
+                    <div class="excerpt">关于浮生树的来历，剧情里给了很多线索但没明说。我整理了一下目前主流的三种解释：1. 天命君创造说 2. 楚迟化身说 3. 栾方棋因果闭环说……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">67</span></span>
+                        <span>❤ <span class="num">8.7k</span></span>
+                    </div>
                 </div>
             </a>
 
+            <!-- 4 -->
             <a class="post-card" href="讨论/首席成亲.html" data-category="八卦">
-                <div class="head">
-                    <span class="title">首席和璟大人到底什么时候成亲？在线等，急</span>
-                    <span class="tag hot">🔥 热</span>
-                </div>
-                <div class="meta">
-                    <span class="author">璟大人后援会</span>
-                    <span>·</span>
-                    <span>2026-08-08</span>
-                </div>
-                <div class="excerpt">首席都在璟大人院子里光膀子被拍到了，这还不官宣？？有人知道内幕吗，我嗑的CP什么时候能喝上喜酒……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">203</span></span>
-                    <span>❤ <span class="num">3.4w</span></span>
+                <div class="body">
+                    <div class="head">
+                        <span class="title">首席和璟大人到底什么时候成亲？在线等，急</span>
+                        <span class="tag hot">🔥 热</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">璟大人后援会</span>
+                        <span>·</span>
+                        <span>2026-08-08</span>
+                    </div>
+                    <div class="excerpt">首席都在璟大人院子里光膀子被拍到了，这还不官宣？？有人知道内幕吗，我嗑的CP什么时候能喝上喜酒……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">203</span></span>
+                        <span>❤ <span class="num">3.4w</span></span>
+                    </div>
                 </div>
             </a>
 
+            <!-- 5 -->
             <a class="post-card" href="讨论/秦墨予同人.html" data-category="同人">
-                <div class="head">
-                    <span class="title">【同人】如果秦墨予没有疯：浮生一粟的另一种可能</span>
-                </div>
-                <div class="meta">
-                    <span class="author">浮生树下许愿人</span>
-                    <span>·</span>
-                    <span>2026-08-06</span>
-                </div>
-                <div class="excerpt">假如秦墨予没有疯癫，林淮就不会被诅咒，他们会在浮生一粟里安稳度过余生。但那样的话，就没有两百年的等待，也没有栾方棋了……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">112</span></span>
-                    <span>❤ <span class="num">1.8w</span></span>
+                <div class="body">
+                    <div class="head">
+                        <span class="title">【同人】如果秦墨予没有疯：浮生一粟的另一种可能</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">浮生树下许愿人</span>
+                        <span>·</span>
+                        <span>2026-08-06</span>
+                    </div>
+                    <div class="excerpt">假如秦墨予没有疯癫，林淮就不会被诅咒，他们会在浮生一粟里安稳度过余生。但那样的话，就没有两百年的等待，也没有栾方棋了……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">112</span></span>
+                        <span>❤ <span class="num">1.8w</span></span>
+                    </div>
                 </div>
             </a>
 
+            <!-- 6 -->
             <a class="post-card" href="讨论/冉舟人偶.html" data-category="剧情">
-                <div class="head">
-                    <span class="title">冉舟到底算不算"活着"？重看青丘之战的感想</span>
-                </div>
-                <div class="meta">
-                    <span class="author">忘川摆渡人</span>
-                    <span>·</span>
-                    <span>2026-08-04</span>
-                </div>
-                <div class="excerpt">冉舟是人偶，她没有灵魂，记忆是上一代传承的，使命是白禾川给的。但她在最后叫了栾方棋的名字——那是她唯一一次没有按照剧本行事……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">78</span></span>
-                    <span>❤ <span class="num">6.3k</span></span>
+                <div class="body">
+                    <div class="head">
+                        <span class="title">冉舟到底算不算"活着"？重看青丘之战的感想</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">忘川摆渡人</span>
+                        <span>·</span>
+                        <span>2026-08-04</span>
+                    </div>
+                    <div class="excerpt">冉舟是人偶，她没有灵魂，记忆是上一代传承的，使命是白禾川给的。但她在最后叫了栾方棋的名字——那是她唯一一次没有按照剧本行事……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">78</span></span>
+                        <span>❤ <span class="num">6.3k</span></span>
+                    </div>
                 </div>
             </a>
 
+            <!-- 7 -->
             <a class="post-card" href="讨论/白禾川和秦雨令.html" data-category="剧情">
-                <div class="head">
-                    <span class="title">白禾川与秦雨令：一场持续两百年的单向执念</span>
-                    <span class="tag hot">🔥 热</span>
-                </div>
-                <div class="meta">
-                    <span class="author">桃林听风客</span>
-                    <span>·</span>
-                    <span>2026-08-02</span>
-                </div>
-                <div class="excerpt">白禾川花了三百年都不明白，秦雨令不是不爱他，是根本不会爱他。而当他终于明白的时候，秦雨令已经亲手把剑刺进了他的心脏……</div>
-                <div class="foot">
-                    <span>💬 <span class="num">145</span></span>
-                    <span>❤ <span class="num">2.1w</span></span>
+                <div class="body">
+                    <div class="head">
+                        <span class="title">白禾川与秦雨令：一场持续两百年的单向执念</span>
+                        <span class="tag hot">🔥 热</span>
+                    </div>
+                    <div class="meta">
+                        <span class="author">桃林听风客</span>
+                        <span>·</span>
+                        <span>2026-08-02</span>
+                    </div>
+                    <div class="excerpt">白禾川花了三百年都不明白，秦雨令不是不爱他，是根本不会爱他。而当他终于明白的时候，秦雨令已经亲手把剑刺进了他的心脏……</div>
+                    <div class="foot">
+                        <span>💬 <span class="num">145</span></span>
+                        <span>❤ <span class="num">2.1w</span></span>
+                    </div>
                 </div>
             </a>
 
