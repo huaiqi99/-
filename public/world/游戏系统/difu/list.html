@@ -136,6 +136,58 @@
             margin-top: 2px;
         }
 
+        /* ===== PVP 入口条 ===== */
+        .pvp-entry {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            background: var(--bg-card-alt);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            transition: all var(--transition);
+        }
+        .pvp-entry:hover {
+            border-color: var(--accent-soft-hover);
+        }
+        .pvp-entry .icon {
+            font-size: 1rem;
+            color: var(--accent);
+            opacity: 0.5;
+            flex-shrink: 0;
+        }
+        .pvp-entry .info {
+            flex: 1;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        .pvp-entry .info strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .pvp-entry .info .sep {
+            color: var(--text-muted);
+            margin: 0 4px;
+        }
+        .pvp-entry .btn {
+            padding: 4px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-card);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: all var(--transition);
+            font-family: inherit;
+            flex-shrink: 0;
+        }
+        .pvp-entry .btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -226,6 +278,8 @@
             #topbar .brand { font-size: 0.95rem; }
             .page-header .title { font-size: 1.3rem; }
             .grid { grid-template-columns: 1fr 1fr; }
+            .pvp-entry { flex-wrap: wrap; gap: 8px; }
+            .pvp-entry .btn { width: 100%; text-align: center; }
         }
         @media (max-width: 420px) {
             .grid { grid-template-columns: 1fr; }
@@ -270,6 +324,17 @@
     <div class="page-header">
         <div class="title">角色合集</div>
         <div class="sub">— 归终之纪，万物有录 —</div>
+    </div>
+
+    <!-- ===== PVP 入口条 ===== -->
+    <div class="pvp-entry">
+        <span class="icon">✦</span>
+        <span class="info">
+            <strong>社区 PVP</strong>
+            <span class="sep">·</span>
+            天梯环境 · 热门阵容 · 玩家梗百科
+        </span>
+        <a class="btn" href="pvp/index.html">进入 →</a>
     </div>
 
     <!-- 角色列表 -->
@@ -326,7 +391,7 @@
             </div>
         </a>
 
-        <!-- 罗修 -->
+        <!-- 魏元璟 -->
         <a class="grid-item" href="role/魏元璟.html">
             <div class="name">魏元璟</div>
             <div class="sub">全能法师 · 群体输出</div>
@@ -386,7 +451,6 @@
 </div>
 
 <script>
-    // 统计角色数量
     var grid = document.getElementById('roleGrid');
     var items = grid.querySelectorAll('.grid-item');
     document.getElementById('count').textContent = items.length;

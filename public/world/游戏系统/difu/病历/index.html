@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>凌宸钧 · 临床病历单</title>
+    <style>
+        /* ============================================================
+           全局变量 & 重置
+           ============================================================ */
+        :root {
+            --bg-body: #e8e0d5;
+            --bg-paper: #f6f0e7;
+            --bg-card: #fcf8f0;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --border-light: #d5c8b8;
+            --border-card: #c4b4a0;
+            --shadow: 0 8px 32px rgba(44, 36, 30, 0.12);
+            --radius: 12px;
+            --font: "Courier New", "Source Code Pro", "PingFang SC", monospace;
+            --transition: 0.3s ease;
+            --accent: #8a2a1a;
+            --accent-soft: rgba(138, 42, 26, 0.06);
+            --sidebar-width: 220px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1614;
+            --bg-paper: #24201c;
+            --bg-card: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
+            --border-light: #35302a;
+            --border-card: #4a443e;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 30px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+           右上角悬浮组
+           ============================================================ */
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+
+        .float-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .float-btn .icon {
+            font-size: 0.9rem;
+        }
+
+        /* ============================================================
+           主容器
+           ============================================================ */
+        #app {
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+           病历单卡片
+           ============================================================ */
+        .medical-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 24px 28px 30px 28px;
+            box-shadow: var(--shadow);
+            position: relative;
+            width: 100%;
+            animation: cardIn 0.45s ease forwards;
+        }
+
+        @keyframes cardIn {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---- 病历单抬头 ---- */
+        .medical-header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-card);
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+
+        .medical-header .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .medical-header .sub {
+            font-size: 0.75rem;
+            color: var(--text-muted-light);
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* ---- 患者信息 ---- */
+        .patient-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 24px;
+            font-size: 0.82rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+
+        .patient-info .item .label {
+            color: var(--text-muted-light);
+            font-weight: 400;
+        }
+
+        .patient-info .item .value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* ---- 诊断（大号红色） ---- */
+        .diagnosis-block {
+            background: var(--accent-soft);
+            border-left: 4px solid var(--accent);
+            padding: 10px 16px;
+            margin-bottom: 14px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .diagnosis-block .main-dx {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+        }
+
+        .diagnosis-block .sub-dx {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ---- 病历正文 ---- */
+        .medical-body {
+            font-size: 0.92rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            font-family: var(--font);
+        }
+
+        .medical-body .section {
+            margin-bottom: 12px;
+        }
+
+        .medical-body .section .title {
+            font-weight: 700;
+            font-size: 0.82rem;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+        }
+
+        .medical-body .section p {
+            margin-bottom: 4px;
+            text-indent: 2em;
+            color: var(--text-secondary);
+        }
+
+        .medical-body .section p.no-indent {
+            text-indent: 0;
+        }
+
+        .medical-body .section .sub-item {
+            margin-left: 1.2em;
+            margin-bottom: 2px;
+            color: var(--text-secondary);
+        }
+
+        .medical-body .section .sub-item .hl {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* ---- 红色高亮（仅用于关键术语） ---- */
+        .hl {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* ---- 接诊记录（原批注改为病程记录风格） ---- */
+        .clinic-note {
+            margin: 12px 0 8px 18px;
+            padding: 10px 16px 10px 20px;
+            border-left: 3px solid var(--accent);
+            background: var(--accent-soft);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            position: relative;
+        }
+
+        .clinic-note::before {
+            content: "【接诊记录】";
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            opacity: 0.7;
+        }
+
+        .clinic-note .hl {
+            font-weight: 600;
+        }
+
+        .clinic-note .quote-line {
+            display: block;
+            margin-top: 4px;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        /* ---- 底部 ---- */
+        .medical-footer {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted-light);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .medical-footer .status {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           侧边栏便签（隐藏式）
+           ============================================================ */
+        .sidebar-tab {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            padding: 8px 10px 8px 6px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            writing-mode: vertical-rl;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            font-family: var(--font);
+            user-select: none;
+        }
+
+        .sidebar-tab:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .sidebar-tab .icon {
+            writing-mode: horizontal-tb;
+            display: inline-block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* ---- 侧边栏面板 ---- */
+        .sidebar-panel {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-card);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06);
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            z-index: 95;
+            padding: 28px 16px 20px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-panel.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-panel .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted-light);
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0 4px;
+            margin-bottom: 12px;
+            transition: color var(--transition);
+        }
+
+        .sidebar-panel .close-btn:hover {
+            color: var(--accent);
+        }
+
+        .sidebar-panel .panel-title {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: var(--text-muted-light);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-panel .role-item {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-size: 0.85rem;
+            font-family: var(--font);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: left;
+            background: none;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-panel .role-item:hover {
+            background: var(--accent-soft);
+            border-color: var(--border-card);
+        }
+
+        .sidebar-panel .role-item.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar-panel .role-item .badge {
+            font-size: 0.6rem;
+            opacity: 0.5;
+            font-weight: 400;
+            margin-left: 6px;
+        }
+
+        .sidebar-panel .role-item .status-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .sidebar-panel .role-item.active .status-dot {
+            opacity: 1;
+        }
+
+        .sidebar-panel .panel-footer {
+            margin-top: auto;
+            font-size: 0.6rem;
+            color: var(--text-muted-light);
+            text-align: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            letter-spacing: 0.3px;
+        }
+
+        /* ---- 遮罩 ---- */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 92;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* ============================================================
+           响应式
+           ============================================================ */
+        @media (max-width: 700px) {
+            body {
+                padding: 0 10px 20px 10px;
+            }
+
+            #app {
+                padding: 16px 0 0 0;
+            }
+
+            .medical-card {
+                padding: 18px 16px 22px 16px;
+            }
+
+            .medical-header .title {
+                font-size: 0.95rem;
+            }
+
+            .diagnosis-block .main-dx {
+                font-size: 1rem;
+            }
+
+            .medical-body {
+                font-size: 0.85rem;
+                line-height: 1.9;
+            }
+
+            .medical-body .section .sub-item {
+                margin-left: 0.8em;
+            }
+
+            .clinic-note {
+                margin-left: 6px;
+                padding: 8px 12px 8px 16px;
+                font-size: 0.78rem;
+            }
+
+            .sidebar-tab {
+                padding: 6px 8px 6px 4px;
+                font-size: 0.6rem;
+            }
+
+            .sidebar-panel {
+                width: 200px;
+                padding: 20px 12px 16px 12px;
+            }
+
+            .sidebar-panel .role-item {
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+
+            .float-group {
+                top: 12px;
+                right: 12px;
+                gap: 6px;
+            }
+
+            .float-btn {
+                padding: 4px 10px 4px 8px;
+                font-size: 0.65rem;
+            }
+
+            .medical-footer {
+                font-size: 0.65rem;
+            }
+
+            .patient-info {
+                font-size: 0.75rem;
+                gap: 4px 16px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .medical-card {
+                padding: 14px 12px 18px 12px;
+            }
+
+            .medical-body {
+                font-size: 0.82rem;
+            }
+
+            .diagnosis-block .main-dx {
+                font-size: 0.92rem;
+            }
+
+            .clinic-note {
+                font-size: 0.74rem;
+                padding: 6px 10px 6px 14px;
+            }
+
+            .sidebar-panel {
+                width: 180px;
+                padding: 16px 10px 12px 10px;
+            }
+
+            .sidebar-panel .role-item {
+                font-size: 0.75rem;
+                padding: 6px 8px;
+            }
+
+            .patient-info {
+                font-size: 0.7rem;
+                gap: 2px 10px;
+            }
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+    </style>
+
+    <script>
+        // ============================================================
+        //  主题切换
+        // ============================================================
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch (e) {}
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark' ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌙</span> 夜间';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('themeBtn');
+            if (!btn) return;
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            btn.innerHTML = isDark ?
+                '<span class="icon">☀️</span> 日间' :
+                '<span class="icon">🌙</span> 夜间';
+        });
+
+        // ============================================================
+        //  侧边栏控制
+        // ============================================================
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            const body = document.body;
+
+            panel.classList.toggle('open', sidebarOpen);
+            overlay.classList.toggle('show', sidebarOpen);
+            body.classList.toggle('no-scroll', sidebarOpen);
+        }
+
+        function closeSidebar() {
+            if (sidebarOpen) toggleSidebar();
+        }
+
+        // ============================================================
+        //  角色切换（预留扩展）
+        // ============================================================
+        let currentRole = 'ling';
+
+        function switchRole(roleId) {
+            if (roleId === currentRole) {
+                closeSidebar();
+                return;
+            }
+            currentRole = roleId;
+            document.querySelectorAll('.role-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.role === roleId);
+            });
+            const card = document.getElementById('medicalCard');
+            card.style.animation = 'none';
+            requestAnimationFrame(() => {
+                card.style.animation = 'cardIn 0.45s ease forwards';
+            });
+            closeSidebar();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+            document.querySelectorAll('.role-item').forEach(el => {
+                el.addEventListener('click', function() {
+                    switchRole(this.dataset.role);
+                });
+            });
+        });
+    </script>
+
+</head>
+<body>
+
+    <!-- ============================================================
+    右上角悬浮组
+    ============================================================ -->
+    <div class="float-group">
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
+    </div>
+
+    <!-- ============================================================
+    侧边栏便签
+    ============================================================ -->
+    <div class="sidebar-tab" onclick="toggleSidebar()">
+        <span class="icon">📋</span> 档案
+    </div>
+
+    <!-- ============================================================
+    侧边栏遮罩
+    ============================================================ -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ============================================================
+    侧边栏面板
+    ============================================================ -->
+    <div class="sidebar-panel" id="sidebarPanel">
+        <button class="close-btn" onclick="closeSidebar()">✕</button>
+        <div class="panel-title">✦ 归终殿 · 临床病例</div>
+
+        <button class="role-item active" data-role="ling">
+            <span class="status-dot"></span>凌宸钧
+            <span class="badge">LCJ-317-001-A</span>
+        </button>
+        <!-- 后续角色会通过JS注入，此处预留 -->
+
+        <div class="panel-footer">临床心理科 · 内部归档</div>
+    </div>
+
+    <!-- ============================================================
+    主容器
+    ============================================================ -->
+    <div id="app">
+
+        <!-- ============================================================
+        病历单：凌宸钧
+        ============================================================ -->
+        <div class="medical-card" id="medicalCard">
+
+            <!-- 抬头 -->
+            <div class="medical-header">
+                <div class="title">｜ 临床心理科 · 病历单 ｜</div>
+                <div class="sub">LINGSHI GROUP · PSYCHIATRIC CLINIC</div>
+            </div>
+
+            <!-- 患者信息 -->
+            <div class="patient-info">
+                <span class="item"><span class="label">姓名</span> <span class="value">凌宸钧</span></span>
+                <span class="item"><span class="label">年龄</span> <span class="value">31岁</span></span>
+                <span class="item"><span class="label">职业</span> <span class="value">凌氏集团总裁</span></span>
+                <span class="item"><span class="label">病历号</span> <span class="value">LCJ-317-001-A</span></span>
+                <span class="item"><span class="label">就诊日期</span> <span class="value">2022.03.17</span></span>
+                <span class="item"><span class="label">主治医师</span> <span class="value">周医生</span></span>
+            </div>
+
+            <!-- 诊断（大号红色，一目了然） -->
+            <div class="diagnosis-block">
+                <div class="main-dx">诊断：偏执型依恋障碍（显性型）</div>
+                <div class="sub-dx">F60.0 偏执型人格障碍（倾向） · F43.22 适应障碍伴焦虑和抑郁情绪（继发）</div>
+            </div>
+
+            <!-- 病历正文 -->
+            <div class="medical-body">
+
+                <!-- 主诉 -->
+                <div class="section">
+                    <div class="title">■ 主诉</div>
+                    <p>患者自述“精神状态稳定”，但经评估确认存在严重的偏执型依恋障碍。患者的核心困扰表现为：对“秦墨予/栾方棋”这一对象持续六年的高强度情感附着，附着程度远超正常范畴，且患者对此缺乏自知力。</p>
+                    <p class="no-indent" style="font-style:italic;color:var(--text-muted);font-size:0.85rem;">患者主动陈述：“我挺好的，我只是偶尔路过他家楼下。一周大概三四次吧。”</p>
+                </div>
+
+                <!-- 现病史 -->
+                <div class="section">
+                    <div class="title">■ 现病史</div>
+                    <p>患者于六年前与目标对象（秦墨予）建立上下级关系，期间逐渐发展为单向高强度情感依恋。患者通过职务之便给予目标对象超出常规的职业晋升和资源支持，并持续进行跟踪行为。</p>
+                    <p>目标对象因精神分裂症住院治疗并离职后，患者出现明显的“替代行为”——寻找了与目标对象外貌高度相似的女性（秦雨令）作为情感替代品，维持了约半年的关系。替代品失效后，患者重回对原始目标的执着。</p>
+                    <p>当前，目标对象已更名“栾方棋”并与他人（林淮）建立婚姻关系。患者对此事实存在认知回避，仍习惯称呼目标对象为“秦墨予”，并在行为层面持续介入目标对象的生活（包括对目标对象伴侣的创业公司进行投资）。</p>
+                </div>
+
+                <!-- 既往史 -->
+                <div class="section">
+                    <div class="title">■ 既往史</div>
+                    <p>患者自述为私生子出身，早年经历被排斥和轻视，后通过自身努力接管家族企业。患者曾多次提及“不甘心”这一情绪，认为其多数行为动机源于对早年处境的补偿。</p>
+                    <p>患者在目标对象因病离职后，曾短暂寻求心理支持，但未系统接受治疗。患者承认自己“偏执”，但将其合理化为“事业型人格”的一部分，拒绝承认其病理性。</p>
+                    <p>家族史：未明确报告重大精神疾病史。</p>
+                </div>
+
+                <!-- 精神检查 -->
+                <div class="section">
+                    <div class="title">■ 精神检查</div>
+                    <p><span class="hl">认知：</span>存在明显的认知分裂——将“秦墨予”与“栾方棋”视为两个独立个体。前者被高度理想化，后者被贬低为“不完整的版本”。</p>
+                    <p><span class="hl">行为：</span>持续性的跟踪行为（社交监控、地理监控、间接经济干预）。</p>
+                    <p><span class="hl">情感：</span>情感附着完全单向，不具备互惠性。存在矛盾情感（渴望靠近与抗拒承认）。</p>
+                    <p><span class="hl">人际关系：</span>社交圈高度同质化，患者倾向于与同样被过去困住的人建立关系。</p>
+                    <p><span class="hl">自知力：</span>部分受损。患者能部分承认自己的偏执倾向，但无法将其认知为病理性。</p>
+                </div>
+
+                <!-- 处方 -->
+                <div class="section">
+                    <div class="title">■ 处方</div>
+                    <p><span class="hl">1. 认知重组治疗</span> —— 患者需从认知上接受“秦墨予”与“栾方棋”是同一人，并理解该对象不存在“回归”的可能。</p>
+                    <p><span class="hl">2. 行为干预</span> —— 建议患者逐步减少对目标对象的跟踪行为。每日记录路过次数并逐步递减。</p>
+                    <p><span class="hl">3. 社交扩充</span> —— 建议患者在保持现有关系的同时，尝试与未受过去创伤影响的人群建立联系。</p>
+                    <p><span class="hl">4. 药物治疗</span> —— 如焦虑或抑郁症状加重，可考虑SSRI类药物辅助。</p>
+                </div>
+
+                <!-- 接诊记录（对话风格） -->
+                <div class="clinic-note">
+                    患者在第3次复诊时提到：“你总是说我对秦墨予有执念，但你没想过，万一他也需要我呢？”<br><br>
+                    此句暴露了患者的核心信念：他认为自己的偏执是一种“守护”，而非一种“入侵”。他需要理解，被偏执者并不感激被偏执。事实上，他可能就是那个让秦墨予重新生病的原因。<br><br>
+                    建议在下次复诊中重点探讨：患者的“爱”是否只是一种包装精致的自我感动？当他说“喜欢”的时候，他喜欢的究竟是他自己想象中的秦墨予，还是那个真实存在、已走向不同人生的栾方棋？如果是前者，那这份感情与秦墨予本人毫无关系——他在和一个幻影谈恋爱。<br>
+                    <span class="quote-line">＊患者在听到“幻影”一词时停止了摩挲戒指。停顿约三秒后，他笑了——体面的、总裁式的笑。他说：“周医生，你是第一个把‘我根本不懂爱情’说得这么学术的人。”他没有否认，这说明他听懂了。＊</span>
+                </div>
+
+            </div>
+
+            <!-- 底部 -->
+            <div class="medical-footer">
+                <span>档案状态：<span class="status">治疗中</span></span>
+                <span>下次复诊：待定</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

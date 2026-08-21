@@ -216,6 +216,21 @@
             background: var(--accent);
         }
 
+        /* 现代AU标记 */
+        .grid-card .badge-au {
+            display: inline-block;
+            font-size: 0.55rem;
+            font-weight: 500;
+            color: var(--text-muted-light);
+            background: var(--bg-card-alt);
+            padding: 1px 10px;
+            border-radius: 10px;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.3px;
+            border: 1px solid var(--border-light);
+        }
+
         @media (max-width: 600px) {
             .grid { grid-template-columns: 1fr; }
             #topbar { padding: 14px 0 10px 0; }
@@ -267,6 +282,7 @@
     </div>
 
     <div class="grid">
+        <!-- 角色合集（古代背景） -->
         <a class="grid-card" href="list.html">
             <span class="deco">✿</span>
             <div class="name">角色合集</div>
@@ -274,19 +290,26 @@
             <div class="desc">查看所有角色卡牌 · 属性 · 技能 · 羁绊</div>
             <span class="status done">已收录 5 位</span>
         </a>
-        <a class="grid-card" href="pvp/index.html">
-            <span class="deco">✦</span>
-            <div class="name">社区 PVP</div>
-            <div class="divider"></div>
-            <div class="desc">天梯环境 · 热门阵容 · 玩家梗百科</div>
-            <span class="status">建设中</span>
-        </a>
+
+        <!-- 论坛 PVP（古代背景） -->
         <a class="grid-card" href="讨论/index.html">
             <span class="deco">❖</span>
             <div class="name">论坛 PVP</div>
             <div class="divider"></div>
-            <div class="desc">角色互动· 内含狗血 · 超绝番外</div>
+            <div class="desc">角色互动 · 内含狗血 · 超绝番外</div>
             <span class="status">鬼脑发动中</span>
+        </a>
+
+        <!-- 病历档案（现代AU） -->
+        <a class="grid-card" href="病历/index.html">
+            <span class="deco">◈</span>
+            <div class="name">
+                病历档案
+                <span class="badge-au">现代 AU</span>
+            </div>
+            <div class="divider"></div>
+            <div class="desc">心理诊疗记录 · 偏执与妄想 · 荒诞自述</div>
+            <span class="status">收录中</span>
         </a>
     </div>
 
