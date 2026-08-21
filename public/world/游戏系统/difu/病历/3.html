@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我那操蛋的人生 · 第三章</title>
+    <style>
+        :root {
+            --bg-body: #e8e0d5;
+            --bg-paper: #f6f0e7;
+            --bg-card: #fcf8f0;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --border-light: #d5c8b8;
+            --border-card: #c4b4a0;
+            --shadow: 0 8px 32px rgba(44, 36, 30, 0.12);
+            --radius: 12px;
+            --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+            --font-mono: "Courier New", "Source Code Pro", "PingFang SC", monospace;
+            --transition: 0.3s ease;
+            --accent: #8a2a1a;
+            --accent-soft: rgba(138, 42, 26, 0.06);
+            --sidebar-width: 240px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1614;
+            --bg-paper: #24201c;
+            --bg-card: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
+            --border-light: #35302a;
+            --border-card: #4a443e;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+
+        .float-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .float-btn .icon { font-size: 0.9rem; }
+        .float-btn .icon-back { font-size: 0.9rem; margin-right: 2px; }
+
+        #app {
+            max-width: 780px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reading-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 32px 36px 36px 36px;
+            box-shadow: var(--shadow);
+            position: relative;
+            width: 100%;
+            animation: cardIn 0.45s ease forwards;
+            flex: 1;
+        }
+
+        @keyframes cardIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .reading-header {
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .reading-header .book-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: var(--text-muted-light);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .reading-header .chapter-line {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .reading-header .chapter-num {
+            font-family: var(--font-mono);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.35;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .reading-header .chapter-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            font-family: var(--font-serif);
+            line-height: 1.2;
+        }
+
+        .reading-header .chapter-title .sub {
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--text-muted-light);
+            letter-spacing: 1.5px;
+            margin-left: 6px;
+        }
+
+        .reading-body {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            font-family: var(--font-serif);
+        }
+
+        .reading-body p {
+            margin-bottom: 0.6em;
+            text-indent: 2em;
+        }
+
+        .reading-body p.no-indent { text-indent: 0; }
+
+        .reading-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .reading-footer .nav-btn {
+            padding: 6px 18px;
+            border: 1px solid var(--border-card);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .reading-footer .nav-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .reading-footer .nav-btn.disabled {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .reading-footer .nav-btn .arrow { font-size: 0.85rem; }
+
+        .reading-footer .chapter-indicator {
+            font-size: 0.65rem;
+            color: var(--text-muted-light);
+            font-family: var(--font-mono);
+            letter-spacing: 1px;
+        }
+
+        .sidebar-tab {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 12px 10px 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            writing-mode: vertical-rl;
+            font-size: 0.65rem;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            user-select: none;
+        }
+
+        .sidebar-tab:hover { border-color: var(--accent); color: var(--accent); }
+        .sidebar-tab .icon {
+            writing-mode: horizontal-tb;
+            display: inline-block;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-panel {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-card);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06);
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            z-index: 95;
+            padding: 28px 16px 20px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-panel.open { transform: translateX(0); }
+
+        .sidebar-panel .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted-light);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            padding: 0 4px;
+            margin-bottom: 16px;
+            transition: color var(--transition);
+        }
+
+        .sidebar-panel .close-btn:hover { color: var(--accent); }
+
+        .sidebar-panel .panel-title {
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            color: var(--text-muted-light);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            font-family: var(--font-mono);
+        }
+
+        .sidebar-panel .panel-title .accent { color: var(--accent); }
+
+        .sidebar-panel .chapter-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-panel .chapter-item {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-size: 0.85rem;
+            font-family: var(--font-serif);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: left;
+            background: none;
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .sidebar-panel .chapter-item:hover {
+            background: var(--accent-soft);
+            border-color: var(--border-card);
+            color: var(--text-primary);
+        }
+
+        .sidebar-panel .chapter-item.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar-panel .chapter-item .num {
+            font-size: 0.6rem;
+            opacity: 0.4;
+            font-weight: 400;
+            margin-right: 8px;
+            font-family: var(--font-mono);
+        }
+
+        .sidebar-panel .panel-footer {
+            margin-top: auto;
+            font-size: 0.55rem;
+            color: var(--text-muted-light);
+            text-align: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            letter-spacing: 0.5px;
+            font-family: var(--font-mono);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 92;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 700px) {
+            body { padding: 0 10px 30px 10px; }
+            #app { padding: 16px 0 0 0; }
+            .reading-card { padding: 20px 18px 26px 18px; }
+            .reading-header .chapter-title { font-size: 1.15rem; }
+            .reading-header .chapter-num { font-size: 1.2rem; }
+            .reading-body { font-size: 0.95rem; line-height: 1.8; }
+            .reading-footer .nav-btn { padding: 6px 14px; font-size: 0.68rem; }
+            .sidebar-tab { padding: 8px 10px 8px 6px; font-size: 0.55rem; }
+            .sidebar-panel { width: 200px; padding: 20px 12px 16px 12px; }
+            .sidebar-panel .chapter-item { font-size: 0.8rem; padding: 8px 10px; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
+        }
+
+        @media (max-width: 420px) {
+            .reading-card { padding: 16px 14px 20px 14px; }
+            .reading-header .chapter-title { font-size: 1rem; }
+            .reading-body { font-size: 0.92rem; line-height: 1.75; }
+            .reading-footer { flex-direction: column; align-items: stretch; gap: 8px; }
+            .reading-footer .nav-btn { justify-content: center; }
+            .sidebar-panel { width: 180px; padding: 16px 10px 12px 10px; }
+            .sidebar-panel .chapter-item { font-size: 0.75rem; padding: 6px 8px; }
+        }
+
+        body.no-scroll { overflow: hidden; }
+    </style>
+
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch (e) {}
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark' ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌙</span> 夜间';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                btn.innerHTML = isDark ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌙</span> 夜间';
+            }
+        });
+
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            const body = document.body;
+
+            panel.classList.toggle('open', sidebarOpen);
+            overlay.classList.toggle('show', sidebarOpen);
+            body.classList.toggle('no-scroll', sidebarOpen);
+        }
+
+        function closeSidebar() {
+            if (sidebarOpen) toggleSidebar();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+        });
+    </script>
+
+</head>
+<body>
+
+    <div class="float-group">
+        <a class="float-btn" href="./index">
+            <span class="icon icon-back">←</span> 病历单
+        </a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
+    </div>
+
+    <div class="sidebar-tab" onclick="toggleSidebar()">
+        <span class="icon">📖</span> 目录
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar-panel" id="sidebarPanel">
+        <button class="close-btn" onclick="closeSidebar()">✕</button>
+        <div class="panel-title">✦ <span class="accent">那</span>操蛋的人生</div>
+
+        <div class="chapter-list">
+            <a href="./chapter-1.html" class="chapter-item">
+                <span class="num">01</span> 酒局
+            </a>
+            <a href="./chapter-2.html" class="chapter-item">
+                <span class="num">02</span> 神秘白月光
+            </a>
+            <a href="./chapter-3.html" class="chapter-item active">
+                <span class="num">03</span> 相遇过程
+            </a>
+            <a href="./chapter-4.html" class="chapter-item">
+                <span class="num">04</span> 致命女装
+            </a>
+        </div>
+
+        <div class="panel-footer">LINGSHI · 孤本手稿</div>
+    </div>
+
+    <div id="app">
+
+        <div class="reading-card">
+
+            <div class="reading-header">
+                <div class="book-title">那 操 蛋 的 人 生</div>
+                <div class="chapter-line">
+                    <span class="chapter-num">03</span>
+                    <span class="chapter-title">
+                        相遇过程
+                        <span class="sub">· 第三章</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="reading-body">
+
+                <p>我看着白禾川那张醉醺醺的脸，突然想起，我和这人是怎么认识的了。</p>
+
+                <p>说来其实很好笑，在秦墨予因为精神分裂住院的半年后，在一次和隔壁公司谈一桩并购案的时候，我发现对方派来的秘书长得和秦墨予有七八分像。推门进来的那一瞬间，我以为自己眼花了，或者我疯了——精神分裂这玩意儿难道还能传染？</p>
+
+                <p>那场会议到底谈了什么，我一个字都没记住。我只记得那个女人坐在我对面，面容完全和记忆里某个人重叠在一起。会议结束后，我以细节对接的名义把她单独留了下来，问她叫什么。她说，秦雨令。</p>
+
+                <p>秦雨令。秦墨予。</p>
+
+                <p>天底下没有这样的巧合，长得像，又都姓秦。我问她，你和秦墨予是什么关系？</p>
+
+                <p>她愣愣地看了我一眼，支支吾吾地说，她是秦墨予的姐姐。</p>
+
+                <p>听到这个答案，我甚至有点恍惚。我又问她今年多少岁，她说二十五岁。居然和秦墨予一样大，这个答案让我心里起了一个很微妙的念头，或许她可以成为第二个秦墨予。</p>
+
+                <p>失而复得的喜悦几乎冲昏了我的大脑，很多年后我才发现，但凡我稍微调查一下她的背景，或者稍微理智一些，都能发现她在撒谎。</p>
+
+                <p>我以特聘秘书的名义把她留在了身边。公司里的人私底下议论得热火朝天，说我莫名其妙弄了个花瓶秘书，大概是什么新欢。我不在乎他们怎么说，我只知道，秦墨予好像以一种荒诞的方式又回到了我身边。</p>
+
+                <p>我像对秦墨予一样对她，派人跟踪，打听她私下在干什么，后来发现她的生活无聊得可怜，除了上班就是回家，两点一线，没有任何值得探究的秘密。</p>
+
+                <p>太日常了，日常到让我失望。</p>
+
+                <p>秦墨予以前的生活至少还有加班和项目报告，而她的人生却像一杯白开水，什么都没有。</p>
+
+                <p>后来我放弃了探究，转头开始回忆当年秦墨予还在的日子。</p>
+
+                <p>我知道秦墨予是孤儿，他的养父在他十六岁那年替人顶罪入了牢狱，从那以后他就一个人生活。某种意义上，他的背景和我有着异曲同工之妙——同样的被抛弃，同样的独自长大，同样的在孤独里学会把自己磨锋利。</p>
+
+                <p>我想，我可以在我力所能及的范围内给他最好的东西，权力，金钱，还有他梦寐以求的陪伴。唯一的条件是，他必须陪在我身边。</p>
+
+                <p>等他彻底退出我的人生，已经是半年后遇到秦雨令的时候。再看到那张和秦墨予有七八分像的脸，我第一次没能用理性思考。</p>
+
+                <p>我问她，你愿意做我女朋友吗？</p>
+
+                <p>她点头了。正是这一点头，让我之后半年的生活变得无比荒诞。</p>
+
+                <p>交往期间，我给了她一切我能想到最好的东西。名牌包，高级公寓，随便刷的副卡。有时候连她自己都不确定我的真实意图到底是什么——如果我只是馋她身子，那这关系未免太古怪了。因为从交往第一天到她离开，我都没碰过她。</p>
+
+                <p>有不明事理的同事问她，凌总对你这么好，到底喜欢你什么？秦雨令无奈地摊摊手，说：他喜欢我的脸。</p>
+
+                <p>我无法否认，没有这张脸，我看都不会看她一眼。</p>
+
+                <p>其实在秦墨予住院的时候，我并非没去看望过他，只是每次去，他的状态都比上一次更糟。到最后，他已经记不清自己的名字了。</p>
+
+                <p>听见我叫他的名字，秦墨予茫然地看着我，问："秦墨予是谁？"</p>
+
+                <p>那一刻，我站在病房门口，不知道该作何表情。林淮把我拉到一边，说他现在有间歇性失忆，很多事都不记得了，让我不要刺激他。</p>
+
+                <p>"间歇性失忆，"我重复了一遍这个词，"那秦墨予……后面还会回来吗？"</p>
+
+                <p>林淮沉默了一会儿，说："我不知道。"</p>
+
+                <p>从那以后，我再也没来看过秦墨予。我不知道该怎么说，也不知道能怎么说。在那个状态下，我已经无法干预他的人生了。我不知道该以什么身份站在他面前，上司，朋友，还是一个无法面对现实的懦夫？</p>
+
+                <p>所以我只能把一切都投射到秦雨令身上。</p>
+
+                <p>她大概知道我并不爱她，也大概知道我只是拿她当秦墨予的替身。但知道了又能如何呢？我不曾亏待过她，难道仅仅因为这个，她就要在我面前表达不满吗？</p>
+
+                <p>人总是贪心不足的，她舍不得那些荣华富贵，就不会向我提分手。我也是，我舍不得那张脸，就不会主动放她走。</p>
+
+                <p>靠着这种心照不宣的默契，我们维持了将近半年的荒诞关系。可人总是会腻的，特别是对着一个不太像正主的仿品。我本来已经打算结束这场荒诞剧了，甚至还对着镜子练习了分手的台词，准备第二天一早就跟她说清楚。</p>
+
+                <p>结果那句话还没出口，白禾川就找上门来了，说是来领秦雨令走的。</p>
+
+                <p>我当时颇为意外，问秦雨令他什么人。</p>
+
+                <p>白禾川扭扭捏捏的说："她是我女朋友。我们吵架了，现在我来领她回去。"</p>
+
+                <p>看他那个心虚的态度，我当时就断定，他是个傻逼。</p>
+
+                <p>众所周知，傻逼的破坏力往往超出想象，我还没来得及叫保安，他就二话不说冲上来和我打了一架。</p>
+
+                <p>虽然说是打架，其实和我单方面挨揍差不了多少。我这辈子没遇到过这么荒谬的事情，最后他顺利把人领走了，而我这个私生子上位的野种，居然被揍得毫无还手之力。</p>
+
+                <p>当时，我的第一反应是：这他妈是什么东西？</p>
+
+                <p>被揍完后，我立马就查了他的背景。白禾川，青丘生物科技创始人，上市公司CEO，甚至和我们凌氏有过几笔合作。有头有脸的人物，居然能像个地痞流氓一样冲进我办公室抢人。</p>
+
+                <p>我气炸了，本来打算雇几个人把他套麻袋揍一顿，但想了想，算了，万一人家把我告了还得去蹲几天局子，而且对公司影响也不好。</p>
+
+                <p>所以我告诉自己，这就是个傻逼，他公司迟早破产，犯不着跟这种人计较。</p>
+
+                <p>没想到一语成谶。</p>
+
+                <p>几个月后，我再去查那家公司，发现青丘生物科技居然真的破产了。资金链断裂，核心项目被对家截胡，白禾川从云端摔进泥里，据说连房子都抵押了。我当即就去吃了顿好的，算是庆祝。</p>
+
+                <p>又没过多久，听说秦雨令也得病死了，据说是某种急性病，入院一周就下死亡通知了。</p>
+
+                <p>得知这个消息的我脸上没什么表示，心里却涌起了一种幸灾乐祸的快感。我的竞争对手又少了一个，不管是生意上的，还是感情上的。</p>
+
+                <p>回忆到此，本该结束了。但故事如果只讲到这儿，你大概会好奇我和白禾川是怎么从单纯的打架互殴演变成现在这种关系的。</p>
+
+                <p>那又是另一个荒诞的段子。</p>
+
+                <p>秦雨令死后，白禾川给她办了个葬礼。我谈不上难过，但确实有一种很奇怪的猎奇心理，想去看看白禾川那家伙有没有哭成狗。于是就开了车，循着讣告上的地址往城郊的殡仪馆去。</p>
+
+                <p>结果还没开到目的地，在一条双向四车道的省道上，迎面冲过来一辆白色面包车。</p>
+
+                <p>我当时正在走神，脑子里还在过秦墨予的事，等反应过来，那辆车已经逆着车道直挺挺地朝我冲了过来。我猛打方向盘，那面包车也猛打方向盘，然后我们就以一种极其诡异的姿态，在另一条道上撞在了一起。</p>
+
+                <p>轰的一声，那面包车当场就散架了。车门飞出去三米远，零件撒了一地，跟乐高积木似的。</p>
+
+                <p>而我的G63，只是前面的引擎盖翘了起来，勉强还维持着车样。</p>
+
+                <p>我的头狠狠撞在弹出来的安全气囊上，还没来得及骂娘，副驾驶的门就被人拉开了。一个满脸是血的男人扑进来，伸手就要抢我的方向盘。</p>
+
+                <p>我第一反应是遇着劫匪了，结果定睛一看，这他妈不白禾川吗？</p>
+
+                <p>但他不是在葬礼上吗，怎么会突然满头是血的跑到我的副驾驶来？</p>
+
+                <p>不对。我立马反应过来——刚才那辆散架的面包车，就是这孙子开的！</p>
+
+                <p>我一句问候他全家的话还没出口，白禾川就抢在我前面喊道："快开车！往反方向开！"</p>
+
+                <p>我想说你有病吧，但余光瞥见后视镜里，省道的尽头扬起一片尘土，一串黑色轿车正气势汹汹地追过来。我从业多年，那种阵型、那种压迫感，让我本能地觉得——这是遇上黑道追杀了。</p>
+
+                <p>我尝试重启车子，而G63不愧是G63，引擎盖都翻成那样了，居然还能打着火。</p>
+
+                <p>然后我们就开启了这场莫名其妙的逃命之旅。</p>
+
+                <p>白禾川瘫在副驾驶上，满头血，不停地往后看。我踩着油门，在城市道路上横冲直撞，闯了无数个红灯，差点把外卖骑手都撞飞了，而白禾川还在不停的喊"开快点"。</p>
+
+                <p>我抽空回了他一句："再快老子驾照就要被吊销到下辈子了。"</p>
+
+                <p>好在G63的抗造程度超出了我的想象，也超出了后面那群人的想象。我一路狂飙到郊区，在一条泥泞的乡间小路上甩掉了那串黑车。确认后面没动静了，我才一脚刹车踩死，喘着粗气停在一片荒草地里。</p>
+
+                <p>我他娘的终于松了口气，转头看向那个罪魁祸首："你他妈惹了谁？要被灭口？"</p>
+
+                <p>白禾川劫后余生地抹了把脸上的血，喘着气说："司衡集团的人。"</p>
+
+                <p>我一听，脑子嗡的一声。司衡？那不就是搞垮他公司的对家吗？</p>
+
+                <p>"和秦雨令有关。"白禾川又补了一句。</p>
+
+                <p>我顿时闭了嘴。我也谈了秦雨令半年，那群黑车不会也要追我吧？</p>
+
+                <p>我问具体情况，白禾川却不肯说，反而开始绘声绘色地描述对方有多邪恶、多可怕，说秦雨令是道上的人物，背景深不可测，惹了她背后的人要挨枪子，说得天花乱坠，把我唬得一愣一愣。</p>
+
+                <p>我说："她得病死的，又不是我杀的。"</p>
+
+                <p>白禾川立刻换了一套说辞，说什么"知情者也要灭口"，"我们现在是一条绳上的蚂蚱"，必须隐藏起来，找个安全的地方住，一个月不能出门。</p>
+
+                <p>现在回想，当时的我大概是脑子瓦特了。</p>
+
+                <p>刚经历秦墨予失忆、秦雨令死亡，我的精神状态大概和心理医生最悲观的评估差不多。如果没有经历那场荒谬的荒野大逃杀，我大概还能用脚趾头想一想——那他妈哪是什么黑道追杀？那分明是来追债的。</p>
+
+                <p>我脑子一抽，想到了我名下那套安全系统最高的员工宿舍。顶层，密码锁，二十四小时保安，本来是我留给秦墨予养病用的，结果一直没派上用场。</p>
+
+                <p>基于眼下情况，我直接把白禾川带了过去。</p>
+
+                <p>那一周，我确实偶尔在楼下看到几个戴黑帽子的人在附近转悠。白禾川趴在窗台上，压低声音说："看，他们还在找我们。"</p>
+
+                <p>我当即就被唬住了，拉上了窗帘。</p>
+
+                <p>我后来才知道，那特么哪是什么职业杀手，那就是一群讨债的！</p>
+
+                <p>白禾川欠了一屁股债，人家来堵他，结果看到我把他塞进高档公寓，以为他还有钱，就在楼下蹲点。</p>
+
+                <p>就这样，我和白禾川在那个员工宿舍里住了一个月。他睡沙发，我睡床。</p>
+
+                <p>那一个月，是我人生中最漫长的合租体验。白禾川话多，从早说到晚，从国际形势说到他前女友，从商业经验说到泡面哪种口味最好吃。我无数次想把他的嘴缝上，但想到外面有杀手，我就忍住了。</p>
+
+                <p>一个月后，我的脑子终于开始重新运转。我开始质疑，开始发现破绽——比如白禾川为什么对司衡集团的追杀细节说得前后矛盾，比如楼下那些黑帽人为什么从来没上过楼，比如为什么所谓的国际犯罪集团追杀时开的是二手桑塔纳。</p>
+
+                <p>我当即决定把他轰出去。</p>
+
+                <p>"滚。"我站在门口，指着电梯，"现在，立刻，马上。"</p>
+
+                <p>白禾川抱着沙发垫子，一脸严肃地说："凌总，我以前也是CEO，我懂管理，懂市场，懂战略。你留下我，我给你打工。"</p>
+
+                <p>我看着他，又看了看他身后那堆吃空的外卖盒。</p>
+
+                <p>众所周知，秦墨予走了我公司里正好缺一个总监的位置。</p>
+
+                <p>"……明天去人事部报到。"我说。</p>
+
+                <p>就这样，我的竞争对手变成了我的员工，我的员工变成了我的室友，我的室友变成了每周五和我一起喝酒的疯子。</p>
+
+                <p>人生就是这么操蛋。</p>
+
+            </div>
+
+            <div class="reading-footer">
+                <a href="./2.html" class="nav-btn">
+                    <span class="arrow">←</span> 上一章
+                </a>
+                <span class="chapter-indicator">3 / 4</span>
+                <a href="./4.html" class="nav-btn">
+                    下一章 <span class="arrow">→</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

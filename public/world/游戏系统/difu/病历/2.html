@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我那操蛋的人生 · 第二章</title>
+    <style>
+        :root {
+            --bg-body: #e8e0d5;
+            --bg-paper: #f6f0e7;
+            --bg-card: #fcf8f0;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --border-light: #d5c8b8;
+            --border-card: #c4b4a0;
+            --shadow: 0 8px 32px rgba(44, 36, 30, 0.12);
+            --radius: 12px;
+            --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+            --font-mono: "Courier New", "Source Code Pro", "PingFang SC", monospace;
+            --transition: 0.3s ease;
+            --accent: #8a2a1a;
+            --accent-soft: rgba(138, 42, 26, 0.06);
+            --sidebar-width: 240px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1614;
+            --bg-paper: #24201c;
+            --bg-card: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
+            --border-light: #35302a;
+            --border-card: #4a443e;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+
+        .float-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .float-btn .icon { font-size: 0.9rem; }
+        .float-btn .icon-back { font-size: 0.9rem; margin-right: 2px; }
+
+        #app {
+            max-width: 780px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reading-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 32px 36px 36px 36px;
+            box-shadow: var(--shadow);
+            position: relative;
+            width: 100%;
+            animation: cardIn 0.45s ease forwards;
+            flex: 1;
+        }
+
+        @keyframes cardIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .reading-header {
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .reading-header .book-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: var(--text-muted-light);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .reading-header .chapter-line {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .reading-header .chapter-num {
+            font-family: var(--font-mono);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+            opacity: 0.35;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .reading-header .chapter-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            font-family: var(--font-serif);
+            line-height: 1.2;
+        }
+
+        .reading-header .chapter-title .sub {
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: var(--text-muted-light);
+            letter-spacing: 1.5px;
+            margin-left: 6px;
+        }
+
+        .reading-body {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            font-family: var(--font-serif);
+        }
+
+        .reading-body p {
+            margin-bottom: 0.6em;
+            text-indent: 2em;
+        }
+
+        .reading-body p.no-indent { text-indent: 0; }
+
+        .reading-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .reading-footer .nav-btn {
+            padding: 6px 18px;
+            border: 1px solid var(--border-card);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .reading-footer .nav-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .reading-footer .nav-btn.disabled {
+            opacity: 0.3;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .reading-footer .nav-btn .arrow { font-size: 0.85rem; }
+
+        .reading-footer .chapter-indicator {
+            font-size: 0.65rem;
+            color: var(--text-muted-light);
+            font-family: var(--font-mono);
+            letter-spacing: 1px;
+        }
+
+        .sidebar-tab {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 90;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 12px 10px 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            writing-mode: vertical-rl;
+            font-size: 0.65rem;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            user-select: none;
+        }
+
+        .sidebar-tab:hover { border-color: var(--accent); color: var(--accent); }
+        .sidebar-tab .icon {
+            writing-mode: horizontal-tb;
+            display: inline-block;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-panel {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-card);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.06);
+            transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            z-index: 95;
+            padding: 28px 16px 20px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-panel.open { transform: translateX(0); }
+
+        .sidebar-panel .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted-light);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            padding: 0 4px;
+            margin-bottom: 16px;
+            transition: color var(--transition);
+        }
+
+        .sidebar-panel .close-btn:hover { color: var(--accent); }
+
+        .sidebar-panel .panel-title {
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            color: var(--text-muted-light);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            font-family: var(--font-mono);
+        }
+
+        .sidebar-panel .panel-title .accent { color: var(--accent); }
+
+        .sidebar-panel .chapter-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-panel .chapter-item {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            font-size: 0.85rem;
+            font-family: var(--font-serif);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: left;
+            background: none;
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .sidebar-panel .chapter-item:hover {
+            background: var(--accent-soft);
+            border-color: var(--border-card);
+            color: var(--text-primary);
+        }
+
+        .sidebar-panel .chapter-item.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .sidebar-panel .chapter-item .num {
+            font-size: 0.6rem;
+            opacity: 0.4;
+            font-weight: 400;
+            margin-right: 8px;
+            font-family: var(--font-mono);
+        }
+
+        .sidebar-panel .panel-footer {
+            margin-top: auto;
+            font-size: 0.55rem;
+            color: var(--text-muted-light);
+            text-align: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            letter-spacing: 0.5px;
+            font-family: var(--font-mono);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 92;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 700px) {
+            body { padding: 0 10px 30px 10px; }
+            #app { padding: 16px 0 0 0; }
+            .reading-card { padding: 20px 18px 26px 18px; }
+            .reading-header .chapter-title { font-size: 1.15rem; }
+            .reading-header .chapter-num { font-size: 1.2rem; }
+            .reading-body { font-size: 0.95rem; line-height: 1.8; }
+            .reading-footer .nav-btn { padding: 6px 14px; font-size: 0.68rem; }
+            .sidebar-tab { padding: 8px 10px 8px 6px; font-size: 0.55rem; }
+            .sidebar-panel { width: 200px; padding: 20px 12px 16px 12px; }
+            .sidebar-panel .chapter-item { font-size: 0.8rem; padding: 8px 10px; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
+        }
+
+        @media (max-width: 420px) {
+            .reading-card { padding: 16px 14px 20px 14px; }
+            .reading-header .chapter-title { font-size: 1rem; }
+            .reading-body { font-size: 0.92rem; line-height: 1.75; }
+            .reading-footer { flex-direction: column; align-items: stretch; gap: 8px; }
+            .reading-footer .nav-btn { justify-content: center; }
+            .sidebar-panel { width: 180px; padding: 16px 10px 12px 10px; }
+            .sidebar-panel .chapter-item { font-size: 0.75rem; padding: 6px 8px; }
+        }
+
+        body.no-scroll { overflow: hidden; }
+    </style>
+
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    } else if (parsed && parsed.value === 'light') {
+                        document.documentElement.removeAttribute('data-theme');
+                    }
+                }
+            } catch (e) {}
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark' ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌙</span> 夜间';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                btn.innerHTML = isDark ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌙</span> 夜间';
+            }
+        });
+
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            const body = document.body;
+
+            panel.classList.toggle('open', sidebarOpen);
+            overlay.classList.toggle('show', sidebarOpen);
+            body.classList.toggle('no-scroll', sidebarOpen);
+        }
+
+        function closeSidebar() {
+            if (sidebarOpen) toggleSidebar();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+        });
+    </script>
+
+</head>
+<body>
+
+    <div class="float-group">
+        <a class="float-btn" href="./index">
+            <span class="icon icon-back">←</span> 病历单
+        </a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
+    </div>
+
+    <div class="sidebar-tab" onclick="toggleSidebar()">
+        <span class="icon">📖</span> 目录
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar-panel" id="sidebarPanel">
+        <button class="close-btn" onclick="closeSidebar()">✕</button>
+        <div class="panel-title">✦ <span class="accent">那</span>操蛋的人生</div>
+
+        <div class="chapter-list">
+            <a href="./chapter-1.html" class="chapter-item">
+                <span class="num">01</span> 酒局
+            </a>
+            <a href="./chapter-2.html" class="chapter-item active">
+                <span class="num">02</span> 神秘白月光
+            </a>
+            <a href="./chapter-3.html" class="chapter-item">
+                <span class="num">03</span> 相遇过程
+            </a>
+            <a href="./chapter-4.html" class="chapter-item">
+                <span class="num">04</span> 致命女装
+            </a>
+        </div>
+
+        <div class="panel-footer">LINGSHI · 孤本手稿</div>
+    </div>
+
+    <div id="app">
+
+        <div class="reading-card">
+
+            <div class="reading-header">
+                <div class="book-title">那 操 蛋 的 人 生</div>
+                <div class="chapter-line">
+                    <span class="chapter-num">02</span>
+                    <span class="chapter-title">
+                        神秘白月光
+                        <span class="sub">· 第二章</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="reading-body">
+
+                <p>在栾方棋开门走进来的前一刻，我迅速抓起桌上的菜单，假装自己正在研究后面印的法文。虽然我一个字都不认识，但我觉得这要比望着门口眼巴巴地等他进来体面一些。</p>
+
+                <p>门从背后打开，先传来的是那道熟悉的声音："凌总好。"</p>
+
+                <p>我转过头，栾方棋今天穿了一件灰色的毛衣，头发比上次见时长了一些，整个人看上去精神确实比以前好多了。他身后跟着个人，黑色风衣，看见我时只微微点了点头，连问候都省了。</p>
+
+                <p>那就是他的老公，林淮。之前他来我公司实习过，我非常不要脸的把他调到了很远的地方去谈合作，对秦墨予说是锻炼，但我知道我只是不想看到他在秦墨予面前刷存在感。</p>
+
+                <p>事实证明，我这偷偷吃醋的行为并没有改变什么，几年后他们还是结了婚。</p>
+
+                <p>"嗯。"我应了一声，"坐。"</p>
+
+                <p>余光里，我仿佛看到白禾川翻了个白眼。大概是没听过我用这么温和的声音说过话。无所谓，反正他的行为不影响我对栾方棋的态度。</p>
+
+                <p>两人在离我不近不远的地方坐下，包厢里空调开得很足，比外面暖和不少。栾方棋顺手把林淮的围巾取下来，低头说了句什么，我没听清，但看到林淮笑了一下，大概是他们之间的悄悄话。</p>
+
+                <p>看到这一幕，我本来以为我应该会很愤怒。事实上，确实有点，但远不及我想象中的歇斯底里。</p>
+
+                <p>林淮注意到了我的目光，淡淡地转过头看我。那张脸上没什么表情，但我意识到，这可能本身就是一种暗示，他是在宣示主权。</p>
+
+                <p>我默默把头低下去，端起水杯喝了一口。</p>
+
+                <p>不得不说，尽管我想象过很多次类似的场景，但真的看到栾方棋和别人有说有笑，我确实……觉得非常碍眼。</p>
+
+                <p>栾方棋像是也注意到了什么，顺着林淮的目光看过来，这才意识到他们从刚才起把我晾在一边了。于是他立刻坐直了些，从包里拿出一个盒子递过来："凌总，生日快乐。一点小礼物，希望您别嫌弃。"</p>
+
+                <p>旁边的白禾川听见，挑了挑眉："你今天生日？"</p>
+
+                <p>我懒得理他。</p>
+
+                <p>白禾川转头看向栾方棋，露出一种发现新大陆的表情："可我不是记得凌总的生日在下个月吗？十八号？"</p>
+
+                <p>我真该把白禾川的嘴撕了。</p>
+
+                <p>栾方棋的表情愣在了脸上，看来他是真的没记住。</p>
+
+                <p>白禾川看热闹不嫌事大，立刻接话："我还以为医学奇迹呢，两年就恢复得跟正常人一样了。现在看来，后遗症还挺严重啊。选择性失忆？日期认知障碍？还是单纯老年痴呆提前发作？"</p>
+
+                <p>栾方棋沉默了片刻，低头去摸口袋里的手机。我看着他手指在屏幕上划拉了两下，然后整个人肉眼可见地僵硬了，可能是把我和某个人的生日看岔了。</p>
+
+                <p>白禾川嘴太碎，身为霸道总裁的我必不能让白月光尴尬，连忙起身把礼物接下，大度的表示："没关系，我过两个生日。下个月是阳历，今天是阴历。过两个比较喜庆。"</p>
+
+                <p>我掀开盒盖，是一个陶瓷杯。杯身上的图案画得歪歪扭扭，大概是某种抽象派后现代艺术。</p>
+
+                <p>我仔细辨别了五秒钟，没看出来画的是猫还是狗，也许这是什么独特的艺术画也说不定。</p>
+
+                <p>"我自己做的，"栾方棋小声说，"想着凌总应该不缺贵重的东西，就……做了个实用的。"</p>
+
+                <p>我去，居然是亲手所作，谢谢，我可太喜欢了，回去放在展柜里珍藏一辈子。</p>
+
+                <p>正当我打算说点什么来答谢的时候，白禾川又插了一嘴："栾方棋，你这画的是凌总还是凌总养的狗啊？我怎么看着四条腿都不太一样长？凌总，我劝你供起来别真用，这杯子喝水容易重金属超标。"</p>
+
+                <p>栾方棋又卡壳了，我感觉他已经快要烧起来了，于是我决定回头跟白禾川好好算算这笔账，最好连他水电一起断了。</p>
+
+                <p>林淮看着他这副无所适从的样子，微微叹了口气，伸手戳了戳他的脸，示意他看对面。栾方棋转头看去，发现林丛言正看着他。</p>
+
+                <p>他和林丛言不算熟，之前只见过几面，连话都没说过几句。但栾方棋的神经大条在这种时候反而成了优势，他很快调整过来，露出一个礼貌的笑："对了，林建筑师，罗修最近提起过你。他说好久没见你了，要不要找个时间……"</p>
+
+                <p>林丛言淡淡答道："不用了，我不认识什么罗修。"</p>
+
+                <p>然后就没后文了。</p>
+
+                <p>栾方棋愣了一下，显然没想到会得到这么个回答。他张了张嘴，最后只是点了点头，没再追问。</p>
+
+                <p>我把这场景看在眼里，怎么说呢，白月光今晚一直在尴尬。我的本意其实不是这样的，早知道就不带这两个蠢货来了，一个比一个会冷场。</p>
+
+                <p>但转念一想，如果栾方棋今晚单独面对我一个人，他或许会更尴尬。至少现在，他的尴尬是分散的，每个人只承担四分之一。</p>
+
+                <p>这么想着，我觉得自己也挺大方的。</p>
+
+                <p>我低头看了眼手边的礼物盒，叹了口气，转头对门口的服务员道："上菜吧，不用等了。"</p>
+
+                <p>后面发生的事情没什么值得提的，和我预想中的一样。栾方棋和林淮坐得很近，两人说说笑笑，偶尔察觉到我的目光，又转过头来和我客套两句。</p>
+
+                <p>白禾川这个酒鬼一直给自己灌酒，喝着喝着就嘴碎，点评这个菜太咸那个杯子太丑。到后面他离栾方棋越来越近，我眼看着他的椅子都快蹭到人家旁边了，直觉他要爆点什么不该爆的，在他张嘴之前及时伸手按住他，把他整个人往后压了压。</p>
+
+                <p>他回头瞪我，我懒得解释。</p>
+
+                <p>林丛言倒是省心，严格遵循食不言寝不语，从不主动开口，好歹给我减少了一个麻烦。</p>
+
+                <p>只是，看着栾方棋坐在林淮身边的样子，我心里那股不清不楚的感觉又发作了。</p>
+
+                <p>这感觉很难形容，不像嫉妒，也不像愤怒。我对林淮谈不上恨，甚至有点佩服他，能把秦墨予从精神病院里捞出来，又让他在两年内恢复如初，这本事我一辈子学不来。</p>
+
+                <p>但当看着栾方棋给林淮倒酒，看着他用那种毫无防备的表情侧头听林淮说话时，我突然又意识到一件事：我已经很久没叫过他"秦墨予"了。</p>
+
+                <p>栾方棋和林淮坐在一起的样子、栾方棋说话时的语气、他给林淮递纸巾的动作……这些画面在脑子里转来转去，但我清楚，让我不舒服的并不是林淮坐在他旁边这件事。</p>
+
+                <p>是什么呢？</p>
+
+                <p>我无法完全说清我心里在想什么，这场饭越吃越让我觉得不对劲，酒过三巡，我便找了个借口去洗手间。</p>
+
+                <p>走廊里安静很多，我推开卫生间的门，站在镜子前，拧开水龙头，掬了一把冷水拍在脸上。</p>
+
+                <p>快十点了，我们吃了将近三个小时。我也喝了不少，现在太阳穴一跳一跳的疼。</p>
+
+                <p>今天是我从心理诊所出来后第一次觉得累，我闭上眼，按了按太阳穴，试图理清刚才那股不舒服到底是什么。</p>
+
+                <p>是不甘吗？好像有点。是愤怒吗？好像也有点。</p>
+
+                <p>……可我这一生有太多的不甘与愤怒，从出生起，从得知私生子的身份起，从被接回凌家起。</p>
+
+                <p>我这一路走过来，不甘心的事情太多了，我都懒得一条条的去数。穷过，冷过，被人叫过野种，被人从办公室里赶出来过。那时候的我十几岁，被接回凌家后，我就把那些人的公司买下来，让那些曾经看不起我的人滚蛋。我以为把那些不甘心一个一个踩碎了，就不会不甘了。</p>
+
+                <p>可事到如今，我为什么还是会因为一件小事而觉得悲伤？秦墨予。秦墨予。我在心里默念这个名字，像念一道咒语。可念到第三遍的时候，脑海里自动替换成了"栾方棋"，这个替换让我恶心。</p>
+
+                <p>到底哪里出了问题？</p>
+
+                <p>我还没想出个所以然来，洗手间的门被推开了。</p>
+
+                <p>我从镜子里看到林淮走了进来，黑色风衣已经脱了，只穿着里面的深色衬衫。他走到我旁边的洗手池前，拧开水龙头，慢条斯理地洗手。</p>
+
+                <p>洗着洗着，他突然开口："凌总，听说您对方棋的新公司很感兴趣。"</p>
+
+                <p>我知道他是什么意思，随口答道："只是正常的商业关注，同行之间，了解一下不过分吧？"</p>
+
+                <p>"当然不过分，"林淮关掉水龙头，甩了甩手上的水，抬头从镜子里看我，"只是我想，凌总如果想知道什么，可以直接来问我。比起您派人去查，这样更省事，也更体面。"</p>
+
+                <p>我的表情冷了下来："林淮，你多虑了。我对栾方棋没有恶意。"</p>
+
+                <p>"我知道，"他笑了一下，"您对他没有恶意，但除了恶意，这世界上还有其他更麻烦的东西。凌总，方棋现在很好。他不需要被提醒过去是谁，也不需要被当作另一个人来怀念。"</p>
+
+                <p>"我只是希望，您别打扰他。毕竟您也说了，您对他没有恶意。"说完，他把纸扔进垃圾桶，转身走了。</p>
+
+                <p>我扯了扯嘴角，在镜子前面又站了一会儿，回忆起刚才林淮说话的那个态度，没由来的想笑。真有意思，被一个比我小九岁的人教训了。懂不懂什么叫霸道总裁，信不信我分分钟让你公司破产。</p>
+
+                <p>算了。我想。至少他还活着，以什么名字活着，和谁在一起，其实都不重要。只要……</p>
+
+                <p>"……"</p>
+
+                <p>我整理了一下领带，确认自己的表情恢复成那个体面的凌总，才推门走了出去。</p>
+
+                <p>回到包厢，眼前的景象让我脚步一顿。</p>
+
+                <p>白禾川不知道什么时候挪到了栾方棋旁边，一条胳膊大剌剌地搭在栾方棋肩上，脸凑得很近，嘴里不知道在说什么。</p>
+
+                <p>栾方棋的表情介于无语和想逃之间，大概又是被白禾川的哪句话噎住了。林淮坐在对面，一脸漠然，他大概刚回来就看到了这一幕，还没来得及把白禾川从栾方棋身上撕下来。</p>
+
+                <p>我面无表情地走回去坐下，白禾川完全没注意到我，正沉浸在某种诡异的兴奋里，搭着栾方棋肩膀的手还拍了拍："我之前就想说了……"</p>
+
+                <p>我心头一跳，有种不祥的预感。</p>
+
+                <p>"——你长得和秦雨令真像啊。"</p>
+
+                <p>包厢里安静了。</p>
+
+                <p>我："……"</p>
+
+                <p>我真该把白禾川的嘴撕烂。</p>
+
+                <p>栾方棋显然没反应过来，重复了一遍："秦雨令？"</p>
+
+                <p>他眨了眨眼，似乎在努力回想这个名字，然后表情更茫然了。他不认识秦雨令，或者说，栾方棋不认识秦雨令。</p>
+
+                <p>而他生病前，也就是秦墨予，其实是认识秦雨令的。那是他名义上的姐姐，也是白禾川的前女友，一个已经"死了"的女人。</p>
+
+                <p>白禾川却像是打开了某个开关，眼神突然变得悠远起来："对啊，秦雨令……我那花姑娘……你们真的好像，特别是眼睛，笑起来的时候……"</p>
+
+                <p>他说着说着，声音低了下去，像是陷入了某种回忆。</p>
+
+                <p>我看着白禾川那张醉醺醺的脸，突然想起来，我和这个人是怎么认识的了。</p>
+
+            </div>
+
+            <div class="reading-footer">
+                <a href="./1.html" class="nav-btn">
+                    <span class="arrow">←</span> 上一章
+                </a>
+                <span class="chapter-indicator">2 / 4</span>
+                <a href="./3.html" class="nav-btn">
+                    下一章 <span class="arrow">→</span>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
