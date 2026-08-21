@@ -238,25 +238,32 @@
             background: var(--bg-card);
             border: 1px solid var(--border-card);
             border-left: none;
-            border-radius: 0 8px 8px 0;
-            padding: 10px 12px 10px 8px;
+            border-radius: 0 20px 20px 0;
+            padding: 16px 10px;
             cursor: pointer;
             box-shadow: var(--shadow);
-            transition: all var(--transition);
+            transition: opacity 0.3s ease, border-color 0.3s ease, color 0.3s ease;
             writing-mode: vertical-rl;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             letter-spacing: 4px;
             color: var(--text-muted);
             font-family: var(--font-mono);
             user-select: none;
+            opacity: 0.35;
+            touch-action: none;
         }
 
-        .sidebar-tab:hover { border-color: var(--accent); color: var(--accent); }
-        .sidebar-tab .icon {
-            writing-mode: horizontal-tb;
-            display: inline-block;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
+        .sidebar-tab:hover,
+        .sidebar-tab.dragging {
+            opacity: 1;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .sidebar-tab.detached {
+            border-radius: 20px;
+            border: 1px solid var(--border-card);
+            padding: 16px 12px;
         }
 
         .sidebar-panel {
@@ -382,7 +389,7 @@
             .reading-header .chapter-num { font-size: 1.2rem; }
             .reading-body { font-size: 0.95rem; line-height: 1.8; }
             .reading-footer .nav-btn { padding: 6px 14px; font-size: 0.68rem; }
-            .sidebar-tab { padding: 8px 10px 8px 6px; font-size: 0.55rem; }
+            .sidebar-tab { padding: 14px 8px; font-size: 0.65rem; border-radius: 0 18px 18px 0; }
             .sidebar-panel { width: 200px; padding: 20px 12px 16px 12px; }
             .sidebar-panel .chapter-item { font-size: 0.8rem; padding: 8px 10px; }
             .float-group { top: 12px; right: 12px; gap: 6px; }
@@ -467,9 +474,93 @@
             if (overlay) {
                 overlay.addEventListener('click', closeSidebar);
             }
+
+            const tab = document.querySelector('.sidebar-tab');
+            if (!tab) return;
+
+            let isDragging = false;
+            let hasMoved = false;
+            let startX, startY, initialLeft, initialTop;
+            const MOVE_THRESHOLD = 5;
+
+            function onPointerDown(e) {
+                const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+
+                isDragging = true;
+                hasMoved = false;
+                startX = clientX;
+                startY = clientY;
+
+                const rect = tab.getBoundingClientRect();
+                if (!tab.dataset.fixed) {
+                    tab.style.transform = 'none';
+                    tab.style.top = rect.top + 'px';
+                    tab.style.left = rect.left + 'px';
+                    tab.dataset.fixed = '1';
+                }
+
+                initialTop = parseFloat(tab.style.top) || rect.top;
+                initialLeft = parseFloat(tab.style.left) || rect.left;
+
+                tab.classList.add('dragging');
+
+                if (e.type === 'touchstart') {
+                    document.addEventListener('touchmove', onPointerMove, { passive: false });
+                    document.addEventListener('touchend', onPointerUp);
+                } else {
+                    document.addEventListener('mousemove', onPointerMove);
+                    document.addEventListener('mouseup', onPointerUp);
+                }
+            }
+
+            function onPointerMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+
+                if (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD) {
+                    hasMoved = true;
+                    tab.classList.add('detached');
+                }
+
+                let newTop = initialTop + dy;
+                let newLeft = initialLeft + dx;
+
+                const maxTop = window.innerHeight - tab.offsetHeight;
+                const maxLeft = window.innerWidth - tab.offsetWidth;
+
+                newTop = Math.max(0, Math.min(newTop, maxTop));
+                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+
+                tab.style.top = newTop + 'px';
+                tab.style.left = newLeft + 'px';
+            }
+
+            function onPointerUp(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                tab.classList.remove('dragging');
+
+                document.removeEventListener('mousemove', onPointerMove);
+                document.removeEventListener('mouseup', onPointerUp);
+                document.removeEventListener('touchmove', onPointerMove);
+                document.removeEventListener('touchend', onPointerUp);
+
+                if (!hasMoved) {
+                    toggleSidebar();
+                }
+            }
+
+            tab.addEventListener('mousedown', onPointerDown);
+            tab.addEventListener('touchstart', onPointerDown, { passive: false });
         });
     </script>
-
 </head>
 <body>
 
@@ -482,8 +573,8 @@
         </button>
     </div>
 
-    <div class="sidebar-tab" onclick="toggleSidebar()">
-        <span class="icon">📖</span> 目录
+    <div class="sidebar-tab" id="sidebarTab">
+        目录
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -493,16 +584,16 @@
         <div class="panel-title">✦ <span class="accent">那</span>操蛋的人生</div>
 
         <div class="chapter-list">
-            <a href="./chapter-1.html" class="chapter-item">
+            <a href="./1.html" class="chapter-item">
                 <span class="num">01</span> 酒局
             </a>
-            <a href="./chapter-2.html" class="chapter-item active">
+            <a href="./2.html" class="chapter-item active">
                 <span class="num">02</span> 神秘白月光
             </a>
-            <a href="./chapter-3.html" class="chapter-item">
+            <a href="./3.html" class="chapter-item">
                 <span class="num">03</span> 相遇过程
             </a>
-            <a href="./chapter-4.html" class="chapter-item">
+            <a href="./4.html" class="chapter-item">
                 <span class="num">04</span> 致命女装
             </a>
         </div>
@@ -625,13 +716,19 @@
 
                 <p>今天是我从心理诊所出来后第一次觉得累，我闭上眼，按了按太阳穴，试图理清刚才那股不舒服到底是什么。</p>
 
-                <p>是不甘吗？好像有点。是愤怒吗？好像也有点。</p>
+                <p>是不甘吗？好像有点。</p>
+                
+                <p>是愤怒吗？好像也有点。</p>
 
                 <p>……可我这一生有太多的不甘与愤怒，从出生起，从得知私生子的身份起，从被接回凌家起。</p>
 
                 <p>我这一路走过来，不甘心的事情太多了，我都懒得一条条的去数。穷过，冷过，被人叫过野种，被人从办公室里赶出来过。那时候的我十几岁，被接回凌家后，我就把那些人的公司买下来，让那些曾经看不起我的人滚蛋。我以为把那些不甘心一个一个踩碎了，就不会不甘了。</p>
 
-                <p>可事到如今，我为什么还是会因为一件小事而觉得悲伤？秦墨予。秦墨予。我在心里默念这个名字，像念一道咒语。可念到第三遍的时候，脑海里自动替换成了"栾方棋"，这个替换让我恶心。</p>
+                <p>可事到如今，我为什么还是会因为一件小事而觉得悲伤？</p>
+                
+                <p>秦墨予。秦墨予。</p>
+                    
+                <p>我在心里默念这个名字，像念一道咒语。可念到第三遍的时候，脑海里自动替换成了"栾方棋"，这个替换让我恶心。</p>
 
                 <p>到底哪里出了问题？</p>
 
@@ -651,7 +748,11 @@
 
                 <p>"我只是希望，您别打扰他。毕竟您也说了，您对他没有恶意。"说完，他把纸扔进垃圾桶，转身走了。</p>
 
-                <p>我扯了扯嘴角，在镜子前面又站了一会儿，回忆起刚才林淮说话的那个态度，没由来的想笑。真有意思，被一个比我小九岁的人教训了。懂不懂什么叫霸道总裁，信不信我分分钟让你公司破产。</p>
+                <p>我扯了扯嘴角，在镜子前面又站了一会儿，回忆起刚才林淮说话的那个态度，没由来的想笑。</p>
+                
+                <p>真有意思，被一个比我小九岁的人教训了。</p>
+                    
+                <p>懂不懂什么叫霸道总裁，信不信我分分钟让你公司破产。</p>
 
                 <p>算了。我想。至少他还活着，以什么名字活着，和谁在一起，其实都不重要。只要……</p>
 

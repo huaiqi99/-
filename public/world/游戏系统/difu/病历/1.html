@@ -252,6 +252,7 @@
             letter-spacing: 1px;
         }
 
+        /* ---- 可拖动目录悬浮球 ---- */
         .sidebar-tab {
             position: fixed;
             left: 0;
@@ -261,29 +262,26 @@
             background: var(--bg-card);
             border: 1px solid var(--border-card);
             border-left: none;
-            border-radius: 0 8px 8px 0;
-            padding: 10px 12px 10px 8px;
+            border-radius: 0 20px 20px 0;
+            padding: 16px 10px;
             cursor: pointer;
             box-shadow: var(--shadow);
-            transition: all var(--transition);
+            transition: opacity 0.3s ease, border-color 0.3s ease, color 0.3s ease;
             writing-mode: vertical-rl;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             letter-spacing: 4px;
             color: var(--text-muted);
             font-family: var(--font-mono);
             user-select: none;
+            opacity: 0.35;
+            touch-action: none;
         }
 
-        .sidebar-tab:hover {
+        .sidebar-tab:hover,
+        .sidebar-tab.dragging {
+            opacity: 1;
             border-color: var(--accent);
             color: var(--accent);
-        }
-
-        .sidebar-tab .icon {
-            writing-mode: horizontal-tb;
-            display: inline-block;
-            margin-bottom: 6px;
-            font-size: 0.95rem;
         }
 
         .sidebar-panel {
@@ -435,8 +433,9 @@
                 font-size: 0.68rem;
             }
             .sidebar-tab {
-                padding: 8px 10px 8px 6px;
-                font-size: 0.55rem;
+                padding: 14px 8px;
+                font-size: 0.65rem;
+                border-radius: 0 18px 18px 0;
             }
             .sidebar-panel {
                 width: 200px;
@@ -556,9 +555,96 @@
             if (overlay) {
                 overlay.addEventListener('click', closeSidebar);
             }
+
+            // ---- 目录悬浮球拖动逻辑 ----
+            const tab = document.querySelector('.sidebar-tab');
+            if (!tab) return;
+
+            let isDragging = false;
+            let hasMoved = false;
+            let startX, startY, initialLeft, initialTop;
+            const MOVE_THRESHOLD = 5; // 像素，超过此值视为拖动而非点击
+
+            function onPointerDown(e) {
+                const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
+
+                isDragging = true;
+                hasMoved = false;
+                startX = clientX;
+                startY = clientY;
+
+                const rect = tab.getBoundingClientRect();
+                // 首次拖动时，将百分比定位转为像素定位
+                if (!tab.dataset.fixed) {
+                    tab.style.transform = 'none';
+                    tab.style.top = rect.top + 'px';
+                    tab.style.left = rect.left + 'px';
+                    tab.dataset.fixed = '1';
+                }
+
+                initialTop = parseFloat(tab.style.top) || rect.top;
+                initialLeft = parseFloat(tab.style.left) || rect.left;
+
+                tab.classList.add('dragging');
+
+                if (e.type === 'touchstart') {
+                    document.addEventListener('touchmove', onPointerMove, { passive: false });
+                    document.addEventListener('touchend', onPointerUp);
+                } else {
+                    document.addEventListener('mousemove', onPointerMove);
+                    document.addEventListener('mouseup', onPointerUp);
+                }
+            }
+
+            function onPointerMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
+
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+
+                if (Math.abs(dx) > MOVE_THRESHOLD || Math.abs(dy) > MOVE_THRESHOLD) {
+                    hasMoved = true;
+                }
+
+                let newTop = initialTop + dy;
+                let newLeft = initialLeft + dx;
+
+                // 边界限制
+                const maxTop = window.innerHeight - tab.offsetHeight;
+                const maxLeft = window.innerWidth - tab.offsetWidth;
+
+                newTop = Math.max(0, Math.min(newTop, maxTop));
+                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+
+                tab.style.top = newTop + 'px';
+                tab.style.left = newLeft + 'px';
+            }
+
+            function onPointerUp(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                tab.classList.remove('dragging');
+
+                document.removeEventListener('mousemove', onPointerMove);
+                document.removeEventListener('mouseup', onPointerUp);
+                document.removeEventListener('touchmove', onPointerMove);
+                document.removeEventListener('touchend', onPointerUp);
+
+                // 如果没有移动（或移动很小），视为点击打开目录
+                if (!hasMoved) {
+                    toggleSidebar();
+                }
+            }
+
+            tab.addEventListener('mousedown', onPointerDown);
+            tab.addEventListener('touchstart', onPointerDown, { passive: false });
         });
     </script>
-
 </head>
 <body>
 
@@ -571,8 +657,8 @@
         </button>
     </div>
 
-    <div class="sidebar-tab" onclick="toggleSidebar()">
-        <span class="icon">📖</span> 目录
+    <div class="sidebar-tab" id="sidebarTab">
+        目录
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -582,16 +668,16 @@
         <div class="panel-title">✦ <span class="accent">那</span>操蛋的人生</div>
 
         <div class="chapter-list">
-            <a href="./chapter-1.html" class="chapter-item active">
+            <a href="./1.html" class="chapter-item active">
                 <span class="num">01</span> 酒局
             </a>
-            <a href="./chapter-2.html" class="chapter-item">
+            <a href="./2.html" class="chapter-item">
                 <span class="num">02</span> 神秘白月光
             </a>
-            <a href="./chapter-3.html" class="chapter-item">
+            <a href="./3.html" class="chapter-item">
                 <span class="num">03</span> 相遇过程
             </a>
-            <a href="./chapter-4.html" class="chapter-item">
+            <a href="./4.html" class="chapter-item">
                 <span class="num">04</span> 致命女装
             </a>
         </div>
