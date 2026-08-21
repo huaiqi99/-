@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>凌宸钧 · 临床病历单</title>
+    <title>归终殿 · 临床病例</title>
     <style>
-        /* ============================================================
-           全局变量 & 重置
-           ============================================================ */
         :root {
             --bg-body: #e8e0d5;
             --bg-paper: #f6f0e7;
@@ -42,11 +39,7 @@
             --accent-soft: rgba(176, 90, 74, 0.08);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: var(--font);
@@ -60,9 +53,6 @@
             flex-direction: column;
         }
 
-        /* ============================================================
-           右上角悬浮组
-           ============================================================ */
         .float-group {
             position: fixed;
             top: 20px;
@@ -92,18 +82,10 @@
             text-decoration: none;
         }
 
-        .float-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
+        .float-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .float-btn .icon { font-size: 0.9rem; }
+        .float-btn .icon-back { font-size: 0.9rem; margin-right: 2px; }
 
-        .float-btn .icon {
-            font-size: 0.9rem;
-        }
-
-        /* ============================================================
-           主容器
-           ============================================================ */
         #app {
             max-width: 820px;
             margin: 0 auto;
@@ -114,9 +96,6 @@
             flex-direction: column;
         }
 
-        /* ============================================================
-           病历单卡片
-           ============================================================ */
         .medical-card {
             background: var(--bg-card);
             border: 1px solid var(--border-card);
@@ -129,17 +108,10 @@
         }
 
         @keyframes cardIn {
-            0% {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* ---- 病历单抬头 ---- */
         .medical-header {
             text-align: center;
             border-bottom: 2px solid var(--border-card);
@@ -161,11 +133,10 @@
             margin-top: 2px;
         }
 
-        /* ---- 患者信息 ---- */
         .patient-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 4px 20px;
             font-size: 0.82rem;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-light);
@@ -173,17 +144,9 @@
             color: var(--text-secondary);
         }
 
-        .patient-info .item .label {
-            color: var(--text-muted-light);
-            font-weight: 400;
-        }
+        .patient-info .item .label { color: var(--text-muted-light); font-weight: 400; }
+        .patient-info .item .value { font-weight: 500; color: var(--text-primary); }
 
-        .patient-info .item .value {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        /* ---- 诊断（大号红色） ---- */
         .diagnosis-block {
             background: var(--accent-soft);
             border-left: 4px solid var(--accent);
@@ -203,9 +166,11 @@
             font-size: 0.8rem;
             color: var(--text-muted);
             margin-top: 2px;
+            line-height: 1.6;
         }
 
-        /* ---- 病历正文 ---- */
+        .diagnosis-block .sub-dx .dx-line { display: block; }
+
         .medical-body {
             font-size: 0.92rem;
             line-height: 2;
@@ -213,9 +178,7 @@
             font-family: var(--font);
         }
 
-        .medical-body .section {
-            margin-bottom: 12px;
-        }
+        .medical-body .section { margin-bottom: 14px; }
 
         .medical-body .section .title {
             font-weight: 700;
@@ -224,6 +187,14 @@
             color: var(--text-primary);
             border-bottom: 1px solid var(--border-light);
             padding-bottom: 2px;
+            margin-bottom: 2px;
+        }
+
+        .medical-body .section .title-en {
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            color: var(--text-muted-light);
+            font-weight: 400;
             margin-bottom: 4px;
         }
 
@@ -233,28 +204,11 @@
             color: var(--text-secondary);
         }
 
-        .medical-body .section p.no-indent {
-            text-indent: 0;
-        }
+        .medical-body .section p.no-indent { text-indent: 0; }
+        .medical-body .section .sub-item { margin-left: 1.2em; margin-bottom: 2px; color: var(--text-secondary); }
+        .medical-body .section .sub-item .hl { font-weight: 600; color: var(--accent); }
+        .hl { color: var(--accent); font-weight: 600; }
 
-        .medical-body .section .sub-item {
-            margin-left: 1.2em;
-            margin-bottom: 2px;
-            color: var(--text-secondary);
-        }
-
-        .medical-body .section .sub-item .hl {
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        /* ---- 红色高亮（仅用于关键术语） ---- */
-        .hl {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        /* ---- 接诊记录（原批注改为病程记录风格） ---- */
         .clinic-note {
             margin: 12px 0 8px 18px;
             padding: 10px 16px 10px 20px;
@@ -268,19 +222,17 @@
         }
 
         .clinic-note::before {
-            content: "【接诊记录】";
+            content: "[CLINICAL NOTES]";
             display: block;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 700;
             color: var(--accent);
             letter-spacing: 0.5px;
             margin-bottom: 2px;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
-        .clinic-note .hl {
-            font-weight: 600;
-        }
+        .clinic-note .hl { font-weight: 600; }
 
         .clinic-note .quote-line {
             display: block;
@@ -290,7 +242,6 @@
             font-size: 0.78rem;
         }
 
-        /* ---- 底部 ---- */
         .medical-footer {
             margin-top: 16px;
             padding-top: 12px;
@@ -303,14 +254,8 @@
             gap: 6px;
         }
 
-        .medical-footer .status {
-            color: var(--accent);
-            font-weight: 500;
-        }
+        .medical-footer .status { color: var(--accent); font-weight: 500; }
 
-        /* ============================================================
-           侧边栏便签（隐藏式）
-           ============================================================ */
         .sidebar-tab {
             position: fixed;
             left: 0;
@@ -333,19 +278,9 @@
             user-select: none;
         }
 
-        .sidebar-tab:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
+        .sidebar-tab:hover { border-color: var(--accent); color: var(--accent); }
+        .sidebar-tab .icon { writing-mode: horizontal-tb; display: inline-block; margin-bottom: 4px; font-size: 0.9rem; }
 
-        .sidebar-tab .icon {
-            writing-mode: horizontal-tb;
-            display: inline-block;
-            margin-bottom: 4px;
-            font-size: 0.9rem;
-        }
-
-        /* ---- 侧边栏面板 ---- */
         .sidebar-panel {
             position: fixed;
             left: 0;
@@ -364,9 +299,7 @@
             flex-direction: column;
         }
 
-        .sidebar-panel.open {
-            transform: translateX(0);
-        }
+        .sidebar-panel.open { transform: translateX(0); }
 
         .sidebar-panel .close-btn {
             align-self: flex-end;
@@ -381,9 +314,7 @@
             transition: color var(--transition);
         }
 
-        .sidebar-panel .close-btn:hover {
-            color: var(--accent);
-        }
+        .sidebar-panel .close-btn:hover { color: var(--accent); }
 
         .sidebar-panel .panel-title {
             font-size: 0.7rem;
@@ -411,38 +342,11 @@
             margin-bottom: 4px;
         }
 
-        .sidebar-panel .role-item:hover {
-            background: var(--accent-soft);
-            border-color: var(--border-card);
-        }
-
-        .sidebar-panel .role-item.active {
-            background: var(--accent-soft);
-            border-color: var(--accent);
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .sidebar-panel .role-item .badge {
-            font-size: 0.6rem;
-            opacity: 0.5;
-            font-weight: 400;
-            margin-left: 6px;
-        }
-
-        .sidebar-panel .role-item .status-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-right: 8px;
-            background: var(--accent);
-            opacity: 0.5;
-        }
-
-        .sidebar-panel .role-item.active .status-dot {
-            opacity: 1;
-        }
+        .sidebar-panel .role-item:hover { background: var(--accent-soft); border-color: var(--border-card); }
+        .sidebar-panel .role-item.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+        .sidebar-panel .role-item .badge { font-size: 0.6rem; opacity: 0.5; font-weight: 400; margin-left: 6px; }
+        .sidebar-panel .role-item .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 8px; background: var(--accent); opacity: 0.5; }
+        .sidebar-panel .role-item.active .status-dot { opacity: 1; }
 
         .sidebar-panel .panel-footer {
             margin-top: auto;
@@ -454,7 +358,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* ---- 遮罩 ---- */
         .sidebar-overlay {
             position: fixed;
             inset: 0;
@@ -465,129 +368,487 @@
             transition: opacity 0.35s ease;
         }
 
-        .sidebar-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
 
-        /* ============================================================
-           响应式
-           ============================================================ */
         @media (max-width: 700px) {
-            body {
-                padding: 0 10px 20px 10px;
-            }
-
-            #app {
-                padding: 16px 0 0 0;
-            }
-
-            .medical-card {
-                padding: 18px 16px 22px 16px;
-            }
-
-            .medical-header .title {
-                font-size: 0.95rem;
-            }
-
-            .diagnosis-block .main-dx {
-                font-size: 1rem;
-            }
-
-            .medical-body {
-                font-size: 0.85rem;
-                line-height: 1.9;
-            }
-
-            .medical-body .section .sub-item {
-                margin-left: 0.8em;
-            }
-
-            .clinic-note {
-                margin-left: 6px;
-                padding: 8px 12px 8px 16px;
-                font-size: 0.78rem;
-            }
-
-            .sidebar-tab {
-                padding: 6px 8px 6px 4px;
-                font-size: 0.6rem;
-            }
-
-            .sidebar-panel {
-                width: 200px;
-                padding: 20px 12px 16px 12px;
-            }
-
-            .sidebar-panel .role-item {
-                font-size: 0.8rem;
-                padding: 8px 10px;
-            }
-
-            .float-group {
-                top: 12px;
-                right: 12px;
-                gap: 6px;
-            }
-
-            .float-btn {
-                padding: 4px 10px 4px 8px;
-                font-size: 0.65rem;
-            }
-
-            .medical-footer {
-                font-size: 0.65rem;
-            }
-
-            .patient-info {
-                font-size: 0.75rem;
-                gap: 4px 16px;
-            }
+            body { padding: 0 10px 20px 10px; }
+            #app { padding: 16px 0 0 0; }
+            .medical-card { padding: 18px 16px 22px 16px; }
+            .medical-header .title { font-size: 0.95rem; }
+            .diagnosis-block .main-dx { font-size: 1rem; }
+            .diagnosis-block .sub-dx { font-size: 0.75rem; }
+            .medical-body { font-size: 0.85rem; line-height: 1.9; }
+            .medical-body .section .sub-item { margin-left: 0.8em; }
+            .clinic-note { margin-left: 6px; padding: 8px 12px 8px 16px; font-size: 0.78rem; }
+            .sidebar-tab { padding: 6px 8px 6px 4px; font-size: 0.6rem; }
+            .sidebar-panel { width: 200px; padding: 20px 12px 16px 12px; }
+            .sidebar-panel .role-item { font-size: 0.8rem; padding: 8px 10px; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
+            .medical-footer { font-size: 0.65rem; }
+            .patient-info { grid-template-columns: 1fr 1fr; gap: 2px 16px; font-size: 0.75rem; }
+            .patient-info .item:nth-child(3) { grid-column: 1 / -1; }
         }
 
         @media (max-width: 420px) {
-            .medical-card {
-                padding: 14px 12px 18px 12px;
-            }
-
-            .medical-body {
-                font-size: 0.82rem;
-            }
-
-            .diagnosis-block .main-dx {
-                font-size: 0.92rem;
-            }
-
-            .clinic-note {
-                font-size: 0.74rem;
-                padding: 6px 10px 6px 14px;
-            }
-
-            .sidebar-panel {
-                width: 180px;
-                padding: 16px 10px 12px 10px;
-            }
-
-            .sidebar-panel .role-item {
-                font-size: 0.75rem;
-                padding: 6px 8px;
-            }
-
-            .patient-info {
-                font-size: 0.7rem;
-                gap: 2px 10px;
-            }
+            .medical-card { padding: 14px 12px 18px 12px; }
+            .medical-body { font-size: 0.82rem; }
+            .diagnosis-block .main-dx { font-size: 0.92rem; }
+            .diagnosis-block .sub-dx { font-size: 0.7rem; }
+            .clinic-note { font-size: 0.74rem; padding: 6px 10px 6px 14px; }
+            .sidebar-panel { width: 180px; padding: 16px 10px 12px 10px; }
+            .sidebar-panel .role-item { font-size: 0.75rem; padding: 6px 8px; }
+            .patient-info { font-size: 0.7rem; gap: 2px 10px; }
         }
 
-        body.no-scroll {
-            overflow: hidden;
-        }
+        body.no-scroll { overflow: hidden; }
     </style>
 
     <script>
-        // ============================================================
-        //  主题切换
-        // ============================================================
+        const patients = [{
+            id: 'ling',
+            name: '凌宸钧',
+            badge: 'LCJ-317-001-A',
+            age: '31岁',
+            occupation: '凌氏集团总裁',
+            date: '2022.03.17',
+            doctor: '周医生',
+            diagnosis: '偏执型依恋障碍（显性型）',
+            subDiagnosis: [
+                'F60.0 偏执型人格障碍（倾向）',
+                'F43.22 适应障碍伴焦虑和抑郁情绪（继发）'
+            ],
+            sections: [{
+                title: '主诉',
+                titleEn: 'CHIEF COMPLAINT',
+                content: `
+                    <p>患者自述"精神状态稳定"，但经评估确认存在严重的偏执型依恋障碍。患者的核心困扰表现为：对"秦墨予/栾方棋"这一对象持续六年的高强度情感附着，附着程度远超正常范畴，且患者对此缺乏自知力。</p>
+                    <p class="no-indent" style="font-style:italic;color:var(--text-muted);font-size:0.85rem;">患者主动陈述："我挺好的，我只是偶尔路过他家楼下。一周大概三四次吧。"</p>
+                `
+            }, {
+                title: '现病史',
+                titleEn: 'HISTORY OF PRESENT ILLNESS',
+                content: `
+                    <p>患者于六年前与目标对象（秦墨予）建立上下级关系，期间逐渐发展为单向高强度情感依恋。患者通过职务之便给予目标对象超出常规的职业晋升和资源支持，并持续进行跟踪行为。</p>
+                    <p>目标对象因精神分裂症住院治疗并离职后，患者出现明显的"替代行为"——寻找了与目标对象外貌高度相似的女性（秦雨令）作为情感替代品，维持了约半年的关系。替代品失效后，患者重回对原始目标的执着。</p>
+                    <p>当前，目标对象已更名"栾方棋"并与他人（林淮）建立婚姻关系。患者对此事实存在认知回避，仍习惯称呼目标对象为"秦墨予"，并在行为层面持续介入目标对象的生活（包括对目标对象伴侣的创业公司进行投资）。</p>
+                `
+            }, {
+                title: '既往史',
+                titleEn: 'PAST MEDICAL HISTORY',
+                content: `
+                    <p>患者自述为私生子出身，早年经历被排斥和轻视，后通过自身努力接管家族企业。患者曾多次提及"不甘心"这一情绪，认为其多数行为动机源于对早年处境的补偿。</p>
+                    <p>患者在目标对象因病离职后，曾短暂寻求心理支持，但未系统接受治疗。患者承认自己"偏执"，但将其合理化为"事业型人格"的一部分，拒绝承认其病理性。</p>
+                    <p>家族史：未明确报告重大精神疾病史。</p>
+                `
+            }, {
+                title: '精神检查',
+                titleEn: 'MENTAL STATUS EXAMINATION',
+                content: `
+                    <p><span class="hl">认知：</span>存在明显的认知分裂——将"秦墨予"与"栾方棋"视为两个独立个体。前者被高度理想化，后者被贬低为"不完整的版本"。</p>
+                    <p><span class="hl">行为：</span>持续性的跟踪行为（社交监控、地理监控、间接经济干预）。</p>
+                    <p><span class="hl">情感：</span>情感附着完全单向，不具备互惠性。存在矛盾情感（渴望靠近与抗拒承认）。</p>
+                    <p><span class="hl">人际关系：</span>社交圈高度同质化，患者倾向于与同样被过去困住的人建立关系。</p>
+                    <p><span class="hl">自知力：</span>部分受损。患者能部分承认自己的偏执倾向，但无法将其认知为病理性。</p>
+                `
+            }, {
+                title: '处方',
+                titleEn: 'TREATMENT PLAN',
+                content: `
+                    <p><span class="hl">1. 认知重组治疗</span> —— 患者需从认知上接受"秦墨予"与"栾方棋"是同一人，并理解该对象不存在"回归"的可能。</p>
+                    <p><span class="hl">2. 行为干预</span> —— 建议患者逐步减少对目标对象的跟踪行为。每日记录路过次数并逐步递减。</p>
+                    <p><span class="hl">3. 社交扩充</span> —— 建议患者在保持现有关系的同时，尝试与未受过去创伤影响的人群建立联系。</p>
+                    <p><span class="hl">4. 药物治疗</span> —— 如焦虑或抑郁症状加重，可考虑SSRI类药物辅助。</p>
+                `
+            }],
+            clinicNote: `
+                患者在第3次复诊时提到："你总是说我对秦墨予有执念，但你没想过，万一他也需要我呢？"<br><br>
+                此句暴露了患者的核心信念：他认为自己的偏执是一种"守护"，而非一种"入侵"。他需要理解，被偏执者并不感激被偏执。事实上，他可能就是那个让秦墨予重新生病的原因。<br><br>
+                建议在下次复诊中重点探讨：患者的"爱"是否只是一种包装精致的自我感动？当他说"喜欢"的时候，他喜欢的究竟是他自己想象中的秦墨予，还是那个真实存在、已走向不同人生的栾方棋？如果是前者，那这份感情与秦墨予本人毫无关系——他在和一个幻影谈恋爱。<br>
+                <span class="quote-line">＊患者在听到"幻影"一词时停止了摩挲戒指。停顿约三秒后，他笑了——体面的、总裁式的笑。他说："周医生，你是第一个把'我根本不懂爱情'说得这么学术的人。"他没有否认，这说明他听懂了。＊</span>
+            `
+        }, {
+            id: 'bai',
+            name: '白禾川',
+            badge: 'BHC-0918-003-A',
+            age: '32岁',
+            occupation: '前青丘生物科技创始人/CEO（已破产）',
+            date: '2022.06.01',
+            doctor: '周医生',
+            diagnosis: '偏执型人格障碍（激越型）伴妄想性认知',
+            subDiagnosis: [
+                'F60.0 偏执型人格障碍（激越型）',
+                'F22.0 妄想性障碍'
+            ],
+            sections: [{
+                title: '主诉',
+                titleEn: 'CHIEF COMPLAINT',
+                content: `
+                    <p>患者自述"没什么大事"，但伴随明显的愤怒和冲动控制障碍。患者的核心困扰表现为：对前女友秦雨令的执念、对司衡集团的持续仇恨、以及对自身事业失败的无法接受。三者高度纠缠，患者无法分开处理，导致情绪长期处于激越状态。</p>
+                    <p class="no-indent" style="font-style:italic;color:var(--text-muted);font-size:0.85rem;">患者主动陈述："等我东山再起……把那群狗东西按在地上摩擦……还有那个女的……啧，不提也罢。"</p>
+                `
+            }, {
+                title: '现病史',
+                titleEn: 'HISTORY OF PRESENT ILLNESS',
+                content: `
+                    <p>患者于三年前创立青丘生物科技，公司估值一度达到数千万。后因核心项目被对家截胡、资金链断裂而破产。患者将全部责任归咎于"司衡集团"的恶意竞争。与此同时，患者的前女友秦雨令在与患者分手后，与凌氏集团总裁凌宸钧交往半年，后因"急性病"去世。</p>
+                    <p>患者在秦雨令的葬礼后，以"被追杀"为由强行闯入凌宸钧的车辆，引发了一场持续数周的荒诞逃亡。在此期间患者与凌宸钧建立了不寻常的共生关系——凌宸钧提供住所和经济支持，白禾川提供……"陪伴"以及持续不断的负面情绪。</p>
+                    <p>值得注意的是，患者对自己的处境存在明显的认知失调：他一边抱怨凌宸钧的"施舍"，一边心安理得地住在他提供的员工宿舍里。一边宣称要"东山再起"，一边连水电费都需要凌宸钧垫付。</p>
+                `
+            }, {
+                title: '既往史',
+                titleEn: 'PAST MEDICAL HISTORY',
+                content: `
+                    <p>患者有白手起家的成功经历，曾一度拥有较高的社会地位和财务自由。破产后，患者的社会地位急剧下降，自尊心受到严重打击。患者与秦雨令的关系被描述为"相爱相杀"——患者对其有强烈的占有欲，但也多次提到"被骗光家产"，暗示这段关系可能涉及财务纠纷。</p>
+                    <p>患者的社交圈目前已严重萎缩，仅与凌宸钧、林丛言保持固定往来。患者自称这是"战略性蛰伏"，但评估认为这可能是一种自我安慰的归因方式。</p>
+                `
+            }, {
+                title: '精神检查',
+                titleEn: 'MENTAL STATUS EXAMINATION',
+                content: `
+                    <p><span class="hl">认知：</span>患者存在显著的认知失调——将自身事业失败归因于外部阴谋（司衡集团），而非自身判断失误。同时，患者对秦雨令的评价存在严重矛盾：一方面称其为"花姑娘"、"骗子"，另一方面又对其持有明显的未释怀情绪。</p>
+                    <p><span class="hl">情感：</span>长期处于激越状态，情绪波动剧烈。患者在提及司衡集团或秦雨令时，语速明显加快，伴随手势增多和音量升高。其愤怒有明显的转向特征——面对无力改变的事实，他倾向于将怒火发泄在可触及的对象（如凌宸钧）身上。</p>
+                    <p><span class="hl">行为：</span>冲动控制能力受损。患者曾有直接冲入他人办公室抢人的记录，并多次对凌宸钧发表过激言论。患者在日常生活中缺乏主动性，表现出"等待东山再起"的被动姿态，与实际行动之间存在巨大落差。</p>
+                `
+            }, {
+                title: '诊断说明',
+                titleEn: 'DIAGNOSTIC FORMULATION',
+                content: `
+                    <p>患者的核心病理在于：无法区分"秦雨令"和"司衡集团"在象征意义上的关联。他的全部痛苦——感情的失败、事业的崩溃、自尊的粉碎——都指向一个他无法直接对抗的对象。当这两个对象在现实中重合（秦雨令即司衡集团的幕后人物），患者将面临认知的彻底崩塌。</p>
+                    <p>目前的激越状态是一种防御机制——愤怒使他免于面对更深层的崩溃。一旦愤怒消退，患者可能进入抑郁或绝望状态。</p>
+                `
+            }, {
+                title: '处方',
+                titleEn: 'TREATMENT PLAN',
+                content: `
+                    <p><span class="hl">1. 现实检验训练</span> —— 帮助患者接受"秦雨令已被司衡取代"这一事实，分阶段处理"她是伤害我的人"这一认知。</p>
+                    <p><span class="hl">2. 愤怒管理</span> —— 引导患者区分"可以愤怒的对象"和"需要接受的事实"。愤怒本身不解决问题，但接受也不等于原谅。</p>
+                    <p><span class="hl">3. 行为激活</span> —— 建议患者设定小而可行的目标，逐步建立自我效能感。从小事做起，重新训练"行动"而非"抱怨"的模式。</p>
+                    <p><span class="hl">4. 药物治疗</span> —— 若激越状态持续影响睡眠和日常功能，可考虑短期使用情绪稳定剂。</p>
+                `
+            }],
+            clinicNote: `
+                患者在第一次接诊时花了大量时间描述司衡集团的"阴谋"，声称"他们从技术、资金、渠道三方面同时锁死"，并强调"这绝不是巧合"。当我问及秦雨令时，他明显停顿了一下，然后说："那个人……算了。"<br><br>
+                第三次接诊时，患者无意中透露了关键信息——"秦雨令是司衡那边的人"。但这句话说完后他立刻改口，说"她是被骗过去的"。评估认为，患者对"秦雨令与司衡集团的关系"已有模糊认知，但情感上无法接受。<br><br>
+                建议在后续治疗中逐步引导患者正视：秦雨令是否真的"被骗"，还是患者无法接受对方自愿选择了与自己对立的一方。<br>
+                <span class="quote-line">＊患者在最后一次接诊时全程没有提起"司衡"这两个字，而是反复描述"东山再起"后的场景——买了更大的办公楼、开更好的车、让所有看不起他的人后悔。那是一个很完整的、带有大量细节的幻想。离开时他说："周医生，你说的话我都知道，但知道和接受是两回事。"他笑了笑，那笑容很疲惫。＊</span>
+                <span class="quote-line" style="margin-top:2px;">他没有继续往下说。但我知道他听懂了——比谁都懂。正是因为太懂，所以才更愤怒。因为一旦接受，他就必须承认：从头到尾，他恨的、爱的、失去的、在意的，很可能都是同一个人。这个认知足以摧毁一个人所有的安全感。他的愤怒是唯一的盾牌。</span>
+            `
+        }, {
+            id: 'lin',
+            name: '林丛言',
+            badge: 'LCY-1225-004-A',
+            age: '33岁',
+            occupation: '前建筑师（现无业）',
+            date: '2022.07.12',
+            doctor: '周医生',
+            diagnosis: '解离性失忆（局部性）伴复杂哀伤障碍（扭曲型）',
+            subDiagnosis: [
+                'F44.0 解离性遗忘（特定时期）',
+                'F43.21 复杂哀伤障碍（扭曲型）'
+            ],
+            sections: [{
+                title: '主诉',
+                titleEn: 'CHIEF COMPLAINT',
+                content: `
+                    <p>患者自述"没什么好说的"，但经评估确认存在显著的解离性失忆和复杂的哀伤反应。患者的核心困扰表现为：能清晰记得前男友顾执的死亡，能清晰记得自己曾对顾执说过伤人的话，能清晰记得分手的事实——但无法回忆成为"景枭"时期的全部记忆，包括与顾执相爱、同居、共同生活的细节。这种割裂状态导致患者对顾执的死亡产生了一种扭曲的情感反应：他不知道自己失去的究竟是什么，但清楚地知道自己失去了。</p>
+                    <p class="no-indent" style="font-style:italic;color:var(--text-muted);font-size:0.85rem;">患者主动陈述："我不记得他说的任何一件关于我们过去的事，但他还是乐此不疲的一遍遍讲给我听，这让我感到厌恶，也让我觉得……他是一个很可悲的人。"</p>
+                `
+            }, {
+                title: '现病史',
+                titleEn: 'HISTORY OF PRESENT ILLNESS',
+                content: `
+                    <p>患者于约三年前遭遇事故后出现失忆，具体原因及时间点均不明确。患者自述"醒过来的时候什么都不记得了"，包括自己的姓名、职业、社交关系。在恢复过程中，患者的记忆逐步重建——他记得了自己的名字（更准确地说，是接受了自己叫"林丛言"这一事实），记得了建筑师的职业，但唯独缺失了与"景枭"身份相关的全部记忆。</p>
+                    <p>患者的前男友顾执在这段期间以"恋人"身份出现，试图帮助患者恢复记忆。患者对此持抗拒态度，认为对方在"编造故事"或"利用自己的脆弱"。在多次尝试无果后，顾执与患者分手。约一年后，顾执前往患者所在的工地探访，遭遇意外事故身亡。</p>
+                    <p>值得注意的是，患者对顾执的死亡表现出"非典型"的哀伤反应：他能准确描述事件经过（时间、地点、死亡原因），但谈及此事时情绪反应明显滞后或隔离。这种隔离状态与患者对顾执生前记忆的缺失直接相关——他无法为"失去"赋予具体的情感内容，因为他想不起自己失去了什么。</p>
+                `
+            }, {
+                title: '既往史',
+                titleEn: 'PAST MEDICAL HISTORY',
+                content: `
+                    <p>患者自述未失忆前曾用名"景枭"，具体身份信息不详。失忆后，患者以"林丛言"为名重新建立身份，曾从事建筑师工作。患者在工作中较为出色，但无详细记录可查。</p>
+                    <p>患者与顾执的关系描述为"他说我们在一起过"。患者承认顾执曾多次尝试帮自己恢复记忆，但患者拒绝了。分手时患者对顾执说过的话，患者至今记得，并承认"那些话很伤人"。但具体内容患者未透露。</p>
+                    <p>家族史：未明确报告。</p>
+                `
+            }, {
+                title: '精神检查',
+                titleEn: 'MENTAL STATUS EXAMINATION',
+                content: `
+                    <p><span class="hl">认知：</span>患者存在明确的局部记忆缺失——对"景枭"时期的一切记忆呈空白状态。但对失忆后发生的事件（包括顾执的死亡）能够清晰准确回忆，说明失忆区域具有明确的边界。</p>
+                    <p><span class="hl">情感：</span>患者对顾执的死亡呈现"扭曲型哀伤"特征。在正常哀伤中，悲伤与怀念应占主导。但在本案例中，患者的核心情感为"不甘"和"愤怒"——对自己无法想起过去的愤怒，而非对失去顾执的悲伤。这说明患者真正无法接受的不是顾执的死，而是自己与顾执之间"未能完成的联结"。</p>
+                    <p><span class="hl">行为：</span>患者日常行为模式趋于固化，缺乏社交主动性。患者每周固定前往顾执的墓地，但据称"只是坐着，不说话"。这一行为具有仪式性，但患者否认其情感意义。</p>
+                    <p><span class="hl">人际关系：</span>患者社交圈已严重萎缩，目前仅与凌宸钧、白禾川保持低频接触。患者在人际互动中呈现防御性姿态，倾向于用沉默或冷淡回应涉及情感的问题。</p>
+                `
+            }, {
+                title: '诊断说明',
+                titleEn: 'DIAGNOSTIC FORMULATION',
+                content: `
+                    <p>患者的核心病理在于：记忆的缺失与情感的残留之间的断裂。他的身体记得自己失去过一个人，他的理智记得自己伤害过一个人，但他的意识无法调用与这个人相关的具体情感记忆。这种断裂导致患者处于一种"空心"的哀伤状态——他知道自己应该难过，但难过的具体内容不可及。愤怒因此成为唯一的出口：他愤怒的是自己"记不起来"。</p>
+                    <p>治疗的核心目标不是恢复记忆，而是帮助患者接受"可能永远也想不起来"这一事实，并在此基础上重新建立与"失去"的关系。</p>
+                `
+            }, {
+                title: '处方',
+                titleEn: 'TREATMENT PLAN',
+                content: `
+                    <p><span class="hl">1. 记忆接纳训练</span> —— 帮助患者区分"忘记"和"失去"，引导患者接受"记忆可能不会回来"这一现实，而非持续对抗遗忘。</p>
+                    <p><span class="hl">2. 哀伤重构</span> —— 引导患者将关注点从"我记不起"转移到"顾执希望我记得什么"，以此间接重建情感连接。</p>
+                    <p><span class="hl">3. 意义重建</span> —— 鼓励患者通过顾执留下的信息（消息记录、照片等）在无记忆的情况下重新构建对这段关系的认知，允许患者在"不完全了解"的情况下哀悼。</p>
+                    <p><span class="hl">4. 药物治疗</span> —— 暂不推荐，除非出现明显的抑郁发作。</p>
+                `
+            }],
+            clinicNote: `
+                患者在首次接诊时表现出明显的抵触。当我问及"顾执"时，他的回答是："你是说那个死掉的人？我知道。他来过我工地，被掉下来的东西砸到了。很可惜，但和我没什么关系。"<br><br>
+                第三次接诊，被问及为何执着于一个亡人的坟墓时，患者表现出明显抗拒情绪，在经历反复劝导后，患者提到："我只是觉得那人太过可悲，如果我这辈子都想不起来他说的那些事，他会不会也含恨九泉？算了……当我没说，我去他的墓只是为了还他的恩情。"<br><br>
+                这句话是他整个病程的缩影。他不怕自己难过，他怕自己"假装难过"。他宁可不哀悼，也不愿做一个"不合格的哀悼者"。<br><br>
+                我问他是否想知道"景枭"和顾执之间发生过什么。他看了我很久，回答："知道了又怎样呢？他人都死了。"<br><br>
+                这句话是对的，也是错的。对的是事实层面：顾执确实死了。错的是情感层面：知道了，至少能让他知道自己为什么站在那块石头前面。<br><br>
+                我目前倾向于认为，患者并非真的"不知道"顾执对他意味着什么。他只是在用"不知道"来避免承认"知道之后会更痛苦"。遗忘是一种保护，而保护自己的代价是永远无法完成哀悼。<br>
+                <span class="quote-line">＊患者离开时在门口停了一下，没有回头，说："我下次不会来了。"但下周三他又出现在诊室门口，表情没有任何变化。后面我才知道，原来是凌宸钧把他拖过来的，因为觉得他像个"痴呆"。＊</span>
+            `
+        }, {
+            id: 'luan',
+            name: '栾方棋',
+            badge: 'QMY-404-NF-A',
+            age: '26岁',
+            occupation: '符修院讲师',
+            date: '2022.04.10',
+            doctor: '周医生',
+            diagnosis: '精神分裂症恢复期',
+            subDiagnosis: [
+                'F20.9 精神分裂症（未特定型，缓解期）',
+                'F44.8 内化型身份认同障碍（缓解中）',
+                'F42.8 轻微精神洁癖（已控制）'
+            ],
+            sections: [{
+                title: '主诉',
+                titleEn: 'CHIEF COMPLAINT',
+                content: `
+                    <p>患者由伴侣林淮陪同前来，主诉为"没什么大事，就是来复查一下"。患者自述当前状态稳定，生活规律，无明显幻觉或妄想。</p>
+                    <p>患者伴侣林淮补充说明：患者目前情绪平稳，社交功能恢复良好，已重返工作岗位约半年。仅有一次轻微复发，持续时间极短，未造成显著影响。</p>
+                    <p class="no-indent" style="font-style:italic;color:var(--text-muted);font-size:0.85rem;">患者听到伴侣的描述后笑了一下，说："那次就是一下子没想通，现在不会了。"</p>
+                `
+            }, {
+                title: '现病史',
+                titleEn: 'HISTORY OF PRESENT ILLNESS',
+                content: `
+                    <p>患者于约四年前出现明显精神症状，表现为：持续性的身份认同混乱、对自身过往记忆的强烈排斥、间歇性妄想（认为"秦墨予"是另一个人，与自己无关）。患者在此阶段无法正常工作，人际关系严重受损，后确诊为精神分裂症并接受住院治疗。</p>
+                    <p>治疗初期，患者对"秦墨予"这一身份表现出强烈的抗拒。他将"秦墨予"描述为"一个我不认识的陌生人"，并拒绝承认自己曾使用过该名字。患者在治疗中反复强调："那不是我。你们搞错了。"这种抗拒持续了约一年，后逐渐减弱。</p>
+                    <p>转折点出现在患者与伴侣林淮的长期互动中。林淮在患者发病期间保持稳定陪伴，未因患者身份认同的混乱而离开或疏远。患者在一次治疗中自述："他从来没有叫错过名字。不管我说我是谁，他都点头。我后来想，如果我一直说秦墨予不是我的话，那他是不是很可怜？"这个认知使患者开始重新审视"秦墨予"这一身份的意义。</p>
+                    <p>患者在康复后期开始主动接触秦墨予时期的信息，并逐步接受"秦墨予是前期的自己"这一认知。患者目前自述："我还是不太喜欢想起那段时间的事，但我不否认那是我了。"</p>
+                `
+            }, {
+                title: '既往史',
+                titleEn: 'PAST MEDICAL HISTORY',
+                content: `
+                    <p>患者发病前为某公司中层管理人员（秦墨予时期），工作能力突出，但在人际关系上表现出一定程度的完美主义倾向。患者自述在发病前"总是觉得事情应该有个正确的样子，如果不对就会很难受"。这一特质在精神分裂症发病后一度加重，表现为对"身份"的执着——他需要"我是谁"这个问题有一个绝对正确的答案。</p>
+                    <p>患者在发病后失去了对秦墨予时期大部分记忆的清晰认知，仅保留零碎片段。患者在治疗中曾尝试回忆，但表示"那些记忆像是别人的录像，我看到了，但感觉不到"。</p>
+                    <p>家族史：未明确报告精神疾病史。</p>
+                `
+            }, {
+                title: '精神检查',
+                titleEn: 'MENTAL STATUS EXAMINATION',
+                content: `
+                    <p><span class="hl">认知：</span>患者当前认知功能基本完好。对"栾方棋"身份认同稳定，对"秦墨予"身份的接纳度较前显著提升。患者仍倾向于将两者表述为"不同时期的我"，但不再进行硬性切割。</p>
+                    <p><span class="hl">情感：</span>情绪平稳，无明显波动。患者对自身经历的态度从早期的"抗拒"转变为"接受但不热衷讨论"。在提及秦墨予时期时，患者偶有短暂的回避性反应，但可自行调整。</p>
+                    <p><span class="hl">行为：</span>患者已恢复工作能力，近期重返原岗位（符修院讲师），表现出正常的工作投入度。社交功能恢复良好，与伴侣林淮的关系稳定，与同事保持正常的互动频率。</p>
+                    <p><span class="hl">自知力：</span>完好。患者能清晰表述自己的病史、症状和康复过程，对自身的认知状态有准确的判断。患者主动表示："我知道我可能还会有一点反复，但我觉得我能控制。而且现在有人看着我，不会出事的。"</p>
+                `
+            }, {
+                title: '诊断说明',
+                titleEn: 'DIAGNOSTIC FORMULATION',
+                content: `
+                    <p>患者的核心病理在精神分裂症的框架下呈现为身份认同的断裂与重建。与其他身份认同障碍不同，患者的"秦墨予"并非患者主动虚构的幻象，而是患者无法接受"自己曾经是另一个人"这一事实。这种抗拒在病理上表现为精神分裂症的身份扭曲，在心理上则表现为对"过去的我"的否定。</p>
+                    <p>患者康复的关键在于：他为了不让伴侣林淮难过，选择了接受"秦墨予"这一身份。这一动机是情感驱动的，而非认知驱动的。这表明患者的情感功能在康复过程中起到了正向作用——他愿意为了所爱之人承受"过去"的重量。</p>
+                    <p>患者目前存在的轻微精神洁癖已降至可控范围，仅在一次情境下出现过短暂的复发反应。患者对该次复发有清晰的记忆和认识，并能主动描述当时的触发因素和自身反应。其自我监测能力良好。</p>
+                `
+            }, {
+                title: '处方',
+                titleEn: 'TREATMENT PLAN',
+                content: `
+                    <p><span class="hl">1. 维持性心理治疗</span> —— 每季度复查一次，持续监测身份认同状态的稳定性，防止复发。</p>
+                    <p><span class="hl">2. 情感支持延续</span> —— 建议患者保持当前的支持系统（特别是与伴侣林淮的关系），并鼓励患者在感到"身份认知松动"时主动向支持系统求助。</p>
+                    <p><span class="hl">3. 工作与生活平衡</span> —— 建议患者注意工作与休息的节奏，避免过度疲劳诱发症状复发。</p>
+                    <p><span class="hl">4. 长期观察</span> —— 虽然患者当前状态良好，但精神分裂症存在复发的可能性，建议患者和伴侣保持对早期警告信号的敏感度，并制定应急方案。</p>
+                `
+            }],
+            clinicNote: `
+                栾方棋是近期接诊的所有患者中唯一一个"已经好了"的案例。坐在我面前的时候，他的肢体语言放松，没有防御性僵硬。这与他在病历记录中的描述形成了对比：记录中提到他曾经"完全无法认同秦墨予"时的状态是充满排斥的。<br><br>
+                谈到那段抗拒期时，他笑了一下，说："其实现在想想，那时候的我也挺可怜的。突然有人告诉我，你以前是另一个人，换谁都会疯吧。"<br><br>
+                我问他是怎么决定接受"秦墨予"的。他想了想，说："我一开始觉得，既然我已经不记得了，那我不承认也没什么问题。过去的那些事和我有什么关系？但我后来发现，我想不想承认不重要——重要的是，如果我不承认，林淮怎么办。"<br><br>
+                "如果我说'过去的那个不是我'，那他等的那个人就消失了。我舍不得他难过。所以我选择承认，秦墨予也是我。怎么说呢，这种感觉其实挺新奇的，像是拥有了两段完全不一样的人生。"<br>
+                <span class="quote-line">＊（至此，栾方棋的病历完。后续仅有每季度的常规复查记录，无异常。）＊</span>
+            `
+        }, {
+            id: 'huai',
+            name: '林淮',
+            badge: 'LHY-1609-001-A',
+            age: '22岁',
+            occupation: '智能家居公司创始人',
+            date: '2022.05.20',
+            doctor: '周医生',
+            diagnosis: '偏执型人格障碍（隐性代偿型）',
+            subDiagnosis: [
+                'F60.0 偏执型人格障碍（隐性代偿型）'
+            ],
+            sections: [{
+                title: '主诉',
+                titleEn: 'CHIEF COMPLAINT',
+                content: `
+                    <p>患者主动预约就诊，首句即提出特殊要求：本病历不对任何第三方公开，包括其伴侣栾方棋。患者自述来诊目的是"想确认自己是不是正常人"，语气平静，逻辑清晰，外表无任何病态迹象。</p>
+                    <p>患者否认存在幻觉、妄想及冲动行为，强调自己"生活规律，工作正常，婚姻稳定"。但在谈及与伴侣的关系时，患者使用了大量绝对化表述（"我只在乎他""我不会让任何人伤害他"），与表面的冷静形成微妙反差。</p>
+                `
+            }, {
+                title: '现病史',
+                titleEn: 'HISTORY OF PRESENT ILLNESS',
+                content: `
+                    <p>患者自述与伴侣栾方棋（曾用名秦墨予）结婚约两年，婚姻关系稳定，日常相处无显著冲突。患者从十六岁起被伴侣接出孤儿院，由对方资助完成大学学业直至毕业。患者将这段经历描述为"他给了我一切"，并认为自己对伴侣的极度关注是"理所当然的回报"。</p>
+                    <p>在深入询问下，患者承认存在以下行为模式：掌握伴侣的全部行程与社交动态；对接近伴侣的异性及同性保持高度警惕；在伴侣病发期间（精神分裂急性期）曾寸步不离陪护，连续数月拒绝离开病房。患者不认为上述行为属于异常，将其定义为"关心"和"责任"。</p>
+                    <p>患者目前社会功能完好，创业公司运转正常，与外部友人（如罗修、魏元璟等）保持定期社交。患者自述这些朋友"很好"，但补充"和他们见面，是因为方棋希望我有自己的生活"。</p>
+                `
+            }, {
+                title: '既往史',
+                titleEn: 'PAST MEDICAL HISTORY',
+                content: `
+                    <p>患者幼年经历不详，自述在孤儿院长大，无父母信息，十六岁前未接受过系统教育。十六岁那年被秦墨予接出，此后人生完全围绕此人展开。患者将秦墨予描述为"唯一重要的人"，并坦言"如果没有他，我可能在孤儿院待到死，或者去任何地方，但都不会是现在这样"。</p>
+                    <p>在秦墨予患病（精神分裂）期间，患者全程陪护，甚至向医生表示："如果他好不了，我就一直陪到好为止。如果他死了，"患者停顿了一下，"那我也没什么必要继续。"患者否认这是威胁或自伤倾向，称其为"事实陈述"。</p>
+                    <p>患者对秦墨予转变为栾方棋的身份重构过程表现出完全接纳，但承认在转换初期存在"确认焦虑"——即反复通过细节（气味、习惯、身体特征）确认对方仍是"同一个人"。这种焦虑在婚后显著缓解。</p>
+                    <p>家族史：无明确报告。</p>
+                `
+            }, {
+                title: '精神检查',
+                titleEn: 'MENTAL STATUS EXAMINATION',
+                content: `
+                    <p><span class="hl">认知：</span>患者认知功能完好，定向力、记忆力、计算力均无异常。对自身状况具有高度自知力，能清晰描述自己的行为模式及背后动机。</p>
+                    <p><span class="hl">情感：</span>情感表达极度克制，面部表情稀少。谈及伴侣时语气平淡，但内容极端（"我可以为他死""我只要他活着"）。无明显抑郁或焦虑发作，但存在情感过度投注于单一对象的倾向，且这种投注带有强烈的排他性。</p>
+                    <p><span class="hl">行为：</span>无冲动或怪异行为。日常安排高度规律，一切以伴侣为中心（工作时间的安排、社交活动的选择、居住地点的确定）。患者将这种生活方式称为"自愿的"，否认感到压抑。</p>
+                    <p><span class="hl">人际关系：</span>除伴侣外，与其他人保持礼貌而疏离的关系。近期社交圈有所扩大（罗修、魏元璟等创业及旧识朋友），患者能正常参与社交活动，但自述"和他们在一起时，只是在等回去见他"。</p>
+                    <p><span class="hl">自知力：</span>完好。患者能准确识别自身行为的特殊性，但拒绝将其病理化。患者明确表示："我知道这听起来很极端，但我不觉得这是病。我没有伤害任何人，也没有影响任何人。"</p>
+                `
+            }, {
+                title: '诊断说明',
+                titleEn: 'DIAGNOSTIC FORMULATION',
+                content: `
+                    <p>患者呈现典型的<span class="hl">隐性偏执型人格障碍</span>。与凌宸钧的显性偏执不同，患者的偏执冲动（占有、控制、极端忠诚、对分离的恐惧）被完美地包裹在"深情人设"之下，具有极强的社会伪装性。外人甚至亲密伴侣都难以察觉其病态性，只会将其评价为"深情""专一""可靠"。</p>
+                    <p>患者的偏执具有高度的目标指向性和功能性——全部指向伴侣栾方棋/秦墨予。在婚前，这种偏执表现为对资助人的极端依附和身份确认焦虑；在婚后，婚姻关系提供的法律与情感确定性，将偏执从"主动控制"降级为"被动防御"，极大缓解了患者的不安全感。</p>
+                    <p>需要警惕的是，患者的所有自我价值感与安全感均系于单一客体。这种结构在关系稳定时表现为"完美伴侣"，但一旦关系出现危机（如伴侣病重、分离、死亡），隐性偏执极有可能迅速显性化，转化为对外攻击或自我毁灭。</p>
+                `
+            }, {
+                title: '处方',
+                titleEn: 'TREATMENT PLAN',
+                content: `
+                    <p><span class="hl">1. 维持现状</span> —— 目前婚姻关系的稳定性是患者最好的代偿机制。在无显著功能损害的前提下，不建议主动拆解患者的防御结构。</p>
+                    <p><span class="hl">2. 社交拓展</span> —— 继续建立独立于婚姻的人际关系支点。患者目前已迈出良好一步（罗修、魏元璟等），建议保持并深化这些非伴侣指向的社交连接。</p>
+                    <p><span class="hl">3. 定期评估</span> —— 每半年进行一次隐性偏执指数评估，监测情感投注的集中度是否异常上升。</p>
+                    <p><span class="hl">4. 危机预案</span> —— 若婚姻关系出现波动（如争吵、分离、丧偶），需立即介入，防止代偿机制崩溃导致偏执显性化。</p>
+                    <p><span class="hl">5. 药物治疗</span> —— 暂不推荐。患者无抑郁、焦虑或精神病性症状，药物可能破坏其现有的高功能代偿。</p>
+                `
+            }],
+            clinicNote: `
+                林淮是自己走进诊室的。他穿着整洁，举止得体，第一句话是："周医生，这份病历，请不要给任何人看。包括方棋。"<br><br>
+                我问他原因。他说："他知道了会难过。他会觉得是他把我变成了这样。但其实不是，我从孤儿院出来的时候，就已经是这样了。他只是……让我有了可以偏执的对象。"<br><br>
+                在谈及与栾方棋的关系时，他的用词精确得像一份合同："十六岁那年，他把我从孤儿院带出来，供我读书，给我名字。没有他，我什么都不是。所以我要陪着他，不管他是秦墨予，还是栾方棋。"<br><br>
+                我说这听起来很深情。他看了我一眼，说："您也可以这么理解。"<br><br>
+                但当我问及"如果他没有选择你呢"，他沉默了很久，手指在膝盖上轻轻敲了两下，然后说："我不会让这种事发生。"<br><br>
+                不是"我会很难过"，不是"我会放手"，而是"我不会让这种事发生"。<br><br>
+                那一刻我确定了——他和凌宸钧是同一种人。凌宸钧的偏执是向外的（跟踪、控制、金钱干预），而林淮的偏执是向内的（陪伴、忠诚、自我献祭）。凌宸钧用手段把对方留在视野里，林淮用存在把对方变成自己的全世界。前者让人害怕，后者让人感动，但本质都是"我不能失去这个人"。<br><br>
+                有趣的是，林淮比凌宸钧幸运。他得到了那个人，并且用婚姻将关系合法化、固定化。这种"得到"极大安抚了他的偏执，使其维持在隐性、高功能的状态。<br><br>
+                我问他有没有朋友。他说有，罗修、魏元璟，还有一些创业的合伙人。他说这些名字的时候，语气明显比谈及栾方棋时要轻，像在读一份无关紧要的名单。<br><br>
+                "和他们相处愉快吗？"我问。<br><br>
+                "愉快，"他说，"但他们不是他。"<br><br>
+                临走时，他忽然在门口停住，回头问："周医生，您觉得我需要治疗吗？"<br><br>
+                我说："从社会功能来看，你不需要。但从人格结构来看，你所有的安全感都系于一个人身上，这很危险。一旦那根绳子断了……"<br><br>
+                他没等我说完，只是轻轻点了点头，说："那就危险吧。我只要他。"<br>
+                <span class="quote-line">＊患者离开后，我在病历封面标注了"绝密·不公开"。本病历单独封存，不向患者伴侣栾方棋及任何第三方披露。从医学伦理角度，我尊重患者对自身病历的隐私权；但从临床角度，我必须记录：这是一份建立在单一人格支点上的高功能隐性偏执档案，目前稳定，但理论上，永远存在崩溃的风险。＊</span>
+            `
+        }];
+
+        let currentPatient = 'ling';
+        let sidebarOpen = false;
+
+        function renderSidebar() {
+            const container = document.getElementById('sidebarRoleList');
+            if (!container) return;
+            container.innerHTML = '';
+            patients.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = 'role-item' + (p.id === currentPatient ? ' active' : '');
+                btn.dataset.role = p.id;
+                btn.innerHTML = `<span class="status-dot"></span>${p.name}<span class="badge">${p.badge}</span>`;
+                btn.addEventListener('click', () => switchPatient(p.id));
+                container.appendChild(btn);
+            });
+        }
+
+        function renderCard(patientId) {
+            const patient = patients.find(p => p.id === patientId);
+            if (!patient) return;
+            currentPatient = patientId;
+            document.querySelectorAll('.role-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.role === patientId);
+            });
+            const card = document.getElementById('medicalCard');
+            if (!card) return;
+            const subDxHtml = patient.subDiagnosis.map(d => `<span class="dx-line">${d}</span>`).join('');
+            const sectionsHtml = patient.sections.map(s => `
+                <div class="section">
+                    <div class="title">■ ${s.title}</div>
+                    <div class="title-en">${s.titleEn}</div>
+                    ${s.content}
+                </div>
+            `).join('');
+            const clinicHtml = patient.clinicNote ? `<div class="clinic-note">${patient.clinicNote}</div>` : '';
+            card.innerHTML = `
+                <div class="medical-header">
+                    <div class="title">｜ 临床心理科 · 病历单 ｜</div>
+                    <div class="sub">LINGSHI GROUP · PSYCHIATRIC CLINIC</div>
+                </div>
+                <div class="patient-info">
+                    <span class="item"><span class="label">姓名</span> <span class="value">${patient.name}</span></span>
+                    <span class="item"><span class="label">年龄</span> <span class="value">${patient.age}</span></span>
+                    <span class="item"><span class="label">职业</span> <span class="value">${patient.occupation}</span></span>
+                    <span class="item"><span class="label">病历号</span> <span class="value">${patient.badge}</span></span>
+                    <span class="item"><span class="label">就诊日期</span> <span class="value">${patient.date}</span></span>
+                    <span class="item"><span class="label">主治医师</span> <span class="value">${patient.doctor}</span></span>
+                </div>
+                <div class="diagnosis-block">
+                    <div class="main-dx">诊断：${patient.diagnosis}</div>
+                    <div class="sub-dx">${subDxHtml}</div>
+                </div>
+                <div class="medical-body">
+                    ${sectionsHtml}
+                    ${clinicHtml}
+                </div>
+                <div class="medical-footer">
+                    <span>档案状态：<span class="status">治疗中</span></span>
+                    <span>下次复诊：待定</span>
+                </div>
+            `;
+            card.style.animation = 'none';
+            requestAnimationFrame(() => {
+                card.style.animation = 'cardIn 0.45s ease forwards';
+            });
+        }
+
+        function switchPatient(patientId) {
+            if (patientId === currentPatient) { closeSidebar(); return; }
+            renderCard(patientId);
+            closeSidebar();
+        }
+
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const panel = document.getElementById('sidebarPanel');
+            const overlay = document.getElementById('sidebarOverlay');
+            const body = document.body;
+            panel.classList.toggle('open', sidebarOpen);
+            overlay.classList.toggle('show', sidebarOpen);
+            body.classList.toggle('no-scroll', sidebarOpen);
+        }
+
+        function closeSidebar() {
+            if (sidebarOpen) toggleSidebar();
+        }
+
         (function() {
             try {
                 const raw = localStorage.getItem('theme');
@@ -622,203 +883,49 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('themeBtn');
-            if (!btn) return;
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            btn.innerHTML = isDark ?
-                '<span class="icon">☀️</span> 日间' :
-                '<span class="icon">🌙</span> 夜间';
-        });
-
-        // ============================================================
-        //  侧边栏控制
-        // ============================================================
-        let sidebarOpen = false;
-
-        function toggleSidebar() {
-            sidebarOpen = !sidebarOpen;
-            const panel = document.getElementById('sidebarPanel');
-            const overlay = document.getElementById('sidebarOverlay');
-            const body = document.body;
-
-            panel.classList.toggle('open', sidebarOpen);
-            overlay.classList.toggle('show', sidebarOpen);
-            body.classList.toggle('no-scroll', sidebarOpen);
-        }
-
-        function closeSidebar() {
-            if (sidebarOpen) toggleSidebar();
-        }
-
-        // ============================================================
-        //  角色切换（预留扩展）
-        // ============================================================
-        let currentRole = 'ling';
-
-        function switchRole(roleId) {
-            if (roleId === currentRole) {
-                closeSidebar();
-                return;
+            if (btn) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                btn.innerHTML = isDark ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌙</span> 夜间';
             }
-            currentRole = roleId;
-            document.querySelectorAll('.role-item').forEach(el => {
-                el.classList.toggle('active', el.dataset.role === roleId);
-            });
-            const card = document.getElementById('medicalCard');
-            card.style.animation = 'none';
-            requestAnimationFrame(() => {
-                card.style.animation = 'cardIn 0.45s ease forwards';
-            });
-            closeSidebar();
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.getElementById('sidebarOverlay');
             if (overlay) {
                 overlay.addEventListener('click', closeSidebar);
             }
-            document.querySelectorAll('.role-item').forEach(el => {
-                el.addEventListener('click', function() {
-                    switchRole(this.dataset.role);
-                });
-            });
+            renderSidebar();
+            renderCard('ling');
         });
     </script>
 
+<base target="_blank">
 </head>
 <body>
 
-    <!-- ============================================================
-    右上角悬浮组
-    ============================================================ -->
     <div class="float-group">
+        <a class="float-btn" href="./index">
+            <span class="icon icon-back">←</span> 返回
+        </a>
         <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
             <span class="icon">🌙</span> 夜间
         </button>
     </div>
 
-    <!-- ============================================================
-    侧边栏便签
-    ============================================================ -->
     <div class="sidebar-tab" onclick="toggleSidebar()">
         <span class="icon">📋</span> 档案
     </div>
 
-    <!-- ============================================================
-    侧边栏遮罩
-    ============================================================ -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ============================================================
-    侧边栏面板
-    ============================================================ -->
     <div class="sidebar-panel" id="sidebarPanel">
         <button class="close-btn" onclick="closeSidebar()">✕</button>
         <div class="panel-title">✦ 归终殿 · 临床病例</div>
-
-        <button class="role-item active" data-role="ling">
-            <span class="status-dot"></span>凌宸钧
-            <span class="badge">LCJ-317-001-A</span>
-        </button>
-        <!-- 后续角色会通过JS注入，此处预留 -->
-
+        <div id="sidebarRoleList"></div>
         <div class="panel-footer">临床心理科 · 内部归档</div>
     </div>
 
-    <!-- ============================================================
-    主容器
-    ============================================================ -->
     <div id="app">
-
-        <!-- ============================================================
-        病历单：凌宸钧
-        ============================================================ -->
-        <div class="medical-card" id="medicalCard">
-
-            <!-- 抬头 -->
-            <div class="medical-header">
-                <div class="title">｜ 临床心理科 · 病历单 ｜</div>
-                <div class="sub">LINGSHI GROUP · PSYCHIATRIC CLINIC</div>
-            </div>
-
-            <!-- 患者信息 -->
-            <div class="patient-info">
-                <span class="item"><span class="label">姓名</span> <span class="value">凌宸钧</span></span>
-                <span class="item"><span class="label">年龄</span> <span class="value">31岁</span></span>
-                <span class="item"><span class="label">职业</span> <span class="value">凌氏集团总裁</span></span>
-                <span class="item"><span class="label">病历号</span> <span class="value">LCJ-317-001-A</span></span>
-                <span class="item"><span class="label">就诊日期</span> <span class="value">2022.03.17</span></span>
-                <span class="item"><span class="label">主治医师</span> <span class="value">周医生</span></span>
-            </div>
-
-            <!-- 诊断（大号红色，一目了然） -->
-            <div class="diagnosis-block">
-                <div class="main-dx">诊断：偏执型依恋障碍（显性型）</div>
-                <div class="sub-dx">F60.0 偏执型人格障碍（倾向） · F43.22 适应障碍伴焦虑和抑郁情绪（继发）</div>
-            </div>
-
-            <!-- 病历正文 -->
-            <div class="medical-body">
-
-                <!-- 主诉 -->
-                <div class="section">
-                    <div class="title">■ 主诉</div>
-                    <p>患者自述“精神状态稳定”，但经评估确认存在严重的偏执型依恋障碍。患者的核心困扰表现为：对“秦墨予/栾方棋”这一对象持续六年的高强度情感附着，附着程度远超正常范畴，且患者对此缺乏自知力。</p>
-                    <p class="no-indent" style="font-style:italic;color:var(--text-muted);font-size:0.85rem;">患者主动陈述：“我挺好的，我只是偶尔路过他家楼下。一周大概三四次吧。”</p>
-                </div>
-
-                <!-- 现病史 -->
-                <div class="section">
-                    <div class="title">■ 现病史</div>
-                    <p>患者于六年前与目标对象（秦墨予）建立上下级关系，期间逐渐发展为单向高强度情感依恋。患者通过职务之便给予目标对象超出常规的职业晋升和资源支持，并持续进行跟踪行为。</p>
-                    <p>目标对象因精神分裂症住院治疗并离职后，患者出现明显的“替代行为”——寻找了与目标对象外貌高度相似的女性（秦雨令）作为情感替代品，维持了约半年的关系。替代品失效后，患者重回对原始目标的执着。</p>
-                    <p>当前，目标对象已更名“栾方棋”并与他人（林淮）建立婚姻关系。患者对此事实存在认知回避，仍习惯称呼目标对象为“秦墨予”，并在行为层面持续介入目标对象的生活（包括对目标对象伴侣的创业公司进行投资）。</p>
-                </div>
-
-                <!-- 既往史 -->
-                <div class="section">
-                    <div class="title">■ 既往史</div>
-                    <p>患者自述为私生子出身，早年经历被排斥和轻视，后通过自身努力接管家族企业。患者曾多次提及“不甘心”这一情绪，认为其多数行为动机源于对早年处境的补偿。</p>
-                    <p>患者在目标对象因病离职后，曾短暂寻求心理支持，但未系统接受治疗。患者承认自己“偏执”，但将其合理化为“事业型人格”的一部分，拒绝承认其病理性。</p>
-                    <p>家族史：未明确报告重大精神疾病史。</p>
-                </div>
-
-                <!-- 精神检查 -->
-                <div class="section">
-                    <div class="title">■ 精神检查</div>
-                    <p><span class="hl">认知：</span>存在明显的认知分裂——将“秦墨予”与“栾方棋”视为两个独立个体。前者被高度理想化，后者被贬低为“不完整的版本”。</p>
-                    <p><span class="hl">行为：</span>持续性的跟踪行为（社交监控、地理监控、间接经济干预）。</p>
-                    <p><span class="hl">情感：</span>情感附着完全单向，不具备互惠性。存在矛盾情感（渴望靠近与抗拒承认）。</p>
-                    <p><span class="hl">人际关系：</span>社交圈高度同质化，患者倾向于与同样被过去困住的人建立关系。</p>
-                    <p><span class="hl">自知力：</span>部分受损。患者能部分承认自己的偏执倾向，但无法将其认知为病理性。</p>
-                </div>
-
-                <!-- 处方 -->
-                <div class="section">
-                    <div class="title">■ 处方</div>
-                    <p><span class="hl">1. 认知重组治疗</span> —— 患者需从认知上接受“秦墨予”与“栾方棋”是同一人，并理解该对象不存在“回归”的可能。</p>
-                    <p><span class="hl">2. 行为干预</span> —— 建议患者逐步减少对目标对象的跟踪行为。每日记录路过次数并逐步递减。</p>
-                    <p><span class="hl">3. 社交扩充</span> —— 建议患者在保持现有关系的同时，尝试与未受过去创伤影响的人群建立联系。</p>
-                    <p><span class="hl">4. 药物治疗</span> —— 如焦虑或抑郁症状加重，可考虑SSRI类药物辅助。</p>
-                </div>
-
-                <!-- 接诊记录（对话风格） -->
-                <div class="clinic-note">
-                    患者在第3次复诊时提到：“你总是说我对秦墨予有执念，但你没想过，万一他也需要我呢？”<br><br>
-                    此句暴露了患者的核心信念：他认为自己的偏执是一种“守护”，而非一种“入侵”。他需要理解，被偏执者并不感激被偏执。事实上，他可能就是那个让秦墨予重新生病的原因。<br><br>
-                    建议在下次复诊中重点探讨：患者的“爱”是否只是一种包装精致的自我感动？当他说“喜欢”的时候，他喜欢的究竟是他自己想象中的秦墨予，还是那个真实存在、已走向不同人生的栾方棋？如果是前者，那这份感情与秦墨予本人毫无关系——他在和一个幻影谈恋爱。<br>
-                    <span class="quote-line">＊患者在听到“幻影”一词时停止了摩挲戒指。停顿约三秒后，他笑了——体面的、总裁式的笑。他说：“周医生，你是第一个把‘我根本不懂爱情’说得这么学术的人。”他没有否认，这说明他听懂了。＊</span>
-                </div>
-
-            </div>
-
-            <!-- 底部 -->
-            <div class="medical-footer">
-                <span>档案状态：<span class="status">治疗中</span></span>
-                <span>下次复诊：待定</span>
-            </div>
-
-        </div>
-
+        <div class="medical-card" id="medicalCard"></div>
     </div>
 
 </body>
