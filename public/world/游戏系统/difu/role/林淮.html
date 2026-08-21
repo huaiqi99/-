@@ -486,7 +486,47 @@
             .bond-section .section-label,
             .voice-section .section-label { font-size: 0.75rem; }
         }
-    </style>
+    
+        /* ---- 悬浮按钮组 ---- */
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+        .float-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .float-btn .icon {
+            font-size: 0.9rem;
+        }
+        .float-btn .icon-back {
+            font-size: 0.9rem;
+            margin-right: 2px;
+        }
+</style>
     <script>
         (function() {
             try {
@@ -508,17 +548,40 @@
             var newTheme = isDark ? 'light' : 'dark';
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            var btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark' ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌓</span> 夜间';
+            }
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('themeBtn');
+            if (btn) {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                btn.innerHTML = isDark ?
+                    '<span class="icon">☀️</span> 日间' :
+                    '<span class="icon">🌓</span> 夜间';
+            }
+        });
+    </script>
+<base target="_blank">
 </head>
 <body>
 
+<div class="float-group">
+    <a class="float-btn" href="../list.html">
+        <span class="icon icon-back">←</span> 返回列表
+    </a>
+    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+        <span class="icon">🌓</span> 夜间
+    </button>
+</div>
+
 <div id="topbar">
     <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
-    <div class="actions">
-        <a class="back-btn" href="../list.html">← 返回列表</a>
-        <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-    </div>
 </div>
 
 <div id="app">
@@ -791,7 +854,7 @@
     var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
         return deg * Math.PI / 180;
     });
-    var scale = 1.2;
+    var scale = 1.0;
     var accent = 'var(--accent)';
     var accentSoft = 'var(--accent-soft)';
 
@@ -908,12 +971,19 @@
         var dx = offset * Math.sin(a);
         var dy = -offset * Math.cos(a);
         var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', v.x + dx);
-        text.setAttribute('y', v.y + dy);
+        // 攻击数值 155 太大，顶点靠近上边界，放右侧避免被截
+        if (i === 0) {
+            text.setAttribute('x', v.x + 14);
+            text.setAttribute('y', v.y);
+            text.setAttribute('text-anchor', 'start');
+        } else {
+            text.setAttribute('x', v.x + dx);
+            text.setAttribute('y', v.y + dy);
+            text.setAttribute('text-anchor', anchorMap[i]);
+        }
         text.setAttribute('fill', accent);
         text.setAttribute('font-size', '9');
         text.setAttribute('font-weight', '600');
-        text.setAttribute('text-anchor', anchorMap[i]);
         text.setAttribute('dominant-baseline', 'central');
         text.textContent = v.val;
         text.setAttribute('opacity', '0');
