@@ -137,8 +137,14 @@
             scrollbar-width: thin;
             padding: 6px 0 10px 0;
             margin: 0 -4px;
+            /* Firefox 滚动条强制统一 */
+            scrollbar-color: var(--accent) var(--bg-card-alt);
         }
-        /* ===== 滚动条美化（暗色模式下强制深色） ===== */
+        [data-theme="dark"] #timeline-wrap {
+            scrollbar-color: #b05a4a #2a2520;
+        }
+
+        /* Chrome/Edge 滚动条 */
         #timeline-wrap::-webkit-scrollbar { height: 5px; }
         #timeline-wrap::-webkit-scrollbar-track { 
             background: var(--bg-card-alt); 
@@ -147,7 +153,6 @@
         #timeline-wrap::-webkit-scrollbar-thumb { 
             background: var(--accent); 
             border-radius: 4px;
-            opacity: 0.6;
         }
         [data-theme="dark"] #timeline-wrap::-webkit-scrollbar-track {
             background: #2a2520;
@@ -159,12 +164,12 @@
         #timeline-track {
             position: relative;
             width: 12000px;
-            height: 380px;
+            height: 390px;
             margin: 10px 0 4px 0;
             flex-shrink: 0;
         }
 
-        /* ===== 轴线（加粗加深，看得清） ===== */
+        /* ===== 轴线（加粗加深） ===== */
         .tl-axis {
             position: absolute;
             top: 50%;
@@ -200,7 +205,7 @@
         .wave-drift { animation: waveDrift 5s ease-in-out infinite alternate; }
         .wave-drift-2 { animation: waveDrift 7s ease-in-out infinite alternate-reverse; }
 
-        /* ===== 节点：去掉所有圆圈，直接用放大的实心符号 ===== */
+        /* ===== 节点：纯符号，无圆无框 ===== */
         .tl-node {
             position: absolute;
             top: 50%;
@@ -214,7 +219,6 @@
         }
         .tl-node:hover { transform: translate(-50%, -50%) scale(1.05); }
 
-        /* 核心：纯符号，无边框无背景无圆 */
         .tl-dot {
             width: auto;
             height: auto;
@@ -222,7 +226,7 @@
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 400;
             line-height: 1;
             color: var(--accent);
@@ -259,9 +263,8 @@
         .tl-node.active .tl-year { color: var(--accent); }
         .tl-node.active .tl-event { color: var(--accent); opacity: 0.9; }
 
-        /* 子节点符号略小 */
         .tl-node.sub .tl-dot {
-            font-size: 22px;
+            font-size: 26px;
             padding: 4px;
         }
         .tl-node.sub .tl-year {
@@ -272,14 +275,14 @@
             font-size: 0.78rem;
         }
 
-        /* ===== 年段分隔竖线（细，但保留存在感） ===== */
+        /* ===== 年段分隔竖线（加粗加深，标签清晰） ===== */
         .tl-divider {
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 1.5px;
+            width: 2px;
             background: var(--accent);
-            opacity: 0.2;
+            opacity: 0.4;
             pointer-events: none;
             z-index: 0;
         }
@@ -287,18 +290,18 @@
             position: absolute;
             top: 10px;
             transform: translateX(-50%);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 400;
             font-family: var(--font-mono);
-            color: var(--text-muted-light);
+            color: var(--text-secondary);
             background: var(--bg-body);
-            padding: 0 8px;
+            padding: 0 10px;
             white-space: nowrap;
             letter-spacing: 0.8px;
-            opacity: 0.7;
+            opacity: 1;
         }
 
-        /* ===== 详情区域 ===== */
+        /* ===== 详情区域（标签清晰） ===== */
         #detail-area {
             margin-top: 8px;
             padding-top: 16px;
@@ -307,13 +310,13 @@
             min-height: 70px;
         }
         #detail-area .period {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-family: var(--font-mono);
             color: var(--accent);
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 2px;
-            opacity: 0.7;
+            opacity: 1;
         }
         #detail-area .title {
             font-size: 1.2rem;
@@ -346,14 +349,14 @@
             body { padding: 0 12px 30px 12px; }
             #app { padding: 16px 0 10px 0; gap: 10px; }
             .page-header h1 { font-size: 1.2rem; }
-            #timeline-track { width: 8000px; height: 320px; }
-            .tl-dot { font-size: 24px; padding: 4px; }
-            .tl-node.sub .tl-dot { font-size: 18px; }
-            .tl-year { font-size: 1.0rem; margin-top: 12px; }
-            .tl-event { font-size: 0.78rem; }
-            .tl-node.sub .tl-year { font-size: 0.9rem; margin-top: 10px; }
-            .tl-node.sub .tl-event { font-size: 0.7rem; }
-            .tl-divider .label { font-size: 0.6rem; top: 8px; }
+            #timeline-track { width: 8000px; height: 340px; }
+            .tl-dot { font-size: 28px; padding: 4px; }
+            .tl-node.sub .tl-dot { font-size: 22px; }
+            .tl-year { font-size: 1.1rem; margin-top: 12px; }
+            .tl-event { font-size: 0.85rem; }
+            .tl-node.sub .tl-year { font-size: 1.0rem; margin-top: 10px; }
+            .tl-node.sub .tl-event { font-size: 0.78rem; }
+            .tl-divider .label { font-size: 0.65rem; top: 8px; }
             .float-group { top: 12px; right: 12px; gap: 6px; }
             .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
             #detail-area .title { font-size: 1.0rem; }
@@ -361,14 +364,14 @@
         }
 
         @media (max-width: 480px) {
-            #timeline-track { width: 6000px; height: 280px; }
-            .tl-dot { font-size: 20px; padding: 3px; }
-            .tl-node.sub .tl-dot { font-size: 15px; }
-            .tl-year { font-size: 0.85rem; margin-top: 10px; }
-            .tl-event { font-size: 0.68rem; }
-            .tl-node.sub .tl-year { font-size: 0.75rem; margin-top: 8px; }
-            .tl-node.sub .tl-event { font-size: 0.6rem; }
-            .tl-divider .label { font-size: 0.5rem; top: 6px; padding: 0 4px; }
+            #timeline-track { width: 6000px; height: 300px; }
+            .tl-dot { font-size: 24px; padding: 3px; }
+            .tl-node.sub .tl-dot { font-size: 18px; }
+            .tl-year { font-size: 0.95rem; margin-top: 10px; }
+            .tl-event { font-size: 0.75rem; }
+            .tl-node.sub .tl-year { font-size: 0.85rem; margin-top: 8px; }
+            .tl-node.sub .tl-event { font-size: 0.68rem; }
+            .tl-divider .label { font-size: 0.55rem; top: 6px; padding: 0 6px; }
             .float-group { top: 8px; right: 8px; gap: 4px; }
             .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
             .float-btn .icon { font-size: 0.7rem; }
@@ -462,47 +465,47 @@
                 <div class="tl-divider" style="left:72.5%;"><span class="label">明熙年间</span></div>
                 <div class="tl-divider" style="left:79.5%;"><span class="label">战后</span></div>
 
-                <!-- ===== 节点：纯实心符号，无圆无框 ===== -->
-                <!-- 上古 ◆ -->
-                <div class="tl-node active" data-index="0" style="left:1%;"><div class="tl-dot">◆</div><span class="tl-year">三千年前</span><span class="tl-event">青丘覆灭，白禾川流亡</span></div>
-                <div class="tl-node" data-index="1" style="left:4.5%;"><div class="tl-dot">◆</div><span class="tl-year">约一千年前</span><span class="tl-event">天命君造伪神楚迟</span></div>
-                <div class="tl-node" data-index="2" style="left:8%;"><div class="tl-dot">◆</div><span class="tl-year">约六百年前</span><span class="tl-event">卞城王建归终殿</span></div>
-                <div class="tl-node" data-index="3" style="left:11.5%;"><div class="tl-dot">◆</div><span class="tl-year">约四百年前</span><span class="tl-event">罗修入归终殿</span></div>
+                <!-- ===== 节点：七个时代，七种不同符号 ===== -->
+                <!-- 上古 ❖ -->
+                <div class="tl-node active" data-index="0" style="left:1%;"><div class="tl-dot">❖</div><span class="tl-year">三千年前</span><span class="tl-event">青丘覆灭，白禾川流亡</span></div>
+                <div class="tl-node" data-index="1" style="left:4.5%;"><div class="tl-dot">❖</div><span class="tl-year">约一千年前</span><span class="tl-event">天命君造伪神楚迟</span></div>
+                <div class="tl-node" data-index="2" style="left:8%;"><div class="tl-dot">❖</div><span class="tl-year">约六百年前</span><span class="tl-event">卞城王建归终殿</span></div>
+                <div class="tl-node" data-index="3" style="left:11.5%;"><div class="tl-dot">❖</div><span class="tl-year">约四百年前</span><span class="tl-event">罗修入归终殿</span></div>
 
-                <!-- 商烈·永昌 ✦ -->
-                <div class="tl-node" data-index="4" style="left:15%;"><div class="tl-dot">✦</div><span class="tl-year">约三百年前</span><span class="tl-event">司缘君创顾执</span></div>
-                <div class="tl-node" data-index="5" style="left:18.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百七十年前</span><span class="tl-event">景枭亡，顾执寻转世</span></div>
-                <div class="tl-node" data-index="6" style="left:22%;"><div class="tl-dot">✦</div><span class="tl-year">约二百五十年前</span><span class="tl-event">罗修与林丛言结怨</span></div>
-                <div class="tl-node" data-index="7" style="left:25.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百四十九年前</span><span class="tl-event">顾执散魂，楚迟断剑</span></div>
-                <div class="tl-node" data-index="8" style="left:29%;"><div class="tl-dot">✦</div><span class="tl-year">约二百四十八年前</span><span class="tl-event">罗修入生死门</span></div>
+                <!-- 商烈·永昌 ✿ -->
+                <div class="tl-node" data-index="4" style="left:15%;"><div class="tl-dot">✿</div><span class="tl-year">约三百年前</span><span class="tl-event">司缘君创顾执</span></div>
+                <div class="tl-node" data-index="5" style="left:18.5%;"><div class="tl-dot">✿</div><span class="tl-year">约二百七十年前</span><span class="tl-event">景枭亡，顾执寻转世</span></div>
+                <div class="tl-node" data-index="6" style="left:22%;"><div class="tl-dot">✿</div><span class="tl-year">约二百五十年前</span><span class="tl-event">罗修与林丛言结怨</span></div>
+                <div class="tl-node" data-index="7" style="left:25.5%;"><div class="tl-dot">✿</div><span class="tl-year">约二百四十九年前</span><span class="tl-event">顾执散魂，楚迟断剑</span></div>
+                <div class="tl-node" data-index="8" style="left:29%;"><div class="tl-dot">✿</div><span class="tl-year">约二百四十八年前</span><span class="tl-event">罗修入生死门</span></div>
 
-                <!-- 商烈·景和 ❖ -->
-                <div class="tl-node" data-index="9" style="left:32.5%;"><div class="tl-dot">❖</div><span class="tl-year">约二百四十二年前</span><span class="tl-event">凌宸钧登基，楚迟收秦墨予</span></div>
-                <div class="tl-node" data-index="10" style="left:36%;"><div class="tl-dot">❖</div><span class="tl-year">约二百三十七年前</span><span class="tl-event">白禾川被秦雨令所救</span></div>
-                <div class="tl-node" data-index="11" style="left:39.5%;"><div class="tl-dot">❖</div><span class="tl-year">约二百三十五年前</span><span class="tl-event">楚迟入锁龙井</span></div>
-                <div class="tl-node" data-index="12" style="left:43%;"><div class="tl-dot">❖</div><span class="tl-year">约二百三十三—二二九</span><span class="tl-event">秦墨予为官·遇林淮·疯魔</span></div>
-                <div class="tl-node" data-index="13" style="left:46.5%;"><div class="tl-dot">❖</div><span class="tl-year">约二百二十六年前</span><span class="tl-event">秦雨令入宫封令妃</span></div>
-                <div class="tl-node" data-index="14" style="left:50%;"><div class="tl-dot">❖</div><span class="tl-year">约二百二十三年前</span><span class="tl-event">商烈亡，苍珩立，林淮战死</span></div>
+                <!-- 商烈·景和 ✦ -->
+                <div class="tl-node" data-index="9" style="left:32.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百四十二年前</span><span class="tl-event">凌宸钧登基，楚迟收秦墨予</span></div>
+                <div class="tl-node" data-index="10" style="left:36%;"><div class="tl-dot">✦</div><span class="tl-year">约二百三十七年前</span><span class="tl-event">白禾川被秦雨令所救</span></div>
+                <div class="tl-node" data-index="11" style="left:39.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百三十五年前</span><span class="tl-event">楚迟入锁龙井</span></div>
+                <div class="tl-node" data-index="12" style="left:43%;"><div class="tl-dot">✦</div><span class="tl-year">约二百三十三—二二九</span><span class="tl-event">秦墨予为官·遇林淮·疯魔</span></div>
+                <div class="tl-node" data-index="13" style="left:46.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百二十六年前</span><span class="tl-event">秦雨令入宫封令妃</span></div>
+                <div class="tl-node" data-index="14" style="left:50%;"><div class="tl-dot">✦</div><span class="tl-year">约二百二十三年前</span><span class="tl-event">商烈亡，苍珩立，林淮战死</span></div>
 
-                <!-- 苍珩·景德 ● -->
-                <div class="tl-node" data-index="15" style="left:53.5%;"><div class="tl-dot">●</div><span class="tl-year">约二百一十八年前</span><span class="tl-event">林淮入归终殿</span></div>
-                <div class="tl-node" data-index="16" style="left:57%;"><div class="tl-dot">●</div><span class="tl-year">约二百零三年前</span><span class="tl-event">栾方棋出生</span></div>
-                <div class="tl-node" data-index="17" style="left:60.5%;"><div class="tl-dot">●</div><span class="tl-year">约一百七十八年前</span><span class="tl-event">栾方棋入归终殿</span></div>
-                <div class="tl-node" data-index="18" style="left:64%;"><div class="tl-dot">●</div><span class="tl-year">约一百七十年前</span><span class="tl-event">冉舟入归终殿，白禾川造偶</span></div>
+                <!-- 苍珩·景德 ◈ -->
+                <div class="tl-node" data-index="15" style="left:53.5%;"><div class="tl-dot">◈</div><span class="tl-year">约二百一十八年前</span><span class="tl-event">林淮入归终殿</span></div>
+                <div class="tl-node" data-index="16" style="left:57%;"><div class="tl-dot">◈</div><span class="tl-year">约二百零三年前</span><span class="tl-event">栾方棋出生</span></div>
+                <div class="tl-node" data-index="17" style="left:60.5%;"><div class="tl-dot">◈</div><span class="tl-year">约一百七十八年前</span><span class="tl-event">栾方棋入归终殿</span></div>
+                <div class="tl-node" data-index="18" style="left:64%;"><div class="tl-dot">◈</div><span class="tl-year">约一百七十年前</span><span class="tl-event">冉舟入归终殿，白禾川造偶</span></div>
 
-                <!-- 苍珩·魏天恒 ⬤ -->
-                <div class="tl-node" data-index="19" style="left:67.5%;"><div class="tl-dot">⬤</div><span class="tl-year">苍珩三十九年</span><span class="tl-event">主线开启：无涯村·观花卷</span></div>
-                <div class="tl-node" data-index="20" style="left:71%;"><div class="tl-dot">⬤</div><span class="tl-year">苍珩四十年</span><span class="tl-event">锁龙井·冉舟之死</span></div>
+                <!-- 苍珩·魏天恒 ◉ -->
+                <div class="tl-node" data-index="19" style="left:67.5%;"><div class="tl-dot">◉</div><span class="tl-year">苍珩三十九年</span><span class="tl-event">主线开启：无涯村·观花卷</span></div>
+                <div class="tl-node" data-index="20" style="left:71%;"><div class="tl-dot">◉</div><span class="tl-year">苍珩四十年</span><span class="tl-event">锁龙井·冉舟之死</span></div>
 
-                <!-- 明熙年间 ✧（实心版✦） -->
-                <div class="tl-node" data-index="21" style="left:74.5%;"><div class="tl-dot">✦</div><span class="tl-year">明熙元年</span><span class="tl-event">魏元璟登基</span></div>
-                <div class="tl-node" data-index="22" style="left:78%;"><div class="tl-dot">✦</div><span class="tl-year">明熙五年</span><span class="tl-event">京城决战·白禾川死</span></div>
+                <!-- 明熙年间 ✧ -->
+                <div class="tl-node" data-index="21" style="left:74.5%;"><div class="tl-dot">✧</div><span class="tl-year">明熙元年</span><span class="tl-event">魏元璟登基</span></div>
+                <div class="tl-node" data-index="22" style="left:78%;"><div class="tl-dot">✧</div><span class="tl-year">明熙五年</span><span class="tl-event">京城决战·白禾川死</span></div>
 
-                <!-- 战后 ◆（循环收束） -->
-                <div class="tl-node" data-index="23" style="left:81.5%;"><div class="tl-dot">◆</div><span class="tl-year">战后五年</span><span class="tl-event">归终殿升格·林淮栾方棋成亲</span></div>
-                <div class="tl-node" data-index="24" style="left:85%;"><div class="tl-dot">◆</div><span class="tl-year">战后二十五年</span><span class="tl-event">念安恢复记忆为魏元璟</span></div>
-                <div class="tl-node" data-index="25" style="left:88.5%;"><div class="tl-dot">◆</div><span class="tl-year">战后三十五年</span><span class="tl-event">罗修与魏元璟破冰</span></div>
-                <div class="tl-node" data-index="26" style="left:92%;"><div class="tl-dot">◆</div><span class="tl-year">战后四十五年</span><span class="tl-event">罗修与魏元璟成亲</span></div>
+                <!-- 战后 ❀ -->
+                <div class="tl-node" data-index="23" style="left:81.5%;"><div class="tl-dot">❀</div><span class="tl-year">战后五年</span><span class="tl-event">归终殿升格·林淮栾方棋成亲</span></div>
+                <div class="tl-node" data-index="24" style="left:85%;"><div class="tl-dot">❀</div><span class="tl-year">战后二十五年</span><span class="tl-event">念安恢复记忆为魏元璟</span></div>
+                <div class="tl-node" data-index="25" style="left:88.5%;"><div class="tl-dot">❀</div><span class="tl-year">战后三十五年</span><span class="tl-event">罗修与魏元璟破冰</span></div>
+                <div class="tl-node" data-index="26" style="left:92%;"><div class="tl-dot">❀</div><span class="tl-year">战后四十五年</span><span class="tl-event">罗修与魏元璟成亲</span></div>
 
             </div>
         </div>
