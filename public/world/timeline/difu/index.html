@@ -1,131 +1,206 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时间线 · 地府打工</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>时间线 · 归终殿</title>
     <style>
+        /* ===== 基础色盘（淡米黄底 + 暗哑红） ===== */
         :root {
-            --bg-body: #ffffff;
-            --text-primary: #2c2c2c;
-            --text-secondary: #4a4a4a;
-            --text-muted: #8a8a8a;
-            --border-light: #ece6de;
-            --accent: #b03a2a;
-            --accent-soft: rgba(176, 58, 42, 0.06);
-            --accent-glow: rgba(176, 58, 42, 0.25);
-            --wave-color: #c95a4a;
+            --bg-body: #faf6ef;
+            --bg-card: #ffffff;
+            --bg-card-alt: #f2eee9;
+            --border-light: #e8e0d5;
+            --border-card: #d5c8b8;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --accent: #8a3a2a;
+            --accent-soft: rgba(138, 58, 42, 0.06);
+            --accent-glow: rgba(138, 58, 42, 0.25);
+            --wave-color: #b07a6a;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.03);
+            --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+            --font-mono: "Courier New", "Source Code Pro", monospace;
+            --transition: 0.25s ease;
         }
 
         [data-theme="dark"] {
-            --bg-body: #1a1816;
+            --bg-body: #1e1a16;
+            --bg-card: #2a2520;
+            --bg-card-alt: #24201c;
+            --border-light: #3a3530;
+            --border-card: #4a443e;
             --text-primary: #cfc8c0;
-            --text-secondary: #9a948c;
-            --text-muted: #6a6560;
-            --border-light: #35302a;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
             --accent: #b05a4a;
-            --accent-soft: rgba(176, 90, 74, 0.1);
-            --accent-glow: rgba(176, 90, 74, 0.3);
-            --wave-color: #d07a6a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+            --accent-glow: rgba(176, 90, 74, 0.30);
+            --wave-color: #a07a6a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+            font-family: var(--font-serif);
             background: var(--bg-body);
             color: var(--text-primary);
-            font-size: 16px;
-            line-height: 1.8;
-            transition: background 0.3s, color 0.3s;
+            transition: background var(--transition), color var(--transition);
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
+            padding: 0 16px 40px 16px;
             display: flex;
             flex-direction: column;
         }
 
-        #nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 18px 24px 10px 24px;
-            width: 100%;
+        /* ===== 右上角悬浮组 ===== */
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: var(--font-mono);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+        .float-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .float-btn .icon { font-size: 0.9rem; }
+
+        /* ===== 主容器 ===== */
+        #app {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 24px 0 20px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ===== 头部 ===== */
+        .page-header {
+            padding: 0 4px 8px 4px;
             border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
-        .nav-brand { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); text-decoration: none; }
-        .nav-brand span { color: var(--accent); }
-        .nav-links { display: flex; gap: 18px; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
-        .nav-links a:hover { color: var(--accent); }
-
-        #header {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 24px 20px 24px;
-            width: 100%;
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: var(--font-serif);
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
         }
-        #header h1 { font-size: 1.6rem; font-weight: 600; color: var(--text-primary); }
-        #header .sub { font-size: 0.95rem; color: var(--text-muted); margin-top: 2px; }
+        .page-header h1 .accent {
+            color: var(--accent);
+            font-weight: 400;
+        }
+        .page-header .sub {
+            font-size: 0.8rem;
+            color: var(--text-muted-light);
+            font-family: var(--font-mono);
+            letter-spacing: 1.5px;
+        }
 
+        /* ===== 时间线滚动容器 ===== */
         #timeline-wrap {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px 20px 24px;
-            width: 100%;
             overflow-x: auto;
             overflow-y: visible;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
             scrollbar-width: thin;
+            padding: 6px 0 10px 0;
+            margin: 0 -4px;
         }
-        #timeline-wrap::-webkit-scrollbar { height: 4px; }
-        #timeline-wrap::-webkit-scrollbar-track { background: var(--border-light); border-radius: 4px; }
-        #timeline-wrap::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        /* ===== 滚动条美化（暗色模式下强制深色） ===== */
+        #timeline-wrap::-webkit-scrollbar { height: 5px; }
+        #timeline-wrap::-webkit-scrollbar-track { 
+            background: var(--bg-card-alt); 
+            border-radius: 4px; 
+        }
+        #timeline-wrap::-webkit-scrollbar-thumb { 
+            background: var(--accent); 
+            border-radius: 4px;
+            opacity: 0.6;
+        }
+        [data-theme="dark"] #timeline-wrap::-webkit-scrollbar-track {
+            background: #2a2520;
+        }
+        [data-theme="dark"] #timeline-wrap::-webkit-scrollbar-thumb {
+            background: #b05a4a;
+        }
 
         #timeline-track {
             position: relative;
             width: 12000px;
             height: 380px;
-            margin: 20px 0 10px 0;
+            margin: 10px 0 4px 0;
             flex-shrink: 0;
         }
 
+        /* ===== 轴线（加粗加深，看得清） ===== */
         .tl-axis {
             position: absolute;
             top: 50%;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: var(--accent);
             transform: translateY(-50%);
             border-radius: 2px;
-            opacity: 0.4;
+            opacity: 0.5;
         }
 
+        /* ===== 波浪（增强动态感） ===== */
         .tl-wave-svg {
             position: absolute;
             top: 50%;
             left: 0;
             right: 0;
-            height: 100px;
+            height: 80px;
             transform: translateY(-50%);
             pointer-events: none;
             overflow: visible;
         }
         .tl-wave-svg svg { width: 100%; height: 100%; display: block; overflow: visible; }
-        .wave-line { fill: none; stroke-width: 2; stroke-linecap: round; filter: drop-shadow(0 0 18px var(--accent-glow)); }
-        .wave-1 { stroke: var(--wave-color); opacity: 0.25; }
-        .wave-2 { stroke: var(--wave-color); opacity: 0.12; stroke-width: 1.5; }
+        .wave-line { fill: none; stroke-linecap: round; }
+        .wave-1 { stroke: var(--wave-color); opacity: 0.3; stroke-width: 2.5; }
+        .wave-2 { stroke: var(--wave-color); opacity: 0.15; stroke-width: 1.8; }
 
         @keyframes waveDrift {
-            0% { transform: translateX(-20px); }
-            100% { transform: translateX(20px); }
+            0% { transform: translateX(-16px); }
+            100% { transform: translateX(16px); }
         }
-        .wave-drift { animation: waveDrift 4s ease-in-out infinite alternate; }
-        .wave-drift-2 { animation: waveDrift 5s ease-in-out infinite alternate-reverse; }
+        .wave-drift { animation: waveDrift 5s ease-in-out infinite alternate; }
+        .wave-drift-2 { animation: waveDrift 7s ease-in-out infinite alternate-reverse; }
 
+        /* ===== 节点：去掉所有圆圈，直接用放大的实心符号 ===== */
         .tl-node {
             position: absolute;
             top: 50%;
@@ -137,168 +212,168 @@
             transition: transform 0.3s;
             z-index: 2;
         }
-        .tl-node:hover { transform: translate(-50%, -50%) scale(1.08); }
+        .tl-node:hover { transform: translate(-50%, -50%) scale(1.05); }
 
+        /* 核心：纯符号，无边框无背景无圆 */
         .tl-dot {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--accent);
-            border: 3px solid var(--bg-body);
-            box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(176,58,42,0.2);
-            transition: all 0.3s;
+            width: auto;
+            height: auto;
+            border-radius: 0;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1;
+            color: var(--accent);
+            padding: 6px;
+            transition: transform 0.3s, text-shadow 0.3s;
+            font-family: var(--font-serif);
+            text-shadow: 0 0 4px rgba(138,58,42,0.08);
         }
         .tl-node.active .tl-dot {
-            box-shadow: 0 0 0 5px var(--accent-glow), 0 4px 28px rgba(176,58,42,0.35);
-            transform: scale(1.2);
+            transform: scale(1.35);
+            text-shadow: 0 0 28px var(--accent-glow), 0 0 60px var(--accent-glow);
         }
 
-        /* ---------- 统一字体大小，主节点和子节点完全一致 ---------- */
         .tl-year {
-            margin-top: 16px;
-            font-size: 1.5rem;
-            font-weight: 600;
+            margin-top: 14px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: var(--font-serif);
             color: var(--text-muted);
             white-space: nowrap;
             letter-spacing: 0.3px;
             transition: color 0.3s;
         }
         .tl-event {
-            font-size: 1.2rem;
-            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text-muted-light);
             white-space: nowrap;
-            margin-top: 3px;
-            opacity: 0.8;
+            margin-top: 2px;
             transition: color 0.3s;
+            letter-spacing: 0.2px;
         }
         .tl-node.active .tl-year { color: var(--accent); }
-        .tl-node.active .tl-event { color: var(--accent); opacity: 1; }
+        .tl-node.active .tl-event { color: var(--accent); opacity: 0.9; }
 
-        /* 子节点不再单独缩小，跟主节点一样大 */
+        /* 子节点符号略小 */
         .tl-node.sub .tl-dot {
-            width: 15px;
-            height: 15px;
-            border-width: 2px;
+            font-size: 22px;
+            padding: 4px;
         }
         .tl-node.sub .tl-year {
-            font-size: 1.5rem;  /* 与主节点相同 */
-            margin-top: 16px;
+            font-size: 1.0rem;
+            margin-top: 12px;
         }
         .tl-node.sub .tl-event {
-            font-size: 1.2rem;  /* 与主节点相同 */
+            font-size: 0.78rem;
         }
 
+        /* ===== 年段分隔竖线（细，但保留存在感） ===== */
         .tl-divider {
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 2px;
+            width: 1.5px;
             background: var(--accent);
-            opacity: 0.5;
+            opacity: 0.2;
             pointer-events: none;
             z-index: 0;
         }
         .tl-divider .label {
             position: absolute;
-            top: -6px;
+            top: 10px;
             transform: translateX(-50%);
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 400;
+            font-family: var(--font-mono);
+            color: var(--text-muted-light);
             background: var(--bg-body);
-            padding: 0 10px;
+            padding: 0 8px;
             white-space: nowrap;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            opacity: 0.7;
         }
 
-        #detail {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 8px 24px 40px 24px;
-            width: 100%;
-        }
-        #detail-content {
-            background: var(--accent-soft);
-            border-radius: 8px;
-            padding: 24px 32px;
-            border-left: 3px solid var(--accent);
+        /* ===== 详情区域 ===== */
+        #detail-area {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1.5px solid var(--border-light);
             transition: opacity 0.35s ease, transform 0.35s ease;
-            min-height: 80px;
+            min-height: 70px;
         }
-        #detail-content .period { font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
-        #detail-content .title { font-size: 1.2rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
-        #detail-content .desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; }
+        #detail-area .period {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            opacity: 0.7;
+        }
+        #detail-area .title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: var(--font-serif);
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        #detail-area .desc {
+            font-size: 0.92rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-family: var(--font-serif);
+        }
 
-        #footer {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 18px 24px 24px 24px;
-            width: 100%;
+        .page-footer {
+            margin-top: 20px;
+            padding-top: 14px;
             border-top: 1px solid var(--border-light);
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.65rem;
+            color: var(--text-muted-light);
             text-align: center;
+            font-family: var(--font-mono);
+            letter-spacing: 1.5px;
         }
 
-        /* ========== 平板/手机 ========== */
+        /* ===== 响应式 ===== */
         @media (max-width: 768px) {
-            #nav { padding: 14px 16px 8px 16px; }
-            .nav-brand { font-size: 1rem; }
-            #header { padding: 24px 16px 16px 16px; }
-            #header h1 { font-size: 1.3rem; }
-            #timeline-wrap { padding: 0 16px 16px 16px; }
+            body { padding: 0 12px 30px 12px; }
+            #app { padding: 16px 0 10px 0; gap: 10px; }
+            .page-header h1 { font-size: 1.2rem; }
             #timeline-track { width: 8000px; height: 320px; }
-            .tl-dot { width: 20px; height: 20px; }
-            .tl-node.sub .tl-dot { width: 13px; height: 13px; }
-
-            .tl-year {
-                font-size: 1.2rem;
-                margin-top: 14px;
-            }
-            .tl-event {
-                font-size: 0.95rem;
-            }
-            .tl-node.sub .tl-year {
-                font-size: 1.2rem;
-                margin-top: 14px;
-            }
-            .tl-node.sub .tl-event {
-                font-size: 0.95rem;
-            }
-            .tl-divider .label {
-                font-size: 0.85rem;
-            }
-
-            #detail { padding: 4px 16px 30px 16px; }
-            #detail-content { padding: 18px 16px; min-height: 60px; }
-            #detail-content .title { font-size: 1rem; }
-            #detail-content .desc { font-size: 0.85rem; }
+            .tl-dot { font-size: 24px; padding: 4px; }
+            .tl-node.sub .tl-dot { font-size: 18px; }
+            .tl-year { font-size: 1.0rem; margin-top: 12px; }
+            .tl-event { font-size: 0.78rem; }
+            .tl-node.sub .tl-year { font-size: 0.9rem; margin-top: 10px; }
+            .tl-node.sub .tl-event { font-size: 0.7rem; }
+            .tl-divider .label { font-size: 0.6rem; top: 8px; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
+            #detail-area .title { font-size: 1.0rem; }
+            #detail-area .desc { font-size: 0.85rem; }
         }
 
-        /* ========== 小屏手机 ========== */
         @media (max-width: 480px) {
-            #header h1 { font-size: 1.1rem; }
             #timeline-track { width: 6000px; height: 280px; }
-            .tl-dot { width: 16px; height: 16px; }
-            .tl-node.sub .tl-dot { width: 10px; height: 10px; }
-
-            .tl-year {
-                font-size: 1rem;
-                margin-top: 12px;
-            }
-            .tl-event {
-                font-size: 0.8rem;
-            }
-            .tl-node.sub .tl-year {
-                font-size: 1rem;
-                margin-top: 12px;
-            }
-            .tl-node.sub .tl-event {
-                font-size: 0.8rem;
-            }
-            .tl-divider .label {
-                font-size: 0.7rem;
-            }
+            .tl-dot { font-size: 20px; padding: 3px; }
+            .tl-node.sub .tl-dot { font-size: 15px; }
+            .tl-year { font-size: 0.85rem; margin-top: 10px; }
+            .tl-event { font-size: 0.68rem; }
+            .tl-node.sub .tl-year { font-size: 0.75rem; margin-top: 8px; }
+            .tl-node.sub .tl-event { font-size: 0.6rem; }
+            .tl-divider .label { font-size: 0.5rem; top: 6px; padding: 0 4px; }
+            .float-group { top: 8px; right: 8px; gap: 4px; }
+            .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
+            .float-btn .icon { font-size: 0.7rem; }
+            #detail-area .title { font-size: 0.9rem; }
+            #detail-area .desc { font-size: 0.8rem; }
         }
     </style>
 
@@ -311,217 +386,137 @@
                     if (parsed && parsed.value === 'dark') {
                         document.documentElement.setAttribute('data-theme', 'dark');
                     } else if (parsed && parsed.value === 'light') {
-                        document.documentElement.setAttribute('data-theme', 'light');
+                        document.documentElement.removeAttribute('data-theme');
                     }
                 }
-            } catch (e) {}
+            } catch(e) {}
         })();
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'theme') {
-                try {
-                    var parsed = JSON.parse(e.newValue);
-                    if (parsed && parsed.value === 'dark') {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    } else if (parsed && parsed.value === 'light') {
-                        document.documentElement.setAttribute('data-theme', 'light');
-                    }
-                } catch (e) {}
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.removeAttribute('data-theme');
+            }
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                btn.innerHTML = newTheme === 'dark'
+                    ? '<span class="icon">☀️</span> 日间'
+                    : '<span class="icon">🌙</span> 夜间';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('themeBtn');
+            if (btn) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                btn.innerHTML = isDark
+                    ? '<span class="icon">☀️</span> 日间'
+                    : '<span class="icon">🌙</span> 夜间';
             }
         });
     </script>
 </head>
 <body>
 
-    <nav id="nav">
-        <a class="nav-brand" href="/-/">墨境 · <span>年表</span></a>
-        <div class="nav-links">
-            <a href="/-/">首页</a>
-            <a href="/-/world/">探索</a>
-        </div>
-    </nav>
-
-    <header id="header">
-        <h1>归终殿 · 时间线</h1>
-        <p class="sub">点击节点查看详情 · 滑动浏览全貌 · 年段以竖线划分</p>
-    </header>
-
-    <div id="timeline-wrap">
-        <div id="timeline-track">
-
-            <div class="tl-axis"></div>
-
-            <div class="tl-wave-svg">
-                <svg viewBox="0 0 12000 100" preserveAspectRatio="none">
-                    <path class="wave-line wave-1 wave-drift" d="M0,50 C900,20 1800,80 2700,50 C3600,20 4500,80 5400,50 C6300,20 7200,80 8100,50 C9000,20 9900,80 10800,50 C11700,20 12000,80 12000,50" />
-                    <path class="wave-line wave-2 wave-drift-2" d="M0,50 C900,80 1800,20 2700,50 C3600,80 4500,20 5400,50 C6300,80 7200,20 8100,50 C9000,80 9900,20 10800,50 C11700,80 12000,20 12000,50" />
-                </svg>
-            </div>
-
-            <!-- 竖线：年段分隔 -->
-            <div class="tl-divider" style="left:13%;"><span class="label">商烈·永昌</span></div>
-            <div class="tl-divider" style="left:30.5%;"><span class="label">商烈·景和</span></div>
-            <div class="tl-divider" style="left:51.5%;"><span class="label">苍珩·景德</span></div>
-            <div class="tl-divider" style="left:65.5%;"><span class="label">苍珩年间（魏天恒）</span></div>
-            <div class="tl-divider" style="left:72.5%;"><span class="label">明熙年间</span></div>
-            <div class="tl-divider" style="left:79.5%;"><span class="label">战后</span></div>
-
-            <!-- ====== 所有节点，主和子字体大小已统一 ====== -->
-            <div class="tl-node active" data-index="0" style="left:1%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">三千年前</span>
-                <span class="tl-event">青丘覆灭，白禾川流亡</span>
-            </div>
-            <div class="tl-node" data-index="1" style="left:4.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约一千年前</span>
-                <span class="tl-event">天命君造伪神楚迟</span>
-            </div>
-            <div class="tl-node" data-index="2" style="left:8%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约六百年前</span>
-                <span class="tl-event">卞城王建归终殿</span>
-            </div>
-            <div class="tl-node" data-index="3" style="left:11.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约四百年前</span>
-                <span class="tl-event">罗修入归终殿</span>
-            </div>
-
-            <div class="tl-node" data-index="4" style="left:15%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约三百年前</span>
-                <span class="tl-event">司缘君创顾执</span>
-            </div>
-            <div class="tl-node" data-index="5" style="left:18.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百七十年前</span>
-                <span class="tl-event">景枭亡，顾执寻转世</span>
-            </div>
-            <div class="tl-node" data-index="6" style="left:22%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百五十年前</span>
-                <span class="tl-event">罗修与林丛言结怨</span>
-            </div>
-            <div class="tl-node" data-index="7" style="left:25.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百四十九年前</span>
-                <span class="tl-event">顾执散魂，楚迟断剑</span>
-            </div>
-            <div class="tl-node" data-index="8" style="left:29%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百四十八年前</span>
-                <span class="tl-event">罗修入生死门</span>
-            </div>
-
-            <div class="tl-node" data-index="9" style="left:32.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百四十二年前</span>
-                <span class="tl-event">凌宸钧登基，楚迟收秦墨予</span>
-            </div>
-            <div class="tl-node" data-index="10" style="left:36%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百三十七年前</span>
-                <span class="tl-event">白禾川被秦雨令所救</span>
-            </div>
-            <div class="tl-node" data-index="11" style="left:39.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百三十五年前</span>
-                <span class="tl-event">楚迟入锁龙井</span>
-            </div>
-            <div class="tl-node" data-index="12" style="left:43%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百三十三—二二九</span>
-                <span class="tl-event">秦墨予为官、遇林淮、疯魔</span>
-            </div>
-            <div class="tl-node" data-index="13" style="left:46.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百二十六年前</span>
-                <span class="tl-event">秦雨令入宫封令妃</span>
-            </div>
-            <div class="tl-node" data-index="14" style="left:50%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百二十三年前</span>
-                <span class="tl-event">商烈亡，苍珩立，林淮战死</span>
-            </div>
-
-            <div class="tl-node" data-index="15" style="left:53.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百一十八年前</span>
-                <span class="tl-event">林淮入归终殿</span>
-            </div>
-            <div class="tl-node" data-index="16" style="left:57%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约二百零三年前</span>
-                <span class="tl-event">栾方棋出生</span>
-            </div>
-            <div class="tl-node" data-index="17" style="left:60.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约一百七十八年前</span>
-                <span class="tl-event">栾方棋入归终殿</span>
-            </div>
-            <div class="tl-node" data-index="18" style="left:64%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">约一百七十年前</span>
-                <span class="tl-event">冉舟入归终殿，白禾川造偶</span>
-            </div>
-
-            <div class="tl-node" data-index="19" style="left:67.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">苍珩三十九年</span>
-                <span class="tl-event">主线开启：无涯村·观花卷</span>
-            </div>
-            <div class="tl-node" data-index="20" style="left:71%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">苍珩四十年</span>
-                <span class="tl-event">锁龙井·冉舟之死</span>
-            </div>
-
-            <div class="tl-node" data-index="21" style="left:74.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">明熙元年</span>
-                <span class="tl-event">魏元璟登基</span>
-            </div>
-            <div class="tl-node" data-index="22" style="left:78%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">明熙五年</span>
-                <span class="tl-event">京城决战·白禾川死</span>
-            </div>
-
-            <div class="tl-node" data-index="23" style="left:81.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">战后五年</span>
-                <span class="tl-event">归终殿升格·林淮栾方棋成亲</span>
-            </div>
-            <div class="tl-node" data-index="24" style="left:85%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">战后二十五年</span>
-                <span class="tl-event">念安恢复记忆为魏元璟</span>
-            </div>
-            <div class="tl-node" data-index="25" style="left:88.5%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">战后三十五年</span>
-                <span class="tl-event">罗修与魏元璟破冰</span>
-            </div>
-            <div class="tl-node" data-index="26" style="left:92%;">
-                <div class="tl-dot"></div>
-                <span class="tl-year">战后四十五年</span>
-                <span class="tl-event">罗修与魏元璟成亲</span>
-            </div>
-
-        </div>
+    <!-- ===== 悬浮按钮 ===== -->
+    <div class="float-group">
+        <a class="float-btn" href="./index.html">
+            <span class="icon">←</span> 返回列表
+        </a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
     </div>
 
-    <div id="detail">
-        <div id="detail-content">
+    <div id="app">
+
+        <!-- 头部 -->
+        <div class="page-header">
+            <h1>归终殿 · <span class="accent">时间线</span></h1>
+            <p class="sub">点击符号 · 滑动长卷 · 年段以细线划分</p>
+        </div>
+
+        <!-- 时间线 -->
+        <div id="timeline-wrap">
+            <div id="timeline-track">
+
+                <div class="tl-axis"></div>
+
+                <div class="tl-wave-svg">
+                    <svg viewBox="0 0 12000 80" preserveAspectRatio="none">
+                        <path class="wave-line wave-1 wave-drift" d="M0,40 C900,16 1800,64 2700,40 C3600,16 4500,64 5400,40 C6300,16 7200,64 8100,40 C9000,16 9900,64 10800,40 C11700,16 12000,64 12000,40" />
+                        <path class="wave-line wave-2 wave-drift-2" d="M0,40 C900,64 1800,16 2700,40 C3600,64 4500,16 5400,40 C6300,64 7200,16 8100,40 C9000,64 9900,16 10800,40 C11700,64 12000,16 12000,40" />
+                    </svg>
+                </div>
+
+                <!-- 年段分隔线 -->
+                <div class="tl-divider" style="left:13%;"><span class="label">商烈·永昌</span></div>
+                <div class="tl-divider" style="left:30.5%;"><span class="label">商烈·景和</span></div>
+                <div class="tl-divider" style="left:51.5%;"><span class="label">苍珩·景德</span></div>
+                <div class="tl-divider" style="left:65.5%;"><span class="label">苍珩·魏天恒</span></div>
+                <div class="tl-divider" style="left:72.5%;"><span class="label">明熙年间</span></div>
+                <div class="tl-divider" style="left:79.5%;"><span class="label">战后</span></div>
+
+                <!-- ===== 节点：纯实心符号，无圆无框 ===== -->
+                <!-- 上古 ◆ -->
+                <div class="tl-node active" data-index="0" style="left:1%;"><div class="tl-dot">◆</div><span class="tl-year">三千年前</span><span class="tl-event">青丘覆灭，白禾川流亡</span></div>
+                <div class="tl-node" data-index="1" style="left:4.5%;"><div class="tl-dot">◆</div><span class="tl-year">约一千年前</span><span class="tl-event">天命君造伪神楚迟</span></div>
+                <div class="tl-node" data-index="2" style="left:8%;"><div class="tl-dot">◆</div><span class="tl-year">约六百年前</span><span class="tl-event">卞城王建归终殿</span></div>
+                <div class="tl-node" data-index="3" style="left:11.5%;"><div class="tl-dot">◆</div><span class="tl-year">约四百年前</span><span class="tl-event">罗修入归终殿</span></div>
+
+                <!-- 商烈·永昌 ✦ -->
+                <div class="tl-node" data-index="4" style="left:15%;"><div class="tl-dot">✦</div><span class="tl-year">约三百年前</span><span class="tl-event">司缘君创顾执</span></div>
+                <div class="tl-node" data-index="5" style="left:18.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百七十年前</span><span class="tl-event">景枭亡，顾执寻转世</span></div>
+                <div class="tl-node" data-index="6" style="left:22%;"><div class="tl-dot">✦</div><span class="tl-year">约二百五十年前</span><span class="tl-event">罗修与林丛言结怨</span></div>
+                <div class="tl-node" data-index="7" style="left:25.5%;"><div class="tl-dot">✦</div><span class="tl-year">约二百四十九年前</span><span class="tl-event">顾执散魂，楚迟断剑</span></div>
+                <div class="tl-node" data-index="8" style="left:29%;"><div class="tl-dot">✦</div><span class="tl-year">约二百四十八年前</span><span class="tl-event">罗修入生死门</span></div>
+
+                <!-- 商烈·景和 ❖ -->
+                <div class="tl-node" data-index="9" style="left:32.5%;"><div class="tl-dot">❖</div><span class="tl-year">约二百四十二年前</span><span class="tl-event">凌宸钧登基，楚迟收秦墨予</span></div>
+                <div class="tl-node" data-index="10" style="left:36%;"><div class="tl-dot">❖</div><span class="tl-year">约二百三十七年前</span><span class="tl-event">白禾川被秦雨令所救</span></div>
+                <div class="tl-node" data-index="11" style="left:39.5%;"><div class="tl-dot">❖</div><span class="tl-year">约二百三十五年前</span><span class="tl-event">楚迟入锁龙井</span></div>
+                <div class="tl-node" data-index="12" style="left:43%;"><div class="tl-dot">❖</div><span class="tl-year">约二百三十三—二二九</span><span class="tl-event">秦墨予为官·遇林淮·疯魔</span></div>
+                <div class="tl-node" data-index="13" style="left:46.5%;"><div class="tl-dot">❖</div><span class="tl-year">约二百二十六年前</span><span class="tl-event">秦雨令入宫封令妃</span></div>
+                <div class="tl-node" data-index="14" style="left:50%;"><div class="tl-dot">❖</div><span class="tl-year">约二百二十三年前</span><span class="tl-event">商烈亡，苍珩立，林淮战死</span></div>
+
+                <!-- 苍珩·景德 ● -->
+                <div class="tl-node" data-index="15" style="left:53.5%;"><div class="tl-dot">●</div><span class="tl-year">约二百一十八年前</span><span class="tl-event">林淮入归终殿</span></div>
+                <div class="tl-node" data-index="16" style="left:57%;"><div class="tl-dot">●</div><span class="tl-year">约二百零三年前</span><span class="tl-event">栾方棋出生</span></div>
+                <div class="tl-node" data-index="17" style="left:60.5%;"><div class="tl-dot">●</div><span class="tl-year">约一百七十八年前</span><span class="tl-event">栾方棋入归终殿</span></div>
+                <div class="tl-node" data-index="18" style="left:64%;"><div class="tl-dot">●</div><span class="tl-year">约一百七十年前</span><span class="tl-event">冉舟入归终殿，白禾川造偶</span></div>
+
+                <!-- 苍珩·魏天恒 ⬤ -->
+                <div class="tl-node" data-index="19" style="left:67.5%;"><div class="tl-dot">⬤</div><span class="tl-year">苍珩三十九年</span><span class="tl-event">主线开启：无涯村·观花卷</span></div>
+                <div class="tl-node" data-index="20" style="left:71%;"><div class="tl-dot">⬤</div><span class="tl-year">苍珩四十年</span><span class="tl-event">锁龙井·冉舟之死</span></div>
+
+                <!-- 明熙年间 ✧（实心版✦） -->
+                <div class="tl-node" data-index="21" style="left:74.5%;"><div class="tl-dot">✦</div><span class="tl-year">明熙元年</span><span class="tl-event">魏元璟登基</span></div>
+                <div class="tl-node" data-index="22" style="left:78%;"><div class="tl-dot">✦</div><span class="tl-year">明熙五年</span><span class="tl-event">京城决战·白禾川死</span></div>
+
+                <!-- 战后 ◆（循环收束） -->
+                <div class="tl-node" data-index="23" style="left:81.5%;"><div class="tl-dot">◆</div><span class="tl-year">战后五年</span><span class="tl-event">归终殿升格·林淮栾方棋成亲</span></div>
+                <div class="tl-node" data-index="24" style="left:85%;"><div class="tl-dot">◆</div><span class="tl-year">战后二十五年</span><span class="tl-event">念安恢复记忆为魏元璟</span></div>
+                <div class="tl-node" data-index="25" style="left:88.5%;"><div class="tl-dot">◆</div><span class="tl-year">战后三十五年</span><span class="tl-event">罗修与魏元璟破冰</span></div>
+                <div class="tl-node" data-index="26" style="left:92%;"><div class="tl-dot">◆</div><span class="tl-year">战后四十五年</span><span class="tl-event">罗修与魏元璟成亲</span></div>
+
+            </div>
+        </div>
+
+        <!-- 详情区域 -->
+        <div id="detail-area">
             <div class="period" id="detail-period">上古</div>
             <div class="title" id="detail-title">青丘覆灭，白禾川流亡</div>
-            <div class="desc" id="detail-desc">青丘狐族篡改凡人命格，天命君·司衡降天火覆灭青丘，降永世轮回诅咒。白禾川离开青丘流亡人间，被天庭通缉。</div>
+            <div class="desc" id="detail-desc">三千年前，青丘狐族崛起，擅摄魂换命之术，肆意篡改凡人命格，干扰天命。天命君司衡降下天火，覆灭青丘，降下诅咒让狐族魂魄永世轮回。诅咒降下之后，白禾川离开青丘，流亡人间，被天庭通缉。</div>
         </div>
-    </div>
 
-    <footer id="footer">
-        ©2026 淮子生生 · 用文字构筑世界
-    </footer>
+        <div class="page-footer">✦ 归终殿 · 编年长卷 ✦</div>
+
+    </div>
 
     <script>
         (function() {
@@ -569,9 +564,9 @@
                 nodes.forEach(function(el) { el.classList.remove('active'); });
                 nodes[index].classList.add('active');
 
-                var container = document.getElementById('detail-content');
+                var container = document.getElementById('detail-area');
                 container.style.opacity = '0';
-                container.style.transform = 'translateY(6px)';
+                container.style.transform = 'translateY(4px)';
 
                 var dataIndex = indexMap[index];
                 setTimeout(function() {
@@ -580,7 +575,7 @@
                     detailDesc.textContent = data[dataIndex].desc;
                     container.style.opacity = '1';
                     container.style.transform = 'translateY(0)';
-                }, 180);
+                }, 160);
             }
 
             nodes.forEach(function(node, idx) {
