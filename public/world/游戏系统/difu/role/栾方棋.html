@@ -1,1138 +1,446 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>归终纪 · 角色卡</title>
-    <style>
-        :root {
-            --bg-body: #f7f4ef;
-            --bg-card: #ffffff;
-            --bg-card-alt: #f2eee9;
-            --border-light: #ece6de;
-            --border-card: #e4ddd4;
-            --text-primary: #2c2c2c;
-            --text-secondary: #4a4a4a;
-            --text-muted: #8a8a8a;
-            --accent: #b03a2a;
-            --accent-soft: rgba(176, 58, 42, 0.06);
-            --accent-soft-hover: rgba(176, 58, 42, 0.10);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-            --radius: 14px;
-            --radius-sm: 8px;
-            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-            --transition: 0.25s ease;
-        }
-        [data-theme="dark"] {
-            --bg-body: #181614;
-            --bg-card: #24201c;
-            --bg-card-alt: #1e1b18;
-            --border-light: #35302a;
-            --border-card: #3a3530;
-            --text-primary: #cfc8c0;
-            --text-secondary: #9a948c;
-            --text-muted: #6a6560;
-            --accent: #b05a4a;
-            --accent-soft: rgba(176, 90, 74, 0.08);
-            --accent-soft-hover: rgba(176, 90, 74, 0.14);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--font);
-            background: var(--bg-body);
-            color: var(--text-primary);
-            transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            padding: 0 16px 40px 16px;
-            display: flex;
-            flex-direction: column;
-        }
-        #topbar {
-            max-width: 960px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 20px 0 12px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-light);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        #topbar .brand {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        #topbar .brand span { color: var(--accent); }
-        #topbar .brand small {
-            font-weight: 400;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-left: 4px;
-        }
-        #topbar .actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .back-btn {
-            padding: 4px 14px;
-            border-radius: 18px;
-            border: 1px solid var(--border-light);
-            background: transparent;
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all var(--transition);
-            font-family: inherit;
-        }
-        .back-btn:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
-        .theme-toggle {
-            background: transparent;
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-        }
-        .theme-toggle:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
-
-        #app {
-            max-width: 960px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 20px 0 0 0;
-        }
-
-        /* 切换按钮 */
-        .tab-bar {
-            display: flex;
-            gap: 0;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .tab-btn {
-            padding: 10px 24px;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid transparent;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-            margin-bottom: -1px;
-        }
-        .tab-btn:hover {
-            color: var(--text-primary);
-        }
-        .tab-btn.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
-        /* 卡片样式 */
-        .hero-header {
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .hero-header .name {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .hero-header .sub {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-        .hero-header .meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 20px;
-            margin-top: 6px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .hero-header .meta .item .label {
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-        .hero-header .meta .item .value {
-            font-weight: 500;
-        }
-        .hero-header .meta .item .value.accent {
-            color: var(--accent);
-        }
-        .stars {
-            color: #e8b84a;
-            font-size: 1rem;
-            letter-spacing: 2px;
-        }
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 4px;
-        }
-        .tags .tag {
-            font-size: 0.7rem;
-            background: var(--bg-card-alt);
-            padding: 2px 12px;
-            border-radius: 12px;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-card);
-        }
-        .tags .tag.accent {
-            background: var(--accent-soft);
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 700px) {
-            .row { grid-template-columns: 1fr; }
-        }
-
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius);
-            padding: 18px 20px 20px 20px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 16px;
-            transition: border-color var(--transition);
-        }
-        .card:hover {
-            border-color: var(--accent-soft-hover);
-        }
-        .card .title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .card .title .deco {
-            color: var(--accent);
-            margin-right: 4px;
-        }
-
-        .radar-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 4px 0;
-            min-height: 320px;
-        }
-        .radar-wrap svg {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            aspect-ratio: 1/1;
-        }
-
-        /* ===== 详细数值样式 ===== */
-        .attr-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px 20px;
-        }
-        .attr-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            padding: 4px 0;
-            border-bottom: 1px solid var(--border-card);
-        }
-        .attr-item .label {
-            color: var(--text-secondary);
-        }
-        .attr-item .val {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .attr-item .val.stars {
-            color: var(--accent);
-        }
-        /* 颜色评级 */
-        .attr-item .val.s { color: var(--accent); font-weight: 700; }
-        .attr-item .val.a { color: #e8b84a; font-weight: 600; }
-        .attr-item .val.b { color: var(--text-muted); }
-        .attr-item .val.c { color: var(--text-muted); opacity: 0.7; }
-        .attr-item .val.d { color: var(--text-muted); opacity: 0.5; }
-        .attr-item .val.e { color: var(--text-muted); opacity: 0.3; }
-        .attr-item .val.f { color: var(--text-muted); opacity: 0.2; }
-        .attr-item .val.sss { color: var(--accent); font-weight: 700; font-size: 0.95rem; }
-        .attr-item .val.ss { color: var(--accent); font-weight: 700; }
-
-        /* 角色标签 */
-        .role-tag {
-            display: inline-block;
-            font-size: 0.65rem;
-            padding: 2px 10px;
-            border-radius: 10px;
-            color: #fff;
-            margin-left: 4px;
-            font-weight: 400;
-            vertical-align: middle;
-        }
-        .role-tag.luan { background: #b03a2a; }
-        .role-tag.qin { background: #b03a2a; }
-        .role-tag.huai { background: #2a6b8a; }
-        .role-tag.luo { background: #7b4b8a; }
-        .role-tag.wei { background: #c9a84b; }
-        [data-theme="dark"] .role-tag.luan { background: #b05a4a; }
-        [data-theme="dark"] .role-tag.qin { background: #b05a4a; }
-        [data-theme="dark"] .role-tag.huai { background: #4a8baa; }
-        [data-theme="dark"] .role-tag.luo { background: #9b6baa; }
-        [data-theme="dark"] .role-tag.wei { background: #dbb85c; }
-
-        /* ===== 技能组 ===== */
-        .skill {
-            border-bottom: 1px solid var(--border-card);
-            padding: 10px 0;
-        }
-        .skill:last-child { border-bottom: none; }
-        .skill .name {
-            font-weight: 600;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .skill .name .type {
-            font-weight: 400;
-            font-size: 0.65rem;
-            background: var(--bg-card-alt);
-            padding: 1px 10px;
-            border-radius: 10px;
-            color: var(--text-muted);
-        }
-        .skill .desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 2px;
-            line-height: 1.7;
-        }
-        .skill .quote {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-style: italic;
-            margin-top: 2px;
-            padding-left: 12px;
-            border-left: 2px solid var(--border-card);
-        }
-
-        /* ===== 羁绊 ===== */
-        .bond-section {
-            margin-bottom: 12px;
-        }
-        .bond-section:last-child { margin-bottom: 0; }
-        .bond-section .section-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        .bond-section .section-label .deco {
-            color: var(--accent);
-        }
-        .bond {
-            border-bottom: 1px solid var(--border-card);
-            padding: 8px 0;
-        }
-        .bond:last-child { border-bottom: none; }
-        .bond .name {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .bond .desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 2px;
-            line-height: 1.7;
-        }
-        .bond .desc .highlight {
-            color: var(--accent);
-        }
-        .bond .quote {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-style: italic;
-            margin-top: 2px;
-            padding-left: 12px;
-            border-left: 2px solid var(--border-card);
-        }
-
-        /* ===== 语音 ===== */
-        .voice-section {
-            margin-bottom: 10px;
-        }
-        .voice-section:last-child { margin-bottom: 0; }
-        .voice-section .section-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-        .voice-section .section-label .deco {
-            color: var(--accent);
-        }
-        .voice-item {
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border-card);
-        }
-        .voice-item:last-child { border-bottom: none; }
-        .voice-item .scene {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 2px;
-        }
-        .voice-item .line {
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            line-height: 1.7;
-            padding-left: 4px;
-        }
-        .voice-item .line .highlight {
-            color: var(--accent);
-        }
-        .voice-item .note {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-            padding-left: 4px;
-        }
-
-        /* ===== 制作人笔记 ===== */
-        .note {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-            padding: 4px 0;
-        }
-        .note .qa {
-            padding: 6px 0;
-            border-bottom: 1px solid var(--border-card);
-        }
-        .note .qa:last-child { border-bottom: none; }
-        .note .qa .q {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .note .qa .a {
-            color: var(--text-secondary);
-            padding-left: 16px;
-            line-height: 1.6;
-        }
-        .note .qa .a .highlight {
-            color: var(--accent);
-        }
-        .note .final {
-            background: var(--accent-soft);
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            font-style: italic;
-            color: var(--text-secondary);
-            margin-top: 8px;
-            border-left: 3px solid var(--accent);
-        }
-
-        /* ===== 武器 ===== */
-        .weapon-block {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            padding: 4px 0;
-        }
-        .weapon-block .name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .weapon-block .quote {
-            font-style: italic;
-            color: var(--text-muted);
-            padding-left: 12px;
-            border-left: 2px solid var(--accent);
-            margin-top: 4px;
-            font-size: 0.82rem;
-        }
-
-        @media (max-width: 600px) {
-            #topbar { padding: 14px 0 10px 0; }
-            #topbar .brand { font-size: 0.95rem; }
-            .hero-header .name { font-size: 1.4rem; }
-            .card { padding: 14px 14px 16px 14px; }
-            .attr-grid { grid-template-columns: 1fr; }
-            .hero-header .meta { gap: 8px 14px; font-size: 0.8rem; }
-            .voice-item .line { font-size: 0.82rem; }
-            .card .title { font-size: 0.85rem; }
-            .bond-section .section-label,
-            .voice-section .section-label { font-size: 0.75rem; }
-            .tab-btn { padding: 8px 16px; font-size: 0.8rem; }
-        }
-    
-        /* ---- 悬浮按钮组 ---- */
-        .float-group {
-            position: fixed;
-            top: 20px;
-            right: 24px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
-        .float-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: var(--font);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            letter-spacing: 0.3px;
-            text-decoration: none;
-        }
-        .float-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-        .float-btn .icon {
-            font-size: 0.9rem;
-        }
-        .float-btn .icon-back {
-            font-size: 0.9rem;
-            margin-right: 2px;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>归终纪 · 角色卡</title>
+<style>
+:root{--bg-body:#faf4ef;--bg-card:#ffffff;--bg-card-alt:#f2eee9;--border-light:#e8e0d5;--border-card:#b03a2a;--text-primary:#1f1a16;--text-secondary:#2c241e;--text-muted:#5a4d42;--text-muted-light:#8a7a6a;--accent:#b03a2a;--accent-soft:rgba(176,58,42,0.06);--shadow-sm:0 1px 4px rgba(0,0,0,0.03);--radius:12px;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.25s ease}
+[data-theme="dark"]{--bg-body:#181614;--bg-card:#2a2520;--bg-card-alt:#24201c;--border-light:#3a3530;--border-card:#b05a4a;--text-primary:#cfc8c0;--text-secondary:#b8aea4;--text-muted:#8a8078;--text-muted-light:#6a6560;--accent:#b05a4a;--accent-soft:rgba(176,90,74,0.08);--shadow-sm:0 1px 4px rgba(0,0,0,0.2)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:17px;line-height:1.7;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;padding:0 16px 40px 16px;display:flex;flex-direction:column}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.75rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm);letter-spacing:0.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+.float-btn .icon{font-size:0.9rem}
+#app{max-width:960px;margin:0 auto;width:100%;padding:24px 4px 20px 4px;flex:1}
+.tab-bar{display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid var(--border-light)}
+.tab-btn{padding:10px 24px;background:transparent;border:none;border-bottom:2px solid transparent;font-size:0.9rem;font-weight:500;font-family:var(--font-serif);color:var(--text-muted);cursor:pointer;transition:all var(--transition);margin-bottom:-1px}
+.tab-btn:hover{color:var(--text-primary)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.hero-header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-light)}
+.hero-header .name{font-size:1.8rem;font-weight:700;font-family:var(--font-serif);letter-spacing:0.5px}
+.hero-header .sub{font-size:0.95rem;color:var(--text-muted);margin-top:2px;font-style:italic}
+.hero-header .meta{display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:6px;font-size:0.85rem;color:var(--text-secondary)}
+.hero-header .meta .item .label{color:var(--text-muted);font-weight:400}
+.hero-header .meta .item .value{font-weight:500}
+.hero-header .meta .item .value.accent{color:var(--accent)}
+.stars{color:#b03a2a;font-size:1rem;letter-spacing:2px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.tags .tag{font-size:0.7rem;background:var(--bg-card-alt);padding:2px 12px;border-radius:12px;color:var(--text-secondary);border:1px solid var(--border-light)}
+.tags .tag.accent{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+@media(max-width:700px){.row{grid-template-columns:1fr}}
+.card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);padding:18px 20px 20px 20px;box-shadow:var(--shadow-sm);margin-bottom:16px}
+.card .title{font-size:0.95rem;font-weight:600;font-family:var(--font-serif);text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:8px}
+.card .title .deco{color:var(--accent);margin-right:4px}
+.radar-wrap{display:flex;justify-content:center;align-items:center;padding:4px 0;min-height:320px}
+.radar-wrap svg{width:100%;max-width:300px;height:auto;aspect-ratio:1/1}
+.attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px}
+.attr-item{display:flex;justify-content:space-between;font-size:0.85rem;padding:4px 0;border-bottom:1px solid var(--border-light)}
+.attr-item .label{color:var(--text-secondary)}
+.attr-item .val{font-weight:500;color:var(--text-primary)}
+.attr-item .val.stars{color:var(--accent)}
+.attr-item .val.s{color:var(--accent);font-weight:700}
+.attr-item .val.a{color:#e8b84a;font-weight:600}
+.attr-item .val.b{color:var(--text-muted)}
+.attr-item .val.c{color:var(--text-muted);opacity:0.7}
+.attr-item .val.d{color:var(--text-muted);opacity:0.5}
+.attr-item .val.e{color:var(--text-muted);opacity:0.3}
+.attr-item .val.f{color:var(--text-muted);opacity:0.2}
+.attr-item .val.sss{color:var(--accent);font-weight:700;font-size:0.95rem}
+.attr-item .val.ss{color:var(--accent);font-weight:700}
+.role-tag{display:inline-block;font-size:0.65rem;padding:2px 10px;border-radius:10px;color:#fff;margin-left:4px;font-weight:400;vertical-align:middle;background:var(--accent)}
+.skill{border-bottom:1px solid var(--border-light);padding:10px 0}
+.skill:last-child{border-bottom:none}
+.skill .name{font-weight:600;font-size:0.95rem;font-family:var(--font-serif);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.skill .name .type{font-weight:400;font-size:0.65rem;background:var(--bg-card-alt);padding:1px 10px;border-radius:10px;color:var(--text-muted);font-family:var(--font-mono)}
+.skill .desc{font-size:0.85rem;color:var(--text-secondary);margin-top:2px;line-height:1.7}
+.skill .quote{font-size:0.8rem;color:var(--text-muted);font-style:italic;margin-top:2px;padding-left:12px;border-left:2px solid var(--border-light)}
+.bond-section{margin-bottom:12px}
+.bond-section:last-child{margin-bottom:0}
+.bond-section .section-label{font-size:0.85rem;font-weight:600;font-family:var(--font-serif);text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);margin-bottom:4px}
+.bond-section .section-label .deco{color:var(--accent)}
+.bond{border-bottom:1px solid var(--border-light);padding:8px 0}
+.bond:last-child{border-bottom:none}
+.bond .name{font-weight:600;font-size:0.9rem;font-family:var(--font-serif)}
+.bond .desc{font-size:0.85rem;color:var(--text-secondary);margin-top:2px;line-height:1.7}
+.bond .desc .highlight{color:var(--accent)}
+.bond .quote{font-size:0.8rem;color:var(--text-muted);font-style:italic;margin-top:2px;padding-left:12px;border-left:2px solid var(--border-light)}
+.voice-section{margin-bottom:10px}
+.voice-section:last-child{margin-bottom:0}
+.voice-section .section-label{font-size:0.85rem;font-weight:600;font-family:var(--font-serif);text-transform:uppercase;letter-spacing:0.4px;color:var(--text-muted);margin-bottom:4px}
+.voice-section .section-label .deco{color:var(--accent)}
+.voice-item{padding:6px 0;border-bottom:1px solid var(--border-light)}
+.voice-item:last-child{border-bottom:none}
+.voice-item .scene{font-size:0.8rem;font-weight:500;color:var(--text-secondary);margin-bottom:2px;font-family:var(--font-mono)}
+.voice-item .line{font-size:0.85rem;color:var(--text-primary);line-height:1.7;padding-left:4px}
+.voice-item .line .highlight{color:var(--accent)}
+.voice-item .note{font-size:0.75rem;color:var(--text-muted);margin-top:2px;padding-left:4px;font-style:italic}
+.note{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;padding:4px 0}
+.note .qa{padding:6px 0;border-bottom:1px solid var(--border-light)}
+.note .qa:last-child{border-bottom:none}
+.note .qa .q{font-weight:600;color:var(--text-primary);font-family:var(--font-serif)}
+.note .qa .a{color:var(--text-secondary);padding-left:16px;line-height:1.6}
+.note .qa .a .highlight{color:var(--accent)}
+.note .final{background:var(--accent-soft);padding:12px 16px;border-radius:var(--radius);font-style:italic;color:var(--text-secondary);margin-top:8px;border-left:3px solid var(--accent)}
+.weapon-block{font-size:0.85rem;color:var(--text-secondary);line-height:1.8;padding:4px 0}
+.weapon-block .name{font-weight:600;color:var(--text-primary);font-family:var(--font-serif)}
+.weapon-block .quote{font-style:italic;color:var(--text-muted);padding-left:12px;border-left:2px solid var(--accent);margin-top:4px;font-size:0.82rem}
+@media(max-width:600px){body{padding:0 12px 30px 12px;font-size:16px}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}#app{padding:16px 0 10px 0}.hero-header .name{font-size:1.4rem}.card{padding:14px 14px 16px 14px}.attr-grid{grid-template-columns:1fr}.hero-header .meta{gap:8px 14px;font-size:0.8rem}.voice-item .line{font-size:0.82rem}.card .title{font-size:0.85rem}.bond-section .section-label,.voice-section .section-label{font-size:0.75rem}.tab-btn{padding:8px 16px;font-size:0.8rem}}
 </style>
-    <script>
-        (function() {
-            try {
-                var raw = localStorage.getItem('theme');
-                if (raw) {
-                    var parsed = JSON.parse(raw);
-                    if (parsed && parsed.value === 'dark') {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    } else if (parsed && parsed.value === 'light') {
-                        document.documentElement.removeAttribute('data-theme');
-                    }
-                }
-            } catch(e) {}
-        })();
-
-        function toggleTheme() {
-            var html = document.documentElement;
-            var isDark = html.getAttribute('data-theme') === 'dark';
-            var newTheme = isDark ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
-            var btn = document.getElementById('themeBtn');
-            if (btn) {
-                btn.innerHTML = newTheme === 'dark' ?
-                    '<span class="icon">☀️</span> 日间' :
-                    '<span class="icon">🌓</span> 夜间';
-            }
-            if (typeof drawRadar === 'function') {
-                drawRadar(currentTab);
-            }
-        }
-
-        var currentTab = 'luan';
-
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.tab-content').forEach(function(el) {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(function(el) {
-                el.classList.remove('active');
-            });
-            document.getElementById('tab-' + tab).classList.add('active');
-            document.querySelector('.tab-btn[data-tab="' + tab + '"]').classList.add('active');
-            drawRadar(tab);
-        }
-
-        function drawRadar(tab) {
-            var container = document.getElementById('radar-' + tab);
-            if (!container) return;
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-
-            var data = {
-                luan: {
-                    drawStats: [60, 62, 70, 75, 80, 135],
-                    displayStats: [60, 62, 70, 75, 80, 150],
-                    labels: ['攻击', '防御', '速度', '控制', '范围', '增益'],
-                    scale: 1.0
-                },
-                qin: {
-                    drawStats: [45, 20, 35, 5, 30, 10],
-                    displayStats: [45, 20, 35, 5, 30, 10],
-                    labels: ['攻击', '防御', '速度', '控制', '范围', '增益'],
-                    scale: 1.5
-                }
-            };
-
-            var charData = data[tab];
-            if (!charData) return;
-
-            var drawStats = charData.drawStats;
-            var displayStats = charData.displayStats;
-            var labels = charData.labels;
-            var scale = charData.scale;
-
-            var cx = 150, cy = 150, maxR = 120;
-            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('viewBox', '-18 -18 336 336');
-            svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '100%');
-
-            var angles = [0, 60, 120, 180, 240, 300].map(function(deg) {
-                return deg * Math.PI / 180;
-            });
-
-            var layers = [0.3, 0.5, 0.7, 1.0];
-            layers.forEach(function(ratio) {
-                var r = maxR * ratio;
-                var pts = angles.map(function(a) {
-                    return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a));
-                }).join(' ');
-                var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                poly.setAttribute('points', pts);
-                poly.setAttribute('fill', 'none');
-                poly.setAttribute('stroke', 'var(--border-card)');
-                poly.setAttribute('stroke-width', ratio === 1.0 ? '0.8' : '0.5');
-                if (ratio !== 1.0) poly.setAttribute('stroke-dasharray', '4,4');
-                svg.appendChild(poly);
-            });
-
-            angles.forEach(function(a) {
-                var x = cx + maxR * Math.sin(a);
-                var y = cy - maxR * Math.cos(a);
-                var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', cx);
-                line.setAttribute('y1', cy);
-                line.setAttribute('x2', x);
-                line.setAttribute('y2', y);
-                line.setAttribute('stroke', 'var(--border-card)');
-                line.setAttribute('stroke-width', '0.4');
-                line.setAttribute('stroke-dasharray', '2,3');
-                svg.appendChild(line);
-            });
-
-            var vertices = drawStats.map(function(val, i) {
-                var r = (val / 100) * maxR * scale;
-                var a = angles[i];
-                return {
-                    x: cx + r * Math.sin(a),
-                    y: cy - r * Math.cos(a),
-                    val: displayStats[i]
-                };
-            });
-
-            var centerPts = angles.map(function() {
-                return cx + ',' + cy;
-            }).join(' ');
-            var targetPts = vertices.map(function(v) {
-                return v.x + ',' + v.y;
-            }).join(' ');
-
-            var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-            poly.setAttribute('points', centerPts);
-            poly.setAttribute('fill', 'var(--accent-soft)');
-            poly.setAttribute('stroke', 'var(--accent)');
-            poly.setAttribute('stroke-width', '2.5');
-            poly.setAttribute('stroke-linejoin', 'round');
-            var anim = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
-            anim.setAttribute('attributeName', 'points');
-            anim.setAttribute('from', centerPts);
-            anim.setAttribute('to', targetPts);
-            anim.setAttribute('dur', '1.2s');
-            anim.setAttribute('fill', 'freeze');
-            anim.setAttribute('calcMode', 'spline');
-            anim.setAttribute('keySplines', '0.25 0.1 0.25 1');
-            poly.appendChild(anim);
-            svg.appendChild(poly);
-
-            vertices.forEach(function(v) {
-                var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', v.x);
-                circle.setAttribute('cy', v.y);
-                circle.setAttribute('r', '3');
-                circle.setAttribute('fill', 'var(--accent)');
-                circle.setAttribute('opacity', '0');
-                var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
-                fade.setAttribute('attributeName', 'opacity');
-                fade.setAttribute('from', '0');
-                fade.setAttribute('to', '1');
-                fade.setAttribute('dur', '0.3s');
-                fade.setAttribute('begin', '1s');
-                fade.setAttribute('fill', 'freeze');
-                circle.appendChild(fade);
-                svg.appendChild(circle);
-            });
-
-            var labelPositions = [
-                { x: 150, y: 10, text: '攻击', anchor: 'middle' },
-                { x: 266, y: 112, text: '防御', anchor: 'start' },
-                { x: 250, y: 206, text: '速度', anchor: 'start' },
-                { x: 150, y: 286, text: '控制', anchor: 'middle' },
-                { x: 52, y: 210, text: '范围', anchor: 'end' },
-                { x: 34, y: 106, text: '增益', anchor: 'end' }
-            ];
-            labelPositions.forEach(function(lp) {
-                var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', lp.x);
-                text.setAttribute('y', lp.y);
-                text.setAttribute('fill', 'var(--text-muted)');
-                text.setAttribute('font-size', '8');
-                text.setAttribute('font-weight', '400');
-                text.setAttribute('text-anchor', lp.anchor);
-                text.setAttribute('dominant-baseline', 'central');
-                text.textContent = lp.text;
-                svg.appendChild(text);
-            });
-
-            var anchorMap = ['middle', 'start', 'start', 'middle', 'end', 'end'];
-            vertices.forEach(function(v, i) {
-                var offset = 12;
-                var a = angles[i];
-                var dx = offset * Math.sin(a);
-                var dy = -offset * Math.cos(a);
-                var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', v.x + dx);
-                text.setAttribute('y', v.y + dy);
-                text.setAttribute('fill', 'var(--accent)');
-                text.setAttribute('font-size', '9');
-                text.setAttribute('font-weight', '600');
-                text.setAttribute('text-anchor', anchorMap[i]);
-                text.setAttribute('dominant-baseline', 'central');
-                text.textContent = v.val;
-                text.setAttribute('opacity', '0');
-                var fade = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
-                fade.setAttribute('attributeName', 'opacity');
-                fade.setAttribute('from', '0');
-                fade.setAttribute('to', '1');
-                fade.setAttribute('dur', '0.3s');
-                fade.setAttribute('begin', '1.2s');
-                fade.setAttribute('fill', 'freeze');
-                text.appendChild(fade);
-                svg.appendChild(text);
-            });
-
-            container.appendChild(svg);
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var btn = document.getElementById('themeBtn');
-            if (btn) {
-                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                btn.innerHTML = isDark ?
-                    '<span class="icon">☀️</span> 日间' :
-                    '<span class="icon">🌓</span> 夜间';
-            }
-        });
-
-        window.addEventListener('load', function() {
-            drawRadar('luan');
-        });
-    </script>
+<script>
+(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='dark'){document.documentElement.setAttribute('data-theme','dark');}else if(parsed&&parsed.value==='light'){document.documentElement.removeAttribute('data-theme');}}}catch(e){}})();
+function toggleTheme(){var html=document.documentElement;var isDark=html.getAttribute('data-theme')==='dark';var newTheme=isDark?'light':'dark';if(newTheme==='dark'){html.setAttribute('data-theme','dark');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));var btn=document.getElementById('themeBtn');if(btn){btn.innerHTML=newTheme==='dark'?'<span class="icon">☀️</span> 日间':'<span class="icon">🌙</span> 夜间';}if(typeof drawRadar==='function'){drawRadar(currentTab);}}
+var currentTab='luan';
+function switchTab(tab){currentTab=tab;document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});document.querySelectorAll('.tab-btn').forEach(function(el){el.classList.remove('active');});document.getElementById('tab-'+tab).classList.add('active');document.querySelector('.tab-btn[data-tab="'+tab+'"]').classList.add('active');drawRadar(tab);}
+function drawRadar(tab){var container=document.getElementById('radar-'+tab);if(!container)return;while(container.firstChild){container.removeChild(container.firstChild);}
+var data={luan:{drawStats:[60,62,70,75,80,135],displayStats:[60,62,70,75,80,150],labels:['攻击','防御','速度','控制','范围','增益'],scale:1.0},qin:{drawStats:[45,20,35,5,30,10],displayStats:[45,20,35,5,30,10],labels:['攻击','防御','速度','控制','范围','增益'],scale:1.5}};var charData=data[tab];if(!charData)return;var drawStats=charData.drawStats;var displayStats=charData.displayStats;var labels=charData.labels;var scale=charData.scale;var cx=150,cy=150,maxR=120;var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','-18 -18 336 336');svg.setAttribute('width','100%');svg.setAttribute('height','100%');var angles=[0,60,120,180,240,300].map(function(deg){return deg*Math.PI/180;});var layers=[0.3,0.5,0.7,1.0];layers.forEach(function(ratio){var r=maxR*ratio;var pts=angles.map(function(a){return(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a));}).join(' ');var poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','var(--border-light)');poly.setAttribute('stroke-width',ratio===1.0?'0.8':'0.5');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});angles.forEach(function(a){var x=cx+maxR*Math.sin(a);var y=cy-maxR*Math.cos(a);var line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','var(--border-light)');line.setAttribute('stroke-width','0.4');line.setAttribute('stroke-dasharray','2,3');svg.appendChild(line);});var vertices=drawStats.map(function(val,i){var r=(val/100)*maxR*scale;var a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:displayStats[i]};});var centerPts=angles.map(function(){return cx+','+cy;}).join(' ');var targetPts=vertices.map(function(v){return v.x+','+v.y;}).join(' ');var poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',centerPts);poly.setAttribute('fill','var(--accent-soft)');poly.setAttribute('stroke','var(--accent)');poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');var anim=document.createElementNS('http://www.w3.org/2000/svg','animate');anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');poly.appendChild(anim);svg.appendChild(poly);vertices.forEach(function(v){var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');circle.setAttribute('cx',v.x);circle.setAttribute('cy',v.y);circle.setAttribute('r','3');circle.setAttribute('fill','var(--accent)');circle.setAttribute('opacity','0');var fade=document.createElementNS('http://www.w3.org/2000/svg','animate');fade.setAttribute('attributeName','opacity');fade.setAttribute('from','0');fade.setAttribute('to','1');fade.setAttribute('dur','0.3s');fade.setAttribute('begin','1s');fade.setAttribute('fill','freeze');circle.appendChild(fade);svg.appendChild(circle);});var labelPositions=[{x:150,y:10,text:'攻击',anchor:'middle'},{x:266,y:112,text:'防御',anchor:'start'},{x:250,y:206,text:'速度',anchor:'start'},{x:150,y:286,text:'控制',anchor:'middle'},{x:52,y:210,text:'范围',anchor:'end'},{x:34,y:106,text:'增益',anchor:'end'}];labelPositions.forEach(function(lp){var text=document.createElementNS('http://www.w3.org/2000/svg','text');text.setAttribute('x',lp.x);text.setAttribute('y',lp.y);text.setAttribute('fill','var(--text-muted)');text.setAttribute('font-size','8');text.setAttribute('font-weight','400');text.setAttribute('text-anchor',lp.anchor);text.setAttribute('dominant-baseline','central');text.textContent=lp.text;svg.appendChild(text);});var anchorMap=['middle','start','start','middle','end','end'];vertices.forEach(function(v,i){var offset=12;var a=angles[i];var dx=offset*Math.sin(a);var dy=-offset*Math.cos(a);var text=document.createElementNS('http://www.w3.org/2000/svg','text');text.setAttribute('x',v.x+dx);text.setAttribute('y',v.y+dy);text.setAttribute('fill','var(--accent)');text.setAttribute('font-size','9');text.setAttribute('font-weight','600');text.setAttribute('text-anchor',anchorMap[i]);text.setAttribute('dominant-baseline','central');text.textContent=v.val;text.setAttribute('opacity','0');var fade=document.createElementNS('http://www.w3.org/2000/svg','animate');fade.setAttribute('attributeName','opacity');fade.setAttribute('from','0');fade.setAttribute('to','1');fade.setAttribute('dur','0.3s');fade.setAttribute('begin','1.2s');fade.setAttribute('fill','freeze');text.appendChild(fade);svg.appendChild(text);});container.appendChild(svg);}
+document.addEventListener('DOMContentLoaded',function(){var btn=document.getElementById('themeBtn');if(btn){var isDark=document.documentElement.getAttribute('data-theme')==='dark';btn.innerHTML=isDark?'<span class="icon">☀️</span> 日间':'<span class="icon">🌙</span> 夜间';}});
+window.addEventListener('load',function(){drawRadar('luan');});
+</script>
 </head>
 <body>
 
 <div class="float-group">
-    <a class="float-btn" href="../list.html">
-        <span class="icon icon-back">←</span> 返回列表
-    </a>
-    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-        <span class="icon">🌓</span> 夜间
-    </button>
-</div>
-
-<div id="topbar">
-    <a class="brand" href="#">归终纪 <small>· 角色卡</small></a>
+  <a class="float-btn" href="../list.html"><span class="icon icon-back">←</span> 返回列表</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
 </div>
 
 <div id="app">
 
-    <div class="tab-bar">
-        <button class="tab-btn active" data-tab="luan" onclick="switchTab('luan')">栾方棋</button>
-        <button class="tab-btn" data-tab="qin" onclick="switchTab('qin')">秦墨予</button>
-    </div>
-
-    <!-- ==================== 栾方棋 ==================== -->
-    <div class="tab-content active" id="tab-luan">
-
-        <div class="hero-header">
-            <div class="name">栾方棋</div>
-            <div class="sub">多功能辅助 · 领域型 · 浮生之主</div>
-            <span class="stars" style="color: #b03a2a;">★★★★★★</span>
-            <div class="meta">
-                <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
-                <span class="item"><span class="label">席位</span> <span class="value">第五席</span></span>
-            </div>
-            <div class="tags">
-                <span class="tag accent">主线</span>
-                <span class="tag">辅助</span>
-                <span class="tag">持续作战</span>
-                <span class="tag">中/远程</span>
-                <span class="tag">高操作</span>
-            </div>
-        </div>
-
-        <!-- 属性面板：雷达图 + 详细数值 两列 -->
-        <div class="row">
-            <div class="card">
-                <div class="title"><span class="deco">✿</span> 属性面板</div>
-                <div class="radar-wrap" id="radar-luan"></div>
-            </div>
-            <div class="card">
-                <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag luan">辅助 · 远程</span></div>
-                <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击力</span><span class="val">780</span></div>
-                    <div class="attr-item"><span class="label">生命值</span><span class="val">13800</span></div>
-                    <div class="attr-item"><span class="label">物理防御</span><span class="val">420</span></div>
-                    <div class="attr-item"><span class="label">法术防御</span><span class="val">580</span></div>
-                    <div class="attr-item"><span class="label">速度</span><span class="val">112</span></div>
-                    <div class="attr-item"><span class="label">控制</span><span class="val a">A</span></div>
-                    <div class="attr-item"><span class="label">范围</span><span class="val a">A</span></div>
-                    <div class="attr-item"><span class="label">增益</span><span class="val sss">SSS</span></div>
-                    <div class="attr-item"><span class="label">生存</span><span class="val s">S</span></div>
-                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★★★☆</span></div>
-                    <div class="attr-item"><span class="label">射程</span><span class="val">中/远程</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 本命武器 · 灵枢轮回木</div>
-            <div class="weapon-block">
-                <div>栾方棋的魂魄与灵枢轮回木融为一体，本命武器随其成长完成了从花到树的完整蜕变。</div>
-                <div style="margin-top:4px;">最初只是掌心一朵绛红浮生花，用以释放符箓之外的术法。随着魂魄与浮生树的融合逐渐深入，花托生出根须，枝叶舒展，最终化为完整的浮生树形态。开大时根系铺陈、枝干冲天，树影覆盖整个领域。</div>
-                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">与其说栾方棋「拥有」浮生树，不如说他「是」浮生树——魂即树，树即魂。</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 特殊机制 · 白发·京城</div>
-            <div class="weapon-block">
-                <div>通关「京城决战」剧情后，栾方棋的必杀技「浮生·渡世域」视觉效果永久改变。</div>
-                <div style="margin-top:4px;">施法时，浮生树根须自地底涌出，半透明的枝干撑开树冠，将整个领域笼罩在浮生花的光晕之下。栾方棋的黑发自发梢开始褪为银白，随领域持续逐渐蔓延；领域结束后缓慢恢复——如那场决战时一般，每一次展开领域，都是与自身生命力的对话。</div>
-                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">数值无变化，仅特效变更。</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 技能组</div>
-            <div class="skill">
-                <div class="name">普攻 · 符箓·引雷 <span class="type">普攻</span></div>
-                <div class="desc">扔出一张引雷符，造成法术伤害，并附加 1 层「雷印」，持续 2 回合。「雷印」：每层使目标防御下降 5%，最多叠加 3 层。</div>
-            </div>
-            <div class="skill">
-                <div class="name">战技 · 符箓·镇邪 <span class="type">战技</span></div>
-                <div class="desc">向敌方单体掷出镇邪符，造成中等法术伤害，并附加「破势」效果：目标防御下降 15%，持续 2 回合。若目标已有「雷印」，则每层雷印额外追加一次符纸伤害。</div>
-            </div>
-            <div class="skill">
-                <div class="name">必杀 · 浮生·渡世域 <span class="type">必杀</span></div>
-                <div class="desc">展开浮生领域，持续 3 回合。领域内友方攻击与庇护每回合提升，敌方攻击与速度每回合下降，数值随回合数持续叠加。施法后栾方棋进入「虚耗」状态，每回合损失自身最大生命值 8%，持续 3 回合。若林淮在场，虚耗状态被压制，不掉血。</div>
-                <div class="quote">视觉彩蛋：施法时头发从发梢逐渐变白，3 回合后恢复。</div>
-            </div>
-            <div class="skill">
-                <div class="name">被动 · 符心·通明 <span class="type">被动</span></div>
-                <div class="desc">每次使用「符箓·镇邪」后，下一次普攻「符箓·引雷」的伤害提升 40%，且必定附加 1 层「雷印」。</div>
-            </div>
-            <div class="skill">
-                <div class="name">被动 · 树魂·共息 <span class="type">被动</span></div>
-                <div class="desc">当栾方棋生命值低于 50% 时，自身防御提升 20%，效果抵抗提升 15%。若「浮生·渡世域」处于冷却中，则冷却时间减少 1 回合（每场战斗触发 1 次）。</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 羁绊效果</div>
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 浮生同契</div>
-                <div class="bond">
-                    <div class="name">与「林淮」同时出场时：</div>
-                    <div class="desc">林淮在场时，栾方棋「虚耗」状态不掉血。林淮每回合恢复栾方棋已损失生命值的 8%。双方效果抵抗提升 10%。<div class="quote">我的爱人。</div></div>
-                    <div class="name" style="margin-top:8px;">互为敌对时：</div>
-                    <div class="desc">双方对彼此造成的伤害降低 30%，无法对对方施加控制效果。若一方生命值低于 20%，另一方本回合行动强制跳过。</div>
-                </div>
-            </div>
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终五席</div>
-                <div class="bond">
-                    <div class="name">与「林淮 · 罗修 · 程木栖 · 魏元璟」同时出场时：</div>
-                    <div class="desc">全体攻击、防御、速度提升 8%。每回合开始时随机解除一名队友的控制效果。程木栖在场时全体受治疗效果提升 10%；罗修在场时敌方受伤害提升 8%；魏元璟在场时己方效果抵抗提升 8%；林淮与栾方棋同时在场时领域类技能持续时间 +1 回合。</div>
-                </div>
-            </div>
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 未竟之言</div>
-                <div class="bond">
-                    <div class="name">与「冉舟」同时出场时：</div>
-                    <div class="desc">冉舟的剑法对带有「雷印」的目标伤害提升 12%。栾方棋的治疗效果对冉舟提升 15%。<div class="quote">“愿我们，再也不见。”</div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 彩蛋语音</div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
-                <div class="voice-item"><div class="scene">战斗开始</div><div class="line">林淮：“别勉强。”<br>栾方棋：“没有没有，受伤了我会自己跑的。”<br>林淮：“……好。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与冉舟同队</div>
-                <div class="voice-item"><div class="scene">战斗开始</div><div class="line">冉舟：“好久没一起出任务了。”<br>栾方棋：“是啊……冉舟师姐。”<br>冉舟：“走前面吧，我跟着你。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与罗修同队</div>
-                <div class="voice-item"><div class="scene">嘲讽</div><div class="line">罗修：“你那个符纸，有没有更响一点的？”<br>栾方棋：“你想听响的，我可以多贴两张在您刀上。”<br>罗修：“……哼。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与程木栖同队</div>
-                <div class="voice-item"><div class="scene">嘲讽</div><div class="line">程木栖：“手伸过来，把个脉。”<br>栾方棋：“师姐我没事……”<br>程木栖：“头发都白了还说没事？”<br>栾方棋：“……等会再喝药行吗。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与魏元璟同队</div>
-                <div class="voice-item"><div class="scene">嘲讽</div><div class="line">魏元璟：“还是和你站在一起好，比罗修那臭脸强多了。”<br>栾方棋：“你这话要是让罗修听到……”<br>魏元璟：“闭嘴，当我没说。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 极特殊情况</div>
-                <div class="voice-item"><div class="scene">我方林淮被敌对栾方棋击杀</div><div class="line">栾方棋：“……”<br>（停顿）<br>栾方棋：“不……不对。不对不对不对……”<br>“我不是……”<br><span class="highlight">浮生树不受控制地爆发，覆盖全场。语音结束后，栾方棋进入虚耗状态，持续至战斗结束。</span><br>“林淮……你看我一眼。”</div></div>
-                <div class="voice-item"><div class="scene">敌方林淮阵亡（栾方棋在己方阵营）</div><div class="line">林淮：“进步了。”<br>栾方棋停在原地，没有攻击。<br>“……”<br>“你干嘛站我对面啊……”<br><span class="note">下一回合开始时，栾方棋攻击力下降 30%，持续 2 回合。</span></div></div>
-                <div class="voice-item"><div class="scene">敌方冉舟阵亡（栾方棋在己方阵营）</div><div class="line">栾方棋：“师姐……”<br>（沉默一瞬）<br>“愿我们，永不再见。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 阵亡</div>
-                <div class="voice-item"><div class="line">“林淮……”<br><span class="note">白发彻底散开，浮生树收拢枝干，将栾方棋包裹其中，化作一株枯树。</span><br>“下次……换我来等你吧。”</div></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 制作人笔记</div>
-            <div class="note">
-                <div class="qa">
-                    <div class="q">关于强度争议</div>
-                    <div class="a">有玩家反馈，栾方棋的辅助能力在当前环境中过于突出，特别是与林淮绑定后，阵容的整体生存能力远超其他体系。<br><br>官方回应：栾方棋的定位是多功能辅助，他的强势点在于持续作战而非爆发压制。他的攻击力成长数值处于中下游水平，不具备单核终结比赛的能力。此外，「虚耗」机制的存在意味着他在展开领域后需要队友的支援才能维持健康血线——林淮在场确实可以压制这一代价，但这占用了一个队伍位置，且林淮本身并不提供治疗能力，队伍仍需要第三人承担回复职责。我们目前的数据显示，栾方棋在无林淮阵容中的胜率处于合理区间。后续会持续观察，如有必要会进行数值调整。</div>
-                </div>
-                <div class="qa">
-                    <div class="q">关于内部爱争议</div>
-                    <div class="a">玩家A：你们觉不觉得栾方棋的堆料有点离谱？两个形态、领域特效、白发变化、还有专属剧情成长……这待遇也差太多了吧。<br>玩家B：说点大家不知道的。<br>玩家C：笑死，楼上意思是这还用问吗。<br>玩家D：有一说一，过了剧情之后很难讨厌他吧。他那个贯穿全文的因果闭环真的写得挺好的。<br>玩家E：不喜欢他怎么了？主角就一定得喜欢？我就觉得他太圣母了。<br>玩家F：嗯，不喜欢主角也挺正常的。那么诚挚地邀请你离开归终纪，我们静候佳音.jpg<br><br>官方回应：每一位角色的设计都经过反复打磨与考量，栾方棋作为贯穿主线核心的角色，在资源投入上确实享有更高的优先级，这是剧情定位决定的，也仅限于此。</div>
-                </div>
-                <div class="qa">
-                    <div class="q">关于剧情闭环</div>
-                    <div class="a">有玩家在社区发帖分析了栾方棋与楚迟之间的因果循环：栾方棋穿越回两百年前，提醒楚迟浮生花会吞噬魂魄；楚迟因此开始研究浮生树，在研究中前往青丘，被困锁龙井；后来收养了秦墨予；秦墨予学会阵法与诅咒，死后魂魄与浮生树融合；转世成为栾方棋，在锁龙井遇见楚迟，最终穿越回两百年前提醒楚迟。<br><br>所以栾方棋的存在本身，就是他自己创造出来的。<br><br>官方在制作人笔记中对此事的回应只有一句话：<span class="highlight">策划组内部没有达成共识。有人说是宿命，有人说是蝴蝶效应，有人说是bug。我们倾向于不解释。</span></div>
-                </div>
-                <div class="qa">
-                    <div class="q">关于天梯环境</div>
-                    <div class="a">PvP中栾方棋的出场率长期位居前三，ban率位居第一。常见阵容多以林淮+程木栖+栾方棋为核心的慢速续航体系。<br><br>目前高分段对栾方棋的处理思路主要有两种：一是前两回合集火压制栾方棋的血线，迫使其提前开大进入虚耗状态；二是优先处理林淮，拆散羁绊后再处理栾方棋本体。<br><br>社区有人总结：<span class="highlight">栾方棋这个角色，你讨厌他的时候是真的讨厌，但你要真问谁最适合当主角，好像也就是他了。</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== 秦墨予 ==================== -->
-    <div class="tab-content" id="tab-qin">
-
-        <div class="hero-header">
-            <div class="name">秦墨予</div>
-            <div class="sub">咒术师 · 单体爆发</div>
-            <span class="stars" style="color: #b03a2a;">★★★★★★</span>
-            <div class="meta">
-                <span class="item"><span class="label">阵营</span> <span class="value accent">凡人</span></span>
-            </div>
-            <div class="tags">
-                <span class="tag accent">主线</span>
-                <span class="tag">单体咒杀</span>
-                <span class="tag">高操作</span>
-                <span class="tag">站桩</span>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="card">
-                <div class="title"><span class="deco">✿</span> 属性面板</div>
-                <div class="radar-wrap" id="radar-qin"></div>
-            </div>
-            <div class="card">
-                <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag qin">咒术师 · 单体爆发</span></div>
-                <div class="attr-grid">
-                    <div class="attr-item"><span class="label">攻击力</span><span class="val">480</span></div>
-                    <div class="attr-item"><span class="label">生命值</span><span class="val">4500</span></div>
-                    <div class="attr-item"><span class="label">物理防御</span><span class="val">120</span></div>
-                    <div class="attr-item"><span class="label">法术防御</span><span class="val">180</span></div>
-                    <div class="attr-item"><span class="label">速度</span><span class="val">45</span></div>
-                    <div class="attr-item"><span class="label">控制</span><span class="val e">E</span></div>
-                    <div class="attr-item"><span class="label">范围</span><span class="val d">D</span></div>
-                    <div class="attr-item"><span class="label">增益</span><span class="val e">E</span></div>
-                    <div class="attr-item"><span class="label">生存</span><span class="val f">F</span></div>
-                    <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★★★★</span></div>
-                    <div class="attr-item"><span class="label">射程</span><span class="val">中</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 特殊机制 · 咒术条</div>
-            <div class="weapon-block">
-                <div>秦墨予无本命武器，无专属神器。</div>
-                <div style="margin-top:4px;">核心资源为「咒术条」：上限 100%，对所有敌人独立计算，可通过战技、普攻累计。达到 100% 时触发「咒杀」，造成无视防御的巨额伤害。</div>
-                <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">咒杀对高攻低防的脆皮角色有奇效，代价是使用者自身也会在爆发后退场。</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 技能组</div>
-            <div class="skill">
-                <div class="name">普攻 · 墨染·蔽目 <span class="type">普攻</span></div>
-                <div class="desc">泼洒墨汁攻击单体敌人，造成少量法术伤害，有概率附加 1 层「墨障」，持续 2 回合。「墨障」：目标下次攻击有 25% 概率偏移（打偏至随机目标，或直接未命中）。</div>
-            </div>
-            <div class="skill">
-                <div class="name">战技 · 咒术·刻印 <span class="type">战技</span></div>
-                <div class="desc">对敌方单体施加咒术刻印，造成一次法术伤害，并累计 30% 咒术条。若目标带有「墨障」，每层额外提升 5% 咒术累计量。咒术条满 100% 时触发「咒杀」：对目标造成大量法术伤害。</div>
-            </div>
-            <div class="skill">
-                <div class="name">必杀 · 咒术·命陨 <span class="type">必杀</span></div>
-                <div class="desc">立即引爆目标身上的所有咒术累计，造成伤害。若咒术条未满，则造成普通伤害并清空累计。若咒术条已满，则触发「咒杀」，伤害额外提升 30%，秦墨予在本次攻击后立即退场。</div>
-            </div>
-            <div class="skill">
-                <div class="name">被动 · 焚命 <span class="type">被动</span></div>
-                <div class="desc">每回合开始时，秦墨予损失自身最大生命值 10%，无法被治疗。咒术条每有 30%，额外损失 2%（最高 18% / 回合）。若咒术条已满且秦墨予未在当回合引爆，则下回合自动触发「咒杀」，随后退场。</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 羁绊效果</div>
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 影卫</div>
-                <div class="bond">
-                    <div class="name">与「林淮」同时出场时：</div>
-                    <div class="desc">林淮在场时，秦墨予的「焚命」不会导致死亡（最低保留 1 点生命）。秦墨予退场时，林淮攻击力提升 15%，持续 2 回合。<div class="quote">“真是好久不见。”</div></div>
-                </div>
-            </div>
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 转世</div>
-                <div class="bond">
-                    <div class="name">与「栾方棋」同时出场时：</div>
-                    <div class="desc">秦墨予施加「墨障」的概率提升 15%。栾方棋对带有「墨障」的目标造成的伤害提升 10%。<div class="quote">“……还有自我配合？”</div></div>
-                </div>
-            </div>
-            <div class="bond-section">
-                <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 养父</div>
-                <div class="bond">
-                    <div class="name">与「楚迟」同时出场时：</div>
-                    <div class="desc">秦墨予每回合额外恢复自身最大生命值 5%（此效果可抵消「焚命」的部分烧血）。楚迟受到攻击时，秦墨予有 15% 概率为其挡下该次伤害。<div class="quote">“秦墨予大概这辈子也没想到，18岁的离别将是他们这辈子的最后一面”</div></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 彩蛋语音</div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
-                <div class="voice-item"><div class="scene">战斗开始</div><div class="line">秦墨予：“白头空负三生意，犹记寒阶共雪温。”<br>林淮：“……什么？”<br>秦墨予（笑）：“没什么，走吧。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与楚迟同队</div>
-                <div class="voice-item"><div class="scene">战斗开始</div><div class="line">楚迟：“……怎么把自己弄成这样？”<br>秦墨予：“不用担心，我没事。”<br>楚迟沉默了一阵。<br>秦墨予：“……”<br>楚迟：“怎么了？”<br>秦墨予没有回答。</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与栾方棋同队</div>
-                <div class="voice-item"><div class="scene">战斗开始</div><div class="line">栾方棋：“呃……虽然这么说有点奇怪，但……请多指教？”<br>秦墨予：“……”自己和自己打招呼的感觉好奇怪。</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 与白禾川同队</div>
-                <div class="voice-item"><div class="scene">嘲讽</div><div class="line">白禾川：“你当年疯成那样，连自己写的咒都忘了。现在倒清醒了？”<br>秦墨予：“清醒了两百年也找不到人。她亲手杀了你的时候，你在想什么？”<br>白禾川沉默。</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 家园语音</div>
-                <div class="voice-item"><div class="scene">与凌宸钧同处家园</div><div class="line">凌宸钧：“秦爱卿，好久不见。”<br>秦墨予：“陛下……您不该留着我写的东西。”<br>凌宸钧：“朕知道。”</div></div>
-                <div class="voice-item"><div class="scene">与秦雨令同处家园</div><div class="line">秦雨令：“又来啦？”<br>秦墨予：“知道我回来还问？上次给你的花完了？”<br>秦雨令：“花完了你就不给我了？”<br>秦墨予：“……给你的，不用还。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 极特殊情况</div>
-                <div class="voice-item"><div class="scene">秦墨予退场时（林淮在场）</div><div class="line">林淮：“遥望卿云归雁尽……缘深终作浅痕存。”<br><span class="note">他听懂了。秦墨予已经死了。</span></div></div>
-                <div class="voice-item"><div class="scene">秦墨予退场时（栾方棋在场）</div><div class="line">栾方棋：“接下来交给我吧。”</div></div>
-                <div class="voice-item"><div class="scene">秦墨予退场时（楚迟在场）</div><div class="line">楚迟：“又走在我前头。”<br>“下辈子别干这么多蠢事了。”</div></div>
-            </div>
-            <div class="voice-section">
-                <div class="section-label"><span class="deco">✦</span> 阵亡</div>
-                <div class="voice-item"><div class="line">“林淮……”<br><span class="note">声音断在这里，没有说完。</span></div></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="title"><span class="deco">✿</span> 制作人笔记</div>
-            <div class="note">
-                <div class="qa">
-                    <div class="q">关于情诗</div>
-                    <div class="a">玩家社区有一篇很火的帖子，标题是《秦墨予念了林淮的诗，林淮死了才听懂》。<br><br>游戏里秦墨予的出场语音是“白头空负三生意，犹记寒阶共雪温”——这两句是林淮当年写给秦墨予的。秦墨予记了两百年，临死前念出来的时候林淮没有反应过来。他问“什么”，秦墨予说“没什么”。等秦墨予死了之后，林淮才把那首诗的后半句补上：“遥望卿云归雁尽，缘深终作浅痕存。”那是秦墨予当年补的那两句。<br><br>整个过程是：林淮写了两句，秦墨予补了两句，秦墨予念了林淮的两句，林淮在秦墨予死后念了秦墨予的两句。两个人隔着生死把一首诗写完了。<br><br>有玩家评论：这首诗从头到尾都在说“留不住”，但他们用这首诗把对方留住了。</div>
-                </div>
-                <div class="qa">
-                    <div class="q">关于强度讨论</div>
-                    <div class="a">PvP社区关于秦墨予的主流评价是：“会用的当爹，不会用的当狗粮。”<br><br>玩家A：秦墨予这个咒术条机制太吃队友了，林淮不在根本站不住。问题是林淮我自己要用的，为了一个五星拆我T0体系，亏不亏？<br>玩家B：亏是亏，但你打对面林淮的时候就知道值了。秦墨予叠满咒术林淮直接蒸发，一个换对面核心，血赚。<br>玩家C：问题是叠得满吗？他自己烧血烧得比对面打他快，我每次还没叠到一半他就先把自己写死了。<br>玩家D：那是你站位有问题。秦墨予开局放后排，前两回合别动他，等对面突进来再开技能。<br>玩家E：不是所有阵容都有条件保一个五星到后期。速攻队就别带秦墨予了，他适合慢速控场阵容。</div>
-                </div>
-                <div class="qa">
-                    <div class="q">关于“秦墨予是不是内部爱”</div>
-                    <div class="a">社区有一个帖子，标题是《秦墨予是栾方棋的前世，为什么做成五星？》。<br><br>主楼：栾方棋六星，浮生之主，辅助生存双溢出。结果他前世就做个五星？攻击防御全是垫底，技能机制还烧自己血，这是对主角前世该有的待遇？<br>玩家F：有没有一种可能，他就是个凡人，做成六星才离谱。<br>玩家G：剧情里秦墨予是文官，不是战斗角色，五星很合理。<br>玩家H：串子又来了，这游戏每个角色都是按剧情定位设计的。<br>玩家I：仔细看技能组就知道，咒术机制是“写咒杀人”的还原，和林淮的羁绊是“影卫护主”的还原，烧血退场是他“用命换结果”的还原。每一条都能在原著找到对应。<br>玩家J：秦墨予要是做成六星我才要喷。他拿什么打六星？靠他那三十的速度还是二十的防御？<br>玩家K：秦墨予本身是栾方棋的前世，所以栾方棋是六星，他前世是五星，这不合理吧？<br>玩家L：有啥不合理的，这也能吵起来，自己动动手指过一下剧情比什么都强。<br><br><span class="highlight">帖子发布两小时后被官方封禁。封禁原因标注：引战。</span></div>
-                </div>
-                <div class="qa">
-                    <div class="q">关于特效细节</div>
-                    <div class="a">秦墨予没有本命武器，没有神光特效，也没有浮生树那种铺满全场的华丽效果。他的技能特效几乎全是水墨。<br><br>普攻「墨染·蔽目」——墨汁泼出，在敌人身上晕开一团黑色，像沾了水的宣纸。咒术累计越高，那团墨色越深。满咒术的时候整个人物身上会渗出细密的墨线，像被自己写的咒文缠住了。<br><br>咒杀触发时屏幕上出现一个墨写的“咒”字，然后裂开。接着是秦墨予退场，没有光效，没有消散——他只是从画面上消失了，像被擦掉的墨迹。<br><br>玩家在社区里讨论过这个设计：“太素了，别人开大都有特效，他没有。但他消失的时候，你盯着那片空白看，会想他之前站在哪里。”<br><br>另一个回复：“因为那片空白就是他的特效。”</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="luan" onclick="switchTab('luan')">栾方棋</button>
+  <button class="tab-btn" data-tab="qin" onclick="switchTab('qin')">秦墨予</button>
 </div>
+
+<!-- ==================== 栾方棋 ==================== -->
+<div class="tab-content active" id="tab-luan">
+
+<div class="hero-header">
+  <div class="name">栾方棋</div>
+  <div class="sub">多功能辅助 · 领域型 · 浮生之主</div>
+  <span class="stars">★★★★★★</span>
+  <div class="meta">
+    <span class="item"><span class="label">阵营</span> <span class="value accent">归终殿</span></span>
+    <span class="item"><span class="label">席位</span> <span class="value">第五席</span></span>
+  </div>
+  <div class="tags">
+    <span class="tag accent">主线</span>
+    <span class="tag">辅助</span>
+    <span class="tag">持续作战</span>
+    <span class="tag">中/远程</span>
+    <span class="tag">高操作</span>
+  </div>
+</div>
+
+<!-- 属性面板 -->
+<div class="row">
+  <div class="card">
+    <div class="title"><span class="deco">✿</span> 属性面板</div>
+    <div class="radar-wrap" id="radar-luan"></div>
+  </div>
+  <div class="card">
+    <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag">辅助 · 远程</span></div>
+    <div class="attr-grid">
+      <div class="attr-item"><span class="label">攻击力</span><span class="val">780</span></div>
+      <div class="attr-item"><span class="label">生命值</span><span class="val">13800</span></div>
+      <div class="attr-item"><span class="label">物理防御</span><span class="val">420</span></div>
+      <div class="attr-item"><span class="label">法术防御</span><span class="val">580</span></div>
+      <div class="attr-item"><span class="label">速度</span><span class="val">112</span></div>
+      <div class="attr-item"><span class="label">控制</span><span class="val a">A</span></div>
+      <div class="attr-item"><span class="label">范围</span><span class="val a">A</span></div>
+      <div class="attr-item"><span class="label">增益</span><span class="val sss">SSS</span></div>
+      <div class="attr-item"><span class="label">生存</span><span class="val s">S</span></div>
+      <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★★★☆</span></div>
+      <div class="attr-item"><span class="label">射程</span><span class="val">中/远程</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 本命武器 · 灵枢轮回木</div>
+  <div class="weapon-block">
+    <div>栾方棋的魂魄与灵枢轮回木融为一体，本命武器随其成长完成了从花到树的完整蜕变。</div>
+    <div style="margin-top:4px;">最初只是掌心一朵绛红浮生花，用以释放符箓之外的术法。随着魂魄与浮生树的融合逐渐深入，花托生出根须，枝叶舒展，最终化为完整的浮生树形态。开大时根系铺陈、枝干冲天，树影覆盖整个领域。</div>
+    <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">与其说栾方棋「拥有」浮生树，不如说他「是」浮生树——魂即树，树即魂。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 特殊机制 · 白发·京城</div>
+  <div class="weapon-block">
+    <div>通关「京城决战」剧情后，栾方棋的必杀技「浮生·渡世域」视觉效果永久改变。</div>
+    <div style="margin-top:4px;">施法时，浮生树根须自地底涌出，半透明的枝干撑开树冠，将整个领域笼罩在浮生花的光晕之下。栾方棋的黑发自发梢开始褪为银白，随领域持续逐渐蔓延；领域结束后缓慢恢复——如那场决战时一般，每一次展开领域，都是与自身生命力的对话。</div>
+    <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">数值无变化，仅特效变更。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 技能组</div>
+  <div class="skill">
+    <div class="name">普攻 · 符箓·引雷 <span class="type">普攻</span></div>
+    <div class="desc">扔出一张引雷符，造成法术伤害，并附加 1 层「雷印」，持续 2 回合。「雷印」：每层使目标防御下降 5%，最多叠加 3 层。</div>
+  </div>
+  <div class="skill">
+    <div class="name">战技 · 符箓·镇邪 <span class="type">战技</span></div>
+    <div class="desc">向敌方单体掷出镇邪符，造成中等法术伤害，并附加「破势」效果：目标防御下降 15%，持续 2 回合。若目标已有「雷印」，则每层雷印额外追加一次符纸伤害。</div>
+  </div>
+  <div class="skill">
+    <div class="name">必杀 · 浮生·渡世域 <span class="type">必杀</span></div>
+    <div class="desc">展开浮生领域，持续 3 回合。领域内友方攻击与庇护每回合提升，敌方攻击与速度每回合下降，数值随回合数持续叠加。施法后栾方棋进入「虚耗」状态，每回合损失自身最大生命值 8%，持续 3 回合。若林淮在场，虚耗状态被压制，不掉血。</div>
+    <div class="quote">视觉彩蛋：施法时头发从发梢逐渐变白，3 回合后恢复。</div>
+  </div>
+  <div class="skill">
+    <div class="name">被动 · 符心·通明 <span class="type">被动</span></div>
+    <div class="desc">每次使用「符箓·镇邪」后，下一次普攻「符箓·引雷」的伤害提升 40%，且必定附加 1 层「雷印」。</div>
+  </div>
+  <div class="skill">
+    <div class="name">被动 · 树魂·共息 <span class="type">被动</span></div>
+    <div class="desc">当栾方棋生命值低于 50% 时，自身防御提升 20%，效果抵抗提升 15%。若「浮生·渡世域」处于冷却中，则冷却时间减少 1 回合（每场战斗触发 1 次）。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 羁绊效果</div>
+  <div class="bond-section">
+    <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 浮生同契</div>
+    <div class="bond">
+      <div class="name">与「林淮」同时出场时：</div>
+      <div class="desc">林淮在场时，栾方棋「虚耗」状态不掉血。林淮每回合恢复栾方棋已损失生命值的 8%。双方效果抵抗提升 10%。<div class="quote">我的爱人。</div></div>
+      <div class="name" style="margin-top:8px;">互为敌对时：</div>
+      <div class="desc">双方对彼此造成的伤害降低 30%，无法对对方施加控制效果。若一方生命值低于 20%，另一方本回合行动强制跳过。</div>
+    </div>
+  </div>
+  <div class="bond-section">
+    <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 归终五席</div>
+    <div class="bond">
+      <div class="name">与「林淮 · 罗修 · 程木栖 · 魏元璟」同时出场时：</div>
+      <div class="desc">全体攻击、防御、速度提升 8%。每回合开始时随机解除一名队友的控制效果。程木栖在场时全体受治疗效果提升 10%；罗修在场时敌方受伤害提升 8%；魏元璟在场时己方效果抵抗提升 8%；林淮与栾方棋同时在场时领域类技能持续时间 +1 回合。</div>
+    </div>
+  </div>
+  <div class="bond-section">
+    <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 未竟之言</div>
+    <div class="bond">
+      <div class="name">与「冉舟」同时出场时：</div>
+      <div class="desc">冉舟的剑法对带有「雷印」的目标伤害提升 12%。栾方棋的治疗效果对冉舟提升 15%。<div class="quote">“愿我们，再也不见。”</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 彩蛋语音</div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
+    <div class="voice-item"><div class="scene">战斗开始</div><div class="line">林淮：“别勉强。”<br>栾方棋：“没有没有，受伤了我会自己跑的。”<br>林淮：“……好。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与冉舟同队</div>
+    <div class="voice-item"><div class="scene">战斗开始</div><div class="line">冉舟：“好久没一起出任务了。”<br>栾方棋：“是啊……冉舟师姐。”<br>冉舟：“走前面吧，我跟着你。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与罗修同队</div>
+    <div class="voice-item"><div class="scene">嘲讽</div><div class="line">罗修：“你那个符纸，有没有更响一点的？”<br>栾方棋：“你想听响的，我可以多贴两张在您刀上。”<br>罗修：“……哼。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与程木栖同队</div>
+    <div class="voice-item"><div class="scene">嘲讽</div><div class="line">程木栖：“手伸过来，把个脉。”<br>栾方棋：“师姐我没事……”<br>程木栖：“头发都白了还说没事？”<br>栾方棋：“……等会再喝药行吗。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与魏元璟同队</div>
+    <div class="voice-item"><div class="scene">嘲讽</div><div class="line">魏元璟：“还是和你站在一起好，比罗修那臭脸强多了。”<br>栾方棋：“你这话要是让罗修听到……”<br>魏元璟：“闭嘴，当我没说。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 极特殊情况</div>
+    <div class="voice-item"><div class="scene">我方林淮被敌对栾方棋击杀</div><div class="line">栾方棋：“……”<br>（停顿）<br>栾方棋：“不……不对。不对不对不对……”<br>“我不是……”<br><span class="highlight">浮生树不受控制地爆发，覆盖全场。语音结束后，栾方棋进入虚耗状态，持续至战斗结束。</span><br>“林淮……你看我一眼。”</div></div>
+    <div class="voice-item"><div class="scene">敌方林淮阵亡（栾方棋在己方阵营）</div><div class="line">林淮：“进步了。”<br>栾方棋停在原地，没有攻击。<br>“……”<br>“你干嘛站我对面啊……”<br><span class="note">下一回合开始时，栾方棋攻击力下降 30%，持续 2 回合。</span></div></div>
+    <div class="voice-item"><div class="scene">敌方冉舟阵亡（栾方棋在己方阵营）</div><div class="line">栾方棋：“师姐……”<br>（沉默一瞬）<br>“愿我们，永不再见。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 阵亡</div>
+    <div class="voice-item"><div class="line">“林淮……”<br><span class="note">白发彻底散开，浮生树收拢枝干，将栾方棋包裹其中，化作一株枯树。</span><br>“下次……换我来等你吧。”</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 制作人笔记</div>
+  <div class="note">
+    <div class="qa">
+      <div class="q">关于强度争议</div>
+      <div class="a">有玩家反馈，栾方棋的辅助能力在当前环境中过于突出，特别是与林淮绑定后，阵容的整体生存能力远超其他体系。<br><br>官方回应：栾方棋的定位是多功能辅助，他的强势点在于持续作战而非爆发压制。他的攻击力成长数值处于中下游水平，不具备单核终结比赛的能力。此外，「虚耗」机制的存在意味着他在展开领域后需要队友的支援才能维持健康血线——林淮在场确实可以压制这一代价，但这占用了一个队伍位置，且林淮本身并不提供治疗能力，队伍仍需要第三人承担回复职责。我们目前的数据显示，栾方棋在无林淮阵容中的胜率处于合理区间。后续会持续观察，如有必要会进行数值调整。</div>
+    </div>
+    <div class="qa">
+      <div class="q">关于内部爱争议</div>
+      <div class="a">玩家A：你们觉不觉得栾方棋的堆料有点离谱？两个形态、领域特效、白发变化、还有专属剧情成长……这待遇也差太多了吧。<br>玩家B：说点大家不知道的。<br>玩家C：笑死，楼上意思是这还用问吗。<br>玩家D：有一说一，过了剧情之后很难讨厌他吧。他那个贯穿全文的因果闭环真的写得挺好的。<br>玩家E：不喜欢他怎么了？主角就一定得喜欢？我就觉得他太圣母了。<br>玩家F：嗯，不喜欢主角也挺正常的。那么诚挚地邀请你离开归终纪，我们静候佳音.jpg<br><br>官方回应：每一位角色的设计都经过反复打磨与考量，栾方棋作为贯穿主线核心的角色，在资源投入上确实享有更高的优先级，这是剧情定位决定的，也仅限于此。</div>
+    </div>
+    <div class="qa">
+      <div class="q">关于剧情闭环</div>
+      <div class="a">有玩家在社区发帖分析了栾方棋与楚迟之间的因果循环：栾方棋穿越回两百年前，提醒楚迟浮生花会吞噬魂魄；楚迟因此开始研究浮生树，在研究中前往青丘，被困锁龙井；后来收养了秦墨予；秦墨予学会阵法与诅咒，死后魂魄与浮生树融合；转世成为栾方棋，在锁龙井遇见楚迟，最终穿越回两百年前提醒楚迟。<br><br>所以栾方棋的存在本身，就是他自己创造出来的。<br><br>官方在制作人笔记中对此事的回应只有一句话：<span class="highlight">策划组内部没有达成共识。有人说是宿命，有人说是蝴蝶效应，有人说是bug。我们倾向于不解释。</span></div>
+    </div>
+    <div class="qa">
+      <div class="q">关于天梯环境</div>
+      <div class="a">PvP中栾方棋的出场率长期位居前三，ban率位居第一。常见阵容多以林淮+程木栖+栾方棋为核心的慢速续航体系。<br><br>目前高分段对栾方棋的处理思路主要有两种：一是前两回合集火压制栾方棋的血线，迫使其提前开大进入虚耗状态；二是优先处理林淮，拆散羁绊后再处理栾方棋本体。<br><br>社区有人总结：<span class="highlight">栾方棋这个角色，你讨厌他的时候是真的讨厌，但你要真问谁最适合当主角，好像也就是他了。</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== 秦墨予 ==================== -->
+<div class="tab-content" id="tab-qin">
+
+<div class="hero-header">
+  <div class="name">秦墨予</div>
+  <div class="sub">咒术师 · 单体爆发</div>
+  <span class="stars">★★★★★★</span>
+  <div class="meta">
+    <span class="item"><span class="label">阵营</span> <span class="value accent">凡人</span></span>
+  </div>
+  <div class="tags">
+    <span class="tag accent">主线</span>
+    <span class="tag">单体咒杀</span>
+    <span class="tag">高操作</span>
+    <span class="tag">站桩</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card">
+    <div class="title"><span class="deco">✿</span> 属性面板</div>
+    <div class="radar-wrap" id="radar-qin"></div>
+  </div>
+  <div class="card">
+    <div class="title"><span class="deco">✿</span> 详细数值 <span class="role-tag">咒术师 · 单体爆发</span></div>
+    <div class="attr-grid">
+      <div class="attr-item"><span class="label">攻击力</span><span class="val">480</span></div>
+      <div class="attr-item"><span class="label">生命值</span><span class="val">4500</span></div>
+      <div class="attr-item"><span class="label">物理防御</span><span class="val">120</span></div>
+      <div class="attr-item"><span class="label">法术防御</span><span class="val">180</span></div>
+      <div class="attr-item"><span class="label">速度</span><span class="val">45</span></div>
+      <div class="attr-item"><span class="label">控制</span><span class="val e">E</span></div>
+      <div class="attr-item"><span class="label">范围</span><span class="val d">D</span></div>
+      <div class="attr-item"><span class="label">增益</span><span class="val e">E</span></div>
+      <div class="attr-item"><span class="label">生存</span><span class="val f">F</span></div>
+      <div class="attr-item"><span class="label">操作难度</span><span class="val stars">★★★★★</span></div>
+      <div class="attr-item"><span class="label">射程</span><span class="val">中</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 特殊机制 · 咒术条</div>
+  <div class="weapon-block">
+    <div>秦墨予无本命武器，无专属神器。</div>
+    <div style="margin-top:4px;">核心资源为「咒术条」：上限 100%，对所有敌人独立计算，可通过战技、普攻累计。达到 100% 时触发「咒杀」，造成无视防御的巨额伤害。</div>
+    <div style="margin-top:4px;color:var(--text-muted);font-style:italic;">咒杀对高攻低防的脆皮角色有奇效，代价是使用者自身也会在爆发后退场。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 技能组</div>
+  <div class="skill">
+    <div class="name">普攻 · 墨染·蔽目 <span class="type">普攻</span></div>
+    <div class="desc">泼洒墨汁攻击单体敌人，造成少量法术伤害，有概率附加 1 层「墨障」，持续 2 回合。「墨障」：目标下次攻击有 25% 概率偏移（打偏至随机目标，或直接未命中）。</div>
+  </div>
+  <div class="skill">
+    <div class="name">战技 · 咒术·刻印 <span class="type">战技</span></div>
+    <div class="desc">对敌方单体施加咒术刻印，造成一次法术伤害，并累计 30% 咒术条。若目标带有「墨障」，每层额外提升 5% 咒术累计量。咒术条满 100% 时触发「咒杀」：对目标造成大量法术伤害。</div>
+  </div>
+  <div class="skill">
+    <div class="name">必杀 · 咒术·命陨 <span class="type">必杀</span></div>
+    <div class="desc">立即引爆目标身上的所有咒术累计，造成伤害。若咒术条未满，则造成普通伤害并清空累计。若咒术条已满，则触发「咒杀」，伤害额外提升 30%，秦墨予在本次攻击后立即退场。</div>
+  </div>
+  <div class="skill">
+    <div class="name">被动 · 焚命 <span class="type">被动</span></div>
+    <div class="desc">每回合开始时，秦墨予损失自身最大生命值 10%，无法被治疗。咒术条每有 30%，额外损失 2%（最高 18% / 回合）。若咒术条已满且秦墨予未在当回合引爆，则下回合自动触发「咒杀」，随后退场。</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 羁绊效果</div>
+  <div class="bond-section">
+    <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 影卫</div>
+    <div class="bond">
+      <div class="name">与「林淮」同时出场时：</div>
+      <div class="desc">林淮在场时，秦墨予的「焚命」不会导致死亡（最低保留 1 点生命）。秦墨予退场时，林淮攻击力提升 15%，持续 2 回合。<div class="quote">“真是好久不见。”</div></div>
+    </div>
+  </div>
+  <div class="bond-section">
+    <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 转世</div>
+    <div class="bond">
+      <div class="name">与「栾方棋」同时出场时：</div>
+      <div class="desc">秦墨予施加「墨障」的概率提升 15%。栾方棋对带有「墨障」的目标造成的伤害提升 10%。<div class="quote">“……还有自我配合？”</div></div>
+    </div>
+  </div>
+  <div class="bond-section">
+    <div class="section-label"><span class="deco">✦</span> 羁绊效果 · 养父</div>
+    <div class="bond">
+      <div class="name">与「楚迟」同时出场时：</div>
+      <div class="desc">秦墨予每回合额外恢复自身最大生命值 5%（此效果可抵消「焚命」的部分烧血）。楚迟受到攻击时，秦墨予有 15% 概率为其挡下该次伤害。<div class="quote">“秦墨予大概这辈子也没想到，18岁的离别将是他们这辈子的最后一面”</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 彩蛋语音</div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与林淮同队</div>
+    <div class="voice-item"><div class="scene">战斗开始</div><div class="line">秦墨予：“白头空负三生意，犹记寒阶共雪温。”<br>林淮：“……什么？”<br>秦墨予（笑）：“没什么，走吧。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与楚迟同队</div>
+    <div class="voice-item"><div class="scene">战斗开始</div><div class="line">楚迟：“……怎么把自己弄成这样？”<br>秦墨予：“不用担心，我没事。”<br>楚迟沉默了一阵。<br>秦墨予：“……”<br>楚迟：“怎么了？”<br>秦墨予没有回答。</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与栾方棋同队</div>
+    <div class="voice-item"><div class="scene">战斗开始</div><div class="line">栾方棋：“呃……虽然这么说有点奇怪，但……请多指教？”<br>秦墨予：“……”自己和自己打招呼的感觉好奇怪。</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 与白禾川同队</div>
+    <div class="voice-item"><div class="scene">嘲讽</div><div class="line">白禾川：“你当年疯成那样，连自己写的咒都忘了。现在倒清醒了？”<br>秦墨予：“清醒了两百年也找不到人。她亲手杀了你的时候，你在想什么？”<br>白禾川沉默。</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 家园语音</div>
+    <div class="voice-item"><div class="scene">与凌宸钧同处家园</div><div class="line">凌宸钧：“秦爱卿，好久不见。”<br>秦墨予：“陛下……您不该留着我写的东西。”<br>凌宸钧：“朕知道。”</div></div>
+    <div class="voice-item"><div class="scene">与秦雨令同处家园</div><div class="line">秦雨令：“又来啦？”<br>秦墨予：“知道我回来还问？上次给你的花完了？”<br>秦雨令：“花完了你就不给我了？”<br>秦墨予：“……给你的，不用还。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 极特殊情况</div>
+    <div class="voice-item"><div class="scene">秦墨予退场时（林淮在场）</div><div class="line">林淮：“遥望卿云归雁尽……缘深终作浅痕存。”<br><span class="note">他听懂了。秦墨予已经死了。</span></div></div>
+    <div class="voice-item"><div class="scene">秦墨予退场时（栾方棋在场）</div><div class="line">栾方棋：“接下来交给我吧。”</div></div>
+    <div class="voice-item"><div class="scene">秦墨予退场时（楚迟在场）</div><div class="line">楚迟：“又走在我前头。”<br>“下辈子别干这么多蠢事了。”</div></div>
+  </div>
+  <div class="voice-section">
+    <div class="section-label"><span class="deco">✦</span> 阵亡</div>
+    <div class="voice-item"><div class="line">“林淮……”<br><span class="note">声音断在这里，没有说完。</span></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="title"><span class="deco">✿</span> 制作人笔记</div>
+  <div class="note">
+    <div class="qa">
+      <div class="q">关于情诗</div>
+      <div class="a">玩家社区有一篇很火的帖子，标题是《秦墨予念了林淮的诗，林淮死了才听懂》。<br><br>游戏里秦墨予的出场语音是“白头空负三生意，犹记寒阶共雪温”——这两句是林淮当年写给秦墨予的。秦墨予记了两百年，临死前念出来的时候林淮没有反应过来。他问“什么”，秦墨予说“没什么”。等秦墨予死了之后，林淮才把那首诗的后半句补上：“遥望卿云归雁尽，缘深终作浅痕存。”那是秦墨予当年补的那两句。<br><br>整个过程是：林淮写了两句，秦墨予补了两句，秦墨予念了林淮的两句，林淮在秦墨予死后念了秦墨予的两句。两个人隔着生死把一首诗写完了。<br><br>有玩家评论：这首诗从头到尾都在说“留不住”，但他们用这首诗把对方留住了。</div>
+    </div>
+    <div class="qa">
+      <div class="q">关于强度讨论</div>
+      <div class="a">PvP社区关于秦墨予的主流评价是：“会用的当爹，不会用的当狗粮。”<br><br>玩家A：秦墨予这个咒术条机制太吃队友了，林淮不在根本站不住。问题是林淮我自己要用的，为了一个五星拆我T0体系，亏不亏？<br>玩家B：亏是亏，但你打对面林淮的时候就知道值了。秦墨予叠满咒术林淮直接蒸发，一个换对面核心，血赚。<br>玩家C：问题是叠得满吗？他自己烧血烧得比对面打他快，我每次还没叠到一半他就先把自己写死了。<br>玩家D：那是你站位有问题。秦墨予开局放后排，前两回合别动他，等对面突进来再开技能。<br>玩家E：不是所有阵容都有条件保一个五星到后期。速攻队就别带秦墨予了，他适合慢速控场阵容。</div>
+    </div>
+    <div class="qa">
+      <div class="q">关于“秦墨予是不是内部爱”</div>
+      <div class="a">社区有一个帖子，标题是《秦墨予是栾方棋的前世，为什么做成五星？》。<br><br>主楼：栾方棋六星，浮生之主，辅助生存双溢出。结果他前世就做个五星？攻击防御全是垫底，技能机制还烧自己血，这是对主角前世该有的待遇？<br>玩家F：有没有一种可能，他就是个凡人，做成六星才离谱。<br>玩家G：剧情里秦墨予是文官，不是战斗角色，五星很合理。<br>玩家H：串子又来了，这游戏每个角色都是按剧情定位设计的。<br>玩家I：仔细看技能组就知道，咒术机制是“写咒杀人”的还原，和林淮的羁绊是“影卫护主”的还原，烧血退场是他“用命换结果”的还原。每一条都能在原著找到对应。<br>玩家J：秦墨予要是做成六星我才要喷。他拿什么打六星？靠他那三十的速度还是二十的防御？<br>玩家K：秦墨予本身是栾方棋的前世，所以栾方棋是六星，他前世是五星，这不合理吧？<br>玩家L：有啥不合理的，这也能吵起来，自己动动手指过一下剧情比什么都强。<br><br><span class="highlight">帖子发布两小时后被官方封禁。封禁原因标注：引战。</span></div>
+    </div>
+    <div class="qa">
+      <div class="q">关于特效细节</div>
+      <div class="a">秦墨予没有本命武器，没有神光特效，也没有浮生树那种铺满全场的华丽效果。他的技能特效几乎全是水墨。<br><br>普攻「墨染·蔽目」——墨汁泼出，在敌人身上晕开一团黑色，像沾了水的宣纸。咒术累计越高，那团墨色越深。满咒术的时候整个人物身上会渗出细密的墨线，像被自己写的咒文缠住了。<br><br>咒杀触发时屏幕上出现一个墨写的“咒”字，然后裂开。接着是秦墨予退场，没有光效，没有消散——他只是从画面上消失了，像被擦掉的墨迹。<br><br>玩家在社区里讨论过这个设计：“太素了，别人开大都有特效，他没有。但他消失的时候，你盯着那片空白看，会想他之前站在哪里。”<br><br>另一个回复：“因为那片空白就是他的特效。”</div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- /app -->
 
 </body>
 </html>
