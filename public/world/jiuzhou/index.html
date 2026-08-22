@@ -360,6 +360,16 @@
       .character-item h4 { font-size: 0.9rem; }
       .character-item p { font-size: 0.88rem; }
       .page-footer { font-size: 0.65rem; }
+      #app .page-header h1,
+      #app .page-header .sub,
+      #app .section-title,
+      #app .section-desc,
+      #app .accordion-content p,
+      #app .accordion-content li,
+      #app .character-item p,
+      #app .triad-item p {
+        text-align: left;
+      }
     }
 
     @media (max-width: 480px) {
@@ -386,13 +396,8 @@
 
   <!-- ===== 右上角 ===== -->
   <div class="float-group">
-    <a class="float-btn" href="/-/"><span class="icon">←</span> 返回</a>
+    <a class="float-btn" href="/-/world"><span class="icon">←</span> 返回</a>
     <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
-    <div class="font-control">
-      <button onclick="changeSize(-1)">A−</button>
-      <span class="size-display" id="sizeDisplay">中</span>
-      <button onclick="changeSize(1)">A+</button>
-    </div>
   </div>
 
   <!-- ===== 主内容 ===== -->
@@ -553,27 +558,6 @@
       window.addEventListener('resize', update, { passive: true });
       update();
     })();
-
-    // 字号
-    var sizeLevels = ['sm', 'md', 'lg'], sizeLabels = ['小', '中', '大'], currentLevel = 1;
-    function changeSize(delta) {
-      var next = Math.max(0, Math.min(currentLevel + delta, sizeLevels.length - 1));
-      if (next === currentLevel) return;
-      sizeLevels.forEach(function(s) { document.body.classList.remove('font-' + s); });
-      currentLevel = next;
-      document.body.classList.add('font-' + sizeLevels[currentLevel]);
-      document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
-      try { localStorage.setItem('worldFontSize', String(currentLevel)); } catch(e) {}
-    }
-    var saved = localStorage.getItem('worldFontSize');
-    if (saved !== null) {
-      var n = parseInt(saved);
-      if (!isNaN(n) && n >= 0 && n < sizeLevels.length) {
-        currentLevel = n;
-        if (currentLevel !== 1) document.body.classList.add('font-' + sizeLevels[currentLevel]);
-        document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
-      }
-    }
 
     // 主题切换
     (function() {
