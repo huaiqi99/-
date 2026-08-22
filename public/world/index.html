@@ -5,39 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>墨境 · 探索</title>
   <style>
-    /* ===== 色盘（亮色极浅米白，暗色柔和深灰） ===== */
+    /* ===== 色盘（亮色纯白，暗色深灰暖调） ===== */
     :root {
-      --bg-body: #faf6ef;
+      --bg-body: #ffffff;
       --bg-card: #ffffff;
-      --bg-hover: rgba(138, 58, 42, 0.04);
-      --border-light: #e0d6c8;
-      --border-card: #d0c4b4;
+      --bg-hover: rgba(138, 58, 42, 0.03);
+      --border-light: #e8e0d5;
+      --border-card: #d5c8b8;
       --text-primary: #1a1410;
       --text-secondary: #2c241e;
       --text-muted: #4a3f38;
       --text-muted-light: #6a5f56;
       --accent: #8a3a2a;
-      --accent-soft: rgba(138, 58, 42, 0.05);
-      --accent-glow: rgba(138, 58, 42, 0.12);
-      --shadow-sm: 0 1px 4px rgba(0,0,0,0.03);
+      --accent-soft: rgba(138, 58, 42, 0.04);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.02);
       --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
       --font-mono: "Courier New", "Source Code Pro", monospace;
       --transition: 0.2s ease;
     }
 
     [data-theme="dark"] {
-      --bg-body: #2a2520;
-      --bg-card: #35302a;
-      --bg-hover: rgba(176, 90, 74, 0.06);
-      --border-light: #4a443e;
-      --border-card: #554e47;
+      --bg-body: #24201c;
+      --bg-card: #2d2824;
+      --bg-hover: rgba(176, 90, 74, 0.05);
+      --border-light: #3d3732;
+      --border-card: #4a443e;
       --text-primary: #d8d0c8;
       --text-secondary: #b8aea4;
       --text-muted: #8a8078;
       --text-muted-light: #6a6560;
       --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.06);
-      --accent-glow: rgba(176, 90, 74, 0.15);
+      --accent-soft: rgba(176, 90, 74, 0.05);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,12 +50,12 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
-      padding: 0 20px 40px 20px;
+      padding: 0 16px 40px 16px;
       display: flex;
       flex-direction: column;
     }
 
-    /* ===== 右上角悬浮按钮组 ===== */
+    /* ===== 右上角悬浮按钮 ===== */
     .float-group {
       position: fixed;
       top: 20px;
@@ -91,10 +89,12 @@
     }
     .float-btn .icon { font-size: 0.9rem; }
 
-    /* ===== 主容器（全屏延展，不加max-width限制） ===== */
+    /* ===== 主容器 ===== */
     #app {
+      max-width: 1100px;
+      margin: 0 auto;
       width: 100%;
-      padding: 24px 4px 20px 4px;
+      padding: 24px 20px 20px 20px;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -134,15 +134,17 @@
       flex: 1;
     }
 
-    /* ===== 条目（全屏延展） ===== */
+    /* ===== 条目 ===== */
     .entry {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px 0;
+      padding: 18px 16px;
       border-bottom: 1px solid var(--border-light);
-      transition: background var(--transition), border-color var(--transition);
-      gap: 24px;
+      transition: background var(--transition);
+      gap: 30px;
+      border-radius: 6px;
+      margin: 0 -4px;
     }
     .entry:last-child {
       border-bottom: none;
@@ -153,7 +155,7 @@
 
     .entry-info {
       flex: 1;
-      min-width: 0;
+      min-width: 180px;
     }
     .entry-name {
       font-size: 1.3rem;
@@ -183,28 +185,28 @@
       letter-spacing: 0.2px;
     }
 
-    /* ===== 按钮组（电脑端两列） ===== */
+    /* ===== 按钮组 ===== */
     .entry-actions {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 10px;
       flex-shrink: 0;
-      min-width: 200px;
+      min-width: 260px;
     }
     .entry-actions a {
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 10px 24px;
+      border-radius: 24px;
       border: 1px solid var(--border-card);
       background: var(--bg-body);
       color: var(--text-secondary);
-      font-size: 0.85rem;
+      font-size: 1rem;
       font-family: var(--font-mono);
       text-decoration: none;
       transition: all var(--transition);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 6px;
       cursor: pointer;
       white-space: nowrap;
       letter-spacing: 0.3px;
@@ -215,7 +217,7 @@
       background: var(--accent-soft);
     }
     .entry-actions a .sym {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-family: var(--font-serif);
       opacity: 0.5;
     }
@@ -241,7 +243,7 @@
     ============================================================ */
     @media (max-width: 768px) {
       body {
-        padding: 0 12px 30px 12px;
+        padding: 0 10px 30px 10px;
         font-size: 16px;
       }
       .float-group {
@@ -253,9 +255,8 @@
         padding: 4px 10px 4px 8px;
         font-size: 0.65rem;
       }
-
       #app {
-        padding: 16px 0 10px 0;
+        padding: 16px 8px 10px 8px;
         gap: 4px;
       }
       .page-header h1 {
@@ -264,12 +265,16 @@
       .page-header .sub {
         font-size: 0.8rem;
       }
-
       .entry {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
-        padding: 16px 0;
+        padding: 14px 8px;
+        margin: 0 -4px;
+      }
+      .entry-info {
+        flex: 1;
+        min-width: unset;
       }
       .entry-name {
         font-size: 1.1rem;
@@ -285,23 +290,24 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
-
-      /* 手机端按钮依然两列 */
       .entry-actions {
         grid-template-columns: repeat(2, 1fr);
         gap: 6px;
         min-width: unset;
       }
       .entry-actions a {
-        font-size: 0.75rem;
-        padding: 6px 10px;
+        font-size: 0.8rem;
+        padding: 8px 14px;
       }
     }
 
     @media (max-width: 480px) {
       body {
-        padding: 0 8px 24px 8px;
+        padding: 0 6px 24px 6px;
         font-size: 15px;
+      }
+      #app {
+        padding: 12px 4px 8px 4px;
       }
       .page-header h1 {
         font-size: 1.2rem;
@@ -313,8 +319,8 @@
         font-size: 0.8rem;
       }
       .entry-actions a {
-        font-size: 0.68rem;
-        padding: 5px 8px;
+        font-size: 0.7rem;
+        padding: 6px 10px;
       }
       .float-group {
         top: 8px;
@@ -332,7 +338,6 @@
     }
   </style>
   <script>
-    // ===== 主题切换 =====
     (function() {
       try {
         var raw = localStorage.getItem('theme');
@@ -397,7 +402,6 @@
 </head>
 <body>
 
-  <!-- ===== 右上角悬浮按钮 ===== -->
   <div class="float-group">
     <a class="float-btn" href="/-/">
       <span class="icon">←</span> 返回
@@ -409,13 +413,11 @@
 
   <div id="app">
 
-    <!-- 头部 -->
     <div class="page-header">
       <h1>墨境 · <span class="accent">书架</span></h1>
       <p class="sub">◈ 选一部作品，走进它的世界</p>
     </div>
 
-    <!-- 列表 -->
     <div id="list">
 
       <div class="entry">

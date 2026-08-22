@@ -5,334 +5,315 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>我在地府打工那些年 · 世界观</title>
   <style>
-    /* ============================================================
-       0. 夜间模式兼容
-    ============================================================ */
     :root {
       --bg-body: #ffffff;
-      --bg-section: #faf8f6;
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --border-light: #ece6de;
-      --accent: #b03a2a;
-      --accent-soft: rgba(176, 58, 42, 0.06);
+      --bg-section: #f8f5f0;
+      --bg-hover: rgba(138, 58, 42, 0.04);
+      --border-light: #e8e0d5;
+      --border-card: #d5c8b8;
+      --text-primary: #1a1410;
+      --text-secondary: #2c241e;
+      --text-muted: #5a4d42;
+      --text-muted-light: #8a7a6a;
+      --accent: #8a3a2a;
+      --accent-soft: rgba(138, 58, 42, 0.05);
+      --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+      --font-mono: "Courier New", "Source Code Pro", monospace;
+      --transition: 0.2s ease;
     }
 
     [data-theme="dark"] {
-      --bg-body: #1a1816;
-      --bg-section: #24201c;
-      --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --border-light: #35302a;
+      --bg-body: #24201c;
+      --bg-section: #2d2824;
+      --border-light: #3d3732;
+      --border-card: #4a443e;
+      --text-primary: #d8d0c8;
+      --text-secondary: #b8aea4;
+      --text-muted: #8a8078;
+      --text-muted-light: #6a6560;
       --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.1);
+      --accent-soft: rgba(176, 90, 74, 0.06);
     }
 
-    /* ============================================================
-       1. 全局
-    ============================================================ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      font-family: var(--font-serif);
       background: var(--bg-body);
       color: var(--text-primary);
-      font-size: 16px;
+      font-size: 17px;
       line-height: 1.8;
-      transition: background 0.3s, color 0.3s;
-      padding: 0;
+      transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
+      padding: 0 16px 40px 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* ============================================================
-       2. 阅读进度条
-    ============================================================ */
     #reading-progress {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 0%;
-      height: 3px;
+      top: 0; left: 0;
+      width: 0%; height: 3px;
       background: var(--accent);
       z-index: 9999;
-      transition: width 0.08s ease;
     }
 
-    /* ============================================================
-       3. 顶部导航
-    ============================================================ */
-    #nav {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 18px 24px 10px 24px;
+    /* ===== 右上角悬浮组 ===== */
+    .float-group {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
+    }
+    .float-group:hover { opacity: 1; }
+
+    .float-btn {
+      background: var(--bg-section);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 5px 12px 5px 10px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      border-bottom: 1px solid var(--border-light);
-      transition: border-color 0.3s;
-    }
-    #nav .nav-left {
-      display: flex;
-      align-items: baseline;
-      gap: 20px;
-    }
-    #nav .nav-title {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      letter-spacing: 0.5px;
-    }
-    #nav .nav-title span { color: var(--accent); }
-    #nav .nav-links {
-      display: flex;
-      gap: 18px;
-    }
-    #nav .nav-links a {
-      color: var(--text-muted);
+      gap: 5px;
       text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
     }
-    #nav .nav-links a:hover { color: var(--accent); }
+    .float-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .float-btn .icon { font-size: 0.8rem; }
 
     .font-control {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
       background: var(--bg-section);
-      border-radius: 20px;
-      padding: 2px 8px;
       border: 1px solid var(--border-light);
-      transition: border-color 0.3s, background 0.3s;
+      border-radius: 24px;
+      padding: 1px 4px;
     }
     .font-control button {
-      padding: 4px 10px;
-      border-radius: 14px;
+      padding: 3px 10px;
+      border-radius: 16px;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
+      transition: all var(--transition);
+      font-family: var(--font-mono);
       font-weight: 500;
     }
-    .font-control button:hover {
-      background: var(--accent);
-      color: #fff;
-    }
+    .font-control button:hover { background: var(--accent); color: #fff; }
     .font-control .size-display {
-      font-size: 0.75rem;
+      font-size: 0.6rem;
       color: var(--text-muted);
-      min-width: 32px;
+      min-width: 24px;
       text-align: center;
-      font-weight: 400;
-      letter-spacing: 0.3px;
+      font-family: var(--font-mono);
     }
 
-    /* ============================================================
-       4. 页头信息
-    ============================================================ */
-    #page-header {
-      max-width: 960px;
+    #app {
+      max-width: 840px;
       margin: 0 auto;
-      padding: 32px 24px 20px 24px;
-      text-align: center;
+      width: 100%;
+      padding: 24px 4px 20px 4px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    #page-header h1 {
+
+    /* ===== 头部 ===== */
+    .page-header {
+      padding: 0 0 16px 0;
+      border-bottom: 1.5px solid var(--border-light);
+    }
+    .page-header h1 {
       font-size: 1.8rem;
-      font-weight: 600;
+      font-weight: 700;
+      font-family: var(--font-serif);
       color: var(--text-primary);
-      letter-spacing: 1px;
     }
-    #page-header .sub {
-      font-size: 1rem;
+    .page-header h1 .accent { color: var(--accent); font-weight: 400; }
+    .page-header .sub {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-muted-light);
+    }
+    .page-header .sub .sym { color: var(--accent); opacity: 0.4; }
+
+    /* ===== 章节 ===== */
+    .section { margin-bottom: 32px; }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      padding: 10px 0 8px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .sym { color: var(--accent); font-size: 1.1rem; opacity: 0.5; }
+    .section-desc {
+      font-size: 0.95rem;
       color: var(--text-muted);
-      margin-top: 4px;
-      font-weight: 400;
+      margin-bottom: 14px;
+      font-style: italic;
     }
 
-    /* ============================================================
-       5. 主内容区
-    ============================================================ */
-    #content {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 8px 24px 40px 24px;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-bottom: 24px;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-      padding: 4px 0;
-      border-bottom: 1px solid transparent;
-    }
-    .back-link:hover {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    /* ============================================================
-       6. 三界架构（三列网格）
-    ============================================================ */
+    /* ===== 三界 ===== */
     .triad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin: 16px 0 8px 0;
+      margin: 6px 0 4px 0;
     }
     .triad-item {
       padding: 16px 18px;
       border: 1px solid var(--border-light);
       border-radius: 8px;
       background: var(--bg-section);
-      transition: border-color 0.3s, background 0.3s;
+      transition: border-color var(--transition);
     }
+    .triad-item:hover { border-color: var(--accent); }
     .triad-item h3 {
       font-size: 1.05rem;
       color: var(--accent);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       font-weight: 600;
       text-align: center;
     }
-    .triad-item p {
-      font-size: 0.92rem;
-      line-height: 1.8;
-      color: var(--text-secondary);
-      margin: 0;
-    }
+    .triad-item h3 .sym { font-weight: 400; opacity: 0.4; }
+    .triad-item p { font-size: 0.92rem; color: var(--text-secondary); }
 
-    @media (max-width: 768px) {
-      .triad { grid-template-columns: 1fr; gap: 12px; }
-    }
-
-    /* ============================================================
-       7. 章节
-    ============================================================ */
-    .section {
-      margin-bottom: 40px;
-    }
-
-    .section-title {
-      font-size: 1.35rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      padding: 12px 0 8px 16px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid var(--border-light);
-      position: relative;
-      transition: border-color 0.3s;
-    }
-    .section-title::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 12px;
-      bottom: 8px;
-      width: 4px;
-      background: var(--accent);
-      border-radius: 2px;
-      transition: height 0.5s ease;
-    }
-
-    /* ============================================================
-       8. 折叠面板
-    ============================================================ */
+    /* ===== 折叠面板（无背景色，装饰线方案） ===== */
     details {
-      margin-bottom: 4px;
-      border-bottom: 1px solid var(--border-light);
-      transition: border-color 0.3s;
-      background: var(--bg-section);
+      margin-bottom: 6px;
       border-radius: 6px;
-      overflow: hidden;
+      border: 1px solid var(--border-light);
+      transition: border-color var(--transition);
     }
-    details:last-child { border-bottom: none; }
+    details:hover {
+      border-color: var(--border-card);
+    }
 
+    /* ★ 折叠按钮：无背景色，靠装饰符号和边框识别 ★ */
     summary {
-      padding: 14px 18px 14px 42px;
+      padding: 14px 18px 14px 20px;
       font-size: 1rem;
       font-weight: 500;
+      font-family: var(--font-serif);
       color: var(--text-primary);
       cursor: pointer;
       list-style: none;
       position: relative;
       user-select: none;
-      transition: background 0.2s;
+      transition: all var(--transition);
       border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     summary:hover {
       background: var(--accent-soft);
     }
 
+    /* 左侧装饰线（竖线） */
     summary::before {
-      content: '▸';
+      content: '';
       position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: var(--accent);
-      transition: transform 0.35s ease;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      opacity: 0.3;
+      transition: opacity var(--transition), top var(--transition), bottom var(--transition);
     }
-
-    details[open] summary {
-      border-bottom: 1px solid var(--border-light);
+    details:hover summary::before {
+      opacity: 0.6;
     }
     details[open] summary::before {
-      transform: translateY(-50%) rotate(90deg);
+      opacity: 0.8;
+      top: 15%;
+      bottom: 15%;
+    }
+
+    /* 右侧装饰符号 ✦ —— 作为"可点击"的视觉暗示 */
+    summary .click-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted-light);
+      opacity: 0.4;
+      transition: all var(--transition);
+      font-weight: 400;
+      font-family: var(--font-serif);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    details:hover summary .click-hint {
+      opacity: 0.7;
+      color: var(--accent);
+    }
+    details[open] summary .click-hint {
+      opacity: 0.2;
+    }
+
+    /* 展开时左侧小三角提示 */
+    details[open] summary .click-hint .hint-icon {
+      display: inline-block;
+      transform: rotate(90deg);
     }
 
     .accordion-content {
-      padding: 0 18px 4px 18px;
+      padding: 0 18px 2px 18px;
       max-height: 0;
       overflow: hidden;
       opacity: 0;
-      transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.3s ease;
+      transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+      border-top: none;
     }
     details[open] .accordion-content {
       max-height: 8000px;
       opacity: 1;
       padding: 4px 18px 18px 18px;
+      border-top: 1px solid var(--border-light);
     }
-
     .accordion-content p {
       font-size: 0.95rem;
-      line-height: 1.9;
       color: var(--text-secondary);
       margin-bottom: 12px;
     }
     .accordion-content p:last-child { margin-bottom: 0; }
-
     .accordion-content h4 {
       font-size: 0.95rem;
       font-weight: 600;
       color: var(--accent);
-      margin: 18px 0 4px 0;
+      margin: 16px 0 4px 0;
     }
     .accordion-content h4:first-child { margin-top: 0; }
-
-    .accordion-content ul {
-      padding-left: 22px;
-      margin: 6px 0 12px 0;
-    }
-    .accordion-content li {
-      font-size: 0.93rem;
-      line-height: 1.9;
-      color: var(--text-secondary);
-      margin-bottom: 2px;
-    }
-
-    /* 斜体 */
+    .accordion-content h4 .sym { font-weight: 400; opacity: 0.4; }
+    .accordion-content ul { padding-left: 22px; margin: 6px 0 12px 0; }
+    .accordion-content li { font-size: 0.93rem; color: var(--text-secondary); margin-bottom: 2px; }
     .accordion-content blockquote {
       border-left: 3px solid var(--accent);
       padding: 6px 16px;
@@ -341,24 +322,15 @@
       border-radius: 0 6px 6px 0;
       color: var(--text-secondary);
       font-size: 0.93rem;
-    }
-    .accordion-content blockquote em,
-    .accordion-content blockquote i,
-    .accordion-content blockquote cite {
       font-style: italic;
-      font-size: 0.93rem;
     }
 
-    /* ============================================================
-       9. 表格 —— 手机端可滑动
-    ============================================================ */
+    /* ===== 表格 ===== */
     .table-wrap {
       overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
       margin: 10px 0 16px 0;
       border-radius: 6px;
       border: 1px solid var(--border-light);
-      transition: border-color 0.3s;
     }
     .table-wrap table {
       width: 100%;
@@ -368,372 +340,205 @@
     }
     .table-wrap table th,
     .table-wrap table td {
-      padding: 8px 10px;
+      padding: 8px 12px;
       text-align: left;
       border-bottom: 1px solid var(--border-light);
       color: var(--text-secondary);
       white-space: nowrap;
     }
+    .table-wrap table tr:hover td { background: var(--accent-soft); }
     .table-wrap table th {
-      background: var(--accent-soft);
+      background: var(--bg-section);
       color: var(--accent);
       font-weight: 600;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      font-family: var(--font-mono);
     }
-    .table-wrap table td strong {
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-    .table-wrap table tr:last-child td {
-      border-bottom: none;
-    }
+    .table-wrap table td strong { color: var(--text-primary); font-weight: 600; }
 
-    /* ============================================================
-       10. 角色条目
-    ============================================================ */
+    /* ===== 角色条目 ===== */
     .character-item {
-      padding: 10px 0 10px 14px;
+      padding: 10px 0 10px 16px;
       border-left: 3px solid var(--accent);
       margin-bottom: 10px;
-      background: transparent;
+      transition: background var(--transition), padding-left var(--transition);
+      border-radius: 0 4px 4px 0;
+    }
+    .character-item:hover {
+      background: var(--accent-soft);
+      padding-left: 20px;
     }
     .character-item h4 {
       font-size: 0.95rem;
+      font-weight: 600;
       color: var(--accent);
       margin-bottom: 2px;
-      font-weight: 600;
     }
-    .character-item p {
-      font-size: 0.93rem;
-      line-height: 1.8;
-      color: var(--text-secondary);
-      margin: 0;
-    }
+    .character-item h4 .sym { font-weight: 400; opacity: 0.4; }
+    .character-item p { font-size: 0.93rem; color: var(--text-secondary); }
 
-    /* ============================================================
-       11. 底部
-    ============================================================ */
-    #footer {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 18px 24px 24px 24px;
+    /* ===== 底部 ===== */
+    .page-footer {
+      margin-top: 20px;
+      padding-top: 16px;
       border-top: 1px solid var(--border-light);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      transition: border-color 0.3s;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      font-size: 0.7rem;
+      color: var(--text-muted-light);
+      text-align: center;
+      font-family: var(--font-mono);
+      letter-spacing: 1.5px;
     }
-    #footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    #footer a:hover { text-decoration: underline; }
-    .footer-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+    .page-footer .sym { color: var(--accent); opacity: 0.3; }
 
-    /* ============================================================
-       12. 字号控制 —— 渐进式放大/缩小（5档）
-    ============================================================ */
-    body {
-      --font-size-base: 16px;
-    }
-    body.font-sm {
-      --font-size-base: 15px;
-    }
-    body.font-md {
-      --font-size-base: 16px;
-    }
-    body.font-lg {
-      --font-size-base: 17px;
-    }
-    body.font-xl {
-      --font-size-base: 18px;
-    }
-    body.font-2xl {
-      --font-size-base: 19px;
-    }
+    /* ===== 字号控制 ===== */
+    body.font-sm { font-size: 15px; }
+    body.font-md { font-size: 17px; }
+    body.font-lg { font-size: 19px; }
 
-    body {
-      font-size: var(--font-size-base);
-    }
-
-    body .accordion-content p,
-    body .accordion-content li,
-    body .character-item p {
-      font-size: calc(var(--font-size-base) * 0.95);
-    }
-    body .accordion-content blockquote {
-      font-size: calc(var(--font-size-base) * 0.93);
-    }
-    body .accordion-content blockquote em,
-    body .accordion-content blockquote i {
-      font-size: calc(var(--font-size-base) * 0.93);
-    }
-    body .table-wrap table {
-      font-size: calc(var(--font-size-base) * 0.88);
-    }
-    body .triad-item p {
-      font-size: calc(var(--font-size-base) * 0.92);
-    }
-    body .section-title {
-      font-size: calc(var(--font-size-base) * 1.35);
-    }
-    body summary {
-      font-size: calc(var(--font-size-base) * 1.0);
-    }
-    body #page-header h1 {
-      font-size: calc(var(--font-size-base) * 1.8);
-    }
-
-    /* ============================================================
-       13. 手机端
-    ============================================================ */
+    /* ===== 手机端 ===== */
     @media (max-width: 768px) {
-      #nav {
-        padding: 14px 16px 8px 16px;
-      }
-      #nav .nav-left { gap: 14px; }
-      #nav .nav-title { font-size: 1rem; }
-      #nav .nav-links a { font-size: 0.85rem; }
-
-      .font-control button {
-        padding: 2px 8px;
-        font-size: 0.75rem;
-      }
-      .font-control .size-display {
-        min-width: 26px;
-        font-size: 0.7rem;
-      }
-
-      #page-header {
-        padding: 20px 16px 14px 16px;
-      }
-      #page-header h1 {
-        font-size: calc(var(--font-size-base) * 1.4);
-      }
-      #page-header .sub {
-        font-size: calc(var(--font-size-base) * 0.9);
-      }
-
-      #content {
-        padding: 4px 14px 30px 14px;
-      }
-
-      .triad {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .triad-item {
-        padding: 12px 14px;
-      }
-      .triad-item h3 {
-        font-size: calc(var(--font-size-base) * 1.0);
-      }
-      .triad-item p {
-        font-size: calc(var(--font-size-base) * 0.9);
-      }
-
-      .section-title {
-        font-size: calc(var(--font-size-base) * 1.15);
-        padding: 10px 0 6px 12px;
-      }
-      .section-title::before {
-        top: 10px;
-        bottom: 6px;
-      }
-
-      summary {
-        font-size: calc(var(--font-size-base) * 0.92);
-        padding: 12px 14px 12px 36px;
-      }
-      summary::before {
-        left: 12px;
-        font-size: 0.9rem;
-      }
-
-      .accordion-content {
-        padding: 0 12px 2px 12px;
-      }
-      details[open] .accordion-content {
-        padding: 2px 12px 14px 12px;
-      }
-      .accordion-content p,
-      .accordion-content li {
-        font-size: calc(var(--font-size-base) * 0.9);
-      }
-      .accordion-content blockquote {
-        font-size: calc(var(--font-size-base) * 0.9);
-        padding: 4px 12px;
-      }
-      .accordion-content blockquote em,
-      .accordion-content blockquote i {
-        font-size: calc(var(--font-size-base) * 0.9);
-      }
-
-      .table-wrap {
-        margin: 8px 0 12px 0;
-        border-radius: 4px;
-      }
-      .table-wrap table {
-        font-size: calc(var(--font-size-base) * 0.78);
-        min-width: 400px;
-      }
+      body { padding: 0 12px 30px 12px; font-size: 16px; }
+      .float-group { top: 12px; right: 12px; gap: 5px; }
+      .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
+      .font-control button { padding: 2px 8px; font-size: 0.65rem; }
+      .font-control .size-display { min-width: 20px; font-size: 0.55rem; }
+      #app { padding: 16px 0 10px 0; }
+      .page-header h1 { font-size: 1.4rem; }
+      .page-header .sub { font-size: 0.85rem; }
+      .triad { grid-template-columns: 1fr; gap: 12px; }
+      .triad-item { padding: 12px 14px; }
+      .triad-item h3 { font-size: 1rem; }
+      .triad-item p { font-size: 0.9rem; }
+      .section-title { font-size: 1.15rem; }
+      summary { padding: 12px 14px 12px 16px; }
+      details { border-width: 1px; }
+      summary .click-hint { font-size: 0.65rem; }
+      .accordion-content { padding: 0 12px 2px 12px; }
+      details[open] .accordion-content { padding: 2px 12px 14px 12px; }
+      .accordion-content p { font-size: 0.9rem; }
+      .accordion-content li { font-size: 0.88rem; }
+      .accordion-content blockquote { font-size: 0.9rem; padding: 4px 12px; }
+      .table-wrap table { font-size: 0.78rem; min-width: 380px; }
       .table-wrap table th,
-      .table-wrap table td {
-        padding: 5px 6px;
-      }
-
-      .character-item {
-        padding: 8px 0 8px 10px;
-        margin-bottom: 6px;
-      }
-      .character-item h4 {
-        font-size: calc(var(--font-size-base) * 0.9);
-      }
-      .character-item p {
-        font-size: calc(var(--font-size-base) * 0.88);
-      }
-
-      #footer {
-        padding: 14px 16px 18px 16px;
-        font-size: calc(var(--font-size-base) * 0.8);
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-      }
+      .table-wrap table td { padding: 5px 8px; }
+      .character-item { padding: 8px 0 8px 12px; }
+      .character-item:hover { padding-left: 14px; }
+      .character-item h4 { font-size: 0.9rem; }
+      .character-item p { font-size: 0.88rem; }
+      .page-footer { font-size: 0.65rem; }
     }
 
     @media (max-width: 480px) {
-      #page-header h1 {
-        font-size: calc(var(--font-size-base) * 1.2);
-      }
-      .section-title {
-        font-size: calc(var(--font-size-base) * 1.0);
-      }
-      summary {
-        font-size: calc(var(--font-size-base) * 0.88);
-        padding: 10px 12px 10px 32px;
-      }
-      summary::before { left: 10px; }
-      .accordion-content p,
-      .accordion-content li {
-        font-size: calc(var(--font-size-base) * 0.87);
-      }
-      .accordion-content blockquote {
-        font-size: calc(var(--font-size-base) * 0.87);
-      }
-      .accordion-content blockquote em,
-      .accordion-content blockquote i {
-        font-size: calc(var(--font-size-base) * 0.87);
-      }
-      .table-wrap table {
-        font-size: calc(var(--font-size-base) * 0.7);
-        min-width: 320px;
-      }
+      body { padding: 0 8px 24px 8px; font-size: 15px; }
+      .float-group { top: 8px; right: 8px; gap: 4px; }
+      .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
+      .float-btn .icon { font-size: 0.7rem; }
+      .font-control button { padding: 2px 6px; font-size: 0.6rem; }
+      .font-control .size-display { min-width: 18px; font-size: 0.5rem; }
+      #app { padding: 12px 0 8px 0; }
+      .page-header h1 { font-size: 1.2rem; }
+      .page-header .sub { font-size: 0.78rem; }
+      .section-title { font-size: 1rem; }
+      summary { font-size: 0.88rem; padding: 10px 12px 10px 14px; }
+      summary .click-hint { font-size: 0.6rem; }
+      .accordion-content p { font-size: 0.87rem; }
+      .accordion-content li { font-size: 0.85rem; }
+      .accordion-content blockquote { font-size: 0.87rem; }
+      .table-wrap table { font-size: 0.7rem; min-width: 300px; }
       .table-wrap table th,
-      .table-wrap table td {
-        padding: 4px 4px;
-      }
-      #footer { padding: 12px 12px 16px 12px; }
+      .table-wrap table td { padding: 4px 6px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ====== 阅读进度条 ====== -->
   <div id="reading-progress"></div>
 
-  <!-- ====== 顶部导航 ====== -->
-  <nav id="nav">
-    <div class="nav-left">
-      <span class="nav-title">墨境 · <span>地府</span></span>
-      <div class="nav-links">
-        <a href="/-/">首页</a>
-      </div>
-    </div>
+  <!-- ===== 右上角 ===== -->
+  <div class="float-group">
+    <a class="float-btn" href="/-/"><span class="icon">←</span> 返回</a>
+    <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
     <div class="font-control">
-      <button onclick="changeSize(-1)" title="缩小字号">A−</button>
+      <button onclick="changeSize(-1)">A−</button>
       <span class="size-display" id="sizeDisplay">中</span>
-      <button onclick="changeSize(1)" title="放大字号">A+</button>
+      <button onclick="changeSize(1)">A+</button>
     </div>
-  </nav>
+  </div>
 
-  <!-- ====== 页头 ====== -->
-  <header id="page-header">
-    <h1>我在地府打工那些年</h1>
-    <p class="sub">天庭书写命途，地府执行轮回，人间承受结果</p>
-  </header>
+  <!-- ===== 主内容 ===== -->
+  <div id="app">
 
-  <!-- ====== 主内容 ====== -->
-  <div id="content">
+    <div class="page-header">
+      <h1>我在地府打工<span class="accent">那些年</span></h1>
+      <p class="sub"><span class="sym">◈</span> 天庭书写命途，地府执行轮回，人间承受结果</p>
+    </div>
 
-    <a href="../" class="back-link">← 返回设定集首页</a>
-
-    <!-- 一、三界架构 -->
+    <!-- ===== 一、三界架构 ===== -->
     <div class="section">
-      <h2 class="section-title">一、三界架构</h2>
-      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:16px;">世界由三层构成，彼此之间有屏障相隔，但并非完全隔绝。</p>
+      <h2 class="section-title"><span class="sym">❖</span> 一、三界架构</h2>
+      <p class="section-desc">世界由三层构成，彼此之间有屏障相隔，但并非完全隔绝。</p>
       <div class="triad">
         <div class="triad-item">
-          <h3>天庭</h3>
+          <h3><span class="sym">✧</span> 天庭</h3>
           <p>位于最上层，是神祇居所。天庭不直接干预人间事务，但通过天命君书写的"命簿"掌控万物命途。天庭的规则至高无上，但并非不可触犯——触犯者会遭剥离神格、贬为凡人或沦为伪神。</p>
         </div>
         <div class="triad-item">
-          <h3>人间</h3>
+          <h3><span class="sym">✦</span> 人间</h3>
           <p>位于中层，凡人生息之地。王朝更迭、战乱兴衰，皆在天命君的因果之内。人间有修行者、散修、以及少量知晓地府存在的组织（如"浑天鉴"），但绝大多数凡人一生都活在幻象与遗忘之中。</p>
         </div>
         <div class="triad-item">
-          <h3>地府</h3>
+          <h3><span class="sym">◈</span> 地府</h3>
           <p>位于最下层，魂魄归处。十殿阎罗执掌轮回审判，归终殿则负责清理游离于规则之外的亡魂。地府有日夜之分，但那只是阴气驱动的假象，用以安抚滞留的魂魄与阴差。</p>
         </div>
       </div>
     </div>
 
-    <!-- 二、天庭 -->
+    <!-- ===== 二、天庭 ===== -->
     <div class="section">
-      <h2 class="section-title">二、天庭</h2>
-      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:14px;">天庭并不以"人"的形态频繁介入三界，其存在更像一张看不见的网。真正构成天庭意志的，是四位执掌不同权柄的天神。</p>
+      <h2 class="section-title"><span class="sym">✦</span> 二、天庭</h2>
+      <p class="section-desc">天庭并不以"人"的形态频繁介入三界，其存在更像一张看不见的网。真正构成天庭意志的，是四位执掌不同权柄的天神。</p>
 
       <details>
-        <summary>四君</summary>
+        <summary>
+          四君
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
-          <h4>天命君 · 司衡</h4>
+          <h4><span class="sym">✧</span> 天命君 · 司衡</h4>
           <p>执掌命途本身。万物之生、死、聚、散，皆由他书写于命簿。他不是"定命者"，而是"命"本身。他几乎不表露情绪，也不干预因果——除非因果本身已偏离天道秩序。他曾以秦雨令的身份下凡，修正商烈末年的历史走向，之后便回归天庭。楚迟是他剥离出的一缕神魂，用于赎罪。</p>
-          <h4>司缘君 · 契缘</h4>
+          <h4><span class="sym">✧</span> 司缘君 · 契缘</h4>
           <p>执掌情缘纠葛。万灵之间的"缘"与"劫"由她编织。她在两百年前剜出半格神格，造出伪神顾执，替她下凡挡情劫，因此触犯天规，被剥去神格贬为凡人，档案也由地府销毁。</p>
-          <h4>司命君 · 未名</h4>
+          <h4><span class="sym">✧</span> 司命君 · 未名</h4>
           <p>执掌万灵寿数、命簿编录。凡人的阳寿何时尽、何时转世，皆由他落笔。但与天命君不同，他只记录、不书写——命途本身不由他决定。</p>
-          <h4>司序君 · 未名</h4>
+          <h4><span class="sym">✧</span> 司序君 · 未名</h4>
           <p>执掌三界秩序、因果链条。若某一界出现结构性崩塌（如青丘覆灭后怨气横流），他便出手"修补"而非"干预"。楚迟被镇压于锁龙井、以魂力修复青丘地脉，便是由他下的指令。</p>
-          <blockquote><em>四君各有分工，但真正的"最高权柄"并不明确——天庭更像一个运转中的系统，各司其职，不设"天帝"。</em></blockquote>
+          <blockquote>四君各有分工，但真正的"最高权柄"并不明确——天庭更像一个运转中的系统，各司其职，不设"天帝"。</blockquote>
         </div>
       </details>
 
       <details>
-        <summary>伪神</summary>
+        <summary>
+          伪神
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>天庭偶尔会剥离神格碎片，投入凡间，形成"伪神"。伪神拥有神的一缕神魂与部分权能，但本质上是消耗品——用于挡劫、赎罪、修补秩序。顾执（为契缘挡情劫）、楚迟（为司衡赎青丘之罪）皆属此类。伪神死后，若无完整魂魄，便不能入轮回。</p>
         </div>
       </details>
     </div>
 
-    <!-- 三、地府 -->
+    <!-- ===== 三、地府 ===== -->
     <div class="section">
-      <h2 class="section-title">三、地府</h2>
-      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:14px;">地府是魂魄的归处，也是三界中最具"人情味"的地方——阎王们虽威严，却会为是否出手救援人间而争吵；归终殿的引渡人在刀尖上行走，却也懂得偷懒、喝酒、爱人。</p>
+      <h2 class="section-title"><span class="sym">◈</span> 三、地府</h2>
+      <p class="section-desc">地府是魂魄的归处，也是三界中最具"人情味"的地方——阎王们虽威严，却会为是否出手救援人间而争吵；归终殿的引渡人在刀尖上行走，却也懂得偷懒、喝酒、爱人。</p>
 
       <details>
-        <summary>十殿阎罗</summary>
+        <summary>
+          十殿阎罗
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>十殿阎罗各司其职，执掌轮回、审判、刑罚、文书等事务。故事中出现的主要是：</p>
           <ul>
@@ -746,7 +551,10 @@
       </details>
 
       <details>
-        <summary>归终殿</summary>
+        <summary>
+          归终殿
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>最初只是六殿下设的"临时收容所"，用于处理阴差不便插手的滞留亡魂。引渡人非人非鬼，拥有实体却能调动阴气法力，可自由穿梭阴阳——这种"中间态"使他们既不沾凡人因果，又不完全受天道束缚。</p>
           <p>京城决战后，归终殿被正式列为地府第十殿，与阎罗十殿同列。昔日的"临时工部门"一跃成为地府最具活力的机构，弟子扩至数百人，开设讲武堂、符修院、枪阁等分系。</p>
@@ -754,37 +562,43 @@
       </details>
 
       <details>
-        <summary>归终殿十席（重置后）</summary>
+        <summary>
+          归终殿十席（重置后）
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <div class="character-item">
-            <h4>罗修（首席）</h4>
+            <h4><span class="sym">✦</span> 罗修（首席）</h4>
             <p>本命武器为墨色魂焰，归终殿最强战力。刀法刚猛，术法邪异，曾为鬼修，被阎王下令禁用魂术后才转修引渡之道。看似不羁冷漠，实则对"重要的人"极为护短。与魏元璟成亲后，稳坐首席之位。</p>
           </div>
           <div class="character-item">
-            <h4>林淮（第二席）</h4>
+            <h4><span class="sym">✦</span> 林淮（第二席）</h4>
             <p>本命武器为银枪，归终殿公认最强体术者。前世为秦墨予的影卫，等待两百年后与栾方棋重逢。成亲后与栾方棋共享浮生树之力。</p>
           </div>
           <div class="character-item">
-            <h4>程木栖（第三席）</h4>
+            <h4><span class="sym">✦</span> 程木栖（第三席）</h4>
             <p>全能型引渡人，本命武器为古琴。琴音可探察万物、镇压怨魂、指挥全局。京城决战后双手重伤，退居二线开设"栖梧阁"医馆。</p>
           </div>
           <div class="character-item">
-            <h4>栾方棋（第四席）</h4>
+            <h4><span class="sym">✦</span> 栾方棋（第四席）</h4>
             <p>本命武器为浮生花，归终殿首席符修。魂魄与灵枢轮回木母体融为一体，可召唤浮生树根、修复地脉。转世后从末席一路升至第四席，为人温润，是魏元璟少有的朋友之一。</p>
           </div>
           <div class="character-item">
-            <h4>魏元璟（第五席）</h4>
+            <h4><span class="sym">✦</span> 魏元璟（第五席）</h4>
             <p>苍珩末代皇帝，死于京城决战，魂魄融合顾执命格重生。从"念安"到魏元璟，性格骄矜但内核敏感。擅长近战刀法，与罗修成亲后成为体能课教习。</p>
           </div>
           <div class="character-item">
-            <h4>蔡可（第九席）</h4>
+            <h4><span class="sym">✦</span> 蔡可（第九席）</h4>
             <p>以铁弓为武器，擅长远程狙射。京城决战后双臂重创，退役随程木栖开设医馆。</p>
           </div>
         </div>
       </details>
 
       <details>
-        <summary>地府其他重要地点</summary>
+        <summary>
+          地府其他重要地点
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <ul>
             <li><strong>轮回井</strong>：连接人间与地府的通道，凡人与阴差皆可通行。</li>
@@ -798,53 +612,71 @@
       </details>
     </div>
 
-    <!-- 四、人间 -->
+    <!-- ===== 四、人间 ===== -->
     <div class="section">
-      <h2 class="section-title">四、人间</h2>
-      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:14px;">人间是故事中变动最大的舞台，朝代更替、战乱与太平皆因天庭与地府的博弈而波动。</p>
+      <h2 class="section-title"><span class="sym">✧</span> 四、人间</h2>
+      <p class="section-desc">人间是故事中变动最大的舞台，朝代更替、战乱与太平皆因天庭与地府的博弈而波动。</p>
 
       <details>
-        <summary>苍珩王朝</summary>
+        <summary>
+          苍珩王朝
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>商烈灭国后由大庆建国，历时两百余年，最终亡于京城决战（白禾川引发的时空错乱导致魏元璟战死、王朝覆灭）。魏元璟是其末代皇帝。</p>
         </div>
       </details>
 
       <details>
-        <summary>浑天鉴</summary>
+        <summary>
+          浑天鉴
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>由司礼监（被罗修救过的一名太监）创立，是人间地下接应引渡人的组织，各地皆有暗哨，皇宫内的魏元璟也曾是其成员。</p>
         </div>
       </details>
 
       <details>
-        <summary>浮生一粟</summary>
+        <summary>
+          浮生一粟
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>京城一处宅院，门口种有浮生树。先后为楚迟、秦墨予、李锦书（人偶师）所居。京城决战中毁于战火。</p>
         </div>
       </details>
 
       <details>
-        <summary>锁龙井 / 青丘遗址</summary>
+        <summary>
+          锁龙井 / 青丘遗址
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>青州地底，曾被天庭镇压的狐族故地。楚迟在此燃尽魂力修复地脉，浮生树母体由此与栾方棋魂魄融合。</p>
         </div>
       </details>
     </div>
 
-    <!-- 五、核心器物与概念 -->
+    <!-- ===== 五、核心器物 ===== -->
     <div class="section">
-      <h2 class="section-title">五、核心器物与概念</h2>
+      <h2 class="section-title"><span class="sym">❖</span> 五、核心器物与概念</h2>
 
       <details>
-        <summary>浮生树 / 灵枢轮回木</summary>
+        <summary>
+          浮生树 / 灵枢轮回木
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>可承载记忆、赋予生命、连通地脉的神树。最初由楚迟的血而生，后在天庭归入"神器"之列。栾方棋魂魄与浮生树母体融合后，世间浮生树皆自他血中生长。</p>
         </div>
       </details>
 
       <details>
-        <summary>五大神器</summary>
+        <summary>
+          五大神器
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <div class="table-wrap">
             <table>
@@ -860,43 +692,43 @@
       </details>
 
       <details>
-        <summary>浮生花</summary>
+        <summary>
+          浮生花
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>浮生树之花，开于枝头。秦墨予曾以此花与林淮结下共生契，使其等待两百年。栾方棋转世后，浮生花融入其魂魄，成为本命武器。</p>
         </div>
       </details>
 
       <details>
-        <summary>浮生之契</summary>
+        <summary>
+          浮生之契
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>魂树相融的契约。一荣俱荣，一损俱损。栾方棋在京城决战中将此契加于林淮，共享一半生命。</p>
         </div>
       </details>
     </div>
 
-    <!-- 六、时间与因果 -->
+    <!-- ===== 六、时间与因果 ===== -->
     <div class="section">
-      <h2 class="section-title">六、时间与因果</h2>
+      <h2 class="section-title"><span class="sym">◈</span> 六、时间与因果</h2>
       <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:12px;">天庭书写命途，地府执行轮回，人间承受结果。但"因果"并非不可扭转——观花卷可以拓印历史，浮生树可以扭曲命运，伪神可以被创造来替神挡劫。然而每一次逆写天道，都需要付出代价。</p>
       <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:12px;">白禾川试图用五大神器重建青丘，是在强行覆盖现实。栾方棋以浮生树母体撕裂天幕，是在以神器的力量对抗神器。而最终，天命君司衡的出现——并非为了"救"任何人，只是为了确认：因果是否已被修正。</p>
       <p style="font-size:0.95rem;color:var(--text-secondary);">地府与天庭的区别在于：天庭只在意"秩序"，地府却在意"每一个灵魂"。这正是归终殿存在的意义——那些命簿上没有名字的人，那些被因果遗漏的魂魄，都有人愿意为他们走一趟阴阳路。</p>
     </div>
 
+    <div class="page-footer">
+      <span class="sym">✦</span> 淮子生生 · 用文字构筑世界 <span class="sym">✦</span>
+    </div>
+
   </div>
 
-  <!-- ====== 底部 ====== -->
-  <footer id="footer">
-    <div class="footer-left">
-      <span>©2026 淮子生生</span>
-      <span style="opacity:0.3;">·</span>
-      <span>用文字构筑世界</span>
-    </div>
-  </footer>
-
-  <!-- ============================================================
-       进度条 JS
-  ============================================================ -->
+  <!-- ===== JS ===== -->
   <script>
+    // 进度条
     (function() {
       const bar = document.getElementById('reading-progress');
       let ticking = false;
@@ -906,8 +738,7 @@
         requestAnimationFrame(() => {
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
           const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-          bar.style.width = Math.min(progress, 100) + '%';
+          bar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
           ticking = false;
         });
       }
@@ -915,87 +746,77 @@
       window.addEventListener('resize', update, { passive: true });
       update();
     })();
-  </script>
 
-  <!-- ============================================================
-       字号控制 JS —— 渐进式放大/缩小（5档）
-  ============================================================ -->
-  <script>
-    var sizeLevels = ['sm', 'md', 'lg', 'xl', '2xl'];
-    var sizeLabels = ['小', '中', '大', '更大', '最大'];
-    var currentLevel = 1;
-
+    // 字号
+    var sizeLevels = ['sm', 'md', 'lg'], sizeLabels = ['小', '中', '大'], currentLevel = 1;
     function changeSize(delta) {
-      var next = currentLevel + delta;
-      if (next < 0) next = 0;
-      if (next >= sizeLevels.length) next = sizeLevels.length - 1;
+      var next = Math.max(0, Math.min(currentLevel + delta, sizeLevels.length - 1));
       if (next === currentLevel) return;
-
-      sizeLevels.forEach(function(s) {
-        document.body.classList.remove('font-' + s);
-      });
-
+      sizeLevels.forEach(function(s) { document.body.classList.remove('font-' + s); });
       currentLevel = next;
       document.body.classList.add('font-' + sizeLevels[currentLevel]);
       document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
-
       try { localStorage.setItem('worldFontSize', String(currentLevel)); } catch(e) {}
     }
-
     var saved = localStorage.getItem('worldFontSize');
     if (saved !== null) {
       var n = parseInt(saved);
       if (!isNaN(n) && n >= 0 && n < sizeLevels.length) {
         currentLevel = n;
-        if (currentLevel !== 1) {
-          document.body.classList.add('font-' + sizeLevels[currentLevel]);
-        }
+        if (currentLevel !== 1) document.body.classList.add('font-' + sizeLevels[currentLevel]);
         document.getElementById('sizeDisplay').textContent = sizeLabels[currentLevel];
       }
     }
-  </script>
 
-  <!-- ============================================================
-       夜间模式同步 —— 跟随 Butterfly 主题
-  ============================================================ -->
-  <script>
+    // 主题切换
     (function() {
-      var html = document.documentElement;
-
-      function applyTheme() {
-        var attr = html.getAttribute('data-theme');
-        if (!attr) {
-          try {
-            var raw = localStorage.getItem('theme');
-            if (raw) {
-              var parsed = JSON.parse(raw);
-              if (parsed && parsed.value) attr = parsed.value;
-            }
-          } catch(e) {}
+      try {
+        var raw = localStorage.getItem('theme');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+          else document.documentElement.removeAttribute('data-theme');
         }
-        if (attr === 'dark') {
-          html.setAttribute('data-theme', 'dark');
-        } else {
-          html.removeAttribute('data-theme');
-        }
-      }
-
-      applyTheme();
-
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'theme') {
-          applyTheme();
-        }
-      });
-
-      var observer = new MutationObserver(function() {
-        applyTheme();
-      });
-      observer.observe(html, {
-        attributes: true,
-        attributeFilter: ['data-theme']
-      });
+      } catch(e) {}
     })();
+
+    function toggleTheme() {
+      var html = document.documentElement;
+      var isDark = html.getAttribute('data-theme') === 'dark';
+      var newTheme = isDark ? 'light' : 'dark';
+      if (newTheme === 'dark') html.setAttribute('data-theme', 'dark');
+      else html.removeAttribute('data-theme');
+      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      var btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = newTheme === 'dark' ? '<span class="icon">☀️</span> 日间' : '<span class="icon">🌙</span> 夜间';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark'
+          ? '<span class="icon">☀️</span> 日间'
+          : '<span class="icon">🌙</span> 夜间';
+      }
+    });
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme') {
+        try {
+          var parsed = JSON.parse(e.newValue);
+          if (parsed && parsed.value === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+          else document.documentElement.removeAttribute('data-theme');
+          var btn = document.getElementById('themeBtn');
+          if (btn) {
+            btn.innerHTML = parsed && parsed.value === 'dark'
+              ? '<span class="icon">☀️</span> 日间'
+              : '<span class="icon">🌙</span> 夜间';
+          }
+        } catch(e) {}
+      }
+    });
   </script>
 
 </body>

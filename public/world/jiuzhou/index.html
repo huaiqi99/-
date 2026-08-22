@@ -7,205 +7,376 @@
   <style>
     :root {
       --bg-body: #ffffff;
-      --bg-section: #faf8f6;
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --border-light: #ece6de;
-      --accent: #b03a2a;
-      --accent-soft: rgba(176, 58, 42, 0.06);
+      --bg-section: #f8f5f0;
+      --bg-hover: rgba(138, 58, 42, 0.04);
+      --border-light: #e8e0d5;
+      --border-card: #d5c8b8;
+      --text-primary: #1a1410;
+      --text-secondary: #2c241e;
+      --text-muted: #5a4d42;
+      --text-muted-light: #8a7a6a;
+      --accent: #8a3a2a;
+      --accent-soft: rgba(138, 58, 42, 0.05);
+      --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+      --font-mono: "Courier New", "Source Code Pro", monospace;
+      --transition: 0.2s ease;
     }
+
     [data-theme="dark"] {
-      --bg-body: #1a1816;
-      --bg-section: #24201c;
-      --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --border-light: #35302a;
+      --bg-body: #24201c;
+      --bg-section: #2d2824;
+      --border-light: #3d3732;
+      --border-card: #4a443e;
+      --text-primary: #d8d0c8;
+      --text-secondary: #b8aea4;
+      --text-muted: #8a8078;
+      --text-muted-light: #6a6560;
       --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.1);
+      --accent-soft: rgba(176, 90, 74, 0.06);
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-family: var(--font-serif);
       background: var(--bg-body);
       color: var(--text-primary);
-      font-size: 16px;
+      font-size: 17px;
       line-height: 1.8;
-      transition: background 0.3s, color 0.3s;
+      transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
+      padding: 0 16px 40px 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
+
     #reading-progress {
-      position: fixed; top:0; left:0;
-      width:0%; height:3px;
+      position: fixed;
+      top: 0; left: 0;
+      width: 0%; height: 3px;
       background: var(--accent);
-      z-index:9999;
-      transition: width 0.08s ease;
+      z-index: 9999;
     }
-    #nav {
-      max-width:960px; margin:0 auto;
-      padding:18px 24px 10px 24px;
-      display:flex; align-items:center; justify-content:space-between;
-      flex-wrap:wrap; gap:12px;
-      border-bottom:1px solid var(--border-light);
+
+    /* ===== 右上角悬浮组 ===== */
+    .float-group {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
     }
-    #nav .nav-title { font-size:1.1rem; font-weight:500; letter-spacing:0.5px; }
-    #nav .nav-title span { color:var(--accent); }
+    .float-group:hover { opacity: 1; }
+
+    .float-btn {
+      background: var(--bg-section);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 5px 12px 5px 10px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-decoration: none;
+    }
+    .float-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .float-btn .icon { font-size: 0.8rem; }
+
     .font-control {
-      display:flex; align-items:center; gap:4px;
-      background:var(--bg-section);
-      border-radius:20px; padding:2px 8px;
-      border:1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--bg-section);
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 1px 4px;
     }
     .font-control button {
-      padding:4px 10px; border-radius:14px; border:none;
-      background:transparent; color:var(--text-muted);
-      font-size:0.85rem; cursor:pointer;
-      transition:all 0.2s; font-family:inherit; font-weight:500;
+      padding: 3px 10px;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-mono);
+      font-weight: 500;
     }
-    .font-control button:hover { background:var(--accent); color:#fff; }
+    .font-control button:hover { background: var(--accent); color: #fff; }
     .font-control .size-display {
-      font-size:0.75rem; color:var(--text-muted);
-      min-width:32px; text-align:center;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      min-width: 24px;
+      text-align: center;
+      font-family: var(--font-mono);
     }
-    #page-header {
-      max-width:960px; margin:0 auto;
-      padding:32px 24px 16px 24px; text-align:center;
+
+    #app {
+      max-width: 840px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 24px 4px 20px 4px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
-    #page-header h1 { font-size:1.8rem; font-weight:600; letter-spacing:1px; }
-    #page-header .sub { font-size:1rem; color:var(--text-muted); margin-top:4px; }
-    #content {
-      max-width:960px; margin:0 auto;
-      padding:8px 24px 40px 24px;
+
+    /* ===== 头部 ===== */
+    .page-header {
+      padding: 0 0 16px 0;
+      border-bottom: 1.5px solid var(--border-light);
     }
+    .page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+    }
+    .page-header h1 .accent { color: var(--accent); font-weight: 400; }
+    .page-header .sub {
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-muted-light);
+    }
+    .page-header .sub .sym { color: var(--accent); opacity: 0.4; }
+
+    /* ===== 章节 ===== */
+    .section { margin-bottom: 32px; }
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      padding: 10px 0 8px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title .sym { color: var(--accent); font-size: 1.1rem; opacity: 0.5; }
+    .section-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    /* ===== 三界卡片 ===== */
     .triad {
-      display:grid; grid-template-columns:repeat(3,1fr);
-      gap:16px; margin:16px 0 8px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 6px 0 4px 0;
     }
     .triad-item {
-      padding:16px 18px;
-      border:1px solid var(--border-light);
-      border-radius:8px;
-      background:var(--bg-section);
+      padding: 16px 18px;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      background: var(--bg-section);
+      transition: border-color var(--transition);
     }
-    .triad-item h3 { font-size:1.05rem; color:var(--accent); margin-bottom:6px; font-weight:600; text-align:center; }
-    .triad-item p { font-size:0.92rem; line-height:1.8; color:var(--text-secondary); margin:0; }
-    @media (max-width:768px) { .triad { grid-template-columns:1fr; gap:12px; } }
+    .triad-item:hover { border-color: var(--accent); }
+    .triad-item h3 {
+      font-size: 1.05rem;
+      color: var(--accent);
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .triad-item h3 .sym { font-weight: 400; opacity: 0.4; }
+    .triad-item p { font-size: 0.92rem; color: var(--text-secondary); }
 
-    .section { margin-bottom:40px; }
-    .section-title {
-      font-size:1.35rem; font-weight:600;
-      padding:12px 0 8px 16px;
-      margin-bottom:14px;
-      border-bottom:1px solid var(--border-light);
-      position:relative;
-    }
-    .section-title::before {
-      content:''; position:absolute; left:0; top:12px; bottom:8px;
-      width:4px; background:var(--accent); border-radius:2px;
-    }
+    /* ===== 折叠面板 ===== */
     details {
-      margin-bottom:4px;
-      border-bottom:1px solid var(--border-light);
-      background:var(--bg-section);
-      border-radius:6px; overflow:hidden;
+      margin-bottom: 6px;
+      border-radius: 6px;
+      border: 1px solid var(--border-light);
+      transition: border-color var(--transition);
     }
-    details:last-child { border-bottom:none; }
+    details:hover { border-color: var(--border-card); }
+
     summary {
-      padding:14px 18px 14px 42px;
-      font-size:1rem; font-weight:500;
-      cursor:pointer; list-style:none;
-      position:relative; user-select:none;
-      border-radius:6px;
-      transition:background 0.2s;
+      padding: 14px 18px 14px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+      cursor: pointer;
+      list-style: none;
+      position: relative;
+      user-select: none;
+      transition: all var(--transition);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    summary:hover { background:var(--accent-soft); }
+    summary:hover { background: var(--accent-soft); }
+
+    /* 左侧装饰竖线 */
     summary::before {
-      content:'▸'; position:absolute; left:16px; top:50%;
-      transform:translateY(-50%);
-      font-size:1rem; color:var(--accent);
-      transition:transform 0.35s ease;
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      opacity: 0.3;
+      transition: opacity var(--transition), top var(--transition), bottom var(--transition);
     }
-    details[open] summary { border-bottom:1px solid var(--border-light); }
-    details[open] summary::before { transform:translateY(-50%) rotate(90deg); }
+    details:hover summary::before { opacity: 0.6; }
+    details[open] summary::before { opacity: 0.8; top: 15%; bottom: 15%; }
+
+    /* 右侧点击提示 */
+    summary .click-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted-light);
+      opacity: 0.4;
+      transition: all var(--transition);
+      font-weight: 400;
+      font-family: var(--font-serif);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    details:hover summary .click-hint { opacity: 0.7; color: var(--accent); }
+    details[open] summary .click-hint { opacity: 0.2; }
+
     .accordion-content {
-      padding:0 18px 4px 18px;
-      max-height:0; overflow:hidden; opacity:0;
-      transition:max-height 0.45s ease, opacity 0.35s ease, padding 0.3s ease;
+      padding: 0 18px 2px 18px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
     }
     details[open] .accordion-content {
-      max-height:8000px; opacity:1;
-      padding:4px 18px 18px 18px;
+      max-height: 8000px;
+      opacity: 1;
+      padding: 4px 18px 18px 18px;
+      border-top: 1px solid var(--border-light);
     }
     .accordion-content p {
-      font-size:0.95rem; line-height:1.9;
-      color:var(--text-secondary); margin-bottom:12px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
     }
-    .accordion-content p:last-child { margin-bottom:0; }
+    .accordion-content p:last-child { margin-bottom: 0; }
     .accordion-content h4 {
-      font-size:0.95rem; font-weight:600; color:var(--accent);
-      margin:18px 0 4px 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 16px 0 4px 0;
     }
-    .accordion-content h4:first-child { margin-top:0; }
-    .accordion-content ul {
-      padding-left:22px; margin:6px 0 12px 0;
-    }
-    .accordion-content li {
-      font-size:0.93rem; line-height:1.9;
-      color:var(--text-secondary); margin-bottom:2px;
-    }
+    .accordion-content h4:first-child { margin-top: 0; }
+    .accordion-content h4 .sym { font-weight: 400; opacity: 0.4; }
+    .accordion-content ul { padding-left: 22px; margin: 6px 0 12px 0; }
+    .accordion-content li { font-size: 0.93rem; color: var(--text-secondary); margin-bottom: 2px; }
+
+    /* ===== 角色条目 ===== */
     .character-item {
-      padding:10px 0 10px 14px;
-      border-left:3px solid var(--accent);
-      margin-bottom:10px;
+      padding: 10px 0 10px 16px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 10px;
+      transition: background var(--transition), padding-left var(--transition);
+      border-radius: 0 4px 4px 0;
     }
-    .character-item h4 { font-size:0.95rem; color:var(--accent); margin-bottom:2px; font-weight:600; }
-    .character-item p { font-size:0.93rem; line-height:1.8; color:var(--text-secondary); margin:0; }
-    #footer {
-      max-width:960px; margin:0 auto;
-      padding:18px 24px 24px 24px;
-      border-top:1px solid var(--border-light);
-      display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
-      font-size:0.85rem; color:var(--text-muted);
+    .character-item:hover {
+      background: var(--accent-soft);
+      padding-left: 20px;
+    }
+    .character-item h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+    .character-item h4 .sym { font-weight: 400; opacity: 0.4; }
+    .character-item p {
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+      margin: 0;
     }
 
-    body { --font-size-base:16px; }
-    body.font-sm { --font-size-base:15px; }
-    body.font-md { --font-size-base:16px; }
-    body.font-lg { --font-size-base:17px; }
-    body.font-xl { --font-size-base:18px; }
-    body.font-2xl { --font-size-base:19px; }
-    body { font-size:var(--font-size-base); }
-    body .accordion-content p,
-    body .accordion-content li,
-    body .character-item p { font-size:calc(var(--font-size-base) * 0.95); }
-    body .triad-item p { font-size:calc(var(--font-size-base) * 0.92); }
-    body .section-title { font-size:calc(var(--font-size-base) * 1.35); }
-    body summary { font-size:calc(var(--font-size-base) * 1.0); }
-    body #page-header h1 { font-size:calc(var(--font-size-base) * 1.8); }
-
-    @media (max-width:768px) {
-      #nav { padding:14px 16px 8px 16px; }
-      #page-header { padding:20px 16px 12px 16px; }
-      #page-header h1 { font-size:calc(var(--font-size-base) * 1.4); }
-      #page-header .sub { font-size:calc(var(--font-size-base) * 0.9); }
-      #content { padding:4px 14px 30px 14px; }
-      .section-title { font-size:calc(var(--font-size-base) * 1.15); padding:10px 0 6px 12px; }
-      .section-title::before { top:10px; bottom:6px; }
-      summary { font-size:calc(var(--font-size-base) * 0.92); padding:12px 14px 12px 36px; }
-      summary::before { left:12px; }
-      details[open] .accordion-content { padding:2px 12px 14px 12px; }
-      .accordion-content p,
-      .accordion-content li { font-size:calc(var(--font-size-base) * 0.9); }
-      .character-item { padding:8px 0 8px 10px; }
-      #footer { padding:14px 16px 18px 16px; flex-direction:column; align-items:flex-start; gap:6px; }
+    /* ===== 底部 ===== */
+    .page-footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+      font-size: 0.7rem;
+      color: var(--text-muted-light);
+      text-align: center;
+      font-family: var(--font-mono);
+      letter-spacing: 1.5px;
     }
-    @media (max-width:480px) {
-      #page-header h1 { font-size:calc(var(--font-size-base) * 1.2); }
-      .section-title { font-size:calc(var(--font-size-base) * 1.0); }
-      summary { font-size:calc(var(--font-size-base) * 0.88); padding:10px 12px 10px 32px; }
-      summary::before { left:10px; }
+    .page-footer .sym { color: var(--accent); opacity: 0.3; }
+
+    /* ===== 字号控制 ===== */
+    body.font-sm { font-size: 15px; }
+    body.font-md { font-size: 17px; }
+    body.font-lg { font-size: 19px; }
+
+    /* ===== 手机端 ===== */
+    @media (max-width: 768px) {
+      body { padding: 0 12px 30px 12px; font-size: 16px; }
+      .float-group { top: 12px; right: 12px; gap: 5px; }
+      .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
+      .font-control button { padding: 2px 8px; font-size: 0.65rem; }
+      .font-control .size-display { min-width: 20px; font-size: 0.55rem; }
+      #app { padding: 16px 0 10px 0; }
+      .page-header h1 { font-size: 1.4rem; }
+      .page-header .sub { font-size: 0.85rem; }
+      .triad { grid-template-columns: 1fr; gap: 12px; }
+      .triad-item { padding: 12px 14px; }
+      .triad-item h3 { font-size: 1rem; }
+      .triad-item p { font-size: 0.9rem; }
+      .section-title { font-size: 1.15rem; }
+      summary { padding: 12px 14px 12px 16px; }
+      summary .click-hint { font-size: 0.65rem; }
+      .accordion-content { padding: 0 12px 2px 12px; }
+      details[open] .accordion-content { padding: 2px 12px 14px 12px; }
+      .accordion-content p { font-size: 0.9rem; }
+      .accordion-content li { font-size: 0.88rem; }
+      .character-item { padding: 8px 0 8px 12px; }
+      .character-item:hover { padding-left: 14px; }
+      .character-item h4 { font-size: 0.9rem; }
+      .character-item p { font-size: 0.88rem; }
+      .page-footer { font-size: 0.65rem; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0 8px 24px 8px; font-size: 15px; }
+      .float-group { top: 8px; right: 8px; gap: 4px; }
+      .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
+      .float-btn .icon { font-size: 0.7rem; }
+      .font-control button { padding: 2px 6px; font-size: 0.6rem; }
+      .font-control .size-display { min-width: 18px; font-size: 0.5rem; }
+      #app { padding: 12px 0 8px 0; }
+      .page-header h1 { font-size: 1.2rem; }
+      .page-header .sub { font-size: 0.78rem; }
+      .section-title { font-size: 1rem; }
+      summary { font-size: 0.88rem; padding: 10px 12px 10px 14px; }
+      summary .click-hint { font-size: 0.6rem; }
+      .accordion-content p { font-size: 0.87rem; }
+      .accordion-content li { font-size: 0.85rem; }
     }
   </style>
 </head>
@@ -213,37 +384,54 @@
 
   <div id="reading-progress"></div>
 
-  <nav id="nav">
-    <span class="nav-title">九州 · <span>风云录</span></span>
+  <!-- ===== 右上角 ===== -->
+  <div class="float-group">
+    <a class="float-btn" href="/-/"><span class="icon">←</span> 返回</a>
+    <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
     <div class="font-control">
       <button onclick="changeSize(-1)">A−</button>
       <span class="size-display" id="sizeDisplay">中</span>
       <button onclick="changeSize(1)">A+</button>
     </div>
-  </nav>
+  </div>
 
-  <header id="page-header">
-    <h1>九州风云录</h1>
-    <p class="sub">当美貌成了原罪，爱便是唯一的赦免。</p>
-  </header>
+  <!-- ===== 主内容 ===== -->
+  <div id="app">
 
-  <div id="content">
+    <div class="page-header">
+      <h1>九州<span class="accent">风云录</span></h1>
+      <p class="sub"><span class="sym">◈</span> 当美貌成了原罪，爱便是唯一的赦免。</p>
+    </div>
 
+    <!-- ===== 一、三界架构 ===== -->
     <div class="section">
-      <h2 class="section-title">一、三界架构</h2>
-      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:16px;">世界分三层，各有屏障，并非不可逾越。</p>
+      <h2 class="section-title"><span class="sym">❖</span> 一、三界架构</h2>
+      <p class="section-desc">世界分三层，各有屏障，并非不可逾越。</p>
       <div class="triad">
-        <div class="triad-item"><h3>天界</h3><p>众神居所，天宫执掌三界秩序。天河横贯，蟠桃园四季常青。权力倾轧、流言蜚语，与人间无异。</p></div>
-        <div class="triad-item"><h3>人间</h3><p>凡人世代生息之地。九州大地上祭祀不绝，凡人不知天宫之事，但春祈秋报从未断绝。</p></div>
-        <div class="triad-item"><h3>幽冥</h3><p>魂魄轮回之所。亡魂渡忘川、过奈何桥、入轮回井。与天宫井水不犯河水。</p></div>
+        <div class="triad-item">
+          <h3><span class="sym">✧</span> 天界</h3>
+          <p>众神居所，天宫执掌三界秩序。天河横贯，蟠桃园四季常青。权力倾轧、流言蜚语，与人间无异。</p>
+        </div>
+        <div class="triad-item">
+          <h3><span class="sym">✦</span> 人间</h3>
+          <p>凡人世代生息之地。九州大地上祭祀不绝，凡人不知天宫之事，但春祈秋报从未断绝。</p>
+        </div>
+        <div class="triad-item">
+          <h3><span class="sym">◈</span> 幽冥</h3>
+          <p>魂魄轮回之所。亡魂渡忘川、过奈何桥、入轮回井。与天宫井水不犯河水。</p>
+        </div>
       </div>
     </div>
 
+    <!-- ===== 二、天宫与神权 ===== -->
     <div class="section">
-      <h2 class="section-title">二、天宫与神权</h2>
+      <h2 class="section-title"><span class="sym">✦</span> 二、天宫与神权</h2>
 
       <details>
-        <summary>主神与职司</summary>
+        <summary>
+          主神与职司
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>天宫以<strong>主神</strong>为尊，下设各司。神职分文武——文职司礼乐文书，武职司征战镇守。</p>
           <ul>
@@ -256,16 +444,22 @@
       </details>
 
       <details>
-        <summary>乐游神 · 沈见川</summary>
+        <summary>
+          乐游神 · 沈见川
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
-          <p>司掌人间祭祀、歌舞与春日宴饮。职责看似风光，实则游离于权力核心之外——礼乐神不需要武力，只需要“好看”和“会跳舞”。</p>
-          <p>祭服须十二重云锦、九旒冠冕，祭典时需“阴阳合德，天人交感”，扮成雌雄莫辨的模样。春祭当日不食烟火，干坐一整天。</p>
-          <p>因相貌出众、职衔清闲，常被暗讽“靠关系上位”。一千年前曾在祭典后被高阶神官性侵，从此灵力衰退、常年失眠。</p>
+          <p>司掌人间祭祀、歌舞与春日宴饮。职责看似风光，实则游离于权力核心之外——礼乐神不需要武力，只需要"好看"和"会跳舞"。</p>
+          <p>祭服须十二重云锦、九旒冠冕，祭典时需"阴阳合德，天人交感"，扮成雌雄莫辨的模样。春祭当日不食烟火，干坐一整天。</p>
+          <p>因相貌出众、职衔清闲，常被暗讽"靠关系上位"。一千年前曾在祭典后被高阶神官性侵，从此灵力衰退、常年失眠。</p>
         </div>
       </details>
 
       <details>
-        <summary>主神 · 李渊</summary>
+        <summary>
+          主神 · 李渊
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>天宫第三任主神，从人间游历飞升，执政三千年。年少时在河滩捡到弃婴沈见川，将其养大成人。</p>
           <p>性情沉稳威严，对三界事务了如指掌，但在某些事上始终保持沉默——比如那只木镯的真正用途。</p>
@@ -273,18 +467,33 @@
       </details>
     </div>
 
+    <!-- ===== 三、核心人物 ===== -->
     <div class="section">
-      <h2 class="section-title">三、核心人物</h2>
-      <div class="character-item"><h4>沈见川（乐游神）</h4><p>生得极好看，也因此招致觊觎与侵害。灵力衰退、常年失眠，腕上戴着李渊所赠的木镯，已有千年。</p></div>
-      <div class="character-item"><h4>李汐</h4><p>李渊与方冉之女，继承水系仙根。从小由沈见川带大，性格刚烈果决。十五岁表白，十八岁将其占有。</p></div>
-      <div class="character-item"><h4>方冉（沧溟神女）</h4><p>水脉之主，李渊之妻。性情外柔内刚，是天宫公认的“天后”典范。</p></div>
+      <h2 class="section-title"><span class="sym">❖</span> 三、核心人物</h2>
+
+      <div class="character-item">
+        <h4><span class="sym">✦</span> 沈见川（乐游神）</h4>
+        <p>生得极好看，也因此招致觊觎与侵害。灵力衰退、常年失眠，腕上戴着李渊所赠的木镯，已有千年。</p>
+      </div>
+      <div class="character-item">
+        <h4><span class="sym">✦</span> 李汐</h4>
+        <p>李渊与方冉之女，继承水系仙根。从小由沈见川带大，性格刚烈果决。十五岁表白，十八岁将其占有。</p>
+      </div>
+      <div class="character-item">
+        <h4><span class="sym">✦</span> 方冉（沧溟神女）</h4>
+        <p>水脉之主，李渊之妻。性情外柔内刚，是天宫公认的"天后"典范。</p>
+      </div>
     </div>
 
+    <!-- ===== 四、关键器物与谜团 ===== -->
     <div class="section">
-      <h2 class="section-title">四、关键器物与谜团</h2>
+      <h2 class="section-title"><span class="sym">◈</span> 四、关键器物与谜团</h2>
 
       <details>
-        <summary>木镯</summary>
+        <summary>
+          木镯
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>李渊千年前所赠，形制朴素，戴在沈见川腕上从未取下。李汐发现它会悄然吸收灵力。</p>
           <p><strong>谜团</strong>：压制灵力？保护监测？还是某种控制？李渊从不解释。</p>
@@ -292,7 +501,10 @@
       </details>
 
       <details>
-        <summary>安神茶</summary>
+        <summary>
+          安神茶
+          <span class="click-hint"><span class="hint-icon">✦</span> 点击展开</span>
+        </summary>
         <div class="accordion-content">
           <p>李汐为沈见川所制，饮后可安睡整夜，但长期饮用产生依赖，停用后失眠加重。</p>
           <p><strong>谜团</strong>：是否含有微量灵力或镇静成分？</p>
@@ -300,27 +512,30 @@
       </details>
     </div>
 
+    <!-- ===== 五、时间与因果 ===== -->
     <div class="section">
-      <h2 class="section-title">五、时间与因果</h2>
+      <h2 class="section-title"><span class="sym">✧</span> 五、时间与因果</h2>
       <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:12px;">天宫以千年为刻度。沈见川活了三千年——前两千年少年意气，后一千年沉入黑暗。时间没有治愈他，只是让伤口结了一层薄痂。</p>
       <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:8px;"><strong>关键节点</strong>：三千年前被李渊捡回 · 一千年前遭遇侵害 · 十八年前李汐出生 · 十五年前开始带李汐 · 故事开场于李汐十八岁生辰前夜。</p>
     </div>
 
+    <!-- ===== 六、核心矛盾 ===== -->
     <div class="section">
-      <h2 class="section-title">六、核心矛盾</h2>
+      <h2 class="section-title"><span class="sym">❖</span> 六、核心矛盾</h2>
       <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:8px;">乐游神的漂亮是一种诅咒——被觊觎、被议论、被侵害。</p>
       <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:8px;">李汐的爱强势而偏执，却也是唯一愿意教他变强、愿意接纳他全部腐烂的人。</p>
       <p style="font-size:0.95rem;color:var(--text-secondary);">救赎不是被改造成另一个人，而是在暗室中终于被看见。</p>
     </div>
 
+    <div class="page-footer">
+      <span class="sym">✦</span> 九州风云录 · 用文字构筑世界 <span class="sym">✦</span>
+    </div>
+
   </div>
 
-  <footer id="footer">
-    <span>©2026 九州风云录 · 世界观</span>
-    <span>用文字构筑世界</span>
-  </footer>
-
+  <!-- ===== JS ===== -->
   <script>
+    // 进度条
     (function() {
       const bar = document.getElementById('reading-progress');
       let ticking = false;
@@ -330,8 +545,7 @@
         requestAnimationFrame(() => {
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
           const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-          bar.style.width = Math.min(progress, 100) + '%';
+          bar.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
           ticking = false;
         });
       }
@@ -340,14 +554,10 @@
       update();
     })();
 
-    var sizeLevels = ['sm','md','lg','xl','2xl'];
-    var sizeLabels = ['小','中','大','更大','最大'];
-    var currentLevel = 1;
-
+    // 字号
+    var sizeLevels = ['sm', 'md', 'lg'], sizeLabels = ['小', '中', '大'], currentLevel = 1;
     function changeSize(delta) {
-      var next = currentLevel + delta;
-      if (next < 0) next = 0;
-      if (next >= sizeLevels.length) next = sizeLevels.length - 1;
+      var next = Math.max(0, Math.min(currentLevel + delta, sizeLevels.length - 1));
       if (next === currentLevel) return;
       sizeLevels.forEach(function(s) { document.body.classList.remove('font-' + s); });
       currentLevel = next;
@@ -365,24 +575,55 @@
       }
     }
 
+    // 主题切换
     (function() {
-      var html = document.documentElement;
-      function applyTheme() {
-        var attr = html.getAttribute('data-theme');
-        if (!attr) {
-          try {
-            var raw = localStorage.getItem('theme');
-            if (raw) { var parsed = JSON.parse(raw); if (parsed && parsed.value) attr = parsed.value; }
-          } catch(e) {}
+      try {
+        var raw = localStorage.getItem('theme');
+        if (raw) {
+          var parsed = JSON.parse(raw);
+          if (parsed && parsed.value === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+          else document.documentElement.removeAttribute('data-theme');
         }
-        if (attr === 'dark') html.setAttribute('data-theme', 'dark');
-        else html.removeAttribute('data-theme');
-      }
-      applyTheme();
-      window.addEventListener('storage', function(e) { if (e.key === 'theme') applyTheme(); });
-      var observer = new MutationObserver(function() { applyTheme(); });
-      observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+      } catch(e) {}
     })();
+
+    function toggleTheme() {
+      var html = document.documentElement;
+      var isDark = html.getAttribute('data-theme') === 'dark';
+      var newTheme = isDark ? 'light' : 'dark';
+      if (newTheme === 'dark') html.setAttribute('data-theme', 'dark');
+      else html.removeAttribute('data-theme');
+      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      var btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = newTheme === 'dark' ? '<span class="icon">☀️</span> 日间' : '<span class="icon">🌙</span> 夜间';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('themeBtn');
+      if (btn) {
+        btn.innerHTML = document.documentElement.getAttribute('data-theme') === 'dark'
+          ? '<span class="icon">☀️</span> 日间'
+          : '<span class="icon">🌙</span> 夜间';
+      }
+    });
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme') {
+        try {
+          var parsed = JSON.parse(e.newValue);
+          if (parsed && parsed.value === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+          else document.documentElement.removeAttribute('data-theme');
+          var btn = document.getElementById('themeBtn');
+          if (btn) {
+            btn.innerHTML = parsed && parsed.value === 'dark'
+              ? '<span class="icon">☀️</span> 日间'
+              : '<span class="icon">🌙</span> 夜间';
+          }
+        } catch(e) {}
+      }
+    });
   </script>
 
 </body>
