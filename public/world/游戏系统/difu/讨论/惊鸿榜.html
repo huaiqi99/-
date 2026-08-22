@@ -18,7 +18,7 @@
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --radius: 12px;
             --radius-sm: 6px;
-            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            --font: "Georgia", "Times New Roman", "Songti SC", serif;
             --transition: 0.25s ease;
             --accent: #b03a2a;
             --accent-soft: rgba(176, 58, 42, 0.06);
@@ -461,10 +461,10 @@
 
         /* ===== 响应式 ===== */
         @media (max-width: 600px) {
-            body { padding: 0 10px; }
+            body { padding: 0 10px; font-size: 16px; }
             #app { padding: 16px 0 30px 0; }
             .thread { padding: 14px 14px; }
-            .floor .body { font-size: 0.88rem; }
+            .floor .body { font-size: 0.95rem; }
             .float-group {
                 top: 12px;
                 right: 12px;
@@ -505,6 +505,7 @@
             .scene-desc { padding-left: 40px; font-size: 0.78rem; }
         }
         @media (max-width: 420px) {
+            body { font-size: 15px; } 
             .poll-item .label {
                 width: 40px;
                 font-size: 0.65rem;
@@ -704,21 +705,21 @@
                     共收得投笺四千二百八十六笺。<br><br>
                     <table class="poll-table">
                         <tr><th class="rank">名次</th><th>姓名</th><th>票数</th></tr>
-                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>1023</td></tr>
-                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>765</td></tr>
-                        <tr><td class="rank">3</td><td class="name-cell">栾方棋（第五席）</td><td>681</td></tr>
-                        <tr><td class="rank">4</td><td class="name-cell">程木栖（栖梧馆）</td><td>613</td></tr>
-                        <tr><td class="rank">5</td><td class="name-cell">罗修（首席）</td><td>544</td></tr>
-                        <tr><td class="rank">—</td><td class="name-cell">其余五位大人</td><td>660</td></tr>
+                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>823</td></tr>
+                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>526</td></tr>
+                        <tr><td class="rank">3</td><td class="name-cell">栾方棋（第五席）</td><td>412</td></tr>
+                        <tr><td class="rank">4</td><td class="name-cell">程木栖（栖梧馆）</td><td>385</td></tr>
+                        <tr><td class="rank">5</td><td class="name-cell">罗修（首席）</td><td>341</td></tr>
+                        <tr><td class="rank">—</td><td class="name-cell">其余五位大人</td><td>290</td></tr>
                     </table>
 
                     <div class="poll-bar">
-                        <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:23.9%;"></div></div><span class="pct">23.9%</span></div>
-                        <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:17.9%;"></div></div><span class="pct">17.9%</span></div>
-                        <div class="poll-item"><span class="label">栾方棋</span><div class="track"><div class="fill luan" style="width:15.9%;"></div></div><span class="pct">15.9%</span></div>
-                        <div class="poll-item"><span class="label">程木栖</span><div class="track"><div class="fill cheng" style="width:14.3%;"></div></div><span class="pct">14.3%</span></div>
-                        <div class="poll-item"><span class="label">罗修</span><div class="track"><div class="fill luo" style="width:12.7%;"></div></div><span class="pct">12.7%</span></div>
-                        <div class="poll-item"><span class="label">其余</span><div class="track"><div class="fill other" style="width:15.3%;"></div></div><span class="pct">15.3%</span></div>
+                        <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:23.5%;"></div></div><span class="pct">23.5%</span></div>
+                        <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:15.0%;"></div></div><span class="pct">15.0%</span></div>
+                        <div class="poll-item"><span class="label">栾方棋</span><div class="track"><div class="fill luan" style="width:11.8%;"></div></div><span class="pct">11.8%</span></div>
+                        <div class="poll-item"><span class="label">程木栖</span><div class="track"><div class="fill cheng" style="width:11.0%;"></div></div><span class="pct">11.0%</span></div>
+                        <div class="poll-item"><span class="label">罗修</span><div class="track"><div class="fill luo" style="width:9.7%;"></div></div><span class="pct">9.7%</span></div>
+                        <div class="poll-item"><span class="label">其余</span><div class="track"><div class="fill other" style="width:8.3%;"></div></div><span class="pct">8.3%</span></div>
                     </div>
                     <div class="poll-note">—— 第一回最终 · 魂力凝影 ——</div>
                     <br>
@@ -811,21 +812,21 @@
                     共收得投笺四千六百五十二笺。<br><br>
                     <table class="poll-table">
                         <tr><th class="rank">名次</th><th>姓名</th><th>票数</th></tr>
-                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>1102</td></tr>
-                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>735</td></tr>
-                        <tr><td class="rank">3</td><td class="name-cell">栾方棋（第五席）</td><td>656</td></tr>
-                        <tr><td class="rank">4</td><td class="name-cell">程木栖（栖梧馆）</td><td>572</td></tr>
-                        <tr><td class="rank">5</td><td class="name-cell">罗修（首席）</td><td>516</td></tr>
-                        <tr><td class="rank">—</td><td class="name-cell">其余五位大人</td><td>671</td></tr>
+                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>1056</td></tr>
+                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>738</td></tr>
+                        <tr><td class="rank">3</td><td class="name-cell">栾方棋（第五席）</td><td>632</td></tr>
+                        <tr><td class="rank">4</td><td class="name-cell">程木栖（栖梧馆）</td><td>558</td></tr>
+                        <tr><td class="rank">5</td><td class="name-cell">罗修（首席）</td><td>504</td></tr>
+                        <tr><td class="rank">—</td><td class="name-cell">其余五位大人</td><td>430</td></tr>
                     </table>
 
                     <div class="poll-bar">
-                        <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:23.7%;"></div></div><span class="pct">23.7%</span></div>
-                        <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:15.8%;"></div></div><span class="pct">15.8%</span></div>
-                        <div class="poll-item"><span class="label">栾方棋</span><div class="track"><div class="fill luan" style="width:14.1%;"></div></div><span class="pct">14.1%</span></div>
-                        <div class="poll-item"><span class="label">程木栖</span><div class="track"><div class="fill cheng" style="width:12.3%;"></div></div><span class="pct">12.3%</span></div>
-                        <div class="poll-item"><span class="label">罗修</span><div class="track"><div class="fill luo" style="width:11.1%;"></div></div><span class="pct">11.1%</span></div>
-                        <div class="poll-item"><span class="label">其余</span><div class="track"><div class="fill other" style="width:14.4%;"></div></div><span class="pct">14.4%</span></div>
+                        <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:24.6%;"></div></div><span class="pct">24.6%</span></div>
+                        <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:17.2%;"></div></div><span class="pct">17.2%</span></div>
+                        <div class="poll-item"><span class="label">栾方棋</span><div class="track"><div class="fill luan" style="width:14.4%;"></div></div><span class="pct">14.4%</span></div>
+                        <div class="poll-item"><span class="label">程木栖</span><div class="track"><div class="fill cheng" style="width:13.0%;"></div></div><span class="pct">13.0%</span></div>
+                        <div class="poll-item"><span class="label">罗修</span><div class="track"><div class="fill luo" style="width:11.7%;"></div></div><span class="pct">11.7%</span></div>
+                        <div class="poll-item"><span class="label">其余</span><div class="track"><div class="fill other" style="width:10.0%;"></div></div><span class="pct">10.0%</span></div>
                     </div>
                     <div class="poll-note">—— 第二回最终 · 魂力凝影 ——</div>
                     <br>
@@ -1080,21 +1081,21 @@
                     共收得投笺四千八百六十笺。<br><br>
                     <table class="poll-table">
                         <tr><th class="rank">名次</th><th>姓名</th><th>票数</th></tr>
-                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>1166</td></tr>
-                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>921</td></tr>
-                        <tr><td class="rank">3</td><td class="name-cell">程木栖（栖梧馆）</td><td>738</td></tr>
-                        <tr><td class="rank">4</td><td class="name-cell">罗修（首席）</td><td>627</td></tr>
-                        <tr><td class="rank">5</td><td class="name-cell">栾方棋（第五席）</td><td>598</td></tr>
-                        <tr><td class="rank">—</td><td class="name-cell">其余五位大人</td><td>810</td></tr>
+                        <tr><td class="rank">1</td><td class="name-cell">林淮（第二席）</td><td>1320</td></tr>
+                        <tr><td class="rank">2</td><td class="name-cell">魏元璟（第十席）</td><td>1010</td></tr>
+                        <tr><td class="rank">3</td><td class="name-cell">程木栖（栖梧馆）</td><td>780</td></tr>
+                        <tr><td class="rank">4</td><td class="name-cell">罗修（首席）</td><td>705</td></tr>
+                        <tr><td class="rank">5</td><td class="name-cell">栾方棋（第五席）</td><td>690</td></tr>
+                        <tr><td class="rank">—</td><td class="name-cell">其余五位大人</td><td>480</td></tr>
                     </table>
 
                     <div class="poll-bar">
-                        <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:24.0%;"></div></div><span class="pct">24.0%</span></div>
-                        <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:18.9%;"></div></div><span class="pct">18.9%</span></div>
-                        <div class="poll-item"><span class="label">程木栖</span><div class="track"><div class="fill cheng" style="width:15.2%;"></div></div><span class="pct">15.2%</span></div>
-                        <div class="poll-item"><span class="label">罗修</span><div class="track"><div class="fill luo" style="width:12.9%;"></div></div><span class="pct">12.9%</span></div>
-                        <div class="poll-item"><span class="label">栾方棋</span><div class="track"><div class="fill luan" style="width:12.3%;"></div></div><span class="pct">12.3%</span></div>
-                        <div class="poll-item"><span class="label">其余</span><div class="track"><div class="fill other" style="width:16.7%;"></div></div><span class="pct">16.7%</span></div>
+                        <div class="poll-item"><span class="label">林淮</span><div class="track"><div class="fill huai" style="width:24.4%;"></div></div><span class="pct">24.4%</span></div>
+                        <div class="poll-item"><span class="label">魏元璟</span><div class="track"><div class="fill jing" style="width:18.7%;"></div></div><span class="pct">18.7%</span></div>
+                        <div class="poll-item"><span class="label">程木栖</span><div class="track"><div class="fill cheng" style="width:14.4%;"></div></div><span class="pct">14.4%</span></div>
+                        <div class="poll-item"><span class="label">罗修</span><div class="track"><div class="fill luo" style="width:13.1%;"></div></div><span class="pct">13.1%</span></div>
+                        <div class="poll-item"><span class="label">栾方棋</span><div class="track"><div class="fill luan" style="width:12.6%;"></div></div><span class="pct">12.6%</span></div>
+                        <div class="poll-item"><span class="label">其余</span><div class="track"><div class="fill other" style="width:8.9%;"></div></div><span class="pct">8.9%</span></div>
                     </div>
                     <div class="poll-note">—— 第三回最终 · 魂力凝影 ——</div>
                     <br>
