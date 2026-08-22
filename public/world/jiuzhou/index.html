@@ -212,6 +212,7 @@
     }
     details:hover { border-color: var(--border-card); }
 
+    /* ★ 折叠按钮：左对齐 + 右侧提示靠右 ★ */
     summary {
       padding: 14px 18px 14px 20px;
       font-size: 1rem;
@@ -226,7 +227,9 @@
       border-radius: 6px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;   /* 左对齐 */
+      gap: 8px;
+      text-align: left;
     }
     summary:hover { background: var(--accent-soft); }
 
@@ -246,7 +249,7 @@
     details:hover summary::before { opacity: 0.6; }
     details[open] summary::before { opacity: 0.8; top: 15%; bottom: 15%; }
 
-    /* 右侧点击提示 */
+    /* 右侧点击提示：推到最右 */
     summary .click-hint {
       font-size: 0.75rem;
       color: var(--text-muted-light);
@@ -257,6 +260,9 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      margin-left: auto;            /* 关键：推到右侧 */
     }
     details:hover summary .click-hint { opacity: 0.7; color: var(--accent); }
     details[open] summary .click-hint { opacity: 0.2; }
@@ -349,8 +355,22 @@
       .triad-item h3 { font-size: 1rem; }
       .triad-item p { font-size: 0.9rem; }
       .section-title { font-size: 1.15rem; }
-      summary { padding: 12px 14px 12px 16px; }
-      summary .click-hint { font-size: 0.65rem; }
+
+      /* ★ 手机端折叠按钮：左对齐 + 右侧提示靠右 ★ */
+      summary {
+        padding: 12px 14px 12px 16px;
+        font-size: 0.95rem;
+        justify-content: flex-start !important;
+        gap: 6px;
+        text-align: left !important;
+      }
+      summary .click-hint {
+        font-size: 0.65rem;
+        flex-shrink: 0;
+        white-space: nowrap;
+        margin-left: auto !important;
+      }
+
       .accordion-content { padding: 0 12px 2px 12px; }
       details[open] .accordion-content { padding: 2px 12px 14px 12px; }
       .accordion-content p { font-size: 0.9rem; }
@@ -383,8 +403,18 @@
       .page-header h1 { font-size: 1.2rem; }
       .page-header .sub { font-size: 0.78rem; }
       .section-title { font-size: 1rem; }
-      summary { font-size: 0.88rem; padding: 10px 12px 10px 14px; }
-      summary .click-hint { font-size: 0.6rem; }
+
+      summary {
+        font-size: 0.88rem;
+        padding: 10px 12px 10px 14px;
+        justify-content: flex-start !important;
+        text-align: left !important;
+      }
+      summary .click-hint {
+        font-size: 0.6rem;
+        margin-left: auto !important;
+      }
+
       .accordion-content p { font-size: 0.87rem; }
       .accordion-content li { font-size: 0.85rem; }
     }

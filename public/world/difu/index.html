@@ -214,7 +214,7 @@
       border-color: var(--border-card);
     }
 
-    /* ★ 折叠按钮：无背景色，靠装饰符号和边框识别 ★ */
+    /* ★ 折叠按钮：强制左对齐，右侧提示靠右 ★ */
     summary {
       padding: 14px 18px 14px 20px;
       font-size: 1rem;
@@ -229,7 +229,9 @@
       border-radius: 6px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;   /* 左对齐 */
+      gap: 8px;
+      text-align: left;
     }
     summary:hover {
       background: var(--accent-soft);
@@ -257,7 +259,7 @@
       bottom: 15%;
     }
 
-    /* 右侧装饰符号 ✦ —— 作为"可点击"的视觉暗示 */
+    /* 右侧装饰符号 ✦ —— 推至最右侧 */
     summary .click-hint {
       font-size: 0.75rem;
       color: var(--text-muted-light);
@@ -269,6 +271,9 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      margin-left: auto;            /* 关键：推到最右 */
     }
     details:hover summary .click-hint {
       opacity: 0.7;
@@ -278,7 +283,7 @@
       opacity: 0.2;
     }
 
-    /* 展开时左侧小三角提示 */
+    /* 展开时左侧小三角提示（可选） */
     details[open] summary .click-hint .hint-icon {
       display: inline-block;
       transform: rotate(90deg);
@@ -397,7 +402,9 @@
     body.font-md { font-size: 17px; }
     body.font-lg { font-size: 19px; }
 
-    /* ===== 手机端 ===== */
+    /* ============================================================
+       手机端
+    ============================================================ */
     @media (max-width: 768px) {
       body { padding: 0 12px 30px 12px; font-size: 16px; }
       .float-group { top: 12px; right: 12px; gap: 5px; }
@@ -412,9 +419,23 @@
       .triad-item h3 { font-size: 1rem; }
       .triad-item p { font-size: 0.9rem; }
       .section-title { font-size: 1.15rem; }
-      summary { padding: 12px 14px 12px 16px; }
+
+      /* ★ 手机端折叠按钮：强制左对齐 + 右侧提示靠右 ★ */
+      summary {
+        padding: 12px 14px 12px 16px;
+        font-size: 0.95rem;
+        justify-content: flex-start !important;
+        gap: 6px;
+        text-align: left !important;
+      }
+      summary .click-hint {
+        font-size: 0.65rem;
+        flex-shrink: 0;
+        white-space: nowrap;
+        margin-left: auto !important;
+      }
+
       details { border-width: 1px; }
-      summary .click-hint { font-size: 0.65rem; }
       .accordion-content { padding: 0 12px 2px 12px; }
       details[open] .accordion-content { padding: 2px 12px 14px 12px; }
       .accordion-content p { font-size: 0.9rem; }
@@ -428,6 +449,8 @@
       .character-item h4 { font-size: 0.9rem; }
       .character-item p { font-size: 0.88rem; }
       .page-footer { font-size: 0.65rem; }
+
+      /* 确保所有文本类元素左对齐（已有的） */
       #app .page-header h1,
       #app .page-header .sub,
       #app .section-title,
@@ -449,8 +472,18 @@
       .page-header h1 { font-size: 1.2rem; }
       .page-header .sub { font-size: 0.78rem; }
       .section-title { font-size: 1rem; }
-      summary { font-size: 0.88rem; padding: 10px 12px 10px 14px; }
-      summary .click-hint { font-size: 0.6rem; }
+
+      summary {
+        font-size: 0.88rem;
+        padding: 10px 12px 10px 14px;
+        justify-content: flex-start !important;
+        text-align: left !important;
+      }
+      summary .click-hint {
+        font-size: 0.6rem;
+        margin-left: auto !important;
+      }
+
       .accordion-content p { font-size: 0.87rem; }
       .accordion-content li { font-size: 0.85rem; }
       .accordion-content blockquote { font-size: 0.87rem; }
