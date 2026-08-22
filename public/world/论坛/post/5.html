@@ -10,49 +10,55 @@
       --bg-card: #ffffff;
       --bg-card-alt: #f2eee9;
       --border-light: #ece6de;
-      --border-card: #e4ddd4;
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --text-muted-light: #b0aaa2;
+      --border-card: #d5c8b8;
+      --text-primary: #1f1a16;
+      --text-secondary: #2c241e;
+      --text-muted: #5a4d42;
+      --text-muted-light: #8a7a6a;
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.06);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.03);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
       --radius: 12px;
       --radius-sm: 6px;
-      --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-      --transition: 0.25s ease;
+      --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+      --font-mono: "Courier New", "Source Code Pro", monospace;
+      --transition: 0.2s ease;
     }
     [data-theme="dark"] {
-      --bg-body: #181614;
-      --bg-card: #24201c;
-      --bg-card-alt: #1e1b18;
+      --bg-body: #1e1a16;
+      --bg-card: #2a2520;
+      --bg-card-alt: #24201c;
       --border-light: #35302a;
-      --border-card: #3a3530;
+      --border-card: #4a443e;
       --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --text-muted-light: #5a5550;
+      --text-secondary: #b8aea4;
+      --text-muted: #8a8078;
+      --text-muted-light: #6a6560;
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.08);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--font);
+      font-family: var(--font-serif);
       background: var(--bg-body);
       color: var(--text-primary);
+      font-size: 17px;
+      line-height: 1.7;
       transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0 16px;
+      padding: 0 16px 40px 16px;
     }
 
-    /* ===== 右上角悬浮组 ===== */
+    /* 强制2D符号 */
+    .sym-2d { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 400; font-style: normal; text-shadow: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
     .float-group {
       position: fixed;
       top: 20px;
@@ -69,10 +75,10 @@
       border-radius: 24px;
       padding: 6px 14px 6px 12px;
       font-size: 0.7rem;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       cursor: pointer;
       transition: all var(--transition);
-      font-family: inherit;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -80,21 +86,18 @@
       letter-spacing: 0.3px;
       text-decoration: none;
     }
-    .float-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .float-btn:hover { border-color: var(--accent); color: var(--accent); }
     .float-btn .icon { font-size: 0.9rem; }
 
     #app {
       max-width: 820px;
       margin: 0 auto;
       width: 100%;
-      padding: 20px 0 40px 0;
+      padding: 24px 4px 40px 4px;
       flex: 1;
     }
 
-    /* ===== 面包屑 ===== */
+    /* 面包屑 */
     .back-bar {
       display: flex;
       align-items: center;
@@ -103,19 +106,64 @@
       flex-wrap: wrap;
     }
     .back-bar .breadcrumb {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted-light);
+      opacity: 0.7;
+      font-family: var(--font-mono);
+      letter-spacing: 0.3px;
     }
     .back-bar .breadcrumb span {
       color: var(--text-secondary);
+      opacity: 1;
     }
+
+    /* ===== 标题卡片 ===== */
+    .title-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 22px 24px 18px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--accent);
+    }
+    .title-card .post-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+      line-height: 1.4;
+    }
+    .title-card .post-title .category {
+      font-size: 0.7rem;
+      font-weight: 400;
+      font-family: var(--font-mono);
+      color: var(--text-muted-light);
+      background: var(--bg-card-alt);
+      padding: 1px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      margin-right: 8px;
+      letter-spacing: 0.5px;
+    }
+    .title-card .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted-light);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .title-card .post-meta span { display: flex; align-items: center; gap: 4px; }
 
     /* ===== 楼层 ===== */
     .floor {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: var(--radius);
-      padding: 18px 20px;
+      padding: 16px 20px;
       margin-bottom: 10px;
       box-shadow: var(--shadow-sm);
     }
@@ -126,26 +174,40 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .floor .avatar {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: var(--bg-card-alt);
-      border: 2px solid var(--border-card);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 13px;
       font-weight: 600;
-      color: var(--text-secondary);
       flex-shrink: 0;
+      border: 2px solid var(--border-card);
+      background: var(--bg-card-alt);
+      color: var(--text-secondary);
+      font-family: var(--font-serif);
     }
-    .floor .avatar.accent {
+    .floor .avatar.lz-avatar {
+      background: #b03a2a;
+      color: #fff;
+      border-color: #b03a2a;
+    }
+    [data-theme="dark"] .floor .avatar.lz-avatar {
+      background: #b05a4a;
+      border-color: #b05a4a;
+    }
+    .floor .avatar.special {
       background: var(--accent-soft);
       color: var(--accent);
       border-color: var(--accent);
+    }
+    .floor .avatar .emoji-avatar {
+      font-size: 14px;
+      line-height: 1;
     }
     .floor .info {
       flex: 1;
@@ -153,30 +215,52 @@
     }
     .floor .info .name {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
     }
     .floor .info .name .badge {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 400;
+      font-family: var(--font-mono);
       background: var(--accent-soft);
       color: var(--accent);
       padding: 1px 8px;
       border-radius: 10px;
+      letter-spacing: 0.3px;
+    }
+    .floor .info .name .badge.lz-badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .floor .info .name .marker {
+      font-size: 0.5rem;
+      font-weight: 400;
+      font-family: var(--font-mono);
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 1px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
     }
     .floor .info .time {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted-light);
+      font-family: var(--font-mono);
     }
     .floor .floor-num {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted-light);
       font-weight: 400;
+      font-family: var(--font-mono);
       margin-left: auto;
       flex-shrink: 0;
+      opacity: 0.5;
     }
     .floor .body {
       font-size: 0.92rem;
@@ -198,16 +282,17 @@
       margin-top: 10px;
       display: flex;
       gap: 16px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted-light);
+      font-family: var(--font-mono);
     }
     .floor .actions button {
       background: transparent;
       border: none;
       color: var(--text-muted-light);
       cursor: pointer;
-      font-size: 0.75rem;
-      font-family: inherit;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       gap: 4px;
@@ -219,39 +304,52 @@
       color: var(--accent);
       background: var(--accent-soft);
     }
-    .marker {
-      display: inline-block;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.6rem;
-      padding: 0 8px;
-      border-radius: 10px;
-      font-weight: 500;
-      margin-left: 4px;
+
+    /* 后记 */
+    .epilogue {
+      margin-top: 24px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-card);
+      color: var(--text-muted-light);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .epilogue p { margin: 0; color: var(--text-muted-light); }
+    .epilogue p span { color: var(--text-secondary); font-style: normal; font-weight: 400; }
+    .epilogue .note {
+      margin: 4px 0 0 0;
+      color: var(--text-muted-light);
+      font-size: 0.75rem;
     }
 
-    /* ===== 响应式 ===== */
     @media (max-width: 600px) {
-      body { padding: 0 10px; }
+      body { padding: 0 10px 30px 10px; font-size: 16px; }
       #app { padding: 14px 0 30px 0; }
       .floor { padding: 14px 14px; }
-      .floor .body { font-size: 0.88rem; }
-      .back-bar { flex-wrap: wrap; }
-      .float-group {
-        top: 12px;
-        right: 12px;
-        gap: 6px;
-      }
-      .float-btn {
-        padding: 4px 10px 4px 8px;
-        font-size: 0.65rem;
-      }
+      .floor .body { font-size: 0.95rem; }
+      .back-bar .breadcrumb { font-size: 0.7rem; }
+      .title-card { padding: 16px 16px 14px 16px; }
+      .title-card .post-title { font-size: 1.1rem; }
+      .title-card .post-meta { font-size: 0.7rem; gap: 10px; }
+      .floor .info .name { font-size: 0.82rem; }
+      .floor .avatar { width: 30px; height: 30px; font-size: 11px; }
+      .float-group { top: 12px; right: 12px; gap: 6px; }
+      .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
+      .epilogue { font-size: 0.75rem; padding: 12px 14px; }
+    }
+    @media (max-width: 420px) {
+      body { padding: 0 6px 24px 6px; font-size: 15px; }
+      #app { padding: 10px 0 20px 0; }
+      .title-card .post-title { font-size: 0.98rem; }
+      .floor .body { font-size: 0.9rem; }
+      .floor { padding: 12px 12px; }
+      .float-group { top: 8px; right: 8px; gap: 4px; }
+      .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
+      .float-btn .icon { font-size: 0.7rem; }
     }
   </style>
   <script>
-    // ============================================================
-    //  主题切换（与怀榆.html 保持一致）
-    // ============================================================
     (function() {
       try {
         const raw = localStorage.getItem('theme');
@@ -296,28 +394,36 @@
 </head>
 <body>
 
-  <!-- ===== 右上角悬浮组 ===== -->
-  <div class="float-group">
-    <a class="float-btn" href="../index.html">
-      <span class="icon">←</span> 返回列表
-    </a>
-    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-      <span class="icon">🌙</span> 夜间
-    </button>
-  </div>
+<div class="float-group">
+  <a class="float-btn" href="../index.html"><span class="icon">←</span> 返回列表</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
+</div>
 
 <div id="app">
-  <!-- ===== 面包屑（仅保留位置信息） ===== -->
+
   <div class="back-bar">
     <span class="breadcrumb">北境茶馆 · <span>老婆不愿意怀孕怎么办</span></span>
   </div>
 
-  <!-- ========== 楼主 ========== -->
+  <!-- ===== 标题卡片 ===== -->
+  <div class="title-card">
+    <div class="post-title">
+      <span class="category">树洞</span>
+      老婆不愿意怀孕怎么办
+    </div>
+    <div class="post-meta">
+      <span>✧ 昭昭是我老婆 · 楼主</span>
+      <span>◈ 2025-12-28 02:34</span>
+      <span>✦ 6.8k 人看过</span>
+    </div>
+  </div>
+
+  <!-- ========== 1楼 · 楼主 ========== -->
   <div class="floor lz">
     <div class="head">
-      <div class="avatar accent">楼</div>
+      <div class="avatar lz-avatar">昭</div>
       <div class="info">
-        <div class="name">昭昭是我老婆 <span class="badge">楼主</span></div>
+        <div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div>
         <div class="time">2025-12-28 02:34</div>
       </div>
       <span class="floor-num">#1</span>
@@ -329,445 +435,712 @@
       我该怎么办？急，在线等。
     </div>
     <div class="actions">
-      <button>👍 1.2w</button>
-      <button>💬 回复</button>
-      <button>⭐ 收藏</button>
+      <button><span class="sym-2d">❤&#xFE0E;</span> 1.2w</button>
+      <button><span class="sym-2d">↩&#xFE0E;</span> 回复</button>
+      <button><span class="sym-2d">★&#xFE0E;</span> 收藏</button>
     </div>
   </div>
 
-  <!-- ========== 2：出主意 ========== -->
+  <!-- ========== 2 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 02:40</div></div><span class="floor-num">#2</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">半</div>
+      <div class="info"><div class="name">半杯奶茶</div><div class="time">2025-12-28 02:40</div></div>
+      <span class="floor-num">#2</span>
+    </div>
     <div class="body">楼主你别急，这种事急不来的。你不如先试试浪漫攻势？带他去你们第一次约会的地方转转，回忆一下甜蜜的过去，让他放松下来再谈。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 3 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 02:45</div></div><span class="floor-num">#3</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">深</div>
+      <div class="info"><div class="name">深夜放毒</div><div class="time">2025-12-28 02:45</div></div>
+      <span class="floor-num">#3</span>
+    </div>
     <div class="body">回楼主，有没有可能他只是还没准备好？你们结婚三年了，也不差这一时半会儿吧。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 4 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 02:50</div></div><span class="floor-num">#4</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">空</div>
+      <div class="info"><div class="name">空调外机</div><div class="time">2025-12-28 02:50</div></div>
+      <span class="floor-num">#4</span>
+    </div>
     <div class="body">好经典的说法，楼主你确定你老婆不是之前流过产？你查查他的过去啊，万一有旧爱呢？怕不是舍不得旧爱吧。</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 5：阿列克谢翻脸 ========== -->
+  <!-- ========== 5 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 02:52</div></div><span class="floor-num">#5</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 02:52</div></div>
+      <span class="floor-num">#5</span>
+    </div>
     <div class="body">从学生时代恋爱至今已相爱七年，绝无出轨可能！我不准你骂我老婆！</div>
-    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 6 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 02:55</div></div><span class="floor-num">#6</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">今</div>
+      <div class="info"><div class="name">今天也在熬夜</div><div class="time">2025-12-28 02:55</div></div>
+      <span class="floor-num">#6</span>
+    </div>
     <div class="body">……没人骂你老婆啊楼主你冷静一点。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 7 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:00</div></div><span class="floor-num">#7</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">白</div>
+      <div class="info"><div class="name">白日梦想家</div><div class="time">2025-12-28 03:00</div></div>
+      <span class="floor-num">#7</span>
+    </div>
     <div class="body">讲真，既然他不想去医院，你就别逼他。试试带他出去玩？旅个游什么的，换个环境心情好了自然就愿意聊了。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 8 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:10</div></div><span class="floor-num">#8</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">吃</div>
+      <div class="info"><div class="name">吃瓜群众</div><div class="time">2025-12-28 03:10</div></div>
+      <span class="floor-num">#8</span>
+    </div>
     <div class="body">楼主你试过直接和他说“你不想生也没关系”吗？有些人就是需要听到这句话才能真正放松。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 9 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:15</div></div><span class="floor-num">#9</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">睡</div>
+      <div class="info"><div class="name">睡不醒的猫</div><div class="time">2025-12-28 03:15</div></div>
+      <span class="floor-num">#9</span>
+    </div>
     <div class="body">楼上说得对，你先表态“不生也可以”，他可能就愿意跟你聊了。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 10 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:20</div></div><span class="floor-num">#10</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d8;color:#2a4a5a;">信</div>
+      <div class="info"><div class="name">信号满格</div><div class="time">2025-12-28 03:20</div></div>
+      <span class="floor-num">#10</span>
+    </div>
     <div class="body">楼主听我的，你晚上睡前抱着他说“不管你生不生，我都爱你”，然后看他什么反应。这招对Omega特别好使。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 11：阿列克谢反馈 ========== -->
+  <!-- ========== 11 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 03:25</div></div><span class="floor-num">#11</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 03:25</div></div>
+      <span class="floor-num">#11</span>
+    </div>
     <div class="body">试了。他说“嗯知道了”然后翻身睡了。</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 12 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:28</div></div><span class="floor-num">#12</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">哈</div>
+      <div class="info"><div class="name">哈哈怪</div><div class="time">2025-12-28 03:28</div></div>
+      <span class="floor-num">#12</span>
+    </div>
     <div class="body">哈哈哈哈哈哈哈哈哈哈楼主你老婆好淡定</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 13 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:30</div></div><span class="floor-num">#13</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">嘴</div>
+      <div class="info"><div class="name">嘴上不说</div><div class="time">2025-12-28 03:30</div></div>
+      <span class="floor-num">#13</span>
+    </div>
     <div class="body">“嗯知道了”然后翻身睡了……这反应太真实了，你老婆是那种嘴上不说心里有事的人吧。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 14：出馊主意 ========== -->
+  <!-- ========== 14 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户 <span class="marker">馊主意大师</span></div><div class="time">2025-12-28 03:35</div></div><span class="floor-num">#14</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">馊</div>
+      <div class="info"><div class="name">馊主意批发商 <span class="marker">馊主意大师</span></div><div class="time">2025-12-28 03:35</div></div>
+      <span class="floor-num">#14</span>
+    </div>
     <div class="body">楼主我教你一招——你假装自己生病了，说“万一我哪天不在了你一个人怎么办”，看他会不会心软松口。苦肉计永远是最好使的。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 15 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:38</div></div><span class="floor-num">#15</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">翻</div>
+      <div class="info"><div class="name">翻车预警</div><div class="time">2025-12-28 03:38</div></div>
+      <span class="floor-num">#15</span>
+    </div>
     <div class="body">楼上的馊主意大师你认真的？？这招用不好会翻车吧。</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 16 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 03:40</div></div><span class="floor-num">#16</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">试</div>
+      <div class="info"><div class="name">试试又不会死</div><div class="time">2025-12-28 03:40</div></div>
+      <span class="floor-num">#16</span>
+    </div>
     <div class="body">试试又不会死，万一有用呢？</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 17：阿列克谢反馈 ========== -->
+  <!-- ========== 17 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 04:00</div></div><span class="floor-num">#17</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 04:00</div></div>
+      <span class="floor-num">#17</span>
+    </div>
     <div class="body">试了。他让我把体检报告给他看，我说我没病，他说“那你装什么”。<br>……然后我一晚上没进卧室。</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 18 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:02</div></div><span class="floor-num">#18</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">笑</div>
+      <div class="info"><div class="name">笑死我了</div><div class="time">2025-12-28 04:02</div></div>
+      <span class="floor-num">#18</span>
+    </div>
     <div class="body">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈楼主你老婆太聪明了！！！</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 19 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:05</div></div><span class="floor-num">#19</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">拿</div>
+      <div class="info"><div class="name">拿捏</div><div class="time">2025-12-28 04:05</div></div>
+      <span class="floor-num">#19</span>
+    </div>
     <div class="body">“那你装什么”……你老婆好绝一Omega，我开始好奇你平时在家是不是被拿捏得死死的。</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 20 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:10</div></div><span class="floor-num">#20</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">客</div>
+      <div class="info"><div class="name">客厅沙发</div><div class="time">2025-12-28 04:10</div></div>
+      <span class="floor-num">#20</span>
+    </div>
     <div class="body">楼主你被赶出卧室了？那你现在在哪发帖？</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 21 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 04:12</div></div><span class="floor-num">#21</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 04:12</div></div>
+      <span class="floor-num">#21</span>
+    </div>
     <div class="body">客厅沙发。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 22 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:15</div></div><span class="floor-num">#22</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">心</div>
+      <div class="info"><div class="name">心疼一秒</div><div class="time">2025-12-28 04:15</div></div>
+      <span class="floor-num">#22</span>
+    </div>
     <div class="body">草，心疼楼主一秒钟。但是真的好搞笑。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 23：开始问恋爱史 ========== -->
+  <!-- ========== 23 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:20</div></div><span class="floor-num">#23</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">问</div>
+      <div class="info"><div class="name">问问恋爱史</div><div class="time">2025-12-28 04:20</div></div>
+      <span class="floor-num">#23</span>
+    </div>
     <div class="body">楼主我能问一下你们怎么认识的吗？你说从学生时代恋爱七年了，看着不像同龄人啊。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 24 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:22</div></div><span class="floor-num">#24</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">比</div>
+      <div class="info"><div class="name">比你大</div><div class="time">2025-12-28 04:22</div></div>
+      <span class="floor-num">#24</span>
+    </div>
     <div class="body">对哦，楼主你语气听起来挺成熟，但你老婆说话那味像比你能打。你们怎么认识的？</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 25：阿列克谢尴尬回答 ========== -->
+  <!-- ========== 25 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 04:28</div></div><span class="floor-num">#25</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 04:28</div></div>
+      <span class="floor-num">#25</span>
+    </div>
     <div class="body">……我刚从军校毕业那年，留校做了教官。那年外派到他们学校带新生军训，他刚好在我带的那个班。</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 26 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:30</div></div><span class="floor-num">#26</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">差</div>
+      <div class="info"><div class="name">差几岁</div><div class="time">2025-12-28 04:30</div></div>
+      <span class="floor-num">#26</span>
+    </div>
     <div class="body">哦——教官和学生啊。等等，那你当时刚毕业，你老婆大一？差几岁啊？</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 27 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:32</div></div><span class="floor-num">#27</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">老</div>
+      <div class="info"><div class="name">老牛吃嫩草</div><div class="time">2025-12-28 04:32</div></div>
+      <span class="floor-num">#27</span>
+    </div>
     <div class="body">老牛吃嫩草啊楼主！！！</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 28 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 04:33</div></div><span class="floor-num">#28</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 04:33</div></div>
+      <span class="floor-num">#28</span>
+    </div>
     <div class="body">你闭嘴，差三岁半而已。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 29 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:35</div></div><span class="floor-num">#29</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">恼</div>
+      <div class="info"><div class="name">恼羞成怒</div><div class="time">2025-12-28 04:35</div></div>
+      <span class="floor-num">#29</span>
+    </div>
     <div class="body">哈哈哈哈哈哈哈哈楼主恼羞成怒了</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 30 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:38</div></div><span class="floor-num">#30</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">师</div>
+      <div class="info"><div class="name">师生恋</div><div class="time">2025-12-28 04:38</div></div>
+      <span class="floor-num">#30</span>
+    </div>
     <div class="body">所以你们是怎么在一起的？教官和学生……这不太好吧？</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 31：阿列克谢含蓄交代 ========== -->
+  <!-- ========== 31 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 04:42</div></div><span class="floor-num">#31</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 04:42</div></div>
+      <span class="floor-num">#31</span>
+    </div>
     <div class="body">就是……第一次见面的时候就很有感觉。后来有一次他遇到点状况，发情期提前了，刚好我在附近……<br>就标记了。然后就在一起了。</div>
-    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 32 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:45</div></div><span class="floor-num">#32</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">带</div>
+      <div class="info"><div class="name">带感</div><div class="time">2025-12-28 04:45</div></div>
+      <span class="floor-num">#32</span>
+    </div>
     <div class="body">草，教官标记了自己的学生……这剧情怎么这么带感？？</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 33 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:47</div></div><span class="floor-num">#33</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">谋</div>
+      <div class="info"><div class="name">谋私</div><div class="time">2025-12-28 04:47</div></div>
+      <span class="floor-num">#33</span>
+    </div>
     <div class="body">我去，你怎么当老师的？？这算以权谋私吧？？</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 34 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:49</div></div><span class="floor-num">#34</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">合</div>
+      <div class="info"><div class="name">合法夫妻</div><div class="time">2025-12-28 04:49</div></div>
+      <span class="floor-num">#34</span>
+    </div>
     <div class="body">但人家结婚了啊！！合法夫妻！！你们管他怎么认识的？吃你的米了？</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 35 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 04:52</div></div><span class="floor-num">#35</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">继</div>
+      <div class="info"><div class="name">继续聊正事</div><div class="time">2025-12-28 04:52</div></div>
+      <span class="floor-num">#35</span>
+    </div>
     <div class="body">好了好了，人家小俩口都结婚了，合法合规，别吵了。继续聊怀孕的事。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 36：关键转折 ========== -->
+  <!-- ========== 36 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户 <span class="marker">慧眼如炬</span></div><div class="time">2025-12-28 05:00</div></div><span class="floor-num">#36</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d8;color:#2a4a5a;">慧</div>
+      <div class="info"><div class="name">慧眼如炬 <span class="marker">慧眼如炬</span></div><div class="time">2025-12-28 05:00</div></div>
+      <span class="floor-num">#36</span>
+    </div>
     <div class="body">等一下……楼主你刚才说你老婆发情期被标记的？<br>那你们当时有没有做措施？<br>……既然你标记过他，那他有没有可能其实怀过，然后在你不知道的时候……没了？</div>
-    <div class="actions"><button>👍 2.1k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 37：沉默 ========== -->
+  <!-- ========== 37 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:02</div></div><span class="floor-num">#37</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">沉</div>
+      <div class="info"><div class="name">沉默是金</div><div class="time">2025-12-28 05:02</div></div>
+      <span class="floor-num">#37</span>
+    </div>
     <div class="body">……</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 38 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:03</div></div><span class="floor-num">#38</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">沉</div>
+      <div class="info"><div class="name">沉默是银</div><div class="time">2025-12-28 05:03</div></div>
+      <span class="floor-num">#38</span>
+    </div>
     <div class="body">沉默。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 39 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:04</div></div><span class="floor-num">#39</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">沉</div>
+      <div class="info"><div class="name">沉默是铜</div><div class="time">2025-12-28 05:04</div></div>
+      <span class="floor-num">#39</span>
+    </div>
     <div class="body">沉默。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 40：阿列克谢沉默 ========== -->
+  <!-- ========== 40 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 05:05</div></div><span class="floor-num">#40</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 05:05</div></div>
+      <span class="floor-num">#40</span>
+    </div>
     <div class="body">……</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 41：催问 ========== -->
+  <!-- ========== 41 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户 <span class="marker">慧眼如炬</span></div><div class="time">2025-12-28 05:06</div></div><span class="floor-num">#41</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">催</div>
+      <div class="info"><div class="name">催更</div><div class="time">2025-12-28 05:06</div></div>
+      <span class="floor-num">#41</span>
+    </div>
     <div class="body">别沉默啊！！赶紧去问！！</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 42：阿列克谢下线 ========== -->
+  <!-- ========== 42 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 05:08</div></div><span class="floor-num">#42</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 05:08</div></div>
+      <span class="floor-num">#42</span>
+    </div>
     <div class="body">……等我。</div>
-    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 43-53：网友扒身份 ========== -->
+  <!-- ========== 43 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:10</div></div><span class="floor-num">#43</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">知</div>
+      <div class="info"><div class="name">知道是谁了</div><div class="time">2025-12-28 05:10</div></div>
+      <span class="floor-num">#43</span>
+    </div>
     <div class="body">等等我好像知道他是谁了……他说的“带新生军训”“大四的时候”再加上这个ID……是不是北境军校的那位？</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 44 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:12</div></div><span class="floor-num">#44</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">像</div>
+      <div class="info"><div class="name">好像是</div><div class="time">2025-12-28 05:12</div></div>
+      <span class="floor-num">#44</span>
+    </div>
     <div class="body">好像是。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 45-53：私聊换帖 ========== -->
+  <!-- ========== 45-48 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:15</div></div><span class="floor-num">#45</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">细</div>
+      <div class="info"><div class="name">细嗦</div><div class="time">2025-12-28 05:15</div></div>
+      <span class="floor-num">#45</span>
+    </div>
     <div class="body">细嗦。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:16</div></div><span class="floor-num">#46</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">细</div>
+      <div class="info"><div class="name">细嗦+1</div><div class="time">2025-12-28 05:16</div></div>
+      <span class="floor-num">#46</span>
+    </div>
     <div class="body">细嗦。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:17</div></div><span class="floor-num">#47</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">细</div>
+      <div class="info"><div class="name">细嗦+2</div><div class="time">2025-12-28 05:17</div></div>
+      <span class="floor-num">#47</span>
+    </div>
     <div class="body">细嗦。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:18</div></div><span class="floor-num">#48</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">传</div>
+      <div class="info"><div class="name">传送门</div><div class="time">2025-12-28 05:18</div></div>
+      <span class="floor-num">#48</span>
+    </div>
     <div class="body">私聊私聊，我开了个新帖，别在这聊了。传送门在此——</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 49-70：大量水楼 ========== -->
+  <!-- ========== 49-69 水楼 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:20</div></div><span class="floor-num">#49</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">蹲</div>
+      <div class="info"><div class="name">蹲一个</div><div class="time">2025-12-28 05:20</div></div>
+      <span class="floor-num">#49</span>
+    </div>
     <div class="body">蹲。</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:25</div></div><span class="floor-num">#50</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">蹲</div>
+      <div class="info"><div class="name">蹲+1</div><div class="time">2025-12-28 05:25</div></div>
+      <span class="floor-num">#50</span>
+    </div>
     <div class="body">蹲+1</div>
-    <div class="actions"><button>👍 67</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 67</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:35</div></div><span class="floor-num">#51</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">回</div>
+      <div class="info"><div class="name">回来了吗</div><div class="time">2025-12-28 05:35</div></div>
+      <span class="floor-num">#51</span>
+    </div>
     <div class="body">楼主回来了吗？</div>
-    <div class="actions"><button>👍 45</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 45</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 05:50</div></div><span class="floor-num">#52</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">还</div>
+      <div class="info"><div class="name">还没</div><div class="time">2025-12-28 05:50</div></div>
+      <span class="floor-num">#52</span>
+    </div>
     <div class="body">还没。</div>
-    <div class="actions"><button>👍 34</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 34</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 06:10</div></div><span class="floor-num">#53</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">一</div>
+      <div class="info"><div class="name">一小时了</div><div class="time">2025-12-28 06:10</div></div>
+      <span class="floor-num">#53</span>
+    </div>
     <div class="body">这都一个小时了……</div>
-    <div class="actions"><button>👍 56</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 56</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 06:30</div></div><span class="floor-num">#54</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">出</div>
+      <div class="info"><div class="name">出事了吗</div><div class="time">2025-12-28 06:30</div></div>
+      <span class="floor-num">#54</span>
+    </div>
     <div class="body">不会出事了吧？</div>
-    <div class="actions"><button>👍 78</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 78</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 06:50</div></div><span class="floor-num">#55</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">别</div>
+      <div class="info"><div class="name">别急</div><div class="time">2025-12-28 06:50</div></div>
+      <span class="floor-num">#55</span>
+    </div>
     <div class="body">别急，人家两口子半夜聊天呢，哪有这么快。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 07:20</div></div><span class="floor-num">#56</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">赌</div>
+      <div class="info"><div class="name">赌五毛</div><div class="time">2025-12-28 07:20</div></div>
+      <span class="floor-num">#56</span>
+    </div>
     <div class="body">我赌五毛钱楼主被老婆骂了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 08:00</div></div><span class="floor-num">#57</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">沉</div>
+      <div class="info"><div class="name">沉了</div><div class="time">2025-12-28 08:00</div></div>
+      <span class="floor-num">#57</span>
+    </div>
     <div class="body">楼主再不回来这帖子就要沉了……</div>
-    <div class="actions"><button>👍 45</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 45</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 08:30</div></div><span class="floor-num">#58</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">天</div>
+      <div class="info"><div class="name">天亮了</div><div class="time">2025-12-28 08:30</div></div>
+      <span class="floor-num">#58</span>
+    </div>
     <div class="body">天都亮了，楼主你还好吗？</div>
-    <div class="actions"><button>👍 67</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 67</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 09:00</div></div><span class="floor-num">#59</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">锁</div>
+      <div class="info"><div class="name">锁门外</div><div class="time">2025-12-28 09:00</div></div>
+      <span class="floor-num">#59</span>
+    </div>
     <div class="body">是不是被老婆锁门外了？？</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 09:30</div></div><span class="floor-num">#60</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">钥</div>
+      <div class="info"><div class="name">备用钥匙</div><div class="time">2025-12-28 09:30</div></div>
+      <span class="floor-num">#60</span>
+    </div>
     <div class="body">楼主你可能需要一把备用钥匙。</div>
-    <div class="actions"><button>👍 56</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 56</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 10:00</div></div><span class="floor-num">#61</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">谁</div>
+      <div class="info"><div class="name">谁还记得</div><div class="time">2025-12-28 10:00</div></div>
+      <span class="floor-num">#61</span>
+    </div>
     <div class="body">谁还记得这是个求助帖……</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 10:30</div></div><span class="floor-num">#62</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">连</div>
+      <div class="info"><div class="name">连续剧</div><div class="time">2025-12-28 10:30</div></div>
+      <span class="floor-num">#62</span>
+    </div>
     <div class="body">已经变成连续剧了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 11:00</div></div><span class="floor-num">#63</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">醒</div>
+      <div class="info"><div class="name">醒了吗</div><div class="time">2025-12-28 11:00</div></div>
+      <span class="floor-num">#63</span>
+    </div>
     <div class="body">楼主你醒了吗？？？</div>
-    <div class="actions"><button>👍 56</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 56</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 12:00</div></div><span class="floor-num">#64</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">中</div>
+      <div class="info"><div class="name">中午了</div><div class="time">2025-12-28 12:00</div></div>
+      <span class="floor-num">#64</span>
+    </div>
     <div class="body">中午了。</div>
-    <div class="actions"><button>👍 34</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 34</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 13:00</div></div><span class="floor-num">#65</span></div>
-    <div class="body">……</div>
-    <div class="actions"><button>👍 23</button><button>💬 回复</button></div>
-  </div>
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 14:00</div></div><span class="floor-num">#66</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">下</div>
+      <div class="info"><div class="name">下午了</div><div class="time">2025-12-28 14:00</div></div>
+      <span class="floor-num">#66</span>
+    </div>
     <div class="body">下午了，楼主你还在吗……</div>
-    <div class="actions"><button>👍 45</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 45</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 15:00</div></div><span class="floor-num">#67</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">没</div>
+      <div class="info"><div class="name">没收手机</div><div class="time">2025-12-28 15:00</div></div>
+      <span class="floor-num">#67</span>
+    </div>
     <div class="body">他不会是被老婆没收手机了吧。</div>
-    <div class="actions"><button>👍 78</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 78</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 16:00</div></div><span class="floor-num">#68</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">后</div>
+      <div class="info"><div class="name">后续</div><div class="time">2025-12-28 16:00</div></div>
+      <span class="floor-num">#68</span>
+    </div>
     <div class="body">蹲一个后续。</div>
-    <div class="actions"><button>👍 67</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 67</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 17:00</div></div><span class="floor-num">#69</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">十</div>
+      <div class="info"><div class="name">十二小时</div><div class="time">2025-12-28 17:00</div></div>
+      <span class="floor-num">#69</span>
+    </div>
     <div class="body">马上十二个小时了……</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 70：阿列克谢回来了 ========== -->
+  <!-- ========== 70 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 18:30</div></div><span class="floor-num">#70</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 18:30</div></div>
+      <span class="floor-num">#70</span>
+    </div>
     <div class="body">
       回来了。前面楼太多了我没看，只看了几个提醒。<br>
       ……问了。<br>
@@ -775,192 +1148,279 @@
       那时候他刚被标记不久，我们还不太熟，他应该也不知道怎么跟我说。后来就自己处理了。<br>
       他说其实不是不想要，只是每次想到那时候，就会觉得……有点惘然。
     </div>
-    <div class="actions"><button>👍 3.4k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 71 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:32</div></div><span class="floor-num">#71</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">渣</div>
+      <div class="info"><div class="name">渣男</div><div class="time">2025-12-28 18:32</div></div>
+      <span class="floor-num">#71</span>
+    </div>
     <div class="body">我去……渣男。</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 72 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:33</div></div><span class="floor-num">#72</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">你</div>
+      <div class="info"><div class="name">你在干嘛</div><div class="time">2025-12-28 18:33</div></div>
+      <span class="floor-num">#72</span>
+    </div>
     <div class="body">这你都没发现？？？你当时在干嘛？？？</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 73 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:35</div></div><span class="floor-num">#73</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">破</div>
+      <div class="info"><div class="name">破案了</div><div class="time">2025-12-28 18:35</div></div>
+      <span class="floor-num">#73</span>
+    </div>
     <div class="body">破案了……怪不得他不愿意提怀孕的事。这换谁心里都有坎啊。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 74 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:38</div></div><span class="floor-num">#74</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">标</div>
+      <div class="info"><div class="name">标记就跑</div><div class="time">2025-12-28 18:38</div></div>
+      <span class="floor-num">#74</span>
+    </div>
     <div class="body">不是，你当时都不知道他怀孕了？？你标记完就跑了吧？</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 75：阿列克谢有点窝火 ========== -->
+  <!-- ========== 75 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 18:40</div></div><span class="floor-num">#75</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 18:40</div></div>
+      <span class="floor-num">#75</span>
+    </div>
     <div class="body">……我当时不知道。后来在一起了之后他也没提过。他这人……就是不想让我觉得亏欠他什么。<br>（别骂了我知道我错得离谱。）</div>
-    <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 76 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:42</div></div><span class="floor-num">#76</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">打</div>
+      <div class="info"><div class="name">打算怎么办</div><div class="time">2025-12-28 18:42</div></div>
+      <span class="floor-num">#76</span>
+    </div>
     <div class="body">楼主你现在打算怎么办？</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 77 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 18:45</div></div><span class="floor-num">#77</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 18:45</div></div>
+      <span class="floor-num">#77</span>
+    </div>
     <div class="body">他说没关系，过去了。但我看得出来他不是完全无所谓。我打算带他去做个体检，不是逼他生，就是……确保他现在身体没问题。然后以后的事，以后再说。他不愿意就不生。</div>
-    <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 78 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:48</div></div><span class="floor-num">#78</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">人</div>
+      <div class="info"><div class="name">人话</div><div class="time">2025-12-28 18:48</div></div>
+      <span class="floor-num">#78</span>
+    </div>
     <div class="body">这才是人话，你早该这么做了。</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 79 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:50</div></div><span class="floor-num">#79</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">哄</div>
+      <div class="info"><div class="name">哄就对了</div><div class="time">2025-12-28 18:50</div></div>
+      <span class="floor-num">#79</span>
+    </div>
     <div class="body">赶紧买点什么补偿你老婆吧，该哄就哄，该跪就跪。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 80 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:52</div></div><span class="floor-num">#80</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">面</div>
+      <div class="info"><div class="name">面馆老板</div><div class="time">2025-12-28 18:52</div></div>
+      <span class="floor-num">#80</span>
+    </div>
     <div class="body">楼主你是不是那个东城老街昭记面馆老板的老公？？</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 81：阿列克谢自爆 ========== -->
+  <!-- ========== 81 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 18:53</div></div><span class="floor-num">#81</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 18:53</div></div>
+      <span class="floor-num">#81</span>
+    </div>
     <div class="body">你怎么知道？？</div>
-    <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 82 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:55</div></div><span class="floor-num">#82</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">配</div>
+      <div class="info"><div class="name">配置经典</div><div class="time">2025-12-28 18:55</div></div>
+      <span class="floor-num">#82</span>
+    </div>
     <div class="body">这配置太经典了……当年北境军校的人都知道，有个教官带完那届军训之后整个人都温柔了，后来才知道是因为谈了个大一新生。再加上你ID“昭昭是我老婆”。昭记面馆的“昭”嘛，猜到了。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 83 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:57</div></div><span class="floor-num">#83</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">自</div>
+      <div class="info"><div class="name">自爆</div><div class="time">2025-12-28 18:57</div></div>
+      <span class="floor-num">#83</span>
+    </div>
     <div class="body">哈哈哈哈哈哈哈哈楼主你自爆了</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 84 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:58</div></div><span class="floor-num">#84</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">全</div>
+      <div class="info"><div class="name">全名</div><div class="time">2025-12-28 18:58</div></div>
+      <span class="floor-num">#84</span>
+    </div>
     <div class="body">所以楼主真是军校教官啊……阿列克谢·彼得罗维奇·沃尔科夫？</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 85 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:58</div></div><span class="floor-num">#85</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">爆</div>
+      <div class="info"><div class="name">爆大名</div><div class="time">2025-12-28 18:58</div></div>
+      <span class="floor-num">#85</span>
+    </div>
     <div class="body">草，楼上你怎么把人家大名爆出来了</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 86 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 18:58</div></div><span class="floor-num">#86</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">官</div>
+      <div class="info"><div class="name">官网可查</div><div class="time">2025-12-28 18:58</div></div>
+      <span class="floor-num">#86</span>
+    </div>
     <div class="body">官网能查到啊，去搜了一下。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 87 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 19:00</div></div><span class="floor-num">#87</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 19:00</div></div>
+      <span class="floor-num">#87</span>
+    </div>
     <div class="body">……</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 88 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:02</div></div><span class="floor-num">#88</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">别</div>
+      <div class="info"><div class="name">别删</div><div class="time">2025-12-28 19:02</div></div>
+      <span class="floor-num">#88</span>
+    </div>
     <div class="body">别删！！我们还没磕够呢！！</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 89 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:03</div></div><span class="floor-num">#89</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">面</div>
+      <div class="info"><div class="name">面馆见</div><div class="time">2025-12-28 19:03</div></div>
+      <span class="floor-num">#89</span>
+    </div>
     <div class="body">别删帖啊！！你老婆的面馆我们还要去吃的！！</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 90 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:05</div></div><span class="floor-num">#90</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">回</div>
+      <div class="info"><div class="name">回家吧</div><div class="time">2025-12-28 19:05</div></div>
+      <span class="floor-num">#90</span>
+    </div>
     <div class="body">楼主你老婆那么漂亮，你忍心让人家一个人守店吗？赶紧回家吧。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 91：阿列克谢妥协 ========== -->
+  <!-- ========== 91 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar accent">✦</div><div class="info"><div class="name">昭昭是我老婆</div><div class="time">2025-12-28 19:10</div></div><span class="floor-num">#91</span></div>
+    <div class="head">
+      <div class="avatar lz-avatar">昭</div>
+      <div class="info"><div class="name">昭昭是我老婆 <span class="badge lz-badge">楼主</span></div><div class="time">2025-12-28 19:10</div></div>
+      <span class="floor-num">#91</span>
+    </div>
     <div class="body">
       行，不删。但你们别去打扰我老婆。他开店已经很累了。<br>我去接他下班了。
     </div>
-    <div class="actions"><button>👍 3.2k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
   <!-- ========== 92 ========== -->
   <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:15</div></div><span class="floor-num">#92</span></div>
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">花</div>
+      <div class="info"><div class="name">买束花</div><div class="time">2025-12-28 19:15</div></div>
+      <span class="floor-num">#92</span>
+    </div>
     <div class="body">快去吧！记得买束花！</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-  </div>
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:18</div></div><span class="floor-num">#93</span></div>
-    <div class="body">希望下次看到楼主发帖是“老婆终于愿意跟我聊了”。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-  </div>
-  <div class="floor">
-    <div class="head"><div class="avatar">匿</div><div class="info"><div class="name">匿名用户</div><div class="time">2025-12-28 19:20</div></div><span class="floor-num">#94</span></div>
-    <div class="body">散了散了，人家接老婆下班去了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- ========== 后记（读者视角，阿列克谢不知道） ========== -->
-  <div style="
-    margin-top: 24px;
-    padding: 16px 20px;
-    border-top: 1px solid var(--border-card);
-    color: var(--text-muted-light);
-    font-size: 0.8rem;
-    line-height: 1.6;
-    font-style: italic;
-  ">
-    <p style="margin: 0; color: var(--text-muted-light);">
-      — 后来有人问起这件事，面馆老板只是笑了一下，说：
-      <span style="color: var(--text-secondary); font-style: normal; font-weight: 400;">“我没流过产，就是看他太闲了，想让他紧张一下。”</span>
-    </p>
-    <p style="margin: 4px 0 0 0; color: var(--text-muted-light); font-size: 0.75rem;">
-      （这件事他老公至今不知道。）
-    </p>
+  <!-- ========== 93 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">希</div>
+      <div class="info"><div class="name">希望</div><div class="time">2025-12-28 19:18</div></div>
+      <span class="floor-num">#93</span>
+    </div>
+    <div class="body">希望下次看到楼主发帖是“老婆终于愿意跟我聊了”。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 94 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">散</div>
+      <div class="info"><div class="name">散了散了</div><div class="time">2025-12-28 19:20</div></div>
+      <span class="floor-num">#94</span>
+    </div>
+    <div class="body">散了散了，人家接老婆下班去了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 后记 ===== -->
+  <div class="epilogue">
+    <p>— 后来有人问起这件事，面馆老板只是笑了一下，说：<span>“我没流过产，就是看他太闲了，想让他紧张一下。”</span></p>
+    <p class="note">（这件事他老公至今不知道。）</p>
   </div>
 
 </div>

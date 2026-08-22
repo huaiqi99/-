@@ -10,49 +10,55 @@
       --bg-card: #ffffff;
       --bg-card-alt: #f2eee9;
       --border-light: #ece6de;
-      --border-card: #e4ddd4;
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --text-muted-light: #b0aaa2;
+      --border-card: #d5c8b8;
+      --text-primary: #1f1a16;
+      --text-secondary: #2c241e;
+      --text-muted: #5a4d42;
+      --text-muted-light: #8a7a6a;
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.06);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.03);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
       --radius: 12px;
       --radius-sm: 6px;
-      --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-      --transition: 0.25s ease;
+      --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+      --font-mono: "Courier New", "Source Code Pro", monospace;
+      --transition: 0.2s ease;
     }
     [data-theme="dark"] {
-      --bg-body: #181614;
-      --bg-card: #24201c;
-      --bg-card-alt: #1e1b18;
+      --bg-body: #1e1a16;
+      --bg-card: #2a2520;
+      --bg-card-alt: #24201c;
       --border-light: #35302a;
-      --border-card: #3a3530;
+      --border-card: #4a443e;
       --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --text-muted-light: #5a5550;
+      --text-secondary: #b8aea4;
+      --text-muted: #8a8078;
+      --text-muted-light: #6a6560;
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.08);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--font);
+      font-family: var(--font-serif);
       background: var(--bg-body);
       color: var(--text-primary);
+      font-size: 17px;
+      line-height: 1.7;
       transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0 16px;
+      padding: 0 16px 40px 16px;
     }
 
-    /* ===== 右上角悬浮组 ===== */
+    /* 强制2D符号 */
+    .sym-2d { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 400; font-style: normal; text-shadow: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
     .float-group {
       position: fixed;
       top: 20px;
@@ -69,10 +75,10 @@
       border-radius: 24px;
       padding: 6px 14px 6px 12px;
       font-size: 0.7rem;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       cursor: pointer;
       transition: all var(--transition);
-      font-family: inherit;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -80,22 +86,18 @@
       letter-spacing: 0.3px;
       text-decoration: none;
     }
-    .float-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .float-btn:hover { border-color: var(--accent); color: var(--accent); }
     .float-btn .icon { font-size: 0.9rem; }
 
-    /* ===== 主容器 ===== */
     #app {
       max-width: 820px;
       margin: 0 auto;
       width: 100%;
-      padding: 20px 0 40px 0;
+      padding: 24px 4px 40px 4px;
       flex: 1;
     }
 
-    /* ===== 面包屑 ===== */
+    /* 面包屑 */
     .back-bar {
       display: flex;
       align-items: center;
@@ -104,19 +106,64 @@
       flex-wrap: wrap;
     }
     .back-bar .breadcrumb {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted-light);
+      opacity: 0.7;
+      font-family: var(--font-mono);
+      letter-spacing: 0.3px;
     }
     .back-bar .breadcrumb span {
       color: var(--text-secondary);
+      opacity: 1;
     }
+
+    /* ===== 标题卡片 ===== */
+    .title-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 22px 24px 18px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--accent);
+    }
+    .title-card .post-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+      line-height: 1.4;
+    }
+    .title-card .post-title .category {
+      font-size: 0.7rem;
+      font-weight: 400;
+      font-family: var(--font-mono);
+      color: var(--text-muted-light);
+      background: var(--bg-card-alt);
+      padding: 1px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      margin-right: 8px;
+      letter-spacing: 0.5px;
+    }
+    .title-card .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted-light);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .title-card .post-meta span { display: flex; align-items: center; gap: 4px; }
 
     /* ===== 楼层 ===== */
     .floor {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: var(--radius);
-      padding: 18px 20px;
+      padding: 16px 20px;
       margin-bottom: 10px;
       box-shadow: var(--shadow-sm);
     }
@@ -132,26 +179,22 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .floor .avatar {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: var(--bg-card-alt);
-      border: 2px solid var(--border-card);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 13px;
       font-weight: 600;
-      color: var(--text-secondary);
       flex-shrink: 0;
-    }
-    .floor .avatar.accent {
-      background: var(--accent-soft);
-      color: var(--accent);
-      border-color: var(--accent);
+      border: 2px solid var(--border-card);
+      background: var(--bg-card-alt);
+      color: var(--text-secondary);
+      font-family: var(--font-serif);
     }
     .floor .avatar.lz-avatar {
       background: #1a1614;
@@ -168,36 +211,52 @@
       color: var(--accent);
       border-color: var(--accent);
     }
+    .floor .avatar .emoji-avatar {
+      font-size: 14px;
+      line-height: 1;
+    }
     .floor .info {
       flex: 1;
       min-width: 0;
     }
     .floor .info .name {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
     }
     .floor .info .name .badge {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 400;
+      font-family: var(--font-mono);
       background: var(--accent-soft);
       color: var(--accent);
       padding: 1px 8px;
       border-radius: 10px;
+      letter-spacing: 0.3px;
+    }
+    .floor .info .name .badge.lz-badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent);
     }
     .floor .info .time {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted-light);
+      font-family: var(--font-mono);
     }
     .floor .floor-num {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted-light);
       font-weight: 400;
+      font-family: var(--font-mono);
       margin-left: auto;
       flex-shrink: 0;
+      opacity: 0.5;
     }
     .floor .body {
       font-size: 0.92rem;
@@ -219,16 +278,17 @@
       margin-top: 10px;
       display: flex;
       gap: 16px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted-light);
+      font-family: var(--font-mono);
     }
     .floor .actions button {
       background: transparent;
       border: none;
       color: var(--text-muted-light);
       cursor: pointer;
-      font-size: 0.75rem;
-      font-family: inherit;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       gap: 4px;
@@ -241,39 +301,39 @@
       background: var(--accent-soft);
     }
 
-    /* ===== 锁定提示 ===== */
     .lock-notice {
       text-align: center;
-      padding: 16px 20px;
+      padding: 14px 18px;
       margin: 20px 0 30px 0;
       background: var(--bg-card-alt);
       border: 1px solid var(--border-card);
       border-radius: var(--radius);
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       letter-spacing: 0.3px;
+      font-family: var(--font-mono);
     }
     .lock-notice strong {
       color: var(--accent);
+      font-weight: 600;
     }
 
-    /* ===== 跨帖分隔 ===== */
     .cross-post-divider {
       text-align: center;
       padding: 24px 0 16px 0;
       color: var(--text-muted-light);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       letter-spacing: 2px;
       text-transform: uppercase;
       border-top: 1px solid var(--border-light);
       margin-top: 8px;
+      font-family: var(--font-mono);
     }
     .cross-post-divider span {
       background: var(--bg-body);
       padding: 0 16px;
     }
 
-    /* ===== 尾声 ===== */
     .epilogue {
       margin-top: 24px;
       padding: 18px 20px;
@@ -288,32 +348,39 @@
     .epilogue strong {
       color: var(--text-primary);
       font-style: normal;
+      font-weight: 600;
     }
+    .epilogue p { margin-bottom: 8px; }
+    .epilogue p:last-child { margin-bottom: 0; }
 
-    /* ===== 响应式 ===== */
     @media (max-width: 600px) {
-      body { padding: 0 10px; }
+      body { padding: 0 10px 30px 10px; font-size: 16px; }
       #app { padding: 14px 0 30px 0; }
       .floor { padding: 14px 14px; }
-      .floor .body { font-size: 0.88rem; }
-      .back-bar { flex-wrap: wrap; }
-      .lock-notice { font-size: 0.78rem; padding: 12px 14px; }
+      .floor .body { font-size: 0.95rem; }
+      .back-bar .breadcrumb { font-size: 0.7rem; }
+      .title-card { padding: 16px 16px 14px 16px; }
+      .title-card .post-title { font-size: 1.1rem; }
+      .title-card .post-meta { font-size: 0.7rem; gap: 10px; }
+      .floor .info .name { font-size: 0.82rem; }
+      .floor .avatar { width: 30px; height: 30px; font-size: 11px; }
+      .lock-notice { font-size: 0.75rem; padding: 10px 14px; }
       .epilogue { font-size: 0.82rem; padding: 14px 14px; }
-      .float-group {
-        top: 12px;
-        right: 12px;
-        gap: 6px;
-      }
-      .float-btn {
-        padding: 4px 10px 4px 8px;
-        font-size: 0.65rem;
-      }
+      .float-group { top: 12px; right: 12px; gap: 6px; }
+      .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
+    }
+    @media (max-width: 420px) {
+      body { padding: 0 6px 24px 6px; font-size: 15px; }
+      #app { padding: 10px 0 20px 0; }
+      .title-card .post-title { font-size: 0.98rem; }
+      .floor .body { font-size: 0.9rem; }
+      .floor { padding: 12px 12px; }
+      .float-group { top: 8px; right: 8px; gap: 4px; }
+      .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
+      .float-btn .icon { font-size: 0.7rem; }
     }
   </style>
   <script>
-    // ============================================================
-    //  主题切换（与怀榆.html 保持一致）
-    // ============================================================
     (function() {
       try {
         const raw = localStorage.getItem('theme');
@@ -358,1057 +425,1065 @@
 </head>
 <body>
 
-  <!-- ===== 右上角悬浮组 ===== -->
-  <div class="float-group">
-    <a class="float-btn" href="../index.html">
-      <span class="icon">←</span> 返回列表
-    </a>
-    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-      <span class="icon">🌙</span> 夜间
-    </button>
+<div class="float-group">
+  <a class="float-btn" href="../index.html"><span class="icon">←</span> 返回列表</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
+</div>
+
+<div id="app">
+
+  <div class="back-bar">
+    <span class="breadcrumb">北境茶馆 · <span>【考据】关于"段深泉"这个名字，我查了三天史料，现在有点睡不着</span></span>
   </div>
 
-  <div id="app">
-    <!-- ===== 面包屑（仅保留位置信息，返回按钮已移入浮动组） ===== -->
-    <div class="back-bar">
-      <span class="breadcrumb">北境茶馆 · <span>【考据】关于"段深泉"这个名字，我查了三天史料，现在有点睡不着</span></span>
+  <!-- ===== 标题卡片 ===== -->
+  <div class="title-card">
+    <div class="post-title">
+      <span class="category">考据</span>
+      关于"段深泉"这个名字，我查了三天史料，现在有点睡不着
+    </div>
+    <div class="post-meta">
+      <span>✧ 楼主 · 层楼叠</span>
+      <span>◈ 2026-01-12 23:47</span>
+      <span>✦ 1.2k 人看过</span>
     </div>
-
-    <!-- ========== 楼主 ========== -->
-    <div class="floor lz">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info">
-          <div class="name">层楼叠 <span class="badge">楼主</span></div>
-          <div class="time">2026-01-12 23:47</div>
-        </div>
-        <span class="floor-num">#1</span>
-      </div>
-      <div class="body">
-        我本科学历史的，最近在做一个关于"大寂灭后人口重建"的课题，翻了不少第二纪元末到第三纪元早期的文献和碑文拓片，然后我发现了一个问题——段深泉这个名字，出现在了两段不应该同时出现的时间里。<br><br>
-        第一处：第二纪元末期，光明神法伊顿的伴侣，文献里明确写他是半神，受神分予力量，活了很久，但大寂灭爆发后，没有关于他下落的任何记载。<br><br>
-        第二处：大寂灭结束之后大约一百年，一份北境的地方官员名录里，出现了一个叫段深泉的人，职位不高，但名字完全对得上。这份名录的年份，距离大寂灭的结束，刚刚好过了一百年。<br><br>
-        但这里有一个问题：他的墓碑上明明白白写着"春秋七十"，他七十岁就死了。可大寂灭之后一百年的官员名录里又出现了他的名字，那就证明他活了起码两百多年。<br><br>
-        我在之前查文献的时候查到法伊顿的遗言里有一句"吾令汝长存此世"，这句话到底只是说说而已，还是真的让他活了几百年？<br><br>
-        这就是我睡不着的原因。
-      </div>
-      <div class="actions">
-        <button>👍 1.2k</button>
-        <button>💬 回复</button>
-        <button>⭐ 收藏</button>
-      </div>
-    </div>
-
-    <!-- ========== 2 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-12 23:52</div></div>
-        <span class="floor-num">#2</span>
-      </div>
-      <div class="body">楼主你确定是同一个人？第二纪元到现在好几百年了，同名同姓的可能性很大吧。</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 3 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-12 23:55</div></div>
-        <span class="floor-num">#3</span>
-      </div>
-      <div class="body">回1L，我一开始也这么想，所以我查了那个官员的更多资料。那个段深泉的籍贯、年龄、家族背景栏全部是空的——这种空档在第三纪元早期的官员档案里极其罕见，因为那时候重建期的人口统计非常严格，几乎每个人都能追溯来源。他的档案像被人故意清空过。</div>
-      <div class="actions"><button>👍 312</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 4 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-12 23:58</div></div>
-        <span class="floor-num">#4</span>
-      </div>
-      <div class="body">有没有可能是重名重姓但刚好档案也丢了？</div>
-      <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 5 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:03</div></div>
-        <span class="floor-num">#5</span>
-      </div>
-      <div class="body">回4L，我查了那个时期所有现存的地方官员名录，段深泉这个名字只出现了那一次。之后的两百年里没有任何同名的官员记录。如果他是一个普通人的后代，不可能只出现一代就没痕迹了。</div>
-      <div class="actions"><button>👍 267</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 6 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:07</div></div>
-        <span class="floor-num">#6</span>
-      </div>
-      <div class="body">楼主你还有别的证据吗？光靠一个名字和一个空档案，说服力不够。</div>
-      <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 7 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:15</div></div>
-        <span class="floor-num">#7</span>
-      </div>
-      <div class="body">
-        有。我在千律州北部一个废弃的遗址里找到了一块残碑，年代大约在第二纪元最后二十年。碑文是祭祀用的，上面刻了一排参与祭祀的人名，其中有一个是"段深泉"。但最让我在意的是碑文侧面刻了一行很小的字，不是正式铭文，像是后来有人随手补刻的。写的是：<br><br>
-        "此人形貌异于常人，发长及腰，眸色淡金，不似此间人。"<br><br>
-        这块碑现在保存在千律州大学考古系的库房里，编号我记下来了。我去查过借阅记录，段深泉本人借过这块碑，时间是两年前。<br>
-        他不仅看过这块碑，还看了自己的描述。
-      </div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 8 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:20</div></div>
-        <span class="floor-num">#8</span>
-      </div>
-      <div class="body">……他看了然后呢？他什么反应？没有人问过他吗？</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 9 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:22</div></div>
-        <span class="floor-num">#9</span>
-      </div>
-      <div class="body">
-        回8L，我问过当时帮他办理借阅的档案管理员，她说段深泉看完碑之后问她："这碑上的字，是第二纪元刻的，还是后来补的？"<br><br>
-        管理员说是原刻。<br>
-        他就没有再说别的话，把碑还回去了。<br>
-        她当时觉得奇怪，因为段教授平时借阅文献从来不多问，那一次是他唯一一次主动问她问题。
-      </div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 10 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:25</div></div>
-        <span class="floor-num">#10</span>
-      </div>
-      <div class="body">也就是说，段深泉看到那块碑的时候就已经知道那块碑上的人是他自己了。</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 11 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:28</div></div>
-        <span class="floor-num">#11</span>
-      </div>
-      <div class="body">我也有点睡不着了。</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 12 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:38</div></div>
-        <span class="floor-num">#12</span>
-      </div>
-      <div class="body">
-        我后来翻到一段文献，是法伊顿的遗言，段深泉自己抄录的：
-        <div class="quote">
-          <span class="q-label">—— 法伊顿遗言 · 段深泉手录</span>
-        “吾令汝长存此世，至于识吾名者尽殁，至于世间无复称法伊顿者。至其时，汝仍当忆我。此皆汝之所欠，汝为我之从者、我之半身、我之所爱。代我而生，至于吾罪亦随汝入墓。”
-        你们自己看吧。
-        </div>
-      </div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 13 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:42</div></div>
-        <span class="floor-num">#13</span>
-      </div>
-      <div class="body">法伊顿还留了遗言？我头一回听说。这话的意思，是不是段深泉能活下来跟它有关系？</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 14 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:45</div></div>
-        <span class="floor-num">#14</span>
-      </div>
-      <div class="body">回13L，我也在想这个可能性。法伊顿明确在大寂灭之前收回了力量，但收回力量段深泉就是凡人了。凡人活几十岁就该死了，结果大寂灭之后一百年又出现了他的名字。<br><br>除了那句遗言，我想不到别的解释。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 15 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:48</div></div>
-        <span class="floor-num">#15</span>
-      </div>
-      <div class="body">真的假的，这么邪乎？死了还能发挥作用？</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 16 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:52</div></div>
-        <span class="floor-num">#16</span>
-      </div>
-      <div class="body">光明神的力量，很神奇吧。但这也只是猜测而已，其实我也不太相信只是神的一句话就能让人活几百年，那他当时要是说我希望全世界的人都活下来，那岂不是大伙都长生不老了？总之，我能找到的文献只到这里，后面的线索就断了。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 17 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 00:55</div></div>
-        <span class="floor-num">#17</span>
-      </div>
-      <div class="body">全世界长生不老可还行hh……不过这分析得确实有道理，但是楼主你想过没有，如果段深泉真的活到了现在，他的身份不可能一直没人注意。他现在不是活得好好的吗？</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 18 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 00:58</div></div>
-        <span class="floor-num">#18</span>
-      </div>
-      <div class="body">回17L，这就是最奇怪的地方。他的身份信息被保护得很好。没有出生记录，没有户籍链，没有人能查到他来自哪里。他的入职档案里"籍贯"那一栏写的是"千律州"，但千律州那么大，没有一个具体的出生地。<br>一个没有出生记录的人能当上大学教授，本身就不正常。</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 19 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:02</div></div>
-        <span class="floor-num">#19</span>
-      </div>
-      <div class="body">所以你这意思是有人在保护他？</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 20 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 01:05</div></div>
-        <span class="floor-num">#20</span>
-      </div>
-      <div class="body">回19L，我觉得这已经是板上钉钉的事了。他借碑的记录被清过一次，我第二次去查的时候，借阅记录里已经没有他的名字了。管理员说可能是系统问题，但这谁相信？前脚才借了石碑，后脚他的名字就消失了，这用脚趾头都能想清楚是什么意思。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 21 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:08</div></div>
-        <span class="floor-num">#21</span>
-      </div>
-      <div class="body">不是吧这么快？真有人在故意销毁？</div>
-      <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 22 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:15</div></div>
-        <span class="floor-num">#22</span>
-      </div>
-      <div class="body">我插一句，楼主你查的是哪块碑？我好像也在哪里听过"眸色淡金"这个描述。</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 23 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 01:18</div></div>
-        <span class="floor-num">#23</span>
-      </div>
-      <div class="body">回22L，你是不是也见过？</div>
-      <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 24 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:20</div></div>
-        <span class="floor-num">#24</span>
-      </div>
-      <div class="body">
-        我见过。之前我在一个神学论坛上看到有人发过一篇帖子，讲的是"第二纪元幸存者假说"，里面提到过一段碑文记载，描述了一个"发长及腰、眸色淡金"的人，出现的时间点不是第二纪元末期，而是大寂灭结束之后大约八十年。那个人在千律州南部活动，被当地人称为"不说话的人"。<br>
-        那个帖子的楼主后来消失了，账号被注销，帖子也删了。
-      </div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 25 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:23</div></div>
-        <span class="floor-num">#25</span>
-      </div>
-      <div class="body">等等，大寂灭之后八十年还有他的踪迹？那会儿他都死了五十多年了。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 26 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:25</div></div>
-        <span class="floor-num">#26</span>
-      </div>
-      <div class="body">关键点不在这里吧，既然之前的帖子都被删了，那基本上就能确定背后确实是有人在刻意替他隐瞒身份了，啧啧……不敢想，北境的天还是太亮了。</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 27 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 01:28</div></div>
-        <span class="floor-num">#27</span>
-      </div>
-      <div class="body">所以我觉得这件事得讨论一下，不然真的睡不着。</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 28 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:35</div></div>
-        <span class="floor-num">#28</span>
-      </div>
-      <div class="body">楼主我帮你查了一下千律州大学考古系那批碑文的公开目录，确实有一块标注为"第二纪末，祭祀用碑"的残碑，备注栏里写着"侧面刻字，内容待考"。你说的那段描述应该就是那块碑。<br>但我又翻了一下系统，发现那块碑的状态已经被改为"修复中，暂不外借"了。<br>什么时候改的？</div>
-      <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 29 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:38</div></div>
-        <span class="floor-num">#29</span>
-      </div>
-      <div class="body">也就是说，有人在你查完之后，把碑锁起来了。</div>
-      <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 30 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 01:40</div></div>
-        <span class="floor-num">#30</span>
-      </div>
-      <div class="body">不只是碑。我刚刚想再查一下段深泉的档案，系统提示"该账户无权访问此页面"。我上周还能查的。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 31 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:42</div></div>
-        <span class="floor-num">#31</span>
-      </div>
-      <div class="body">楼主你是不是已经被人盯上了……</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 32 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 01:45</div></div>
-        <span class="floor-num">#32</span>
-      </div>
-      <div class="body">应该是。但这个帖子我不会删，如果有人能查到大寂灭之后段深泉的活动记录，或者任何关于"长生种"的线索，请发出来。我需要证据，不只是猜测。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 33 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:50</div></div>
-        <span class="floor-num">#33</span>
-      </div>
-      <div class="body">说实话，我本来不信这些的。但楼主你列出的东西太具体了，碑文编号、借阅记录、档案权限变化，还真不像编出来的。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 34 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 01:55</div></div>
-        <span class="floor-num">#34</span>
-      </div>
-      <div class="body">我认识千律州大学考古系的人，明天帮你去问问那块碑的情况。</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 35 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:00</div></div>
-        <span class="floor-num">#35</span>
-      </div>
-      <div class="body">我以前在神学论坛混过，那篇讲"第二纪元幸存者"的帖子我也有印象。当时楼主的证据链没有你这么多，但方向是一样的——段深泉这个名字在历史上的连续性太异常了。只是那篇帖子被删得太快，没来得及深挖。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 36 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:05</div></div>
-        <span class="floor-num">#36</span>
-      </div>
-      <div class="body">那个神学论坛还在吗？</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 37 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:08</div></div>
-        <span class="floor-num">#37</span>
-      </div>
-      <div class="body">好像还在，但已经很久没人发新帖了。那件事之后，大部分活跃用户都被私聊过，有人直接换号了。</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 38 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:10</div></div>
-        <span class="floor-num">#38</span>
-      </div>
-      <div class="body">那你们觉得，段深泉自己知道吗？他知道自己的信息是被人封锁的吗？</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 39 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 02:15</div></div>
-        <span class="floor-num">#39</span>
-      </div>
-      <div class="body">回38L，我觉得他肯定知道，能问管理员"是原刻还是后补的"，这绝对是在确认什么。也许他也在排查是否有人知道他的真实身份。<br><br>他不是在好奇，他是在验证。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 40 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:18</div></div>
-        <span class="floor-num">#40</span>
-      </div>
-      <div class="body">如果他真的知道，那他为什么不公开信息，这样反而更容易引人怀疑吧？</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 41 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:20</div></div>
-        <span class="floor-num">#41</span>
-      </div>
-      <div class="body">回40L，因为公开了信息会被人盯上。楼主查了三次就被锁权限了，段深泉如果真的活到了现在，你觉得他有多少次被人查过？有多少人想对他做实验？他能活到现在，一定是因为背后有势力一直在替他封锁信息，"不允许讨论"，这件事本身就是一种威慑，是一种保障人身安全的手段。</div>
-      <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 42 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:22</div></div>
-        <span class="floor-num">#42</span>
-      </div>
-      <div class="body">我忽然想到一件事——段深泉讲课时提到过一些祭祀细节，那种细节书上完全看不出来，但他却能讲得头头是道，好像真见过现场似的。我当时觉得他是研究深入，现在想想，有没有可能他亲眼见过？</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 43 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:25</div></div>
-        <span class="floor-num">#43</span>
-      </div>
-      <div class="body">见过第二纪元的祭祀仪式……那他到底多大？</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 44 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:28</div></div>
-        <span class="floor-num">#44</span>
-      </div>
-      <div class="body">之前不是说了吗，从第二纪元活到现在，保底六百岁。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 45 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:35</div></div>
-        <span class="floor-num">#45</span>
-      </div>
-      <div class="body">
-        楼主，我找到了一段旧文献，原文是第三纪元初期一个地方官吏写的私人笔记，内容提到他见过一个"不似凡人"的人，那人"发色不辨年岁，目光不属此世"，住在千律州南部一个小镇上，镇上的人都叫他"段先生"。<br><br>
-        笔记里提到的时间，距大寂灭结束大约一百二十年。
-      </div>
-      <div class="actions"><button>👍 1.5k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 46 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:38</div></div>
-        <span class="floor-num">#46</span>
-      </div>
-      <div class="body">几百岁了还这么健朗，段先生真是长命千岁。比我爷爷的爷爷的爷爷的爷爷年纪还大。👍</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 47 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:40</div></div>
-        <span class="floor-num">#47</span>
-      </div>
-      <div class="body">有没有可能他不是"一个人"？我是说……有没有可能是一群人接力用同一个名字？</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 48 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 02:42</div></div>
-        <span class="floor-num">#48</span>
-      </div>
-      <div class="body">回47L，接力用名字可还行，一个人可以接力名字，总不能接力外貌和眼睛颜色吧？那段碑文和笔记里可都描述了同一种外貌特征，而且长发金眼的特征又极其罕见。如果是一群人接力，不可能每一代都长成同一个样子。</div>
-      <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 49 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:45</div></div>
-        <span class="floor-num">#49</span>
-      </div>
-      <div class="body">我悟了，所以真的是同一个人，一个从大寂灭之前活到现在的人。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 50 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:50</div></div>
-        <span class="floor-num">#50</span>
-      </div>
-      <div class="body">我现在也想问一句了，楼主你还好吗？</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 51 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 02:52</div></div>
-        <span class="floor-num">#51</span>
-      </div>
-      <div class="body">回50L，还好，只是觉得挺激动的，你们说我去把这个结论写成小说发期刊有人看吗？</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 52 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:55</div></div>
-        <span class="floor-num">#52</span>
-      </div>
-      <div class="body">那你可以大写特写了，什么类型都能写。悬疑、爱情、种田文。不过写成爱情小说应该很有看头，毕竟是法伊顿亲自签名的爱人，而且如果他真活下来了，那他应该是第三纪元唯一一个亲眼见过法伊顿长什么样的人。<br><br>那他看到法伊顿的画像的时候是什么表情？会不会觉得不像？</div>
-      <div class="actions"><button>👍 1.8k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 53 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 02:58</div></div>
-        <span class="floor-num">#53</span>
-      </div>
-      <div class="body">我去翻过法伊顿的画像资料，现存最早的一幅是第三纪元中期临摹的，据说原稿已毁。段深泉在课堂上讲到法伊顿的时候还挺投入的，那语气……啧啧，像是真的在讲自己已逝的妻子。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 54 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:00</div></div>
-        <span class="floor-num">#54</span>
-      </div>
-      <div class="body">你怎么知道是妻子不是老公？我这波站法伊顿攻，段教授那文文弱弱的样子一看就是下面那个。</div>
-      <div class="actions"><button>👍 2.1k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 55 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:05</div></div>
-        <span class="floor-num">#55</span>
-      </div>
-      <div class="body">谁说的，美人攻没见过吗，段教授那气质一看就是克制又深情的好攻。👍</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 56 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:08</div></div>
-        <span class="floor-num">#56</span>
-      </div>
-      <div class="body">行了楼上别歪楼了，要磕自己去cp论坛磕。我说点正事，楼主，我建议你把帖子的关键证据备份一下。我直觉这帖子活不久。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 57 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:10</div></div>
-        <span class="floor-num">#57</span>
-      </div>
-      <div class="body">已经备份了，你们有发现的线索也请存一份，万一真的没了至少还能拼回来。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 58 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info"><div class="name">_蚀_ <span class="badge">🔹 特殊</span></div><div class="time">2026-01-13 03:15</div></div>
-        <span class="floor-num">#58</span>
-      </div>
-      <div class="body">我是神学论坛那个"第二纪元幸存者"帖子的原楼主。我换了号来说一句话——你们现在查的方向是对的，但你们查得太快了。有些东西知道得越多越不安全。我之前那个帖子被删之后，有人来找过我。那些人不是来问问题的，是来让我"停下来"的。<br><br>请你们小心。</div>
-      <div class="actions"><button>👍 2.3k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 59 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:18</div></div>
-        <span class="floor-num">#59</span>
-      </div>
-      <div class="body">……58L，你是认真的？</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 60 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:20</div></div>
-        <span class="floor-num">#60</span>
-      </div>
-      <div class="body">58L没有在开玩笑。我刚刚也在其他平台搜了一下"段深泉+碑文"的关键词，发现搜索结果正在减少。刚才还能搜到的，现在有些链接已经打不开了。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 61 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:22</div></div>
-        <span class="floor-num">#61</span>
-      </div>
-      <div class="body">有人在清理。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 62 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:25</div></div>
-        <span class="floor-num">#62</span>
-      </div>
-      <div class="body">楼主你看到这条的话，我建议你把这个帖子也锁一下评论，至少不要让更多人点进来。</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 63 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar lz-avatar">考</div>
-        <div class="info"><div class="name">层楼叠 <span class="badge">楼主</span></div><div class="time">2026-01-13 03:28</div></div>
-        <span class="floor-num">#63</span>
-      </div>
-      <div class="body">已经有人在删了。</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 64 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:30</div></div>
-        <span class="floor-num">#64</span>
-      </div>
-      <div class="body">我去隔壁神学论坛翻了一下旧帖，发现那个论坛的"幸存者"相关主题全部不见了。不是删帖，是整个版块没了。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 65 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:32</div></div>
-        <span class="floor-num">#65</span>
-      </div>
-      <div class="body">什么时候没的？</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 66 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:33</div></div>
-        <span class="floor-num">#66</span>
-      </div>
-      <div class="body">大概四十分钟前。</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 67 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:35</div></div>
-        <span class="floor-num">#67</span>
-      </div>
-      <div class="body">也就是说，我们这个帖子开始被关注之后，隔壁神学论坛的旧帖就被清理了。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 68 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:38</div></div>
-        <span class="floor-num">#68</span>
-      </div>
-      <div class="body">我打个字手都在抖，我们是不是已经碰到了不该碰的东西？</div>
-      <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 69 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:40</div></div>
-        <span class="floor-num">#69</span>
-      </div>
-      <div class="body">卧槽我现在正在疯狂录屏……</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 70 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:42</div></div>
-        <span class="floor-num">#70</span>
-      </div>
-      <div class="body">不是吧到底在藏什么，有什么见不得人的，真活得久一点也不见得大家排挤他啊，删这么快是心虚了吗。</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 71 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:45</div></div>
-        <span class="floor-num">#71</span>
-      </div>
-      <div class="body">楼上别戾气太大了，你要能活几百年你也要藏。一个从大寂灭之前活到现在的人，如果被发现，他会被当成什么？研究对象？活文物？他活了几百年，不是为了在实验室里度过下半辈子的。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ========== 72 ========== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">匿</div>
-        <div class="info"><div class="name">匿名用户</div><div class="time">2026-01-13 03:48</div></div>
-        <span class="floor-num">#72</span>
-      </div>
-      <div class="body">不过段教授确实牛逼吧，虽然活了这么久，但文学能力真不是盖的，建议大家都来听一下段教授的千律州古代史。</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 锁定提示 ===== -->
-    <div class="lock-notice">
-      <strong>⛔ 此帖已被管理员锁定，无法继续回复</strong><br />
-      2026-01-13 03:55
-    </div>
-
-    <!-- ===== 跨帖分隔 ===== -->
-    <div class="cross-post-divider">
-      <span>— 以下内容搬运自神学论坛 · 该帖已被删除 —</span>
-    </div>
-
-    <!-- ===== 神学论坛帖子 · 楼主 ===== -->
-    <div class="floor lz">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info">
-          <div class="name">残碑 <span class="badge">楼主</span></div>
-          <div class="time">2026-01-13 03:30</div>
-        </div>
-        <span class="floor-num">#1</span>
-      </div>
-      <div class="body">
-        北境茶馆那边已经炸了。有人在扒段深泉。<br><br>
-        我在这个论坛发过关于"第二纪元幸存者"的帖子，后来被删了。账号也被封了。现在是新号。<br><br>
-        那个帖子里我写过一段东西，当时没人注意，但现在和茶馆那边连起来看，有点意思。<br><br>
-        我查过千律州南部一个小镇的旧档案，第三纪元早期，当地有一个"段先生"，没有名字，所有人都叫他段先生。他住了大约四十年，然后消失了。四十年里，他的外貌没有变化过。<br><br>
-        档案里有一句原话："其人驻镇四十载，容颜不改，岁时不侵。"<br><br>
-        我后来查过那个小镇后来的记录，段先生离开之后，镇上开始出现"段深泉"这个名字的记载——不是同一个人，而是有人开始用这个名字自称。<br><br>
-        我觉得他在换名字。或者说……他每隔一段时间就会换一个名字，但后来他决定不换了。
-      </div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 2 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">烛火</div><div class="time">2026-01-13 03:32</div></div>
-        <span class="floor-num">#2</span>
-      </div>
-      <div class="body">"容颜不改，岁时不侵"。这八个字太直白了，写档案的人知道都他不是普通人，又不敢明说。</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 3 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">石上苔</div><div class="time">2026-01-13 03:33</div></div>
-        <span class="floor-num">#3</span>
-      </div>
-      <div class="body">所以段深泉不是"活了五百年"，他是从大寂灭之前一直活到了现在。中间他换过名字，换过地方，但最后他选择用回段深泉这个名字了。为什么？</div>
-      <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 4 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info"><div class="name">残碑 <span class="badge">楼主</span></div><div class="time">2026-01-13 03:35</div></div>
-        <span class="floor-num">#4</span>
-      </div>
-      <div class="body">回3L，我猜——因为他在等一个人。用回段深泉这个名字，可能是为了让那个人能找到他。</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 5 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">无名</div><div class="time">2026-01-13 03:36</div></div>
-        <span class="floor-num">#5</span>
-      </div>
-      <div class="body">等谁？法伊顿已经死了几百年了。</div>
-      <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 6 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info"><div class="name">残碑 <span class="badge">楼主</span></div><div class="time">2026-01-13 03:38</div></div>
-        <span class="floor-num">#6</span>
-      </div>
-      <div class="body">回5L，我不知道。但这个论坛存活到今天，本身就是在讨论那些"不该存在"的东西。段深泉如果真的活到了现在，那他就属于"不该存在"的范畴。</div>
-      <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 7 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">子不语</div><div class="time">2026-01-13 03:40</div></div>
-        <span class="floor-num">#7</span>
-      </div>
-      <div class="body">这个帖子估计也活不了多久。茶馆那边已经被锁了，我们这边应该也快了。</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 8 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">夜行者</div><div class="time">2026-01-13 03:42</div></div>
-        <span class="floor-num">#8</span>
-      </div>
-      <div class="body">我刚刚试了一下，茶馆那个帖子的链接已经打不开了。被删了？还是隐藏了？</div>
-      <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 9 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info"><div class="name">残碑 <span class="badge">楼主</span></div><div class="time">2026-01-13 03:43</div></div>
-        <span class="floor-num">#9</span>
-      </div>
-      <div class="body">被删了，我这边已经404了。备份还在，但主帖没了。</div>
-      <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 10 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">烛火</div><div class="time">2026-01-13 03:45</div></div>
-        <span class="floor-num">#10</span>
-      </div>
-      <div class="body">那我们这个帖子还能撑多久？</div>
-      <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 11 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info"><div class="name">残碑 <span class="badge">楼主</span></div><div class="time">2026-01-13 03:46</div></div>
-        <span class="floor-num">#11</span>
-      </div>
-      <div class="body">不知道。但如果这个帖子也被删了，我会再换号发。我把所有的文献编号和碑文内容都存下来了。只要人还在，帖子就能再建。</div>
-      <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 12 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">石上苔</div><div class="time">2026-01-13 03:48</div></div>
-        <span class="floor-num">#12</span>
-      </div>
-      <div class="body">但有些东西是存不下来的。段深泉这个人，他本身就是活着的证据。</div>
-      <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 13 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">无名</div><div class="time">2026-01-13 03:50</div></div>
-        <span class="floor-num">#13</span>
-      </div>
-      <div class="body">如果段深泉真的是从大寂灭之前活下来的，那他现在应该已经知道有人在查他了。他会是什么反应？</div>
-      <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 14 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar special">✦</div>
-        <div class="info"><div class="name">残碑 <span class="badge">楼主</span></div><div class="time">2026-01-13 03:52</div></div>
-        <span class="floor-num">#14</span>
-      </div>
-      <div class="body">回13L，他不会有什么反应。他活得太久了，早就习惯了被人查。他只是继续教他的历史，等那个他等的人。</div>
-      <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛 15 ===== -->
-    <div class="floor">
-      <div class="head">
-        <div class="avatar">神</div>
-        <div class="info"><div class="name">夜行者</div><div class="time">2026-01-13 03:55</div></div>
-        <span class="floor-num">#15</span>
-      </div>
-      <div class="body">所以他等的真的是法伊顿？</div>
-      <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
-    </div>
-
-    <!-- ===== 神学论坛封锁 ===== -->
-    <div class="lock-notice" style="margin-top: 10px;">
-      <strong>⛔ 该帖已被删除 · 原论坛已无法访问</strong><br />
-      2026-01-13 04:00
-    </div>
-
-    <!-- ===== 尾声 ===== -->
-    <div class="epilogue">
-      <p>那之后，关于段深泉的讨论在公开渠道迅速消失。</p>
-      <p>茶馆的帖子被删了，神学论坛关停了，几个活跃账号陆续注销。有人在别的地方试着重新开帖，活不过当晚。</p>
-      <p>但这件事没有真正消失——它只是沉下去了。私聊群、加密文档、离线备份，在那些看不见的地方，关于段深泉的线索仍在被拼凑。</p>
-      <p>而段深泉本人，照常上课，照常下课，照常在窗边坐一会儿，然后关灯离开教室。</p>
-      <p>他什么都没说。</p>
-      <p style="margin-top: 10px; color: var(--text-muted-light); font-size: 0.82rem;">
-        ——后来有人问起这件事，得到的回答只有一句话：<br>
-        <span style="color: var(--text-secondary); font-style: normal;">"有些东西，你们不信，不代表它不存在。"</span>
-      </p>
-    </div>
-
   </div>
+
+  <!-- ========== 1楼 · 楼主 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info">
+        <div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div>
+        <div class="time">2026-01-12 23:47</div>
+      </div>
+      <span class="floor-num">#1</span>
+    </div>
+    <div class="body">
+      我本科学历史的，最近在做一个关于"大寂灭后人口重建"的课题，翻了不少第二纪元末到第三纪元早期的文献和碑文拓片，然后我发现了一个问题——段深泉这个名字，出现在了两段不应该同时出现的时间里。<br><br>
+      第一处：第二纪元末期，光明神法伊顿的伴侣，文献里明确写他是半神，受神分予力量，活了很久，但大寂灭爆发后，没有关于他下落的任何记载。<br><br>
+      第二处：大寂灭结束之后大约一百年，一份北境的地方官员名录里，出现了一个叫段深泉的人，职位不高，但名字完全对得上。这份名录的年份，距离大寂灭的结束，刚刚好过了一百年。<br><br>
+      但这里有一个问题：他的墓碑上明明白白写着"春秋七十"，他七十岁就死了。可大寂灭之后一百年的官员名录里又出现了他的名字，那就证明他活了起码两百多年。<br><br>
+      我在之前查文献的时候查到法伊顿的遗言里有一句"吾令汝长存此世"，这句话到底只是说说而已，还是真的让他活了几百年？<br><br>
+      这就是我睡不着的原因。
+    </div>
+    <div class="actions">
+      <button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button>
+      <button><span class="sym-2d">↩&#xFE0E;</span> 回复</button>
+      <button><span class="sym-2d">★&#xFE0E;</span> 收藏</button>
+    </div>
+  </div>
+
+  <!-- ========== 2 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#e8d5c4;color:#5a3d2e;">大</div>
+      <div class="info"><div class="name">大裤衩</div><div class="time">2026-01-12 23:52</div></div>
+      <span class="floor-num">#2</span>
+    </div>
+    <div class="body">楼主你确定是同一个人？第二纪元到现在好几百年了，同名同姓的可能性很大吧。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 3 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-12 23:55</div></div>
+      <span class="floor-num">#3</span>
+    </div>
+    <div class="body">回1L，我一开始也这么想，所以我查了那个官员的更多资料。那个段深泉的籍贯、年龄、家族背景栏全部是空的——这种空档在第三纪元早期的官员档案里极其罕见，因为那时候重建期的人口统计非常严格，几乎每个人都能追溯来源。他的档案像被人故意清空过。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 312</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 4 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c4d4c8;color:#2a4a3a;">我</div>
+      <div class="info"><div class="name">我家的猫一胎九个</div><div class="time">2026-01-12 23:58</div></div>
+      <span class="floor-num">#4</span>
+    </div>
+    <div class="body">有没有可能是重名重姓但刚好档案也丢了？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 5 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:03</div></div>
+      <span class="floor-num">#5</span>
+    </div>
+    <div class="body">回4L，我查了那个时期所有现存的地方官员名录，段深泉这个名字只出现了那一次。之后的两百年里没有任何同名的官员记录。如果他是一个普通人的后代，不可能只出现一代就没痕迹了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 267</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 6 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8d8;color:#4a2a5a;">今</div>
+      <div class="info"><div class="name">今天不想起名</div><div class="time">2026-01-13 00:07</div></div>
+      <span class="floor-num">#6</span>
+    </div>
+    <div class="body">楼主你还有别的证据吗？光靠一个名字和一个空档案，说服力不够。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 7 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:15</div></div>
+      <span class="floor-num">#7</span>
+    </div>
+    <div class="body">
+      有。我在千律州北部一个废弃的遗址里找到了一块残碑，年代大约在第二纪元最后二十年。碑文是祭祀用的，上面刻了一排参与祭祀的人名，其中有一个是"段深泉"。但最让我在意的是碑文侧面刻了一行很小的字，不是正式铭文，像是后来有人随手补刻的。写的是：<br><br>
+      "此人形貌异于常人，发长及腰，眸色淡金，不似此间人。"<br><br>
+      这块碑现在保存在千律州大学考古系的库房里，编号我记下来了。我去查过借阅记录，段深泉本人借过这块碑，时间是两年前。<br>
+      他不仅看过这块碑，还看了自己的描述。
+    </div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 8 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">芝</div>
+      <div class="info"><div class="name">芝士就是力量</div><div class="time">2026-01-13 00:20</div></div>
+      <span class="floor-num">#8</span>
+    </div>
+    <div class="body">……他看了然后呢？他什么反应？没有人问过他吗？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 9 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:22</div></div>
+      <span class="floor-num">#9</span>
+    </div>
+    <div class="body">
+      回8L，我问过当时帮他办理借阅的档案管理员，她说段深泉看完碑之后问她："这碑上的字，是第二纪元刻的，还是后来补的？"<br><br>
+      管理员说是原刻。<br>
+      他就没有再说别的话，把碑还回去了。<br>
+      她当时觉得奇怪，因为段教授平时借阅文献从来不多问，那一次是他唯一一次主动问她问题。
+    </div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 10 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d8;color:#2a4a5a;">躺</div>
+      <div class="info"><div class="name">躺平大师</div><div class="time">2026-01-13 00:25</div></div>
+      <span class="floor-num">#10</span>
+    </div>
+    <div class="body">也就是说，段深泉看到那块碑的时候就已经知道那块碑上的人是他自己了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 11 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc4;color:#3d2a1a;">互</div>
+      <div class="info"><div class="name">互联网野人</div><div class="time">2026-01-13 00:28</div></div>
+      <span class="floor-num">#11</span>
+    </div>
+    <div class="body">我也有点睡不着了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 12 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:38</div></div>
+      <span class="floor-num">#12</span>
+    </div>
+    <div class="body">
+      我后来翻到一段文献，是法伊顿的遗言，段深泉自己抄录的：
+      <div class="quote">
+        <span class="q-label">—— 法伊顿遗言 · 段深泉手录</span>
+      “吾令汝长存此世，至于识吾名者尽殁，至于世间无复称法伊顿者。至其时，汝仍当忆我。此皆汝之所欠，汝为我之从者、我之半身、我之所爱。代我而生，至于吾罪亦随汝入墓。”
+      你们自己看吧。
+      </div>
+    </div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 13 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8c8b8;color:#3d2a1a;">今</div>
+      <div class="info"><div class="name">今天也在摸鱼</div><div class="time">2026-01-13 00:42</div></div>
+      <span class="floor-num">#13</span>
+    </div>
+    <div class="body">法伊顿还留了遗言？我头一回听说。这话的意思，是不是段深泉能活下来跟它有关系？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 14 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:45</div></div>
+      <span class="floor-num">#14</span>
+    </div>
+    <div class="body">回13L，我也在想这个可能性。法伊顿明确在大寂灭之前收回了力量，但收回力量段深泉就是凡人了。凡人活几十岁就该死了，结果大寂灭之后一百年又出现了他的名字。<br><br>除了那句遗言，我想不到别的解释。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 15 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">早</div>
+      <div class="info"><div class="name">早睡失败人士</div><div class="time">2026-01-13 00:48</div></div>
+      <span class="floor-num">#15</span>
+    </div>
+    <div class="body">真的假的，这么邪乎？死了还能发挥作用？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 16 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:52</div></div>
+      <span class="floor-num">#16</span>
+    </div>
+    <div class="body">光明神的力量，很神奇吧。但这也只是猜测而已，其实我也不太相信只是神的一句话就能让人活几百年，那他当时要是说我希望全世界的人都活下来，那岂不是大伙都长生不老了？总之，我能找到的文献只到这里，后面的线索就断了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 17 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">杠</div>
+      <div class="info"><div class="name">杠精本精</div><div class="time">2026-01-13 00:55</div></div>
+      <span class="floor-num">#17</span>
+    </div>
+    <div class="body">全世界长生不老可还行hh……不过这分析得确实有道理，但是楼主你想过没有，如果段深泉真的活到了现在，他的身份不可能一直没人注意。他现在不是活得好好的吗？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 18 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 00:58</div></div>
+      <span class="floor-num">#18</span>
+    </div>
+    <div class="body">回17L，这就是最奇怪的地方。他的身份信息被保护得很好。没有出生记录，没有户籍链，没有人能查到他来自哪里。他的入职档案里"籍贯"那一栏写的是"千律州"，但千律州那么大，没有一个具体的出生地。<br>一个没有出生记录的人能当上大学教授，本身就不正常。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 19 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">疯</div>
+      <div class="info"><div class="name">疯狂星期四V我50</div><div class="time">2026-01-13 01:02</div></div>
+      <span class="floor-num">#19</span>
+    </div>
+    <div class="body">所以你这意思是有人在保护他？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 20 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 01:05</div></div>
+      <span class="floor-num">#20</span>
+    </div>
+    <div class="body">回19L，我觉得这已经是板上钉钉的事了。他借碑的记录被清过一次，我第二次去查的时候，借阅记录里已经没有他的名字了。管理员说可能是系统问题，但这谁相信？前脚才借了石碑，后脚他的名字就消失了，这用脚趾头都能想清楚是什么意思。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 21 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8c8c4;color:#4a2a2a;">禁</div>
+      <div class="info"><div class="name">禁止随地大小变</div><div class="time">2026-01-13 01:08</div></div>
+      <span class="floor-num">#21</span>
+    </div>
+    <div class="body">不是吧这么快？真有人在故意销毁？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 22 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4d0c8;color:#3a3a2a;">社</div>
+      <div class="info"><div class="name">社恐但爱发帖</div><div class="time">2026-01-13 01:15</div></div>
+      <span class="floor-num">#22</span>
+    </div>
+    <div class="body">我插一句，楼主你查的是哪块碑？我好像也在哪里听过"眸色淡金"这个描述。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 23 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 01:18</div></div>
+      <span class="floor-num">#23</span>
+    </div>
+    <div class="body">回22L，你是不是也见过？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 24 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c0;color:#2a4a3a;">上</div>
+      <div class="info"><div class="name">上辈子是只猹</div><div class="time">2026-01-13 01:20</div></div>
+      <span class="floor-num">#24</span>
+    </div>
+    <div class="body">
+      我见过。之前我在一个神学论坛上看到有人发过一篇帖子，讲的是"第二纪元幸存者假说"，里面提到过一段碑文记载，描述了一个"发长及腰、眸色淡金"的人，出现的时间点不是第二纪元末期，而是大寂灭结束之后大约八十年。那个人在千律州南部活动，被当地人称为"不说话的人"。<br>
+      那个帖子的楼主后来消失了，账号被注销，帖子也删了。
+    </div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 25 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">这</div>
+      <div class="info"><div class="name">这事我真不懂</div><div class="time">2026-01-13 01:23</div></div>
+      <span class="floor-num">#25</span>
+    </div>
+    <div class="body">等等，大寂灭之后八十年还有他的踪迹？那会儿他都死了五十多年了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 26 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0d4;color:#2a3a4a;">空</div>
+      <div class="info"><div class="name">空调救了我的命</div><div class="time">2026-01-13 01:25</div></div>
+      <span class="floor-num">#26</span>
+    </div>
+    <div class="body">关键点不在这里吧，既然之前的帖子都被删了，那基本上就能确定背后确实是有人在刻意替他隐瞒身份了，啧啧……不敢想，北境的天还是太亮了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 27 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 01:28</div></div>
+      <span class="floor-num">#27</span>
+    </div>
+    <div class="body">所以我觉得这件事得讨论一下，不然真的睡不着。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 28 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8d0c8;color:#3a3a2a;">野</div>
+      <div class="info"><div class="name">野生吐槽机</div><div class="time">2026-01-13 01:35</div></div>
+      <span class="floor-num">#28</span>
+    </div>
+    <div class="body">楼主我帮你查了一下千律州大学考古系那批碑文的公开目录，确实有一块标注为"第二纪末，祭祀用碑"的残碑，备注栏里写着"侧面刻字，内容待考"。你说的那段描述应该就是那块碑。<br>但我又翻了一下系统，发现那块碑的状态已经被改为"修复中，暂不外借"了。<br>什么时候改的？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 29 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a3a2a;">今</div>
+      <div class="info"><div class="name">今天吃啥</div><div class="time">2026-01-13 01:38</div></div>
+      <span class="floor-num">#29</span>
+    </div>
+    <div class="body">也就是说，有人在你查完之后，把碑锁起来了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 30 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 01:40</div></div>
+      <span class="floor-num">#30</span>
+    </div>
+    <div class="body">不只是碑。我刚刚想再查一下段深泉的档案，系统提示"该账户无权访问此页面"。我上周还能查的。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 31 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a2a;">我</div>
+      <div class="info"><div class="name">我还能再睡五分钟</div><div class="time">2026-01-13 01:42</div></div>
+      <span class="floor-num">#31</span>
+    </div>
+    <div class="body">楼主你是不是已经被人盯上了……</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 32 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 01:45</div></div>
+      <span class="floor-num">#32</span>
+    </div>
+    <div class="body">应该是。但这个帖子我不会删，如果有人能查到大寂灭之后段深泉的活动记录，或者任何关于"长生种"的线索，请发出来。我需要证据，不只是猜测。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 33 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">网</div>
+      <div class="info"><div class="name">网络街溜子</div><div class="time">2026-01-13 01:50</div></div>
+      <span class="floor-num">#33</span>
+    </div>
+    <div class="body">说实话，我本来不信这些的。但楼主你列出的东西太具体了，碑文编号、借阅记录、档案权限变化，还真不像编出来的。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 34 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">主</div>
+      <div class="info"><div class="name">主打一个陪伴</div><div class="time">2026-01-13 01:55</div></div>
+      <span class="floor-num">#34</span>
+    </div>
+    <div class="body">我认识千律州大学考古系的人，明天帮你去问问那块碑的情况。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 35 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8d0c4;color:#3a3a2a;">退</div>
+      <div class="info"><div class="name">退堂鼓表演艺术家</div><div class="time">2026-01-13 02:00</div></div>
+      <span class="floor-num">#35</span>
+    </div>
+    <div class="body">我以前在神学论坛混过，那篇讲"第二纪元幸存者"的帖子我也有印象。当时楼主的证据链没有你这么多，但方向是一样的——段深泉这个名字在历史上的连续性太异常了。只是那篇帖子被删得太快，没来得及深挖。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 36 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">假</div>
+      <div class="info"><div class="name">假笑男孩本孩</div><div class="time">2026-01-13 02:05</div></div>
+      <span class="floor-num">#36</span>
+    </div>
+    <div class="body">那个神学论坛还在吗？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 37 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">每</div>
+      <div class="info"><div class="name">每天都很饿</div><div class="time">2026-01-13 02:08</div></div>
+      <span class="floor-num">#37</span>
+    </div>
+    <div class="body">好像还在，但已经很久没人发新帖了。那件事之后，大部分活跃用户都被私聊过，有人直接换号了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 38 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">人</div>
+      <div class="info"><div class="name">人类早期驯服键盘实录</div><div class="time">2026-01-13 02:10</div></div>
+      <span class="floor-num">#38</span>
+    </div>
+    <div class="body">那你们觉得，段深泉自己知道吗？他知道自己的信息是被人封锁的吗？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 39 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 02:15</div></div>
+      <span class="floor-num">#39</span>
+    </div>
+    <div class="body">回38L，我觉得他肯定知道，能问管理员"是原刻还是后补的"，这绝对是在确认什么。也许他也在排查是否有人知道他的真实身份。<br><br>他不是在好奇，他是在验证。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 40 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0d4;color:#2a3a4a;">骑</div>
+      <div class="info"><div class="name">骑着蜗牛追火箭</div><div class="time">2026-01-13 02:18</div></div>
+      <span class="floor-num">#40</span>
+    </div>
+    <div class="body">如果他真的知道，那他为什么不公开信息，这样反而更容易引人怀疑吧？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 41 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c0;color:#3a2a1a;">咸</div>
+      <div class="info"><div class="name">咸鱼本鱼</div><div class="time">2026-01-13 02:20</div></div>
+      <span class="floor-num">#41</span>
+    </div>
+    <div class="body">回40L，因为公开了信息会被人盯上。楼主查了三次就被锁权限了，段深泉如果真的活到了现在，你觉得他有多少次被人查过？有多少人想对他做实验？他能活到现在，一定是因为背后有势力一直在替他封锁信息，"不允许讨论"，这件事本身就是一种威慑，是一种保障人身安全的手段。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 42 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc8;color:#3a2a1a;">情</div>
+      <div class="info"><div class="name">情绪稳定的大人</div><div class="time">2026-01-13 02:22</div></div>
+      <span class="floor-num">#42</span>
+    </div>
+    <div class="body">我忽然想到一件事——段深泉讲课时提到过一些祭祀细节，那种细节书上完全看不出来，但他却能讲得头头是道，好像真见过现场似的。我当时觉得他是研究深入，现在想想，有没有可能他亲眼见过？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 43 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">已</div>
+      <div class="info"><div class="name">已读乱回</div><div class="time">2026-01-13 02:25</div></div>
+      <span class="floor-num">#43</span>
+    </div>
+    <div class="body">见过第二纪元的祭祀仪式……那他到底多大？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 44 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">对</div>
+      <div class="info"><div class="name">对方正在输入...</div><div class="time">2026-01-13 02:28</div></div>
+      <span class="floor-num">#44</span>
+    </div>
+    <div class="body">之前不是说了吗，从第二纪元活到现在，保底六百岁。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 45 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0d0;color:#2a3a3a;">温</div>
+      <div class="info"><div class="name">温柔一刀</div><div class="time">2026-01-13 02:35</div></div>
+      <span class="floor-num">#45</span>
+    </div>
+    <div class="body">
+      楼主，我找到了一段旧文献，原文是第三纪元初期一个地方官吏写的私人笔记，内容提到他见过一个"不似凡人"的人，那人"发色不辨年岁，目光不属此世"，住在千律州南部一个小镇上，镇上的人都叫他"段先生"。<br><br>
+      笔记里提到的时间，距大寂灭结束大约一百二十年。
+    </div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 46 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">间</div>
+      <div class="info"><div class="name">间歇性踌躇满志</div><div class="time">2026-01-13 02:38</div></div>
+      <span class="floor-num">#46</span>
+    </div>
+    <div class="body">几百岁了还这么健朗，段先生真是长命千岁。比我爷爷的爷爷的爷爷的爷爷年纪还大。👍</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 47 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">持</div>
+      <div class="info"><div class="name">持续性混吃等死</div><div class="time">2026-01-13 02:40</div></div>
+      <span class="floor-num">#47</span>
+    </div>
+    <div class="body">有没有可能他不是"一个人"？我是说……有没有可能是一群人接力用同一个名字？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 48 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 02:42</div></div>
+      <span class="floor-num">#48</span>
+    </div>
+    <div class="body">回47L，接力用名字可还行，一个人可以接力名字，总不能接力外貌和眼睛颜色吧？那段碑文和笔记里可都描述了同一种外貌特征，而且长发金眼的特征又极其罕见。如果是一群人接力，不可能每一代都长成同一个样子。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 49 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">我</div>
+      <div class="info"><div class="name">我的精神状态很美丽</div><div class="time">2026-01-13 02:45</div></div>
+      <span class="floor-num">#49</span>
+    </div>
+    <div class="body">我悟了，所以真的是同一个人，一个从大寂灭之前活到现在的人。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 50 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0c8;color:#2a3a2a;">今</div>
+      <div class="info"><div class="name">今天的砖格外烫手</div><div class="time">2026-01-13 02:50</div></div>
+      <span class="floor-num">#50</span>
+    </div>
+    <div class="body">我现在也想问一句了，楼主你还好吗？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 51 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 02:52</div></div>
+      <span class="floor-num">#51</span>
+    </div>
+    <div class="body">回50L，还好，只是觉得挺激动的，你们说我去把这个结论写成小说发期刊有人看吗？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 52 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4d0c8;color:#3a3a2a;">你</div>
+      <div class="info"><div class="name">你杠就是你对</div><div class="time">2026-01-13 02:55</div></div>
+      <span class="floor-num">#52</span>
+    </div>
+    <div class="body">那你可以大写特写了，什么类型都能写。悬疑、爱情、种田文。不过写成爱情小说应该很有看头，毕竟是法伊顿亲自签名的爱人，而且如果他真活下来了，那他应该是第三纪元唯一一个亲眼见过法伊顿长什么样的人。<br><br>那他看到法伊顿的画像的时候是什么表情？会不会觉得不像？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 53 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c0;color:#2a4a3a;">佛</div>
+      <div class="info"><div class="name">佛系追更人</div><div class="time">2026-01-13 02:58</div></div>
+      <span class="floor-num">#53</span>
+    </div>
+    <div class="body">我去翻过法伊顿的画像资料，现存最早的一幅是第三纪元中期临摹的，据说原稿已毁。段深泉在课堂上讲到法伊顿的时候还挺投入的，那语气……啧啧，像是真的在讲自己已逝的妻子。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 54 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">打</div>
+      <div class="info"><div class="name">打工人打工魂</div><div class="time">2026-01-13 03:00</div></div>
+      <span class="floor-num">#54</span>
+    </div>
+    <div class="body">你怎么知道是妻子不是老公？我这波站法伊顿攻，段教授那文文弱弱的样子一看就是下面那个。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 55 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">今</div>
+      <div class="info"><div class="name">今天也在破防</div><div class="time">2026-01-13 03:05</div></div>
+      <span class="floor-num">#55</span>
+    </div>
+    <div class="body">谁说的，美人攻没见过吗，段教授那气质一看就是克制又深情的好攻。👍</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 56 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8d0c8;color:#3a3a2a;">吃</div>
+      <div class="info"><div class="name">吃瓜群众代表</div><div class="time">2026-01-13 03:08</div></div>
+      <span class="floor-num">#56</span>
+    </div>
+    <div class="body">行了楼上别歪楼了，要磕自己去cp论坛磕。我说点正事，楼主，我建议你把帖子的关键证据备份一下。我直觉这帖子活不久。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 57 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d4;color:#2a4a4a;">深</div>
+      <div class="info"><div class="name">深夜哲学家</div><div class="time">2026-01-13 03:10</div></div>
+      <span class="floor-num">#57</span>
+    </div>
+    <div class="body">已经备份了，你们有发现的线索也请存一份，万一真的没了至少还能拼回来。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 58 · 特殊 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar special">✦</div>
+      <div class="info"><div class="name">_蚀_ <span class="badge">🔹 特殊</span></div><div class="time">2026-01-13 03:15</div></div>
+      <span class="floor-num">#58</span>
+    </div>
+    <div class="body">我是神学论坛那个"第二纪元幸存者"帖子的原楼主。我换了号来说一句话——你们现在查的方向是对的，但你们查得太快了。有些东西知道得越多越不安全。我之前那个帖子被删之后，有人来找过我。那些人不是来问问题的，是来让我"停下来"的。<br><br>请你们小心。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 59 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">摸</div>
+      <div class="info"><div class="name">摸鱼协会会长</div><div class="time">2026-01-13 03:18</div></div>
+      <span class="floor-num">#59</span>
+    </div>
+    <div class="body">……58L，你是认真的？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 60 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0c8;color:#2a3a2a;">这</div>
+      <div class="info"><div class="name">这题我会</div><div class="time">2026-01-13 03:20</div></div>
+      <span class="floor-num">#60</span>
+    </div>
+    <div class="body">58L没有在开玩笑。我刚刚也在其他平台搜了一下"段深泉+碑文"的关键词，发现搜索结果正在减少。刚才还能搜到的，现在有些链接已经打不开了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 61 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c0;color:#3a2a1a;">我</div>
+      <div class="info"><div class="name">我觉得你说得对</div><div class="time">2026-01-13 03:22</div></div>
+      <span class="floor-num">#61</span>
+    </div>
+    <div class="body">有人在清理。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 62 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">但</div>
+      <div class="info"><div class="name">但是我不听</div><div class="time">2026-01-13 03:25</div></div>
+      <span class="floor-num">#62</span>
+    </div>
+    <div class="body">楼主你看到这条的话，我建议你把这个帖子也锁一下评论，至少不要让更多人点进来。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 63 ========== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar lz-avatar">层</div>
+      <div class="info"><div class="name">层楼叠 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 03:28</div></div>
+      <span class="floor-num">#63</span>
+    </div>
+    <div class="body">已经有人在删了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 64 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc8;color:#3a2a1a;">溜</div>
+      <div class="info"><div class="name">溜了溜了</div><div class="time">2026-01-13 03:30</div></div>
+      <span class="floor-num">#64</span>
+    </div>
+    <div class="body">我去隔壁神学论坛翻了一下旧帖，发现那个论坛的"幸存者"相关主题全部不见了。不是删帖，是整个版块没了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 65 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">懂</div>
+      <div class="info"><div class="name">懂的都懂</div><div class="time">2026-01-13 03:32</div></div>
+      <span class="floor-num">#65</span>
+    </div>
+    <div class="body">什么时候没的？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 66 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">不</div>
+      <div class="info"><div class="name">不懂别问</div><div class="time">2026-01-13 03:33</div></div>
+      <span class="floor-num">#66</span>
+    </div>
+    <div class="body">大概四十分钟前。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 67 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0cc;color:#2a3a3a;">随</div>
+      <div class="info"><div class="name">随缘回复</div><div class="time">2026-01-13 03:35</div></div>
+      <span class="floor-num">#67</span>
+    </div>
+    <div class="body">也就是说，我们这个帖子开始被关注之后，隔壁神学论坛的旧帖就被清理了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 68 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">离</div>
+      <div class="info"><div class="name">离线中</div><div class="time">2026-01-13 03:38</div></div>
+      <span class="floor-num">#68</span>
+    </div>
+    <div class="body">我打个字手都在抖，我们是不是已经碰到了不该碰的东西？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 69 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">已</div>
+      <div class="info"><div class="name">已阅</div><div class="time">2026-01-13 03:40</div></div>
+      <span class="floor-num">#69</span>
+    </div>
+    <div class="body">卧槽我现在正在疯狂录屏……</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 70 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">这</div>
+      <div class="info"><div class="name">这事我真不懂</div><div class="time">2026-01-13 03:42</div></div>
+      <span class="floor-num">#70</span>
+    </div>
+    <div class="body">不是吧到底在藏什么，有什么见不得人的，真活得久一点也不见得大家排挤他啊，删这么快是心虚了吗。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 71 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">社</div>
+      <div class="info"><div class="name">社恐但爱发帖</div><div class="time">2026-01-13 03:45</div></div>
+      <span class="floor-num">#71</span>
+    </div>
+    <div class="body">楼上别戾气太大了，你要能活几百年你也要藏。一个从大寂灭之前活到现在的人，如果被发现，他会被当成什么？研究对象？活文物？他活了几百年，不是为了在实验室里度过下半辈子的。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ========== 72 ========== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d8d0c8;color:#3a3a2a;">退</div>
+      <div class="info"><div class="name">退堂鼓表演艺术家</div><div class="time">2026-01-13 03:48</div></div>
+      <span class="floor-num">#72</span>
+    </div>
+    <div class="body">不过段教授确实牛逼吧，虽然活了这么久，但文学能力真不是盖的，建议大家都来听一下段教授的千律州古代史。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 锁定提示 ===== -->
+  <div class="lock-notice">
+    <strong>▸ 此帖已被管理员锁定，无法继续回复</strong><br />
+    2026-01-13 03:55
+  </div>
+
+  <!-- ===== 跨帖分隔 ===== -->
+  <div class="cross-post-divider">
+    <span>— 以下内容搬运自神学论坛 · 该帖已被删除 —</span>
+  </div>
+
+  <!-- ===== 神学论坛 · 楼主 ===== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar special">残</div>
+      <div class="info">
+        <div class="name">残碑 <span class="badge lz-badge">楼主</span></div>
+        <div class="time">2026-01-13 03:30</div>
+      </div>
+      <span class="floor-num">#1</span>
+    </div>
+    <div class="body">
+      北境茶馆那边已经炸了。有人在扒段深泉。<br><br>
+      我在这个论坛发过关于"第二纪元幸存者"的帖子，后来被删了。账号也被封了。现在是新号。<br><br>
+      那个帖子里我写过一段东西，当时没人注意，但现在和茶馆那边连起来看，有点意思。<br><br>
+      我查过千律州南部一个小镇的旧档案，第三纪元早期，当地有一个"段先生"，没有名字，所有人都叫他段先生。他住了大约四十年，然后消失了。四十年里，他的外貌没有变化过。<br><br>
+      档案里有一句原话："其人驻镇四十载，容颜不改，岁时不侵。"<br><br>
+      我后来查过那个小镇后来的记录，段先生离开之后，镇上开始出现"段深泉"这个名字的记载——不是同一个人，而是有人开始用这个名字自称。<br><br>
+      我觉得他在换名字。或者说……他每隔一段时间就会换一个名字，但后来他决定不换了。
+    </div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 2 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">烛</div>
+      <div class="info"><div class="name">烛火</div><div class="time">2026-01-13 03:32</div></div>
+      <span class="floor-num">#2</span>
+    </div>
+    <div class="body">"容颜不改，岁时不侵"。这八个字太直白了，写档案的人知道都他不是普通人，又不敢明说。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 3 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">石</div>
+      <div class="info"><div class="name">石上苔</div><div class="time">2026-01-13 03:33</div></div>
+      <span class="floor-num">#3</span>
+    </div>
+    <div class="body">所以段深泉不是"活了五百年"，他是从大寂灭之前一直活到了现在。中间他换过名字，换过地方，但最后他选择用回段深泉这个名字了。为什么？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 4 ===== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar special">残</div>
+      <div class="info"><div class="name">残碑 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 03:35</div></div>
+      <span class="floor-num">#4</span>
+    </div>
+    <div class="body">回3L，我猜——因为他在等一个人。用回段深泉这个名字，可能是为了让那个人能找到他。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 5 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">无</div>
+      <div class="info"><div class="name">无名</div><div class="time">2026-01-13 03:36</div></div>
+      <span class="floor-num">#5</span>
+    </div>
+    <div class="body">等谁？法伊顿已经死了几百年了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 6 ===== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar special">残</div>
+      <div class="info"><div class="name">残碑 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 03:38</div></div>
+      <span class="floor-num">#6</span>
+    </div>
+    <div class="body">回5L，我不知道。但这个论坛存活到今天，本身就是在讨论那些"不该存在"的东西。段深泉如果真的活到了现在，那他就属于"不该存在"的范畴。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 7 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d0c8;color:#2a3a2a;">子</div>
+      <div class="info"><div class="name">子不语</div><div class="time">2026-01-13 03:40</div></div>
+      <span class="floor-num">#7</span>
+    </div>
+    <div class="body">这个帖子估计也活不了多久。茶馆那边已经被锁了，我们这边应该也快了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 8 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">夜</div>
+      <div class="info"><div class="name">夜行者</div><div class="time">2026-01-13 03:42</div></div>
+      <span class="floor-num">#8</span>
+    </div>
+    <div class="body">我刚刚试了一下，茶馆那个帖子的链接已经打不开了。被删了？还是隐藏了？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 9 ===== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar special">残</div>
+      <div class="info"><div class="name">残碑 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 03:43</div></div>
+      <span class="floor-num">#9</span>
+    </div>
+    <div class="body">被删了，我这边已经404了。备份还在，但主帖没了。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 10 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">烛</div>
+      <div class="info"><div class="name">烛火</div><div class="time">2026-01-13 03:45</div></div>
+      <span class="floor-num">#10</span>
+    </div>
+    <div class="body">那我们这个帖子还能撑多久？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 11 ===== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar special">残</div>
+      <div class="info"><div class="name">残碑 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 03:46</div></div>
+      <span class="floor-num">#11</span>
+    </div>
+    <div class="body">不知道。但如果这个帖子也被删了，我会再换号发。我把所有的文献编号和碑文内容都存下来了。只要人还在，帖子就能再建。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 12 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">石</div>
+      <div class="info"><div class="name">石上苔</div><div class="time">2026-01-13 03:48</div></div>
+      <span class="floor-num">#12</span>
+    </div>
+    <div class="body">但有些东西是存不下来的。段深泉这个人，他本身就是活着的证据。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 13 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">无</div>
+      <div class="info"><div class="name">无名</div><div class="time">2026-01-13 03:50</div></div>
+      <span class="floor-num">#13</span>
+    </div>
+    <div class="body">如果段深泉真的是从大寂灭之前活下来的，那他现在应该已经知道有人在查他了。他会是什么反应？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 14 ===== -->
+  <div class="floor lz">
+    <div class="head">
+      <div class="avatar special">残</div>
+      <div class="info"><div class="name">残碑 <span class="badge lz-badge">楼主</span></div><div class="time">2026-01-13 03:52</div></div>
+      <span class="floor-num">#14</span>
+    </div>
+    <div class="body">回13L，他不会有什么反应。他活得太久了，早就习惯了被人查。他只是继续教他的历史，等那个他等的人。</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛 15 ===== -->
+  <div class="floor">
+    <div class="head">
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">夜</div>
+      <div class="info"><div class="name">夜行者</div><div class="time">2026-01-13 03:55</div></div>
+      <span class="floor-num">#15</span>
+    </div>
+    <div class="body">所以他等的真的是法伊顿？</div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
+  </div>
+
+  <!-- ===== 神学论坛锁定 ===== -->
+  <div class="lock-notice" style="margin-top: 10px;">
+    <strong>▸ 该帖已被删除 · 原论坛已无法访问</strong><br />
+    2026-01-13 04:00
+  </div>
+
+  <!-- ===== 尾声 ===== -->
+  <div class="epilogue">
+    <p>那之后，关于段深泉的讨论在公开渠道迅速消失。</p>
+    <p>茶馆的帖子被删了，神学论坛关停了，几个活跃账号陆续注销。有人在别的地方试着重新开帖，活不过当晚。</p>
+    <p>但这件事没有真正消失——它只是沉下去了。私聊群、加密文档、离线备份，在那些看不见的地方，关于段深泉的线索仍在被拼凑。</p>
+    <p>而段深泉本人，照常上课，照常下课，照常在窗边坐一会儿，然后关灯离开教室。</p>
+    <p>他什么都没说。</p>
+    <p style="margin-top: 10px; color: var(--text-muted-light); font-size: 0.82rem;">
+      ——后来有人问起这件事，得到的回答只有一句话：<br>
+      <span style="color: var(--text-secondary); font-style: normal;">"有些东西，你们不信，不代表它不存在。"</span>
+    </p>
+  </div>
+
+</div>
 </body>
 </html>

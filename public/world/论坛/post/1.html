@@ -10,49 +10,55 @@
       --bg-card: #ffffff;
       --bg-card-alt: #f2eee9;
       --border-light: #ece6de;
-      --border-card: #e4ddd4;
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --text-muted-light: #b0aaa2;
+      --border-card: #d5c8b8;
+      --text-primary: #1f1a16;
+      --text-secondary: #2c241e;
+      --text-muted: #5a4d42;
+      --text-muted-light: #8a7a6a;
       --accent: #b03a2a;
       --accent-soft: rgba(176, 58, 42, 0.06);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.03);
       --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
       --radius: 12px;
       --radius-sm: 6px;
-      --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-      --transition: 0.25s ease;
+      --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+      --font-mono: "Courier New", "Source Code Pro", monospace;
+      --transition: 0.2s ease;
     }
     [data-theme="dark"] {
-      --bg-body: #181614;
-      --bg-card: #24201c;
-      --bg-card-alt: #1e1b18;
+      --bg-body: #1e1a16;
+      --bg-card: #2a2520;
+      --bg-card-alt: #24201c;
       --border-light: #35302a;
-      --border-card: #3a3530;
+      --border-card: #4a443e;
       --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --text-muted-light: #5a5550;
+      --text-secondary: #b8aea4;
+      --text-muted: #8a8078;
+      --text-muted-light: #6a6560;
       --accent: #b05a4a;
       --accent-soft: rgba(176, 90, 74, 0.08);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+      --shadow-sm: 0 1px 4px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: var(--font);
+      font-family: var(--font-serif);
       background: var(--bg-body);
       color: var(--text-primary);
+      font-size: 17px;
+      line-height: 1.7;
       transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 0 16px;
+      padding: 0 16px 40px 16px;
     }
 
-    /* ===== 右上角悬浮组 ===== */
+    /* 强制2D符号 */
+    .sym-2d { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 400; font-style: normal; text-shadow: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
     .float-group {
       position: fixed;
       top: 20px;
@@ -69,10 +75,10 @@
       border-radius: 24px;
       padding: 6px 14px 6px 12px;
       font-size: 0.7rem;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       cursor: pointer;
       transition: all var(--transition);
-      font-family: inherit;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -80,21 +86,18 @@
       letter-spacing: 0.3px;
       text-decoration: none;
     }
-    .float-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .float-btn:hover { border-color: var(--accent); color: var(--accent); }
     .float-btn .icon { font-size: 0.9rem; }
 
     #app {
       max-width: 820px;
       margin: 0 auto;
       width: 100%;
-      padding: 20px 0 40px 0;
+      padding: 24px 4px 40px 4px;
       flex: 1;
     }
 
-    /* ===== 面包屑 ===== */
+    /* 面包屑 */
     .back-bar {
       display: flex;
       align-items: center;
@@ -103,19 +106,64 @@
       flex-wrap: wrap;
     }
     .back-bar .breadcrumb {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted-light);
+      opacity: 0.7;
+      font-family: var(--font-mono);
+      letter-spacing: 0.3px;
     }
     .back-bar .breadcrumb span {
       color: var(--text-secondary);
+      opacity: 1;
     }
+
+    /* ===== 标题卡片 ===== */
+    .title-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius);
+      padding: 22px 24px 18px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--accent);
+    }
+    .title-card .post-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+      letter-spacing: 0.3px;
+      line-height: 1.4;
+    }
+    .title-card .post-title .category {
+      font-size: 0.7rem;
+      font-weight: 400;
+      font-family: var(--font-mono);
+      color: var(--text-muted-light);
+      background: var(--bg-card-alt);
+      padding: 1px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      margin-right: 8px;
+      letter-spacing: 0.5px;
+    }
+    .title-card .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted-light);
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .title-card .post-meta span { display: flex; align-items: center; gap: 4px; }
 
     /* ===== 楼层 ===== */
     .floor {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
       border-radius: var(--radius);
-      padding: 18px 20px;
+      padding: 16px 20px;
       margin-bottom: 10px;
       box-shadow: var(--shadow-sm);
     }
@@ -126,42 +174,41 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .floor .avatar {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: var(--bg-card-alt);
-      border: 2px solid var(--border-card);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 13px;
       font-weight: 600;
-      color: var(--text-secondary);
       flex-shrink: 0;
+      border: 2px solid var(--border-card);
+      background: var(--bg-card-alt);
+      color: var(--text-secondary);
+      font-family: var(--font-serif);
     }
-    .floor .avatar.accent {
-      background: var(--accent-soft);
-      color: var(--accent);
-      border-color: var(--accent);
+    .floor .avatar.lz-avatar {
+      background: #1a1614;
+      color: #f7f4ef;
+      border-color: #1a1614;
     }
-    .floor .avatar.lz-f {
-      background: #f5d0d0;
-      color: #b85a5a;
-      border-color: #d48a8a;
-      font-size: 1rem;
-    }
-    [data-theme="dark"] .floor .avatar.lz-f {
-      background: #4a2a2a;
-      color: #d48a8a;
-      border-color: #6a3a3a;
+    [data-theme="dark"] .floor .avatar.lz-avatar {
+      background: #cfc8c0;
+      color: #1a1614;
+      border-color: #cfc8c0;
     }
     .floor .avatar.special {
       background: var(--accent-soft);
       color: var(--accent);
       border-color: var(--accent);
+    }
+    .floor .avatar .emoji-avatar {
+      font-size: 14px;
+      line-height: 1;
     }
     .floor .info {
       flex: 1;
@@ -169,30 +216,42 @@
     }
     .floor .info .name {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
     }
     .floor .info .name .badge {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 400;
+      font-family: var(--font-mono);
       background: var(--accent-soft);
       color: var(--accent);
       padding: 1px 8px;
       border-radius: 10px;
+      letter-spacing: 0.3px;
+    }
+    .floor .info .name .badge.lz-badge {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent);
     }
     .floor .info .time {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted-light);
+      font-family: var(--font-mono);
     }
     .floor .floor-num {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted-light);
       font-weight: 400;
+      font-family: var(--font-mono);
       margin-left: auto;
       flex-shrink: 0;
+      opacity: 0.5;
     }
     .floor .body {
       font-size: 0.92rem;
@@ -209,14 +268,12 @@
       border-radius: var(--radius-sm);
       font-size: 0.85rem;
       color: var(--text-muted);
-      font-family: "Georgia", "KaiTi", serif;
-      letter-spacing: 0.5px;
     }
     .floor .body .quote .q-label {
       font-size: 0.7rem;
       color: var(--text-muted-light);
       font-style: normal;
-      font-family: var(--font);
+      font-family: var(--font-mono);
       letter-spacing: 0.3px;
       display: block;
       margin-bottom: 4px;
@@ -225,16 +282,17 @@
       margin-top: 10px;
       display: flex;
       gap: 16px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted-light);
+      font-family: var(--font-mono);
     }
     .floor .actions button {
       background: transparent;
       border: none;
       color: var(--text-muted-light);
       cursor: pointer;
-      font-size: 0.75rem;
-      font-family: inherit;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
       display: flex;
       align-items: center;
       gap: 4px;
@@ -247,28 +305,32 @@
       background: var(--accent-soft);
     }
 
-    /* ===== 响应式 ===== */
     @media (max-width: 600px) {
-      body { padding: 0 10px; }
+      body { padding: 0 10px 30px 10px; font-size: 16px; }
       #app { padding: 14px 0 30px 0; }
       .floor { padding: 14px 14px; }
-      .floor .body { font-size: 0.88rem; }
-      .back-bar { flex-wrap: wrap; }
-      .float-group {
-        top: 12px;
-        right: 12px;
-        gap: 6px;
-      }
-      .float-btn {
-        padding: 4px 10px 4px 8px;
-        font-size: 0.65rem;
-      }
+      .floor .body { font-size: 0.95rem; }
+      .back-bar .breadcrumb { font-size: 0.7rem; }
+      .title-card { padding: 16px 16px 14px 16px; }
+      .title-card .post-title { font-size: 1.1rem; }
+      .title-card .post-meta { font-size: 0.7rem; gap: 10px; }
+      .floor .info .name { font-size: 0.82rem; }
+      .floor .avatar { width: 30px; height: 30px; font-size: 11px; }
+      .float-group { top: 12px; right: 12px; gap: 6px; }
+      .float-btn { padding: 4px 10px 4px 8px; font-size: 0.6rem; }
+    }
+    @media (max-width: 420px) {
+      body { padding: 0 6px 24px 6px; font-size: 15px; }
+      #app { padding: 10px 0 20px 0; }
+      .title-card .post-title { font-size: 0.98rem; }
+      .floor .body { font-size: 0.9rem; }
+      .floor { padding: 12px 12px; }
+      .float-group { top: 8px; right: 8px; gap: 4px; }
+      .float-btn { padding: 3px 8px 3px 6px; font-size: 0.55rem; border-radius: 18px; }
+      .float-btn .icon { font-size: 0.7rem; }
     }
   </style>
   <script>
-    // ============================================================
-    //  主题切换（与怀榆.html 保持一致）
-    // ============================================================
     (function() {
       try {
         const raw = localStorage.getItem('theme');
@@ -313,28 +375,36 @@
 </head>
 <body>
 
-  <!-- ===== 右上角悬浮组 ===== -->
-  <div class="float-group">
-    <a class="float-btn" href="../index.html">
-      <span class="icon">←</span> 返回列表
-    </a>
-    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-      <span class="icon">🌙</span> 夜间
-    </button>
-  </div>
+<div class="float-group">
+  <a class="float-btn" href="../index.html"><span class="icon">←</span> 返回列表</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
+</div>
 
 <div id="app">
-  <!-- ===== 面包屑（仅保留位置信息） ===== -->
+
   <div class="back-bar">
     <span class="breadcrumb">北境茶馆 · <span>【闲聊】我学千律州古代史的时候发现了一对好磕的cp…</span></span>
   </div>
 
-  <!-- ========== 楼主 ========== -->
+  <!-- ===== 标题卡片 ===== -->
+  <div class="title-card">
+    <div class="post-title">
+      <span class="category">闲聊</span>
+      我学千律州古代史的时候发现了一对好磕的cp…
+    </div>
+    <div class="post-meta">
+      <span>✧ 暮色入茶 · 楼主</span>
+      <span>◈ 2026-02-18 19:50</span>
+      <span>✦ 2.3k 人看过</span>
+    </div>
+  </div>
+
+  <!-- ========== 1楼 · 楼主 ========== -->
   <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
+      <div class="avatar lz-avatar">暮</div>
       <div class="info">
-        <div class="name">暮色入茶 <span class="badge">楼主</span></div>
+        <div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div>
         <div class="time">2026-02-18 19:50</div>
       </div>
       <span class="floor-num">#1</span>
@@ -344,446 +414,446 @@
       我一个人磕了好几天了，周围没人懂我，来论坛找找同好。
     </div>
     <div class="actions">
-      <button>👍 234</button>
-      <button>💬 回复</button>
-      <button>⭐ 收藏</button>
+      <button><span class="sym-2d">❤&#xFE0E;</span> 234</button>
+      <button><span class="sym-2d">↩&#xFE0E;</span> 回复</button>
+      <button><span class="sym-2d">★&#xFE0E;</span> 收藏</button>
     </div>
   </div>
 
-  <!-- 2 -->
+  <!-- ========== 2 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 19:53</div></div>
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">摸</div>
+      <div class="info"><div class="name">摸鱼仙人</div><div class="time">2026-02-18 19:53</div></div>
       <span class="floor-num">#2</span>
     </div>
     <div class="body">……楼主你是认真的吗？你发错版了吧？隔壁有专门的泉榆cp论坛，你这帖子该发那边才对，不是这里。</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 3 -->
-  <div class="floor">
+  <!-- ========== 3 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 19:56</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 19:56</div></div>
       <span class="floor-num">#3</span>
     </div>
     <div class="body">啊？还有专门的cp论坛？我不知道啊……我寻思神学论坛这边应该会有一些史料讨论之类的东西，顺便还能吃点考据糖，就发这边了。</div>
-    <div class="actions"><button>👍 67</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 67</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 4 -->
+  <!-- ========== 4 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:00</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">芝</div>
+      <div class="info"><div class="name">芝士就是力量</div><div class="time">2026-02-18 20:00</div></div>
       <span class="floor-num">#4</span>
     </div>
     <div class="body">楼主你最好别去那个cp论坛，那边全是各种追妻火葬场同人文，已经和真实历史没有任何关系了。你要真想了解这对，来神学论坛反而找对地方了。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 5 -->
-  <div class="floor">
+  <!-- ========== 5 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 20:03</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 20:03</div></div>
       <span class="floor-num">#5</span>
     </div>
     <div class="body">回4L，什么意思？那边不讨论史实吗？</div>
-    <div class="actions"><button>👍 34</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 34</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 6 -->
+  <!-- ========== 6 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:05</div></div>
+      <div class="avatar" style="background:#c8d4d8;color:#2a4a5a;">野</div>
+      <div class="info"><div class="name">野生吐槽机</div><div class="time">2026-02-18 20:05</div></div>
       <span class="floor-num">#6</span>
     </div>
     <div class="body">不是不讨论，是被大量同人盖过去了，你翻十页能看见一条正经考据就不错了。而且很多流传很广的“共识”其实根本经不起推敲。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 7 -->
-  <div class="floor">
+  <!-- ========== 7 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 20:08</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 20:08</div></div>
       <span class="floor-num">#7</span>
     </div>
     <div class="body">比如什么“共识”？我刚入坑，你给我讲讲。</div>
-    <div class="actions"><button>👍 45</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 45</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 8 -->
+  <!-- ========== 8 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:12</div></div>
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">大</div>
+      <div class="info"><div class="name">大裤衩</div><div class="time">2026-02-18 20:12</div></div>
       <span class="floor-num">#8</span>
     </div>
     <div class="body">比如“怀榆”这个名字是为了纪念段深泉而取的。这个说法在cp圈里几乎是铁律，但你仔细查史料会发现有对不上的地方。法伊顿自己说过，他第一次见到那个人的时候是在一棵榆树下面，所以才取了这个名字。问题是——段深泉出生在永昼净土的神殿里，永昼净土没有榆树。榆树是时衍天宫的树种。段深泉这辈子可能根本没见过榆树。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 9 -->
+  <!-- ========== 9 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:15</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">我</div>
+      <div class="info"><div class="name">我家的猫一胎九个</div><div class="time">2026-02-18 20:15</div></div>
       <span class="floor-num">#9</span>
     </div>
     <div class="body">……等一下，那法伊顿说的“那个人”是谁？不是段深泉吗？</div>
-    <div class="actions"><button>👍 78</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 78</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 10 -->
+  <!-- ========== 10 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:18</div></div>
+      <div class="avatar" style="background:#d4d0c8;color:#3a3a2a;">躺</div>
+      <div class="info"><div class="name">躺平大师</div><div class="time">2026-02-18 20:18</div></div>
       <span class="floor-num">#10</span>
     </div>
     <div class="body">永昼净土没有榆树这个说法有出处吗？我第一次听说。</div>
-    <div class="actions"><button>👍 56</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 56</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 11 -->
+  <!-- ========== 11 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:20</div></div>
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">这</div>
+      <div class="info"><div class="name">这题我会</div><div class="time">2026-02-18 20:20</div></div>
       <span class="floor-num">#11</span>
     </div>
     <div class="body">回10L，千律州植物志里有记载，榆树的自然分布只在时衍天宫一带，千律州其他地区没有野生榆树，也没有大规模种植的记录。而且永昼净土的光照条件和土壤都不适合榆树生长。所以法伊顿说的那棵榆树，只可能在时衍天宫。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 12 -->
+  <!-- ========== 12 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:23</div></div>
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">互</div>
+      <div class="info"><div class="name">互联网野人</div><div class="time">2026-02-18 20:23</div></div>
       <span class="floor-num">#12</span>
     </div>
     <div class="body">那法伊顿是在时衍天宫遇到的某个人，取了“怀榆”这个名字。但那个人不是段深泉。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 13 -->
+  <!-- ========== 13 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:25</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">今</div>
+      <div class="info"><div class="name">今天也在摸鱼</div><div class="time">2026-02-18 20:25</div></div>
       <span class="floor-num">#13</span>
     </div>
     <div class="body">段深泉的母亲段锦，是时衍天宫皇族出身。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 14 -->
-  <div class="floor">
+  <!-- ========== 14 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 20:26</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 20:26</div></div>
       <span class="floor-num">#14</span>
     </div>
     <div class="body">……所以“怀榆”是为了祭奠段深泉的母亲？</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 15 -->
+  <!-- ========== 15 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:28</div></div>
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">杠</div>
+      <div class="info"><div class="name">杠精本精</div><div class="time">2026-02-18 20:28</div></div>
       <span class="floor-num">#15</span>
     </div>
     <div class="body">你凭什么确定是段锦？万一是其他什么人呢？</div>
-    <div class="actions"><button>👍 67</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 67</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 16 -->
+  <!-- ========== 16 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:30</div></div>
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">早</div>
+      <div class="info"><div class="name">早睡失败人士</div><div class="time">2026-02-18 20:30</div></div>
       <span class="floor-num">#16</span>
     </div>
     <div class="body">回15L，因为段锦是第一任大神使，段深泉是第二任。段锦确实跟着法伊顿从时衍天宫去了永昼净土。法伊顿在时衍天宫遇到的那个人，只可能是段锦。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 17 -->
+  <!-- ========== 17 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:33</div></div>
+      <div class="avatar" style="background:#c8d4d8;color:#2a4a5a;">疯</div>
+      <div class="info"><div class="name">疯狂星期四V我50</div><div class="time">2026-02-18 20:33</div></div>
       <span class="floor-num">#17</span>
     </div>
     <div class="body">我靠，那cp论坛里那些“法伊顿为了纪念和段深泉的初遇取了怀榆这个名字”的同人文全翻车了？</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 18 -->
-  <div class="floor">
+  <!-- ========== 18 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 20:35</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 20:35</div></div>
       <span class="floor-num">#18</span>
     </div>
     <div class="body">所以段深泉是继承了他母亲的位置？他从小就知道自己要当大神使？</div>
-    <div class="actions"><button>👍 78</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 78</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 19 -->
+  <!-- ========== 19 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:38</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">禁</div>
+      <div class="info"><div class="name">禁止随地大小变</div><div class="time">2026-02-18 20:38</div></div>
       <span class="floor-num">#19</span>
     </div>
     <div class="body">史料里有一个说法叫“代母职”，段深泉确实是在段锦年迈之后被推上这个位置的。法伊顿可能根本没在意过换人了，对他来说大概只是“换了一个人继续当大神使”。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 20 -->
+  <!-- ========== 20 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:40</div></div>
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">社</div>
+      <div class="info"><div class="name">社恐但爱发帖</div><div class="time">2026-02-18 20:40</div></div>
       <span class="floor-num">#20</span>
     </div>
     <div class="body">这么说起来，你们看过史书上法伊顿的画像吧？就是那张著名的登梯照，他当时站在天梯上回头看了一眼下方的人，刚好一阵风吹过来。我难以描述，不知道画师有没有美化，反正确实是好看。这张图被泉榆cp论坛挂在置顶，因为大家都默认法伊顿当时在看的是段深泉。但查一下时间……还真不一定。那时候段深泉说不定还没出生呢。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 21 -->
+  <!-- ========== 21 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:42</div></div>
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">骑</div>
+      <div class="info"><div class="name">骑着蜗牛追火箭</div><div class="time">2026-02-18 20:42</div></div>
       <span class="floor-num">#21</span>
     </div>
     <div class="body">你的意思是法伊顿当时看的有可能是段锦？</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 22 -->
+  <!-- ========== 22 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:43</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">咸</div>
+      <div class="info"><div class="name">咸鱼本鱼</div><div class="time">2026-02-18 20:43</div></div>
       <span class="floor-num">#22</span>
     </div>
     <div class="body">……草，怎么这么胃疼。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 23 -->
+  <!-- ========== 23 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:45</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">上</div>
+      <div class="info"><div class="name">上辈子是只猹</div><div class="time">2026-02-18 20:45</div></div>
       <span class="floor-num">#23</span>
     </div>
     <div class="body">我也只是猜测，毕竟画像没有标注明确时间，考古只能推测出大概年份。段深泉和段锦的时间隔得并不长，法伊顿身边那个位置换人换得太快了，外人可能根本看不出区别。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 24 -->
+  <!-- ========== 24 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:48</div></div>
+      <div class="avatar" style="background:#d8ccc8;color:#3a2a1a;">情</div>
+      <div class="info"><div class="name">情绪稳定的大人</div><div class="time">2026-02-18 20:48</div></div>
       <span class="floor-num">#24</span>
     </div>
     <div class="body">那法伊顿分神给段深泉的时候，他分的对象到底是谁？是段深泉这个人，还是“大神使”这个位置？</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 25 -->
+  <!-- ========== 25 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:50</div></div>
+      <div class="avatar" style="background:#c8d0d4;color:#2a3a4a;">空</div>
+      <div class="info"><div class="name">空调救了我的命</div><div class="time">2026-02-18 20:50</div></div>
       <span class="floor-num">#25</span>
     </div>
     <div class="body">这个问题问得太狠了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 26 -->
+  <!-- ========== 26 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:52</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">对</div>
+      <div class="info"><div class="name">对方正在输入...</div><div class="time">2026-02-18 20:52</div></div>
       <span class="floor-num">#26</span>
     </div>
     <div class="body">法伊顿那段分神的记录你们看过吗？“法伊顿分予神力于一人，其人得半神之格，名深泉。时人以其貌异，目为非凡。”——他只分了力量，没说别的。他可能真的没意识到自己面前换了人。</div>
-    <div class="actions"><button>👍 312</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 312</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 27 -->
+  <!-- ========== 27 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:55</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">今</div>
+      <div class="info"><div class="name">今天不想起名</div><div class="time">2026-02-18 20:55</div></div>
       <span class="floor-num">#27</span>
     </div>
     <div class="body">不过法伊顿后来应该是认清了，至少部分看清了。他去追过段深泉，段深泉跑回时衍天宫那段时间，法伊顿去找过他。</div>
-    <div class="actions"><button>👍 267</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 267</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 28 -->
+  <!-- ========== 28 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 20:58</div></div>
+      <div class="avatar" style="background:#d8d0c4;color:#3a3a2a;">退</div>
+      <div class="info"><div class="name">退堂鼓表演艺术家</div><div class="time">2026-02-18 20:58</div></div>
       <span class="floor-num">#28</span>
     </div>
     <div class="body">这段史料我也看过，法伊顿离开永昼净土的时间点确实和段深泉离开的时间对得上。堂堂光明神亲自去追一个凡人，这已经是很大的让步了。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 29 -->
+  <!-- ========== 29 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:00</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">假</div>
+      <div class="info"><div class="name">假笑男孩本孩</div><div class="time">2026-02-18 21:00</div></div>
       <span class="floor-num">#29</span>
     </div>
     <div class="body">让步是让步，但本质没变。法伊顿还是神，段深泉还是人。他追过去可能只是不习惯——养了很久的猫跑了你会去找，但你还是把它当猫。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 30 -->
+  <!-- ========== 30 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:03</div></div>
+      <div class="avatar" style="background:#d8ccc8;color:#3a2a1a;">吃</div>
+      <div class="info"><div class="name">吃瓜群众代表</div><div class="time">2026-02-18 21:03</div></div>
       <span class="floor-num">#30</span>
     </div>
     <div class="body">但后来他分神了。分神这个动作本身就已经超过“神明对凡人”的范畴了。他给了段深泉一半力量，让自己不再是唯一的神。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 31 -->
+  <!-- ========== 31 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:05</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">无</div>
+      <div class="info"><div class="name">无人在意</div><div class="time">2026-02-18 21:05</div></div>
       <span class="floor-num">#31</span>
     </div>
     <div class="body">忘记在哪看的了，法伊顿的原话我记得有一句是“现在我们是平等的了，你可以爱我了吗”。这句话太明显了，他一直在等段深泉爱他，但他不懂为什么段深泉不觉得那就是爱。</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 32 -->
+  <!-- ========== 32 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:08</div></div>
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">我</div>
+      <div class="info"><div class="name">我还能再睡五分钟</div><div class="time">2026-02-18 21:08</div></div>
       <span class="floor-num">#32</span>
     </div>
     <div class="body">换你你也不会觉得这是爱吧，法伊顿给的一切都是“施舍”而不是“给予”。大神使的身份是他给的，力量是他分的，连那个名字——你想想段深泉知道就连这个“怀榆”也和他毫无相关，他心里是什么感受。</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 33 -->
+  <!-- ========== 33 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:10</div></div>
+      <div class="avatar" style="background:#d8d0c8;color:#3a3a2a;">野</div>
+      <div class="info"><div class="name">野生历史学家</div><div class="time">2026-02-18 21:10</div></div>
       <span class="floor-num">#33</span>
     </div>
     <div class="body">但其实以上都是历史大佬扒的，这段关系太私人了，不会写在正史里。我们也是拼了半天才拼出个大概，很多细节都是猜的，也不完全正确。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 34 -->
+  <!-- ========== 34 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:12</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">网</div>
+      <div class="info"><div class="name">网络街溜子</div><div class="time">2026-02-18 21:12</div></div>
       <span class="floor-num">#34</span>
     </div>
     <div class="body">所以段深泉一辈子都不知道这件事？</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 35 -->
+  <!-- ========== 35 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:15</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">我</div>
+      <div class="info"><div class="name">我觉得你说得对</div><div class="time">2026-02-18 21:15</div></div>
       <span class="floor-num">#35</span>
     </div>
     <div class="body">怎么可能不知道，都当上大神使了，能笨到哪去，我们都能猜出来，段深泉凭什么不能。</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 36 -->
-  <div class="floor">
+  <!-- ========== 36 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 21:18</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 21:18</div></div>
       <span class="floor-num">#36</span>
     </div>
     <div class="body">我忽然想到一个事，法伊顿的遗言你们看过吗？我记得之前在某篇文献里见过出土的原版，我找一下。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 37 -->
+  <!-- ========== 37 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:20</div></div>
+      <div class="avatar" style="background:#c8d4d0;color:#2a4a4a;">深</div>
+      <div class="info"><div class="name">深夜哲学家</div><div class="time">2026-02-18 21:20</div></div>
       <span class="floor-num">#37</span>
     </div>
     <div class="body">法伊顿还有遗言？？我怎么不知道？？</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 38 -->
+  <!-- ========== 38 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:22</div></div>
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">烛</div>
+      <div class="info"><div class="name">烛火</div><div class="time">2026-02-18 21:22</div></div>
       <span class="floor-num">#38</span>
     </div>
     <div class="body">法伊顿的遗言是谁记下来的？除了段深泉谁听过？史官能记录上这个？</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 39 -->
+  <!-- ========== 39 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:25</div></div>
+      <div class="avatar" style="background:#c8d4c4;color:#2a4a3a;">石</div>
+      <div class="info"><div class="name">石上苔</div><div class="time">2026-02-18 21:25</div></div>
       <span class="floor-num">#39</span>
     </div>
     <div class="body">段深泉自己记下来的呗，法伊顿不是让他活下去了吗，他活着就是为了记住这些。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 40 -->
+  <!-- ========== 40 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:28</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">无</div>
+      <div class="info"><div class="name">无名</div><div class="time">2026-02-18 21:28</div></div>
       <span class="floor-num">#40</span>
     </div>
     <div class="body">……这句话本身就很地狱。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 41 -->
-  <div class="floor">
+  <!-- ========== 41 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 21:30</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 21:30</div></div>
       <span class="floor-num">#41</span>
     </div>
     <div class="body">
@@ -793,113 +863,113 @@
         “吾令汝长存此世，至于识吾名者尽殁，至于世间无复称法伊顿者。至其时，汝仍当忆我。此皆汝之所欠，汝为我之从者、我之半身、我之所爱。代我而生，至于吾罪亦随汝入墓。”
       </div>
     </div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 42 -->
+  <!-- ========== 42 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:33</div></div>
+      <div class="avatar" style="background:#c8d0c8;color:#2a3a2a;">子</div>
+      <div class="info"><div class="name">子不语</div><div class="time">2026-02-18 21:33</div></div>
       <span class="floor-num">#42</span>
     </div>
     <div class="body">这是遗言？？这更像诅咒吧。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 43 -->
+  <!-- ========== 43 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:35</div></div>
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">夜</div>
+      <div class="info"><div class="name">夜行者</div><div class="time">2026-02-18 21:35</div></div>
       <span class="floor-num">#43</span>
     </div>
     <div class="body">“至于识吾名者尽殁”——他让段深泉活到所有认识他的人都死了。这太偏执了，法伊顿真的是这样说的吗？</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 44 -->
+  <!-- ========== 44 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:38</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">摸</div>
+      <div class="info"><div class="name">摸鱼协会会长</div><div class="time">2026-02-18 21:38</div></div>
       <span class="floor-num">#44</span>
     </div>
     <div class="body">但这段遗言没有实际作用，段深泉没有因为这句话就长生不老，只是普通地活到了老死。法伊顿收回力量之后，段深泉就是凡人了。</div>
-    <div class="actions"><button>👍 378</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 378</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 45 -->
+  <!-- ========== 45 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:40</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">但</div>
+      <div class="info"><div class="name">但是我不听</div><div class="time">2026-02-18 21:40</div></div>
       <span class="floor-num">#45</span>
     </div>
     <div class="body">等等，法伊顿收回了力量？他不是给了段深泉一半神力吗，怎么收回去的？</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 46 -->
+  <!-- ========== 46 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:42</div></div>
+      <div class="avatar" style="background:#c8d4d8;color:#2a4a5a;">温</div>
+      <div class="info"><div class="name">温柔一刀</div><div class="time">2026-02-18 21:42</div></div>
       <span class="floor-num">#46</span>
     </div>
     <div class="body">回45L，大寂灭前夕，法伊顿知道自己要死了，把分出去的力量收了回来。因为他知道段深泉体内如果有墟元力，会在大寂灭中一起死。收回力量之后段深泉就是纯粹的凡人，凡人不会因为大寂灭而死。</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 47 -->
+  <!-- ========== 47 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:45</div></div>
+      <div class="avatar" style="background:#d8ccc8;color:#3a2a1a;">懂</div>
+      <div class="info"><div class="name">懂的都懂</div><div class="time">2026-02-18 21:45</div></div>
       <span class="floor-num">#47</span>
     </div>
     <div class="body">所以那段遗言根本不是诅咒，他收回力量才是真正让段深泉活下来的动作。</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 48 -->
+  <!-- ========== 48 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:48</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">随</div>
+      <div class="info"><div class="name">随缘回复</div><div class="time">2026-02-18 21:48</div></div>
       <span class="floor-num">#48</span>
     </div>
     <div class="body">但我还是想问，法伊顿收回了力量，段深泉就只是一个普通人了。一个普通人能活多久？几十年就死了。那历史上那些“段深泉”的记载是怎么回事？名字重合太多，时间跨度又长，说全是巧合有点勉强。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 49 -->
+  <!-- ========== 49 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:50</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">不</div>
+      <div class="info"><div class="name">不懂别问</div><div class="time">2026-02-18 21:50</div></div>
       <span class="floor-num">#49</span>
     </div>
     <div class="body">那就涉及到一个不可宣之于口的话题了……就此打住吧，再往下就不是历史讨论的范畴了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 50 -->
+  <!-- ========== 50 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:52</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">持</div>
+      <div class="info"><div class="name">持续性混吃等死</div><div class="time">2026-02-18 21:52</div></div>
       <span class="floor-num">#50</span>
     </div>
     <div class="body">对，打住。再聊下去会被封的，楼主只要知道段深泉后面只是普通的死了就好，墓就在时衍天宫南边一个的小镇里。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 51 -->
+  <!-- ========== 51 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:55</div></div>
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">离</div>
+      <div class="info"><div class="name">离线中</div><div class="time">2026-02-18 21:55</div></div>
       <span class="floor-num">#51</span>
     </div>
     <div class="body">那个墓我去看过，就是很普通的墓，大概是别人帮他立的。我把上面的碑文抄下来了：
@@ -908,315 +978,315 @@
         “大神使段深泉之墓。生于永昼，归于南镇，春秋七十。侍昭临三十载，受半神之格，后复为凡人。神曰‘代我而生，至于吾罪亦随汝入墓’，吾性拙，未及尽偿。唯终老于斯，念神不辍。”
       </div>
     </div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 52 -->
+  <!-- ========== 52 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 21:58</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">已</div>
+      <div class="info"><div class="name">已读乱回</div><div class="time">2026-02-18 21:58</div></div>
       <span class="floor-num">#52</span>
     </div>
     <div class="body">“念神不辍”……</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 53 -->
+  <!-- ========== 53 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:00</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">你</div>
+      <div class="info"><div class="name">你杠就是你对</div><div class="time">2026-02-18 22:00</div></div>
       <span class="floor-num">#53</span>
     </div>
     <div class="body">你们注意到他对法伊顿的称呼了吗？碑文里写的是“神曰”，也就意味着他一直到死，称呼法伊顿的方式都是“神”。</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 54 -->
+  <!-- ========== 54 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:02</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">我</div>
+      <div class="info"><div class="name">我的精神状态很美丽</div><div class="time">2026-02-18 22:02</div></div>
       <span class="floor-num">#54</span>
     </div>
     <div class="body">哎哟胃疼，段深泉咋这么卑微，一生都记得他，却又是个犟种，到死都不改口。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 55 -->
-  <div class="floor">
+  <!-- ========== 55 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 22:05</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 22:05</div></div>
       <span class="floor-num">#55</span>
     </div>
     <div class="body">我本来只是想找个姐妹一起嗑cp，怎么现在心情这么复杂。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 56 -->
+  <!-- ========== 56 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:08</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">打</div>
+      <div class="info"><div class="name">打工人打工魂</div><div class="time">2026-02-18 22:08</div></div>
       <span class="floor-num">#56</span>
     </div>
     <div class="body">因为你知道得太多了。回去看同人文你已经看不下去了。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 57 -->
+  <!-- ========== 57 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:10</div></div>
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">佛</div>
+      <div class="info"><div class="name">佛系追更人</div><div class="time">2026-02-18 22:10</div></div>
       <span class="floor-num">#57</span>
     </div>
     <div class="body">我确实再也无法直视“霸道神使爱上我”这种设定了。</div>
-    <div class="actions"><button>👍 567</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 58 -->
+  <!-- ========== 58 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:12</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">今</div>
+      <div class="info"><div class="name">今天也在破防</div><div class="time">2026-02-18 22:12</div></div>
       <span class="floor-num">#58</span>
     </div>
     <div class="body">但是回到最初，法伊顿和段深泉还是好磕的。只是好磕的点不一样了——从“神明为凡人低头”变成了“神明直到最后也没学会平等地去爱，但他已经尽力了”。</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 59 -->
+  <!-- ========== 59 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:15</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">间</div>
+      <div class="info"><div class="name">间歇性踌躇满志</div><div class="time">2026-02-18 22:15</div></div>
       <span class="floor-num">#59</span>
     </div>
     <div class="body">段深泉呢？他接受了法伊顿最后收回力量的动作，也接受了那段像诅咒一样的遗言。他活下去了，用自己的方式记住那个人。<br><br>哪怕那个人到死都没真正懂过他。</div>
-    <div class="actions"><button>👍 1.2k</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 60 -->
-  <div class="floor">
+  <!-- ========== 60 ========== -->
+  <div class="floor lz">
     <div class="head">
-      <div class="avatar lz-f">✿</div>
-      <div class="info"><div class="name">暮色入茶 <span class="badge">楼主</span></div><div class="time">2026-02-18 22:18</div></div>
+      <div class="avatar lz-avatar">暮</div>
+      <div class="info"><div class="name">暮色入茶 <span class="badge lz-badge">楼主</span></div><div class="time">2026-02-18 22:18</div></div>
       <span class="floor-num">#60</span>
     </div>
     <div class="body">好了，今晚的糖嗑到这里，我先去吃碗面冷静一下。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 61 -->
+  <!-- ========== 61 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:20</div></div>
+      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">卧</div>
+      <div class="info"><div class="name">卧龙</div><div class="time">2026-02-18 22:20</div></div>
       <span class="floor-num">#61</span>
     </div>
     <div class="body">楼主记得去隔壁泉榆cp论坛发一下这个帖子，让那边的人清醒清醒。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 62 -->
+  <!-- ========== 62 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:22</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">凤</div>
+      <div class="info"><div class="name">凤雏</div><div class="time">2026-02-18 22:22</div></div>
       <span class="floor-num">#62</span>
     </div>
     <div class="body">算了，让她们继续沉浸在“霸道神使爱上我”的幻想里吧，也是一种幸福。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 63 -->
+  <!-- ========== 63 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:25</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">我</div>
+      <div class="info"><div class="name">我走不出来</div><div class="time">2026-02-18 22:25</div></div>
       <span class="floor-num">#63</span>
     </div>
     <div class="body">我走不出来了，法伊顿分神那三年到底算什么啊——他以为终于平等了，段深泉以为终于被看见了，然后大寂灭来了。三年。连好好爱一场的时间都不够。</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 64 -->
+  <!-- ========== 64 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:28</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">每</div>
+      <div class="info"><div class="name">每天都很饿</div><div class="time">2026-02-18 22:28</div></div>
       <span class="floor-num">#64</span>
     </div>
     <div class="body">所以段深泉在法伊顿死后那几十年，每一天都在回忆那三年。然后他老了，死了，那段记忆也跟着他一起消失了。</div>
-    <div class="actions"><button>👍 789</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 65 -->
+  <!-- ========== 65 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:30</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">主</div>
+      <div class="info"><div class="name">主打一个陪伴</div><div class="time">2026-02-18 22:30</div></div>
       <span class="floor-num">#65</span>
     </div>
     <div class="body">法伊顿最后那句话,“至于吾罪亦随汝入墓”——等于说是他承认自己有罪，到最后可能终于懂了，但他已经没有时间了。</div>
-    <div class="actions"><button>👍 890</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 66 -->
+  <!-- ========== 66 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:33</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">今</div>
+      <div class="info"><div class="name">今天吃啥</div><div class="time">2026-02-18 22:33</div></div>
       <span class="floor-num">#66</span>
     </div>
     <div class="body">我今晚睡不着了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 67 -->
+  <!-- ========== 67 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:35</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">你</div>
+      <div class="info"><div class="name">你干嘛</div><div class="time">2026-02-18 22:35</div></div>
       <span class="floor-num">#67</span>
     </div>
     <div class="body">没事，你想想段深泉，他可能每晚也睡不着。他活了那么多年，每个晚上都在回想那三年。你能睡着的，你至少没有一段被神明爱过但来不及的过去。</div>
-    <div class="actions"><button>👍 456</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 68 -->
+  <!-- ========== 68 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:38</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">这</div>
+      <div class="info"><div class="name">这很难评</div><div class="time">2026-02-18 22:38</div></div>
       <span class="floor-num">#68</span>
     </div>
     <div class="body">……这安慰得也太地狱了。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 69 -->
+  <!-- ========== 69 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:40</div></div>
+      <div class="avatar" style="background:#d8ccc4;color:#3a2a1a;">溜</div>
+      <div class="info"><div class="name">溜了溜了</div><div class="time">2026-02-18 22:40</div></div>
       <span class="floor-num">#69</span>
     </div>
     <div class="body">楼主已经跑了，被聊跑了。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 70 -->
+  <!-- ========== 70 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:42</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">我</div>
+      <div class="info"><div class="name">我也溜了</div><div class="time">2026-02-18 22:42</div></div>
       <span class="floor-num">#70</span>
     </div>
     <div class="body">我也跑了，我去隔壁论坛看一篇不用动脑子的同人文缓一缓。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 71 -->
+  <!-- ========== 71 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:45</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">你</div>
+      <div class="info"><div class="name">你还看</div><div class="time">2026-02-18 22:45</div></div>
       <span class="floor-num">#71</span>
     </div>
     <div class="body">你还能看下去吗？你知根知底了。</div>
-    <div class="actions"><button>👍 156</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 72 -->
+  <!-- ========== 72 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:48</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">无</div>
+      <div class="info"><div class="name">无所谓了</div><div class="time">2026-02-18 22:48</div></div>
       <span class="floor-num">#72</span>
     </div>
     <div class="body">无所谓了，我可以一边看一边告诉自己“这里的法伊顿不是历史书上那个”，就当平行世界。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 73 -->
+  <!-- ========== 73 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:50</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">学</div>
+      <div class="info"><div class="name">学废了</div><div class="time">2026-02-18 22:50</div></div>
       <span class="floor-num">#73</span>
     </div>
     <div class="body">好办法，我学废了。</div>
-    <div class="actions"><button>👍 189</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 74 -->
+  <!-- ========== 74 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:52</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">祝</div>
+      <div class="info"><div class="name">祝好</div><div class="time">2026-02-18 22:52</div></div>
       <span class="floor-num">#74</span>
     </div>
     <div class="body">祝每一个磕泉榆的人，都能学会把历史同人分开看。不然真的会睡不着。</div>
-    <div class="actions"><button>👍 678</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 75 -->
+  <!-- ========== 75 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:55</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">晚</div>
+      <div class="info"><div class="name">晚安</div><div class="time">2026-02-18 22:55</div></div>
       <span class="floor-num">#75</span>
     </div>
     <div class="body">晚安，我去吃面了。</div>
-    <div class="actions"><button>👍 123</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 76 -->
+  <!-- ========== 76 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 22:58</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">加</div>
+      <div class="info"><div class="name">加蛋</div><div class="time">2026-02-18 22:58</div></div>
       <span class="floor-num">#76</span>
     </div>
     <div class="body">晚安，记得加蛋。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 77 -->
+  <!-- ========== 77 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 23:00</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">你</div>
+      <div class="info"><div class="name">你怎么知道</div><div class="time">2026-02-18 23:00</div></div>
       <span class="floor-num">#77</span>
     </div>
     <div class="body">……你怎么知道我今晚打算吃面加蛋。</div>
-    <div class="actions"><button>👍 89</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 78 -->
+  <!-- ========== 78 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 23:02</div></div>
+      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">番</div>
+      <div class="info"><div class="name">番茄鸡蛋面</div><div class="time">2026-02-18 23:02</div></div>
       <span class="floor-num">#78</span>
     </div>
     <div class="body">因为我也要吃，番茄鸡蛋面，加蛋。</div>
-    <div class="actions"><button>👍 345</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
-  <!-- 79 -->
+  <!-- ========== 79 ========== -->
   <div class="floor">
     <div class="head">
-      <div class="avatar">匿</div>
-      <div class="info"><div class="name">匿名用户</div><div class="time">2026-02-18 23:05</div></div>
+      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">面</div>
+      <div class="info"><div class="name">面馆见</div><div class="time">2026-02-18 23:05</div></div>
       <span class="floor-num">#79</span>
     </div>
     <div class="body">行了别说了，我去面馆了。</div>
-    <div class="actions"><button>👍 234</button><button>💬 回复</button></div>
+    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
   </div>
 
 </div>
