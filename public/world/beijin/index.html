@@ -177,6 +177,7 @@
     }
     details:hover { border-color: var(--border-card); }
 
+    /* === 折叠按钮：flex 左对齐 + 右侧提示靠右 === */
     summary {
       padding: 14px 18px 14px 20px;
       font-size: 1rem;
@@ -191,12 +192,13 @@
       border-radius: 6px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;   /* 左对齐 */
+      gap: 8px;
       text-align: left;
-      gap: 12px;
     }
     summary:hover { background: var(--accent-soft); }
 
+    /* 左侧装饰竖线 */
     summary::before {
       content: '';
       position: absolute;
@@ -212,6 +214,7 @@
     details:hover summary::before { opacity: 0.6; }
     details[open] summary::before { opacity: 0.8; top: 15%; bottom: 15%; }
 
+    /* 点击提示：推到最右侧 */
     summary .click-hint {
       font-size: 0.75rem;
       color: var(--text-muted-light);
@@ -224,6 +227,7 @@
       gap: 4px;
       flex-shrink: 0;
       white-space: nowrap;
+      margin-left: auto;            /* 关键：推到右端 */
     }
     details:hover summary .click-hint { opacity: 0.7; color: var(--accent); }
     details[open] summary .click-hint { opacity: 0.2; }
@@ -287,8 +291,7 @@
       text-align: left;
       border-bottom: 1px solid var(--border-light);
       color: var(--text-secondary);
-      font-size: 0.88rem;           /* 与 table 保持一致，手机端会覆盖 */
-      /* 移除 white-space: nowrap，允许换行，解决手机端撑开问题 */
+      font-size: 0.88rem;
     }
     .table-wrap table tr:hover td { background: var(--accent-soft); }
     .table-wrap table th {
@@ -356,17 +359,18 @@
       .derivative-notice { padding: 12px 14px; font-size: 0.9rem; margin-bottom: 20px; }
       .section-title { font-size: 1.15rem; }
 
+      /* 折叠按钮：左对齐 + 右侧提示靠右 */
       summary {
         padding: 12px 14px 12px 16px;
         font-size: 0.95rem;
-        text-align: left !important;
-        justify-content: space-between;
-        gap: 8px;
+        justify-content: flex-start;
+        gap: 6px;
       }
       summary .click-hint {
         font-size: 0.65rem;
         flex-shrink: 0;
         white-space: nowrap;
+        margin-left: auto;
       }
 
       .accordion-content { padding: 0 12px 2px 12px; }
@@ -380,26 +384,44 @@
       .character-item p { font-size: 0.88rem; }
       .page-footer { font-size: 0.65rem; }
 
-      /* ——— 表格修复：强制缩小字体，允许换行 ——— */
+      /* ===== 表格：手机端字号清晰，不拆单词 ===== */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
       .table-wrap table {
-        font-size: 0.72rem;
-        min-width: 320px;
+        font-size: 0.82rem;
+        min-width: 420px;
+        table-layout: fixed;
       }
       .table-wrap table th,
       .table-wrap table td {
-        font-size: 0.72rem !important;   /* 强制覆盖，与 table 一致 */
-        padding: 6px 8px;
-        white-space: normal;             /* 允许换行，防止撑开 */
-        word-break: break-word;
+        font-size: 0.82rem !important;
+        padding: 6px 10px;
+        white-space: normal;
+        overflow-wrap: break-word;    /* 只拆超长单词，不拆正常词 */
+        word-break: normal;           /* 关键：不拆单词，保留完整词语 */
+        vertical-align: top;
+      }
+      /* 第一列（性别）宽度固定，不被挤压 */
+      .table-wrap table th:first-child,
+      .table-wrap table td:first-child {
+        width: 22%;
+        min-width: 70px;
+        white-space: nowrap;          /* 性别列保留不换行 */
+      }
+      /* 第二列（特征）自动分配剩余宽度 */
+      .table-wrap table th:last-child,
+      .table-wrap table td:last-child {
+        width: 78%;
       }
       .table-wrap table th {
-        font-size: 0.66rem !important;
+        font-size: 0.7rem !important;
       }
       .table-wrap table td strong {
         font-weight: 600;
       }
 
-      /* 确保所有文本类元素左对齐 */
       #app .page-header h1,
       #app .page-header .sub,
       #app .section-title,
@@ -425,7 +447,7 @@
       summary {
         font-size: 0.88rem;
         padding: 10px 12px 10px 14px;
-        text-align: left !important;
+        justify-content: flex-start;
       }
       summary .click-hint { font-size: 0.6rem; }
 
@@ -434,18 +456,29 @@
       .accordion-content blockquote { font-size: 0.87rem; }
 
       .table-wrap table {
-        font-size: 0.65rem;
-        min-width: 260px;
+        font-size: 0.76rem;
+        min-width: 320px;
       }
       .table-wrap table th,
       .table-wrap table td {
-        font-size: 0.65rem !important;
-        padding: 4px 6px;
+        font-size: 0.76rem !important;
+        padding: 4px 8px;
         white-space: normal;
-        word-break: break-word;
+        overflow-wrap: break-word;
+        word-break: normal;
+      }
+      .table-wrap table th:first-child,
+      .table-wrap table td:first-child {
+        width: 25%;
+        min-width: 60px;
+        white-space: nowrap;
+      }
+      .table-wrap table th:last-child,
+      .table-wrap table td:last-child {
+        width: 75%;
       }
       .table-wrap table th {
-        font-size: 0.6rem !important;
+        font-size: 0.65rem !important;
       }
     }
   </style>
