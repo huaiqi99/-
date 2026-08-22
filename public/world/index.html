@@ -3,59 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>探索 · 墨境</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <title>墨境 · 探索</title>
   <style>
-    /* ============================================================
-       0. 夜间模式兼容
-    ============================================================ */
+    /* ===== 色盘 ===== */
     :root {
-      --bg-body: #ffffff;
-      --bg-hover: rgba(176, 58, 42, 0.04);
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --border-light: #ece6de;
-      --accent: #b03a2a;
-      --accent-soft: rgba(176, 58, 42, 0.08);
+      --bg-body: #faf6ef;
+      --bg-card: #ffffff;
+      --bg-card-alt: #f2eee9;
+      --border-light: #e8e0d5;
+      --border-card: #d5c8b8;
+      --text-primary: #1f1a16;
+      --text-secondary: #2c241e;
+      --text-muted: #5a4d42;
+      --text-muted-light: #8a7a6a;
+      --accent: #8a3a2a;
+      --accent-soft: rgba(138, 58, 42, 0.05);
+      --accent-glow: rgba(138, 58, 42, 0.12);
+      --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.03);
+      --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+      --font-mono: "Courier New", "Source Code Pro", monospace;
+      --transition: 0.2s ease;
     }
 
     [data-theme="dark"] {
-      --bg-body: #1a1816;
-      --bg-hover: rgba(176, 90, 74, 0.08);
+      --bg-body: #1e1a16;
+      --bg-card: #2a2520;
+      --bg-card-alt: #24201c;
+      --border-light: #3a3530;
+      --border-card: #4a443e;
       --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --border-light: #35302a;
+      --text-secondary: #b8aea4;
+      --text-muted: #8a8078;
+      --text-muted-light: #6a6560;
       --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.12);
+      --accent-soft: rgba(176, 90, 74, 0.06);
+      --accent-glow: rgba(176, 90, 74, 0.15);
     }
 
-    /* ============================================================
-       1. 全局
-    ============================================================ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      font-family: var(--font-serif);
       background: var(--bg-body);
       color: var(--text-primary);
       font-size: 16px;
       line-height: 1.7;
-      transition: background 0.3s, color 0.3s;
+      transition: background var(--transition), color var(--transition);
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       min-height: 100vh;
+      padding: 0 16px 40px 16px;
       display: flex;
       flex-direction: column;
     }
 
-    /* ============================================================
-       2. 顶部导航
-    ============================================================ */
+    /* ===== 顶部导航 ===== */
     #nav {
-      max-width: 960px;
+      max-width: 840px;
       margin: 0 auto;
-      padding: 18px 24px 10px 24px;
+      padding: 18px 4px 10px 4px;
       width: 100%;
       display: flex;
       align-items: center;
@@ -63,76 +69,129 @@
       border-bottom: 1px solid var(--border-light);
       transition: border-color 0.3s;
     }
-    .nav-brand {
-      font-size: 1.1rem;
-      font-weight: 500;
-      color: var(--text-primary);
-      text-decoration: none;
-      letter-spacing: 0.5px;
-    }
-    .nav-brand span { color: var(--accent); }
-    .nav-links {
+    .nav-left {
       display: flex;
-      gap: 18px;
+      align-items: center;
+      gap: 20px;
     }
-    .nav-links a {
+    .nav-back {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+      transition: color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
-    .nav-links a:hover { color: var(--accent); }
-
-    /* ============================================================
-       3. 页头
-    ============================================================ */
-    #header {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 32px 24px 16px 24px;
-      width: 100%;
+    .nav-back:hover {
+      color: var(--accent);
     }
-    #header h1 {
-      font-size: 1.6rem;
+    .nav-brand {
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--text-primary);
+      text-decoration: none;
       letter-spacing: 0.5px;
+      font-family: var(--font-serif);
     }
-    #header .sub {
-      font-size: 0.95rem;
+    .nav-brand span {
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-right a {
       color: var(--text-muted);
-      margin-top: 2px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color var(--transition);
+      font-family: var(--font-serif);
+    }
+    .nav-right a:hover {
+      color: var(--accent);
+    }
+    /* 夜间切换按钮（放导航里，不额外悬浮） */
+    .theme-toggle-nav {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: color var(--transition);
+      font-family: var(--font-serif);
+      padding: 2px 4px;
+    }
+    .theme-toggle-nav:hover {
+      color: var(--accent);
     }
 
-    /* ============================================================
-       4. 作品列表（无卡片）
-    ============================================================ */
-    #list {
-      max-width: 960px;
+    /* ===== 主容器 ===== */
+    #app {
+      max-width: 840px;
       margin: 0 auto;
-      padding: 8px 24px 40px 24px;
       width: 100%;
+      padding: 24px 4px 20px 4px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* ===== 头部 ===== */
+    .page-header {
+      padding: 0 0 14px 0;
+      border-bottom: 1.5px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .page-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    .page-header h1 .accent {
+      color: var(--accent);
+      font-weight: 400;
+    }
+    .page-header .sub {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--text-muted-light);
+      font-family: var(--font-serif);
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== 作品列表（全屏延展，无卡片） ===== */
+    #list {
+      padding: 6px 0 0 0;
       flex: 1;
     }
 
+    /* ===== 条目 ===== */
     .entry {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 0;
+      padding: 16px 0;
       border-bottom: 1px solid var(--border-light);
-      transition: border-color 0.3s, background 0.2s;
+      transition: background var(--transition), border-color var(--transition);
       gap: 20px;
     }
     .entry:last-child {
       border-bottom: none;
     }
+
+    /* ★ 悬停只有极淡背景色，没有上浮、没有阴影、没有圆角 = 全屏感保留 */
     .entry:hover {
-      background: var(--bg-hover);
-      margin: 0 -12px;
-      padding-left: 12px;
-      padding-right: 12px;
-      border-radius: 6px;
+      background: var(--accent-soft);
     }
 
     .entry-info {
@@ -141,107 +200,126 @@
     }
     .entry-name {
       font-size: 1.05rem;
-      font-weight: 500;
+      font-weight: 600;
+      font-family: var(--font-serif);
       color: var(--text-primary);
       letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .entry-name .highlight {
+    .entry-name .marker {
       color: var(--accent);
+      font-size: 1rem;
+      font-weight: 400;
+      opacity: 0.6;
     }
     .entry-desc {
-      font-size: 0.88rem;
-      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-muted-light);
       margin-top: 1px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-family: var(--font-serif);
+      letter-spacing: 0.2px;
     }
 
-    /* 电脑端：flex + wrap，按钮多了自动换行，不会挤 */
+    /* ===== 按钮组 ===== */
     .entry-actions {
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
     .entry-actions a {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border-light);
-      background: transparent;
+      padding: 5px 14px;
+      border-radius: 18px;
+      border: 1px solid var(--border-card);
+      background: var(--bg-body);
       color: var(--text-secondary);
-      font-size: 0.8rem;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
       text-decoration: none;
-      transition: all 0.25s;
+      transition: all var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      font-family: inherit;
+      gap: 4px;
       cursor: pointer;
       white-space: nowrap;
+      letter-spacing: 0.3px;
     }
     .entry-actions a:hover {
       border-color: var(--accent);
       color: var(--accent);
       background: var(--accent-soft);
     }
-    .entry-actions a .icon {
-      font-size: 0.75rem;
+    .entry-actions a .sym {
+      font-size: 0.7rem;
+      font-family: var(--font-serif);
+      opacity: 0.5;
     }
 
-    /* ============================================================
-       5. 底部
-    ============================================================ */
-    #footer {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 18px 24px 24px 24px;
-      width: 100%;
+    /* ===== 底部 ===== */
+    .page-footer {
+      margin-top: 16px;
+      padding-top: 14px;
       border-top: 1px solid var(--border-light);
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      font-size: 0.65rem;
+      color: var(--text-muted-light);
       text-align: center;
-      transition: border-color 0.3s;
+      font-family: var(--font-mono);
+      letter-spacing: 1.5px;
+    }
+    .page-footer .sym {
+      color: var(--accent);
+      opacity: 0.3;
     }
 
     /* ============================================================
-       6. 手机端
+       手机端
     ============================================================ */
     @media (max-width: 768px) {
+      body {
+        padding: 0 12px 30px 12px;
+      }
       #nav {
-        padding: 14px 16px 8px 16px;
+        padding: 14px 4px 8px 4px;
       }
-      .nav-brand { font-size: 1rem; }
-      .nav-links a { font-size: 0.85rem; }
-
-      #header {
-        padding: 24px 16px 12px 16px;
+      .nav-brand {
+        font-size: 0.95rem;
       }
-      #header h1 { font-size: 1.3rem; }
-      #header .sub { font-size: 0.85rem; }
-
-      #list {
-        padding: 4px 16px 30px 16px;
+      .nav-back {
+        font-size: 0.72rem;
+      }
+      .nav-right a,
+      .theme-toggle-nav {
+        font-size: 0.78rem;
+      }
+      #app {
+        padding: 18px 0 10px 0;
+        gap: 4px;
+      }
+      .page-header h1 {
+        font-size: 1.2rem;
+      }
+      .page-header .sub {
+        font-size: 0.72rem;
       }
 
       .entry {
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
+        gap: 8px;
         padding: 14px 0;
       }
-      .entry:hover {
-        margin: 0 -8px;
-        padding-left: 8px;
-        padding-right: 8px;
-      }
-
       .entry-name {
         font-size: 0.98rem;
       }
       .entry-desc {
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         white-space: normal;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -249,39 +327,47 @@
         overflow: hidden;
       }
 
-      /* 手机端：强制两列，每行最多2个 */
       .entry-actions {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         justify-content: stretch;
-        gap: 6px;
+        gap: 5px;
       }
       .entry-actions a {
         width: 100%;
         justify-content: center;
-        padding: 8px 10px;
-        font-size: 0.78rem;
-      }
-
-      #footer {
-        padding: 14px 16px 18px 16px;
-        font-size: 0.75rem;
+        padding: 6px 10px;
+        font-size: 0.68rem;
       }
     }
 
     @media (max-width: 480px) {
-      #header h1 { font-size: 1.1rem; }
-      .entry-name { font-size: 0.92rem; }
-      .entry-actions a {
+      .page-header h1 {
+        font-size: 1.05rem;
+      }
+      .entry-name {
+        font-size: 0.9rem;
+      }
+      .entry-name .marker {
+        font-size: 0.85rem;
+      }
+      .entry-desc {
         font-size: 0.72rem;
-        padding: 6px 8px;
+      }
+      .entry-actions a {
+        font-size: 0.62rem;
+        padding: 5px 8px;
+      }
+      .nav-brand {
+        font-size: 0.85rem;
+      }
+      .nav-back {
+        font-size: 0.65rem;
       }
     }
   </style>
   <script>
-    // ============================================================
-    //  读取 Butterfly 主题的夜间模式
-    // ============================================================
+    // ===== 主题切换 =====
     (function() {
       try {
         var raw = localStorage.getItem('theme');
@@ -290,11 +376,35 @@
           if (parsed && parsed.value === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
           } else if (parsed && parsed.value === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.removeAttribute('data-theme');
           }
         }
-      } catch(e) {}
+      } catch (e) {}
     })();
+
+    function toggleTheme() {
+      var html = document.documentElement;
+      var isDark = html.getAttribute('data-theme') === 'dark';
+      var newTheme = isDark ? 'light' : 'dark';
+      if (newTheme === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else {
+        html.removeAttribute('data-theme');
+      }
+      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+      var btn = document.getElementById('themeToggle');
+      if (btn) {
+        btn.textContent = newTheme === 'dark' ? '☀️ 日间' : '🌙 夜间';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('themeToggle');
+      if (btn) {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        btn.textContent = isDark ? '☀️ 日间' : '🌙 夜间';
+      }
+    });
 
     window.addEventListener('storage', function(e) {
       if (e.key === 'theme') {
@@ -303,94 +413,109 @@
           if (parsed && parsed.value === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
           } else if (parsed && parsed.value === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
+            document.documentElement.removeAttribute('data-theme');
           }
-        } catch(e) {}
+          var btn = document.getElementById('themeToggle');
+          if (btn) {
+            btn.textContent = parsed && parsed.value === 'dark' ? '☀️ 日间' : '🌙 夜间';
+          }
+        } catch (e) {}
       }
-    });
-
-    var observer = new MutationObserver(function() {
-      var attr = document.documentElement.getAttribute('data-theme');
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme']
     });
   </script>
 </head>
 <body>
 
+  <!-- ===== 顶部导航（含返回按钮） ===== -->
   <nav id="nav">
-    <a class="nav-brand" href="/-/">墨境 · <span>探索</span></a>
-    <div class="nav-links">
-      <a href="/-/">首页</a>
+    <div class="nav-left">
+      <a class="nav-back" href="/-/">← 返回</a>
+      <a class="nav-brand" href="/-/">墨境 · <span>书架</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="theme-toggle-nav" id="themeToggle" onclick="toggleTheme()">🌙 夜间</button>
     </div>
   </nav>
 
-  <header id="header">
-    <h1>选择一部作品</h1>
-    <p class="sub">进入它的世界，查看角色与设定</p>
-  </header>
+  <div id="app">
 
-  <main id="list">
-
-    <!-- 我在地府打工那些年 -->
-    <div class="entry">
-      <div class="entry-info">
-        <div class="entry-name"><span class="highlight">●</span> 我在地府打工那些年</div>
-        <div class="entry-desc">浮生一梦，花开两世，轮回已就，故人当归。</div>
-      </div>
-      <div class="entry-actions">
-        <a href="/-/world/timeline/difu/"><span class="icon">⏳</span> 编年表</a>
-        <a href="/-/world/relation/difu/"><span class="icon">✦</span> 星图</a>
-        <a href="/-/world/difu/"><span class="icon">◈</span> 世界观</a>
-        <a href="/-/world/游戏系统/difu"><span class="icon">📖</span> 归终纪</a>
-      </div>
+    <!-- 头部 -->
+    <div class="page-header">
+      <h1>选择一部 <span class="accent">作品</span></h1>
+      <p class="sub">◈ 进入它的世界，查看角色与设定</p>
     </div>
 
-    <!-- 这破游戏NPC太能打了 -->
-    <div class="entry">
-      <div class="entry-info">
-        <div class="entry-name"><span class="highlight">●</span> 这破游戏NPC太能打了</div>
-        <div class="entry-desc">此去千秋，有人提灯，渡尽长夜始见光。</div>
+    <!-- 列表 -->
+    <div id="list">
+
+      <!-- 我在地府打工那些年 -->
+      <div class="entry">
+        <div class="entry-info">
+          <div class="entry-name">
+            <span class="marker">❖</span> 我在地府打工那些年
+          </div>
+          <div class="entry-desc">浮生一梦，花开两世，轮回已就，故人当归。</div>
+        </div>
+        <div class="entry-actions">
+          <a href="/-/world/timeline/difu/"><span class="sym">◈</span> 编年表</a>
+          <a href="/-/world/relation/difu/"><span class="sym">✦</span> 星图</a>
+          <a href="/-/world/difu/"><span class="sym">❖</span> 世界观</a>
+          <a href="/-/world/游戏系统/difu"><span class="sym">◉</span> 归终纪</a>
+        </div>
       </div>
-      <div class="entry-actions">
-        <a href="/-/world/timeline/npc/"><span class="icon">⏳</span> 编年表</a>
-        <a href="/-/world/relation/npc/"><span class="icon">✦</span> 星图</a>
-        <a href="/-/world/npc/"><span class="icon">◈</span> 世界观</a>
+
+      <!-- 这破游戏NPC太能打了 -->
+      <div class="entry">
+        <div class="entry-info">
+          <div class="entry-name">
+            <span class="marker">✦</span> 这破游戏NPC太能打了
+          </div>
+          <div class="entry-desc">此去千秋，有人提灯，渡尽长夜始见光。</div>
+        </div>
+        <div class="entry-actions">
+          <a href="/-/world/timeline/npc/"><span class="sym">◈</span> 编年表</a>
+          <a href="/-/world/relation/npc/"><span class="sym">✦</span> 星图</a>
+          <a href="/-/world/npc/"><span class="sym">❖</span> 世界观</a>
+        </div>
       </div>
+
+      <!-- 九州风云录 -->
+      <div class="entry">
+        <div class="entry-info">
+          <div class="entry-name">
+            <span class="marker">◈</span> 九州风云录
+          </div>
+          <div class="entry-desc">残烛蒙尘，暗室千年，风过旧窗，照见骨里青山。</div>
+        </div>
+        <div class="entry-actions">
+          <a href="/-/world/relation/jiuzhou/"><span class="sym">✦</span> 星图</a>
+          <a href="/-/world/jiuzhou/"><span class="sym">❖</span> 世界观</a>
+        </div>
+      </div>
+
+      <!-- 北境玫瑰 -->
+      <div class="entry">
+        <div class="entry-info">
+          <div class="entry-name">
+            <span class="marker">✧</span> 北境玫瑰
+          </div>
+          <div class="entry-desc">北风剥尽千般相，铁锈缠作骨中霜。</div>
+        </div>
+        <div class="entry-actions">
+          <a href="/-/world/relation/beijin/"><span class="sym">✦</span> 星图</a>
+          <a href="/-/world/beijin/"><span class="sym">❖</span> 世界观</a>
+          <a href="/-/world/论坛/"><span class="sym">◉</span> 论坛</a>
+        </div>
+      </div>
+
     </div>
 
-    <!-- 九州风云录 -->
-    <div class="entry">
-      <div class="entry-info">
-        <div class="entry-name"><span class="highlight">●</span> 九州风云录</div>
-        <div class="entry-desc">残烛蒙尘，暗室千年，风过旧窗，照见骨里青山。</div>
-      </div>
-      <div class="entry-actions">
-        <a href="/-/world/relation/jiuzhou/"><span class="icon">✦</span> 星图</a>
-        <a href="/-/world/jiuzhou/"><span class="icon">◈</span> 世界观</a>
-      </div>
+    <!-- 底部 -->
+    <div class="page-footer">
+      <span class="sym">✦</span> 更多作品陆续添加 · 用文字构筑世界 <span class="sym">✦</span>
     </div>
 
-    <!-- 北境玫瑰 -->
-    <div class="entry">
-      <div class="entry-info">
-        <div class="entry-name"><span class="highlight">●</span> 北境玫瑰</div>
-        <div class="entry-desc">北风剥尽千般相，铁锈缠作骨中霜。</div>
-      </div>
-      <div class="entry-actions">
-        <a href="/-/world/relation/beijin/"><span class="icon">✦</span> 星图</a>
-        <a href="/-/world/beijin/"><span class="icon">◈</span> 世界观</a>
-        <a href="/-/world/论坛/"><span class="icon">💬</span> 论坛</a>
-      </div>
-    </div>
-
-  </main>
-
-  <footer id="footer">
-    更多作品陆续添加中 · 用文字构筑世界
-  </footer>
+  </div>
 
 </body>
 </html>
