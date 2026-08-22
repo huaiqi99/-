@@ -1,1061 +1,329 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>北境茶馆 · 论坛</title>
-  <style>
-    :root {
-      --bg-body: #f7f4ef;
-      --bg-card: #ffffff;
-      --bg-card-alt: #f2eee9;
-      --bg-modal: rgba(0,0,0,0.35);
-      --border-light: #ece6de;
-      --border-card: #e4ddd4;
-      --text-primary: #2c2c2c;
-      --text-secondary: #4a4a4a;
-      --text-muted: #8a8a8a;
-      --text-muted-light: #b0aaa2;
-      --accent: #b03a2a;
-      --accent-soft: rgba(176, 58, 42, 0.08);
-      --gold: #b8944a;
-      --gold-soft: rgba(184, 148, 74, 0.12);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
-      --radius: 12px;
-      --radius-sm: 8px;
-      --font: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-      --transition: 0.25s ease;
-    }
-    [data-theme="dark"] {
-      --bg-body: #181614;
-      --bg-card: #24201c;
-      --bg-card-alt: #1e1b18;
-      --bg-modal: rgba(0,0,0,0.6);
-      --border-light: #35302a;
-      --border-card: #3a3530;
-      --text-primary: #cfc8c0;
-      --text-secondary: #9a948c;
-      --text-muted: #6a6560;
-      --text-muted-light: #5a5550;
-      --accent: #b05a4a;
-      --accent-soft: rgba(176, 90, 74, 0.12);
-      --gold: #c9a052;
-      --gold-soft: rgba(201, 160, 82, 0.12);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: var(--font);
-      background: var(--bg-body);
-      color: var(--text-primary);
-      transition: background var(--transition), color var(--transition);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>北境茶馆 · 论坛</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-card-alt:#f2eee9;--bg-modal:rgba(0,0,0,0.35);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#1f1a16;--text-secondary:#2c241e;--text-muted:#5a4d42;--text-muted-light:#8a7a6a;--accent:#b03a2a;--accent-soft:rgba(176,58,42,0.06);--gold:#b8944a;--gold-soft:rgba(184,148,74,0.10);--shadow-sm:0 1px 4px rgba(0,0,0,0.03);--shadow-md:0 4px 16px rgba(0,0,0,0.06);--shadow-lg:0 8px 32px rgba(0,0,0,0.10);--radius:12px;--radius-sm:8px;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.2s ease}
+[data-theme="dark"]{--bg-body:#1e1a16;--bg-card:#2a2520;--bg-card-alt:#24201c;--bg-modal:rgba(0,0,0,0.6);--border-light:#35302a;--border-card:#4a443e;--text-primary:#cfc8c0;--text-secondary:#b8aea4;--text-muted:#8a8078;--text-muted-light:#6a6560;--accent:#b05a4a;--accent-soft:rgba(176,90,74,0.08);--gold:#c9a052;--gold-soft:rgba(201,160,82,0.10);--shadow-sm:0 1px 4px rgba(0,0,0,0.2);--shadow-md:0 4px 16px rgba(0,0,0,0.3);--shadow-lg:0 8px 32px rgba(0,0,0,0.45)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:17px;line-height:1.7;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;padding:0 16px 40px 16px;display:flex;flex-direction:column}
 
-    #topbar {
-      max-width: 860px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 18px 0 12px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-light);
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    #topbar .brand {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    #topbar .brand span { color: var(--accent); }
-    #topbar .brand small {
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-left: 4px;
-    }
-    #topbar .actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .theme-toggle {
-      background: transparent;
-      border: 1px solid var(--border-light);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
-    }
-    .theme-toggle:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
-    .back-home-btn {
-      padding: 4px 14px;
-      border-radius: 18px;
-      border: 1px solid var(--border-light);
-      background: transparent;
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .back-home-btn:hover {
-      border-color: var(--text-secondary);
-      color: var(--text-primary);
-    }
+/* ===== 强制 2D 符号 ===== */
+.sym-reply{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-weight:400;font-style:normal;text-shadow:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
-    #app {
-      max-width: 860px;
-      margin: 0 auto;
-      width: 100%;
-      padding: 20px 0 40px 0;
-      flex: 1;
-    }
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm);letter-spacing:0.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+.float-btn .icon{font-size:0.9rem}
 
-    .tavern-status {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius);
-      padding: 10px 18px;
-      margin-bottom: 18px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      box-shadow: var(--shadow-sm);
-      align-items: center;
-    }
-    .tavern-status .status-item { display: flex; align-items: center; gap: 4px; }
-    .tavern-status .status-item .num { color: var(--text-secondary); font-weight: 500; }
-    .tavern-status .divider { opacity: 0.3; }
-    .tavern-status .saying {
-      margin-left: auto;
-      font-style: italic;
-      color: var(--text-muted-light);
-      font-size: 0.75rem;
-    }
-    .tavern-status .saying::before { content: '“'; color: var(--accent); opacity: 0.5; }
-    .tavern-status .saying::after { content: '”'; color: var(--accent); opacity: 0.5; }
+#app{max-width:860px;margin:0 auto;width:100%;padding:24px 4px 20px 4px;flex:1;display:flex;flex-direction:column;gap:8px}
 
-    #list-view .list-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    #list-view .list-header h2 { font-size: 1.1rem; font-weight: 600; }
-    #list-view .list-header .count { font-size: 0.8rem; color: var(--text-muted); }
+.tavern-status{display:flex;gap:16px;flex-wrap:wrap;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);padding:10px 18px;font-size:0.78rem;color:var(--text-muted);box-shadow:var(--shadow-sm);align-items:center}
+.tavern-status .status-item{display:flex;align-items:center;gap:4px}
+.tavern-status .status-item .num{color:var(--text-secondary);font-weight:500}
+.tavern-status .divider{opacity:0.25}
+.tavern-status .saying{margin-left:auto;font-style:italic;color:var(--text-muted-light);font-size:0.75rem}
+.tavern-status .saying::before{content:'“';color:var(--accent);opacity:0.4}
+.tavern-status .saying::after{content:'”';color:var(--accent);opacity:0.4}
 
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 10px;
-      margin-bottom: 16px;
-      align-items: center;
-    }
-    .filter-bar .filter-tag {
-      font-size: 0.75rem;
-      padding: 3px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--border-card);
-      background: transparent;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
-    }
-    .filter-bar .filter-tag:hover { border-color: var(--text-muted); }
-    .filter-bar .filter-tag.active {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    /* ===== 显眼的「角色档案」标签 ===== */
-    .filter-bar .role-tag {
-     border-color: var(--gold);
-     color: var(--gold);
-     font-weight: 600;
-     background: var(--gold-soft);
-     transition: all var(--transition);
-     text-decoration: none;
-     font-size: 0.75rem;
-     padding: 3px 14px;
-     border-radius: 16px;
-     border: 1px solid var(--gold);
-     display: inline-block;
-    }
-    .filter-bar .role-tag:hover {
-     background: var(--gold);
-     color: #fff;
-     border-color: var(--gold);
-     transform: scale(1.03);
-    }
-    .filter-bar .search-box {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .filter-bar .search-box input {
-      background: var(--bg-card-alt);
-      border: 1px solid var(--border-card);
-      border-radius: 16px;
-      padding: 4px 14px;
-      font-size: 0.75rem;
-      color: var(--text-primary);
-      font-family: inherit;
-      outline: none;
-      transition: border-color var(--transition);
-      width: 140px;
-    }
-    .filter-bar .search-box input:focus { border-color: var(--accent); }
-    .filter-bar .search-box input::placeholder { color: var(--text-muted-light); }
+.list-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.list-header h2{font-size:1.15rem;font-weight:600;font-family:var(--font-serif)}
+.list-header .count{font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono)}
 
-    /* ---- 帖子卡片（预设+动态共用） ---- */
-    .post-item {
-      display: block;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: var(--text-primary);
-      transition: all var(--transition);
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      animation: card-in 0.4s ease forwards;
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    .post-item:nth-child(1) { animation-delay: 0.04s; }
-    .post-item:nth-child(2) { animation-delay: 0.08s; }
-    .post-item:nth-child(3) { animation-delay: 0.12s; }
-    .post-item:nth-child(4) { animation-delay: 0.16s; }
-    .post-item:nth-child(5) { animation-delay: 0.20s; }
-    .post-item:nth-child(6) { animation-delay: 0.24s; }
-    .post-item:nth-child(7) { animation-delay: 0.28s; }
-    .post-item:nth-child(8) { animation-delay: 0.32s; }
-    @keyframes card-in {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    .post-item:hover {
-      border-color: var(--accent);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-    .post-item .title {
-      font-size: 1rem;
-      font-weight: 500;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .post-item .title .hot {
-      font-size: 0.65rem;
-      background: var(--accent-soft);
-      color: var(--accent);
-      padding: 1px 10px;
-      border-radius: 12px;
-      font-weight: 500;
-    }
-    .post-item .title .category-tag {
-      font-size: 0.6rem;
-      color: var(--text-muted-light);
-      border: 1px solid var(--border-card);
-      padding: 0 8px;
-      border-radius: 10px;
-    }
-    .post-item .meta {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .post-item .meta .author { color: var(--text-secondary); font-weight: 500; }
-    .post-item .excerpt {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      margin-top: 6px;
-      line-height: 1.6;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .post-item .stats {
-      margin-top: 8px;
-      display: flex;
-      gap: 14px;
-      font-size: 0.75rem;
-      color: var(--text-muted-light);
-    }
-    .post-item .stats span { display: flex; align-items: center; gap: 4px; }
-    .post-item .stats .num { font-weight: 500; color: var(--text-secondary); }
+.filter-bar{display:flex;flex-wrap:nowrap;gap:6px;margin-bottom:16px;align-items:center;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-bar .filter-tag{flex-shrink:0;font-size:0.72rem;padding:4px 14px;border-radius:16px;border:1px solid var(--border-card);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);letter-spacing:0.3px;white-space:nowrap}
+.filter-bar .filter-tag:hover{border-color:var(--text-muted)}
+.filter-bar .filter-tag.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.filter-bar .role-tag{border-color:var(--gold);color:var(--gold);font-weight:600;background:var(--gold-soft);flex-shrink:0;font-size:0.72rem;padding:4px 14px;border-radius:16px;border:1px solid var(--gold);text-decoration:none;white-space:nowrap;font-family:var(--font-mono);letter-spacing:0.3px;transition:all var(--transition)}
+.filter-bar .role-tag:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+.filter-bar .search-box{flex-shrink:0;margin-left:auto;display:flex;align-items:center}
+.filter-bar .search-box input{background:var(--bg-card-alt);border:1px solid var(--border-card);border-radius:16px;padding:4px 14px;font-size:0.72rem;color:var(--text-primary);font-family:var(--font-serif);outline:none;transition:border-color var(--transition);width:130px}
+.filter-bar .search-box input:focus{border-color:var(--accent)}
+.filter-bar .search-box input::placeholder{color:var(--text-muted-light);font-style:italic}
 
-    /* ---- 动态帖子 ---- */
-    .post-item-dynamic {
-      display: block;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      margin-bottom: 10px;
-      text-decoration: none;
-      color: var(--text-primary);
-      transition: all var(--transition);
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      animation: card-in 0.4s ease forwards;
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    .post-item-dynamic:hover {
-      border-color: var(--accent);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-    .post-item-dynamic .title {
-      font-size: 1rem;
-      font-weight: 500;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .post-item-dynamic .title .category-tag {
-      font-size: 0.6rem;
-      color: var(--text-muted-light);
-      border: 1px solid var(--border-card);
-      padding: 0 8px;
-      border-radius: 10px;
-    }
-    .post-item-dynamic .meta {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .post-item-dynamic .meta .author { color: var(--text-secondary); font-weight: 500; }
-    .post-item-dynamic .excerpt {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      margin-top: 6px;
-      line-height: 1.6;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .post-item-dynamic .stats {
-      margin-top: 8px;
-      display: flex;
-      gap: 14px;
-      font-size: 0.75rem;
-      color: var(--text-muted-light);
-    }
-    .post-item-dynamic .stats span { display: flex; align-items: center; gap: 4px; }
-    .post-item-dynamic .stats .num { font-weight: 500; color: var(--text-secondary); }
+.post-item{display:block;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);padding:16px 18px;margin-bottom:10px;text-decoration:none;color:var(--text-primary);transition:all var(--transition);cursor:pointer;box-shadow:var(--shadow-sm);animation:cardIn 0.35s ease forwards;opacity:0;transform:translateY(8px)}
+.post-item:nth-child(1){animation-delay:0.04s}
+.post-item:nth-child(2){animation-delay:0.08s}
+.post-item:nth-child(3){animation-delay:0.12s}
+.post-item:nth-child(4){animation-delay:0.16s}
+.post-item:nth-child(5){animation-delay:0.20s}
+.post-item:nth-child(6){animation-delay:0.24s}
+.post-item:nth-child(7){animation-delay:0.28s}
+.post-item:nth-child(8){animation-delay:0.32s}
+@keyframes cardIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+.post-item:hover{border-color:var(--accent);box-shadow:var(--shadow-md)}
+.post-item .title{font-size:1rem;font-weight:500;font-family:var(--font-serif);margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.post-item .title .hot{font-size:0.6rem;background:var(--accent-soft);color:var(--accent);padding:1px 10px;border-radius:12px;font-weight:500;font-family:var(--font-mono)}
+.post-item .title .category-tag{font-size:0.55rem;color:var(--text-muted-light);border:1px solid var(--border-card);padding:0 8px;border-radius:10px;font-family:var(--font-mono)}
+.post-item .meta{font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.post-item .meta .author{color:var(--text-secondary);font-weight:500;font-family:var(--font-serif)}
+.post-item .excerpt{font-size:0.85rem;color:var(--text-secondary);margin-top:6px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-item .stats{margin-top:8px;display:flex;gap:16px;font-size:0.72rem;color:var(--text-muted-light);font-family:var(--font-mono)}
+.post-item .stats span{display:flex;align-items:center;gap:4px}
+.post-item .stats .num{font-weight:500;color:var(--text-secondary)}
+.post-item.hidden{display:none}
 
-    .post-item.hidden,
-    .post-item-dynamic.hidden {
-      display: none;
-    }
+#detail-view{display:none}
+#detail-view .back-link{display:inline-block;margin-bottom:14px;color:var(--text-muted);text-decoration:none;font-size:0.85rem;cursor:pointer;transition:color var(--transition);font-family:var(--font-serif);background:none;border:none;padding:0}
+#detail-view .back-link:hover{color:var(--accent)}
+#detail-view .detail-title{font-size:1.4rem;font-weight:600;font-family:var(--font-serif);margin-bottom:6px}
+#detail-view .detail-meta{font-size:0.78rem;color:var(--text-muted);margin-bottom:14px;display:flex;gap:16px;flex-wrap:wrap;font-family:var(--font-mono)}
+#detail-view .detail-body{font-size:0.92rem;line-height:1.9;color:var(--text-secondary);background:var(--bg-card-alt);border-radius:var(--radius-sm);padding:16px 18px;border:1px solid var(--border-card);white-space:pre-wrap}
+#detail-view .detail-stats{margin-top:14px;display:flex;gap:20px;font-size:0.82rem;color:var(--text-muted);font-family:var(--font-mono)}
+#detail-view .detail-stats .num{color:var(--text-secondary);font-weight:500}
 
-    #detail-view { display: none; }
-    #detail-view .back-link {
-      display: inline-block;
-      margin-bottom: 14px;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: color var(--transition);
-      font-family: inherit;
-      background: none;
-      border: none;
-      padding: 0;
-    }
-    #detail-view .back-link:hover { color: var(--accent); }
-    #detail-view .detail-title { font-size: 1.4rem; font-weight: 600; margin-bottom: 6px; }
-    #detail-view .detail-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    #detail-view .detail-body {
-      font-size: 0.95rem;
-      line-height: 1.9;
-      color: var(--text-secondary);
-      background: var(--bg-card-alt);
-      border-radius: var(--radius-sm);
-      padding: 16px 18px;
-      border: 1px solid var(--border-card);
-      white-space: pre-wrap;
-    }
-    #detail-view .detail-stats {
-      margin-top: 14px;
-      display: flex;
-      gap: 20px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-    #detail-view .detail-stats .num { color: var(--text-secondary); font-weight: 500; }
+.new-post-btn{position:fixed;bottom:28px;right:28px;background:var(--accent);color:#fff;border:none;border-radius:50%;width:56px;height:56px;font-size:1.6rem;cursor:pointer;box-shadow:var(--shadow-lg);transition:all var(--transition);font-family:inherit;display:flex;align-items:center;justify-content:center;z-index:100}
+.new-post-btn:hover{transform:scale(1.06)}
 
-    .new-post-btn {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 1.6rem;
-      cursor: pointer;
-      box-shadow: var(--shadow-lg);
-      transition: all var(--transition);
-      font-family: inherit;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    .new-post-btn:hover { transform: scale(1.06); }
+.modal-overlay{display:none;position:fixed;inset:0;background:var(--bg-modal);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);max-width:520px;width:100%;padding:24px 28px;box-shadow:var(--shadow-lg);max-height:90vh;overflow-y:auto}
+.modal-box .modal-title{font-size:1.1rem;font-weight:600;font-family:var(--font-serif);margin-bottom:16px}
+.modal-box .modal-close{float:right;background:none;border:none;font-size:1.4rem;color:var(--text-muted);cursor:pointer;font-family:var(--font-serif);line-height:1}
+.modal-box .modal-close:hover{color:var(--text-primary)}
+.modal-box label{display:block;font-size:0.78rem;font-weight:500;color:var(--text-secondary);margin-top:12px;margin-bottom:4px;font-family:var(--font-serif)}
+.modal-box input,.modal-box select,.modal-box textarea{width:100%;padding:8px 12px;background:var(--bg-card-alt);border:1px solid var(--border-card);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.88rem;font-family:var(--font-serif);outline:none;transition:border-color var(--transition)}
+.modal-box input:focus,.modal-box select:focus,.modal-box textarea:focus{border-color:var(--accent)}
+.modal-box textarea{resize:vertical;min-height:100px}
+.modal-box .submit-btn{margin-top:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 24px;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all var(--transition);font-family:var(--font-serif)}
+.modal-box .submit-btn:hover{opacity:0.85}
 
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg-modal);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius);
-      max-width: 520px;
-      width: 100%;
-      padding: 24px 28px;
-      box-shadow: var(--shadow-lg);
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .modal-box .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-    .modal-box .modal-close {
-      float: right;
-      background: none;
-      border: none;
-      font-size: 1.4rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-family: inherit;
-      line-height: 1;
-    }
-    .modal-box .modal-close:hover { color: var(--text-primary); }
-    .modal-box label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      margin-top: 12px;
-      margin-bottom: 4px;
-    }
-    .modal-box input,
-    .modal-box select,
-    .modal-box textarea {
-      width: 100%;
-      padding: 8px 12px;
-      background: var(--bg-card-alt);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      font-family: inherit;
-      outline: none;
-      transition: border-color var(--transition);
-    }
-    .modal-box input:focus,
-    .modal-box select:focus,
-    .modal-box textarea:focus { border-color: var(--accent); }
-    .modal-box textarea { resize: vertical; min-height: 100px; }
-    .modal-box .submit-btn {
-      margin-top: 16px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 8px 24px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition);
-      font-family: inherit;
-    }
-    .modal-box .submit-btn:hover { opacity: 0.85; }
+.empty-state{text-align:center;padding:20px 0;color:var(--text-muted);font-size:0.9rem}
 
-    .empty-state { text-align: center; padding: 20px 0; color: var(--text-muted); font-size: 0.9rem; }
-
-    @media (max-width: 600px) {
-      body { padding: 0 10px; }
-      #topbar { padding: 14px 0 10px 0; }
-      #topbar .brand { font-size: 0.95rem; }
-      #app { padding: 14px 0 30px 0; }
-      .post-item { padding: 14px 14px; }
-      .post-item .title { font-size: 0.92rem; }
-      .tavern-status { font-size: 0.7rem; padding: 8px 14px; gap: 10px; }
-      .tavern-status .saying { display: none; }
-      .filter-bar .search-box input { width: 100px; }
-      .modal-box { padding: 18px 16px; }
-      .new-post-btn { bottom: 18px; right: 18px; width: 48px; height: 48px; font-size: 1.3rem; }
-      .back-home-btn { font-size: 0.7rem; padding: 3px 10px; }
-    }
-  </style>
-  <script>
-    (function() {
-      try {
-        const raw = localStorage.getItem('theme');
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.value === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-          } else if (parsed && parsed.value === 'light') {
-            document.documentElement.removeAttribute('data-theme');
-          }
-        }
-      } catch(e) {}
-    })();
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.getAttribute('data-theme') === 'dark';
-      const newTheme = isDark ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
-    }
-    
-  </script>
+@media(max-width:700px){body{padding:0 12px 30px 12px;font-size:16px}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.6rem}#app{padding:16px 0 10px 0;gap:6px}.tavern-status{font-size:0.68rem;padding:8px 14px;gap:8px}.tavern-status .saying{display:none}.list-header h2{font-size:1rem}.filter-bar{gap:4px;margin-bottom:12px}.filter-bar .filter-tag{font-size:0.65rem;padding:3px 12px}.filter-bar .role-tag{font-size:0.65rem;padding:3px 12px}.filter-bar .search-box input{width:90px;font-size:0.65rem;padding:3px 10px}.post-item{padding:14px 14px}.post-item .title{font-size:0.92rem}.post-item .excerpt{font-size:0.82rem}.post-item .meta{font-size:0.7rem}.post-item .stats{font-size:0.68rem}.new-post-btn{bottom:18px;right:18px;width:48px;height:48px;font-size:1.3rem}.modal-box{padding:18px 16px}#detail-view .detail-title{font-size:1.2rem}#detail-view .detail-body{font-size:0.88rem;padding:12px 14px}}
+@media(max-width:420px){body{padding:0 8px 24px 8px;font-size:15px}.float-group{top:8px;right:8px;gap:4px}.float-btn{padding:3px 8px 3px 6px;font-size:0.55rem;border-radius:18px}.float-btn .icon{font-size:0.7rem}#app{padding:12px 0 8px 0}.tavern-status{font-size:0.62rem;padding:6px 10px;gap:6px}.filter-bar .filter-tag{font-size:0.6rem;padding:2px 10px}.filter-bar .role-tag{font-size:0.6rem;padding:2px 10px}.filter-bar .search-box input{width:70px;font-size:0.6rem;padding:2px 8px}.post-item{padding:12px 12px}.post-item .title{font-size:0.88rem}.post-item .excerpt{font-size:0.78rem}.post-item .meta{font-size:0.65rem;gap:6px}.post-item .stats{font-size:0.62rem;gap:10px}.new-post-btn{bottom:14px;right:14px;width:42px;height:42px;font-size:1.1rem}}
+</style>
+<script>
+(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='dark'){document.documentElement.setAttribute('data-theme','dark');}else if(parsed&&parsed.value==='light'){document.documentElement.removeAttribute('data-theme');}}}catch(e){}})();
+function toggleTheme(){var html=document.documentElement;var isDark=html.getAttribute('data-theme')==='dark';var newTheme=isDark?'light':'dark';if(newTheme==='dark'){html.setAttribute('data-theme','dark');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));var btn=document.getElementById('themeBtn');if(btn){btn.innerHTML=newTheme==='dark'?'<span class="icon">☀️</span> 日间':'<span class="icon">🌙</span> 夜间';}}
+</script>
 </head>
 <body>
 
-<div id="topbar">
-  <a class="brand" href="#" onclick="return goHome()">
-    🍵 北境茶馆 <small>· 炉火正旺</small>
-  </a>
-  <div class="actions">
-    <a class="back-home-btn" href="../index.html">← 返回首页</a>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-  </div>
+<div class="float-group">
+  <a class="float-btn" href="../index.html"><span class="icon">←</span> 返回首页</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
 </div>
 
 <div id="app">
 
-  <div class="tavern-status" id="tavern-status">
-    <span class="status-item">🔥 在线 <span class="num" id="online-num">47</span></span>
-    <span class="divider">|</span>
-    <span class="status-item">📝 今日新帖 <span class="num" id="today-num">0</span></span>
-    <span class="divider">|</span>
-    <span class="status-item">🍵 茶水温度 <span class="num" id="tea-temp">82</span>°</span>
-    <span class="saying" id="saying-text">一壶茶，三两句闲话，便是人间好时节。</span>
+<div class="tavern-status">
+  <span class="status-item">▸ 在线 <span class="num" id="online-num">47</span></span>
+  <span class="divider">|</span>
+  <span class="status-item">◈ 今日新帖 <span class="num" id="today-num">0</span></span>
+  <span class="divider">|</span>
+  <span class="status-item">◉ 茶水温度 <span class="num" id="tea-temp">82</span>°</span>
+  <span class="saying" id="saying-text">一壶茶，三两句闲话，便是人间好时节。</span>
+</div>
+
+<div id="list-view">
+
+  <div class="list-header">
+    <h2>◈ 热门讨论</h2>
+    <span class="count" id="post-count">5 个帖子</span>
   </div>
 
-  <div id="list-view">
-
-    <div class="list-header">
-      <h2>📋 热门讨论</h2>
-      <span class="count" id="post-count">5 个帖子</span>
-    </div>
-
-    <!-- 分类筛选 + 角色入口 + 搜索 -->
-    <div class="filter-bar">
-      <button class="filter-tag active" data-filter="all">全部</button>
-      <button class="filter-tag" data-filter="讨论">讨论</button>
-      <button class="filter-tag" data-filter="求助">求助</button>
-      <button class="filter-tag" data-filter="树洞">树洞</button>
-      <button class="filter-tag" data-filter="闲聊">闲聊</button>
-      <!-- ===== 显眼的角色标签 ===== -->
-      <a class="filter-tag role-tag" href="../角色/index.html">📖 角色档案</a>
-      <div class="search-box">
-        <input type="text" id="search-input" placeholder="🔍 搜索帖子..." />
-      </div>
-    </div>
-
-    <!-- ===== 帖子容器（预设+动态都在这里） ===== -->
-    <div id="post-container">
-
-      <!-- 预设帖子：硬编码，有 href -->
-      <a class="post-item" href="post/6.html" data-category="讨论">
-        <div class="title">
-          【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。
-          <span class="hot">🔥 热</span>
-        </div>
-        <div class="meta">
-          <span class="author">匿名楼主</span>
-          <span>·</span>
-          <span>2026-01-12</span>
-          <span>·</span>
-          <span>最后回复 3小时前</span>
-        </div>
-        <div class="excerpt">大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……</div>
-        <div class="stats">
-          <span>💬 <span class="num">99</span></span>
-          <span>👍 <span class="num">3.4k</span></span>
-        </div>
-      </a>
-
-      <a class="post-item" href="post/2.html" data-category="求助">
-        <div class="title">
-          【求助】我们学校那位新来的特聘讲师，到底是什么来头？
-          <span class="hot">🔥 热</span>
-        </div>
-        <div class="meta">
-          <span class="author">听雨阁</span>
-          <span>·</span>
-          <span>2026-01-10</span>
-          <span>·</span>
-          <span>最后回复 1天前</span>
-        </div>
-        <div class="excerpt">他的背景好像特别离谱，具体怎么形容我也不知道，但在他在向校长反映问题的第二天，校长就被调走了……</div>
-        <div class="stats">
-          <span>💬 <span class="num">142</span></span>
-          <span>👍 <span class="num">5.6k</span></span>
-        </div>
-      </a>
-
-      <a class="post-item" href="post/1.html" data-category="闲聊">
-        <div class="title">
-          【闲聊】我学千律州古代史的时候发现了一对好磕的cp…
-        </div>
-        <div class="meta">
-          <span class="author">匿名楼主</span>
-          <span>·</span>
-          <span>2026-01-05</span>
-          <span>·</span>
-          <span>最后回复 5天前</span>
-        </div>
-        <div class="excerpt">最近在修千律州古代史，然后读到第二纪元末期光明神法伊顿和他的大神使段深泉……真的好好磕啊，神明和凡人，分神，大寂灭，每一段都踩在我的好球带上，有没有人也磕这对的？</div>
-        <div class="stats">
-          <span>💬 <span class="num">72</span></span>
-          <span>👍 <span class="num">8.9k</span></span>
-        </div>
-      </a>
-
-      <a class="post-item" href="post/3.html" data-category="讨论">
-        <div class="title">
-          【讨论】你们有没有发现《归途》的歌词……细思极恐？
-        </div>
-        <div class="meta">
-          <span class="author">暮色入茶</span>
-          <span>·</span>
-          <span>2026-01-08</span>
-          <span>·</span>
-          <span>最后回复 2天前</span>
-        </div>
-        <div class="excerpt">科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——风将你的名字吹向远方……</div>
-        <div class="stats">
-          <span>💬 <span class="num">49</span></span>
-          <span>👍 <span class="num">2.1k</span></span>
-        </div>
-      </a>
-
-      <a class="post-item" href="post/4.html" data-category="讨论">
-        <div class="title">
-          【讨论】关于“段深泉”这个名字，我查了三天史料，现在有点睡不着
-        </div>
-        <div class="meta">
-          <span class="author">层楼叠</span>
-          <span>·</span>
-          <span>2026-01-05</span>
-          <span>·</span>
-          <span>最后回复 5天前</span>
-        </div>
-        <div class="excerpt">我本科学历史的，最近做课题的时候翻了不少文献和碑文拓片，然后我发现了一个问题——段深泉这个名字，出现在了两段不应该同时出现的时间里。</div>
-        <div class="stats">
-          <span>💬 <span class="num">72</span></span>
-          <span>👍 <span class="num">8.9k</span></span>
-        </div>
-      </a>
-
-      <a class="post-item" href="post/5.html" data-category="求助">
-        <div class="title">
-          【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产
-          <span class="hot">🔥 热</span>
-        </div>
-        <div class="meta">
-          <span class="author">昭昭是我老婆</span>
-          <span>·</span>
-          <span>2025-12-28</span>
-          <span>·</span>
-          <span>最后回复 2周前</span>
-        </div>
-        <div class="excerpt">我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。我想让他去看医生，他又不肯。我该怎么办？急，在线等。</div>
-        <div class="stats">
-          <span>💬 <span class="num">312</span></span>
-          <span>👍 <span class="num">1.2w</span></span>
-        </div>
-      </a>
-
-      <!-- 动态帖子由 JS 渲染到这里 -->
-      <div id="dynamic-posts"></div>
-
+  <div class="filter-bar">
+    <button class="filter-tag active" data-filter="all">全部</button>
+    <button class="filter-tag" data-filter="讨论">讨论</button>
+    <button class="filter-tag" data-filter="求助">求助</button>
+    <button class="filter-tag" data-filter="树洞">树洞</button>
+    <button class="filter-tag" data-filter="闲聊">闲聊</button>
+    <a class="role-tag" href="../角色/index.html">◉ 角色档案</a>
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="◈ 搜索帖子..." />
     </div>
   </div>
 
-  <div id="detail-view">
-    <button class="back-link" onclick="goBackToList()">← 返回列表</button>
-    <div class="detail-title" id="detail-title"></div>
-    <div class="detail-meta" id="detail-meta"></div>
-    <div class="detail-body" id="detail-body"></div>
-    <div class="detail-stats" id="detail-stats"></div>
-  </div>
+  <div id="post-container">
 
-  <button class="new-post-btn" id="new-post-btn" title="写新帖">✍️</button>
+    <!-- 预设帖子（回复符号强制 2D） -->
+    <a class="post-item" href="post/6.html" data-category="讨论">
+      <div class="title">【讨论】关于尼古拉·茨韦特科夫大家怎么看的？感觉他资源咖到离谱了。<span class="hot">▸ 热</span></div>
+      <div class="meta"><span class="author">匿名楼主</span><span>·</span><span>2026-01-12</span><span>·</span><span>最后回复 3小时前</span></div>
+      <div class="excerpt">大家都知道最近的当红明星尼古拉·茨韦特科夫吧？出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的……</div>
+      <div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">99</span></span><span>♡ <span class="num">3.4k</span></span></div>
+    </a>
 
-  <div class="modal-overlay" id="new-post-modal">
-    <div class="modal-box">
-      <button class="modal-close" id="modal-close">✕</button>
-      <div class="modal-title">✍️ 写新帖</div>
-      <form id="new-post-form">
-        <label for="post-title">标题</label>
-        <input type="text" id="post-title" placeholder="取个吸引人的标题..." required />
-        <label for="post-category">分类</label>
-        <select id="post-category">
-          <option value="讨论">讨论</option>
-          <option value="求助">求助</option>
-          <option value="树洞">树洞</option>
-          <option value="闲聊">闲聊</option>
-        </select>
-        <label for="post-author">署名</label>
-        <input type="text" id="post-author" placeholder="你的名字（或匿名）" value="匿名楼主" />
-        <label for="post-content">内容</label>
-        <textarea id="post-content" placeholder="写下你的想法..." required></textarea>
-        <button type="submit" class="submit-btn">📨 发布帖子</button>
-      </form>
-    </div>
+    <a class="post-item" href="post/2.html" data-category="求助">
+      <div class="title">【求助】我们学校那位新来的特聘讲师，到底是什么来头？<span class="hot">▸ 热</span></div>
+      <div class="meta"><span class="author">听雨阁</span><span>·</span><span>2026-01-10</span><span>·</span><span>最后回复 1天前</span></div>
+      <div class="excerpt">他的背景好像特别离谱，具体怎么形容我也不知道，但在他在向校长反映问题的第二天，校长就被调走了……</div>
+      <div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">142</span></span><span>♡ <span class="num">5.6k</span></span></div>
+    </a>
+
+    <a class="post-item" href="post/1.html" data-category="闲聊">
+      <div class="title">【闲聊】我学千律州古代史的时候发现了一对好磕的cp…</div>
+      <div class="meta"><span class="author">匿名楼主</span><span>·</span><span>2026-01-05</span><span>·</span><span>最后回复 5天前</span></div>
+      <div class="excerpt">最近在修千律州古代史，然后读到第二纪元末期光明神法伊顿和他的大神使段深泉……真的好好磕啊，神明和凡人，分神，大寂灭，每一段都踩在我的好球带上，有没有人也磕这对的？</div>
+      <div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">72</span></span><span>♡ <span class="num">8.9k</span></span></div>
+    </a>
+
+    <a class="post-item" href="post/3.html" data-category="讨论">
+      <div class="title">【讨论】你们有没有发现《归途》的歌词……细思极恐？</div>
+      <div class="meta"><span class="author">暮色入茶</span><span>·</span><span>2026-01-08</span><span>·</span><span>最后回复 2天前</span></div>
+      <div class="excerpt">科利亚那首《归途》你们听过吧？就是前段时间巡演场场大合唱的那首。我本来觉得就是一首很温柔的歌，歌颂世界啊自然啊什么的，结果昨晚洗澡的时候脑子里突然蹦出来一句歌词——风将你的名字吹向远方……</div>
+      <div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">49</span></span><span>♡ <span class="num">2.1k</span></span></div>
+    </a>
+
+    <a class="post-item" href="post/4.html" data-category="讨论">
+      <div class="title">【讨论】关于“段深泉”这个名字，我查了三天史料，现在有点睡不着</div>
+      <div class="meta"><span class="author">层楼叠</span><span>·</span><span>2026-01-05</span><span>·</span><span>最后回复 5天前</span></div>
+      <div class="excerpt">我本科学历史的，最近做课题的时候翻了不少文献和碑文拓片，然后我发现了一个问题——段深泉这个名字，出现在了两段不应该同时出现的时间里。</div>
+      <div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">72</span></span><span>♡ <span class="num">8.9k</span></span></div>
+    </a>
+
+    <a class="post-item" href="post/5.html" data-category="求助">
+      <div class="title">【求助】结婚三年的老婆不愿意怀孕怎么办？他好像有点害怕流产<span class="hot">▸ 热</span></div>
+      <div class="meta"><span class="author">昭昭是我老婆</span><span>·</span><span>2025-12-28</span><span>·</span><span>最后回复 2周前</span></div>
+      <div class="excerpt">我们感情很好，他很爱我，我也很爱他。但一提到孩子他就脸色发白，晚上还会做噩梦。我想让他去看医生，他又不肯。我该怎么办？急，在线等。</div>
+      <div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">312</span></span><span>♡ <span class="num">1.2w</span></span></div>
+    </a>
+
+    <div id="dynamic-posts"></div>
+
   </div>
+</div>
+
+<div id="detail-view">
+  <button class="back-link" onclick="goBackToList()">← 返回列表</button>
+  <div class="detail-title" id="detail-title"></div>
+  <div class="detail-meta" id="detail-meta"></div>
+  <div class="detail-body" id="detail-body"></div>
+  <div class="detail-stats" id="detail-stats"></div>
+</div>
+
+<button class="new-post-btn" id="new-post-btn">✧</button>
+
+<div class="modal-overlay" id="new-post-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-title">✧ 写新帖</div>
+    <form id="new-post-form">
+      <label for="post-title">标题</label>
+      <input type="text" id="post-title" placeholder="取个吸引人的标题..." required />
+      <label for="post-category">分类</label>
+      <select id="post-category">
+        <option value="讨论">讨论</option>
+        <option value="求助">求助</option>
+        <option value="树洞">树洞</option>
+        <option value="闲聊">闲聊</option>
+      </select>
+      <label for="post-author">署名</label>
+      <input type="text" id="post-author" placeholder="你的名字（或匿名）" value="匿名楼主" />
+      <label for="post-content">内容</label>
+      <textarea id="post-content" placeholder="写下你的想法..." required></textarea>
+      <button type="submit" class="submit-btn">✧ 发布帖子</button>
+    </form>
+  </div>
+</div>
 
 </div>
 
 <script>
-  // ================================================================
-  //  数据
-  // ================================================================
+var STORAGE_KEY='beijing_forum_dynamic_posts';
+function loadDynamicPosts(){try{var raw=localStorage.getItem(STORAGE_KEY);if(raw){var parsed=JSON.parse(raw);if(Array.isArray(parsed))return parsed;}}catch(e){}return[];}
+function saveDynamicPosts(posts){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(posts));}catch(e){}}
+function getNextId(posts){return posts.reduce(function(max,p){return Math.max(max,p.id);},0)+1;}
 
-  const STORAGE_KEY = 'beijing_forum_dynamic_posts';
+var dynamicPosts=loadDynamicPosts();
+var currentFilter='all';
+var currentSearch='';
+var currentView='list';
+var currentDetailId=null;
 
-  function loadDynamicPosts() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch(e) {}
-    return [];
-  }
+function getTodayCount(){var today=new Date().toDateString();try{var raw=localStorage.getItem('beijing_today_count');if(raw){var data=JSON.parse(raw);if(data.date===today)return data.count;}}catch(e){}return 0;}
+function incrementTodayCount(){var today=new Date().toDateString();var count=getTodayCount()+1;localStorage.setItem('beijing_today_count',JSON.stringify({date:today,count:count}));return count;}
 
-  function saveDynamicPosts(posts) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)); } catch(e) {}
-  }
+function render(){if(currentView==='detail'){renderDetail();return;}renderPosts();}
 
-  function getNextId(posts) {
-    return posts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
-  }
-
-  // ================================================================
-  //  状态
-  // ================================================================
-
-  let dynamicPosts = loadDynamicPosts();
-  let currentFilter = 'all';
-  let currentSearch = '';
-  let currentView = 'list';
-  let currentDetailId = null;
-
-  function getTodayCount() {
-    const today = new Date().toDateString();
-    try {
-      const raw = localStorage.getItem('beijing_today_count');
-      if (raw) {
-        const data = JSON.parse(raw);
-        if (data.date === today) return data.count;
-      }
-    } catch(e) {}
-    return 0;
-  }
-
-  function incrementTodayCount() {
-    const today = new Date().toDateString();
-    const count = getTodayCount() + 1;
-    localStorage.setItem('beijing_today_count', JSON.stringify({ date: today, count }));
-    return count;
-  }
-
-  // ================================================================
-  //  渲染
-  // ================================================================
-
-  function render() {
-    if (currentView === 'detail') { renderDetail(); return; }
-    renderPosts();
-  }
-
-  // 核心：筛选所有帖子（预设+动态）
-  function renderPosts() {
-    // 1. 预设帖子（.post-item）——通过 data-category 和标题筛选
-    const presetPosts = document.querySelectorAll('.post-item');
-    let visibleCount = 0;
-
-    presetPosts.forEach(el => {
-      const category = el.dataset.category || '';
-      const title = el.querySelector('.title')?.textContent || '';
-      const author = el.querySelector('.meta .author')?.textContent || '';
-      const matchCategory = currentFilter === 'all' || category === currentFilter;
-      const matchSearch = !currentSearch.trim() ||
-        title.toLowerCase().includes(currentSearch.toLowerCase()) ||
-        author.toLowerCase().includes(currentSearch.toLowerCase());
-      const show = matchCategory && matchSearch;
-      el.classList.toggle('hidden', !show);
-      if (show) visibleCount++;
-    });
-
-    // 2. 动态帖子（.post-item-dynamic）——重新渲染
-    const container = document.getElementById('dynamic-posts');
-    let filtered = [...dynamicPosts];
-
-    if (currentFilter !== 'all') {
-      filtered = filtered.filter(p => p.category === currentFilter);
-    }
-    if (currentSearch.trim()) {
-      const q = currentSearch.trim().toLowerCase();
-      filtered = filtered.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        p.author.toLowerCase().includes(q)
-      );
-    }
-    filtered = filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    if (filtered.length === 0) {
-      container.innerHTML = '';
-    } else {
-      container.innerHTML = filtered.map(post => `
-        <div class="post-item-dynamic" onclick="openDetail(${post.id})">
-          <div class="title">
-            ${post.title}
-            <span class="category-tag">${post.category}</span>
-          </div>
-          <div class="meta">
-            <span class="author">${post.author}</span>
-            <span>·</span>
-            <span>${post.date}</span>
-            <span>·</span>
-            <span>刚刚发布</span>
-          </div>
-          <div class="excerpt">${post.content.slice(0, 80)}${post.content.length > 80 ? '……' : ''}</div>
-          <div class="stats">
-            <span>💬 <span class="num">${post.replies}</span></span>
-            <span>👍 <span class="num">${post.likes}</span></span>
-          </div>
-        </div>
-      `).join('');
-      visibleCount += filtered.length;
-    }
-
-    document.getElementById('post-count').textContent = visibleCount + ' 个帖子';
-  }
-
-  function renderDetail() {
-    const post = dynamicPosts.find(p => p.id === currentDetailId);
-    if (!post) { goBackToList(); return; }
-
-    document.getElementById('list-view').style.display = 'none';
-    document.getElementById('detail-view').style.display = 'block';
-
-    document.getElementById('detail-title').textContent = post.title;
-    document.getElementById('detail-meta').innerHTML = `
-      <span>${post.author}</span>
-      <span>·</span>
-      <span>${post.date}</span>
-      <span>·</span>
-      <span>分类：${post.category}</span>
-    `;
-    document.getElementById('detail-body').textContent = post.content;
-    document.getElementById('detail-stats').innerHTML = `
-      <span>💬 <span class="num">${post.replies}</span> 回复</span>
-      <span>👍 <span class="num">${post.likes}</span> 点赞</span>
-    `;
-  }
-
-  function openDetail(id) {
-    currentDetailId = id;
-    currentView = 'detail';
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function goBackToList() {
-    currentView = 'list';
-    document.getElementById('list-view').style.display = 'block';
-    document.getElementById('detail-view').style.display = 'none';
-    render();
-  }
-
-  function goHome() { goBackToList(); return false; }
-
-  // ================================================================
-  //  发帖
-  // ================================================================
-
-  function openNewPostModal() {
-    document.getElementById('new-post-modal').classList.add('open');
-    document.getElementById('post-title').focus();
-  }
-
-  function closeNewPostModal() {
-    document.getElementById('new-post-modal').classList.remove('open');
-    document.getElementById('new-post-form').reset();
-  }
-
-  function submitNewPost(e) {
-    e.preventDefault();
-    const title = document.getElementById('post-title').value.trim();
-    const category = document.getElementById('post-category').value;
-    const author = document.getElementById('post-author').value.trim() || '匿名楼主';
-    const content = document.getElementById('post-content').value.trim();
-    if (!title || !content) return;
-
-    const newPost = {
-      id: getNextId(dynamicPosts),
-      title, category, author,
-      date: new Date().toISOString().slice(0, 10),
-      content, replies: 0, likes: 0
-    };
-
-    dynamicPosts = [newPost, ...dynamicPosts];
-    saveDynamicPosts(dynamicPosts);
-    document.getElementById('today-num').textContent = incrementTodayCount();
-    closeNewPostModal();
-    render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // ================================================================
-  //  筛选 + 搜索
-  // ================================================================
-
-  function setupFilters() {
-    document.querySelectorAll('.filter-tag:not(.role-tag)').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentFilter = this.dataset.filter;
-        render();
-      });
-    });
-
-    const searchInput = document.getElementById('search-input');
-    let timer;
-    searchInput.addEventListener('input', function() {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        currentSearch = this.value;
-        render();
-      }, 250);
-    });
-  }
-
-  // ================================================================
-  //  茶馆实况
-  // ================================================================
-
-  function setupTavernStatus() {
-    const onlineEl = document.getElementById('online-num');
-    setInterval(() => {
-      const base = 47;
-      const variation = Math.floor(Math.random() * 30) - 10;
-      onlineEl.textContent = Math.max(12, base + variation);
-    }, 5000);
-
-    const tempEl = document.getElementById('tea-temp');
-    setInterval(() => {
-      const base = 82;
-      const variation = Math.floor(Math.random() * 8) - 3;
-      tempEl.textContent = Math.max(65, Math.min(95, base + variation));
-    }, 8000);
-
-    document.getElementById('today-num').textContent = getTodayCount();
-
-    const sayings = [
-      '一壶茶，三两句闲话，便是人间好时节。',
-      '北境的风冷，茶馆的灯暖。',
-      '说书人一拍惊堂木，满座俱静。',
-      '有些故事，喝着喝着就讲完了。',
-      '茶凉了可以续，人走了……也会回来。',
-      '这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'
-    ];
-    const sayingEl = document.getElementById('saying-text');
-    setInterval(() => {
-      const idx = Math.floor(Math.random() * sayings.length);
-      sayingEl.textContent = sayings[idx];
-    }, 12000);
-  }
-
-  // ================================================================
-  //  启动
-  // ================================================================
-
-  document.getElementById('new-post-btn').addEventListener('click', openNewPostModal);
-  document.getElementById('modal-close').addEventListener('click', closeNewPostModal);
-  document.getElementById('new-post-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeNewPostModal();
+function renderPosts(){
+  var presetPosts=document.querySelectorAll('.post-item');
+  var visibleCount=0;
+  presetPosts.forEach(function(el){
+    var category=el.dataset.category||'';
+    var title=(el.querySelector('.title')||{}).textContent||'';
+    var author=(el.querySelector('.meta .author')||{}).textContent||'';
+    var matchCategory=currentFilter==='all'||category===currentFilter;
+    var matchSearch=!currentSearch.trim()||title.toLowerCase().includes(currentSearch.toLowerCase())||author.toLowerCase().includes(currentSearch.toLowerCase());
+    var show=matchCategory&&matchSearch;
+    el.classList.toggle('hidden',!show);
+    if(show)visibleCount++;
   });
-  document.getElementById('new-post-form').addEventListener('submit', submitNewPost);
 
-  setupFilters();
-  setupTavernStatus();
-  render();
+  var container=document.getElementById('dynamic-posts');
+  var filtered=dynamicPosts.slice();
+  if(currentFilter!=='all'){filtered=filtered.filter(function(p){return p.category===currentFilter;});}
+  if(currentSearch.trim()){var q=currentSearch.trim().toLowerCase();filtered=filtered.filter(function(p){return p.title.toLowerCase().includes(q)||p.author.toLowerCase().includes(q);});}
+  filtered=filtered.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+
+  if(filtered.length===0){container.innerHTML='';}else{
+    container.innerHTML=filtered.map(function(post){
+      return '<div class="post-item" onclick="openDetail('+post.id+')"><div class="title">'+post.title+'<span class="category-tag">'+post.category+'</span></div><div class="meta"><span class="author">'+post.author+'</span><span>·</span><span>'+post.date+'</span><span>·</span><span>刚刚发布</span></div><div class="excerpt">'+(post.content.slice(0,80)+(post.content.length>80?'……':''))+'</div><div class="stats"><span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">'+post.replies+'</span></span><span>♡ <span class="num">'+post.likes+'</span></span></div></div>';
+    }).join('');
+    visibleCount+=filtered.length;
+  }
+  document.getElementById('post-count').textContent=visibleCount+' 个帖子';
+}
+
+function renderDetail(){
+  var post=null;
+  for(var i=0;i<dynamicPosts.length;i++){if(dynamicPosts[i].id===currentDetailId){post=dynamicPosts[i];break;}}
+  if(!post){goBackToList();return;}
+  document.getElementById('list-view').style.display='none';
+  document.getElementById('detail-view').style.display='block';
+  document.getElementById('detail-title').textContent=post.title;
+  document.getElementById('detail-meta').innerHTML='<span>'+post.author+'</span><span>·</span><span>'+post.date+'</span><span>·</span><span>分类：'+post.category+'</span>';
+  document.getElementById('detail-body').textContent=post.content;
+  document.getElementById('detail-stats').innerHTML='<span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">'+post.replies+'</span> 回复</span><span>♡ <span class="num">'+post.likes+'</span> 点赞</span>';
+}
+
+function openDetail(id){currentDetailId=id;currentView='detail';render();window.scrollTo({top:0,behavior:'smooth'});}
+function goBackToList(){currentView='list';document.getElementById('list-view').style.display='block';document.getElementById('detail-view').style.display='none';render();}
+
+function openNewPostModal(){document.getElementById('new-post-modal').classList.add('open');document.getElementById('post-title').focus();}
+function closeNewPostModal(){document.getElementById('new-post-modal').classList.remove('open');document.getElementById('new-post-form').reset();}
+function submitNewPost(e){e.preventDefault();var title=document.getElementById('post-title').value.trim();var category=document.getElementById('post-category').value;var author=document.getElementById('post-author').value.trim()||'匿名楼主';var content=document.getElementById('post-content').value.trim();if(!title||!content)return;var newPost={id:getNextId(dynamicPosts),title:title,category:category,author:author,date:new Date().toISOString().slice(0,10),content:content,replies:0,likes:0};dynamicPosts=[newPost].concat(dynamicPosts);saveDynamicPosts(dynamicPosts);document.getElementById('today-num').textContent=incrementTodayCount();closeNewPostModal();render();window.scrollTo({top:0,behavior:'smooth'});}
+
+function setupFilters(){
+  document.querySelectorAll('.filter-tag:not(.role-tag)').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.filter-tag').forEach(function(b){b.classList.remove('active');});
+      this.classList.add('active');
+      currentFilter=this.dataset.filter;
+      render();
+    });
+  });
+  var searchInput=document.getElementById('search-input');
+  var timer;
+  searchInput.addEventListener('input',function(){
+    clearTimeout(timer);
+    timer=setTimeout(function(){currentSearch=searchInput.value;render();},250);
+  });
+}
+
+function setupTavernStatus(){
+  var onlineEl=document.getElementById('online-num');
+  setInterval(function(){var base=47;var variation=Math.floor(Math.random()*30)-10;onlineEl.textContent=Math.max(12,base+variation);},5000);
+  var tempEl=document.getElementById('tea-temp');
+  setInterval(function(){var base=82;var variation=Math.floor(Math.random()*8)-3;tempEl.textContent=Math.max(65,Math.min(95,base+variation));},8000);
+  document.getElementById('today-num').textContent=getTodayCount();
+  var sayings=['一壶茶，三两句闲话，便是人间好时节。','北境的风冷，茶馆的灯暖。','说书人一拍惊堂木，满座俱静。','有些故事，喝着喝着就讲完了。','茶凉了可以续，人走了……也会回来。','这世上最热闹的地方，是茶馆。最安静的地方，也是茶馆。'];
+  var sayingEl=document.getElementById('saying-text');
+  setInterval(function(){var idx=Math.floor(Math.random()*sayings.length);sayingEl.textContent=sayings[idx];},12000);
+}
+
+document.getElementById('new-post-btn').addEventListener('click',openNewPostModal);
+document.getElementById('modal-close').addEventListener('click',closeNewPostModal);
+document.getElementById('new-post-modal').addEventListener('click',function(e){if(e.target===this)closeNewPostModal();});
+document.getElementById('new-post-form').addEventListener('submit',submitNewPost);
+
+setupFilters();
+setupTavernStatus();
+render();
 </script>
 
 </body>

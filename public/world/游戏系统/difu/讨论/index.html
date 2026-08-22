@@ -1,566 +1,279 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>归终殿 · 讨论区</title>
-    <style>
-        :root {
-            --bg-body: #f7f4ef;
-            --bg-card: #ffffff;
-            --bg-card-alt: #f2eee9;
-            --border-light: #ece6de;
-            --border-card: #e4ddd4;
-            --text-primary: #2c2c2c;
-            --text-secondary: #4a4a4a;
-            --text-muted: #8a8a8a;
-            --text-muted-light: #b0aaa2;
-            --accent: #b03a2a;
-            --accent-soft: rgba(176, 58, 42, 0.06);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-            --radius: 12px;
-            --radius-sm: 6px;
-            --font: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-            --transition: 0.25s ease;
-        }
-        [data-theme="dark"] {
-            --bg-body: #181614;
-            --bg-card: #24201c;
-            --bg-card-alt: #1e1b18;
-            --border-light: #35302a;
-            --border-card: #3a3530;
-            --text-primary: #cfc8c0;
-            --text-secondary: #9a948c;
-            --text-muted: #6a6560;
-            --text-muted-light: #5a5550;
-            --accent: #b05a4a;
-            --accent-soft: rgba(176, 90, 74, 0.08);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--font);
-            background: var(--bg-body);
-            color: var(--text-primary);
-            transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            padding: 0 16px;
-            display: flex;
-            flex-direction: column;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>归终殿 · 讨论区</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-card-alt:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#1f1a16;--text-secondary:#2c241e;--text-muted:#5a4d42;--text-muted-light:#8a7a6a;--accent:#b03a2a;--accent-soft:rgba(176,58,42,0.06);--shadow-sm:0 1px 4px rgba(0,0,0,0.03);--shadow-md:0 4px 16px rgba(0,0,0,0.06);--radius:12px;--radius-sm:6px;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.2s ease}
+[data-theme="dark"]{--bg-body:#1e1a16;--bg-card:#2a2520;--bg-card-alt:#24201c;--border-light:#35302a;--border-card:#4a443e;--text-primary:#cfc8c0;--text-secondary:#b8aea4;--text-muted:#8a8078;--text-muted-light:#6a6560;--accent:#b05a4a;--accent-soft:rgba(176,90,74,0.08);--shadow-sm:0 1px 4px rgba(0,0,0,0.2);--shadow-md:0 4px 16px rgba(0,0,0,0.3)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:17px;line-height:1.7;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;padding:0 16px 40px 16px;display:flex;flex-direction:column}
 
-        .float-group {
-            position: fixed;
-            top: 20px;
-            right: 24px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
-        .float-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: var(--shadow-sm);
-            letter-spacing: 0.3px;
-            text-decoration: none;
-        }
-        .float-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-        .float-btn .icon { font-size: 0.9rem; }
+/* 强制2D符号 */
+.sym-reply{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-weight:400;font-style:normal;text-shadow:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
-        #app {
-            max-width: 780px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 24px 0 40px 0;
-            flex: 1;
-        }
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm);letter-spacing:0.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+.float-btn .icon{font-size:0.9rem}
 
-        .page-header {
-            margin-bottom: 24px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .page-header .title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .page-header .title .deco {
-            color: var(--accent);
-            margin-right: 6px;
-        }
-        .page-header .sub {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
+#app{max-width:780px;margin:0 auto;width:100%;padding:24px 4px 40px 4px;flex:1}
 
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 8px;
-            margin-bottom: 20px;
-        }
-        .filter-tag {
-            font-size: 0.75rem;
-            padding: 4px 16px;
-            border-radius: 16px;
-            border: 1px solid var(--border-card);
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-        }
-        .filter-tag:hover { border-color: var(--text-muted); }
-        .filter-tag.active {
-            background: var(--accent-soft);
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-        .filter-tag .sym { margin-right: 4px; }
+.page-header{margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border-light)}
+.page-header .title{font-size:1.4rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px}
+.page-header .title .deco{color:var(--accent);margin-right:6px}
+.page-header .sub{font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px}
 
-        .post-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .post-card {
-            display: block;
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius);
-            text-decoration: none;
-            color: var(--text-primary);
-            transition: all var(--transition);
-            box-shadow: var(--shadow-sm);
-            animation: fade-in 0.3s ease forwards;
-            opacity: 0;
-            transform: translateY(6px);
-            cursor: pointer;
-            overflow: hidden;
-        }
-        .post-card:nth-child(1) { animation-delay: 0.04s; }
-        .post-card:nth-child(2) { animation-delay: 0.08s; }
-        .post-card:nth-child(3) { animation-delay: 0.12s; }
-        .post-card:nth-child(4) { animation-delay: 0.16s; }
-        .post-card:nth-child(5) { animation-delay: 0.20s; }
-        .post-card:nth-child(6) { animation-delay: 0.24s; }
-        .post-card:nth-child(7) { animation-delay: 0.28s; }
-        @keyframes fade-in {
-            0% { opacity: 0; transform: translateY(6px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .post-card:hover {
-            border-color: var(--accent);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-        }
-        .post-card .body {
-            display: block;
-            padding: 16px 20px;
-            text-decoration: none;
-            color: inherit;
-        }
-        .post-card .head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 2px;
-        }
-        .post-card .head .title {
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        .post-card .head .tag {
-            font-size: 0.6rem;
-            padding: 1px 10px;
-            border-radius: 10px;
-            border: 1px solid var(--border-card);
-            color: var(--text-muted-light);
-            flex-shrink: 0;
-        }
-        .post-card .head .tag.hot {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: var(--accent-soft);
-        }
-        .post-card .meta {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .post-card .meta .author {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        .post-card .excerpt {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .post-card .foot {
-            margin-top: 8px;
-            display: flex;
-            gap: 14px;
-            font-size: 0.75rem;
-            color: var(--text-muted-light);
-        }
-        .post-card .foot span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .post-card .foot .num {
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+.filter-bar{display:flex;flex-wrap:nowrap;gap:6px;margin-bottom:20px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-tag{flex-shrink:0;font-size:0.72rem;padding:4px 16px;border-radius:16px;border:1px solid var(--border-card);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);letter-spacing:0.3px;white-space:nowrap}
+.filter-tag:hover{border-color:var(--text-muted)}
+.filter-tag.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.filter-tag .sym{margin-right:4px;font-family:var(--font-serif)}
 
-        .post-card .action-bar {
-            padding: 0 20px 14px;
-            display: flex;
-            justify-content: flex-end;
-            border-top: 1px solid var(--border-light);
-            margin-top: 0;
-        }
-        .post-card .action-btn {
-            font-size: 0.78rem;
-            padding: 6px 16px;
-            border-radius: 16px;
-            border: 1px solid var(--border-card);
-            background: var(--bg-card-alt);
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all var(--transition);
-            font-family: inherit;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 10px;
-        }
-        .post-card .action-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: var(--accent-soft);
-        }
+.post-list{display:flex;flex-direction:column;gap:10px}
+.post-card{display:block;background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--radius);text-decoration:none;color:var(--text-primary);transition:all var(--transition);box-shadow:var(--shadow-sm);animation:fadeIn 0.3s ease forwards;opacity:0;transform:translateY(6px);cursor:pointer;overflow:hidden}
+.post-card:nth-child(1){animation-delay:0.04s}
+.post-card:nth-child(2){animation-delay:0.08s}
+.post-card:nth-child(3){animation-delay:0.12s}
+.post-card:nth-child(4){animation-delay:0.16s}
+.post-card:nth-child(5){animation-delay:0.20s}
+.post-card:nth-child(6){animation-delay:0.24s}
+.post-card:nth-child(7){animation-delay:0.28s}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+.post-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md)}
+.post-card .body{display:block;padding:16px 20px;text-decoration:none;color:inherit}
+.post-card .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.post-card .head .title{font-size:1rem;font-weight:500;font-family:var(--font-serif)}
+.post-card .head .tag{font-size:0.6rem;padding:1px 10px;border-radius:10px;border:1px solid var(--border-card);color:var(--text-muted-light);flex-shrink:0;font-family:var(--font-mono)}
+.post-card .head .tag.hot{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.post-card .meta{font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.post-card .meta .author{color:var(--text-secondary);font-weight:500;font-family:var(--font-serif)}
+.post-card .excerpt{font-size:0.85rem;color:var(--text-secondary);margin-top:4px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-card .foot{margin-top:8px;display:flex;gap:14px;font-size:0.72rem;color:var(--text-muted-light);font-family:var(--font-mono)}
+.post-card .foot span{display:flex;align-items:center;gap:4px}
+.post-card .foot .num{font-weight:500;color:var(--text-secondary)}
+.post-card .action-bar{padding:0 20px 14px;display:flex;justify-content:flex-end;border-top:1px solid var(--border-light);margin-top:0}
+.post-card .action-btn{font-size:0.75rem;padding:6px 16px;border-radius:16px;border:1px solid var(--border-card);background:var(--bg-card-alt);color:var(--text-secondary);text-decoration:none;transition:all var(--transition);font-family:var(--font-mono);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:10px;letter-spacing:0.3px}
+.post-card .action-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.post-card.hidden{display:none}
+.empty-state{text-align:center;padding:32px 0;color:var(--text-muted);font-size:0.9rem}
+.empty-state .sym{font-size:2rem;display:block;margin-bottom:8px;color:var(--text-muted-light)}
 
-        .post-card.hidden {
-            display: none;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 32px 0;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        .empty-state .sym {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted-light);
-        }
-
-        @media (max-width: 600px) {
-            body { padding: 0 10px; }
-            #app { padding: 16px 0 30px 0; }
-            .post-card .body { padding: 14px 16px; }
-            .post-card .action-bar { padding: 0 16px 12px; }
-            .post-card .head .title { font-size: 0.92rem; }
-            .page-header .title { font-size: 1.2rem; }
-            .float-group {
-                top: 12px;
-                right: 12px;
-                gap: 6px;
-            }
-            .float-btn {
-                padding: 4px 10px 4px 8px;
-                font-size: 0.65rem;
-            }
-        }
-    </style>
-    <script>
-        (function() {
-            try {
-                const raw = localStorage.getItem('theme');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && parsed.value === 'dark') {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    } else if (parsed && parsed.value === 'light') {
-                        document.documentElement.removeAttribute('data-theme');
-                    }
-                }
-            } catch(e) {}
-        })();
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            if (newTheme === 'dark') {
-                html.setAttribute('data-theme', 'dark');
-            } else {
-                html.removeAttribute('data-theme');
-            }
-            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
-            const btn = document.getElementById('themeBtn');
-            if (btn) {
-                btn.innerHTML = newTheme === 'dark'
-                    ? '<span class="icon">☀️</span> 日间'
-                    : '<span class="icon">🌙</span> 夜间';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('themeBtn');
-            if (!btn) return;
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            btn.innerHTML = isDark
-                ? '<span class="icon">☀️</span> 日间'
-                : '<span class="icon">🌙</span> 夜间';
-        });
-    </script>
+@media(max-width:600px){body{padding:0 10px 30px 10px;font-size:16px}#app{padding:16px 0 30px 0}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.6rem}.post-card .body{padding:14px 16px}.post-card .action-bar{padding:0 16px 12px}.post-card .head .title{font-size:0.92rem}.page-header .title{font-size:1.2rem}.filter-bar{gap:4px}.filter-tag{font-size:0.65rem;padding:3px 12px}}
+</style>
+<script>
+(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='dark'){document.documentElement.setAttribute('data-theme','dark');}else if(parsed&&parsed.value==='light'){document.documentElement.removeAttribute('data-theme');}}}catch(e){}})();
+function toggleTheme(){var html=document.documentElement;var isDark=html.getAttribute('data-theme')==='dark';var newTheme=isDark?'light':'dark';if(newTheme==='dark'){html.setAttribute('data-theme','dark');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));var btn=document.getElementById('themeBtn');if(btn){btn.innerHTML=newTheme==='dark'?'<span class="icon">☀️</span> 日间':'<span class="icon">🌙</span> 夜间';}}
+document.addEventListener('DOMContentLoaded',function(){var btn=document.getElementById('themeBtn');if(!btn)return;var isDark=document.documentElement.getAttribute('data-theme')==='dark';btn.innerHTML=isDark?'<span class="icon">☀️</span> 日间':'<span class="icon">🌙</span> 夜间';});
+</script>
 </head>
 <body>
 
-    <div class="float-group">
-        <a class="float-btn" href="../index.html">
-            <span class="icon">←</span> 返回首页
-        </a>
-        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-            <span class="icon">🌙</span> 夜间
-        </button>
+<div class="float-group">
+  <a class="float-btn" href="../index.html"><span class="icon">←</span> 返回首页</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span class="icon">🌙</span> 夜间</button>
+</div>
+
+<div id="app">
+
+<div class="page-header">
+  <div class="title"><span class="deco">❀</span>归终殿 · 讨论区</div>
+  <div class="sub">◈ 炉火正旺 · 共 7 个话题</div>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <button class="filter-tag active" data-filter="all"><span class="sym">❖</span>全部</button>
+  <button class="filter-tag" data-filter="战力"><span class="sym">✦</span>战力</button>
+  <button class="filter-tag" data-filter="八卦"><span class="sym">◈</span>八卦</button>
+  <button class="filter-tag" data-filter="剧情"><span class="sym">✿</span>剧情</button>
+  <button class="filter-tag" data-filter="同人"><span class="sym">❀</span>同人</button>
+  <button class="filter-tag" data-filter="闲聊"><span class="sym">◉</span>闲聊</button>
+</div>
+
+<div class="post-list" id="postList">
+
+  <!-- 1 -->
+  <div class="post-card" data-category="八卦" onclick="location.href='惊鸿榜.html'">
+    <div class="body">
+      <div class="head">
+        <span class="title">【归终帖】惊鸿榜七日投票纪事</span>
+        <span class="tag hot">▸ 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">符修院小师妹</span>
+        <span>·</span>
+        <span>甲辰年·秋·初五日</span>
+      </div>
+      <div class="excerpt">归终殿弟子借玉牒发起惊鸿榜投票，七日为期，每日三笺，列十一人于榜。林淮断层第一，魏元璟、程木栖、栾方棋、罗修诸位大人名次胶着。至第六日，首席大人亲至公示栏，榜单遂止……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">156</span></span>
+        <span>♡ <span class="num">2.3w</span></span>
+      </div>
     </div>
-
-    <div id="app">
-
-        <div class="page-header">
-            <div class="title"><span class="deco">✦</span>归终殿 · 讨论区</div>
-            <div class="sub">❀ 炉火正旺 · 共 7 个话题</div>
-        </div>
-
-        <div class="filter-bar" id="filterBar">
-            <button class="filter-tag active" data-filter="all"><span class="sym">❖</span>全部</button>
-            <button class="filter-tag" data-filter="战力"><span class="sym">⚔</span>战力</button>
-            <button class="filter-tag" data-filter="八卦"><span class="sym">◈</span>八卦</button>
-            <button class="filter-tag" data-filter="剧情"><span class="sym">✿</span>剧情</button>
-            <button class="filter-tag" data-filter="同人"><span class="sym">❀</span>同人</button>
-            <button class="filter-tag" data-filter="闲聊"><span class="sym">◉</span>闲聊</button>
-        </div>
-
-        <div class="post-list" id="postList">
-
-            <!-- 1 -->
-            <div class="post-card" data-category="八卦" onclick="location.href='惊鸿榜.html'">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">【归终帖】惊鸿榜七日投票纪事</span>
-                        <span class="tag hot">🔥 热</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">符修院小师妹</span>
-                        <span>·</span>
-                        <span>甲辰年·秋·初五日</span>
-                    </div>
-                    <div class="excerpt">归终殿弟子借玉牒发起惊鸿榜投票，七日为期，每日三笺，列十一人于榜。林淮断层第一，魏元璟、程木栖、栾方棋、罗修诸位大人名次胶着。至第六日，首席大人亲至公示栏，榜单遂止……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">156</span></span>
-                        <span>❤ <span class="num">2.3w</span></span>
-                    </div>
-                </div>
-                <div class="action-bar">
-                    <a class="action-btn" href="./后续聊天.html" onclick="event.stopPropagation()">→ 查看诸位大人得知榜单后的反应</a>
-                </div>
-            </div>
-
-            <!-- 2 -->
-            <a class="post-card" href="讨论/战力分析.html" data-category="战力">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">林淮 vs 罗修，正面交锋谁赢？认真分析</span>
-                        <span class="tag hot">🔥 热</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">枪阁小师弟</span>
-                        <span>·</span>
-                        <span>2026-08-12</span>
-                    </div>
-                    <div class="excerpt">抛开剧情滤镜，纯战力向。林淮攻击力 155，速度 120，属于一击必杀型；罗修防御力 95，速度 90，但鬼修法术和引魂刀双修……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">89</span></span>
-                        <span>❤ <span class="num">1.1w</span></span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 3 -->
-            <a class="post-card" href="讨论/浮生树起源.html" data-category="剧情">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">浮生树起源的三种假说：天命君、楚迟、栾方棋</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">藏经阁扫地僧</span>
-                        <span>·</span>
-                        <span>2026-08-10</span>
-                    </div>
-                    <div class="excerpt">关于浮生树的来历，剧情里给了很多线索但没明说。我整理了一下目前主流的三种解释：1. 天命君创造说 2. 楚迟化身说 3. 栾方棋因果闭环说……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">67</span></span>
-                        <span>❤ <span class="num">8.7k</span></span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 4 -->
-            <a class="post-card" href="讨论/首席成亲.html" data-category="八卦">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">首席和璟大人到底什么时候成亲？在线等，急</span>
-                        <span class="tag hot">🔥 热</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">璟大人后援会</span>
-                        <span>·</span>
-                        <span>2026-08-08</span>
-                    </div>
-                    <div class="excerpt">首席都在璟大人院子里光膀子被拍到了，这还不官宣？？有人知道内幕吗，我嗑的CP什么时候能喝上喜酒……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">203</span></span>
-                        <span>❤ <span class="num">3.4w</span></span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 5 -->
-            <a class="post-card" href="讨论/秦墨予同人.html" data-category="同人">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">【同人】如果秦墨予没有疯：浮生一粟的另一种可能</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">浮生树下许愿人</span>
-                        <span>·</span>
-                        <span>2026-08-06</span>
-                    </div>
-                    <div class="excerpt">假如秦墨予没有疯癫，林淮就不会被诅咒，他们会在浮生一粟里安稳度过余生。但那样的话，就没有两百年的等待，也没有栾方棋了……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">112</span></span>
-                        <span>❤ <span class="num">1.8w</span></span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 6 -->
-            <a class="post-card" href="讨论/冉舟人偶.html" data-category="剧情">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">冉舟到底算不算"活着"？重看青丘之战的感想</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">忘川摆渡人</span>
-                        <span>·</span>
-                        <span>2026-08-04</span>
-                    </div>
-                    <div class="excerpt">冉舟是人偶，她没有灵魂，记忆是上一代传承的，使命是白禾川给的。但她在最后叫了栾方棋的名字——那是她唯一一次没有按照剧本行事……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">78</span></span>
-                        <span>❤ <span class="num">6.3k</span></span>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 7 -->
-            <a class="post-card" href="讨论/白禾川和秦雨令.html" data-category="剧情">
-                <div class="body">
-                    <div class="head">
-                        <span class="title">白禾川与秦雨令：一场持续两百年的单向执念</span>
-                        <span class="tag hot">🔥 热</span>
-                    </div>
-                    <div class="meta">
-                        <span class="author">桃林听风客</span>
-                        <span>·</span>
-                        <span>2026-08-02</span>
-                    </div>
-                    <div class="excerpt">白禾川花了三百年都不明白，秦雨令不是不爱他，是根本不会爱他。而当他终于明白的时候，秦雨令已经亲手把剑刺进了他的心脏……</div>
-                    <div class="foot">
-                        <span>💬 <span class="num">145</span></span>
-                        <span>❤ <span class="num">2.1w</span></span>
-                    </div>
-                </div>
-            </a>
-
-        </div>
-
-        <div class="empty-state" id="emptyState" style="display:none;">
-            <span class="sym">❀</span>
-            没有匹配的帖子<br>
-            <span style="font-size:0.8rem;">换个分类试试吧</span>
-        </div>
-
+    <div class="action-bar">
+      <a class="action-btn" href="./后续聊天.html" onclick="event.stopPropagation()">→ 查看诸位大人得知榜单后的反应</a>
     </div>
+  </div>
 
-    <script>
-        const filterTags = document.querySelectorAll('.filter-tag');
-        const postCards = document.querySelectorAll('.post-card');
-        const emptyState = document.getElementById('emptyState');
-        let currentFilter = 'all';
+  <!-- 2 -->
+  <a class="post-card" href="讨论/战力分析.html" data-category="战力">
+    <div class="body">
+      <div class="head">
+        <span class="title">林淮 vs 罗修，正面交锋谁赢？认真分析</span>
+        <span class="tag hot">▸ 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">枪阁小师弟</span>
+        <span>·</span>
+        <span>2026-08-12</span>
+      </div>
+      <div class="excerpt">抛开剧情滤镜，纯战力向。林淮攻击力 155，速度 120，属于一击必杀型；罗修防御力 95，速度 90，但鬼修法术和引魂刀双修……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">89</span></span>
+        <span>♡ <span class="num">1.1w</span></span>
+      </div>
+    </div>
+  </a>
 
-        filterTags.forEach(btn => {
-            btn.addEventListener('click', function() {
-                filterTags.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentFilter = this.dataset.filter;
-                applyFilter();
-            });
-        });
+  <!-- 3 -->
+  <a class="post-card" href="讨论/浮生树起源.html" data-category="剧情">
+    <div class="body">
+      <div class="head">
+        <span class="title">浮生树起源的三种假说：天命君、楚迟、栾方棋</span>
+      </div>
+      <div class="meta">
+        <span class="author">藏经阁扫地僧</span>
+        <span>·</span>
+        <span>2026-08-10</span>
+      </div>
+      <div class="excerpt">关于浮生树的来历，剧情里给了很多线索但没明说。我整理了一下目前主流的三种解释：1. 天命君创造说 2. 楚迟化身说 3. 栾方棋因果闭环说……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">67</span></span>
+        <span>♡ <span class="num">8.7k</span></span>
+      </div>
+    </div>
+  </a>
 
-        function applyFilter() {
-            let visible = 0;
-            postCards.forEach(card => {
-                const cat = card.dataset.category || '';
-                const show = currentFilter === 'all' || cat === currentFilter;
-                card.classList.toggle('hidden', !show);
-                if (show) visible++;
-            });
-            emptyState.style.display = visible === 0 ? 'block' : 'none';
-            const sub = document.querySelector('.page-header .sub');
-            if (sub) {
-                sub.textContent = '❀ 炉火正旺 · 共 ' + visible + ' 个话题';
-            }
-        }
+  <!-- 4 -->
+  <a class="post-card" href="讨论/首席成亲.html" data-category="八卦">
+    <div class="body">
+      <div class="head">
+        <span class="title">首席和璟大人到底什么时候成亲？在线等，急</span>
+        <span class="tag hot">▸ 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">璟大人后援会</span>
+        <span>·</span>
+        <span>2026-08-08</span>
+      </div>
+      <div class="excerpt">首席都在璟大人院子里光膀子被拍到了，这还不官宣？？有人知道内幕吗，我嗑的CP什么时候能喝上喜酒……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">203</span></span>
+        <span>♡ <span class="num">3.4w</span></span>
+      </div>
+    </div>
+  </a>
 
-        applyFilter();
-    </script>
+  <!-- 5 -->
+  <a class="post-card" href="讨论/秦墨予同人.html" data-category="同人">
+    <div class="body">
+      <div class="head">
+        <span class="title">【同人】如果秦墨予没有疯：浮生一粟的另一种可能</span>
+      </div>
+      <div class="meta">
+        <span class="author">浮生树下许愿人</span>
+        <span>·</span>
+        <span>2026-08-06</span>
+      </div>
+      <div class="excerpt">假如秦墨予没有疯癫，林淮就不会被诅咒，他们会在浮生一粟里安稳度过余生。但那样的话，就没有两百年的等待，也没有栾方棋了……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">112</span></span>
+        <span>♡ <span class="num">1.8w</span></span>
+      </div>
+    </div>
+  </a>
+
+  <!-- 6 -->
+  <a class="post-card" href="讨论/冉舟人偶.html" data-category="剧情">
+    <div class="body">
+      <div class="head">
+        <span class="title">冉舟到底算不算"活着"？重看青丘之战的感想</span>
+      </div>
+      <div class="meta">
+        <span class="author">忘川摆渡人</span>
+        <span>·</span>
+        <span>2026-08-04</span>
+      </div>
+      <div class="excerpt">冉舟是人偶，她没有灵魂，记忆是上一代传承的，使命是白禾川给的。但她在最后叫了栾方棋的名字——那是她唯一一次没有按照剧本行事……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">78</span></span>
+        <span>♡ <span class="num">6.3k</span></span>
+      </div>
+    </div>
+  </a>
+
+  <!-- 7 -->
+  <a class="post-card" href="讨论/白禾川和秦雨令.html" data-category="剧情">
+    <div class="body">
+      <div class="head">
+        <span class="title">白禾川与秦雨令：一场持续两百年的单向执念</span>
+        <span class="tag hot">▸ 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">桃林听风客</span>
+        <span>·</span>
+        <span>2026-08-02</span>
+      </div>
+      <div class="excerpt">白禾川花了三百年都不明白，秦雨令不是不爱他，是根本不会爱他。而当他终于明白的时候，秦雨令已经亲手把剑刺进了他的心脏……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">145</span></span>
+        <span>♡ <span class="num">2.1w</span></span>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<div class="empty-state" id="emptyState" style="display:none;">
+  <span class="sym">❀</span>
+  没有匹配的帖子<br>
+  <span style="font-size:0.8rem;">换个分类试试吧</span>
+</div>
+
+</div>
+
+<script>
+var filterTags=document.querySelectorAll('.filter-tag');
+var postCards=document.querySelectorAll('.post-card');
+var emptyState=document.getElementById('emptyState');
+var currentFilter='all';
+
+filterTags.forEach(function(btn){
+  btn.addEventListener('click',function(){
+    filterTags.forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    currentFilter=this.dataset.filter;
+    applyFilter();
+  });
+});
+
+function applyFilter(){
+  var visible=0;
+  postCards.forEach(function(card){
+    var cat=card.dataset.category||'';
+    var show=currentFilter==='all'||cat===currentFilter;
+    card.classList.toggle('hidden',!show);
+    if(show)visible++;
+  });
+  emptyState.style.display=visible===0?'block':'none';
+  var sub=document.querySelector('.page-header .sub');
+  if(sub){sub.textContent='◈ 炉火正旺 · 共 '+visible+' 个话题';}
+}
+
+applyFilter();
+</script>
 
 </body>
 </html>
