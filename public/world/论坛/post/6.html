@@ -55,8 +55,6 @@
       flex-direction: column;
       padding: 0 16px 40px 16px;
     }
-
-    /* 强制2D符号 */
     .sym-2d { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 400; font-style: normal; text-shadow: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
     .float-group {
@@ -97,7 +95,6 @@
       flex: 1;
     }
 
-    /* 面包屑 */
     .back-bar {
       display: flex;
       align-items: center;
@@ -112,12 +109,8 @@
       font-family: var(--font-mono);
       letter-spacing: 0.3px;
     }
-    .back-bar .breadcrumb span {
-      color: var(--text-secondary);
-      opacity: 1;
-    }
+    .back-bar .breadcrumb span { color: var(--text-secondary); opacity: 1; }
 
-    /* ===== 标题卡片 ===== */
     .title-card {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
@@ -158,7 +151,6 @@
     }
     .title-card .post-meta span { display: flex; align-items: center; gap: 4px; }
 
-    /* ===== 楼层 ===== */
     .floor {
       background: var(--bg-card);
       border: 1px solid var(--border-card);
@@ -167,9 +159,13 @@
       margin-bottom: 10px;
       box-shadow: var(--shadow-sm);
     }
-    .floor.lz {
-      border-left: 3px solid var(--accent);
-    }
+    .floor.lz { border-left: 3px solid var(--accent); }
+
+    /* 头像颜色自动交替 */
+    .floor[data-color="0"] .avatar { background:#d4c8b8; color:#5a3d2a; }
+    .floor[data-color="1"] .avatar { background:#c8d4c8; color:#2a4a3a; }
+    .floor[data-color="2"] .avatar { background:#d4c8c4; color:#4a2a1a; }
+
     .floor .head {
       display: flex;
       align-items: center;
@@ -187,27 +183,12 @@
       font-weight: 600;
       flex-shrink: 0;
       border: 2px solid var(--border-card);
-      background: var(--bg-card-alt);
-      color: var(--text-secondary);
       font-family: var(--font-serif);
-    }
-    .floor .avatar.lz-avatar {
-      background: #8a3a2a;
-      color: #fff;
-      border-color: #8a3a2a;
-    }
-    [data-theme="dark"] .floor .avatar.lz-avatar {
-      background: #b05a4a;
-      border-color: #b05a4a;
     }
     .floor .avatar.accent {
       background: var(--accent-soft);
       color: var(--accent);
       border-color: var(--accent);
-    }
-    .floor .avatar .emoji-avatar {
-      font-size: 14px;
-      line-height: 1;
     }
     .floor .info {
       flex: 1;
@@ -381,7 +362,6 @@
     <span class="breadcrumb">北境茶馆 · <span>关于尼古拉·茨韦特科夫</span></span>
   </div>
 
-  <!-- ===== 标题卡片 ===== -->
   <div class="title-card">
     <div class="post-title">
       <span class="category">讨论</span>
@@ -394,1121 +374,154 @@
     </div>
   </div>
 
-  <!-- ========== 1楼 · 楼主（lz 类确保红色左竖条） ========== -->
-  <div class="floor lz">
-    <div class="head">
-      <div class="avatar accent">楼</div>
-      <div class="info">
-        <div class="name">匿名楼主 <span class="badge lz-badge">楼主</span></div>
-        <div class="time">2026-01-14 20:17</div>
-      </div>
-      <span class="floor-num">#1</span>
-    </div>
-    <div class="body">
-      出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的。不是说他没演技，确实有点天赋，但上升速度快到不正常，圈内哪个演员不是熬七八年才出头？他凭什么？
-    </div>
-    <div class="actions">
-      <button><span class="sym-2d">❤&#xFE0E;</span> 1.2w</button>
-      <button><span class="sym-2d">↩&#xFE0E;</span> 回复</button>
-      <button><span class="sym-2d">★&#xFE0E;</span> 收藏</button>
-    </div>
-  </div>
-
-  <!-- ========== 2 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">葡</div>
-      <div class="info"><div class="name">葡萄冻冻</div><div class="time">2026-01-14 20:25</div></div>
-      <span class="floor-num">#2</span>
-    </div>
-    <div class="body">楼主在酸什么？你是没见过他的《冬夜车站》吗？那场独白戏直接封神，这演技是资源能喂出来的？建议去看看眼科。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 3 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">小</div>
-      <div class="info"><div class="name">小笼包</div><div class="time">2026-01-14 20:31</div></div>
-      <span class="floor-num">#3</span>
-    </div>
-    <div class="body">↑笑死，“有点天赋”？《冬夜车站》那段戏我看了四遍，每一遍都在哭，你管这叫“有点天赋”？你行你上啊。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 189</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 4 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">日</div>
-      <div class="info"><div class="name">日落飞行</div><div class="time">2026-01-14 20:38</div></div>
-      <span class="floor-num">#4</span>
-    </div>
-    <div class="body">我不是说他没有演技，我是说他的资源不正常。你敢说他背后没人？从龙套到顶流两年不到，你见过哪个演员纯靠实力两年飞升的？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 5 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">银</div>
-      <div class="info"><div class="name">银河修理员</div><div class="time">2026-01-14 20:45</div></div>
-      <span class="floor-num">#5</span>
-    </div>
-    <div class="body">所以呢？有人捧又怎么了？娱乐圈哪个顶流背后没人？有演技有人捧，这叫强强联合，不叫资源咖。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 312</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 6 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">猫</div>
-      <div class="info"><div class="name">猫眼石</div><div class="time">2026-01-14 20:52</div></div>
-      <span class="floor-num">#6</span>
-    </div>
-    <div class="body">爬完楼只想知道一件事——他背后到底是谁？？我吃瓜没吃全，求指路！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 7 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">霓</div>
-      <div class="info"><div class="name">霓虹甜心</div><div class="time">2026-01-14 21:00</div></div>
-      <span class="floor-num">#7</span>
-    </div>
-    <div class="body">回6L，据说是莫罗佐夫集团的女总裁，瓦伦蒂娜·莫罗佐娃。两人被拍过好几次，但一直没有实锤，科利亚那边也没回应过。直到前阵子……你懂的，发布会直接甩结婚证了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 8 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">汽</div>
-      <div class="info"><div class="name">汽水味泡泡</div><div class="time">2026-01-14 21:08</div></div>
-      <span class="floor-num">#8</span>
-    </div>
-    <div class="body">草，结婚证？？？那之前说“包养”的可以闭嘴了吧？人家是合法夫妻！合法！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 9 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">月</div>
-      <div class="info"><div class="name">月亮邮差</div><div class="time">2026-01-14 21:15</div></div>
-      <span class="floor-num">#9</span>
-    </div>
-    <div class="body">合法夫妻又不影响“资源咖”的事实，他就是靠老婆上位的，这有什么好洗的？没有瓦伦蒂娜，他还在跑龙套呢。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 10 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">北</div>
-      <div class="info"><div class="name">北风</div><div class="time">2026-01-14 21:22</div></div>
-      <span class="floor-num">#10</span>
-    </div>
-    <div class="body">“靠老婆上位”这个说法真的很恶心，他和他妻子是合法伴侣，作为伴侣给对方提供资源和帮助怎么了？你爸妈给你掏学费你是不也要说“我是靠爸妈上位的”？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 11 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">板</div>
-      <div class="info"><div class="name">板栗饼</div><div class="time">2026-01-14 21:30</div></div>
-      <span class="floor-num">#11</span>
-    </div>
-    <div class="body">笑死，208w能和普通人比？他有今天就是靠瓦伦蒂娜砸钱砸出来的，还硬要说全是自己实力，粉丝滤镜厚得能砌城墙了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 156</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 12 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">芝</div>
-      <div class="info"><div class="name">芝士年糕</div><div class="time">2026-01-14 21:40</div></div>
-      <span class="floor-num">#12</span>
-    </div>
-    <div class="body">各位各位，别吵了，我只想说一句——他老婆好A我好爱……（小声）发布会那段“我家小甜心怀孕了”我在b站刷了八百遍，谁懂啊？？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 13 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">海</div>
-      <div class="info"><div class="name">海盐芝士</div><div class="time">2026-01-14 21:50</div></div>
-      <span class="floor-num">#13</span>
-    </div>
-    <div class="body">楼上我懂你！！瓦伦蒂娜甩结婚证那段我直接垂直入坑CP！那个语气那个眼神——“他怀孕了，需要静养”，谁再说一句试试，法务部上门。这是什么宠妻狂魔总裁人设！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 14 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">樱</div>
-      <div class="info"><div class="name">樱花冻</div><div class="time">2026-01-14 22:00</div></div>
-      <span class="floor-num">#14</span>
-    </div>
-    <div class="body">科利亚那个坐在台下的表情你们看了吗？全程没说话，就捧着一杯水，眼睛亮亮的，嘴角压都压不住。我当时就在屏幕前哭了，谁懂啊这个Omega以前吃了多少苦……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 15 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">星</div>
-      <div class="info"><div class="name">星河入梦</div><div class="time">2026-01-14 22:15</div></div>
-      <span class="floor-num">#15</span>
-    </div>
-    <div class="body">认真说，他早期跑龙套的戏我都扒过，《北城旧事》里那个只有三句台词的小裁缝，眼神戏就非常到位了，那时候他根本没资源，纯靠自己。瓦伦蒂娜只是给了他一个更好的舞台，真正在台上发光的是他自己。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 789</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 16 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">芒</div>
-      <div class="info"><div class="name">芒果布丁</div><div class="time">2026-01-14 22:30</div></div>
-      <span class="floor-num">#16</span>
-    </div>
-    <div class="body">唯粉别吹了，没有瓦伦蒂娜他连那个舞台都上不去。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 17 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">荔</div>
-      <div class="info"><div class="name">荔枝气泡</div><div class="time">2026-01-14 22:40</div></div>
-      <span class="floor-num">#17</span>
-    </div>
-    <div class="body">黑粉也别酸了，人家现在结婚证在手孩子都有了，你家正主还在抠脚呢。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 18 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">青</div>
-      <div class="info"><div class="name">青柠七</div><div class="time">2026-01-14 22:50</div></div>
-      <span class="floor-num">#18</span>
-    </div>
-    <div class="body">我只想说——有没有人注意到，科利亚最近发的ins，背景里有一家看起来特别普通的小面馆？他一个顶流为什么去那种地方吃饭？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 19 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">西</div>
-      <div class="info"><div class="name">西瓜椰椰</div><div class="time">2026-01-14 23:00</div></div>
-      <span class="floor-num">#19</span>
-    </div>
-    <div class="body">回18L，我也看到了！！那家面馆好像叫“昭记面馆”，特别不起眼那种，但是他去了好几次了。是亲戚开的吗？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 20 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">好</div>
-      <div class="info"><div class="name">好奇猫猫</div><div class="time">2026-01-14 23:10</div></div>
-      <span class="floor-num">#20</span>
-    </div>
-    <div class="body">好奇+1，有没有人扒一下那家面馆？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 21 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">面</div>
-      <div class="info"><div class="name">面馆常客</div><div class="time">2026-01-14 23:20</div></div>
-      <span class="floor-num">#21</span>
-    </div>
-    <div class="body">面馆老板好像是他朋友，之前在某个采访里提过一句“有个开面馆的朋友，面很好吃”，但是没说是谁。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 345</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 22 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">东</div>
-      <div class="info"><div class="name">东城老街</div><div class="time">2026-01-14 23:30</div></div>
-      <span class="floor-num">#22</span>
-    </div>
-    <div class="body">等等，那个面馆是不是在东城老街那边？我之前路过一次，门口有个穿围裙的男生在擦桌子，棕色头发金色眼睛，长得超级好看！我当时还心想“这颜值开面馆是不是有点浪费了”……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 23 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">金</div>
-      <div class="info"><div class="name">金色眼睛</div><div class="time">2026-01-14 23:40</div></div>
-      <span class="floor-num">#23</span>
-    </div>
-    <div class="body">金色眼睛？？？你确定不是戴的美瞳？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 67</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 24 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">阳</div>
-      <div class="info"><div class="name">阳光下</div><div class="time">2026-01-14 23:45</div></div>
-      <span class="floor-num">#24</span>
-    </div>
-    <div class="body">不是，真的是金色的，阳光下会反光那种，超级好看。他店里的面也很好吃！我吃过一次，老板人很安静，不怎么说话，但会默默给客人加个蛋。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 25 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">组</div>
-      <div class="info"><div class="name">组团吃面</div><div class="time">2026-01-14 23:55</div></div>
-      <span class="floor-num">#25</span>
-    </div>
-    <div class="body">完了，我现在对小面馆老板的兴趣比对科利亚还大……有没有人组团去吃面？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 26 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">团</div>
-      <div class="info"><div class="name">团+1</div><div class="time">2026-01-15 00:05</div></div>
-      <span class="floor-num">#26</span>
-    </div>
-    <div class="body">组团+1，我要去看金色眼睛的老板！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 27 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">专</div>
-      <div class="info"><div class="name">专注演技</div><div class="time">2026-01-15 00:15</div></div>
-      <span class="floor-num">#27</span>
-    </div>
-    <div class="body">你们这些人……能不能专注讨论科利亚的演技！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 28 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">分</div>
-      <div class="info"><div class="name">分析帝</div><div class="time">2026-01-15 00:30</div></div>
-      <span class="floor-num">#28</span>
-    </div>
-    <div class="body">我来认真分析一下科利亚的演技吧。科利亚在《冬夜车站》之前确实没什么代表作，但他早期的龙套其实很有东西。《北城旧事》里那个小裁缝，全剧就三句台词，但他用眼神演完了一场暗恋。导演后来在一个采访里说，那个角色原本只是工具人，是科利亚自己琢磨出了“暗恋”这条线，导演看了成片之后直接把原本的配角戏份删了，给他多留了一个镜头——就是最后那个回头。你们可以回去扒，那个回头，信息量巨大。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 29 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">回</div>
-      <div class="info"><div class="name">回头杀</div><div class="time">2026-01-15 00:45</div></div>
-      <span class="floor-num">#29</span>
-    </div>
-    <div class="body">卧槽，那个回头是他自己设计的？？我一直以为那是导演的安排！！那场戏我真的反复拉进度条……他回头看了一眼，然后低头继续缝衣服，全程没有一句台词，但我眼泪唰就下来了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 30 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">泥</div>
-      <div class="info"><div class="name">泥里发光</div><div class="time">2026-01-15 01:00</div></div>
-      <span class="floor-num">#30</span>
-    </div>
-    <div class="body">所以我说，天赋是藏不住的，他早期跑龙套的时候就已经有东西了。瓦伦蒂娜是那个把他从泥里捞出来的人，但发光的是他自己。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 31 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">资</div>
-      <div class="info"><div class="name">资源咖</div><div class="time">2026-01-15 01:15</div></div>
-      <span class="floor-num">#31</span>
-    </div>
-    <div class="body">唯粉又开始吹了……好好好，他是有天赋，但资源咖的事实能改吗？不是瓦伦蒂娜他连那个角色都拿不到好吧？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 32 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">小</div>
-      <div class="info"><div class="name">小说照进现实</div><div class="time">2026-01-15 01:30</div></div>
-      <span class="floor-num">#32</span>
-    </div>
-    <div class="body">行了，别吵了。来点CP粉发言：你们不觉得“瓦伦蒂娜把他从泥里捞出来”这个设定真的很小说吗？女总裁×落难小演员，看他被前两任金主抛弃的时候心疼了，直接买下来（不是，是签下来），然后一步一步把他捧红——这不是爱情什么是爱情？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 33 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">会</div>
-      <div class="info"><div class="name">会说你就多说点</div><div class="time">2026-01-15 01:45</div></div>
-      <span class="floor-num">#33</span>
-    </div>
-    <div class="body">啊啊啊楼上会说你就多说点！我当时知道他俩的故事之后直接哭了，科利亚以前真的好惨啊……前两个金主都不是人，把他当玩具一样。瓦伦蒂娜是第一个把他当人看的人。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 34 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">流</div>
-      <div class="info"><div class="name">流产旧瓜</div><div class="time">2026-01-15 02:00</div></div>
-      <span class="floor-num">#34</span>
-    </div>
-    <div class="body">他以前流产过你知道吗？我在一个旧帖子里看到有人扒的，说他早年被人弄到子宫受损，差点不能生了。所以发布会上瓦伦蒂娜说“他怀孕了”的时候，我直接爆哭。这个孩子是奇迹吧？是老天爷看他太苦了还给他的吧？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 4.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 35 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">什</div>
-      <div class="info"><div class="name">什么瓜</div><div class="time">2026-01-15 02:15</div></div>
-      <span class="floor-num">#35</span>
-    </div>
-    <div class="body">什么？他流过产？？我怎么没看到这个瓜？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 36 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">截</div>
-      <div class="info"><div class="name">截图党</div><div class="time">2026-01-15 02:30</div></div>
-      <span class="floor-num">#36</span>
-    </div>
-    <div class="body">旧帖子被删了，但是我截图了。他前两任金主都不是人，第一个把他当玩具，第二个直接往他身上倒开水，还……算了不说了，太恶心了。所以他怀孕这件事，真的像是命运在补偿他。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 37 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">路</div>
-      <div class="info"><div class="name">路过入坑</div><div class="time">2026-01-15 02:45</div></div>
-      <span class="floor-num">#37</span>
-    </div>
-    <div class="body">……我本来只是路过吃瓜的，现在直接入坑了。有没有他俩的CP超话？我要去补课。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 38 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">教</div>
-      <div class="info"><div class="name">教科书</div><div class="time">2026-01-15 03:00</div></div>
-      <span class="floor-num">#38</span>
-    </div>
-    <div class="body">CP粉表示，瓦伦蒂娜发布会那段真的可以写进“Alpha的教科书”里——不辟谣，直接甩证；不骂人，直接开团；不解释，直接宣布怀孕。全程高能，没有一句废话。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 39 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">静</div>
-      <div class="info"><div class="name">静养</div><div class="time">2026-01-15 03:15</div></div>
-      <span class="floor-num">#39</span>
-    </div>
-    <div class="body">而且她说的是“他怀孕了，需要静养”——注意，她说的是“静养”，不是“停工”。她不是要科利亚放弃事业，她是让他在最好的状态下生孩子。生完了再复出，她连资源都给他留好了。这是什么神仙Alpha？！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 40 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">排</div>
-      <div class="info"><div class="name">排队</div><div class="time">2026-01-15 03:30</div></div>
-      <span class="floor-num">#40</span>
-    </div>
-    <div class="body">我现在就想问：瓦伦蒂娜还缺Omega吗？我可以排队吗？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 41 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">眼</div>
-      <div class="info"><div class="name">眼神</div><div class="time">2026-01-15 03:45</div></div>
-      <span class="floor-num">#41</span>
-    </div>
-    <div class="body">回40L，排队+1，不过我觉得她眼里只有科利亚。你看她发布会全程眼神，从头到尾只看着台下那个人，记者问问题她都不看镜头。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 42 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">认</div>
-      <div class="info"><div class="name">认识老板吗</div><div class="time">2026-01-15 04:00</div></div>
-      <span class="floor-num">#42</span>
-    </div>
-    <div class="body">话说回来，有没有人认识这家面馆老板的？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 43 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">朋</div>
-      <div class="info"><div class="name">朋友的朋友</div><div class="time">2026-01-15 04:15</div></div>
-      <span class="floor-num">#43</span>
-    </div>
-    <div class="body">我有个朋友在那条街上住，说面馆老板好像结婚了，老婆是军校的教官？就是那种穿制服、看起来很不好惹的Alpha。但老板看起来软软的，两个人站在一起还挺配的。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 44 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">画</div>
-      <div class="info"><div class="name">画面感</div><div class="time">2026-01-15 04:30</div></div>
-      <span class="floor-num">#44</span>
-    </div>
-    <div class="body">军校教官？？？我脑子里有画面了……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 45 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">门</div>
-      <div class="info"><div class="name">门框</div><div class="time">2026-01-15 04:45</div></div>
-      <span class="floor-num">#45</span>
-    </div>
-    <div class="body">回44L，我见过一次！！有一次我去吃面，正好看到一个穿军装的高个子男人在门口等老板收摊。他靠在门框上玩手机，偶尔抬头看一眼店里，然后老板就加快速度擦桌子了。那个画面真的太日常了但甜到我原地升天。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 46 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">酸</div>
-      <div class="info"><div class="name">酸了</div><div class="time">2026-01-15 05:00</div></div>
-      <span class="floor-num">#46</span>
-    </div>
-    <div class="body">我酸了，为什么好看的人都有对象了，而且对象还都是大美人……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 47 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">黎</div>
-      <div class="info"><div class="name">黎昭</div><div class="time">2026-01-15 05:15</div></div>
-      <span class="floor-num">#47</span>
-    </div>
-    <div class="body">等等，你们说的面馆老板，是不是叫黎昭？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 48 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">对</div>
-      <div class="info"><div class="name">对对对</div><div class="time">2026-01-15 05:20</div></div>
-      <span class="floor-num">#48</span>
-    </div>
-    <div class="body">对对对！叫黎昭！金色眼睛的！你怎么知道？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 49 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">街</div>
-      <div class="info"><div class="name">街坊邻居</div><div class="time">2026-01-15 05:30</div></div>
-      <span class="floor-num">#49</span>
-    </div>
-    <div class="body">因为我是他那条街的。他以前很惨的，好像是从外地逃难来的，后来开了这家面馆。人特别好，熟了之后会偷偷给你加菜。他老婆真的是军校教官，姓沃尔科夫，叫阿列克谢，来过几次，长得又高又帅但是看起来很凶，不过对黎昭超级温柔，就是那种“全世界我只对你一个人笑”的感觉。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 50 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">表</div>
-      <div class="info"><div class="name">表弟</div><div class="time">2026-01-15 05:45</div></div>
-      <span class="floor-num">#50</span>
-    </div>
-    <div class="body">阿列克谢·沃尔科夫？？等等，这不是那个很有名的军校教官吗？我表弟就在他手底下军训过，说他训练的时候是魔鬼，但是带完那一届之后好像突然变得好说话了……原来是因为恋爱了？！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 51 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">围</div>
-      <div class="info"><div class="name">围裙</div><div class="time">2026-01-15 06:00</div></div>
-      <span class="floor-num">#51</span>
-    </div>
-    <div class="body">笑死，阿列克谢·沃尔科夫——北境军校第一铁面教官，训练场上能把新生骂哭的那种——回家系上围裙帮老婆洗碗？？这反差……我嗑了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 52 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">铁</div>
-      <div class="info"><div class="name">铁面柔情</div><div class="time">2026-01-15 06:15</div></div>
-      <span class="floor-num">#52</span>
-    </div>
-    <div class="body">我也想被这种铁面教官宠……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 567</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 53 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">歪</div>
-      <div class="info"><div class="name">歪楼了</div><div class="time">2026-01-15 06:30</div></div>
-      <span class="floor-num">#53</span>
-    </div>
-    <div class="body">好了好了，歪楼了，我们不是在讨论科利亚吗？？怎么变成讨论面馆老板夫妻了？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 123</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 54 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">朋</div>
-      <div class="info"><div class="name">朋友的朋友</div><div class="time">2026-01-15 06:45</div></div>
-      <span class="floor-num">#54</span>
-    </div>
-    <div class="body">因为那个面馆老板是科利亚的朋友啊！他ins背景里那家面馆就是黎昭的店！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 55 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">级</div>
-      <div class="info"><div class="name">级别</div><div class="time">2026-01-15 07:00</div></div>
-      <span class="floor-num">#55</span>
-    </div>
-    <div class="body">真的假的？？科利亚那个级别的人会去那种小面馆？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 56 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">采</div>
-      <div class="info"><div class="name">采访</div><div class="time">2026-01-15 07:10</div></div>
-      <span class="floor-num">#56</span>
-    </div>
-    <div class="body">真的，我之前在他一个采访里看到的。主持人问他平时喜欢去哪里吃饭，他说“东城老街有一家面馆，老板是我朋友，面很好吃”。然后镜头切了一下，他手机壳上贴着一个面馆的logo——“昭记面馆”。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 57 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">神</div>
-      <div class="info"><div class="name">神仙朋友圈</div><div class="time">2026-01-15 07:20</div></div>
-      <span class="floor-num">#57</span>
-    </div>
-    <div class="body">卧槽，所以科利亚和黎昭是朋友？？？这是什么神仙朋友圈？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 58 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">四</div>
-      <div class="info"><div class="name">四人组</div><div class="time">2026-01-15 07:30</div></div>
-      <span class="floor-num">#58</span>
-    </div>
-    <div class="body">那阿列克谢·沃尔科夫和瓦伦蒂娜·莫罗佐娃是不是也认识？？？这四个人是不是会一起吃饭？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 59 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">画</div>
-      <div class="info"><div class="name">画面太美</div><div class="time">2026-01-15 07:45</div></div>
-      <span class="floor-num">#59</span>
-    </div>
-    <div class="body">别说了，画面已经在我脑子里了——阿列克谢坐在面馆里冷着脸吃面，瓦伦蒂娜坐在对面翘着腿喝咖啡，黎昭和科利亚在后厨偷偷嘀咕什么，然后四个人一起抬头笑……这什么神仙联动！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 60 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">时</div>
-      <div class="info"><div class="name">时间</div><div class="time">2026-01-15 08:00</div></div>
-      <span class="floor-num">#60</span>
-    </div>
-    <div class="body">你们看看时间，现在是凌晨两点半，为什么这个帖子还有四百多人在线？你们都不睡觉的吗？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 61 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">素</div>
-      <div class="info"><div class="name">素养</div><div class="time">2026-01-15 08:10</div></div>
-      <span class="floor-num">#61</span>
-    </div>
-    <div class="body">熬夜吃瓜是互联网人的基本素养。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 62 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">小</div>
-      <div class="info"><div class="name">小号</div><div class="time">2026-01-15 08:20</div></div>
-      <span class="floor-num">#62</span>
-    </div>
-    <div class="body">等等，我好像看到科利亚本人的小号了……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 63 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">哪</div>
-      <div class="info"><div class="name">哪里</div><div class="time">2026-01-15 08:25</div></div>
-      <span class="floor-num">#63</span>
-    </div>
-    <div class="body">什么？？哪里？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 89</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 64 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">番</div>
-      <div class="info"><div class="name">番茄面多加蛋</div><div class="time">2026-01-15 08:30</div></div>
-      <span class="floor-num">#64</span>
-    </div>
-    <div class="body">就是这个ID“番茄面多加蛋”，主页全是猫和剧本的截图，但是有一条点赞是瓦伦蒂娜的发布会视频……而且是秒赞。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 65 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">草</div>
-      <div class="info"><div class="name">草</div><div class="time">2026-01-15 08:35</div></div>
-      <span class="floor-num">#65</span>
-    </div>
-    <div class="body">草，那真的是他小号？？？他凌晨两点在刷自己的CP帖？？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 66 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">循</div>
-      <div class="info"><div class="name">循环</div><div class="time">2026-01-15 08:40</div></div>
-      <span class="floor-num">#66</span>
-    </div>
-    <div class="body">他不仅刷，他还点赞了一条CP粉的评论——“瓦伦蒂娜发布会那句‘我家小甜心’我已经循环了八百遍，我真的会嗑死。”</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 67 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">清</div>
-      <div class="info"><div class="name">清醒一点</div><div class="time">2026-01-15 08:45</div></div>
-      <span class="floor-num">#67</span>
-    </div>
-    <div class="body">本人下场点赞CP粉？？？科利亚你清醒一点！！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 68 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">饿</div>
-      <div class="info"><div class="name">饿了</div><div class="time">2026-01-15 08:50</div></div>
-      <span class="floor-num">#68</span>
-    </div>
-    <div class="body">他可能……也没清醒，毕竟凌晨两点了。而且怀孕的人是不是容易饿？他可能正在找吃的，然后刷到这个帖子。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 69 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">心</div>
-      <div class="info"><div class="name">心情好</div><div class="time">2026-01-15 08:55</div></div>
-      <span class="floor-num">#69</span>
-    </div>
-    <div class="body">然后他看到大家都在夸他老婆，心情很好，就点了个赞？？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 70 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">合</div>
-      <div class="info"><div class="name">合理</div><div class="time">2026-01-15 09:00</div></div>
-      <span class="floor-num">#70</span>
-    </div>
-    <div class="body">过于合理了。我宣布这就是真相。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 71 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">昭</div>
-      <div class="info"><div class="name">昭昭是我老婆</div><div class="time">2026-01-15 09:05</div></div>
-      <span class="floor-num">#71</span>
-    </div>
-    <div class="body">等等，那个ID“昭昭是我老婆”是不是也在线？？这个ID好眼熟啊，是不是刚才说军校教官的那个？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 72 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">点</div>
-      <div class="info"><div class="name">点进去</div><div class="time">2026-01-15 09:10</div></div>
-      <span class="floor-num">#72</span>
-    </div>
-    <div class="body">回71L，我点进去看了，这人主页全是面馆的照片和一只猫，看起来像个普通人。但是IP地址……怎么在另外一个城市？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 456</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 73 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">出</div>
-      <div class="info"><div class="name">出差</div><div class="time">2026-01-15 09:15</div></div>
-      <span class="floor-num">#73</span>
-    </div>
-    <div class="body">可能是出差了？他不是军校教官吗？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 74 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">不</div>
-      <div class="info"><div class="name">不准骂</div><div class="time">2026-01-15 09:20</div></div>
-      <span class="floor-num">#74</span>
-    </div>
-    <div class="body">但是他刚回复了一条评论，语气特别暴躁——“不准骂我老婆！”……等等，他老婆是谁？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 75 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">笑</div>
-      <div class="info"><div class="name">笑死</div><div class="time">2026-01-15 09:25</div></div>
-      <span class="floor-num">#75</span>
-    </div>
-    <div class="body">草，笑死，这个ID“昭昭是我老婆”，然后回复了一句“不准骂我老婆”……所以他老婆叫“昭昭”？不就是黎昭吗？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 76 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">本</div>
-      <div class="info"><div class="name">本人</div><div class="time">2026-01-15 09:30</div></div>
-      <span class="floor-num">#76</span>
-    </div>
-    <div class="body">所以这个ID是阿列克谢·沃尔科夫本人？？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 77 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">终</div>
-      <div class="info"><div class="name">终极恋爱脑</div><div class="time">2026-01-15 09:35</div></div>
-      <span class="floor-num">#77</span>
-    </div>
-    <div class="body">军校教官凌晨两点在论坛里巡逻，看到有人讨论他老婆的店就进去怼一句“不准骂我老婆”？阿列克谢你是什么终极恋爱脑啊！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 78 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">求</div>
-      <div class="info"><div class="name">求问</div><div class="time">2026-01-15 09:40</div></div>
-      <span class="floor-num">#78</span>
-    </div>
-    <div class="body">然后有人扒出来，他半小时前还在另一个帖子里回复了：“求问，结婚三年的老婆不愿意怀孕怎么办”……</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 79 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">暴</div>
-      <div class="info"><div class="name">暴躁楼主</div><div class="time">2026-01-15 09:45</div></div>
-      <span class="floor-num">#79</span>
-    </div>
-    <div class="body">草，那个帖子我看了！！楼主被评论区围攻了，说“你老婆肯定有过流产史”，楼主直接怼回去“从学生时代恋爱至今已相爱七年，绝无出轨可能！（不准骂我老婆！）”我当时笑疯了，原来那个暴躁楼主就是阿列克谢·沃尔科夫？！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 80 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">又</div>
-      <div class="info"><div class="name">又暴躁又深情</div><div class="time">2026-01-15 09:50</div></div>
-      <span class="floor-num">#80</span>
-    </div>
-    <div class="body">这个Alpha真的是……又暴躁又深情，我服了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 81 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">你</div>
-      <div class="info"><div class="name">你还没睡</div><div class="time">2026-01-15 09:55</div></div>
-      <span class="floor-num">#81</span>
-    </div>
-    <div class="body">等等等等，这个“昭昭是我老婆”又回了一条——“你还没睡？？？”</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 82 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">跟</div>
-      <div class="info"><div class="name">跟谁说话</div><div class="time">2026-01-15 10:00</div></div>
-      <span class="floor-num">#82</span>
-    </div>
-    <div class="body">他在跟谁说话？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 83 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">小</div>
-      <div class="info"><div class="name">小面馆打烊了</div><div class="time">2026-01-15 10:05</div></div>
-      <span class="floor-num">#83</span>
-    </div>
-    <div class="body">草，往下翻，有一个ID叫“小面馆打烊了”的回复了他——“你不也没睡。”</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 84 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">这</div>
-      <div class="info"><div class="name">这是黎昭</div><div class="time">2026-01-15 10:10</div></div>
-      <span class="floor-num">#84</span>
-    </div>
-    <div class="body">这个“小面馆打烊了”……是不是黎昭？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 85 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">主</div>
-      <div class="info"><div class="name">主页</div><div class="time">2026-01-15 10:15</div></div>
-      <span class="floor-num">#85</span>
-    </div>
-    <div class="body">应该是！！你看他主页全是面馆照片和一只橘猫，IP地址就在本地！！</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 86 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">卧</div>
-      <div class="info"><div class="name">卧槽</div><div class="time">2026-01-15 10:20</div></div>
-      <span class="floor-num">#86</span>
-    </div>
-    <div class="body">卧槽，两口子在论坛里隔空对话了！！一个出差在外地的Alpha，凌晨两点不睡觉在论坛里巡逻，看到别人聊他老婆的面馆就急了，打字问“你还没睡？？”，然后他老婆秒回“你不也没睡”。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 87 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8c4;color:#4a2a1a;">婚</div>
-      <div class="info"><div class="name">婚后日常</div><div class="time">2026-01-15 10:25</div></div>
-      <span class="floor-num">#87</span>
-    </div>
-    <div class="body">这是什么婚后日常大放送……我嗑到昏厥了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.1k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 88 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">淡</div>
-      <div class="info"><div class="name">淡定</div><div class="time">2026-01-15 10:30</div></div>
-      <span class="floor-num">#88</span>
-    </div>
-    <div class="body">“你不也没睡。”——黎昭这句话真的好淡定，像是早就知道他老公在刷论坛，连问都懒得问。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 89 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">别</div>
-      <div class="info"><div class="name">别熬夜</div><div class="time">2026-01-15 10:35</div></div>
-      <span class="floor-num">#89</span>
-    </div>
-    <div class="body">然后阿列克谢回了一句：“我这边刚开完会，你别熬夜，明天还要开店。”——他明明自己也熬夜，但先管老婆。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 90 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">知</div>
-      <div class="info"><div class="name">知道了</div><div class="time">2026-01-15 10:40</div></div>
-      <span class="floor-num">#90</span>
-    </div>
-    <div class="body">黎昭回：“知道了，你也是。”——好了，我圆满了。今晚的瓜吃到这儿我饱了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 91 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#4a2a1a;">截</div>
-      <div class="info"><div class="name">截图</div><div class="time">2026-01-15 10:45</div></div>
-      <span class="floor-num">#91</span>
-    </div>
-    <div class="body">有没有人截图？我要把这段对话裱起来——“昭昭是我老婆”和“小面馆打烊了”的深夜论坛对话。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 92 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">已</div>
-      <div class="info"><div class="name">已截图</div><div class="time">2026-01-15 10:50</div></div>
-      <span class="floor-num">#92</span>
-    </div>
-    <div class="body">已截图。我今晚能笑着睡过去。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 890</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 93 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">科</div>
-      <div class="info"><div class="name">科利亚在看</div><div class="time">2026-01-15 10:55</div></div>
-      <span class="floor-num">#93</span>
-    </div>
-    <div class="body">科利亚本人还在这帖子里啊！！他是不是也在看这对夫妻的互动？？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 678</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 94 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">夜</div>
-      <div class="info"><div class="name">夜宵</div><div class="time">2026-01-15 11:00</div></div>
-      <span class="floor-num">#94</span>
-    </div>
-    <div class="body">他可能正在一边吃夜宵一边刷手机，看到朋友夫妻的深夜互动，然后默默截图发给瓦伦蒂娜了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.2k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 95 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">回</div>
-      <div class="info"><div class="name">回什么</div><div class="time">2026-01-15 11:05</div></div>
-      <span class="floor-num">#95</span>
-    </div>
-    <div class="body">瓦伦蒂娜回他什么？</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 234</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 96 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">产</div>
-      <div class="info"><div class="name">产检</div><div class="time">2026-01-15 11:10</div></div>
-      <span class="floor-num">#96</span>
-    </div>
-    <div class="body">我猜回的是——“你也早点睡，明天产检，别熬夜。”——然后科利亚乖乖关手机了。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.8k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 97 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">甜</div>
-      <div class="info"><div class="name">好甜</div><div class="time">2026-01-15 11:15</div></div>
-      <span class="floor-num">#97</span>
-    </div>
-    <div class="body">呜呜呜好甜，我好幸福，我今天吃瓜吃到饱，大家晚安。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 2.3k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 98 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#d4c8b8;color:#5a3d2a;">祝</div>
-      <div class="info"><div class="name">祝福</div><div class="time">2026-01-15 11:20</div></div>
-      <span class="floor-num">#98</span>
-    </div>
-    <div class="body">晚安，祝大家都能找到像阿列克谢这样的Alpha、像瓦伦蒂娜这样的Alpha（等等我到底在说什么）。</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 1.5k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 99 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar" style="background:#c8d4c8;color:#2a4a3a;">晚</div>
-      <div class="info"><div class="name">晚安</div><div class="time">2026-01-15 11:25</div></div>
-      <span class="floor-num">#99</span>
-    </div>
-    <div class="body">祝大家都能像科利亚和黎昭一样被好好爱着。晚安。🌙</div>
-    <div class="actions"><button><span class="sym-2d">❤&#xFE0E;</span> 3.4k</button><button><span class="sym-2d">↩&#xFE0E;</span> 回复</button></div>
-  </div>
-
-  <!-- ========== 100楼：科利亚本人回复 ========== -->
-  <div class="floor">
-    <div class="head">
-      <div class="avatar accent">✦</div>
-      <div class="info">
-        <div class="name">番茄面多加蛋 <span class="badge special-badge">🔹 特殊</span></div>
-        <div class="time">2026-01-15 11:30</div>
-      </div>
-      <span class="floor-num">#100</span>
-    </div>
-    <div class="body">你们也早点睡。晚安。</div>
-    <div class="actions">
-      <button><span class="sym-2d">❤&#xFE0E;</span> 8.7w</button>
-      <button><span class="sym-2d">↩&#xFE0E;</span> 回复</button>
-    </div>
-  </div>
+  <div id="floors"></div>
 
 </div>
+
+<script>
+const floors = [
+  { num:1, name:`匿名楼主`, avatar:`楼`, time:`2026-01-14 20:17`, body:`出道三年只演过NPC和龙套，两年内突然从男配到男主到顶流，背后不是没人推我是不信的。不是说他没演技，确实有点天赋，但上升速度快到不正常，圈内哪个演员不是熬七八年才出头？他凭什么？`, likes:`1.2w`, lz:true, special:false },
+  { num:2, name:`葡萄冻冻`, avatar:`葡`, time:`2026-01-14 20:25`, body:`楼主在酸什么？你是没见过他的《冬夜车站》吗？那场独白戏直接封神，这演技是资源能喂出来的？建议去看看眼科。`, likes:`234`, lz:false, special:false },
+  { num:3, name:`小笼包`, avatar:`小`, time:`2026-01-14 20:31`, body:`↑笑死，"有点天赋"？《冬夜车站》那段戏我看了四遍，每一遍都在哭，你管这叫"有点天赋"？你行你上啊。`, likes:`189`, lz:false, special:false },
+  { num:4, name:`日落飞行`, avatar:`日`, time:`2026-01-14 20:38`, body:`我不是说他没有演技，我是说他的资源不正常。你敢说他背后没人？从龙套到顶流两年不到，你见过哪个演员纯靠实力两年飞升的？`, likes:`456`, lz:false, special:false },
+  { num:5, name:`银河修理员`, avatar:`银`, time:`2026-01-14 20:45`, body:`所以呢？有人捧又怎么了？娱乐圈哪个顶流背后没人？有演技有人捧，这叫强强联合，不叫资源咖。`, likes:`312`, lz:false, special:false },
+  { num:6, name:`猫眼石`, avatar:`猫`, time:`2026-01-14 20:52`, body:`爬完楼只想知道一件事——他背后到底是谁？？我吃瓜没吃全，求指路！！`, likes:`567`, lz:false, special:false },
+  { num:7, name:`霓虹甜心`, avatar:`霓`, time:`2026-01-14 21:00`, body:`回6L，据说是莫罗佐夫集团的女总裁，瓦伦蒂娜·莫罗佐娃。两人被拍过好几次，但一直没有实锤，科利亚那边也没回应过。直到前阵子……你懂的，发布会直接甩结婚证了。`, likes:`1.2k`, lz:false, special:false },
+  { num:8, name:`汽水味泡泡`, avatar:`汽`, time:`2026-01-14 21:08`, body:`草，结婚证？？？那之前说"包养"的可以闭嘴了吧？人家是合法夫妻！合法！！`, likes:`890`, lz:false, special:false },
+  { num:9, name:`月亮邮差`, avatar:`月`, time:`2026-01-14 21:15`, body:`合法夫妻又不影响"资源咖"的事实，他就是靠老婆上位的，这有什么好洗的？没有瓦伦蒂娜，他还在跑龙套呢。`, likes:`234`, lz:false, special:false },
+  { num:10, name:`北风`, avatar:`北`, time:`2026-01-14 21:22`, body:`"靠老婆上位"这个说法真的很恶心，他和他妻子是合法伴侣，作为伴侣给对方提供资源和帮助怎么了？你爸妈给你掏学费你是不也要说"我是靠爸妈上位的"？`, likes:`678`, lz:false, special:false },
+  { num:11, name:`板栗饼`, avatar:`板`, time:`2026-01-14 21:30`, body:`笑死，208w能和普通人比？他有今天就是靠瓦伦蒂娜砸钱砸出来的，还硬要说全是自己实力，粉丝滤镜厚得能砌城墙了。`, likes:`156`, lz:false, special:false },
+  { num:12, name:`芝士年糕`, avatar:`芝`, time:`2026-01-14 21:40`, body:`各位各位，别吵了，我只想说一句——他老婆好A我好爱……（小声）发布会那段"我家小甜心怀孕了"我在b站刷了八百遍，谁懂啊？？？`, likes:`1.5k`, lz:false, special:false },
+  { num:13, name:`海盐芝士`, avatar:`海`, time:`2026-01-14 21:50`, body:`楼上我懂你！！瓦伦蒂娜甩结婚证那段我直接垂直入坑CP！那个语气那个眼神——"他怀孕了，需要静养"，谁再说一句试试，法务部上门。这是什么宠妻狂魔总裁人设！！`, likes:`2.1k`, lz:false, special:false },
+  { num:14, name:`樱花冻`, avatar:`樱`, time:`2026-01-14 22:00`, body:`科利亚那个坐在台下的表情你们看了吗？全程没说话，就捧着一杯水，眼睛亮亮的，嘴角压都压不住。我当时就在屏幕前哭了，谁懂啊这个Omega以前吃了多少苦……`, likes:`3.4k`, lz:false, special:false },
+  { num:15, name:`星河入梦`, avatar:`星`, time:`2026-01-14 22:15`, body:`认真说，他早期跑龙套的戏我都扒过，《北城旧事》里那个只有三句台词的小裁缝，眼神戏就非常到位了，那时候他根本没资源，纯靠自己。瓦伦蒂娜只是给了他一个更好的舞台，真正在台上发光的是他自己。`, likes:`789`, lz:false, special:false },
+  { num:16, name:`芒果布丁`, avatar:`芒`, time:`2026-01-14 22:30`, body:`唯粉别吹了，没有瓦伦蒂娜他连那个舞台都上不去。`, likes:`123`, lz:false, special:false },
+  { num:17, name:`荔枝气泡`, avatar:`荔`, time:`2026-01-14 22:40`, body:`黑粉也别酸了，人家现在结婚证在手孩子都有了，你家正主还在抠脚呢。`, likes:`567`, lz:false, special:false },
+  { num:18, name:`青柠七`, avatar:`青`, time:`2026-01-14 22:50`, body:`我只想说——有没有人注意到，科利亚最近发的ins，背景里有一家看起来特别普通的小面馆？他一个顶流为什么去那种地方吃饭？？`, likes:`1.1k`, lz:false, special:false },
+  { num:19, name:`西瓜椰椰`, avatar:`西`, time:`2026-01-14 23:00`, body:`回18L，我也看到了！！那家面馆好像叫"昭记面馆"，特别不起眼那种，但是他去了好几次了。是亲戚开的吗？`, likes:`456`, lz:false, special:false },
+  { num:20, name:`好奇猫猫`, avatar:`好`, time:`2026-01-14 23:10`, body:`好奇+1，有没有人扒一下那家面馆？`, likes:`234`, lz:false, special:false },
+  { num:21, name:`楼下便利店VIP`, avatar:`面`, time:`2026-01-14 23:20`, body:`面馆老板好像是他朋友，之前在某个采访里提过一句"有个开面馆的朋友，面很好吃"，但是没说是谁。`, likes:`345`, lz:false, special:false },
+  { num:22, name:`早八起不来`, avatar:`东`, time:`2026-01-14 23:30`, body:`等等，那个面馆是不是在东城老街那边？我之前路过一次，门口有个穿围裙的男生在擦桌子，棕色头发金色眼睛，长得超级好看！我当时还心想"这颜值开面馆是不是有点浪费了"……`, likes:`890`, lz:false, special:false },
+  { num:23, name:`精神状态领先十年`, avatar:`金`, time:`2026-01-14 23:40`, body:`金色眼睛？？？你确定不是戴的美瞳？？`, likes:`67`, lz:false, special:false },
+  { num:24, name:`空调26度主义者`, avatar:`阳`, time:`2026-01-14 23:45`, body:`不是，真的是金色的，阳光下会反光那种，超级好看。他店里的面也很好吃！我吃过一次，老板人很安静，不怎么说话，但会默默给客人加个蛋。`, likes:`1.2k`, lz:false, special:false },
+  { num:25, name:`摸鱼办副主任`, avatar:`组`, time:`2026-01-14 23:55`, body:`完了，我现在对小面馆老板的兴趣比对科利亚还大……有没有人组团去吃面？`, likes:`678`, lz:false, special:false },
+  { num:26, name:`人在广东已漂到失联`, avatar:`团`, time:`2026-01-15 00:05`, body:`组团+1，我要去看金色眼睛的老板！！`, likes:`234`, lz:false, special:false },
+  { num:27, name:`已读不回专业户`, avatar:`专`, time:`2026-01-15 00:15`, body:`你们这些人……能不能专注讨论科利亚的演技！`, likes:`89`, lz:false, special:false },
+  { num:28, name:`外卖满减数学家`, avatar:`分`, time:`2026-01-15 00:30`, body:`我来认真分析一下科利亚的演技吧。科利亚在《冬夜车站》之前确实没什么代表作，但他早期的龙套其实很有东西。《北城旧事》里那个小裁缝，全剧就三句台词，但他用眼神演完了一场暗恋。导演后来在一个采访里说，那个角色原本只是工具人，是科利亚自己琢磨出了"暗恋"这条线，导演看了成片之后直接把原本的配角戏份删了，给他多留了一个镜头——就是最后那个回头。你们可以回去扒，那个回头，信息量巨大。`, likes:`2.3k`, lz:false, special:false },
+  { num:29, name:`被窝探险家`, avatar:`回`, time:`2026-01-15 00:45`, body:`卧槽，那个回头是他自己设计的？？我一直以为那是导演的安排！！那场戏我真的反复拉进度条……他回头看了一眼，然后低头继续缝衣服，全程没有一句台词，但我眼泪唰就下来了。`, likes:`1.8k`, lz:false, special:false },
+  { num:30, name:`奶茶续命协会会长`, avatar:`泥`, time:`2026-01-15 01:00`, body:`所以我说，天赋是藏不住的，他早期跑龙套的时候就已经有东西了。瓦伦蒂娜是那个把他从泥里捞出来的人，但发光的是他自己。`, likes:`1.2k`, lz:false, special:false },
+  { num:31, name:`工资到账就清零`, avatar:`资`, time:`2026-01-15 01:15`, body:`唯粉又开始吹了……好好好，他是有天赋，但资源咖的事实能改吗？不是瓦伦蒂娜他连那个角色都拿不到好吧？`, likes:`123`, lz:false, special:false },
+  { num:32, name:`小说照进现实`, avatar:`小`, time:`2026-01-15 01:30`, body:`行了，别吵了。来点CP粉发言：你们不觉得"瓦伦蒂娜把他从泥里捞出来"这个设定真的很小说吗？女总裁×落难小演员，看他被前两任金主抛弃的时候心疼了，直接买下来（不是，是签下来），然后一步一步把他捧红——这不是爱情什么是爱情？`, likes:`3.1k`, lz:false, special:false },
+  { num:33, name:`周末不加班`, avatar:`会`, time:`2026-01-15 01:45`, body:`啊啊啊楼上会说你就多说点！我当时知道他俩的故事之后直接哭了，科利亚以前真的好惨啊……前两个金主都不是人，把他当玩具一样。瓦伦蒂娜是第一个把他当人看的人。`, likes:`2.8k`, lz:false, special:false },
+  { num:34, name:`凌晨三点网上冲浪`, avatar:`流`, time:`2026-01-15 02:00`, body:`他以前流产过你知道吗？我在一个旧帖子里看到有人扒的，说他早年被人弄到子宫受损，差点不能生了。所以发布会上瓦伦蒂娜说"他怀孕了"的时候，我直接爆哭。这个孩子是奇迹吧？是老天爷看他太苦了还给他的吧？`, likes:`4.5k`, lz:false, special:false },
+  { num:35, name:`对方正在长肉`, avatar:`什`, time:`2026-01-15 02:15`, body:`什么？他流过产？？我怎么没看到这个瓜？`, likes:`234`, lz:false, special:false },
+  { num:36, name:`截图癖晚期`, avatar:`截`, time:`2026-01-15 02:30`, body:`旧帖子被删了，但是我截图了。他前两任金主都不是人，第一个把他当玩具，第二个直接往他身上倒开水，还……算了不说了，太恶心了。所以他怀孕这件事，真的像是命运在补偿他。`, likes:`3.2k`, lz:false, special:false },
+  { num:37, name:`路过买瓜`, avatar:`路`, time:`2026-01-15 02:45`, body:`……我本来只是路过吃瓜的，现在直接入坑了。有没有他俩的CP超话？我要去补课。`, likes:`678`, lz:false, special:false },
+  { num:38, name:`教科书级吃瓜`, avatar:`教`, time:`2026-01-15 03:00`, body:`CP粉表示，瓦伦蒂娜发布会那段真的可以写进"Alpha的教科书"里——不辟谣，直接甩证；不骂人，直接开团；不解释，直接宣布怀孕。全程高能，没有一句废话。`, likes:`2.1k`, lz:false, special:false },
+  { num:39, name:`静音模式常驻`, avatar:`静`, time:`2026-01-15 03:15`, body:`而且她说的是"他怀孕了，需要静养"——注意，她说的是"静养"，不是"停工"。她不是要科利亚放弃事业，她是让他在最好的状态下生孩子。生完了再复出，她连资源都给他留好了。这是什么神仙Alpha？！`, likes:`3.4k`, lz:false, special:false },
+  { num:40, name:`排队等退休`, avatar:`排`, time:`2026-01-15 03:30`, body:`我现在就想问：瓦伦蒂娜还缺Omega吗？我可以排队吗？`, likes:`456`, lz:false, special:false },
+  { num:41, name:`眼睛长在手机上`, avatar:`眼`, time:`2026-01-15 03:45`, body:`回40L，排队+1，不过我觉得她眼里只有科利亚。你看她发布会全程眼神，从头到尾只看着台下那个人，记者问问题她都不看镜头。`, likes:`890`, lz:false, special:false },
+  { num:42, name:`认识一下`, avatar:`认`, time:`2026-01-15 04:00`, body:`话说回来，有没有人认识这家面馆老板的？`, likes:`234`, lz:false, special:false },
+  { num:43, name:`朋友的朋友`, avatar:`朋`, time:`2026-01-15 04:15`, body:`我有个朋友在那条街上住，说面馆老板好像结婚了，老婆是军校的教官？就是那种穿制服、看起来很不好惹的Alpha。但老板看起来软软的，两个人站在一起还挺配的。`, likes:`1.8k`, lz:false, special:false },
+  { num:44, name:`画面感很强`, avatar:`画`, time:`2026-01-15 04:30`, body:`军校教官？？？我脑子里有画面了……`, likes:`456`, lz:false, special:false },
+  { num:45, name:`门框子成精`, avatar:`门`, time:`2026-01-15 04:45`, body:`回44L，我见过一次！！有一次我去吃面，正好看到一个穿军装的高个子男人在门口等老板收摊。他靠在门框上玩手机，偶尔抬头看一眼店里，然后老板就加快速度擦桌子了。那个画面真的太日常了但甜到我原地升天。`, likes:`2.3k`, lz:false, special:false },
+  { num:46, name:`柠檬树上柠檬果`, avatar:`酸`, time:`2026-01-15 05:00`, body:`我酸了，为什么好看的人都有对象了，而且对象还都是大美人……`, likes:`678`, lz:false, special:false },
+  { num:47, name:`黎明的曙光`, avatar:`黎`, time:`2026-01-15 05:15`, body:`等等，你们说的面馆老板，是不是叫黎昭？`, likes:`234`, lz:false, special:false },
+  { num:48, name:`对方撤回一条消息`, avatar:`对`, time:`2026-01-15 05:20`, body:`对对对！叫黎昭！金色眼睛的！你怎么知道？？`, likes:`89`, lz:false, special:false },
+  { num:49, name:`街头霸王`, avatar:`街`, time:`2026-01-15 05:30`, body:`因为我是他那条街的。他以前很惨的，好像是从外地逃难来的，后来开了这家面馆。人特别好，熟了之后会偷偷给你加菜。他老婆真的是军校教官，姓沃尔科夫，叫阿列克谢，来过几次，长得又高又帅但是看起来很凶，不过对黎昭超级温柔，就是那种"全世界我只对你一个人笑"的感觉。`, likes:`3.2k`, lz:false, special:false },
+  { num:50, name:`表面淡定`, avatar:`表`, time:`2026-01-15 05:45`, body:`阿列克谢·沃尔科夫？？等等，这不是那个很有名的军校教官吗？我表弟就在他手底下军训过，说他训练的时候是魔鬼，但是带完那一届之后好像突然变得好说话了……原来是因为恋爱了？！`, likes:`1.8k`, lz:false, special:false },
+  { num:51, name:`围裙妈妈`, avatar:`围`, time:`2026-01-15 06:00`, body:`笑死，阿列克谢·沃尔科夫——北境军校第一铁面教官，训练场上能把新生骂哭的那种——回家系上围裙帮老婆洗碗？？这反差……我嗑了。`, likes:`2.1k`, lz:false, special:false },
+  { num:52, name:`铁锅炖自己`, avatar:`铁`, time:`2026-01-15 06:15`, body:`我也想被这种铁面教官宠……`, likes:`567`, lz:false, special:false },
+  { num:53, name:`歪楼小能手`, avatar:`歪`, time:`2026-01-15 06:30`, body:`好了好了，歪楼了，我们不是在讨论科利亚吗？？怎么变成讨论面馆老板夫妻了？？`, likes:`123`, lz:false, special:false },
+  { num:54, name:`朋友圈三天可见`, avatar:`朋`, time:`2026-01-15 06:45`, body:`因为那个面馆老板是科利亚的朋友啊！他ins背景里那家面馆就是黎昭的店！！`, likes:`1.5k`, lz:false, special:false },
+  { num:55, name:`级别不够`, avatar:`级`, time:`2026-01-15 07:00`, body:`真的假的？？科利亚那个级别的人会去那种小面馆？`, likes:`234`, lz:false, special:false },
+  { num:56, name:`采访一下`, avatar:`采`, time:`2026-01-15 07:10`, body:`真的，我之前在他一个采访里看到的。主持人问他平时喜欢去哪里吃饭，他说"东城老街有一家面馆，老板是我朋友，面很好吃"。然后镜头切了一下，他手机壳上贴着一个面馆的logo——"昭记面馆"。`, likes:`2.3k`, lz:false, special:false },
+  { num:57, name:`熬夜冠军候补`, avatar:`熬`, time:`2026-01-15 07:20`, body:`卧槽，所以科利亚和黎昭是朋友？？？这是什么神仙朋友圈？？`, likes:`890`, lz:false, special:false },
+  { num:58, name:`人在广东已漂到失联`, avatar:`人`, time:`2026-01-15 07:30`, body:`那阿列克谢·沃尔科夫和瓦伦蒂娜·莫罗佐娃是不是也认识？？？这四个人是不是会一起吃饭？？`, likes:`678`, lz:false, special:false },
+  { num:59, name:`奶茶续命协会会长`, avatar:`奶`, time:`2026-01-15 07:45`, body:`别说了，画面已经在我脑子里了——阿列克谢坐在面馆里冷着脸吃面，瓦伦蒂娜坐在对面翘着腿喝咖啡，黎昭和科利亚在后厨偷偷嘀咕什么，然后四个人一起抬头笑……这什么神仙联动！`, likes:`3.4k`, lz:false, special:false },
+  { num:60, name:`早八起不来`, avatar:`早`, time:`2026-01-15 08:00`, body:`你们看看时间，现在是凌晨两点半，为什么这个帖子还有四百多人在线？你们都不睡觉的吗？`, likes:`234`, lz:false, special:false },
+  { num:61, name:`已读不回专业户`, avatar:`已`, time:`2026-01-15 08:10`, body:`熬夜吃瓜是互联网人的基本素养。`, likes:`456`, lz:false, special:false },
+  { num:62, name:`摸鱼办副主任`, avatar:`摸`, time:`2026-01-15 08:20`, body:`等等，我好像看到科利亚本人的小号了……`, likes:`1.2k`, lz:false, special:false },
+  { num:63, name:`精神状态领先十年`, avatar:`精`, time:`2026-01-15 08:25`, body:`什么？？哪里？？`, likes:`89`, lz:false, special:false },
+  { num:64, name:`番茄面多加蛋`, avatar:`番`, time:`2026-01-15 08:30`, body:`就是这个ID"番茄面多加蛋"，主页全是猫和剧本的截图，但是有一条点赞是瓦伦蒂娜的发布会视频……而且是秒赞。`, likes:`2.1k`, lz:false, special:true },
+  { num:65, name:`西瓜中间那一口`, avatar:`西`, time:`2026-01-15 08:35`, body:`草，那真的是他小号？？？他凌晨两点在刷自己的CP帖？？？`, likes:`1.5k`, lz:false, special:false },
+  { num:66, name:`开启消息免打扰`, avatar:`开`, time:`2026-01-15 08:40`, body:`他不仅刷，他还点赞了一条CP粉的评论——"瓦伦蒂娜发布会那句'我家小甜心'我已经循环了八百遍，我真的会嗑死。"`, likes:`3.4k`, lz:false, special:false },
+  { num:67, name:`周末不加班`, avatar:`周`, time:`2026-01-15 08:45`, body:`本人下场点赞CP粉？？？科利亚你清醒一点！！！`, likes:`890`, lz:false, special:false },
+  { num:68, name:`睡到自然醒`, avatar:`睡`, time:`2026-01-15 08:50`, body:`他可能……也没清醒，毕竟凌晨两点了。而且怀孕的人是不是容易饿？他可能正在找吃的，然后刷到这个帖子。`, likes:`678`, lz:false, special:false },
+  { num:69, name:`工资到账就清零`, avatar:`资`, time:`2026-01-15 08:55`, body:`然后他看到大家都在夸他老婆，心情很好，就点了个赞？？？`, likes:`456`, lz:false, special:false },
+  { num:70, name:`外卖满减数学家`, avatar:`外`, time:`2026-01-15 09:00`, body:`过于合理了。我宣布这就是真相。`, likes:`234`, lz:false, special:false },
+  { num:71, name:`昭昭是我老婆`, avatar:`昭`, time:`2026-01-15 09:05`, body:`等等，那个ID"昭昭是我老婆"是不是也在线？？这个ID好眼熟啊，是不是刚才说军校教官的那个？？`, likes:`1.8k`, lz:false, special:true },
+  { num:72, name:`快递到了下楼拿`, avatar:`快`, time:`2026-01-15 09:10`, body:`回71L，我点进去看了，这人主页全是面馆的照片和一只猫，看起来像个普通人。但是IP地址……怎么在另外一个城市？`, likes:`456`, lz:false, special:false },
+  { num:73, name:`对方正在长肉`, avatar:`对`, time:`2026-01-15 09:15`, body:`可能是出差了？他不是军校教官吗？`, likes:`234`, lz:false, special:false },
+  { num:74, name:`被窝探险家`, avatar:`被`, time:`2026-01-15 09:20`, body:`但是他刚回复了一条评论，语气特别暴躁——"不准骂我老婆！"……等等，他老婆是谁？？`, likes:`1.2k`, lz:false, special:false },
+  { num:75, name:`空调26度主义者`, avatar:`空`, time:`2026-01-15 09:25`, body:`草，笑死，这个ID"昭昭是我老婆"，然后回复了一句"不准骂我老婆"……所以他老婆叫"昭昭"？不就是黎昭吗？？`, likes:`2.3k`, lz:false, special:false },
+  { num:76, name:`设置仅聊天`, avatar:`设`, time:`2026-01-15 09:30`, body:`所以这个ID是阿列克谢·沃尔科夫本人？？？`, likes:`1.5k`, lz:false, special:false },
+  { num:77, name:`对方撤回一条消息`, avatar:`对`, time:`2026-01-15 09:35`, body:`军校教官凌晨两点在论坛里巡逻，看到有人讨论他老婆的店就进去怼一句"不准骂我老婆"？阿列克谢你是什么终极恋爱脑啊！！`, likes:`3.4k`, lz:false, special:false },
+  { num:78, name:`凌晨三点网上冲浪`, avatar:`凌`, time:`2026-01-15 09:40`, body:`然后有人扒出来，他半小时前还在另一个帖子里回复了："求问，结婚三年的老婆不愿意怀孕怎么办"……`, likes:`2.1k`, lz:false, special:false },
+  { num:79, name:`铁锅炖自己`, avatar:`铁`, time:`2026-01-15 09:45`, body:`草，那个帖子我看了！！楼主被评论区围攻了，说"你老婆肯定有过流产史"，楼主直接怼回去"从学生时代恋爱至今已相爱七年，绝无出轨可能！（不准骂我老婆！）"我当时笑疯了，原来那个暴躁楼主就是阿列克谢·沃尔科夫？！`, likes:`3.8k`, lz:false, special:false },
+  { num:80, name:`去冰三分糖`, avatar:`去`, time:`2026-01-15 09:50`, body:`这个Alpha真的是……又暴躁又深情，我服了。`, likes:`1.8k`, lz:false, special:false },
+  { num:81, name:`人在广东已漂到失联`, avatar:`人`, time:`2026-01-15 09:55`, body:`等等等等，这个"昭昭是我老婆"又回了一条——"你还没睡？？？"`, likes:`1.5k`, lz:false, special:false },
+  { num:82, name:`互联网流浪猫`, avatar:`互`, time:`2026-01-15 10:00`, body:`他在跟谁说话？`, likes:`234`, lz:false, special:false },
+  { num:83, name:`小面馆打烊了`, avatar:`小`, time:`2026-01-15 10:05`, body:`草，往下翻，有一个ID叫"小面馆打烊了"的回复了他——"你不也没睡。"`, likes:`2.3k`, lz:false, special:true },
+  { num:84, name:`两点思考人生`, avatar:`两`, time:`2026-01-15 10:10`, body:`这个"小面馆打烊了"……是不是黎昭？？`, likes:`1.2k`, lz:false, special:false },
+  { num:85, name:`该用户已成仙`, avatar:`该`, time:`2026-01-15 10:15`, body:`应该是！！你看他主页全是面馆照片和一只橘猫，IP地址就在本地！！`, likes:`890`, lz:false, special:false },
+  { num:86, name:`开启消息免打扰`, avatar:`开`, time:`2026-01-15 10:20`, body:`卧槽，两口子在论坛里隔空对话了！！一个出差在外地的Alpha，凌晨两点不睡觉在论坛里巡逻，看到别人聊他老婆的面馆就急了，打字问"你还没睡？？"，然后他老婆秒回"你不也没睡"。`, likes:`3.4k`, lz:false, special:false },
+  { num:87, name:`婚后日常`, avatar:`婚`, time:`2026-01-15 10:25`, body:`这是什么婚后日常大放送……我嗑到昏厥了。`, likes:`2.1k`, lz:false, special:false },
+  { num:88, name:`淡定`, avatar:`淡`, time:`2026-01-15 10:30`, body:`"你不也没睡。"——黎昭这句话真的好淡定，像是早就知道他老公在刷论坛，连问都懒得问。`, likes:`1.8k`, lz:false, special:false },
+  { num:89, name:`别熬夜`, avatar:`别`, time:`2026-01-15 10:35`, body:`然后阿列克谢回了一句："我这边刚开完会，你别熬夜，明天还要开店。"——他明明自己也熬夜，但先管老婆。`, likes:`2.8k`, lz:false, special:false },
+  { num:90, name:`知道了`, avatar:`知`, time:`2026-01-15 10:40`, body:`黎昭回："知道了，你也是。"——好了，我圆满了。今晚的瓜吃到这儿我饱了。`, likes:`1.5k`, lz:false, special:false },
+  { num:91, name:`截图`, avatar:`截`, time:`2026-01-15 10:45`, body:`有没有人截图？我要把这段对话裱起来——"昭昭是我老婆"和"小面馆打烊了"的深夜论坛对话。`, likes:`1.2k`, lz:false, special:false },
+  { num:92, name:`已截图`, avatar:`已`, time:`2026-01-15 10:50`, body:`已截图。我今晚能笑着睡过去。`, likes:`890`, lz:false, special:false },
+  { num:93, name:`科利亚在看`, avatar:`科`, time:`2026-01-15 10:55`, body:`科利亚本人还在这帖子里啊！！他是不是也在看这对夫妻的互动？？`, likes:`678`, lz:false, special:false },
+  { num:94, name:`夜宵`, avatar:`夜`, time:`2026-01-15 11:00`, body:`他可能正在一边吃夜宵一边刷手机，看到朋友夫妻的深夜互动，然后默默截图发给瓦伦蒂娜了。`, likes:`1.2k`, lz:false, special:false },
+  { num:95, name:`回什么`, avatar:`回`, time:`2026-01-15 11:05`, body:`瓦伦蒂娜回他什么？`, likes:`234`, lz:false, special:false },
+  { num:96, name:`产检`, avatar:`产`, time:`2026-01-15 11:10`, body:`我猜回的是——"你也早点睡，明天产检，别熬夜。"——然后科利亚乖乖关手机了。`, likes:`1.8k`, lz:false, special:false },
+  { num:97, name:`好甜`, avatar:`甜`, time:`2026-01-15 11:15`, body:`呜呜呜好甜，我好幸福，我今天吃瓜吃到饱，大家晚安。`, likes:`2.3k`, lz:false, special:false },
+  { num:98, name:`祝福`, avatar:`祝`, time:`2026-01-15 11:20`, body:`晚安，祝大家都能找到像阿列克谢这样的Alpha、像瓦伦蒂娜这样的Alpha（等等我到底在说什么）。`, likes:`1.5k`, lz:false, special:false },
+  { num:99, name:`晚安`, avatar:`晚`, time:`2026-01-15 11:25`, body:`祝大家都能像科利亚和黎昭一样被好好爱着。晚安。🌙`, likes:`3.4k`, lz:false, special:false },
+  { num:100, name:`番茄面多加蛋`, avatar:`✦`, time:`2026-01-15 11:30`, body:`你们也早点睡。晚安。`, likes:`8.7w`, lz:false, special:true },
+];
+
+function renderFloors() {
+  const container = document.getElementById('floors');
+  if (!container) return;
+
+  floors.forEach((f, idx) => {
+    const el = document.createElement('div');
+    const lzClass = f.lz ? ' lz' : '';
+    const accentClass = f.special ? ' accent' : '';
+    const badgeHtml = f.lz
+      ? ' <span class="badge lz-badge">楼主</span>'
+      : f.special
+      ? ' <span class="badge special-badge">🔹 特殊</span>'
+      : '';
+
+    el.className = `floor${lzClass}`;
+    el.setAttribute('data-color', idx % 3);
+
+    el.innerHTML = `
+      <div class="head">
+        <div class="avatar${accentClass}">${f.avatar}</div>
+        <div class="info">
+          <div class="name">${f.name}${badgeHtml}</div>
+          <div class="time">${f.time}</div>
+        </div>
+        <span class="floor-num">#${f.num}</span>
+      </div>
+      <div class="body">${f.body}</div>
+      <div class="actions">
+        <button><span class="sym-2d">❤&#xFE0E;</span> ${f.likes}</button>
+        <button><span class="sym-2d">↩&#xFE0E;</span> 回复</button>
+        ${f.num === 1 ? '<button><span class="sym-2d">★&#xFE0E;</span> 收藏</button>' : ''}
+      </div>
+    `;
+
+    container.appendChild(el);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', renderFloors);
+</script>
+
 </body>
 </html>
