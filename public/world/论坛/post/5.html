@@ -391,6 +391,7 @@
         : '<span class="icon">🌙</span> 夜间';
     });
   </script>
+<base target="_blank">
 </head>
 <body>
 
@@ -856,6 +857,7 @@
     "avatar": "已",
     "name": "已黑化但还在加班",
     "marker": "慧眼如炬",
+    "marker": null,
     "time": "2025-12-28 05:06",
     "body": "别沉默啊！！赶紧去问！！",
     "likes": "1.5k",
@@ -877,6 +879,7 @@
     "lz": false,
     "avatar": "社",
     "name": "社恐小伙爱评论",
+    "color": { "bg": "#d4c8b8", "fg": "#5a3d2a" },
     "marker": null,
     "time": "2025-12-28 05:10",
     "body": "等等我好像知道他是谁了……他说的“带新生军训”“大四的时候”再加上这个ID……是不是北境军校的那位？",
@@ -886,8 +889,8 @@
   {
     "num": 44,
     "lz": false,
-    "avatar": "湖",
-    "name": "湖南小伙爱总结",
+    "avatar": "废",
+    "name": "废话文学十级学者",
     "marker": null,
     "time": "2025-12-28 05:12",
     "body": "好像是。",
@@ -930,8 +933,9 @@
   {
     "num": 48,
     "lz": false,
-    "avatar": "穷",
-    "name": "穷得只剩表情包",
+    "avatar": "社",
+    "name": "社恐小伙爱评论",
+    "color": { "bg": "#d4c8b8", "fg": "#5a3d2a" },
     "marker": null,
     "time": "2025-12-28 05:18",
     "body": "私聊私聊，我开了个新帖，别在这聊了。传送门在此——",
@@ -1041,7 +1045,7 @@
     "num": 58,
     "lz": false,
     "avatar": "下",
-    "name": "下班跑得快",
+    "name": "下班跑得最快",
     "marker": null,
     "time": "2025-12-28 08:30",
     "body": "天都亮了，楼主你还好吗？",
@@ -1129,7 +1133,7 @@
     "num": 67,
     "lz": false,
     "avatar": "可",
-    "name": "可乐加冰",
+    "name": "可乐要加冰",
     "marker": null,
     "time": "2025-12-28 15:00",
     "body": "他不会是被老婆没收手机了吧。",
@@ -1151,7 +1155,7 @@
     "num": 69,
     "lz": false,
     "avatar": "烧",
-    "name": "烧烤",
+    "name": "烧烤配啤酒",
     "marker": null,
     "time": "2025-12-28 17:00",
     "body": "马上十二个小时了……",
@@ -1184,7 +1188,7 @@
     "num": 72,
     "lz": false,
     "avatar": "螺",
-    "name": "螺蛳粉",
+    "name": "螺蛳粉真香",
     "marker": null,
     "time": "2025-12-28 18:33",
     "body": "这你都没发现？？？你当时在干嘛？？？",
@@ -1271,8 +1275,9 @@
   {
     "num": 80,
     "lz": false,
-    "avatar": "特",
-    "name": "特辣是不要命",
+    "avatar": "不",
+    "name": "不是哥们",
+    "color": { "bg": "#d4c8b8", "fg": "#5a3d2a" },
     "marker": null,
     "time": "2025-12-28 18:52",
     "body": "楼主你是不是那个东城老街昭记面馆老板的老公？？",
@@ -1293,8 +1298,9 @@
   {
     "num": 82,
     "lz": false,
-    "avatar": "甜",
-    "name": "甜咸豆腐脑都接受",
+    "avatar": "不",
+    "name": "不是哥们",
+    "color": { "bg": "#d4c8b8", "fg": "#5a3d2a" },
     "marker": null,
     "time": "2025-12-28 18:55",
     "body": "这配置太经典了……当年北境军校的人都知道，有个教官带完那届军训之后整个人都温柔了，后来才知道是因为谈了个大一新生。再加上你ID“昭昭是我老婆”。昭记面馆的“昭”嘛，猜到了。",
@@ -1435,8 +1441,13 @@
   }
 ];
 
-      function getAvatarStyle(name, isLz) {
+      function getAvatarStyle(name, isLz, customColor) {
         if (isLz) return 'class="avatar lz-avatar"';
+        // 如果手动指定了颜色，直接用
+        if (customColor) {
+          return `class="avatar" style="background:${customColor.bg};color:${customColor.fg};"`;
+        }
+        // 否则按名字哈希随机生成
         let hash = 0;
         for (let i = 0; i < name.length; i++) {
           hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -1461,7 +1472,7 @@
           if (f.marker) {
             nameHtml += ' <span class="marker">' + f.marker + '</span>';
           }
-          const avatarAttr = getAvatarStyle(f.name, f.lz);
+          const avatarAttr = getAvatarStyle(f.name, f.lz, f.color);
           const favBtn = f.fav 
             ? '<button><span class="sym-2d">★&#xFE0E;</span> 收藏</button>' 
             : '';
