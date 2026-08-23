@@ -52,7 +52,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      font-family: "Georgia", "Times New Roman", "Songti SC", "PingFang SC", "Microsoft YaHei", serif;
       background: var(--bg-body);
       color: var(--text-primary);
       min-height: 100vh;
@@ -544,7 +544,7 @@
         width: 100%;
         min-width: auto;
         height: auto;
-        aspect-ratio: 200 / 260;
+        aspect-ratio: 200 / 160;
       }
       .carousel-slide img { object-position: center center; }
       .name-title { padding-top: 0; }
@@ -580,7 +580,7 @@
       }
     }
     @media (max-width: 400px) {
-      .carousel { aspect-ratio: 200 / 260; }
+      .carousel { aspect-ratio: 200 / 160; }
       .name-title .name { font-size: 1.2rem; }
     }
   </style>
@@ -636,7 +636,6 @@
       const nextBtn = document.querySelector('.carousel-btn.next');
       let current = 0;
       const total = slides.length;
-      let interval = null;
 
       function goTo(index) {
         if (index < 0) index = total - 1;
@@ -649,40 +648,22 @@
       function next() { goTo(current + 1); }
       function prev() { goTo(current - 1); }
 
-      function startAuto() {
-        if (total <= 1) return;
-        if (interval) clearInterval(interval);
-        interval = setInterval(next, 4000);
-      }
-
-      function stopAuto() {
-        if (interval) { clearInterval(interval); interval = null; }
-      }
-
       if (prevBtn) prevBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); stopAuto(); prev(); startAuto();
+        e.stopPropagation(); prev();
       });
       if (nextBtn) nextBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); stopAuto(); next(); startAuto();
+        e.stopPropagation(); next();
       });
       dots.forEach((dot, i) => {
         dot.addEventListener('click', function(e) {
-          e.stopPropagation(); stopAuto(); goTo(i); startAuto();
+          e.stopPropagation(); goTo(i);
         });
       });
 
-      const carousel = document.querySelector('.carousel');
-      if (carousel) {
-        carousel.addEventListener('mouseenter', stopAuto);
-        carousel.addEventListener('mouseleave', startAuto);
-        carousel.addEventListener('touchstart', stopAuto);
-        carousel.addEventListener('touchend', startAuto);
-      }
-
       if (total > 0) goTo(0);
-      startAuto();
     });
   </script>
+<base target="_blank">
 </head>
 <body>
 
