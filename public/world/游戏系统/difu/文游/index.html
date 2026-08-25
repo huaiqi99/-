@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归终殿 · 引契</title>
+    <style>
+        :root {
+            --bg-body: #e8e0d5;
+            --bg-paper: #f6f0e7;
+            --bg-card: #fcf8f0;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --border-light: #d5c8b8;
+            --border-card: #c4b4a0;
+            --shadow: 0 8px 32px rgba(44, 36, 30, 0.12);
+            --radius: 12px;
+            --font: "Courier New", "Source Code Pro", "PingFang SC", monospace;
+            --transition: 0.3s ease;
+            --accent: #8a2a1a;
+            --accent-soft: rgba(138, 42, 26, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1614;
+            --bg-paper: #24201c;
+            --bg-card: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
+            --border-light: #35302a;
+            --border-card: #4a443e;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 30px 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+
+        .float-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .float-btn .icon { font-size: 0.9rem; }
+
+        #app {
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .medical-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 28px 32px 34px 32px;
+            box-shadow: var(--shadow);
+            position: relative;
+            width: 100%;
+            animation: cardIn 0.45s ease forwards;
+        }
+
+        @keyframes cardIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .medical-header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-card);
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+
+        .medical-header .title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .medical-header .sub {
+            font-size: 0.9rem;
+            color: var(--text-muted-light);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .divider {
+            text-align: center;
+            color: var(--text-muted-light);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            margin: 18px 0;
+        }
+
+        .intro-body {
+            font-size: 1.05rem;
+            line-height: 2.4;
+            color: var(--text-secondary);
+            margin: 22px 0;
+            text-align: left;
+        }
+
+        .intro-body p {
+            text-indent: 2em;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .start-btn, .menu-btn {
+            display: inline-block;
+            padding: 14px 40px;
+            border-radius: 6px;
+            font-size: 1.0rem;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all var(--transition);
+            letter-spacing: 2px;
+            text-decoration: none;
+            border: 1px solid var(--accent);
+        }
+
+        .start-btn {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .start-btn:hover {
+            background: var(--accent);
+            color: var(--bg-card);
+        }
+
+        .menu-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border-color: var(--border-card);
+        }
+
+        .menu-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 0 10px 20px 10px; }
+            .medical-card { padding: 20px 18px 26px 18px; }
+            .medical-header .title { font-size: 1.15rem; }
+            .medical-header .sub { font-size: 0.82rem; }
+            .intro-body { font-size: 0.95rem; line-height: 2.2; }
+            .divider { font-size: 0.78rem; }
+            .start-btn, .menu-btn { padding: 12px 28px; font-size: 0.92rem; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 5px 11px 5px 9px; font-size: 0.7rem; }
+        }
+
+        @media (max-width: 420px) {
+            .medical-card { padding: 16px 14px 22px 14px; }
+            .medical-header .title { font-size: 1.05rem; }
+            .intro-body { font-size: 0.9rem; }
+            .start-btn, .menu-btn { padding: 10px 22px; font-size: 0.88rem; letter-spacing: 1px; }
+            .btn-group { gap: 10px; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <div class="float-group">
+        <a class="float-btn" href="../index.html">
+            <span class="icon">←</span> 返回
+        </a>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
+    </div>
+
+    <div id="app">
+        <div class="medical-card" style="text-align:center;">
+            <div class="medical-header">
+                <div class="title">｜ 归终殿 · 引契 ｜</div>
+                <div class="sub">THE GUIDING CONTRACT</div>
+            </div>
+            <div class="divider">═══════════════════════════════════════</div>
+            <div class="intro-body">
+                <p>你叫栾方棋，地府归终殿末席引渡人。</p>
+                <p>人死后魂魄会被阴差带回地府，其中因天灾人祸不能寿终正寝的魂魄一部分会被带到枉死城，另一部分被漏掉滞留在人间的，则会成为孤魂野鬼。这类魂魄成为怨魂的几率极大，有些甚至会修炼成厉鬼。停留的时间越长成为厉鬼的几率越大，为了它们不伤及他人，这个时候就需要地府的人出面解决。</p>
+                <p>为此，六殿卞城王特地成立了归终殿——一个专门负责引渡未归冤魂的部门。</p>
+                <p>然而这也只是对外宣传得好听，用你同行间的话来说，他们就是为地府专门收拾烂摊子的打杂人员。</p>
+                <p>一般冤魂并不会在世上逗留，要么是有人在背后捣鬼，要么就是有自我意识的冤魂。这两种哪一种处理起来都不轻松，每个引渡人忙天忙地，一个任务被推来推去，一去就是十天半月。</p>
+                <p>所以就算归终殿里的人待遇好，也没几个人心甘情愿的来当这个所谓的引渡人。</p>
+                <p>作为排名最次，也最好说话的引渡人，你手里的任务基本没断过，刚完成上一个，下一刻回到地府手里又被塞了一个。</p>
+                <p>你捏着那张皱巴巴的引契，站在京城郊外无涯村的村口。上面写着：「冤魂收束，滞留超两年。」——翻译成人话就是：村里闹鬼闹了两年没人管，轮到你了。</p>
+                <p>那么就有刚进入归终殿的新人会问了，既然任务多，不回去不就好了？那些个卷宗总不能直接追到人间来吧？</p>
+                <p>此言差矣。栾方棋认真地告诉那个新人：你不回去，任务就会堆在那里，然后一次性把堆成山的引契全塞你手里。</p>
+                <p>所以，还是不要偷懒为好——来自前辈的忠告。</p>
+            </div>
+            <div class="divider">═══════════════════════════════════════</div>
+            <div class="btn-group">
+                <a href="./节点1.html" class="start-btn">【 开 始 游 戏 】</a>
+                <a href="./菜单.html" class="menu-btn">【 菜 单 】</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    }
+                }
+            } catch (e) {}
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('themeBtn').innerHTML = isDark ?
+                '<span class="icon">☀️</span> 日间' :
+                '<span class="icon">🌙</span> 夜间';
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') html.setAttribute('data-theme', 'dark');
+            else html.removeAttribute('data-theme');
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            document.getElementById('themeBtn').innerHTML = newTheme === 'dark' ?
+                '<span class="icon">☀️</span> 日间' :
+                '<span class="icon">🌙</span> 夜间';
+        }
+    </script>
+</body>
+</html>

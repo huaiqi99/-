@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>归终殿 · 引契</title>
+    <title>归终殿 · 引契 · 节点一</title>
     <style>
         :root {
             --bg-body: #e8e0d5;
@@ -69,7 +69,7 @@
             border: 1px solid var(--border-light);
             border-radius: 24px;
             padding: 6px 14px 6px 12px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             cursor: pointer;
             transition: all var(--transition);
@@ -119,64 +119,20 @@
         }
 
         .medical-header .title {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: 700;
             letter-spacing: 3px;
             color: var(--text-primary);
         }
 
         .medical-header .sub {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: var(--text-muted-light);
             letter-spacing: 1px;
             margin-top: 2px;
         }
 
-        /* ===== 开始界面 ===== */
-        #startScreen .intro-body {
-            font-size: 0.88rem;
-            line-height: 2.2;
-            color: var(--text-secondary);
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        #startScreen .intro-body p {
-            text-indent: 2em;
-            margin-bottom: 8px;
-        }
-
-        #startScreen .divider {
-            text-align: center;
-            color: var(--text-muted-light);
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            margin: 16px 0;
-        }
-
-        .start-btn {
-            display: inline-block;
-            padding: 12px 36px;
-            border-radius: 6px;
-            border: 1px solid var(--accent);
-            background: var(--accent-soft);
-            color: var(--accent);
-            font-size: 0.9rem;
-            font-family: var(--font);
-            cursor: pointer;
-            transition: all var(--transition);
-            letter-spacing: 2px;
-            margin-top: 8px;
-        }
-
-        .start-btn:hover {
-            background: var(--accent);
-            color: var(--bg-card);
-        }
-
         /* ===== 游戏界面 ===== */
-        #gameScreen { display: none; }
-
         .game-card {
             min-height: 70vh;
             display: flex;
@@ -199,7 +155,7 @@
         .narration-box.hidden { opacity: 0; pointer-events: none; }
 
         .narration-text {
-            font-size: 0.95rem;
+            font-size: 1.15rem;
             line-height: 2;
             color: var(--text-secondary);
             text-indent: 2em;
@@ -229,13 +185,13 @@
 
         .choice-btn {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 18px;
             border: 1px solid var(--border-card);
             border-radius: 8px;
             background: var(--bg-paper);
             color: var(--text-secondary);
             font-family: var(--font);
-            font-size: 0.85rem;
+            font-size: 1.0rem;
             line-height: 1.6;
             cursor: pointer;
             transition: all var(--transition);
@@ -255,7 +211,7 @@
             border-color: var(--accent);
             background: var(--accent-soft);
             color: var(--accent);
-            padding-left: 20px;
+            padding-left: 22px;
         }
 
         .choice-btn:hover::before { opacity: 1; }
@@ -274,7 +230,7 @@
         .dialogue-box.active { display: flex; }
 
         .speaker-label {
-            font-size: 0.8rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--accent);
             letter-spacing: 1px;
@@ -294,7 +250,7 @@
         }
 
         .dialogue-text {
-            font-size: 0.92rem;
+            font-size: 1.1rem;
             line-height: 1.8;
             color: var(--text-secondary);
             min-height: 3em;
@@ -308,9 +264,9 @@
         /* 点击推进提示 */
         .click-hint {
             position: absolute;
-            bottom: 12px;
-            right: 20px;
-            font-size: 0.65rem;
+            bottom: 14px;
+            right: 22px;
+            font-size: 0.8rem;
             color: var(--text-muted-light);
             opacity: 0;
             transition: opacity 0.3s;
@@ -325,6 +281,32 @@
             50% { opacity: 0.8; }
         }
 
+        /* 上一句按钮 */
+        .step-back-btn {
+            position: absolute;
+            bottom: 14px;
+            left: 22px;
+            font-size: 0.8rem;
+            color: var(--text-muted-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .step-back-btn.show {
+            opacity: 0.6;
+            pointer-events: auto;
+        }
+
+        .step-back-btn:hover {
+            color: var(--accent);
+            opacity: 1;
+        }
+
         /* 推进点击层（选项出现时禁用） */
         .click-layer {
             position: absolute;
@@ -335,32 +317,27 @@
 
         .click-layer.disabled { pointer-events: none; display: none; }
 
-        /* 结束标记 */
-        .ending-mark {
-            text-align: center;
-            color: var(--accent);
-            font-weight: 700;
-            letter-spacing: 4px;
-            font-size: 1rem;
-            padding: 40px 0;
-        }
-
         @media (max-width: 700px) {
             body { padding: 0 10px 20px 10px; }
             .medical-card { padding: 18px 16px 22px 16px; }
-            .medical-header .title { font-size: 0.95rem; }
-            .narration-text { font-size: 0.88rem; line-height: 1.9; }
-            .dialogue-text { font-size: 0.85rem; }
-            .choice-btn { font-size: 0.8rem; padding: 10px 12px; }
+            .medical-header .title { font-size: 1.1rem; }
+            .medical-header .sub { font-size: 0.8rem; }
+            .narration-text { font-size: 1.05rem; line-height: 1.9; }
+            .dialogue-text { font-size: 1.0rem; }
+            .choice-btn { font-size: 0.95rem; padding: 12px 14px; }
+            .speaker-label { font-size: 0.88rem; }
             .float-group { top: 12px; right: 12px; gap: 6px; }
-            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
+            .float-btn { padding: 5px 11px 5px 9px; font-size: 0.7rem; }
+            .click-hint, .step-back-btn { font-size: 0.75rem; }
         }
 
         @media (max-width: 420px) {
             .medical-card { padding: 14px 12px 18px 12px; }
-            .narration-text { font-size: 0.85rem; }
-            .dialogue-text { font-size: 0.82rem; }
-            .choice-btn { font-size: 0.78rem; }
+            .narration-text { font-size: 1.0rem; }
+            .dialogue-text { font-size: 0.95rem; }
+            .choice-btn { font-size: 0.9rem; padding: 10px 12px; }
+            .speaker-label { font-size: 0.85rem; }
+            .click-hint, .step-back-btn { font-size: 0.72rem; }
         }
     </style>
 <base target="_blank">
@@ -368,63 +345,38 @@
 <body>
 
     <div class="float-group">
-        <button class="float-btn" id="backBtn" style="display:none;" onclick="goBack()">
-            <span class="icon">←</span> 返回
-        </button>
+        <a class="float-btn" href="./index.html">
+            <span class="icon">←</span> 返回目录
+        </a>
         <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
             <span class="icon">🌙</span> 夜间
         </button>
     </div>
 
     <div id="app">
-        <!-- 开始界面 -->
-        <div id="startScreen">
-            <div class="medical-card" style="text-align:center;">
-                <div class="medical-header">
-                    <div class="title">｜ 归终殿 · 引契 ｜</div>
-                    <div class="sub">THE GUIDING CONTRACT · CHAPTER 01</div>
-                </div>
-                <div class="divider">═══════════════════════════════════════</div>
-                <div class="intro-body">
-                    <p>你叫栾方棋，地府归终殿末席引渡人。</p>
-                    <p>人死后魂魄会被阴差带回地府，其中因天灾人祸不能寿终正寝的魂魄一部分会被带到枉死城，另一部分被漏掉滞留在人间的，则会成为孤魂野鬼。这类魂魄成为怨魂的几率极大，有些甚至会修炼成厉鬼。停留的时间越长成为厉鬼的几率越大，为了它们不伤及他人，这个时候就需要地府的人出面解决。</p>
-                    <p>为此，六殿卞城王特地成立了归终殿——一个专门负责引渡未归冤魂的部门。</p>
-                    <p>然而这也只是对外宣传得好听，用你同行间的话来说，他们就是为地府专门收拾烂摊子的打杂人员。</p>
-                    <p>一般冤魂并不会在世上逗留，要么是有人在背后捣鬼，要么就是有自我意识的冤魂。这两种哪一种处理起来都不轻松，每个引渡人忙天忙地，一个任务被推来推去，一去就是十天半月。</p>
-                    <p>所以就算归终殿里的人待遇好，也没几个人心甘情愿的来当这个所谓的引渡人。</p>
-                    <p>作为排名最次，也最好说话的引渡人，你手里的任务基本没断过，刚完成上一个，下一刻回到地府手里又被塞了一个。</p>
-                    <p>你捏着那张皱巴巴的引契，站在京城郊外无涯村的村口。上面写着："冤魂收束，滞留超两年。"——翻译成人话就是：村里闹鬼闹了两年没人管，轮到你了。</p>
-                    <p>那么就有刚进入归终殿的新人会问了，既然任务多，不回去不就好了？那些个卷宗总不能直接追到人间来吧？</p>
-                    <p>此言差矣。栾方棋认真地告诉那个新人：你不回去，任务就会堆在那里，然后一次性把堆成山的引契全塞你手里。</p>
-                    <p>所以，还是不要偷懒为好——来自前辈的忠告。</p>
-                </div>
-                <div class="divider">═══════════════════════════════════════</div>
-                <button class="start-btn" onclick="startGame()">【 开 始 游 戏 】</button>
+        <div class="medical-card game-card" id="gameCard">
+            <div class="medical-header" style="margin-bottom: 12px; border-bottom-width: 1px;">
+                <div class="title">｜ 节点一 · 醉梦客栈 ｜</div>
+                <div class="sub">CHAPTER 01 · THE DREAM INN</div>
             </div>
-        </div>
 
-        <!-- 游戏界面 -->
-        <div id="gameScreen">
-            <div class="medical-card game-card" id="gameCard">
-                <div class="medical-header" style="margin-bottom: 12px; border-bottom-width: 1px;">
-                    <div class="title">｜ 节点一 · 醉梦客栈 ｜</div>
-                    <div class="sub">CHAPTER 01 · THE DREAM INN</div>
-                </div>
-
-                <div class="narration-box" id="narrationBox">
-                    <div class="narration-text" id="narrationText"></div>
-                </div>
-
-                <div class="choice-box" id="choiceBox"></div>
-
-                <div class="dialogue-box" id="dialogueBox">
-                    <div class="speaker-label" id="speakerLabel"></div>
-                    <div class="dialogue-text" id="dialogueText"></div>
-                </div>
-
-                <div class="click-hint" id="clickHint">◆ 点击继续 ◆</div>
-                <div class="click-layer" id="clickLayer" onclick="handleClick()"></div>
+            <div class="narration-box" id="narrationBox">
+                <div class="narration-text" id="narrationText"></div>
             </div>
+
+            <div class="choice-box" id="choiceBox"></div>
+
+            <div class="dialogue-box" id="dialogueBox">
+                <div class="speaker-label" id="speakerLabel"></div>
+                <div class="dialogue-text" id="dialogueText"></div>
+            </div>
+
+            <div class="step-back-btn" id="stepBackBtn" onclick="event.stopPropagation(); goBack();">
+                <span>◀ 上一句</span>
+            </div>
+
+            <div class="click-hint" id="clickHint">◆ 点击继续 ◆</div>
+            <div class="click-layer" id="clickLayer" onclick="handleClick()"></div>
         </div>
     </div>
 
@@ -436,92 +388,92 @@
             { type: 'dialogue', speaker: '栾方棋', text: '（地府那帮文书是不是又把卷宗拿反了？）', inner: true },
             { type: 'narration', text: '你选了个靠门的角落坐下，小二擦了两下桌面就算招呼过了，你给自己倒了杯酒，开始盘算任期还剩多少年。' },
             { type: 'narration', text: '正走着神，一阵汗味突然糊到了你面前。你抬头，看见一张络腮胡几乎遮住半张脸的粗糙面孔。男人嘿嘿笑着，眼睛在你身上上下扫了好几下。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“这位小哥，我看你有些面生啊，家住何方？”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '这位小哥，我看你有些面生啊，家住何方？' },
             { type: 'dialogue', speaker: '栾方棋', text: '（大哥，我只是个路过的打工人。你手离我酒杯远点。）', inner: true },
             { type: 'narration', text: '一只满是黑毛的手伸过来，伸手就要抓你的酒杯。你低头看了看自己这只握住酒杯的手，又看了看他那张热切的脸，欲言又止，止言又欲，脑子里做好了最坏的打算。' },
             { type: 'choice', choices: [
-                { text: '推过酒杯：“家住京城。”', next: 9 },
-                { text: '坐直身子：“我是来引渡亡魂的。”', next: 40 }
+                { text: '推过酒杯：家住京城。', next: 9 },
+                { text: '坐直身子：我是来引渡亡魂的。', next: 41 }
             ]},
 
-            // ===== 分支A (9-39) =====
+            // ===== 分支A (9-40) =====
             { type: 'narration', text: '你按下把酒杯抢回来的冲动，反而将它朝大汉的方向推了推，脸上挤出个还算客气的笑。' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“家住京城。”' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“京城好啊，那小兄弟来这醉梦客栈，也是来……咳咳，寻那‘杯中良缘’的？”' },
-            { type: 'narration', text: '他说“杯中良缘”四个字时，眉毛几乎要飞进头发里，语气百转千回，硬生生把一句普通的话说成了接头暗号。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '家住京城。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '京城好啊，那小兄弟来这醉梦客栈，也是来……咳咳，寻那「杯中良缘」的？' },
+            { type: 'narration', text: '他说「杯中良缘」四个字时，眉毛几乎要飞进头发里，语气百转千回，硬生生把一句普通的话说成了接头暗号。' },
             { type: 'dialogue', speaker: '栾方棋', text: '（何意味。）', inner: true },
-            { type: 'narration', text: '你含糊地“嗯”了一声，低头假装在喝酒，打算糊弄两句就找借口走人。但大汉显然把你的含糊当成了默认。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“实不相瞒，哥哥我在这醉梦客栈蹲了三天了，就等一个合眼缘的。”' },
+            { type: 'narration', text: '你含糊地「嗯」了一声，低头假装在喝酒，打算糊弄两句就找借口走人。但大汉显然把你的含糊当成了默认。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '实不相瞒，哥哥我在这醉梦客栈蹲了三天了，就等一个合眼缘的。' },
             { type: 'dialogue', speaker: '栾方棋', text: '（你蹲三天关我什么事？）', inner: true },
             { type: 'narration', text: '他挪了挪屁股，板凳朝你这边又凑了半尺。你不动声色地往后靠了靠，他却不依不饶地又凑近了一些。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“小兄弟，你觉得哥哥我怎么样？你方才说家住京城，那想必是见过大世面的。哥哥我不求别的，就想找个踏实人搭伙过日子——咱俩……是不是挺有缘的？”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '小兄弟，你觉得哥哥我怎么样？你方才说家住京城，那想必是见过大世面的。哥哥我不求别的，就想找个踏实人搭伙过日子——咱俩……是不是挺有缘的？' },
             { type: 'narration', text: '你触电般想抽回手，王铁柱却握得更紧，甚至用拇指摩挲你的手背，含情脉脉地看着你。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“京城来的公子就是懂规矩。不如今晚就……”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '京城来的公子就是懂规矩。不如今晚就……' },
             { type: 'narration', text: '你猛地往后一仰，差点连人带椅翻过去。' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“兄台且慢！实不相瞒，我是出家人。'},
+            { type: 'dialogue', speaker: '栾方棋', text: '兄台且慢！实不相瞒，我是出家人。' },
             { type: 'narration', text: '你急中生智，一把按住他凑过来的肩膀，脸上挤出个肃穆的表情。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '（一愣，脸上的笑容僵在半空）"出家人？"'},
-            { type: 'dialogue', speaker: '栾方棋', text: '对，云游道士，不近女色，也……不近男色。而且身患隐疾，不宜结缘。”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '（一愣，脸上的笑容僵在半空）出家人？' },
+            { type: 'dialogue', speaker: '栾方棋', text: '对，云游道士，不近女色，也……不近男色。而且身患隐疾，不宜结缘。' },
             { type: 'narration', text: '王铁柱缓缓松开你的手腕，脸上的表情从狂喜转为呆滞，再从呆滞转为羞愤。他猛地一拍桌子。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“好你个京城来的！先递酒给我，转头又说自己是道士！戏弄我王铁柱是吧？”' },
-            { type: 'narration', text: '周围酒客“唰”地一下全看了过来，有人开始窃窃私语。你低头看着地上那只被拍落的杯子，沉默良久。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '好你个京城来的！先递酒给我，转头又说自己是道士！戏弄我王铁柱是吧？' },
+            { type: 'narration', text: '周围酒客「唰」地一下全看了过来，有人开始窃窃私语。你低头看着地上那只被拍落的杯子，沉默良久。' },
             { type: 'dialogue', speaker: '栾方棋', text: '（活得久真是什么都能见着。）', inner: true },
-            { type: 'narration', text: '王铁柱的咒骂声渐渐远去，而你面无表情的喝着酒，将一切世俗的语言都隔绝在外。脸皮而已，无需在意。但你深知这样沉默下去不是办法，任务还得做，地府还得回，于是你站起来，若无其事的开始找人搭话，试图询问最近的村子有没有发生什么灵异事件。' },
+            { type: 'narration', text: '王铁柱的咒骂声渐渐远去，而你面无表情地喝着酒，将一切世俗的语言都隔绝在外。脸皮而已，无需在意。但你深知这样沉默下去不是办法，任务还得做，地府还得回，于是你站起来，若无其事地开始找人搭话，试图询问最近的村子有没有发生什么灵异事件。' },
             { type: 'narration', text: '经王铁柱一事后，众人看你的目光多少带了点微妙的意味。不知是不是不愿招惹你这个身患隐疾的道士，大多数人都选择了沉默，但也有少数人对你此行的目的感到好奇，并亲切的发问——' },
-            { type: 'dialogue', speaker: '中年男人', text: '“你再说一次，仔细说说你是来这干什么的？”' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“我是引渡人，主要职责是来引渡人间未归游魂的。”' },
-            { type: 'dialogue', speaker: '中年男人', text: '“你刚不是说你是道士吗？”' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“……道士也分很多种，我是救济苍生那一类的。”' },
-            { type: 'dialogue', speaker: '众人', text: '“哦哦哦原来是这样。”' },
-            { type: 'dialogue', speaker: '中年女人', text: '（松了口气，操着口方言转身离开）"吓死我了，一上来就问我看没看见鬼，我还以为真有鬼呢。"' },
-            { type: 'dialogue', speaker: '老年人', text: '“小伙子，吓唬人可是不对的。”' },
+            { type: 'dialogue', speaker: '中年男人', text: '你再说一次，仔细说说你是来这干什么的？' },
+            { type: 'dialogue', speaker: '栾方棋', text: '我是引渡人，主要职责是来引渡人间未归游魂的。' },
+            { type: 'dialogue', speaker: '中年男人', text: '你刚不是说你是道士吗？' },
+            { type: 'dialogue', speaker: '栾方棋', text: '……道士也分很多种，我是救济苍生那一类的。' },
+            { type: 'dialogue', speaker: '众人', text: '哦哦哦原来是这样。' },
+            { type: 'dialogue', speaker: '中年女人', text: '（松了口气，操着口方言转身离开）吓死我了，一上来就问我看没看见鬼，我还以为真有鬼呢。' },
+            { type: 'dialogue', speaker: '老年人', text: '小伙子，吓唬人可是不对的。' },
             { type: 'dialogue', speaker: '栾方棋', text: '……' },
             { type: 'jump', next: 67 },
 
-            // ===== 分支B (40-66) =====
+            // ===== 分支B (41-66) =====
             { type: 'narration', text: '你坐直了身子，面不改色，一字一顿。' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“我是来引渡无涯村亡魂的。”' },
-            { type: 'dialogue', speaker: '王铁柱', text: '（刚喝了口酒还没咽下去，闻言竟是直接喷了出来）“你说什么？”'},
-            { type: 'narration', text: '你注意到周围几桌的人已经开始往这边看了。你犹豫了一下，还是本着“也许他没听清”的心态，重复了一遍。' },
-            { type: 'dialogue', speaker: '栾方棋', text: '（理直气壮）“我是来引渡无涯村亡魂的。”' },
-            { type: 'dialogue', speaker: '王铁柱', text: '那你怎么不早说，还把酒递给我干什么？你想害我啊！”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '我是来引渡无涯村亡魂的。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '（刚喝了口酒还没咽下去，闻言竟是直接喷了出来）你说什么？' },
+            { type: 'narration', text: '你注意到周围几桌的人已经开始往这边看了。你犹豫了一下，还是本着「也许他没听清」的心态，重复了一遍。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（理直气壮）我是来引渡无涯村亡魂的。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '那你怎么不早说，还把酒递给我干什么？你想害我啊！' },
             { type: 'narration', text: '他语气激昂，仿佛你不是递了杯酒，而是递了碗砒霜。而此时，看完全程的小二贴心的凑过来为你解释了一下何为杯中良缘。' },
-            { type: 'narration', text: '小二凑过来为你解释：在醉梦客栈，喝下对方的酒就是要寻你做“有缘人”的意思。您既不阻止，还主动把酒送过去，那不就是把自己的情缘送过去了吗？' },
+            { type: 'narration', text: '小二凑过来为你解释：在醉梦客栈，喝下对方的酒就是要寻你做「有缘人」的意思。您既不阻止，还主动把酒送过去，那不就是把自己的情缘送过去了吗？' },
             { type: 'dialogue', speaker: '栾方棋', text: '……' },
             { type: 'narration', text: '你低头瞧见那只被大汉丢在地上的杯子，喉结艰难地滚动了一下。' },
             { type: 'dialogue', speaker: '栾方棋', text: '（活得久真是什么都能见着。）', inner: true },
             { type: 'narration', text: '王铁柱似乎是觉得十分晦气，转头就走了，随便找了张桌子坐下，开始向周围人讲述自己的经历。' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“你们是没看见啊，我看那小子穿得跟个送葬的似的，模样还算周正，又一个人坐了这么久，还以为他是个懂规矩的呢！”' },
-            { type: 'dialogue', speaker: '王铁柱', text: '“我好心过去搭话，结果他竟然说什么，他是个道士，还要勾我的魂！”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '你们是没看见啊，我看那小子穿得跟个送葬的似的，模样还算周正，又一个人坐了这么久，还以为他是个懂规矩的呢！' },
+            { type: 'dialogue', speaker: '王铁柱', text: '我好心过去搭话，结果他竟然说什么，他是个道士，还要勾我的魂！' },
             { type: 'narration', text: '男人愤愤不平，嗓门还大，经他这一嚎几乎半个客栈的人都听得到，丝毫不在意栾方棋就在离他几米远的位置。虽说栾方棋觉得自己细胳膊细腿的不像是能渣了那胡子大汉的样子，但其他人显然不那么认为。看过来的眼神满是探究，甚至还隐约听见了几声关于他独特品味的议论。' },
-            { type: 'narration', text: '片刻后，王铁柱的咒骂声渐渐远去，而你面无表情的喝着酒，将一切世俗的语言都隔绝在外。脸皮而已，无需在意。但你深知这样沉默下去不是办法，任务还得做，地府还得回，于是你站起来，若无其事的开始找人搭话，试图询问最近的村子有没有发生什么灵异事件。' },
+            { type: 'narration', text: '片刻后，王铁柱的咒骂声渐渐远去，而你面无表情地喝着酒，将一切世俗的语言都隔绝在外。脸皮而已，无需在意。但你深知这样沉默下去不是办法，任务还得做，地府还得回，于是你站起来，若无其事地开始找人搭话，试图询问最近的村子有没有发生什么灵异事件。' },
             { type: 'narration', text: '经此一事后，众人看你的目光多少带了点微妙的意味。不知是不是不愿招惹你这个神秘的勾魂使者，大多数人都选择了沉默，但也有少数人对你此行的目的感到好奇，并亲切的发问——' },
-            { type: 'dialogue', speaker: '中年男人', text: '“你再说一次，仔细说说你是来这干什么的？”' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“我是引渡人，主要职责是来引渡人间未归游魂的。”' },
-            { type: 'dialogue', speaker: '中年男人', text: '“他说他是个道士。”' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“……对的，是道士。”' },
-            { type: 'dialogue', speaker: '众人', text: '“哦哦哦原来是这样。”' },
-            { type: 'dialogue', speaker: '王铁柱', text: '（又挤了进来，拍着胸脯道）“我就说我没骗人吧，他就是这么说的！还要勾我的魂！”' },
-            { type: 'dialogue', speaker: '老年人', text: '“小伙子，勾魂可是不对的。”' },
-            { type: 'dialogue', speaker: '中年女人', text: '（松了口气，操着口方言转身离开）"吓死我了，一上来就问我看没看见鬼，我还以为真有鬼呢。"' },
+            { type: 'dialogue', speaker: '中年男人', text: '你再说一次，仔细说说你是来这干什么的？' },
+            { type: 'dialogue', speaker: '栾方棋', text: '我是引渡人，主要职责是来引渡人间未归游魂的。' },
+            { type: 'dialogue', speaker: '中年男人', text: '他说他是个道士。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '……对的，是道士。' },
+            { type: 'dialogue', speaker: '众人', text: '哦哦哦原来是这样。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '（又挤了进来，拍着胸脯道）我就说我没骗人吧，他就是这么说的！还要勾我的魂！' },
+            { type: 'dialogue', speaker: '老年人', text: '小伙子，勾魂可是不对的。' },
+            { type: 'dialogue', speaker: '中年女人', text: '（松了口气，操着口方言转身离开）吓死我了，一上来就问我看没看见鬼，我还以为真有鬼呢。' },
             { type: 'dialogue', speaker: '栾方棋', text: '……' },
 
-            // ===== 汇合点 (67-henduo) =====
-            { type: 'narration', text: '你果断放弃了与这群活在太平盛世表象下的村民深入探讨“亡魂滞留”的学术问题。人群聚得快，散得也快。' },
+            // ===== 汇合点 (67-末尾) =====
+            { type: 'narration', text: '你果断放弃了与这群活在太平盛世表象下的村民深入探讨「亡魂滞留」的学术问题。人群聚得快，散得也快。' },
             { type: 'narration', text: '你刚松了口气，正要出门寻找线索，一位挑着空担子的老者就扒开人群走了进来。' },
-            { type: 'dialogue', speaker: '老者', text: '“后生，穿得这般别致，可是要去收妖？”' },
+            { type: 'dialogue', speaker: '老者', text: '后生，穿得这般别致，可是要去收妖？' },
             { type: 'narration', text: '听到这话，你大为震惊，心想难道真来了个懂行的？' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“正是，老人家可是听说了村中哪里不太平？”' },
-            { type: 'dialogue', speaker: '老者', text: '“收妖，老夫年轻时可是此道翘楚！你会夜观天象否，或者会召唤亡灵，借尸还魂？看得出我气运如何，是否印堂发黑？还是说你会呼风唤雨，召集各方瑞兽前来祈福？”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '正是，老人家可是听说了村中哪里不太平？' },
+            { type: 'dialogue', speaker: '老者', text: '收妖，老夫年轻时可是此道翘楚！你会夜观天象否，或者会召唤亡灵，借尸还魂？看得出我气运如何，是否印堂发黑？还是说你会呼风唤雨，召集各方瑞兽前来祈福？' },
             { type: 'dialogue', speaker: '栾方棋', text: '（何意味）', inner: true },
-            { type: 'dialogue', speaker: '栾方棋', text: '“……都不会。”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '……都不会。' },
             { type: 'dialogue', speaker: '众人', text: '（一阵唏嘘）', inner: true },
             { type: 'narration', text: '老者沉默半晌，重新捡起地上的担子，语气里满是恨铁不成钢的嫌弃。' },
-            { type: 'dialogue', speaker: '老者', text: '“嘶……年轻人，道行浅了点啊。我年轻时比这厉害多了都混不上几顿饱饭，如今这世道，可养不起光吃饭不办事的道士！”' },
+            { type: 'dialogue', speaker: '老者', text: '嘶……年轻人，道行浅了点啊。我年轻时比这厉害多了都混不上几顿饱饭，如今这世道，可养不起光吃饭不办事的道士！' },
             { type: 'narration', text: '眼见着老人要走，栾方棋在心里衡量了一下平时引渡人的工作，赶紧开口——' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“我……我也许会净化土地，收冤魂，保一方平安什么的。”（急病乱投医' },
+            { type: 'dialogue', speaker: '栾方棋', text: '我……我也许会净化土地，收冤魂，保一方平安什么的。（急病乱投医）' },
             { type: 'narration', text: '召唤祥瑞什么的太夸张了，那是天上神仙才能做到的事情，他顶多能召唤几只鬼出来。该说不说，也许在归终殿随便拉个人出来都比不上那些会呼风唤雨的道士，毕竟他们最擅长的除了打架就是引魂，随便借尸还魂这种事还真做不到。' },
-            { type: 'dialogue', speaker: '老者', text: '（依旧恨铁不成钢）“唉，年轻人，道行浅啊，再练练，再练练吧！”' },
+            { type: 'dialogue', speaker: '老者', text: '（依旧恨铁不成钢）唉，年轻人，道行浅啊，再练练，再练练吧！' },
             { type: 'narration', text: '话音未落，人已挑着担晃晃悠悠地消失在了人群外。' },
             { type: 'dialogue', speaker: '栾方棋', text: '……' },
             { type: 'narration', text: '你望着老人挑着担远去的背影，依旧很难想象他召唤瑞兽的样子。来了半天什么有用的信息都没问出来，你沉默了一会儿，决定出门找找情报。' },
@@ -529,21 +481,21 @@
             { type: 'narration', text: '一般来说引渡人的工作晚上会更方便执行，且更多情况下，引魂的地方根本就看不到人，从来没出现过现在这种被人围观的场面。' },
             { type: 'narration', text: '由于引渡人的身份特殊性，他们在人间引魂从不藏着掖着，直接暴露身份的不在少数，反正过后普通人也会被抹除记忆，倒是十分省事。想清楚这一点后，你埋头往门外走。刚抬脚跨出客栈大门，却见不远处同样头戴斗笠脸披面纱的女人。' },
             { type: 'narration', text: '那女人一眼便看到了你。目光相接的瞬间，她一把推开人群，快步上前拉住你的衣袖。' },
-            { type: 'dialogue', speaker: '冉舟', text: '（低声）“栾方棋？你也……接到这个任务了？”' },
+            { type: 'dialogue', speaker: '冉舟', text: '（低声）栾方棋？你也……接到这个任务了？' },
             { type: 'narration', text: '来者正是冉舟，是你来自地府的同门师姐，席位比你高一级，但实力远远不止高一级。' },
             { type: 'narration', text: '你将斗笠取下，望着面前的人，同样非常震惊。' },
-            { type: 'dialogue', speaker: '栾方棋', text: '“难道你也是？？”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '难道你也是？？' },
             { type: 'narration', text: '两人对视一眼，无需多言，极为默契地从兜里掏出一张被雨水浸得有些皱巴的纸，上面赫然写着同样冰冷简洁的字句：京城郊外，无涯村，冤魂收束。归终殿派发。' },
             { type: 'dialogue', speaker: '栾方棋', text: '……' },
             { type: 'dialogue', speaker: '冉舟', text: '……' },
             { type: 'dialogue', speaker: '栾方棋', text: '（早知道有人来我就不来了。）', inner: true },
             { type: 'narration', text: '两人相对无言，周围的人瞧见俩衣着怪异的人立在街头，审视的目光愈发炽烈，时不时对二人的打扮评头论足，猜测他们的身份。' },
             { type: 'narration', text: '冉舟默不作声地将纸揣回怀里，一把拉住栾方棋的胳膊，将他扯到路旁一棵歪脖子老槐树下，确认避开了人群才叹气道——' },
-            { type: 'dialogue', speaker: '冉舟', text: '“归终殿那‘十全十美’的编制……这次竟舍得派两位正式引渡人同来？看来这无涯村的钉子户怕是不好拔啊。”' },
-            { type: 'narration', text: '归终殿编制仅限十位引渡人，据传是六殿下对“十全十美”的莫名执念。平日任务堆积如山，人手捉襟见肘都是常态。' },
+            { type: 'dialogue', speaker: '冉舟', text: '归终殿那「十全十美」的编制……这次竟舍得派两位正式引渡人同来？看来这无涯村的钉子户怕是不好拔啊。' },
+            { type: 'narration', text: '归终殿编制仅限十位引渡人，据传是六殿下对「十全十美」的莫名执念。平日任务堆积如山，人手捉襟见肘都是常态。' },
             { type: 'narration', text: '一开始，归终殿的建立是为了处理那些阴差不便插手，滞留人间的麻烦魂魄。也因此，引渡人成了地府最特殊的一类人——拥有实体，能流血受伤，却又非纯粹的凡人肉身，可自由穿梭阴阳，调动阴气法力。' },
             { type: 'narration', text: '大概是因为后来发现这随意建立的临时收容所相当的好用，便一直延续至今，存续了近四百年。' },
-            { type: 'narration', text: '你每次路过归终殿都能瞥见殿内引契堆积如山，高可及梁。从前的你并不知道为什么引渡人永远只有十个，直到殿内的某位前辈告诉你——这“十”的限制，是卞城王殿下对“精简机构”的独特理解。' },
+            { type: 'narration', text: '你每次路过归终殿都能瞥见殿内引契堆积如山，高可及梁。从前的你并不知道为什么引渡人永远只有十个，直到殿内的某位前辈告诉你——这「十」的限制，是卞城王殿下对「精简机构」的独特理解。' },
             { type: 'narration', text: '后来许是殿下自己也看不过眼，才大发慈悲增设了一批打杂的小引渡人，聊作补充。但正式的引渡人，依旧只有十个。物以稀为贵，像现在这种连续派出两个正式引渡人解决同一个问题是极度少见的，一般都是重大事件。' },
             { type: 'narration', text: '所以两人在见面时都不约而同的捏了一把冷汗，颇有种英勇赴死的感慨。' },
             { type: 'narration', text: '不情愿归不情愿，任务还是要做的，在简单了解了前后情况之后，两人有了共同的决定：先去城里买件衣裳。' },
@@ -560,8 +512,6 @@
         let isEnded = false;
 
         // ===== DOM =====
-        const startScreen = document.getElementById('startScreen');
-        const gameScreen = document.getElementById('gameScreen');
         const narrationBox = document.getElementById('narrationBox');
         const narrationText = document.getElementById('narrationText');
         const choiceBox = document.getElementById('choiceBox');
@@ -570,7 +520,7 @@
         const dialogueText = document.getElementById('dialogueText');
         const clickLayer = document.getElementById('clickLayer');
         const clickHint = document.getElementById('clickHint');
-        const backBtn = document.getElementById('backBtn');
+        const stepBackBtn = document.getElementById('stepBackBtn');
 
         // ===== 初始化主题 =====
         (function() {
@@ -602,10 +552,7 @@
         }
 
         // ===== 游戏控制 =====
-        function startGame() {
-            startScreen.style.display = 'none';
-            gameScreen.style.display = 'block';
-            backBtn.style.display = 'flex';
+        function initGame() {
             historyStack = [];
             currentIdx = 0;
             isEnded = false;
@@ -615,14 +562,12 @@
         function showStep(idx) {
             if (idx < 0 || idx >= script.length) return;
 
-            // 记录历史（避免重复记录同一步）
             if (historyStack[historyStack.length - 1] !== idx) {
                 historyStack.push(idx);
             }
             currentIdx = idx;
             const node = script[idx];
 
-            // 处理跳转节点（自动跳过，不渲染）
             if (node.type === 'jump') {
                 showStep(node.next);
                 return;
@@ -630,12 +575,20 @@
 
             // 重置状态
             isChoiceActive = false;
+            isEnded = false;
             clickHint.classList.remove('show');
             clickLayer.classList.remove('disabled');
             choiceBox.classList.remove('active');
             choiceBox.innerHTML = '';
             isTyping = false;
             clearTimeout(typeTimer);
+
+            // 控制上一句按钮：只要历史里不止一步就显示
+            if (historyStack.length > 1) {
+                stepBackBtn.classList.add('show');
+            } else {
+                stepBackBtn.classList.remove('show');
+            }
 
             if (node.type === 'narration') {
                 renderNarration(node);
@@ -647,7 +600,6 @@
         }
 
         function renderNarration(node) {
-            // 隐藏对话，显示旁白
             dialogueBox.classList.remove('active');
             speakerLabel.textContent = '';
             dialogueText.textContent = '';
@@ -655,37 +607,34 @@
             narrationBox.classList.remove('hidden');
             narrationText.textContent = node.text;
             narrationText.classList.remove('show');
-            void narrationText.offsetWidth; // 强制重绘
+            void narrationText.offsetWidth;
             narrationText.classList.add('show');
 
             if (node.ending) {
                 isEnded = true;
                 clickLayer.classList.add('disabled');
+                // 结尾也保留「上一句」按钮（只要历史长度>1）
                 return;
             }
 
-            // 旁白动画结束后显示点击提示
             setTimeout(() => {
                 if (!isChoiceActive && !isEnded) clickHint.classList.add('show');
             }, 600);
         }
 
         function renderDialogue(node) {
-            // 隐藏旁白，显示对话
             narrationBox.classList.add('hidden');
             narrationText.textContent = '';
 
             dialogueBox.classList.add('active');
             speakerLabel.textContent = node.speaker || '未知';
 
-            // 内心OS斜体处理
             if (node.inner) {
                 dialogueText.innerHTML = '<span class="inner-os">' + escapeHtml(node.text) + '</span>';
             } else {
                 dialogueText.innerHTML = escapeHtml(node.text);
             }
 
-            // 打字机效果
             const fullHTML = dialogueText.innerHTML;
             const plainText = node.text;
             dialogueText.innerHTML = '';
@@ -696,13 +645,12 @@
             function typeChar() {
                 if (!isTyping) return;
                 if (i < plainText.length) {
-                    // 简单逐字显示（忽略HTML标签的复杂处理，直接用完整HTML在结束时替换）
                     dialogueText.textContent = plainText.substring(0, i + 1);
                     i++;
                     typeTimer = setTimeout(typeChar, 30);
                 } else {
                     isTyping = false;
-                    dialogueText.innerHTML = fullHTML; // 恢复HTML样式
+                    dialogueText.innerHTML = fullHTML;
                     if (!isChoiceActive && !isEnded) clickHint.classList.add('show');
                 }
             }
@@ -710,7 +658,6 @@
         }
 
         function renderChoice(node) {
-            // 隐藏旁白和对话，只显示选项
             narrationBox.classList.add('hidden');
             narrationText.textContent = '';
             dialogueBox.classList.remove('active');
@@ -720,10 +667,11 @@
             isChoiceActive = true;
             clickLayer.classList.add('disabled');
             clickHint.classList.remove('show');
+            stepBackBtn.classList.remove('show');
             choiceBox.classList.add('active');
             choiceBox.innerHTML = '';
 
-            node.choices.forEach((choice, index) => {
+            node.choices.forEach((choice) => {
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn';
                 btn.textContent = choice.text;
@@ -740,7 +688,6 @@
             if (isChoiceActive || isEnded) return;
 
             if (isTyping) {
-                // 跳过打字机
                 isTyping = false;
                 clearTimeout(typeTimer);
                 const node = script[currentIdx];
@@ -755,7 +702,6 @@
                 return;
             }
 
-            // 进入下一步
             const nextIdx = currentIdx + 1;
             if (nextIdx < script.length) {
                 showStep(nextIdx);
@@ -763,21 +709,11 @@
         }
 
         function goBack() {
-            if (historyStack.length <= 1) {
-                // 返回开始界面
-                gameScreen.style.display = 'none';
-                startScreen.style.display = 'block';
-                backBtn.style.display = 'none';
-                historyStack = [];
-                return;
-            }
+            if (historyStack.length <= 1) return;
 
-            // 弹出当前
             historyStack.pop();
             const prevIdx = historyStack[historyStack.length - 1];
-
-            // 重新渲染上一步（不加入历史）
-            historyStack.pop(); // 先移除，因为showStep会重新加入
+            historyStack.pop();
             showStep(prevIdx);
         }
 
@@ -786,6 +722,8 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        document.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
