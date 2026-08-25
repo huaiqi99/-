@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归终殿 · 引契</title>
+    <style>
+        :root {
+            --bg-body: #e8e0d5;
+            --bg-paper: #f6f0e7;
+            --bg-card: #fcf8f0;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --border-light: #d5c8b8;
+            --border-card: #c4b4a0;
+            --shadow: 0 8px 32px rgba(44, 36, 30, 0.12);
+            --radius: 12px;
+            --font: "Courier New", "Source Code Pro", "PingFang SC", monospace;
+            --transition: 0.3s ease;
+            --accent: #8a2a1a;
+            --accent-soft: rgba(138, 42, 26, 0.06);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1a1614;
+            --bg-paper: #24201c;
+            --bg-card: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
+            --border-light: #35302a;
+            --border-card: #4a443e;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding: 0 16px 30px 16px;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .float-group {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .float-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 6px 14px 6px 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            letter-spacing: 0.3px;
+            text-decoration: none;
+        }
+
+        .float-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .float-btn .icon { font-size: 0.9rem; }
+
+        #app {
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 0 0 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .medical-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius);
+            padding: 24px 28px 30px 28px;
+            box-shadow: var(--shadow);
+            position: relative;
+            width: 100%;
+            animation: cardIn 0.45s ease forwards;
+        }
+
+        @keyframes cardIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .medical-header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-card);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+
+        .medical-header .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .medical-header .sub {
+            font-size: 0.75rem;
+            color: var(--text-muted-light);
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* ===== 开始界面 ===== */
+        #startScreen .intro-body {
+            font-size: 0.88rem;
+            line-height: 2.2;
+            color: var(--text-secondary);
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        #startScreen .intro-body p {
+            text-indent: 2em;
+            margin-bottom: 8px;
+        }
+
+        #startScreen .divider {
+            text-align: center;
+            color: var(--text-muted-light);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            margin: 16px 0;
+        }
+
+        .start-btn {
+            display: inline-block;
+            padding: 12px 36px;
+            border-radius: 6px;
+            border: 1px solid var(--accent);
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all var(--transition);
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .start-btn:hover {
+            background: var(--accent);
+            color: var(--bg-card);
+        }
+
+        /* ===== 游戏界面 ===== */
+        #gameScreen { display: none; }
+
+        .game-card {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 旁白区 */
+        .narration-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            padding: 12px 8px;
+            transition: opacity 0.4s ease;
+        }
+
+        .narration-box.hidden { opacity: 0; pointer-events: none; }
+
+        .narration-text {
+            font-size: 0.95rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            text-indent: 2em;
+            width: 100%;
+            opacity: 0;
+        }
+
+        .narration-text.show {
+            animation: narrFadeIn 0.6s ease forwards;
+        }
+
+        @keyframes narrFadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 选项区 */
+        .choice-box {
+            padding: 16px 12px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            animation: cardIn 0.4s ease forwards;
+        }
+
+        .choice-box.active { display: flex; }
+
+        .choice-btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            background: var(--bg-paper);
+            color: var(--text-secondary);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-btn::before {
+            content: "▸ ";
+            color: var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding-left: 20px;
+        }
+
+        .choice-btn:hover::before { opacity: 1; }
+
+        /* 对话框区 */
+        .dialogue-box {
+            border-top: 1px solid var(--border-light);
+            padding-top: 16px;
+            margin-top: auto;
+            min-height: 120px;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dialogue-box.active { display: flex; }
+
+        .speaker-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speaker-label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .dialogue-text {
+            font-size: 0.92rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            min-height: 3em;
+        }
+
+        .dialogue-text .inner-os {
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        /* 点击推进提示 */
+        .click-hint {
+            position: absolute;
+            bottom: 12px;
+            right: 20px;
+            font-size: 0.65rem;
+            color: var(--text-muted-light);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        .click-hint.show { opacity: 0.6; animation: hintBlink 1.5s infinite; }
+
+        @keyframes hintBlink {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        /* 推进点击层（选项出现时禁用） */
+        .click-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        .click-layer.disabled { pointer-events: none; display: none; }
+
+        /* 结束标记 */
+        .ending-mark {
+            text-align: center;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 4px;
+            font-size: 1rem;
+            padding: 40px 0;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 0 10px 20px 10px; }
+            .medical-card { padding: 18px 16px 22px 16px; }
+            .medical-header .title { font-size: 0.95rem; }
+            .narration-text { font-size: 0.88rem; line-height: 1.9; }
+            .dialogue-text { font-size: 0.85rem; }
+            .choice-btn { font-size: 0.8rem; padding: 10px 12px; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
+        }
+
+        @media (max-width: 420px) {
+            .medical-card { padding: 14px 12px 18px 12px; }
+            .narration-text { font-size: 0.85rem; }
+            .dialogue-text { font-size: 0.82rem; }
+            .choice-btn { font-size: 0.78rem; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <div class="float-group">
+        <button class="float-btn" id="backBtn" style="display:none;" onclick="goBack()">
+            <span class="icon">←</span> 返回
+        </button>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span class="icon">🌙</span> 夜间
+        </button>
+    </div>
+
+    <div id="app">
+        <!-- 开始界面 -->
+        <div id="startScreen">
+            <div class="medical-card" style="text-align:center;">
+                <div class="medical-header">
+                    <div class="title">｜ 归终殿 · 引契 ｜</div>
+                    <div class="sub">THE GUIDING CONTRACT · CHAPTER 01</div>
+                </div>
+                <div class="divider">═══════════════════════════════════════</div>
+                <div class="intro-body">
+                    <p>你叫栾方棋，地府归终殿末席引渡人。说好听是"引渡亡魂"，说难听就是给地府收拾烂摊子的临时工。今天你捏着一张皱巴巴的引契，站在京城郊外无涯村的村口。上面写着："冤魂收束，滞留超两年。"——翻译成人话就是：村里闹鬼闹了两年没人管，轮到你了。</p>
+                    <p>你带着自己的破铜烂铁来到无涯村，看着村口其乐融融的丰收景象，心想：这破班不上也罢。但你也清楚，不上的话，下个月的引契会堆成山砸你脸上。</p>
+                </div>
+                <div class="divider">═══════════════════════════════════════</div>
+                <button class="start-btn" onclick="startGame()">【 开 始 游 戏 】</button>
+            </div>
+        </div>
+
+        <!-- 游戏界面 -->
+        <div id="gameScreen">
+            <div class="medical-card game-card" id="gameCard">
+                <div class="medical-header" style="margin-bottom: 12px; border-bottom-width: 1px;">
+                    <div class="title">｜ 节点一 · 醉梦客栈 ｜</div>
+                    <div class="sub">CHAPTER 01 · THE DREAM INN</div>
+                </div>
+
+                <div class="narration-box" id="narrationBox">
+                    <div class="narration-text" id="narrationText"></div>
+                </div>
+
+                <div class="choice-box" id="choiceBox"></div>
+
+                <div class="dialogue-box" id="dialogueBox">
+                    <div class="speaker-label" id="speakerLabel"></div>
+                    <div class="dialogue-text" id="dialogueText"></div>
+                </div>
+
+                <div class="click-hint" id="clickHint">◆ 点击继续 ◆</div>
+                <div class="click-layer" id="clickLayer" onclick="handleClick()"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 剧情脚本 =====
+        const script = [
+            { type: 'narration', text: '你推开醉梦客栈的门时，没有野鬼遍地，也没有阴风阵阵。大堂里坐满了人，划拳的、喝酒的、聊天的，喧闹得像个庙会。' },
+            { type: 'narration', text: '你低头看了看自己这身黑衣长袍，现在站在一群短打布衣的村民中间，像个误入菜市场的送葬队伍领班。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（地府那帮文书是不是又把卷宗拿反了？）', inner: true },
+            { type: 'narration', text: '你选了个靠门的角落坐下，小二擦了两下桌面就算招呼过了，你给自己倒了杯酒，开始盘算任期还剩多少年。' },
+            { type: 'narration', text: '正走着神，一阵汗味突然糊到了你面前。你抬头，看见一张络腮胡几乎遮住半张脸的粗糙面孔。男人嘿嘿笑着，眼睛在你身上上下扫了好几下。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“这位小哥，我看你有些面生啊，家住何方？”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（大哥，我只是个路过的打工人。你手离我酒杯远点。）', inner: true },
+            { type: 'narration', text: '一只满是黑毛的手伸过来，伸手就要抓你的酒杯。你低头看了看自己这只握住酒杯的手，又看了看他那张热切的脸，心里犹豫万分，脑子里做好了最坏的打算。' },
+            { type: 'choice', choices: [
+                { text: '推过酒杯：“家住京城。”', next: 9 },
+                { text: '坐直身子：“我是来引渡亡魂的。”', next: 26 }
+            ]},
+
+            // ===== 分支A (9-25) =====
+            { type: 'narration', text: '你按下把酒杯抢回来的冲动，反而将它朝大汉的方向推了推，脸上挤出个还算客气的笑。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '“家住京城。”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“京城好啊，那小兄弟来这醉梦客栈，也是来……咳咳，寻那‘杯中良缘’的？”' },
+            { type: 'narration', text: '他说“杯中良缘”四个字时，眉毛几乎要飞进头发里，语气百转千回，硬生生把一句普通的话说成了接头暗号。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（何意味。）', inner: true },
+            { type: 'narration', text: '你含糊地“嗯”了一声，低头假装在喝酒，打算糊弄两句就找借口走人。但大汉显然把你的含糊当成了默认。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“实不相瞒，哥哥我在这醉梦客栈蹲了三天了，就等一个合眼缘的。”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（你蹲三天关我什么事？）', inner: true },
+            { type: 'narration', text: '他挪了挪屁股，板凳朝你这边又凑了半尺。你不动声色地往后靠了靠，他却不依不饶地又凑近了一些。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“小兄弟，你觉得哥哥我怎么样？你方才说家住京城，那想必是见过大世面的。哥哥我不求别的，就想找个踏实人搭伙过日子——咱俩……是不是挺有缘的？”' },
+            { type: 'narration', text: '你触电般想抽回手，王铁柱却握得更紧，甚至用拇指摩挲你的手背，含情脉脉地看着你。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“京城来的公子就是懂规矩。不如今晚就……”' },
+            { type: 'narration', text: '你猛地往后一仰，差点连人带椅翻过去。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '“兄台且慢！实不相瞒，我是出家人。云游道士，不近女色，也……不近男色。而且身患隐疾，不宜结缘。”' },
+            { type: 'narration', text: '王铁柱缓缓松开你的手腕，脸上的表情从狂喜转为呆滞，再从呆滞转为羞愤。他猛地一拍桌子。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“好你个京城来的！先递酒给我，转头又说自己是道士！戏弄我王铁柱是吧？”' },
+            { type: 'narration', text: '周围酒客“唰”地一下全看了过来，有人开始窃窃私语。你低头看着地上那只被拍落的杯子，沉默良久。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（活得久真是什么都能见着。）', inner: true },
+            { type: 'jump', next: 38 },
+
+            // ===== 分支B (26-37) =====
+            { type: 'narration', text: '你坐直了身子，面不改色，一字一顿。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '“我是来引渡无涯村亡魂的。”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '（刚喝了口酒还没咽下去，闻言竟是直接喷了出来）“你说什么？那你怎么不早说，还把酒递给我干什么？你想害我啊！”' },
+            { type: 'narration', text: '小二凑过来为你解释：在醉梦客栈，喝下对方的酒就是要寻你做“有缘人”的意思。您既不阻止，还主动把酒送过去，那不就是把自己的情缘送过去了吗？' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（活得久真是什么都能见着。）', inner: true },
+            { type: 'narration', text: '王铁柱似乎是觉得十分晦气，转头就走了，随便找了张桌子坐下，开始向周围人讲述自己的经历。' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“你们是没看见啊，我看那小子穿得跟个送葬的似的，模样还算周正，又一个人坐了这么久，还以为他是个懂规矩的呢！”' },
+            { type: 'dialogue', speaker: '王铁柱', text: '“我好心过去搭话，结果他竟然说什么，他是个道士，还要勾我的魂！”' },
+            { type: 'narration', text: '王铁柱的咒骂声渐渐远去，而你面无表情地喝着酒，将一切世俗的语言都隔绝在外。脸皮而已，无需在意。' },
+            { type: 'narration', text: '你站起来，若无其事地开始找人搭话，试图询问最近的村子有没有发生什么灵异事件。经此一事后，众人看你的目光多少带了点微妙的意味。' },
+            { type: 'narration', text: '你果断放弃了与这群活在太平盛世表象下的村民深入探讨“亡魂滞留”的学术问题。人群聚得快，散得也快。' },
+            { type: 'narration', text: '你刚松了口气，正要出门寻找线索，一位挑着空担子的老者就扒开人群走了进来。' },
+
+            // ===== 汇合点 (38-52) =====
+            { type: 'dialogue', speaker: '老者', text: '“后生，穿得这般别致，可是要去收妖？”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '“正是，老人家可是听说了村中哪里不太平？”' },
+            { type: 'dialogue', speaker: '老者', text: '“收妖，老夫年轻时可是此道翘楚！你会夜观天象否，或者会召唤亡灵，借尸还魂？看得出我气运如何，是否印堂发黑？还是说你会呼风唤雨，召集各方瑞兽前来祈福？”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（何意味）“……都不会。”' },
+            { type: 'narration', text: '老者重新捡起地上的担子，语气里满是恨铁不成钢的嫌弃。' },
+            { type: 'dialogue', speaker: '老者', text: '“嘶……年轻人，道行浅了点啊。我年轻时比这厉害多了都混不上几顿饱饭，如今这世道，可养不起光吃饭不办事的道士！”' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（急病乱投医）“我……我也许会净化土地，收冤魂，保一方平安什么的。”' },
+            { type: 'dialogue', speaker: '老者', text: '“唉，年轻人，道行浅啊，再练练，再练练吧！”' },
+            { type: 'narration', text: '话音未落，人已挑着担晃晃悠悠地消失在了人群外。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '……' },
+            { type: 'narration', text: '你感觉自己厚实的脸皮稍微有点不够用，埋头往门外走。刚抬脚跨出客栈大门，却见不远处同样头戴斗笠脸披面纱的女人。' },
+            { type: 'narration', text: '那女人一眼便看到了你。目光相接的瞬间，她一把推开人群，快步上前拉住你的衣袖。' },
+            { type: 'dialogue', speaker: '冉舟', text: '（低声）“栾方棋？你也……接到这个任务了？”' },
+            { type: 'narration', text: '来者正是冉舟，是你来自地府的同门师姐，席位比你高一级，但实力远远不止高一级。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（早知道有人来我就不来了。）', inner: true },
+            { type: 'dialogue', speaker: '冉舟', text: '“没事，这样我们互相也有个照应。”' },
+            { type: 'narration', text: '你们四目相对，然后默契地从兜里掏出归终殿派发的任务单子。看着这两张一模一样的任务单，你终于发现，这同一件任务，居然被派发给了不同的两位引渡人。' },
+            { type: 'dialogue', speaker: '栾方棋', text: '（……下个月的引契果然还是会堆成山砸我脸上。）', inner: true },
+            { type: 'narration', text: '【节点一 · 完】', ending: true }
+        ];
+
+        // ===== 状态 =====
+        let currentIdx = 0;
+        let historyStack = [];
+        let isTyping = false;
+        let typeTimer = null;
+        let isChoiceActive = false;
+        let isEnded = false;
+
+        // ===== DOM =====
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const narrationBox = document.getElementById('narrationBox');
+        const narrationText = document.getElementById('narrationText');
+        const choiceBox = document.getElementById('choiceBox');
+        const dialogueBox = document.getElementById('dialogueBox');
+        const speakerLabel = document.getElementById('speakerLabel');
+        const dialogueText = document.getElementById('dialogueText');
+        const clickLayer = document.getElementById('clickLayer');
+        const clickHint = document.getElementById('clickHint');
+        const backBtn = document.getElementById('backBtn');
+
+        // ===== 初始化主题 =====
+        (function() {
+            try {
+                const raw = localStorage.getItem('theme');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.value === 'dark') {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    }
+                }
+            } catch (e) {}
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('themeBtn').innerHTML = isDark ?
+                '<span class="icon">☀️</span> 日间' :
+                '<span class="icon">🌙</span> 夜间';
+        })();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            if (newTheme === 'dark') html.setAttribute('data-theme', 'dark');
+            else html.removeAttribute('data-theme');
+            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+            document.getElementById('themeBtn').innerHTML = newTheme === 'dark' ?
+                '<span class="icon">☀️</span> 日间' :
+                '<span class="icon">🌙</span> 夜间';
+        }
+
+        // ===== 游戏控制 =====
+        function startGame() {
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            backBtn.style.display = 'flex';
+            historyStack = [];
+            currentIdx = 0;
+            isEnded = false;
+            showStep(0);
+        }
+
+        function showStep(idx) {
+            if (idx < 0 || idx >= script.length) return;
+
+            // 记录历史（避免重复记录同一步）
+            if (historyStack[historyStack.length - 1] !== idx) {
+                historyStack.push(idx);
+            }
+            currentIdx = idx;
+            const node = script[idx];
+
+            // 处理跳转节点（自动跳过，不渲染）
+            if (node.type === 'jump') {
+                showStep(node.next);
+                return;
+            }
+
+            // 重置状态
+            isChoiceActive = false;
+            clickHint.classList.remove('show');
+            clickLayer.classList.remove('disabled');
+            choiceBox.classList.remove('active');
+            choiceBox.innerHTML = '';
+            isTyping = false;
+            clearTimeout(typeTimer);
+
+            if (node.type === 'narration') {
+                renderNarration(node);
+            } else if (node.type === 'dialogue') {
+                renderDialogue(node);
+            } else if (node.type === 'choice') {
+                renderChoice(node);
+            }
+        }
+
+        function renderNarration(node) {
+            // 隐藏对话，显示旁白
+            dialogueBox.classList.remove('active');
+            speakerLabel.textContent = '';
+            dialogueText.textContent = '';
+
+            narrationBox.classList.remove('hidden');
+            narrationText.textContent = node.text;
+            narrationText.classList.remove('show');
+            void narrationText.offsetWidth; // 强制重绘
+            narrationText.classList.add('show');
+
+            if (node.ending) {
+                isEnded = true;
+                clickLayer.classList.add('disabled');
+                return;
+            }
+
+            // 旁白动画结束后显示点击提示
+            setTimeout(() => {
+                if (!isChoiceActive && !isEnded) clickHint.classList.add('show');
+            }, 600);
+        }
+
+        function renderDialogue(node) {
+            // 隐藏旁白，显示对话
+            narrationBox.classList.add('hidden');
+            narrationText.textContent = '';
+
+            dialogueBox.classList.add('active');
+            speakerLabel.textContent = node.speaker || '未知';
+
+            // 内心OS斜体处理
+            if (node.inner) {
+                dialogueText.innerHTML = '<span class="inner-os">' + escapeHtml(node.text) + '</span>';
+            } else {
+                dialogueText.innerHTML = escapeHtml(node.text);
+            }
+
+            // 打字机效果
+            const fullHTML = dialogueText.innerHTML;
+            const plainText = node.text;
+            dialogueText.innerHTML = '';
+            isTyping = true;
+            clickHint.classList.remove('show');
+
+            let i = 0;
+            function typeChar() {
+                if (!isTyping) return;
+                if (i < plainText.length) {
+                    // 简单逐字显示（忽略HTML标签的复杂处理，直接用完整HTML在结束时替换）
+                    dialogueText.textContent = plainText.substring(0, i + 1);
+                    i++;
+                    typeTimer = setTimeout(typeChar, 30);
+                } else {
+                    isTyping = false;
+                    dialogueText.innerHTML = fullHTML; // 恢复HTML样式
+                    if (!isChoiceActive && !isEnded) clickHint.classList.add('show');
+                }
+            }
+            typeChar();
+        }
+
+        function renderChoice(node) {
+            // 隐藏旁白和对话，只显示选项
+            narrationBox.classList.add('hidden');
+            narrationText.textContent = '';
+            dialogueBox.classList.remove('active');
+            speakerLabel.textContent = '';
+            dialogueText.textContent = '';
+
+            isChoiceActive = true;
+            clickLayer.classList.add('disabled');
+            clickHint.classList.remove('show');
+            choiceBox.classList.add('active');
+            choiceBox.innerHTML = '';
+
+            node.choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    choiceBox.classList.remove('active');
+                    showStep(choice.next);
+                };
+                choiceBox.appendChild(btn);
+            });
+        }
+
+        function handleClick() {
+            if (isChoiceActive || isEnded) return;
+
+            if (isTyping) {
+                // 跳过打字机
+                isTyping = false;
+                clearTimeout(typeTimer);
+                const node = script[currentIdx];
+                if (node.type === 'dialogue') {
+                    if (node.inner) {
+                        dialogueText.innerHTML = '<span class="inner-os">' + escapeHtml(node.text) + '</span>';
+                    } else {
+                        dialogueText.innerHTML = escapeHtml(node.text);
+                    }
+                }
+                clickHint.classList.add('show');
+                return;
+            }
+
+            // 进入下一步
+            const nextIdx = currentIdx + 1;
+            if (nextIdx < script.length) {
+                showStep(nextIdx);
+            }
+        }
+
+        function goBack() {
+            if (historyStack.length <= 1) {
+                // 返回开始界面
+                gameScreen.style.display = 'none';
+                startScreen.style.display = 'block';
+                backBtn.style.display = 'none';
+                historyStack = [];
+                return;
+            }
+
+            // 弹出当前
+            historyStack.pop();
+            const prevIdx = historyStack[historyStack.length - 1];
+
+            // 重新渲染上一步（不加入历史）
+            historyStack.pop(); // 先移除，因为showStep会重新加入
+            showStep(prevIdx);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
