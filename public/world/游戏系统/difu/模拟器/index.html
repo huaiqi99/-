@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>引渡人模拟器 · 归终殿</title>
+<style>
+:root{--bg-body:#1a1614;--bg-card:#24201c;--bg-card-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;}
+[data-theme="light"]{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-card-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;transition:background var(--transition),color var(--transition);overflow:hidden;position:relative;}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
+.float-btn:hover{border-color:var(--accent);color:var(--accent);}
+.container{width:100%;max-width:560px;text-align:center;position:relative;z-index:2;}
+.badge{font-size:0.7rem;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;font-family:var(--font-mono);}
+h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.subtitle{font-size:1rem;color:var(--text-secondary);font-style:italic;margin-bottom:40px;line-height:1.6;}
+.profile-select{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
+.profile-card{background:var(--bg-card);border:2px solid var(--border-card);border-radius:14px;padding:28px 16px;cursor:pointer;transition:all var(--transition);position:relative;}
+.profile-card:hover{transform:translateY(-2px);background:var(--bg-card-hover);}
+.profile-card.active[data-profile="linxiwu"]{border-color:var(--profile-lin);box-shadow:0 0 0 4px rgba(212,154,154,0.12);}
+.profile-card.active[data-profile="luojin"]{border-color:var(--profile-luo);box-shadow:0 0 0 4px rgba(78,90,100,0.12);}
+.profile-card .sym{font-size:1.8rem;margin-bottom:10px;display:block;}
+.profile-card .name{font-size:1.15rem;font-weight:600;margin-bottom:6px;}
+.profile-card .desc{font-size:0.8rem;color:var(--text-muted);line-height:1.5;}
+.start-btn{display:inline-block;width:100%;padding:14px;background:transparent;border:1.5px solid var(--accent);border-radius:24px;color:var(--accent);font-family:var(--font-serif);font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all var(--transition);text-decoration:none;text-align:center;}
+.start-btn:hover{background:var(--accent);color:var(--bg-body);}
+.footer-note{margin-top:24px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.5px;}
+
+/* ===== 粒子层 ===== */
+#particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.particle{position:absolute;bottom:-20px;font-size:12px;color:var(--accent);opacity:0;animation:floatUp linear infinite;will-change:transform,opacity;}
+@keyframes floatUp{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(-110vh) translateX(var(--drift)) rotate(360deg);opacity:0;}}
+
+/* 光晕装饰 */
+.glow{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.08;pointer-events:none;z-index:0;animation:glowPulse 6s ease-in-out infinite alternate;}
+.glow-1{width:300px;height:300px;background:var(--profile-lin);top:10%;left:10%;animation-delay:0s;}
+.glow-2{width:250px;height:250px;background:var(--profile-luo);bottom:15%;right:10%;animation-delay:3s;}
+@keyframes glowPulse{0%{opacity:0.05;transform:scale(1);}100%{opacity:0.12;transform:scale(1.15);}}
+
+@media(max-width:480px){h1{font-size:1.6rem;}.profile-select{gap:12px;}.profile-card{padding:22px 12px;}.subtitle{font-size:0.9rem;margin-bottom:28px;}}
+</style>
+</head>
+<body>
+
+<div class="float-group">
+  <a class="float-btn" href="../index"><span style="margin-right:2px;">←</span> 返回</a>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span id="themeIcon">☀️</span> <span id="themeLabel">日间</span></button>
+</div>
+
+<!-- 光晕背景 -->
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<!-- 粒子层 -->
+<div id="particles"></div>
+
+<div class="container">
+  <div class="badge">◈ 归终殿弟子手册</div>
+  <h1>引渡人模拟器</h1>
+  <p class="subtitle">"从入门弟子到十席之路，你的地府生涯，由你书写。"</p>
+  <div class="profile-select" id="profileSelect">
+    <div class="profile-card active" data-profile="linxiwu" onclick="selectProfile('linxiwu')">
+      <span class="sym">✿</span>
+      <div class="name">林栖梧</div>
+      <div class="desc">符修院助教 · 浮生树血脉<br>双父：林淮 × 栾方棋</div>
+    </div>
+    <div class="profile-card" data-profile="luojin" onclick="selectProfile('luojin')">
+      <span class="sym">✦</span>
+      <div class="name">罗烬</div>
+      <div class="desc">讲武堂弟子 · 刀法传承<br>双父：罗修 × 魏元璟</div>
+    </div>
+  </div>
+  <a href="./命薄.html" class="start-btn">开始人生</a>
+  <div class="footer-note" id="footerNote">当前档案：林栖梧</div>
+</div>
+
+<script>
+(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='light'){document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.removeAttribute('data-theme');}}}catch(e){}})();
+function toggleTheme(){var html=document.documentElement;var isLight=html.getAttribute('data-theme')==='light';var newTheme=isLight?'dark':'light';if(newTheme==='light'){html.setAttribute('data-theme','light');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));updateThemeBtn();}
+function updateThemeBtn(){var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(!icon||!label)return;var isLight=document.documentElement.getAttribute('data-theme')==='light';icon.textContent=isLight?'🌙':'☀️';label.textContent=isLight?'夜间':'日间';}
+function selectProfile(id){localStorage.setItem('activeProfile',id);document.querySelectorAll('.profile-card').forEach(function(c){c.classList.toggle('active',c.dataset.profile===id);});var names={linxiwu:'林栖梧',luojin:'罗烬'};var note=document.getElementById('footerNote');if(note)note.textContent='当前档案：'+names[id];}
+(function(){var saved=localStorage.getItem('activeProfile')||'linxiwu';selectProfile(saved);updateThemeBtn();})();
+
+/* ===== 粒子生成 ===== */
+var particleSymbols=['✦','✿','◈','·','嘻嘻','❖'];
+var particleColors=['#D49A9A','#c4b4a0','#8a8078','#4E5A64','#b8aea4'];
+function spawnParticles(){var container=document.getElementById('particles');if(!container)return;for(var i=0;i<28;i++){var p=document.createElement('span');p.className='particle';p.textContent=particleSymbols[Math.floor(Math.random()*particleSymbols.length)];p.style.left=Math.random()*100+'%';p.style.fontSize=(Math.random()*10+8)+'px';p.style.color=particleColors[Math.floor(Math.random()*particleColors.length)];p.style.setProperty('--drift',((Math.random()-0.5)*120)+'px');var duration=Math.random()*8+6;p.style.animationDuration=duration+'s';p.style.animationDelay=(Math.random()*duration)+'s';container.appendChild(p);}}
+spawnParticles();
+</script>
+
+</body>
+</html>
