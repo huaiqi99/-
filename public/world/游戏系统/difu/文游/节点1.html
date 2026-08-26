@@ -43,13 +43,12 @@
             color: var(--text-primary);
             transition: background var(--transition), color var(--transition);
             min-height: 100vh;
-            padding: 0 16px 30px 16px;
+            padding: 0 20px 30px 20px;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow-x: hidden;
         }
-        /* 背景纹理 + 暗角 */
         .bg-texture {
             position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.5;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
@@ -79,13 +78,14 @@
         .float-btn .icon { font-size: 0.9rem; }
 
         #app {
-            max-width: 860px; margin: 0 auto; width: 100%;
+            max-width: 1000px; margin: 0 auto; width: 100%;
             padding: 20px 0 0 0; flex: 1; display: flex; flex-direction: column;
         }
         .medical-card {
             background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius);
             padding: 0; box-shadow: var(--shadow); position: relative; width: 100%;
             animation: cardIn 0.45s ease forwards; overflow: hidden;
+            min-height: 82vh;
         }
         @keyframes cardIn {
             0% { opacity: 0; transform: translateY(12px); }
@@ -94,37 +94,37 @@
 
         /* 顶部信息栏 */
         .top-bar {
-            padding: 12px 24px 10px 24px;
+            padding: 14px 28px 12px 28px;
             border-bottom: 1px solid var(--border-light);
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
             flex-wrap: wrap;
         }
         .scene-tag {
-            font-size: 0.85rem; color: var(--accent); font-weight: 700;
+            font-size: 0.9rem; color: var(--accent); font-weight: 700;
             letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
         }
-        .progress-wrap { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
+        .progress-wrap { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end; }
         .progress-bar {
-            width: 120px; height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden;
+            width: 140px; height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden;
         }
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
-        .progress-text { font-size: 0.7rem; color: var(--text-muted-light); min-width: 32px; text-align: right; }
+        .progress-text { font-size: 0.75rem; color: var(--text-muted-light); min-width: 36px; text-align: right; }
 
         .medical-header {
             text-align: center; border-bottom: 1px solid var(--border-card);
-            padding: 14px 20px 12px 20px;
+            padding: 16px 24px 14px 24px;
         }
-        .medical-header .title { font-size: 1.25rem; font-weight: 700; letter-spacing: 3px; color: var(--text-primary); }
-        .medical-header .sub { font-size: 0.82rem; color: var(--text-muted-light); letter-spacing: 1px; margin-top: 2px; }
+        .medical-header .title { font-size: 1.3rem; font-weight: 700; letter-spacing: 3px; color: var(--text-primary); }
+        .medical-header .sub { font-size: 0.85rem; color: var(--text-muted-light); letter-spacing: 1px; margin-top: 2px; }
 
         /* 内容区 */
-        .game-body { padding: 16px 28px 20px 28px; position: relative; }
+        .game-body { padding: 20px 32px 24px 32px; position: relative; flex: 1; display: flex; flex-direction: column; }
 
-        .narration-box { padding: 10px 0; transition: opacity 0.4s ease; }
+        .narration-box { padding: 14px 0; transition: opacity 0.4s ease; flex: 1; display: flex; align-items: center; }
         .narration-box.hidden { opacity: 0; pointer-events: none; height: 0; padding: 0; overflow: hidden; }
         .narration-text {
-            font-size: 1.15rem; line-height: 2; color: var(--text-secondary);
-            text-indent: 2em; opacity: 0;
+            font-size: 1.2rem; line-height: 2.1; color: var(--text-secondary);
+            text-indent: 2em; opacity: 0; width: 100%;
         }
         .narration-text.show { animation: narrFadeIn 0.6s ease forwards; }
         @keyframes narrFadeIn {
@@ -133,34 +133,34 @@
         }
 
         .choice-box {
-            padding: 12px 0 16px 0; display: none; flex-direction: column; gap: 10px;
+            padding: 16px 0 20px 0; display: none; flex-direction: column; gap: 12px;
             animation: cardIn 0.4s ease forwards;
         }
         .choice-box.active { display: flex; }
         .choice-btn {
-            width: 100%; padding: 14px 18px; border: 1px solid var(--border-card); border-radius: 8px;
+            width: 100%; padding: 16px 20px; border: 1px solid var(--border-card); border-radius: 8px;
             background: var(--bg-paper); color: var(--text-secondary); font-family: var(--font);
-            font-size: 1.0rem; line-height: 1.6; cursor: pointer; transition: all var(--transition);
+            font-size: 1.05rem; line-height: 1.6; cursor: pointer; transition: all var(--transition);
             text-align: left; position: relative; overflow: hidden;
         }
         .choice-btn::before { content: "▸ "; color: var(--accent); opacity: 0; transition: opacity 0.2s; }
-        .choice-btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); padding-left: 22px; }
+        .choice-btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); padding-left: 24px; }
         .choice-btn:hover::before { opacity: 1; }
 
         .dialogue-box {
-            border-top: 1px solid var(--border-light); padding: 16px 0 8px 0;
-            display: none; flex-direction: column; gap: 6px;
+            border-top: 1px solid var(--border-light); padding: 18px 0 10px 0;
+            display: none; flex-direction: column; gap: 8px; margin-top: auto;
         }
         .dialogue-box.active { display: flex; }
         .speaker-label {
-            font-size: 0.95rem; font-weight: 700; color: var(--accent); letter-spacing: 1px;
+            font-size: 1.0rem; font-weight: 700; color: var(--accent); letter-spacing: 1px;
             display: flex; align-items: center; gap: 8px;
         }
         .speaker-label::before {
             content: ""; display: inline-block; width: 8px; height: 8px;
             background: var(--accent); border-radius: 50%; opacity: 0.6;
         }
-        .dialogue-text { font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary); min-height: 2.5em; }
+        .dialogue-text { font-size: 1.15rem; line-height: 1.9; color: var(--text-secondary); min-height: 2.5em; }
         .dialogue-text .inner-os { font-style: italic; color: var(--text-muted); }
 
         /* 关键词 */
@@ -169,23 +169,23 @@
 
         /* 底部操作栏 */
         .bottom-bar {
-            border-top: 1px solid var(--border-light); padding: 10px 28px 14px 28px;
+            border-top: 1px solid var(--border-light); padding: 12px 32px 16px 32px;
             display: flex; align-items: center; justify-content: space-between; position: relative;
         }
         .step-back-btn {
-            font-size: 0.8rem; color: var(--text-muted-light); cursor: pointer;
+            font-size: 0.85rem; color: var(--text-muted-light); cursor: pointer;
             transition: all 0.3s; letter-spacing: 1px; opacity: 0; pointer-events: none; user-select: none;
         }
         .step-back-btn.show { opacity: 0.6; pointer-events: auto; }
         .step-back-btn:hover { color: var(--accent); opacity: 1; }
         .auto-play-toggle {
-            font-size: 0.8rem; color: var(--text-muted-light); cursor: pointer;
+            font-size: 0.85rem; color: var(--text-muted-light); cursor: pointer;
             transition: all 0.3s; letter-spacing: 1px; user-select: none;
             display: flex; align-items: center; gap: 4px;
         }
         .auto-play-toggle:hover, .auto-play-toggle.active { color: var(--accent); }
         .click-hint {
-            font-size: 0.8rem; color: var(--text-muted-light); opacity: 0;
+            font-size: 0.85rem; color: var(--text-muted-light); opacity: 0;
             transition: opacity 0.3s; pointer-events: none; letter-spacing: 1px;
         }
         .click-hint.show { opacity: 0.6; animation: hintBlink 1.5s infinite; }
@@ -196,7 +196,7 @@
 
         /* 左侧日志面板 */
         .log-panel {
-            position: fixed; left: 0; top: 0; bottom: 0; width: 340px;
+            position: fixed; left: 0; top: 0; bottom: 0; width: 360px;
             background: var(--bg-card); border-right: 1px solid var(--border-card);
             z-index: 200; transform: translateX(-100%);
             transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -208,11 +208,11 @@
             opacity: 0; pointer-events: none; transition: opacity 0.35s;
         }
         .log-overlay.show { opacity: 1; pointer-events: auto; }
-        .log-header { font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
-        .log-list { flex: 1; overflow-y: auto; font-size: 0.9rem; }
+        .log-header { font-size: 0.95rem; font-weight: 700; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
+        .log-list { flex: 1; overflow-y: auto; font-size: 0.92rem; }
         .log-entry { padding: 10px 0; border-bottom: 1px solid var(--border-light); }
         .log-entry:last-child { border-bottom: none; }
-        .log-speaker { font-size: 0.8rem; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+        .log-speaker { font-size: 0.82rem; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
         .log-text { color: var(--text-secondary); line-height: 1.6; }
         .log-close { align-self: flex-end; background: none; border: none; font-size: 1.2rem; color: var(--text-muted-light); cursor: pointer; margin-bottom: 8px; }
         .log-close:hover { color: var(--accent); }
@@ -282,31 +282,32 @@
 
         @media (max-width: 700px) {
             body { padding: 0 10px 20px 10px; }
+            .medical-card { min-height: 78vh; }
             .medical-header .title { font-size: 1.1rem; }
             .medical-header .sub { font-size: 0.78rem; }
-            .game-body { padding: 14px 18px 18px 18px; }
-            .narration-text { font-size: 1.05rem; line-height: 1.9; }
-            .dialogue-text { font-size: 1.0rem; }
-            .choice-btn { font-size: 0.95rem; padding: 12px 14px; }
-            .speaker-label { font-size: 0.88rem; }
+            .game-body { padding: 14px 20px 18px 20px; }
+            .narration-text { font-size: 1.08rem; line-height: 1.9; }
+            .dialogue-text { font-size: 1.02rem; }
+            .choice-btn { font-size: 0.98rem; padding: 13px 16px; }
+            .speaker-label { font-size: 0.9rem; }
             .float-group { top: 12px; right: 12px; gap: 6px; }
             .float-btn { padding: 5px 11px 5px 9px; font-size: 0.7rem; }
-            .top-bar { padding: 10px 16px 8px 16px; }
-            .scene-tag { font-size: 0.78rem; }
-            .progress-bar { width: 80px; }
-            .bottom-bar { padding: 8px 18px 12px 18px; }
-            .step-back-btn, .auto-play-toggle, .click-hint { font-size: 0.75rem; }
-            .log-panel { width: 280px; padding: 16px; }
+            .top-bar { padding: 10px 18px 8px 18px; }
+            .scene-tag { font-size: 0.8rem; }
+            .progress-bar { width: 100px; }
+            .bottom-bar { padding: 10px 20px 14px 20px; }
+            .step-back-btn, .auto-play-toggle, .click-hint { font-size: 0.78rem; }
+            .log-panel { width: 290px; padding: 16px; }
             .save-grid { grid-template-columns: 1fr; }
             .modal-card { padding: 18px; }
         }
         @media (max-width: 420px) {
             .medical-header .title { font-size: 1.0rem; }
-            .narration-text { font-size: 1.0rem; }
-            .dialogue-text { font-size: 0.95rem; }
-            .choice-btn { font-size: 0.9rem; padding: 10px 12px; }
+            .narration-text { font-size: 1.02rem; }
+            .dialogue-text { font-size: 0.98rem; }
+            .choice-btn { font-size: 0.92rem; padding: 11px 14px; }
             .speaker-label { font-size: 0.85rem; }
-            .log-panel { width: 240px; }
+            .log-panel { width: 250px; }
         }
     </style>
 </head>
@@ -315,6 +316,7 @@
     <div class="bg-vignette"></div>
 
     <div class="float-group">
+        <button class="float-btn" id="bgmBtn" onclick="GameEngine.toggleBgm()"><span class="icon">🔇</span> BGM</button>
         <button class="float-btn" onclick="GameEngine.toggleLog()"><span class="icon">📋</span> 日志</button>
         <button class="float-btn" onclick="GameEngine.openSettings()"><span class="icon">⚙️</span> 设置</button>
         <button class="float-btn" onclick="GameEngine.openSaveMenu()"><span class="icon">💾</span> 存档</button>
@@ -439,6 +441,7 @@
 
         // ===== 剧情脚本 =====
         const script = [
+= [
             { type: 'narration', text: '你推开醉梦客栈的门时，没有野鬼遍地，也没有阴风阵阵。大堂里坐满了人，划拳的、喝酒的、聊天的，喧闹得像个庙会。' },
             { type: 'narration', text: '你低头看了看自己这身黑衣长袍，现在站在一群短打布衣的村民中间，像个误入菜市场的送葬队伍领班。' },
             { type: 'dialogue', speaker: '栾方棋', text: '（地府那帮文书是不是又把卷宗拿反了？）', inner: true },
@@ -558,9 +561,26 @@
             { type: 'dialogue', speaker: '栾方棋', text: '（……下个月的引契果然还是会堆成山砸我脸上。）', inner: true },
             { type: 'narration', text: '【节点一 · 完】', ending: true }
         ];
-
-        // ===== 初始化 =====
-        document.addEventListener('DOMContentLoaded', () => {
+const keywords = {
+            '归终殿': { desc: '地府六殿卞城王设立的专门机构，负责引渡滞留人间的冤魂。编制仅限十位正式引渡人，外加一批打杂的小引渡人。存续近四百年。' },
+            '引渡人': { desc: '归终殿的核心执行人员。拥有实体，能流血受伤，却又非纯粹的凡人肉身，可自由穿梭阴阳，调动阴气法力。主要职责是收束滞留人间的冤魂。' },
+            '引契': { desc: '归终殿派发任务的凭证，类似人间的公文。引渡人凭引契前往指定地点收束冤魂。任务堆积如山，高可及梁。' },
+            '枉死城': { desc: '地府收容因天灾人祸不能寿终正寝的魂魄之所。部分魂魄在前往枉死城的途中被漏掉，滞留在人间成为孤魂野鬼。' },
+            '卞城王': { desc: '地府第六殿阎王，归终殿的创立者。对「十全十美」有莫名执念，因此正式引渡人编制仅限十位。' },
+            '杯中良缘': { desc: '醉梦客栈特有的风俗。喝下对方递来的酒，即表示愿意与对方结为「有缘人」。' },
+            '冤魂': { desc: '因非正常死亡而滞留人间的魂魄。停留时间越长，成为怨魂乃至厉鬼的几率越大。' }
+        };
+const sceneMap = {
+            0: '🏮 醉梦客栈 · 大堂',
+            67: '🌾 无涯村 · 村口',
+            88: '🌳 歪脖子老槐树下'
+        };
+const bgmMap = {
+            // 0: './bgm/tavern.mp3',
+            // 67: './bgm/village.mp3',
+            // 88: './bgm/mystery.mp3'
+        };
+document.addEventListener('DOMContentLoaded', () => {
             // 检查是否有读档参数
             const params = new URLSearchParams(window.location.search);
             const loadSlot = params.get('load');
@@ -573,12 +593,6 @@
                 chapterName: '节点一 · 醉梦客栈',
                 chapterId: '节点1'
             });
-
-            // 如果有读档参数，执行读档
-            if (loadSlot) {
-                setTimeout(() => GameEngine.doLoad(loadSlot), 100);
-            }
-        });
     </script>
 </body>
 </html>

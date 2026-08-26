@@ -83,6 +83,16 @@ class AudioManager {
         this.currentBgm = src;
     }
     stopBgm() { this.bgm.pause(); this.currentBgm = null; }
+    toggleBgm() {
+        if (!this.initialized) { this.init(); return true; }
+        if (this.bgm.paused) {
+            if (this.currentBgm) { this.bgm.play().catch(()=>{}); return true; }
+            return false;
+        } else {
+            this.bgm.pause(); return false;
+        }
+    }
+    isBgmPlaying() { return this.initialized && !this.bgm.paused; }
     playSfx(src) {
         if (!this.initialized || this.sfxVolume <= 0 || !src) return;
         const sfx = new Audio(src);
@@ -333,7 +343,7 @@ const GameEngine = {
     checkBgm() {
         if (!this.audio) return;
         for (let i = this.currentIdx; i >= 0; i--) {
-            if (this.bgmMap[i]) { this.audio.playBgm(this.bgmMap[i]); return; }
+            if (this.bgmMap[i]) { this.audio.playBgm(this.bgmMap[i]); this.updateBgmBtn(); return; }
         }
     },
 
@@ -559,5 +569,22 @@ const GameEngine = {
     },
     closeMenuCollection() { document.getElementById('collectionOverlay')?.classList.remove('show'); },
     openMenuCredits() { document.getElementById('creditsOverlay')?.classList.add('show'); },
-    closeMenuCredits() { document.getElementById('creditsOverlay')?.classList.remove('show'); }
+    closeMenuCredits() { document.getElementById('creditsOverlay')?.classList.remove('show'); },
+    updateBgmBtn() {
+        const btn = document.getElementById('bgmBtn');
+        if (!btn) return;
+        const playing = this.audio?.isBgmPlaying();
+        btn.innerHTML = playing ? '<span class="icon">🔊</span> BGM' : '<span class="icon">🔇</span> BGM';
+        btn.style.opacity = this.audio?.initialized ? '1' : '0.5';
+    },
+    toggleBgm() {
+        if (!this.audio) return;
+        const started = this.audio.toggleBgm();
+        this.updateBgmBtn();
+        if (started && !this.audio.currentBgm) {
+            // 如果没有当前BGM，尝试播放当前场景的
+            this.checkBgm();
+            this.updateBgmBtn();
+        }
+    }
 };
