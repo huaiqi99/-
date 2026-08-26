@@ -1,5 +1,14 @@
 (function(){'use strict';const GZD=window.GZD||{};
 
+// 保险：若核心.js未初始化（比如DOMContentLoaded已错过），手动补
+if(!document.body.getAttribute('data-profile')||!document.querySelector('.content-block.active')){
+    const saved=localStorage.getItem('activeProfile')||'linxiwu';
+    document.body.setAttribute('data-profile',saved);
+    document.querySelectorAll('.content-block').forEach(b=>b.classList.remove('active'));
+    const t=document.getElementById('content-'+saved);
+    if(t)t.classList.add('active');
+}
+
 // 1. 地府时辰
 const earthlyHours=[{name:'子时',start:23,end:1,desc:'万籁俱寂，忘川水静。引渡人交班时分，归终殿广场上浮生树泛着幽微的银白光芒。',yinqi:'96%',weather:'浓雾',tree:'花叶低垂'},{name:'丑时',start:1,end:3,desc:'地府灯火阑珊，阴差换岗。偶有迷途亡魂在奈何桥畔徘徊，需引渡人前往安抚。',yinqi:'94%',weather:'阴风',tree:'静默'},{name:'寅时',start:3,end:5,desc:'夜将尽而未尽，阴气仍重。三生石前常有执念深重的魂魄驻足，不宜惊扰。',yinqi:'88%',weather:'薄霜',tree:'微光'},{name:'卯时',start:5,end:7,desc:'地府假天明，阴气渐收。弟子陆续起身前往砺峰阁晨训，脚步声在石板路上回响。',yinqi:'72%',weather:'薄雾',tree:'苏醒'},{name:'辰时',start:7,end:9,desc:'假日高升，各院阁开课。符修院传来符纸燃烧的气息，讲武堂响起兵器碰撞声。',yinqi:'60%',weather:'晴朗',tree:'摇曳'},{name:'巳时',start:9,end:11,desc:'阳气混入地府，部分敏感弟子略感不适。此时不宜进行高强度阴气修炼。',yinqi:'55%',weather:'晴朗',tree:'盛放'},{name:'午时',start:11,end:13,desc:'地府日中，阴气最弱。弟子多在此刻用膳、休整，或于栖梧馆疗伤。',yinqi:'45%',weather:'燥热',tree:'收敛'},{name:'未时',start:13,end:15,desc:'午后慵懒，藏经阁内弟子翻阅古籍的沙沙声与远处演武广场的呼喝交织。',yinqi:'50%',weather:'多云',tree:'低语'},{name:'申时',start:15,end:17,desc:'外勤引渡人陆续回殿，带回人间消息。殿前广场渐渐热闹，浮生树影拉长。',yinqi:'58%',weather:'微风',tree:'舒展'},{name:'酉时',start:17,end:19,desc:'假日落，地府入暮。各院阁陆续闭课，弟子或结伴前往忘川观落日余晖。',yinqi:'70%',weather:'霞光',tree:'泛光'},{name:'戌时',start:19,end:21,desc:'夜课开始，音律坊传出琴笛之声。部分弟子于浮生树下进行夜间冥想。',yinqi:'82%',weather:'薄雾',tree:'轻颤'},{name:'亥时',start:21,end:23,desc:'地府入夜，灯火次第亮起。归终殿弟子陆续归寝，只剩巡逻队在殿外游走。',yinqi:'90%',weather:'浓雾',tree:'沉睡'}];
 function getCurrentHour(){const h=new Date().getHours();for(let i=0;i<earthlyHours.length;i++){const e=earthlyHours[i];if(e.start>e.end){if(h>=e.start||h<e.end)return e;}else{if(h>=e.start&&h<e.end)return e;}}return earthlyHours[0];}
@@ -31,25 +40,26 @@ const modal=document.getElementById('newsModal'),modalTag=document.getElementByI
 function openNewsModal(tag,title,body,time){modalTag.textContent=tag||'资讯';modalTitle.textContent=title||'无标题';modalBody.textContent=body.replace(/\\n/g,'\n')||'暂无详细内容。';modalTime.textContent=time||'';modal.classList.add('active');document.body.style.overflow='hidden';}
 function closeNewsModal(){modal.classList.remove('active');document.body.style.overflow='';}
 document.querySelectorAll('.news-card').forEach(card=>{card.addEventListener('click',function(){const tag=this.dataset.tag||'资讯',title=this.dataset.title||this.querySelector('.title')?.textContent||'标题',body=this.dataset.body||this.querySelector('.excerpt')?.textContent||'暂无详情。',time=this.dataset.time||this.querySelector('.time')?.textContent||'';openNewsModal(tag,title,body,time);const nid=this.dataset.newsId;if(nid){if(GZD.Storage)GZD.Storage.markNewsRead(nid);this.classList.add('is-read');}});});
-modalClose.addEventListener('click',closeNewsModal);modal.addEventListener('click',function(e){if(e.target===this)closeNewsModal();});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeNewsModal();});
+if(modalClose)modalClose.addEventListener('click',closeNewsModal);
+if(modal)modal.addEventListener('click',function(e){if(e.target===this)closeNewsModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeNewsModal();});
 (function(){if(!GZD.Storage)return;const read=GZD.Storage.getNewsRead()||[];document.querySelectorAll('.news-card').forEach(card=>{const nid=card.dataset.newsId;if(nid&&read.includes(nid))card.classList.add('is-read');});})();
 
 // 6. 花瓣特效 - 固定12个，infinite循环
-const PETAL_CHARS=['❀','✿','✽'],petalContainer=document.getElementById('petal-container');
+const PETAL_CHARS=['❀','✿','·'],petalContainer=document.getElementById('petal-container');
 if(petalContainer){for(let i=0;i<12;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
 
 // 7. 时间轴渐入
 function revealTimelineItems(){document.querySelectorAll('.timeline-item:not(.visible)').forEach(item=>{if(item.getBoundingClientRect().top<window.innerHeight*0.85)item.classList.add('visible');});}
 setTimeout(revealTimelineItems,500);window.addEventListener('scroll',revealTimelineItems);
 
-// 8. 角色切换 - 不再自己抢body控制权，交给核心.js，只更新页面专属UI
+// 8. 角色切换UI更新
 function updateProfileUI(profile){const nameMap={'linxiwu':'林栖梧','luojin':'罗烬'};const nameEl=document.getElementById('currentProfileName');if(nameEl)nameEl.textContent=nameMap[profile]||'林栖梧';const switchBtn=document.getElementById('profileSwitchBtn');if(switchBtn)switchBtn.textContent='切换到 '+(profile==='linxiwu'?'罗烬':'林栖梧');}
 
-// 侧边栏切换按钮
-const switchBtn=document.getElementById('profileSwitchBtn');
-if(switchBtn){switchBtn.addEventListener('click',function(){const current=document.body.dataset.profile||'linxiwu';GZD.ProfileManager.switch(current==='linxiwu'?'luojin':'linxiwu');});}
+// 侧边栏切换按钮 - 健壮绑定
+document.addEventListener('click',function(e){const btn=e.target.closest('#profileSwitchBtn');if(!btn)return;const current=document.body.getAttribute('data-profile')||'linxiwu';if(GZD.ProfileManager&&GZD.ProfileManager.switch){GZD.ProfileManager.switch(current==='linxiwu'?'luojin':'linxiwu');}else{const target=current==='linxiwu'?'luojin':'linxiwu';document.body.setAttribute('data-profile',target);document.querySelectorAll('.content-block').forEach(b=>b.classList.remove('active'));const t=document.getElementById('content-'+target);if(t)t.classList.add('active');updateProfileUI(target);window.dispatchEvent(new CustomEvent('profilechange',{detail:{profile:target}}));try{localStorage.setItem('activeProfile',target);}catch(_){}}});
 
-// 初始化：只更新页面专属UI，body和content-block由核心.js统一管理
+// 初始化UI
 (function(){const saved=localStorage.getItem('activeProfile')||'linxiwu';updateProfileUI(saved);setTimeout(updateStoryProgress,200);setTimeout(revealTimelineItems,300);})();
 
 // 监听核心.js触发的角色切换事件
