@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,25 @@
     <style>
         /* ===== 全局变量 & 重置 ===== */
         :root {
+            --bg-body: #f7f4ef;       /* 日间默认 */
+            --bg-card: #ffffff;
+            --bg-hover: #f2eee9;
+            --bg-accent-soft: rgba(138, 58, 42, 0.04);
+            --border-light: #ece6de;
+            --border-card: #d5c8b8;
+            --text-primary: #2c2c2c;
+            --text-secondary: #4a4a4a;
+            --text-muted: #8a8a8a;
+            --accent: #8a3a2a;
+            --profile-lin: #D49A9A;
+            --profile-luo: #4E5A64;
+            --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+            --font-mono: "Courier New", "Source Code Pro", monospace;
+            --transition: 0.3s ease;
+            --sidebar-width: 240px;
+            --card-border-color: var(--border-card);
+        }
+        [data-theme="dark"] {
             --bg-body: #1a1614;
             --bg-card: #24201c;
             --bg-hover: #2d2824;
@@ -17,26 +36,6 @@
             --text-secondary: #b8aea4;
             --text-muted: #8a8078;
             --accent: #c4b4a0;
-            --profile-lin: #D49A9A;
-            --profile-luo: #4E5A64;
-            --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
-            --font-mono: "Courier New", "Source Code Pro", monospace;
-            --transition: 0.3s ease;
-            --sidebar-width: 240px;
-            --card-border-color: var(--border-card);
-        }
-        [data-theme="light"] {
-            --bg-body: #f7f4ef;
-            --bg-card: #ffffff;
-            --bg-hover: #f2eee9;
-            --bg-accent-soft: rgba(138, 58, 42, 0.04);
-            --border-light: #ece6de;
-            --border-card: #d5c8b8;
-            --text-primary: #2c2c2c;
-            --text-secondary: #4a4a4a;
-            --text-muted: #8a8a8a;
-            --accent: #8a3a2a;
-            --card-border-color: #d5c8b8;
         }
         body[data-profile="linxiwu"] {
             --profile-accent: var(--profile-lin);
@@ -58,7 +57,7 @@
             background: var(--bg-body);
             color: var(--text-primary);
             font-size: 16px;
-            line-height: 1.7;
+            line-height: 1.6;
             transition: background var(--transition), color var(--transition);
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
@@ -101,12 +100,10 @@
         .top-header {
             max-width: 900px;
             margin: 0 auto;
-            padding: 20px 4px 16px 4px;
+            padding: 20px 4px 12px 4px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 4px;
             border-bottom: 1px solid var(--border-light);
         }
         .top-header .page-title {
@@ -122,10 +119,11 @@
             transition: color var(--transition);
         }
         .top-header .profile-name {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
             font-family: var(--font-mono);
             letter-spacing: 0.5px;
+            margin-left: 2px;
         }
         .top-header .profile-name span {
             color: var(--profile-accent);
@@ -305,12 +303,13 @@
         .card {
             position: relative;
             background: var(--bg-card);
-            padding: 22px 20px 20px 20px;
-            margin-bottom: 18px;
+            padding: 18px 18px 16px 18px;
+            margin-bottom: 16px;
             border: 1px solid var(--border-card);
             box-shadow: inset 0 0 0 1px var(--profile-accent), 0 2px 10px rgba(0, 0, 0, 0.06);
             transition: border-color var(--transition), box-shadow var(--transition), transform 0.25s ease;
             animation: cardIn 0.45s ease forwards;
+            line-height: 1.6;
         }
         @keyframes cardIn {
             from {
@@ -332,9 +331,9 @@
                 radial-gradient(ellipse at 70% 80%, rgba(255, 248, 240, 0.02) 0%, transparent 60%);
             z-index: 0;
         }
-        /* 左上装饰角（书签符号） */
+        /* 左上书签（由 data-corner 控制） */
         .card::after {
-            content: '✿';
+            content: attr(data-corner);
             position: absolute;
             top: -7px;
             left: 14px;
@@ -348,7 +347,7 @@
             transform-style: flat;
             -webkit-transform-style: flat;
         }
-        /* 右下装饰角（额外符号，可选） */
+        /* 右下书签（用额外元素 .corner-deco） */
         .card .corner-deco {
             position: absolute;
             bottom: -7px;
@@ -381,7 +380,7 @@
             font-family: var(--font-serif);
             letter-spacing: 0.5px;
             color: var(--text-muted);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -400,7 +399,6 @@
             opacity: 0.5;
             border-radius: 1px;
         }
-        /* 标题前不再显示额外符号，移除 .sym 相关 */
 
         /* 内容块切换 */
         .content-block {
@@ -422,7 +420,7 @@
             box-shadow: inset 0 0 0 1px var(--profile-accent);
         }
         .chrono-banner::after {
-            content: none; /* 移除书签 */
+            content: none;
         }
         .chrono-banner .hour-block {
             display: flex;
@@ -502,23 +500,23 @@
             transition: all var(--transition);
             cursor: pointer;
             position: relative;
-            /* 移除条纹，改用左上角圆洞 */
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            overflow: visible; /* 让圆洞可见 */
         }
-        /* 圆洞装饰 */
+        /* 圆洞（完全在卡片内部） */
         .news-card::before {
             content: '';
             position: absolute;
-            top: -8px;
-            left: -8px;
-            width: 16px;
-            height: 16px;
+            top: -4px;
+            left: -4px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: var(--bg-body);
             border: 1px solid var(--border-light);
             z-index: 2;
             pointer-events: none;
-            box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
         }
         .news-card:hover {
             border-color: var(--profile-accent);
@@ -548,7 +546,7 @@
             font-size: 0.85rem;
             color: var(--text-secondary);
             line-height: 1.6;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -558,6 +556,20 @@
             font-size: 0.65rem;
             color: var(--text-muted);
             font-family: var(--font-mono);
+            display: inline-block;
+        }
+        .news-card .expand-hint {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-left: 8px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            transform-style: flat;
+            -webkit-transform-style: flat;
+        }
+        .news-card:hover .expand-hint {
+            opacity: 1;
         }
         .news-card .read-badge {
             position: absolute;
@@ -567,12 +579,14 @@
             color: var(--text-muted);
             opacity: 0;
             transition: opacity 0.3s;
+            transform-style: flat;
+            -webkit-transform-style: flat;
         }
         .news-card.is-read .read-badge {
-            opacity: 0.5;
+            opacity: 0.6;
         }
         .news-card.is-read {
-            opacity: 0.75;
+            opacity: 0.8;
         }
 
         /* ===== 命簿主线 ===== */
@@ -580,14 +594,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             flex-wrap: wrap;
             gap: 8px;
             position: relative;
             z-index: 1;
         }
         .story-title {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -603,7 +617,7 @@
             background: var(--border-light);
             border-radius: 3px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             position: relative;
             z-index: 1;
         }
@@ -616,8 +630,8 @@
         .story-desc {
             font-size: 0.92rem;
             color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 10px;
+            line-height: 1.7;
+            margin-bottom: 8px;
             position: relative;
             z-index: 1;
         }
@@ -638,7 +652,7 @@
         }
         .quest-item {
             display: grid;
-            grid-template-columns: 20px 1fr 80px 70px auto;
+            grid-template-columns: 20px 1fr 70px 65px auto;
             align-items: center;
             gap: 8px;
             padding: 8px 0;
@@ -647,6 +661,7 @@
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
+            line-height: 1.4;
         }
         .quest-item:last-child {
             border-bottom: none;
@@ -667,9 +682,8 @@
         .quest-item .title {
             color: var(--text-primary);
             font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            word-break: break-word;
+            line-height: 1.3;
         }
         .quest-item .publisher {
             font-size: 0.8rem;
@@ -695,7 +709,7 @@
             transition: all 0.3s ease;
             text-align: center;
             justify-self: end;
-            min-width: 48px;
+            min-width: 46px;
         }
         .quest-item .status.doing {
             border-color: var(--profile-accent);
@@ -724,7 +738,7 @@
         }
         .timeline-item {
             position: relative;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             opacity: 0;
             transform: translateX(-12px);
             transition: opacity 0.5s ease, transform 0.5s ease;
@@ -773,7 +787,7 @@
         /* ===== 浮生树低语 ===== */
         .whisper {
             text-align: center;
-            padding: 24px 20px;
+            padding: 22px 20px;
             border-style: dashed;
             opacity: 0.9;
         }
@@ -781,7 +795,7 @@
             font-size: 1rem;
             font-style: italic;
             color: var(--text-secondary);
-            line-height: 1.8;
+            line-height: 1.7;
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
         .whisper .quote.fade-out {
@@ -795,9 +809,7 @@
             font-family: var(--font-mono);
         }
 
-        /* ==============================================================
-                  模态框（新闻详情弹窗）
-                  ============================================================== */
+        /* ===== 模态框 ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -874,9 +886,10 @@
         .modal-content .modal-body {
             font-size: 0.95rem;
             color: var(--text-secondary);
-            line-height: 1.9;
+            line-height: 1.8;
             margin-bottom: 14px;
             white-space: pre-wrap;
+            word-break: break-word;
         }
         .modal-content .modal-time {
             font-size: 0.75rem;
@@ -886,9 +899,7 @@
             border-top: 1px solid var(--border-light);
         }
 
-        /* ==============================================================
-                  花瓣特效 · 强制2D
-                  ============================================================== */
+        /* ===== 花瓣特效（从上往下飘落） ===== */
         #petal-container {
             position: fixed;
             inset: 0;
@@ -899,24 +910,42 @@
         .petal-char {
             position: absolute;
             top: -30px;
-            font-size: 20px;
+            font-size: 18px;
             will-change: transform, opacity;
             opacity: 0;
             user-select: none;
             transform-style: flat;
             -webkit-transform-style: flat;
+            animation: petalFall linear infinite;
+        }
+        @keyframes petalFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(calc(100vh + 50px)) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         /* ===== 响应式 ===== */
         @media (max-width: 768px) {
             body {
                 padding: 0 12px 30px 12px;
+                font-size: 15px;
             }
             .top-header {
-                padding: 16px 0 12px 0;
+                padding: 14px 0 10px 0;
             }
             .top-header .page-title {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             .top-header .profile-name {
                 font-size: 0.8rem;
@@ -927,21 +956,24 @@
             .chrono-banner .hour-name {
                 font-size: 1.6rem;
             }
+            .card {
+                padding: 14px 14px 12px 14px;
+                line-height: 1.5;
+            }
             .quest-item {
-                grid-template-columns: 16px 1fr 60px 60px auto;
-                gap: 4px;
-                font-size: 0.8rem;
+                grid-template-columns: 16px 1fr 55px 55px auto;
+                gap: 6px;
+                font-size: 0.85rem;
+                padding: 6px 0;
             }
             .quest-item .publisher {
                 font-size: 0.7rem;
-                width: auto;
             }
             .quest-item .deadline {
                 font-size: 0.65rem;
-                width: auto;
             }
             .quest-item .status {
-                font-size: 0.6rem;
+                font-size: 0.65rem;
                 padding: 0 6px;
                 min-width: 36px;
             }
@@ -952,9 +984,6 @@
             .sidebar-tab {
                 padding: 8px 8px 8px 4px;
                 font-size: 0.65rem;
-            }
-            .card {
-                padding: 16px;
             }
             .modal-content {
                 padding: 20px 18px 18px 18px;
@@ -996,12 +1025,16 @@
             .quest-item {
                 grid-template-columns: 16px 1fr 50px 50px auto;
                 gap: 4px;
-                font-size: 0.75rem;
+                font-size: 0.8rem;
             }
             .quest-item .status {
-                font-size: 0.55rem;
+                font-size: 0.6rem;
                 padding: 0 4px;
                 min-width: 30px;
+            }
+            .news-card .expand-hint {
+                font-size: 0.55rem;
+                margin-left: 4px;
             }
         }
     </style>
@@ -1011,8 +1044,8 @@
     <!-- ===== 浮动按钮 ===== -->
     <div class="float-group">
         <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
-        <button class="float-btn" id="themeBtn" onclick="GZD.ThemeManager.toggle()">
-            <span id="themeIcon">☀️</span> <span id="themeLabel">日间</span>
+        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+            <span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span>
         </button>
     </div>
 
@@ -1032,7 +1065,6 @@
         <a class="nav-item" href="#"><span class="sym">✶</span> 升席纪事</a>
         <a class="nav-item" href="#"><span class="sym">✉</span> 传讯符</a>
         <a class="nav-item" href="#"><span class="sym">⚙</span> 设置</a>
-        <!-- 角色切换按钮 -->
         <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
         <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
     </div>
@@ -1045,7 +1077,7 @@
 
     <div id="app">
 
-        <!-- ===== 时辰横幅（无书签） ===== -->
+        <!-- ===== 时辰横幅 ===== -->
         <div class="card chrono-banner">
             <div class="hour-block">
                 <span class="hour-name" id="hourName">子时</span>
@@ -1062,7 +1094,8 @@
         <!-- ===== 林栖梧内容 ===== -->
         <div class="content-block active" id="content-linxiwu">
 
-            <div class="card" data-corner="✿">
+            <div class="card" data-corner="❀">
+                <span class="corner-deco">❀</span>
                 <div class="card-title">今日要闻</div>
                 <div class="news-grid">
                     <div class="news-card" data-news-id="news-lin-1" data-tag="殿务公告" data-title="下月升席挑战报名开启" data-body="有意挑战第十席之位的弟子，请于本月晦日前至归终正殿登记。需通过讲武堂基础体术考核方可报名。\n\n考核内容包含：体术、符法、引渡实战三项。通过者将获得挑战第十席的资格。具体细则可至殿务司咨询。" data-time="辰时三刻 · 殿务司">
@@ -1070,6 +1103,7 @@
                         <div class="title">下月升席挑战报名开启</div>
                         <div class="excerpt">有意挑战第十席之位的弟子，请于本月晦日前至归终正殿登记。需通过讲武堂基础体术考核方可报名。</div>
                         <div class="time">辰时三刻 · 殿务司</div>
+                        <span class="expand-hint">点击展开</span>
                         <span class="read-badge">✓ 已读</span>
                     </div>
                     <div class="news-card" data-news-id="news-lin-2" data-tag="人间异动" data-title="青州锁龙井封印松动" data-body="司序君下令加固地脉，归终殿已派第三席前往勘查。近期或需增派人手协防。\n\n据前线回报，封印裂隙已扩大至三指宽，阴气外泄。第三席请求增派两名擅长符修的弟子协助加固。" data-time="卯时初 · 人间司">
@@ -1077,6 +1111,7 @@
                         <div class="title">青州锁龙井封印松动</div>
                         <div class="excerpt">司序君下令加固地脉，归终殿已派第三席前往勘查。近期或需增派人手协防。</div>
                         <div class="time">卯时初 · 人间司</div>
+                        <span class="expand-hint">点击展开</span>
                         <span class="read-badge">✓ 已读</span>
                     </div>
                     <div class="news-card" data-news-id="news-lin-3" data-tag="同僚动态" data-title="音律坊新曲试奏" data-body="魏元璟携摧城笛于音律坊试奏新谱，程木栖以古琴相和。据说一曲终了，浮生树落瓣如雨。\n\n新曲名为《忘川渡》，据魏元璟说，此曲旨在安抚滞留忘川的亡魂。音律坊计划于下月朔日正式演奏。" data-time="昨日戌时 · 音律坊">
@@ -1084,12 +1119,14 @@
                         <div class="title">音律坊新曲试奏</div>
                         <div class="excerpt">魏元璟携摧城笛于音律坊试奏新谱，程木栖以古琴相和。据说一曲终了，浮生树落瓣如雨。</div>
                         <div class="time">昨日戌时 · 音律坊</div>
+                        <span class="expand-hint">点击展开</span>
                         <span class="read-badge">✓ 已读</span>
                     </div>
                 </div>
             </div>
 
-            <div class="card" data-corner="◈">
+            <div class="card" data-corner="❀">
+                <span class="corner-deco">❀</span>
                 <div class="card-title">命簿主线</div>
                 <div class="story-header">
                     <div class="story-title">第一章 · 初入归终殿</div>
@@ -1100,7 +1137,8 @@
                 <div class="story-update">最近更新：苍珩四百三十五年 · 霜月 · 入门试炼</div>
             </div>
 
-            <div class="card" data-corner="◆">
+            <div class="card" data-corner="❀">
+                <span class="corner-deco">❀</span>
                 <div class="card-title">待办委托</div>
                 <div class="quest-list" id="questList-lin">
                     <div class="quest-item" data-quest-id="lin-q1"><span class="sym">◈</span><span class="title">巡逻忘川河畔（东段）</span><span class="publisher">殿务司</span><span class="deadline">今日酉时前</span><span class="status">未接</span></div>
@@ -1111,7 +1149,8 @@
                 </div>
             </div>
 
-            <div class="card" data-corner="✶">
+            <div class="card" data-corner="❀">
+                <span class="corner-deco">❀</span>
                 <div class="card-title">最近纪事</div>
                 <div class="timeline">
                     <div class="timeline-item">
@@ -1141,7 +1180,8 @@
         <!-- ===== 罗烬内容 ===== -->
         <div class="content-block" id="content-luojin">
 
-            <div class="card" data-corner="✿">
+            <div class="card" data-corner="◈">
+                <span class="corner-deco">◈</span>
                 <div class="card-title">今日要闻</div>
                 <div class="news-grid">
                     <div class="news-card" data-news-id="news-luo-1" data-tag="讲武堂" data-title="罗修首席亲授双刀技法" data-body="本月讲武堂开设首席特别课程，仅限通过基础考核的弟子参加。据说罗修会在课上亲自喂招。\n\n课程名额有限，先到先得。讲武堂弟子可至堂务处报名，截止日期为本月二十日。" data-time="巳时初 · 讲武堂">
@@ -1149,6 +1189,7 @@
                         <div class="title">罗修首席亲授双刀技法</div>
                         <div class="excerpt">本月讲武堂开设首席特别课程，仅限通过基础考核的弟子参加。据说罗修会在课上亲自喂招。</div>
                         <div class="time">巳时初 · 讲武堂</div>
+                        <span class="expand-hint">点击展开</span>
                         <span class="read-badge">✓ 已读</span>
                     </div>
                     <div class="news-card" data-news-id="news-luo-2" data-tag="同僚动态" data-title="林栖梧于符修院开试讲课" data-body="林栖梧以浮生树血脉之力演示符箓绘制，引得符修院弟子围观。栾方棋在旁点评：'比我当年强点。'\n\n据现场弟子描述，林栖梧绘制了七道符箓，其中三道引发了浮生树共鸣。符修院已邀请她下月再开一课。" data-time="昨日未时 · 符修院">
@@ -1156,6 +1197,7 @@
                         <div class="title">林栖梧于符修院开试讲课</div>
                         <div class="excerpt">林栖梧以浮生树血脉之力演示符箓绘制，引得符修院弟子围观。栾方棋在旁点评："比我当年强点。"</div>
                         <div class="time">昨日未时 · 符修院</div>
+                        <span class="expand-hint">点击展开</span>
                         <span class="read-badge">✓ 已读</span>
                     </div>
                     <div class="news-card" data-news-id="news-luo-3" data-tag="殿务公告" data-title="演武广场设施维护" data-body="演武广场东侧石靶因长期使用出现裂痕，今日申时后暂停使用。讲武堂弟子请移步西侧场地。\n\n维护工期预计三日，期间东侧场地封闭。请各位弟子相互转告。" data-time="辰时二刻 · 工造司">
@@ -1163,12 +1205,14 @@
                         <div class="title">演武广场设施维护</div>
                         <div class="excerpt">演武广场东侧石靶因长期使用出现裂痕，今日申时后暂停使用。讲武堂弟子请移步西侧场地。</div>
                         <div class="time">辰时二刻 · 工造司</div>
+                        <span class="expand-hint">点击展开</span>
                         <span class="read-badge">✓ 已读</span>
                     </div>
                 </div>
             </div>
 
             <div class="card" data-corner="◈">
+                <span class="corner-deco">◈</span>
                 <div class="card-title">命簿主线</div>
                 <div class="story-header">
                     <div class="story-title">第一章 · 刀与火</div>
@@ -1179,7 +1223,8 @@
                 <div class="story-update">最近更新：苍珩四百三十五年 · 霜月 · 拜师讲武堂</div>
             </div>
 
-            <div class="card" data-corner="◆">
+            <div class="card" data-corner="◈">
+                <span class="corner-deco">◈</span>
                 <div class="card-title">待办委托</div>
                 <div class="quest-list" id="questList-luo">
                     <div class="quest-item" data-quest-id="luo-q1"><span class="sym">◈</span><span class="title">演武广场石靶修缮协助</span><span class="publisher">工造司</span><span class="deadline">今日申时前</span><span class="status">未接</span></div>
@@ -1190,7 +1235,8 @@
                 </div>
             </div>
 
-            <div class="card" data-corner="✶">
+            <div class="card" data-corner="◈">
+                <span class="corner-deco">◈</span>
                 <div class="card-title">最近纪事</div>
                 <div class="timeline">
                     <div class="timeline-item">
@@ -1219,6 +1265,7 @@
 
         <!-- ===== 浮生树低语 ===== -->
         <div class="card whisper" id="whisperCard" data-corner="❀">
+            <span class="corner-deco">❀</span>
             <div class="quote" id="whisperText">"每一段走过的黄泉路，每一次艰难的引渡，都将铸就独一无二的你。"</div>
             <div class="source">—— 浮生树低语 · 随机</div>
         </div>

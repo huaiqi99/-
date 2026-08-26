@@ -178,7 +178,7 @@
         el.textContent = CELEBRATION_EMOJIS[Math.floor(Math.random() * CELEBRATION_EMOJIS.length)];
         el.style.cssText =
             'position:fixed;pointer-events:none;z-index:200;font-size:1.8rem;left:' + (x - 16) + 'px;top:' + (y - 16) +
-            'px;animation:celebFloat 1.2s ease-out forwards;';
+            'px;animation:celebFloat 1.2s ease-out forwards;transform-style:flat;-webkit-transform-style:flat;';
         document.body.appendChild(el);
         setTimeout(() => el.remove(), 1300);
     }
@@ -228,7 +228,8 @@
     function openNewsModal(tag, title, body, time) {
         modalTag.textContent = tag || '殿务公告';
         modalTitle.textContent = title || '无标题';
-        modalBody.textContent = body || '暂无详细内容。';
+        // 处理换行：将 \\n 替换为真正的换行
+        modalBody.textContent = body.replace(/\\n/g, '\n') || '暂无详细内容。';
         modalTime.textContent = time || '';
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -272,8 +273,8 @@
         });
     })();
 
-    // ---------- 6. 花瓣特效（❀ ✿ 字符飘落，强制2D） ----------
-    const PETAL_CHARS = ['❀', '✿', '🌸', '🌺', '✾', '❁', '✽'];
+    // ---------- 6. 花瓣特效（从上往下飘落，使用 CSS 动画） ----------
+    const PETAL_CHARS = ['❀', '✿', '✽'];
     const petalContainer = document.getElementById('petal-container');
 
     function createPetal() {
@@ -283,80 +284,32 @@
         el.textContent = char;
         const size = 16 + Math.random() * 18;
         const x = Math.random() * window.innerWidth;
-        const delay = Math.random() * 6;
-        const duration = 14 + Math.random() * 10;
-        const rotSpeed = (Math.random() - 0.5) * 360;
-        const drift = (Math.random() - 0.5) * 120;
+        const duration = 12 + Math.random() * 14; // 秒
+        const delay = Math.random() * 8;
+        const rotation = Math.random() * 360;
 
         el.style.fontSize = size + 'px';
         el.style.left = x + 'px';
         el.style.top = '-30px';
+        el.style.animationDuration = duration + 's';
+        el.style.animationDelay = delay + 's';
+        el.style.transform = 'rotate(' + rotation + 'deg)';
         el.style.opacity = (0.3 + Math.random() * 0.5).toString();
-        el.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
-        el.style.transformStyle = 'flat';
-        el.style.webkitTransformStyle = 'flat';
 
         petalContainer.appendChild(el);
 
-        const keyframes = [
-            { transform: 'translate(0, 0) rotate(0deg)', opacity: parseFloat(el.style.opacity) },
-            { transform: 'translate(' + (drift * 0.3) + 'px, ' + (window.innerHeight * 0.3) + 'px) rotate(' + (rotSpeed *
-                    0.4) + 'deg)', opacity: parseFloat(el.style.opacity) * 0.9 },
-            { transform: 'translate(' + (drift * 0.7) + 'px, ' + (window.innerHeight * 0.6) + 'px) rotate(' + (rotSpeed *
-                    0.8) + 'deg)', opacity: parseFloat(el.style.opacity) * 0.7 },
-            { transform: 'translate(' + (drift * 0.4) + 'px, ' + (window.innerHeight * 0.85) + 'px) rotate(' + (rotSpeed *
-                    1.2) + 'deg)', opacity: parseFloat(el.style.opacity) * 0.4 },
-            { transform: 'translate(' + (drift * 0.9) + 'px, ' + (window.innerHeight + 40) + 'px) rotate(' + (rotSpeed *
-                    1.6) + 'deg)', opacity: 0 }
-        ];
-
-        const anim = el.animate(keyframes, {
-            duration: duration * 1000,
-            delay: delay * 1000,
-            easing: 'ease-in-out',
-            iterations: 1,
-            fill: 'forwards'
-        });
-
-        anim.onfinish = function() {
+        // 动画结束后移除
+        el.addEventListener('animationend', function() {
             el.remove();
-        };
-
-        return el;
+        });
     }
 
-    let petalTimer = null;
-
-    function startPetals() {
-        if (petalTimer) clearInterval(petalTimer);
-        for (let i = 0; i < 6; i++) {
-            setTimeout(createPetal, i * 300);
-        }
-        petalTimer = setInterval(createPetal, 1200 + Math.random() * 1600);
+    // 初始生成一批
+    for (let i = 0; i < 20; i++) {
+        setTimeout(createPetal, i * 200);
     }
-
-    function stopPetals() {
-        if (petalTimer) {
-            clearInterval(petalTimer);
-            petalTimer = null;
-        }
-        petalContainer.innerHTML = '';
-    }
-
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            const children = petalContainer.children;
-            if (children.length > 40) {
-                for (let i = 0; i < children.length - 30; i++) {
-                    if (children[i]) children[i].remove();
-                }
-            }
-        }, 500);
-    });
-
-    startPetals();
+    // 持续生成
+    setInterval(createPetal, 1200 + Math.random() * 1500);
 
     // ---------- 7. 时间轴渐入 ----------
     function revealTimelineItems() {
@@ -370,35 +323,17 @@
     setTimeout(revealTimelineItems, 500);
     window.addEventListener('scroll', revealTimelineItems);
 
-    // ---------- 8. 角色切换（顶部名称 + 侧边栏按钮 + 书签符号） ----------
+    // ---------- 8. 角色切换（顶部名称 + 侧边栏按钮） ----------
     function updateProfileUI(profile) {
-        // 更新顶部名称
         const nameMap = { 'linxiwu': '林栖梧', 'luojin': '罗烬' };
         const nameEl = document.getElementById('currentProfileName');
         if (nameEl) nameEl.textContent = nameMap[profile] || '林栖梧';
 
-        // 更新侧边栏按钮文字
         const switchBtn = document.getElementById('profileSwitchBtn');
         if (switchBtn) {
             const target = profile === 'linxiwu' ? '罗烬' : '林栖梧';
             switchBtn.textContent = '切换到 ' + target;
         }
-
-        // 更新卡片书签符号（data-corner 已由HTML定义，无需额外操作）
-        // 但需要确保 .card::after 内容与 data-corner 一致
-        document.querySelectorAll('.card[data-corner]').forEach(card => {
-            const corner = card.dataset.corner || '✿';
-            // 通过伪元素 content 无法直接动态改变，我们使用 .corner-deco 元素代替
-            // 但我们在HTML中未使用 .corner-deco，而是使用 ::after，无法动态改变。
-            // 我们可以通过JS添加一个内联样式覆盖，或者直接在HTML中写多个.corner-deco。
-            // 简便做法：在HTML中每个卡片添加了 data-corner，我们可以在CSS中根据 data-corner 设置 ::after 内容？但CSS无法动态读取属性。
-            // 我们改为在HTML中直接放置 .corner-deco 元素，并设置内容。
-            // 因为我们已经改用了 .corner-deco 元素，但之前的HTML没有，现在我们在新HTML中已经添加了 .corner-deco? 实际上我们没有添加。
-            // 我们可以在JS中动态为每个卡片添加 .corner-deco 并设置内容。
-            // 但为了简洁，我们直接在HTML中为每个卡片添加 <span class="corner-deco">符号</span>，然后根据角色切换时无需改变符号，因为符号是固定的。
-            // 但由于角色切换后，页面内容切换，但卡片是固定的，所以不需要动态改变。
-            // 因此我们只需要更新顶部名称和侧边栏按钮即可。
-        });
     }
 
     // 角色切换函数（覆盖 GZD.ProfileManager）
@@ -429,13 +364,15 @@
         });
     }
 
-    // 初始化UI
+    // 初始化：从 localStorage 读取角色，并与 index 联动
     (function() {
-        const saved = localStorage.getItem('gzd_profile');
-        const profile = saved || 'linxiwu';
-        // 确保 body 的 data-profile 正确
+        let saved = localStorage.getItem('activeProfile');
+        if (!saved) {
+            // 如果没有 activeProfile，尝试读取 gzd_profile（旧逻辑）
+            saved = localStorage.getItem('gzd_profile') || 'linxiwu';
+        }
+        const profile = saved;
         document.body.dataset.profile = profile;
-        // 激活对应内容
         document.querySelectorAll('.content-block').forEach(block => block.classList.remove('active'));
         const target = document.getElementById('content-' + profile);
         if (target) target.classList.add('active');
@@ -443,22 +380,61 @@
         // 更新进度
         setTimeout(updateStoryProgress, 200);
         setTimeout(revealTimelineItems, 300);
+        // 同步保存
+        try { localStorage.setItem('activeProfile', profile); } catch (_) {}
     })();
 
-    // ---------- 9. 主题切换兼容 ----------
-    if (!GZD.ThemeManager) {
-        GZD.ThemeManager = {
-            toggle: function() {
-                const html = document.documentElement;
-                const isLight = html.getAttribute('data-theme') === 'light';
-                html.setAttribute('data-theme', isLight ? '' : 'light');
-                const icon = document.getElementById('themeIcon');
-                const label = document.getElementById('themeLabel');
-                if (icon) icon.textContent = isLight ? '☀️' : '🌙';
-                if (label) label.textContent = isLight ? '日间' : '夜间';
+    // 监听 role 切换事件（从 index 页面可能通过 storage 变更，但我们使用主动切换）
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'activeProfile' || e.key === 'gzd_profile') {
+            const newProfile = e.newValue || 'linxiwu';
+            if (newProfile !== document.body.dataset.profile) {
+                GZD.ProfileManager.switch(newProfile);
             }
-        };
+        }
+    });
+
+    // ---------- 9. 主题切换（默认日间） ----------
+    // HTML 中已设置 data-theme="light"，但用户可能通过按钮切换
+    function toggleTheme() {
+        const html = document.documentElement;
+        const isLight = html.getAttribute('data-theme') === 'light';
+        const newTheme = isLight ? 'dark' : 'light';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
+        updateThemeBtn();
     }
+
+    function updateThemeBtn() {
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
+        if (!icon || !label) return;
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        icon.textContent = isLight ? '🌙' : '☀️';
+        label.textContent = isLight ? '夜间' : '日间';
+    }
+
+    // 暴露全局切换函数
+    window.toggleTheme = toggleTheme;
+
+    // 初始化主题按钮
+    (function() {
+        const stored = localStorage.getItem('theme');
+        if (stored) {
+            try {
+                const data = JSON.parse(stored);
+                if (data.value === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } catch (e) {}
+        } else {
+            // 默认日间
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+        updateThemeBtn();
+    })();
 
     // ---------- 10. 侧边栏兼容 ----------
     if (!GZD.Sidebar) {
@@ -505,4 +481,4 @@
 
     console.log('🌙 归终殿 · 命簿纪事 增强版已加载');
     console.log('✿ 功能：时辰·打字机·新闻弹窗·花瓣飘落·任务庆祝·时间轴·角色切换');
-})();
+})();;
