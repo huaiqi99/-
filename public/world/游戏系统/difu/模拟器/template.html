@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归终殿 · 页面标题占位符</title>
+<style>
+:root{
+  --bg-body:#1a1614;
+  --bg-card:#24201c;
+  --bg-hover:#2d2824;
+  --bg-accent-soft:rgba(196,180,160,0.06);
+  --border-light:#3d3732;
+  --border-card:#4a443e;
+  --text-primary:#e8e0d5;
+  --text-secondary:#b8aea4;
+  --text-muted:#8a8078;
+  --accent:#c4b4a0;
+  --profile-lin:#D49A9A;
+  --profile-luo:#4E5A64;
+  --font-serif:"Georgia","Times New Roman","Songti SC",serif;
+  --font-mono:"Courier New","Source Code Pro",monospace;
+  --transition:0.3s ease;
+  --sidebar-width:240px;
+}
+[data-theme="light"]{
+  --bg-body:#f7f4ef;
+  --bg-card:#ffffff;
+  --bg-hover:#f2eee9;
+  --bg-accent-soft:rgba(138,58,42,0.04);
+  --border-light:#ece6de;
+  --border-card:#d5c8b8;
+  --text-primary:#2c2c2c;
+  --text-secondary:#4a4a4a;
+  --text-muted:#8a8a8a;
+  --accent:#8a3a2a;
+}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-serif);
+  background:var(--bg-body);
+  color:var(--text-primary);
+  font-size:16px;
+  line-height:1.7;
+  transition:background var(--transition),color var(--transition);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding:0 16px 40px 16px;
+}
+
+.float-group{
+  position:fixed;top:20px;right:24px;z-index:100;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+}
+.float-btn{
+  background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;
+  padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);
+  cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);
+  display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;
+}
+.float-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+.top-header{
+  max-width:900px;margin:0 auto;padding:20px 4px 16px 4px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border-light);
+}
+.top-header .page-title{
+  font-size:1.2rem;font-weight:700;letter-spacing:1px;
+  display:flex;align-items:center;gap:8px;
+}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition);}
+.profile-toggle{display:flex;gap:8px;align-items:center;}
+.profile-toggle button{
+  padding:5px 16px;border-radius:16px;border:1px solid var(--border-light);
+  background:transparent;color:var(--text-muted);font-family:var(--font-serif);
+  font-size:0.85rem;cursor:pointer;transition:all 0.2s;
+}
+.profile-toggle button:hover{border-color:var(--text-secondary);color:var(--text-secondary);}
+.profile-toggle button.active[data-profile="linxiwu"]{
+  border-color:var(--profile-lin);color:var(--profile-lin);background:rgba(212,154,154,0.08);
+}
+.profile-toggle button.active[data-profile="luojin"]{
+  border-color:var(--profile-luo);color:var(--profile-luo);background:rgba(78,90,100,0.08);
+}
+
+.sidebar-tab{
+  position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;
+  background:var(--bg-card);border:1px solid var(--border-card);border-left:none;
+  border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;
+  box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all var(--transition);
+  writing-mode:vertical-rl;font-size:0.7rem;letter-spacing:3px;
+  color:var(--text-muted);font-family:var(--font-mono);user-select:none;
+}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent);}
+.sidebar-tab .sym{writing-mode:horizontal-tb;display:inline-block;margin-bottom:4px;}
+.sidebar-panel{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);
+  background:var(--bg-card);border-right:1px solid var(--border-card);
+  box-shadow:4px 0 24px rgba(0,0,0,0.25);
+  transform:translateX(-100%);
+  transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);
+  z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.sidebar-panel.open{transform:translateX(0);}
+.sidebar-panel .close-btn{
+  align-self:flex-end;background:none;border:none;font-size:1.2rem;
+  color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;
+  transition:color var(--transition);
+}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent);}
+.sidebar-panel .panel-title{
+  font-size:0.7rem;letter-spacing:2px;color:var(--text-muted);
+  text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;
+  border-bottom:1px solid var(--border-light);font-family:var(--font-mono);
+}
+.sidebar-panel .nav-item{
+  display:block;padding:10px 12px;border-radius:6px;
+  border:1px solid transparent;font-size:0.9rem;font-family:var(--font-serif);
+  color:var(--text-secondary);cursor:pointer;transition:all var(--transition);
+  text-align:left;background:none;width:100%;margin-bottom:4px;text-decoration:none;
+}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light);}
+.sidebar-panel .nav-item.active{
+  background:var(--bg-accent-soft);border-color:var(--profile-accent);
+  color:var(--profile-accent);font-weight:600;
+}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px;}
+.sidebar-panel .panel-footer{
+  margin-top:auto;font-size:0.6rem;color:var(--text-muted);
+  text-align:center;padding-top:12px;border-top:1px solid var(--border-light);
+  font-family:var(--font-mono);letter-spacing:0.5px;
+}
+.sidebar-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:92;
+  opacity:0;pointer-events:none;transition:opacity 0.35s ease;
+}
+.sidebar-overlay.show{opacity:1;pointer-events:auto;}
+body.no-scroll{overflow:hidden;}
+
+#app{max-width:900px;margin:0 auto;width:100%;padding:20px 4px 0 4px;}
+
+.card{
+  background:var(--bg-card);border:1.5px solid var(--profile-accent);
+  border-radius:12px;padding:20px;margin-bottom:16px;
+  transition:border-color var(--transition),box-shadow var(--transition);
+  animation:cardIn 0.4s ease forwards;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.card-title{
+  font-size:0.9rem;font-weight:600;font-family:var(--font-serif);
+  letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.card-title .sym{color:var(--profile-accent);}
+
+.content-block{display:none;}
+.content-block.active{display:block;}
+
+@media(max-width:768px){
+  body{padding:0 12px 30px 12px;}
+  .top-header{padding:16px 0 12px 0;}
+  .top-header .page-title{font-size:1rem;}
+  .profile-toggle button{padding:4px 12px;font-size:0.8rem;}
+  .sidebar-panel{width:210px;padding:20px 14px 16px 14px;}
+  .sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}
+  .card{padding:16px;}
+}
+@media(max-width:480px){
+  .top-header{flex-direction:column;align-items:flex-start;}
+  .float-group{top:12px;right:12px;gap:6px;}
+  .float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}
+}
+</style>
+</head>
+<body data-profile="linxiwu">
+
+<div class="float-group">
+  <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+  <button class="float-btn" id="themeBtn" onclick="GZD.ThemeManager.toggle()">
+    <span id="themeIcon">☀️</span> <span id="themeLabel">日间</span>
+  </button>
+</div>
+
+<div class="sidebar-tab" onclick="GZD.Sidebar.toggle()"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="GZD.Sidebar.close()"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+  <button class="close-btn" onclick="GZD.Sidebar.close()">✕</button>
+  <div class="panel-title">◈ 归终殿 · 导航</div>
+  <a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+  <a class="nav-item" href="#"><span class="sym">✦</span> 引渡人档案</a>
+  <a class="nav-item" href="#"><span class="sym">❖</span> 魂力与状态</a>
+  <a class="nav-item" href="#"><span class="sym">✿</span> 院阁修习表</a>
+  <a class="nav-item" href="#"><span class="sym">✧</span> 同僚与十席</a>
+  <a class="nav-item" href="#"><span class="sym">◆</span> 差事与外勤</a>
+  <a class="nav-item" href="#"><span class="sym">❤</span> 血脉羁绊</a>
+  <a class="nav-item" href="#"><span class="sym">✶</span> 升席纪事</a>
+  <a class="nav-item" href="#"><span class="sym">✉</span> 传讯符</a>
+  <a class="nav-item" href="#"><span class="sym">⚙</span> 设置</a>
+  <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
+</div>
+
+<div class="top-header">
+  <div class="page-title"><span class="sym">◈</span> <span id="pageTitle">页面标题</span></div>
+  <div class="profile-toggle">
+    <button data-profile="linxiwu" onclick="GZD.ProfileManager.switch('linxiwu')">✿ 林栖梧</button>
+    <button data-profile="luojin" onclick="GZD.ProfileManager.switch('luojin')">✦ 罗烬</button>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ==================== 页面专属内容开始 ==================== -->
+  <!-- 请在此处插入该页面专属内容 -->
+  <!-- 提示：不同角色的内容请用 <div class="content-block" id="content-linxiwu"> 和 -->
+  <!--       <div class="content-block" id="content-luojin"> 包裹，并给当前激活项加 active 类 -->
+  <!-- ==================== 页面专属内容结束 ==================== -->
+
+</div>
+
+<script src="./核心.js"></script>
+<!-- ==================== 页面专属脚本（请另存为 xxx.js 并在下方引入） ==================== -->
+<!-- <script src="./xxx.js"></script> -->
+
+</body>
+</html>
