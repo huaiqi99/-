@@ -472,7 +472,7 @@
         };
     }
 
-    // ---------- 12. 监听角色切换事件 ----------
+    // ---------- 12. 监听角色切换事件 ---------
     window.addEventListener('profilechange', function(e) {
         updateProfileUI(e.detail.profile);
         updateStoryProgress();
