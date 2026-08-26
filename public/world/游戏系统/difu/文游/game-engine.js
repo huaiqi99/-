@@ -200,6 +200,8 @@ const GameEngine = {
 
     renderNarration(node) {
         this.dom.dialogueBox.classList.remove('active');
+        this.dom.speakerLabel.textContent = '';
+        this.dom.dialogueText.innerHTML = '';
         this.dom.narrationBox.classList.remove('hidden');
         this.dom.narrationText.innerHTML = this.highlightKeywords(node.text);
         this.dom.narrationText.classList.remove('show');
