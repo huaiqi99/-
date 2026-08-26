@@ -1041,6 +1041,7 @@
 /* ===== 强制2D渲染（修复符号3D问题） ===== */
 .sym, .sidebar-tab, .sidebar-tab .sym, .sidebar-panel .nav-item, .sidebar-panel .nav-item .sym, .sidebar-panel .profile-switch-btn, .card::after, .card .corner-deco, .news-card::before, .news-card .expand-hint, .news-card .read-badge, .petal-char { transform-style: flat !important; -webkit-transform-style: flat !important; }
 </style>
+<base target="_blank">
 </head>
 <body data-profile="linxiwu">
 
@@ -1053,7 +1054,7 @@
     </div>
 
     <!-- ===== 侧边栏 ===== -->
-    <div class="sidebar-tab" onclick="GZD.Sidebar.toggle()"><span class="sym">◈</span> 导航</div>
+    <div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="GZD.Sidebar.close()"></div>
     <div class="sidebar-panel" id="sidebarPanel">
         <button class="close-btn" onclick="GZD.Sidebar.close()">✕</button>
