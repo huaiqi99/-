@@ -22,7 +22,6 @@
             --accent: #8a2a1a;
             --accent-soft: rgba(138, 42, 26, 0.06);
         }
-
         [data-theme="dark"] {
             --bg-body: #1a1614;
             --bg-paper: #24201c;
@@ -37,194 +36,125 @@
             --accent: #b05a4a;
             --accent-soft: rgba(176, 90, 74, 0.08);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: var(--font);
             background: var(--bg-body);
             color: var(--text-primary);
             transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
-            padding: 0 16px 30px 16px;
+            padding: 0 16px 40px 16px;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
-
+        .bg-texture {
+            position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.5;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+        .bg-vignette {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 55%, rgba(0,0,0,0.06) 100%);
+        }
+        [data-theme="dark"] .bg-vignette {
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.35) 100%);
+        }
         .float-group {
-            position: fixed;
-            top: 20px;
-            right: 24px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
+            position: fixed; top: 20px; right: 24px; z-index: 100;
+            display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
         }
-
         .float-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            letter-spacing: 0.3px;
-            text-decoration: none;
+            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 24px;
+            padding: 6px 14px 6px 12px; font-size: 0.75rem; color: var(--text-muted);
+            cursor: pointer; transition: all var(--transition); font-family: inherit;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04); letter-spacing: 0.3px; text-decoration: none;
         }
-
         .float-btn:hover { border-color: var(--accent); color: var(--accent); }
         .float-btn .icon { font-size: 0.9rem; }
 
         #app {
-            max-width: 820px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 20px 0 0 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            max-width: 820px; margin: 0 auto; width: 100%;
+            padding: 28px 0 0 0; flex: 1; display: flex; flex-direction: column;
         }
-
         .medical-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius);
-            padding: 28px 32px 34px 32px;
-            box-shadow: var(--shadow);
-            position: relative;
-            width: 100%;
+            background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius);
+            padding: 28px 32px 34px 32px; box-shadow: var(--shadow); width: 100%;
             animation: cardIn 0.45s ease forwards;
         }
-
         @keyframes cardIn {
             0% { opacity: 0; transform: translateY(12px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-
         .medical-header {
-            text-align: center;
-            border-bottom: 2px solid var(--border-card);
-            padding-bottom: 14px;
-            margin-bottom: 18px;
+            text-align: center; border-bottom: 2px solid var(--border-card);
+            padding-bottom: 14px; margin-bottom: 18px;
         }
-
-        .medical-header .title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--text-primary);
-        }
-
-        .medical-header .sub {
-            font-size: 0.9rem;
-            color: var(--text-muted-light);
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
-
+        .medical-header .title { font-size: 1.35rem; font-weight: 700; letter-spacing: 3px; color: var(--text-primary); }
+        .medical-header .sub { font-size: 0.9rem; color: var(--text-muted-light); letter-spacing: 1px; margin-top: 4px; }
         .divider {
-            text-align: center;
-            color: var(--text-muted-light);
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            margin: 18px 0;
+            text-align: center; color: var(--text-muted-light);
+            font-size: 0.85rem; letter-spacing: 2px; margin: 18px 0;
         }
-
         .intro-body {
-            font-size: 1.05rem;
-            line-height: 2.4;
-            color: var(--text-secondary);
-            margin: 22px 0;
-            text-align: left;
+            font-size: 1.05rem; line-height: 2.4; color: var(--text-secondary);
+            margin: 22px 0; text-align: left;
         }
-
-        .intro-body p {
-            text-indent: 2em;
-            margin-bottom: 10px;
-        }
+        .intro-body p { text-indent: 2em; margin-bottom: 10px; }
 
         .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 10px;
-            flex-wrap: wrap;
+            display: flex; justify-content: center; gap: 16px;
+            margin-top: 10px; flex-wrap: wrap;
         }
-
         .start-btn, .menu-btn {
-            display: inline-block;
-            padding: 14px 40px;
-            border-radius: 6px;
-            font-size: 1.0rem;
-            font-family: var(--font);
-            cursor: pointer;
-            transition: all var(--transition);
-            letter-spacing: 2px;
-            text-decoration: none;
-            border: 1px solid var(--accent);
+            display: inline-block; padding: 14px 40px; border-radius: 6px;
+            font-size: 1.0rem; font-family: var(--font); cursor: pointer;
+            transition: all var(--transition); letter-spacing: 2px;
+            text-decoration: none; border: 1px solid var(--accent);
         }
-
         .start-btn {
-            background: var(--accent-soft);
-            color: var(--accent);
+            background: var(--accent-soft); color: var(--accent);
         }
-
         .start-btn:hover {
-            background: var(--accent);
-            color: var(--bg-card);
+            background: var(--accent); color: var(--bg-card);
         }
-
         .menu-btn {
-            background: transparent;
-            color: var(--text-muted);
+            background: transparent; color: var(--text-muted);
             border-color: var(--border-card);
         }
-
         .menu-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+            border-color: var(--accent); color: var(--accent);
             background: var(--accent-soft);
         }
 
         @media (max-width: 700px) {
-            body { padding: 0 10px 20px 10px; }
-            .medical-card { padding: 20px 18px 26px 18px; }
+            body { padding: 0 10px 30px 10px; }
+            .medical-card { padding: 22px 20px 28px 20px; }
             .medical-header .title { font-size: 1.15rem; }
-            .medical-header .sub { font-size: 0.82rem; }
             .intro-body { font-size: 0.95rem; line-height: 2.2; }
             .divider { font-size: 0.78rem; }
             .start-btn, .menu-btn { padding: 12px 28px; font-size: 0.92rem; }
             .float-group { top: 12px; right: 12px; gap: 6px; }
             .float-btn { padding: 5px 11px 5px 9px; font-size: 0.7rem; }
         }
-
         @media (max-width: 420px) {
-            .medical-card { padding: 16px 14px 22px 14px; }
+            .medical-card { padding: 18px 14px 22px 14px; }
             .medical-header .title { font-size: 1.05rem; }
             .intro-body { font-size: 0.9rem; }
             .start-btn, .menu-btn { padding: 10px 22px; font-size: 0.88rem; letter-spacing: 1px; }
             .btn-group { gap: 10px; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <div class="bg-texture"></div>
+    <div class="bg-vignette"></div>
 
     <div class="float-group">
-        <a class="float-btn" href="../index.html">
-            <span class="icon">←</span> 返回
-        </a>
-        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-            <span class="icon">🌙</span> 夜间
-        </button>
+        <a class="float-btn" href="../index.html"><span class="icon">←</span> 返回</a>
+        <button class="float-btn" id="themeBtn" onclick="ThemeManager.toggle()"><span class="icon">🌙</span> 夜间</button>
     </div>
 
     <div id="app">
@@ -255,34 +185,9 @@
         </div>
     </div>
 
+    <script src="./game-engine.js"></script>
     <script>
-        (function() {
-            try {
-                const raw = localStorage.getItem('theme');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && parsed.value === 'dark') {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    }
-                }
-            } catch (e) {}
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.getElementById('themeBtn').innerHTML = isDark ?
-                '<span class="icon">☀️</span> 日间' :
-                '<span class="icon">🌙</span> 夜间';
-        })();
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            if (newTheme === 'dark') html.setAttribute('data-theme', 'dark');
-            else html.removeAttribute('data-theme');
-            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
-            document.getElementById('themeBtn').innerHTML = newTheme === 'dark' ?
-                '<span class="icon">☀️</span> 日间' :
-                '<span class="icon">🌙</span> 夜间';
-        }
+        document.addEventListener('DOMContentLoaded', () => ThemeManager.init());
     </script>
 </body>
 </html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归终殿 · 引契 · 菜单</title>
+    <style>
+        :root {
+            --bg-body: #e8e0d5;
+            --bg-paper: #f6f0e7;
+            --bg-card: #fcf8f0;
+            --text-primary: #1f1a16;
+            --text-secondary: #2c241e;
+            --text-muted: #5a4d42;
+            --text-muted-light: #8a7a6a;
+            --border-light: #d5c8b8;
+            --border-card: #c4b4a0;
+            --shadow: 0 8px 32px rgba(44, 36, 30, 0.12);
+            --radius: 12px;
+            --font: "Courier New", "Source Code Pro", "PingFang SC", monospace;
+            --transition: 0.3s ease;
+            --accent: #8a2a1a;
+            --accent-soft: rgba(138, 42, 26, 0.06);
+        }
+        [data-theme="dark"] {
+            --bg-body: #1a1614;
+            --bg-paper: #24201c;
+            --bg-card: #2d2824;
+            --text-primary: #cfc8c0;
+            --text-secondary: #b8aea4;
+            --text-muted: #8a8078;
+            --text-muted-light: #6a6560;
+            --border-light: #35302a;
+            --border-card: #4a443e;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #b05a4a;
+            --accent-soft: rgba(176, 90, 74, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            min-height: 100vh;
+            padding: 0 16px 40px 16px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        /* 背景纹理 + 暗角 */
+        .bg-texture {
+            position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.5;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+        .bg-vignette {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 55%, rgba(0,0,0,0.06) 100%);
+        }
+        [data-theme="dark"] .bg-vignette {
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.35) 100%);
+        }
+        .float-group {
+            position: fixed; top: 20px; right: 24px; z-index: 100;
+            display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+        }
+        .float-btn {
+            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 24px;
+            padding: 6px 14px 6px 12px; font-size: 0.75rem; color: var(--text-muted);
+            cursor: pointer; transition: all var(--transition); font-family: inherit;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04); letter-spacing: 0.3px; text-decoration: none;
+        }
+        .float-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .float-btn .icon { font-size: 0.9rem; }
+
+        #app { max-width: 640px; margin: 0 auto; width: 100%; padding: 28px 0 0 0; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .medical-card {
+            background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius);
+            padding: 32px 36px 38px 36px; box-shadow: var(--shadow); width: 100%;
+            animation: cardIn 0.45s ease forwards;
+        }
+        @keyframes cardIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .medical-header {
+            text-align: center; border-bottom: 2px solid var(--border-card);
+            padding-bottom: 16px; margin-bottom: 22px;
+        }
+        .medical-header .title { font-size: 1.45rem; font-weight: 700; letter-spacing: 3px; color: var(--text-primary); }
+        .medical-header .sub { font-size: 0.9rem; color: var(--text-muted-light); letter-spacing: 1px; margin-top: 4px; }
+        .divider { text-align: center; color: var(--text-muted-light); font-size: 0.85rem; letter-spacing: 2px; margin: 18px 0; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .menu-btn {
+            display: block; padding: 14px 10px; border-radius: 8px;
+            border: 1px solid var(--border-card); background: var(--bg-paper);
+            color: var(--text-secondary); font-family: var(--font); font-size: 1.0rem;
+            cursor: pointer; transition: all var(--transition); text-align: center;
+            text-decoration: none; letter-spacing: 1px;
+        }
+        .menu-btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+        .menu-btn.primary { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+        .menu-btn.primary:hover { background: var(--accent); color: var(--bg-card); }
+
+        .version-info { text-align: center; font-size: 0.75rem; color: var(--text-muted-light); margin-top: 20px; letter-spacing: 1px; }
+
+        /* 弹窗通用 */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 300;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius);
+            padding: 24px; width: 90%; max-width: 520px; max-height: 80vh; overflow-y: auto;
+            box-shadow: var(--shadow); position: relative;
+        }
+        .modal-header { font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
+        .modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 1.2rem; color: var(--text-muted-light); cursor: pointer; font-family: inherit; }
+        .modal-close:hover { color: var(--accent); }
+
+        /* 设置 */
+        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-light); }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-label { font-size: 0.95rem; color: var(--text-secondary); }
+        .setting-control { display: flex; align-items: center; gap: 10px; }
+        .setting-control input[type="range"] { width: 120px; }
+        .setting-control select {
+            background: var(--bg-paper); border: 1px solid var(--border-card); border-radius: 4px;
+            padding: 6px 10px; font-family: var(--font); font-size: 0.85rem; color: var(--text-secondary);
+        }
+        .setting-btn {
+            padding: 10px 28px; border-radius: 6px; border: 1px solid var(--accent);
+            background: var(--accent-soft); color: var(--accent); font-family: var(--font); font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s; letter-spacing: 1px; margin-top: 8px;
+        }
+        .setting-btn:hover { background: var(--accent); color: var(--bg-card); }
+
+        /* 存档网格 */
+        .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .menu-save-slot {
+            border: 1px solid var(--border-card); border-radius: 8px; padding: 14px;
+            cursor: pointer; transition: all 0.2s; color: var(--text-secondary);
+        }
+        .menu-save-slot:hover { border-color: var(--accent); background: var(--accent-soft); }
+        .menu-save-slot.empty { cursor: default; color: var(--text-muted-light); }
+        .menu-save-slot.empty:hover { border-color: var(--border-card); background: transparent; }
+
+        /* 收藏 */
+        .collection-list { max-height: 50vh; overflow-y: auto; }
+        .collection-item { padding: 12px 0; border-bottom: 1px solid var(--border-light); }
+        .collection-item:last-child { border-bottom: none; }
+        .collection-word { font-size: 1.05rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+        .collection-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* credits */
+        .credits-body { text-align: center; font-size: 0.95rem; line-height: 2.2; color: var(--text-secondary); }
+
+        @media (max-width: 700px) {
+            body { padding: 0 10px 30px 10px; }
+            .medical-card { padding: 22px 20px 28px 20px; }
+            .medical-header .title { font-size: 1.2rem; }
+            .menu-grid { gap: 10px; }
+            .menu-btn { padding: 12px 8px; font-size: 0.92rem; }
+            .float-group { top: 12px; right: 12px; gap: 6px; }
+            .float-btn { padding: 5px 11px 5px 9px; font-size: 0.7rem; }
+            .modal-card { padding: 18px; }
+            .save-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 420px) {
+            .medical-card { padding: 18px 14px 22px 14px; }
+            .medical-header .title { font-size: 1.1rem; }
+            .menu-btn { font-size: 0.88rem; letter-spacing: 0.5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-texture"></div>
+    <div class="bg-vignette"></div>
+
+    <div class="float-group">
+        <a class="float-btn" href="./index.html"><span class="icon">←</span> 返回</a>
+        <button class="float-btn" id="themeBtn" onclick="ThemeManager.toggle()"><span class="icon">🌙</span> 夜间</button>
+    </div>
+
+    <div id="app">
+        <div class="medical-card" style="text-align:center;">
+            <div class="medical-header">
+                <div class="title">｜ 归终殿 · 引契 ｜</div>
+                <div class="sub">THE GUIDING CONTRACT</div>
+            </div>
+            <div class="divider">═══════════════════════════════════════</div>
+            <div class="menu-grid">
+                <a href="./节点1.html" class="menu-btn primary" id="btnContinue" style="display:none;">继续游戏</a>
+                <a href="./节点1.html" class="menu-btn">开始游戏</a>
+                <button class="menu-btn" onclick="GameEngine.openMenuSave()">存档管理</button>
+                <button class="menu-btn" onclick="GameEngine.openMenuSave()">读档管理</button>
+                <button class="menu-btn" onclick="GameEngine.openMenuCollection()">收藏图鉴</button>
+                <button class="menu-btn" onclick="GameEngine.openSettings()">系统设置</button>
+                <button class="menu-btn" onclick="GameEngine.openMenuCredits()">制作人员</button>
+            </div>
+            <div class="version-info">v2.0 · 归终殿档案系统</div>
+        </div>
+    </div>
+
+    <!-- 设置面板 -->
+    <div class="modal-overlay" id="settingsOverlay" onclick="GameEngine.closeSettings()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="GameEngine.closeSettings()">✕</button>
+            <div class="modal-header">系统设置</div>
+            <div class="setting-row">
+                <span class="setting-label">文字速度</span>
+                <div class="setting-control">
+                    <select id="settingSpeed">
+                        <option value="60">慢</option>
+                        <option value="30" selected>中</option>
+                        <option value="10">快</option>
+                    </select>
+                </div>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">BGM 音量</span>
+                <div class="setting-control"><input type="range" id="settingBgm" min="0" max="100" value="30"><span id="bgmVal">30%</span></div>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">音效音量</span>
+                <div class="setting-control"><input type="range" id="settingSfx" min="0" max="100" value="50"><span id="sfxVal">50%</span></div>
+            </div>
+            <div style="text-align:center;margin-top:12px;">
+                <button class="setting-btn" onclick="GameEngine.applySettings()">保存设置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 存档/读档面板 -->
+    <div class="modal-overlay" id="menuSaveOverlay" onclick="GameEngine.closeMenuSave()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="GameEngine.closeMenuSave()">✕</button>
+            <div class="modal-header">存档管理</div>
+            <div class="save-grid" id="menuSaveSlots"></div>
+        </div>
+    </div>
+
+    <!-- 收藏图鉴 -->
+    <div class="modal-overlay" id="collectionOverlay" onclick="GameEngine.closeMenuCollection()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="GameEngine.closeMenuCollection()">✕</button>
+            <div class="modal-header">收藏图鉴</div>
+            <div class="collection-list" id="collectionList"></div>
+        </div>
+    </div>
+
+    <!-- 制作人员 -->
+    <div class="modal-overlay" id="creditsOverlay" onclick="GameEngine.closeMenuCredits()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="GameEngine.closeMenuCredits()">✕</button>
+            <div class="modal-header">制作人员</div>
+            <div class="credits-body">
+                <p>原作 · 剧情 · 文案</p>
+                <p style="font-weight:700;color:var(--accent);">——</p>
+                <p>程序 · 界面 · 系统</p>
+                <p style="font-weight:700;color:var(--accent);">归终殿档案系统 v2.0</p>
+                <p style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);">本作为同人衍生创作</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="./game-engine.js"></script>
+    <script>
+        document.getElementById('settingBgm').addEventListener('input', e => document.getElementById('bgmVal').textContent = e.target.value + '%');
+        document.getElementById('settingSfx').addEventListener('input', e => document.getElementById('sfxVal').textContent = e.target.value + '%');
+        document.addEventListener('DOMContentLoaded', () => GameEngine.initMenu());
+    </script>
+</body>
+</html>

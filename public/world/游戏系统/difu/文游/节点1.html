@@ -22,7 +22,6 @@
             --accent: #8a2a1a;
             --accent-soft: rgba(138, 42, 26, 0.06);
         }
-
         [data-theme="dark"] {
             --bg-body: #1a1614;
             --bg-paper: #24201c;
@@ -37,349 +36,408 @@
             --accent: #b05a4a;
             --accent-soft: rgba(176, 90, 74, 0.08);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: var(--font);
             background: var(--bg-body);
             color: var(--text-primary);
             transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
             padding: 0 16px 30px 16px;
             display: flex;
             flex-direction: column;
+            position: relative;
             overflow-x: hidden;
         }
+        /* 背景纹理 + 暗角 */
+        .bg-texture {
+            position: fixed; inset: 0; z-index: -2; pointer-events: none; opacity: 0.5;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+        .bg-vignette {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 55%, rgba(0,0,0,0.06) 100%);
+        }
+        [data-theme="dark"] .bg-vignette {
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.35) 100%);
+        }
 
+        /* 浮动按钮 */
         .float-group {
-            position: fixed;
-            top: 20px;
-            right: 24px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
+            position: fixed; top: 20px; right: 24px; z-index: 100;
+            display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
         }
-
         .float-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-            letter-spacing: 0.3px;
-            text-decoration: none;
+            background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 24px;
+            padding: 6px 14px 6px 12px; font-size: 0.75rem; color: var(--text-muted);
+            cursor: pointer; transition: all var(--transition); font-family: inherit;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04); letter-spacing: 0.3px; text-decoration: none;
         }
-
         .float-btn:hover { border-color: var(--accent); color: var(--accent); }
         .float-btn .icon { font-size: 0.9rem; }
 
         #app {
-            max-width: 820px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 20px 0 0 0;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            max-width: 860px; margin: 0 auto; width: 100%;
+            padding: 20px 0 0 0; flex: 1; display: flex; flex-direction: column;
         }
-
         .medical-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius);
-            padding: 24px 28px 30px 28px;
-            box-shadow: var(--shadow);
-            position: relative;
-            width: 100%;
-            animation: cardIn 0.45s ease forwards;
+            background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius);
+            padding: 0; box-shadow: var(--shadow); position: relative; width: 100%;
+            animation: cardIn 0.45s ease forwards; overflow: hidden;
         }
-
         @keyframes cardIn {
             0% { opacity: 0; transform: translateY(12px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
+        /* 顶部信息栏 */
+        .top-bar {
+            padding: 12px 24px 10px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            flex-wrap: wrap;
+        }
+        .scene-tag {
+            font-size: 0.85rem; color: var(--accent); font-weight: 700;
+            letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
+        }
+        .progress-wrap { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; }
+        .progress-bar {
+            width: 120px; height: 4px; background: var(--border-light); border-radius: 2px; overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+        .progress-text { font-size: 0.7rem; color: var(--text-muted-light); min-width: 32px; text-align: right; }
+
         .medical-header {
-            text-align: center;
-            border-bottom: 2px solid var(--border-card);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
+            text-align: center; border-bottom: 1px solid var(--border-card);
+            padding: 14px 20px 12px 20px;
         }
+        .medical-header .title { font-size: 1.25rem; font-weight: 700; letter-spacing: 3px; color: var(--text-primary); }
+        .medical-header .sub { font-size: 0.82rem; color: var(--text-muted-light); letter-spacing: 1px; margin-top: 2px; }
 
-        .medical-header .title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--text-primary);
-        }
+        /* 内容区 */
+        .game-body { padding: 16px 28px 20px 28px; position: relative; }
 
-        .medical-header .sub {
-            font-size: 0.85rem;
-            color: var(--text-muted-light);
-            letter-spacing: 1px;
-            margin-top: 2px;
-        }
-
-        /* ===== 游戏界面 ===== */
-        .game-card {
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 旁白区 */
-        .narration-box {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            padding: 12px 8px;
-            transition: opacity 0.4s ease;
-        }
-
-        .narration-box.hidden { opacity: 0; pointer-events: none; }
-
+        .narration-box { padding: 10px 0; transition: opacity 0.4s ease; }
+        .narration-box.hidden { opacity: 0; pointer-events: none; height: 0; padding: 0; overflow: hidden; }
         .narration-text {
-            font-size: 1.15rem;
-            line-height: 2;
-            color: var(--text-secondary);
-            text-indent: 2em;
-            width: 100%;
-            opacity: 0;
+            font-size: 1.15rem; line-height: 2; color: var(--text-secondary);
+            text-indent: 2em; opacity: 0;
         }
-
-        .narration-text.show {
-            animation: narrFadeIn 0.6s ease forwards;
-        }
-
+        .narration-text.show { animation: narrFadeIn 0.6s ease forwards; }
         @keyframes narrFadeIn {
-            0% { opacity: 0; transform: translateY(10px); }
+            0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* 选项区 */
         .choice-box {
-            padding: 16px 12px;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
+            padding: 12px 0 16px 0; display: none; flex-direction: column; gap: 10px;
             animation: cardIn 0.4s ease forwards;
         }
-
         .choice-box.active { display: flex; }
-
         .choice-btn {
-            width: 100%;
-            padding: 14px 18px;
-            border: 1px solid var(--border-card);
-            border-radius: 8px;
-            background: var(--bg-paper);
-            color: var(--text-secondary);
-            font-family: var(--font);
-            font-size: 1.0rem;
-            line-height: 1.6;
-            cursor: pointer;
-            transition: all var(--transition);
-            text-align: left;
-            position: relative;
-            overflow: hidden;
+            width: 100%; padding: 14px 18px; border: 1px solid var(--border-card); border-radius: 8px;
+            background: var(--bg-paper); color: var(--text-secondary); font-family: var(--font);
+            font-size: 1.0rem; line-height: 1.6; cursor: pointer; transition: all var(--transition);
+            text-align: left; position: relative; overflow: hidden;
         }
-
-        .choice-btn::before {
-            content: "▸ ";
-            color: var(--accent);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .choice-btn:hover {
-            border-color: var(--accent);
-            background: var(--accent-soft);
-            color: var(--accent);
-            padding-left: 22px;
-        }
-
+        .choice-btn::before { content: "▸ "; color: var(--accent); opacity: 0; transition: opacity 0.2s; }
+        .choice-btn:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); padding-left: 22px; }
         .choice-btn:hover::before { opacity: 1; }
 
-        /* 对话框区 */
         .dialogue-box {
-            border-top: 1px solid var(--border-light);
-            padding-top: 16px;
-            margin-top: auto;
-            min-height: 120px;
-            display: none;
-            flex-direction: column;
-            gap: 6px;
+            border-top: 1px solid var(--border-light); padding: 16px 0 8px 0;
+            display: none; flex-direction: column; gap: 6px;
         }
-
         .dialogue-box.active { display: flex; }
-
         .speaker-label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 0.95rem; font-weight: 700; color: var(--accent); letter-spacing: 1px;
+            display: flex; align-items: center; gap: 8px;
         }
-
         .speaker-label::before {
-            content: "";
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            opacity: 0.6;
+            content: ""; display: inline-block; width: 8px; height: 8px;
+            background: var(--accent); border-radius: 50%; opacity: 0.6;
         }
+        .dialogue-text { font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary); min-height: 2.5em; }
+        .dialogue-text .inner-os { font-style: italic; color: var(--text-muted); }
 
-        .dialogue-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            min-height: 3em;
+        /* 关键词 */
+        .keyword { color: var(--accent); cursor: pointer; border-bottom: 1px dashed var(--accent); transition: all 0.2s; }
+        .keyword:hover { background: var(--accent-soft); }
+
+        /* 底部操作栏 */
+        .bottom-bar {
+            border-top: 1px solid var(--border-light); padding: 10px 28px 14px 28px;
+            display: flex; align-items: center; justify-content: space-between; position: relative;
         }
-
-        .dialogue-text .inner-os {
-            font-style: italic;
-            color: var(--text-muted);
-        }
-
-        /* 点击推进提示 */
-        .click-hint {
-            position: absolute;
-            bottom: 14px;
-            right: 22px;
-            font-size: 0.8rem;
-            color: var(--text-muted-light);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            letter-spacing: 1px;
-        }
-
-        .click-hint.show { opacity: 0.6; animation: hintBlink 1.5s infinite; }
-
-        @keyframes hintBlink {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
-        }
-
-        /* 上一句按钮 */
         .step-back-btn {
-            position: absolute;
-            bottom: 14px;
-            left: 22px;
-            font-size: 0.8rem;
-            color: var(--text-muted-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 1px;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            user-select: none;
+            font-size: 0.8rem; color: var(--text-muted-light); cursor: pointer;
+            transition: all 0.3s; letter-spacing: 1px; opacity: 0; pointer-events: none; user-select: none;
         }
-
-        .step-back-btn.show {
-            opacity: 0.6;
-            pointer-events: auto;
+        .step-back-btn.show { opacity: 0.6; pointer-events: auto; }
+        .step-back-btn:hover { color: var(--accent); opacity: 1; }
+        .auto-play-toggle {
+            font-size: 0.8rem; color: var(--text-muted-light); cursor: pointer;
+            transition: all 0.3s; letter-spacing: 1px; user-select: none;
+            display: flex; align-items: center; gap: 4px;
         }
-
-        .step-back-btn:hover {
-            color: var(--accent);
-            opacity: 1;
+        .auto-play-toggle:hover, .auto-play-toggle.active { color: var(--accent); }
+        .click-hint {
+            font-size: 0.8rem; color: var(--text-muted-light); opacity: 0;
+            transition: opacity 0.3s; pointer-events: none; letter-spacing: 1px;
         }
+        .click-hint.show { opacity: 0.6; animation: hintBlink 1.5s infinite; }
+        @keyframes hintBlink { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
 
-        /* 推进点击层（选项出现时禁用） */
-        .click-layer {
-            position: absolute;
-            inset: 0;
-            z-index: 5;
-            cursor: pointer;
-        }
-
+        .click-layer { position: absolute; inset: 0; z-index: 5; cursor: pointer; }
         .click-layer.disabled { pointer-events: none; display: none; }
+
+        /* 左侧日志面板 */
+        .log-panel {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 340px;
+            background: var(--bg-card); border-right: 1px solid var(--border-card);
+            z-index: 200; transform: translateX(-100%);
+            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+            padding: 20px; overflow-y: auto; display: flex; flex-direction: column;
+        }
+        .log-panel.open { transform: translateX(0); }
+        .log-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.15); z-index: 199;
+            opacity: 0; pointer-events: none; transition: opacity 0.35s;
+        }
+        .log-overlay.show { opacity: 1; pointer-events: auto; }
+        .log-header { font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
+        .log-list { flex: 1; overflow-y: auto; font-size: 0.9rem; }
+        .log-entry { padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+        .log-entry:last-child { border-bottom: none; }
+        .log-speaker { font-size: 0.8rem; color: var(--accent); font-weight: 700; margin-bottom: 2px; }
+        .log-text { color: var(--text-secondary); line-height: 1.6; }
+        .log-close { align-self: flex-end; background: none; border: none; font-size: 1.2rem; color: var(--text-muted-light); cursor: pointer; margin-bottom: 8px; }
+        .log-close:hover { color: var(--accent); }
+
+        /* 弹窗通用 */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.2); z-index: 300;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius);
+            padding: 24px; width: 90%; max-width: 520px; max-height: 80vh; overflow-y: auto;
+            box-shadow: var(--shadow); position: relative;
+        }
+        .modal-header { font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
+        .modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 1.2rem; color: var(--text-muted-light); cursor: pointer; font-family: inherit; }
+        .modal-close:hover { color: var(--accent); }
+
+        /* 存档 */
+        .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .save-slot {
+            border: 1px solid var(--border-card); border-radius: 8px; padding: 14px;
+            cursor: pointer; transition: all 0.2s; color: var(--text-secondary);
+        }
+        .save-slot:hover { border-color: var(--accent); background: var(--accent-soft); }
+        .save-slot.empty { cursor: default; color: var(--text-muted-light); }
+        .save-slot.empty:hover { border-color: var(--border-card); background: transparent; }
+        .slot-time { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .slot-preview { font-size: 0.85rem; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 设置 */
+        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-light); }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-label { font-size: 0.95rem; color: var(--text-secondary); }
+        .setting-control { display: flex; align-items: center; gap: 10px; }
+        .setting-control input[type="range"] { width: 120px; }
+        .setting-control select {
+            background: var(--bg-paper); border: 1px solid var(--border-card); border-radius: 4px;
+            padding: 6px 10px; font-family: var(--font); font-size: 0.85rem; color: var(--text-secondary);
+        }
+        .setting-btn {
+            padding: 10px 28px; border-radius: 6px; border: 1px solid var(--accent);
+            background: var(--accent-soft); color: var(--accent); font-family: var(--font); font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s; letter-spacing: 1px; margin-top: 8px;
+        }
+        .setting-btn:hover { background: var(--accent); color: var(--bg-card); }
+
+        /* 词典 */
+        .dict-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.15); z-index: 400;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .dict-overlay.show { opacity: 1; pointer-events: auto; }
+        .dict-card {
+            background: var(--bg-card); border: 1px solid var(--border-card);
+            border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0;
+            padding: 20px 24px; width: 90%; max-width: 420px; box-shadow: var(--shadow); position: relative;
+        }
+        .dict-title { font-size: 1.15rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+        .dict-content { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; }
+        .dict-status { font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; letter-spacing: 1px; }
+        .dict-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 1.1rem; color: var(--text-muted-light); cursor: pointer; }
+        .dict-close:hover { color: var(--accent); }
 
         @media (max-width: 700px) {
             body { padding: 0 10px 20px 10px; }
-            .medical-card { padding: 18px 16px 22px 16px; }
             .medical-header .title { font-size: 1.1rem; }
-            .medical-header .sub { font-size: 0.8rem; }
+            .medical-header .sub { font-size: 0.78rem; }
+            .game-body { padding: 14px 18px 18px 18px; }
             .narration-text { font-size: 1.05rem; line-height: 1.9; }
             .dialogue-text { font-size: 1.0rem; }
             .choice-btn { font-size: 0.95rem; padding: 12px 14px; }
             .speaker-label { font-size: 0.88rem; }
             .float-group { top: 12px; right: 12px; gap: 6px; }
             .float-btn { padding: 5px 11px 5px 9px; font-size: 0.7rem; }
-            .click-hint, .step-back-btn { font-size: 0.75rem; }
+            .top-bar { padding: 10px 16px 8px 16px; }
+            .scene-tag { font-size: 0.78rem; }
+            .progress-bar { width: 80px; }
+            .bottom-bar { padding: 8px 18px 12px 18px; }
+            .step-back-btn, .auto-play-toggle, .click-hint { font-size: 0.75rem; }
+            .log-panel { width: 280px; padding: 16px; }
+            .save-grid { grid-template-columns: 1fr; }
+            .modal-card { padding: 18px; }
         }
-
         @media (max-width: 420px) {
-            .medical-card { padding: 14px 12px 18px 12px; }
+            .medical-header .title { font-size: 1.0rem; }
             .narration-text { font-size: 1.0rem; }
             .dialogue-text { font-size: 0.95rem; }
             .choice-btn { font-size: 0.9rem; padding: 10px 12px; }
             .speaker-label { font-size: 0.85rem; }
-            .click-hint, .step-back-btn { font-size: 0.72rem; }
+            .log-panel { width: 240px; }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <div class="bg-texture"></div>
+    <div class="bg-vignette"></div>
 
     <div class="float-group">
-        <a class="float-btn" href="./index.html">
-            <span class="icon">←</span> 返回目录
-        </a>
-        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-            <span class="icon">🌙</span> 夜间
-        </button>
+        <button class="float-btn" onclick="GameEngine.toggleLog()"><span class="icon">📋</span> 日志</button>
+        <button class="float-btn" onclick="GameEngine.openSettings()"><span class="icon">⚙️</span> 设置</button>
+        <button class="float-btn" onclick="GameEngine.openSaveMenu()"><span class="icon">💾</span> 存档</button>
+        <button class="float-btn" onclick="GameEngine.openLoadMenu()"><span class="icon">📂</span> 读档</button>
+        <a class="float-btn" href="./index.html"><span class="icon">←</span> 目录</a>
+        <button class="float-btn" id="themeBtn" onclick="ThemeManager.toggle()"><span class="icon">🌙</span> 夜间</button>
+    </div>
+
+    <!-- 左侧日志 -->
+    <div class="log-overlay" id="logOverlay" onclick="GameEngine.closeLog()"></div>
+    <div class="log-panel" id="logPanel">
+        <button class="log-close" onclick="GameEngine.closeLog()">✕</button>
+        <div class="log-header">📋 剧情日志</div>
+        <div class="log-list" id="logList"></div>
+    </div>
+
+    <!-- 存档/读档弹窗 -->
+    <div class="modal-overlay" id="savePanelOverlay" onclick="GameEngine.closeSaveMenu()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="GameEngine.closeSaveMenu()">✕</button>
+            <div class="modal-header" id="savePanelTitle">存档管理</div>
+            <div class="save-grid" id="saveSlots"></div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="modal-overlay" id="settingsOverlay" onclick="GameEngine.closeSettings()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="GameEngine.closeSettings()">✕</button>
+            <div class="modal-header">系统设置</div>
+            <div class="setting-row">
+                <span class="setting-label">文字速度</span>
+                <div class="setting-control">
+                    <select id="settingSpeed"><option value="60">慢</option><option value="30" selected>中</option><option value="10">快</option></select>
+                </div>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">BGM 音量</span>
+                <div class="setting-control"><input type="range" id="settingBgm" min="0" max="100" value="30"><span id="bgmVal">30%</span></div>
+            </div>
+            <div class="setting-row">
+                <span class="setting-label">音效音量</span>
+                <div class="setting-control"><input type="range" id="settingSfx" min="0" max="100" value="50"><span id="sfxVal">50%</span></div>
+            </div>
+            <div style="text-align:center;margin-top:12px;">
+                <button class="setting-btn" onclick="GameEngine.applySettings()">保存设置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 词典弹窗 -->
+    <div class="dict-overlay" id="dictOverlay" onclick="GameEngine.closeDict()">
+        <div class="dict-card" onclick="event.stopPropagation()">
+            <button class="dict-close" onclick="GameEngine.closeDict()">✕</button>
+            <div class="dict-title" id="dictTitle"></div>
+            <div class="dict-content" id="dictContent"></div>
+            <div class="dict-status" id="dictStatus"></div>
+        </div>
     </div>
 
     <div id="app">
         <div class="medical-card game-card" id="gameCard">
-            <div class="medical-header" style="margin-bottom: 12px; border-bottom-width: 1px;">
+            <div class="top-bar">
+                <div class="scene-tag" id="sceneTag">🏮 醉梦客栈 · 大堂</div>
+                <div class="progress-wrap">
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
+            </div>
+            <div class="medical-header">
                 <div class="title">｜ 节点一 · 醉梦客栈 ｜</div>
                 <div class="sub">CHAPTER 01 · THE DREAM INN</div>
             </div>
-
-            <div class="narration-box" id="narrationBox">
-                <div class="narration-text" id="narrationText"></div>
+            <div class="game-body">
+                <div class="narration-box" id="narrationBox">
+                    <div class="narration-text" id="narrationText"></div>
+                </div>
+                <div class="choice-box" id="choiceBox"></div>
+                <div class="dialogue-box" id="dialogueBox">
+                    <div class="speaker-label" id="speakerLabel"></div>
+                    <div class="dialogue-text" id="dialogueText"></div>
+                </div>
+                <div class="click-layer" id="clickLayer" onclick="GameEngine.handleClick()"></div>
             </div>
-
-            <div class="choice-box" id="choiceBox"></div>
-
-            <div class="dialogue-box" id="dialogueBox">
-                <div class="speaker-label" id="speakerLabel"></div>
-                <div class="dialogue-text" id="dialogueText"></div>
+            <div class="bottom-bar">
+                <div class="step-back-btn" id="stepBackBtn" onclick="event.stopPropagation(); GameEngine.goBack();"><span>◀ 上一句</span></div>
+                <div class="auto-play-toggle" id="autoPlayToggle" onclick="event.stopPropagation(); GameEngine.toggleAutoPlay();"><span id="autoPlayIcon">▶</span> 自动</div>
+                <div class="click-hint" id="clickHint">◆ 点击继续 ◆</div>
             </div>
-
-            <div class="step-back-btn" id="stepBackBtn" onclick="event.stopPropagation(); goBack();">
-                <span>◀ 上一句</span>
-            </div>
-
-            <div class="click-hint" id="clickHint">◆ 点击继续 ◆</div>
-            <div class="click-layer" id="clickLayer" onclick="handleClick()"></div>
         </div>
     </div>
 
+    <script src="./game-engine.js"></script>
     <script>
+        document.getElementById('settingBgm').addEventListener('input', e => document.getElementById('bgmVal').textContent = e.target.value + '%');
+        document.getElementById('settingSfx').addEventListener('input', e => document.getElementById('sfxVal').textContent = e.target.value + '%');
+
+        // ===== 关键词词典 =====
+        const keywords = {
+            '归终殿': { desc: '地府六殿卞城王设立的专门机构，负责引渡滞留人间的冤魂。编制仅限十位正式引渡人，外加一批打杂的小引渡人。存续近四百年。' },
+            '引渡人': { desc: '归终殿的核心执行人员。拥有实体，能流血受伤，却又非纯粹的凡人肉身，可自由穿梭阴阳，调动阴气法力。主要职责是收束滞留人间的冤魂。' },
+            '引契': { desc: '归终殿派发任务的凭证，类似人间的公文。引渡人凭引契前往指定地点收束冤魂。任务堆积如山，高可及梁。' },
+            '枉死城': { desc: '地府收容因天灾人祸不能寿终正寝的魂魄之所。部分魂魄在前往枉死城的途中被漏掉，滞留在人间成为孤魂野鬼。' },
+            '卞城王': { desc: '地府第六殿阎王，归终殿的创立者。对「十全十美」有莫名执念，因此正式引渡人编制仅限十位。' },
+            '杯中良缘': { desc: '醉梦客栈特有的风俗。喝下对方递来的酒，即表示愿意与对方结为「有缘人」。' },
+            '冤魂': { desc: '因非正常死亡而滞留人间的魂魄。停留时间越长，成为怨魂乃至厉鬼的几率越大。' }
+        };
+
+        // ===== 场景标签映射 =====
+        const sceneMap = {
+            0: '🏮 醉梦客栈 · 大堂',
+            67: '🌾 无涯村 · 村口',
+            88: '🌳 歪脖子老槐树下'
+        };
+
+        // ===== BGM 映射（占位路径，请替换为实际音频文件） =====
+        const bgmMap = {
+            // 0: './bgm/tavern.mp3',
+            // 67: './bgm/village.mp3',
+            // 88: './bgm/mystery.mp3'
+        };
+
         // ===== 剧情脚本 =====
         const script = [
             { type: 'narration', text: '你推开醉梦客栈的门时，没有野鬼遍地，也没有阴风阵阵。大堂里坐满了人，划拳的、喝酒的、聊天的，喧闹得像个庙会。' },
@@ -502,227 +560,26 @@
             { type: 'narration', text: '【节点一 · 完】', ending: true }
         ];
 
-        // ===== 状态 =====
-        let currentIdx = 0;
-        let historyStack = [];
-        let isTyping = false;
-        let typeTimer = null;
-        let isChoiceActive = false;
-        let isEnded = false;
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查是否有读档参数
+            const params = new URLSearchParams(window.location.search);
+            const loadSlot = params.get('load');
 
-        // ===== DOM =====
-        const narrationBox = document.getElementById('narrationBox');
-        const narrationText = document.getElementById('narrationText');
-        const choiceBox = document.getElementById('choiceBox');
-        const dialogueBox = document.getElementById('dialogueBox');
-        const speakerLabel = document.getElementById('speakerLabel');
-        const dialogueText = document.getElementById('dialogueText');
-        const clickLayer = document.getElementById('clickLayer');
-        const clickHint = document.getElementById('clickHint');
-        const stepBackBtn = document.getElementById('stepBackBtn');
-
-        // ===== 初始化主题 =====
-        (function() {
-            try {
-                const raw = localStorage.getItem('theme');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && parsed.value === 'dark') {
-                        document.documentElement.setAttribute('data-theme', 'dark');
-                    }
-                }
-            } catch (e) {}
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.getElementById('themeBtn').innerHTML = isDark ?
-                '<span class="icon">☀️</span> 日间' :
-                '<span class="icon">🌙</span> 夜间';
-        })();
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            if (newTheme === 'dark') html.setAttribute('data-theme', 'dark');
-            else html.removeAttribute('data-theme');
-            localStorage.setItem('theme', JSON.stringify({ value: newTheme }));
-            document.getElementById('themeBtn').innerHTML = newTheme === 'dark' ?
-                '<span class="icon">☀️</span> 日间' :
-                '<span class="icon">🌙</span> 夜间';
-        }
-
-        // ===== 游戏控制 =====
-        function initGame() {
-            historyStack = [];
-            currentIdx = 0;
-            isEnded = false;
-            showStep(0);
-        }
-
-        function showStep(idx) {
-            if (idx < 0 || idx >= script.length) return;
-
-            if (historyStack[historyStack.length - 1] !== idx) {
-                historyStack.push(idx);
-            }
-            currentIdx = idx;
-            const node = script[idx];
-
-            if (node.type === 'jump') {
-                showStep(node.next);
-                return;
-            }
-
-            // 重置状态
-            isChoiceActive = false;
-            isEnded = false;
-            clickHint.classList.remove('show');
-            clickLayer.classList.remove('disabled');
-            choiceBox.classList.remove('active');
-            choiceBox.innerHTML = '';
-            isTyping = false;
-            clearTimeout(typeTimer);
-
-            // 控制上一句按钮：只要历史里不止一步就显示
-            if (historyStack.length > 1) {
-                stepBackBtn.classList.add('show');
-            } else {
-                stepBackBtn.classList.remove('show');
-            }
-
-            if (node.type === 'narration') {
-                renderNarration(node);
-            } else if (node.type === 'dialogue') {
-                renderDialogue(node);
-            } else if (node.type === 'choice') {
-                renderChoice(node);
-            }
-        }
-
-        function renderNarration(node) {
-            dialogueBox.classList.remove('active');
-            speakerLabel.textContent = '';
-            dialogueText.textContent = '';
-
-            narrationBox.classList.remove('hidden');
-            narrationText.textContent = node.text;
-            narrationText.classList.remove('show');
-            void narrationText.offsetWidth;
-            narrationText.classList.add('show');
-
-            if (node.ending) {
-                isEnded = true;
-                clickLayer.classList.add('disabled');
-                // 结尾也保留「上一句」按钮（只要历史长度>1）
-                return;
-            }
-
-            setTimeout(() => {
-                if (!isChoiceActive && !isEnded) clickHint.classList.add('show');
-            }, 600);
-        }
-
-        function renderDialogue(node) {
-            narrationBox.classList.add('hidden');
-            narrationText.textContent = '';
-
-            dialogueBox.classList.add('active');
-            speakerLabel.textContent = node.speaker || '未知';
-
-            if (node.inner) {
-                dialogueText.innerHTML = '<span class="inner-os">' + escapeHtml(node.text) + '</span>';
-            } else {
-                dialogueText.innerHTML = escapeHtml(node.text);
-            }
-
-            const fullHTML = dialogueText.innerHTML;
-            const plainText = node.text;
-            dialogueText.innerHTML = '';
-            isTyping = true;
-            clickHint.classList.remove('show');
-
-            let i = 0;
-            function typeChar() {
-                if (!isTyping) return;
-                if (i < plainText.length) {
-                    dialogueText.textContent = plainText.substring(0, i + 1);
-                    i++;
-                    typeTimer = setTimeout(typeChar, 30);
-                } else {
-                    isTyping = false;
-                    dialogueText.innerHTML = fullHTML;
-                    if (!isChoiceActive && !isEnded) clickHint.classList.add('show');
-                }
-            }
-            typeChar();
-        }
-
-        function renderChoice(node) {
-            narrationBox.classList.add('hidden');
-            narrationText.textContent = '';
-            dialogueBox.classList.remove('active');
-            speakerLabel.textContent = '';
-            dialogueText.textContent = '';
-
-            isChoiceActive = true;
-            clickLayer.classList.add('disabled');
-            clickHint.classList.remove('show');
-            stepBackBtn.classList.remove('show');
-            choiceBox.classList.add('active');
-            choiceBox.innerHTML = '';
-
-            node.choices.forEach((choice) => {
-                const btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.textContent = choice.text;
-                btn.onclick = (e) => {
-                    e.stopPropagation();
-                    choiceBox.classList.remove('active');
-                    showStep(choice.next);
-                };
-                choiceBox.appendChild(btn);
+            GameEngine.init({
+                script: script,
+                keywords: keywords,
+                sceneMap: sceneMap,
+                bgmMap: bgmMap,
+                chapterName: '节点一 · 醉梦客栈',
+                chapterId: '节点1'
             });
-        }
 
-        function handleClick() {
-            if (isChoiceActive || isEnded) return;
-
-            if (isTyping) {
-                isTyping = false;
-                clearTimeout(typeTimer);
-                const node = script[currentIdx];
-                if (node.type === 'dialogue') {
-                    if (node.inner) {
-                        dialogueText.innerHTML = '<span class="inner-os">' + escapeHtml(node.text) + '</span>';
-                    } else {
-                        dialogueText.innerHTML = escapeHtml(node.text);
-                    }
-                }
-                clickHint.classList.add('show');
-                return;
+            // 如果有读档参数，执行读档
+            if (loadSlot) {
+                setTimeout(() => GameEngine.doLoad(loadSlot), 100);
             }
-
-            const nextIdx = currentIdx + 1;
-            if (nextIdx < script.length) {
-                showStep(nextIdx);
-            }
-        }
-
-        function goBack() {
-            if (historyStack.length <= 1) return;
-
-            historyStack.pop();
-            const prevIdx = historyStack[historyStack.length - 1];
-            historyStack.pop();
-            showStep(prevIdx);
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        document.addEventListener('DOMContentLoaded', initGame);
+        });
     </script>
 </body>
 </html>
