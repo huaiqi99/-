@@ -342,7 +342,8 @@ const GameEngine = {
     highlightKeywords(text) {
         let html = Utils.escapeHtml(text);
         for (const word in this.keywords) {
-            const re = new RegExp(word.replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'g');
+            const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const re = new RegExp(escaped, 'g');
             html = html.replace(re, `<span class="keyword" onclick="GameEngine.showDict('${word}')">${word}</span>`);
         }
         return html;

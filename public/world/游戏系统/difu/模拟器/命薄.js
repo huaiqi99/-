@@ -34,7 +34,7 @@ document.querySelectorAll('.news-card').forEach(card=>{card.addEventListener('cl
 modalClose.addEventListener('click',closeNewsModal);modal.addEventListener('click',function(e){if(e.target===this)closeNewsModal();});document.addEventListener('keydown',function(e){if(e.key==='Escape')closeNewsModal();});
 (function(){if(!GZD.Storage)return;const read=GZD.Storage.getNewsRead()||[];document.querySelectorAll('.news-card').forEach(card=>{const nid=card.dataset.newsId;if(nid&&read.includes(nid))card.classList.add('is-read');});})();
 
-// 6. 花瓣特效 - 固定12个，infinite循环，不持续生成，不移除
+// 6. 花瓣特效 - 固定12个，infinite循环
 const PETAL_CHARS=['❀','✿','✽'],petalContainer=document.getElementById('petal-container');
 if(petalContainer){for(let i=0;i<12;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
 
@@ -42,12 +42,18 @@ if(petalContainer){for(let i=0;i<12;i++){const el=document.createElement('div');
 function revealTimelineItems(){document.querySelectorAll('.timeline-item:not(.visible)').forEach(item=>{if(item.getBoundingClientRect().top<window.innerHeight*0.85)item.classList.add('visible');});}
 setTimeout(revealTimelineItems,500);window.addEventListener('scroll',revealTimelineItems);
 
-// 8. 角色切换 - 统一使用 activeProfile
+// 8. 角色切换 - 不再自己抢body控制权，交给核心.js，只更新页面专属UI
 function updateProfileUI(profile){const nameMap={'linxiwu':'林栖梧','luojin':'罗烬'};const nameEl=document.getElementById('currentProfileName');if(nameEl)nameEl.textContent=nameMap[profile]||'林栖梧';const switchBtn=document.getElementById('profileSwitchBtn');if(switchBtn)switchBtn.textContent='切换到 '+(profile==='linxiwu'?'罗烬':'林栖梧');}
-if(!GZD.ProfileManager){GZD.ProfileManager={switch:function(profile){document.body.dataset.profile=profile;document.querySelectorAll('.content-block').forEach(b=>b.classList.remove('active'));const t=document.getElementById('content-'+profile);if(t)t.classList.add('active');updateProfileUI(profile);window.dispatchEvent(new CustomEvent('profilechange',{detail:{profile}}));try{localStorage.setItem('activeProfile',profile);}catch(_){}updateStoryProgress();setTimeout(revealTimelineItems,300);}};}
-const switchBtn=document.getElementById('profileSwitchBtn');if(switchBtn){switchBtn.addEventListener('click',function(){const current=document.body.dataset.profile||'linxiwu';GZD.ProfileManager.switch(current==='linxiwu'?'luojin':'linxiwu');});}
-(function(){const saved=localStorage.getItem('activeProfile')||'linxiwu';document.body.dataset.profile=saved;document.querySelectorAll('.content-block').forEach(b=>b.classList.remove('active'));const t=document.getElementById('content-'+saved);if(t)t.classList.add('active');updateProfileUI(saved);setTimeout(updateStoryProgress,200);setTimeout(revealTimelineItems,300);try{localStorage.setItem('activeProfile',saved);}catch(_){}})();
-window.addEventListener('storage',function(e){if(e.key==='activeProfile'){const n=e.newValue||'linxiwu';if(n!==document.body.dataset.profile)GZD.ProfileManager.switch(n);}});
+
+// 侧边栏切换按钮
+const switchBtn=document.getElementById('profileSwitchBtn');
+if(switchBtn){switchBtn.addEventListener('click',function(){const current=document.body.dataset.profile||'linxiwu';GZD.ProfileManager.switch(current==='linxiwu'?'luojin':'linxiwu');});}
+
+// 初始化：只更新页面专属UI，body和content-block由核心.js统一管理
+(function(){const saved=localStorage.getItem('activeProfile')||'linxiwu';updateProfileUI(saved);setTimeout(updateStoryProgress,200);setTimeout(revealTimelineItems,300);})();
+
+// 监听核心.js触发的角色切换事件
+window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.profile);updateStoryProgress();setTimeout(revealTimelineItems,300);});
 
 // 9. 主题切换
 function toggleTheme(){const html=document.documentElement,isLight=html.getAttribute('data-theme')==='light';html.setAttribute('data-theme',isLight?'dark':'light');localStorage.setItem('theme',JSON.stringify({value:isLight?'dark':'light'}));updateThemeBtn();}
@@ -60,8 +66,5 @@ if(!GZD.Sidebar){GZD.Sidebar={toggle:function(){const p=document.getElementById(
 
 // 11. Storage兼容
 if(!GZD.Storage){GZD.Storage={_data:{quests:{},news:[]},getQuests:function(){return this._data.quests;},updateQuestStatus:function(qid,status){this._data.quests[qid]={status:status};},getNewsRead:function(){return this._data.news||[];},markNewsRead:function(nid){if(!this._data.news.includes(nid))this._data.news.push(nid);}};}
-
-// 12. 监听角色切换
-window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.profile);updateStoryProgress();setTimeout(revealTimelineItems,300);});
 
 console.log('🌙 归终殿 · 命簿纪事 已加载');})();
