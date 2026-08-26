@@ -1037,7 +1037,10 @@
                 margin-left: 4px;
             }
         }
-    </style>
+    
+/* ===== 强制2D渲染（修复符号3D问题） ===== */
+.sym, .sidebar-tab, .sidebar-tab .sym, .sidebar-panel .nav-item, .sidebar-panel .nav-item .sym, .sidebar-panel .profile-switch-btn, .card::after, .card .corner-deco, .news-card::before, .news-card .expand-hint, .news-card .read-badge, .petal-char { transform-style: flat !important; -webkit-transform-style: flat !important; }
+</style>
 <base target="_blank">
 </head>
 <body data-profile="linxiwu">
