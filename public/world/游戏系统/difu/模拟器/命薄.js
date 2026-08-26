@@ -75,10 +75,8 @@ function updateProfileUI(profile){const nameMap={'linxiwu':'林栖梧','luojin':
 window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.profile);updateStoryProgress();setTimeout(revealTimelineItems,300);});
 
 // ===== 10. 主题按钮更新 =====
-function updateThemeBtn(){const icon=document.getElementById('themeIcon'),label=document.getElementById('themeLabel');if(!icon||!label)return;const isLight=document.documentElement.getAttribute('data-theme')==='light';icon.textContent=isLight?'🌙':'☀️';label.textContent=isLight?'夜间':'日间';}
-window.toggleTheme=function(){GZD.ThemeManager.toggle();};
-// 同步主题设置（确保从其他页面继承）
-(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='light'){document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.removeAttribute('data-theme');}}else{document.documentElement.setAttribute('data-theme','light');}}catch(e){document.documentElement.setAttribute('data-theme','light');}})();
+function updateThemeBtn(){const b=document.getElementById('themeBtn'),isLight=document.documentElement.getAttribute('data-theme')==='light';if(b)b.innerHTML='<span id="themeIcon">'+(isLight?'🌙':'☀️')+'</span> <span id="themeLabel">'+(isLight?'夜间':'日间')+'</span>';}
+document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
 updateThemeBtn();
 
 console.log('🌙 归终殿 · 命簿纪事 v2.0 已加载');})();
