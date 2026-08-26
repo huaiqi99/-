@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@ h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
 
 <div class="float-group">
   <a class="float-btn" href="../index"><span style="margin-right:2px;">←</span> 返回</a>
-  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span id="themeIcon">☀️</span> <span id="themeLabel">日间</span></button>
+  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
 </div>
 
 <!-- 光晕背景 -->
@@ -77,7 +77,7 @@ h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
 </div>
 
 <script>
-(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='light'){document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.removeAttribute('data-theme');}}}catch(e){}})();
+(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='light'){document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.removeAttribute('data-theme');} }else{document.documentElement.setAttribute('data-theme','light');} }catch(e){document.documentElement.setAttribute('data-theme','light');} })();
 function toggleTheme(){var html=document.documentElement;var isLight=html.getAttribute('data-theme')==='light';var newTheme=isLight?'dark':'light';if(newTheme==='light'){html.setAttribute('data-theme','light');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));updateThemeBtn();}
 function updateThemeBtn(){var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(!icon||!label)return;var isLight=document.documentElement.getAttribute('data-theme')==='light';icon.textContent=isLight?'🌙':'☀️';label.textContent=isLight?'夜间':'日间';}
 function selectProfile(id){localStorage.setItem('activeProfile',id);document.querySelectorAll('.profile-card').forEach(function(c){c.classList.toggle('active',c.dataset.profile===id);});var names={linxiwu:'林栖梧',luojin:'罗烬'};var note=document.getElementById('footerNote');if(note)note.textContent='当前档案：'+names[id];}
