@@ -200,8 +200,6 @@ const GameEngine = {
 
     renderNarration(node) {
         this.dom.dialogueBox.classList.remove('active');
-        this.dom.speakerLabel.textContent = '';
-        this.dom.dialogueText.textContent = '';
         this.dom.narrationBox.classList.remove('hidden');
         this.dom.narrationText.innerHTML = this.highlightKeywords(node.text);
         this.dom.narrationText.classList.remove('show');
@@ -218,15 +216,9 @@ const GameEngine = {
     },
 
     renderDialogue(node) {
-        this.dom.narrationBox.classList.add('hidden');
-        this.dom.narrationText.textContent = '';
         this.dom.dialogueBox.classList.add('active');
         this.dom.speakerLabel.textContent = node.speaker || '未知';
 
-        const html = node.inner
-            ? '<span class="inner-os">' + Utils.escapeHtml(node.text) + '</span>'
-            : Utils.escapeHtml(node.text);
-        const fullHTML = this.highlightKeywords(node.inner ? node.text : node.text);
         const plainText = node.text;
         this.dom.dialogueText.innerHTML = '';
         this.isTyping = true; this.clickHintHide();
@@ -240,8 +232,9 @@ const GameEngine = {
                 this.typeTimer = setTimeout(typeChar, this.textSpeed);
             } else {
                 this.isTyping = false;
-                this.dom.dialogueText.innerHTML = this.highlightKeywords(node.text);
-                if (node.inner) this.dom.dialogueText.querySelector('.keyword')?.classList.add('inner-os');
+                let html = this.highlightKeywords(node.text);
+                if (node.inner) html = '<span class="inner-os">' + html + '</span>';
+                this.dom.dialogueText.innerHTML = html;
                 if (!this.isChoiceActive && !this.isEnded) this.clickHintShow();
                 this.scheduleAuto();
             }
@@ -250,11 +243,6 @@ const GameEngine = {
     },
 
     renderChoice(node) {
-        this.dom.narrationBox.classList.add('hidden');
-        this.dom.narrationText.textContent = '';
-        this.dom.dialogueBox.classList.remove('active');
-        this.dom.speakerLabel.textContent = '';
-        this.dom.dialogueText.textContent = '';
         this.isChoiceActive = true;
         this.clickLayerDisable(); this.clickHintHide();
         this.dom.stepBackBtn.classList.remove('show');
@@ -281,8 +269,9 @@ const GameEngine = {
             this.isTyping = false; clearTimeout(this.typeTimer);
             const node = this.script[this.currentIdx];
             if (node.type === 'dialogue') {
-                this.dom.dialogueText.innerHTML = this.highlightKeywords(node.text);
-                if (node.inner) this.dom.dialogueText.innerHTML = '<span class="inner-os">' + this.dom.dialogueText.innerHTML + '</span>';
+                let html = this.highlightKeywords(node.text);
+                if (node.inner) html = '<span class="inner-os">' + html + '</span>';
+                this.dom.dialogueText.innerHTML = html;
             }
             this.clickHintShow(); this.scheduleAuto(); return;
         }
@@ -298,7 +287,6 @@ const GameEngine = {
         this.showStep(prev);
     },
 
-    // ---------- 自动播放 ----------
     toggleAutoPlay() {
         this.autoPlay = !this.autoPlay;
         Storage.saveSettings({ autoPlay: this.autoPlay });
@@ -319,7 +307,6 @@ const GameEngine = {
         }, 2200);
     },
 
-    // ---------- UI 辅助 ----------
     clickHintShow() { if (this.dom.clickHint) this.dom.clickHint.classList.add('show'); },
     clickHintHide() { if (this.dom.clickHint) this.dom.clickHint.classList.remove('show'); },
     clickLayerDisable() { if (this.dom.clickLayer) this.dom.clickLayer.classList.add('disabled'); },
@@ -350,11 +337,10 @@ const GameEngine = {
         }
     },
 
-    // ---------- 关键词 / 收藏 ----------
     highlightKeywords(text) {
         let html = Utils.escapeHtml(text);
         for (const word in this.keywords) {
-            const re = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            const re = new RegExp(word.replace(/[.*+?^${}()|[\]\]/g, '\$&'), 'g');
             html = html.replace(re, `<span class="keyword" onclick="GameEngine.showDict('${word}')">${word}</span>`);
         }
         return html;
@@ -372,7 +358,6 @@ const GameEngine = {
     },
     closeDict() { document.getElementById('dictOverlay')?.classList.remove('show'); },
 
-    // ---------- 日志 ----------
     addLogEntry(node) {
         let entry = { type: node.type, text: '' };
         if (node.type === 'narration') entry.text = node.text;
@@ -406,7 +391,6 @@ const GameEngine = {
         document.getElementById('logOverlay')?.classList.remove('show');
     },
 
-    // ---------- 存档 / 读档 ----------
     getCurrentState() {
         const node = this.script[this.currentIdx];
         let preview = '';
@@ -445,7 +429,6 @@ const GameEngine = {
         const saves = Storage.getSaves();
         grid.innerHTML = '';
 
-        // 自动存档槽
         const autoDiv = document.createElement('div');
         autoDiv.className = 'save-slot' + (saves.auto ? '' : ' empty');
         if (saves.auto) {
@@ -456,7 +439,6 @@ const GameEngine = {
         }
         grid.appendChild(autoDiv);
 
-        // 5个手动槽
         for (let i = 0; i < 5; i++) {
             const slot = document.createElement('div');
             slot.className = 'save-slot' + (saves.slots[i] ? '' : ' empty');
@@ -479,16 +461,13 @@ const GameEngine = {
         const data = Storage.loadSlot(slotId);
         if (!data) return;
         if (data.chapterId && data.chapterId !== this.chapterId) {
-            // 跨章节读档：跳转页面
             const url = `./${data.chapterId}.html?load=${slotId}`;
             window.location.href = url;
             return;
         }
-        // 同章节读档
         this.historyStack = data.historyStack ? [...data.historyStack] : [data.nodeIndex];
         this.currentIdx = data.nodeIndex;
         this.logEntries = [];
-        // 重建日志
         for (let i = 0; i <= data.nodeIndex; i++) {
             if (this.script[i] && this.script[i].type !== 'jump') this.addLogEntry(this.script[i]);
         }
@@ -497,7 +476,6 @@ const GameEngine = {
         this.closeSaveMenu();
     },
 
-    // ---------- 设置 ----------
     openSettings() {
         const s = Storage.getSettings();
         document.getElementById('settingSpeed') && (document.getElementById('settingSpeed').value = s.textSpeed);
@@ -517,7 +495,6 @@ const GameEngine = {
         this.closeSettings();
     },
 
-    // ---------- 菜单页辅助 ----------
     initMenu() {
         ThemeManager.init();
         this.checkContinue();
@@ -587,7 +564,6 @@ const GameEngine = {
         const started = this.audio.toggleBgm();
         this.updateBgmBtn();
         if (started && !this.audio.currentBgm) {
-            // 如果没有当前BGM，尝试播放当前场景的
             this.checkBgm();
             this.updateBgmBtn();
         }

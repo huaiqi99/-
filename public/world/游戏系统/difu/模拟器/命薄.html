@@ -3,50 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>命簿纪事 · 引渡人模拟器</title>
+<title>归终殿 · 命簿纪事</title>
 <style>
-:root{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--bg-accent-soft:rgba(196,180,160,0.06);--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;}
-[data-theme="light"]{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--bg-accent-soft:rgba(138,58,42,0.04);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
-body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);}body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
-*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
-body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.7;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px;}
-.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
-.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
+:root{
+  --bg-body:#1a1614;
+  --bg-card:#24201c;
+  --bg-hover:#2d2824;
+  --bg-accent-soft:rgba(196,180,160,0.06);
+  --border-light:#3d3732;
+  --border-card:#4a443e;
+  --text-primary:#e8e0d5;
+  --text-secondary:#b8aea4;
+  --text-muted:#8a8078;
+  --accent:#c4b4a0;
+  --profile-lin:#D49A9A;
+  --profile-luo:#4E5A64;
+  --font-serif:"Georgia","Times New Roman","Songti SC",serif;
+  --font-mono:"Courier New","Source Code Pro",monospace;
+  --transition:0.3s ease;
+  --sidebar-width:240px;
+}
+[data-theme="light"]{
+  --bg-body:#f7f4ef;
+  --bg-card:#ffffff;
+  --bg-hover:#f2eee9;
+  --bg-accent-soft:rgba(138,58,42,0.04);
+  --border-light:#ece6de;
+  --border-card:#d5c8b8;
+  --text-primary:#2c2c2c;
+  --text-secondary:#4a4a4a;
+  --text-muted:#8a8a8a;
+  --accent:#8a3a2a;
+}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-serif);
+  background:var(--bg-body);
+  color:var(--text-primary);
+  font-size:16px;
+  line-height:1.7;
+  transition:background var(--transition),color var(--transition);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding:0 16px 40px 16px;
+}
+
+.float-group{
+  position:fixed;top:20px;right:24px;z-index:100;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+}
+.float-btn{
+  background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;
+  padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);
+  cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);
+  display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;
+}
 .float-btn:hover{border-color:var(--accent);color:var(--accent);}
-.top-header{max-width:900px;margin:0 auto;padding:20px 4px 16px 4px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border-light);}
-.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px;}
+
+.top-header{
+  max-width:900px;margin:0 auto;padding:20px 4px 16px 4px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  border-bottom:1px solid var(--border-light);
+}
+.top-header .page-title{
+  font-size:1.2rem;font-weight:700;letter-spacing:1px;
+  display:flex;align-items:center;gap:8px;
+}
 .top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition);}
 .profile-toggle{display:flex;gap:8px;align-items:center;}
-.profile-toggle button{padding:5px 16px;border-radius:16px;border:1px solid var(--border-light);background:transparent;color:var(--text-muted);font-family:var(--font-serif);font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.profile-toggle button{
+  padding:5px 16px;border-radius:16px;border:1px solid var(--border-light);
+  background:transparent;color:var(--text-muted);font-family:var(--font-serif);
+  font-size:0.85rem;cursor:pointer;transition:all 0.2s;
+}
 .profile-toggle button:hover{border-color:var(--text-secondary);color:var(--text-secondary);}
-.profile-toggle button.active[data-profile="linxiwu"]{border-color:var(--profile-lin);color:var(--profile-lin);background:rgba(212,154,154,0.08);}
-.profile-toggle button.active[data-profile="luojin"]{border-color:var(--profile-luo);color:var(--profile-luo);background:rgba(78,90,100,0.08);}
-.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:0.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none;}
+.profile-toggle button.active[data-profile="linxiwu"]{
+  border-color:var(--profile-lin);color:var(--profile-lin);background:rgba(212,154,154,0.08);
+}
+.profile-toggle button.active[data-profile="luojin"]{
+  border-color:var(--profile-luo);color:var(--profile-luo);background:rgba(78,90,100,0.08);
+}
+
+.sidebar-tab{
+  position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;
+  background:var(--bg-card);border:1px solid var(--border-card);border-left:none;
+  border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;
+  box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all var(--transition);
+  writing-mode:vertical-rl;font-size:0.7rem;letter-spacing:3px;
+  color:var(--text-muted);font-family:var(--font-mono);user-select:none;
+}
 .sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent);}
 .sidebar-tab .sym{writing-mode:horizontal-tb;display:inline-block;margin-bottom:4px;}
-.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,0.25);transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column;}
+.sidebar-panel{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);
+  background:var(--bg-card);border-right:1px solid var(--border-card);
+  box-shadow:4px 0 24px rgba(0,0,0,0.25);
+  transform:translateX(-100%);
+  transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);
+  z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
 .sidebar-panel.open{transform:translateX(0);}
-.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition);}
+.sidebar-panel .close-btn{
+  align-self:flex-end;background:none;border:none;font-size:1.2rem;
+  color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;
+  transition:color var(--transition);
+}
 .sidebar-panel .close-btn:hover{color:var(--profile-accent);}
-.sidebar-panel .panel-title{font-size:0.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono);}
-.sidebar-panel .nav-item{display:block;padding:10px 12px;border-radius:6px;border:1px solid transparent;font-size:0.9rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:4px;text-decoration:none;}
+.sidebar-panel .panel-title{
+  font-size:0.7rem;letter-spacing:2px;color:var(--text-muted);
+  text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;
+  border-bottom:1px solid var(--border-light);font-family:var(--font-mono);
+}
+.sidebar-panel .nav-item{
+  display:block;padding:10px 12px;border-radius:6px;
+  border:1px solid transparent;font-size:0.9rem;font-family:var(--font-serif);
+  color:var(--text-secondary);cursor:pointer;transition:all var(--transition);
+  text-align:left;background:none;width:100%;margin-bottom:4px;text-decoration:none;
+}
 .sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light);}
-.sidebar-panel .nav-item.active{background:var(--bg-accent-soft);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600;}
+.sidebar-panel .nav-item.active{
+  background:var(--bg-accent-soft);border-color:var(--profile-accent);
+  color:var(--profile-accent);font-weight:600;
+}
 .sidebar-panel .nav-item .sym{display:inline-block;width:22px;}
-.sidebar-panel .panel-footer{margin-top:auto;font-size:0.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:0.5px;}
-.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:92;opacity:0;pointer-events:none;transition:opacity 0.35s ease;}
+.sidebar-panel .panel-footer{
+  margin-top:auto;font-size:0.6rem;color:var(--text-muted);
+  text-align:center;padding-top:12px;border-top:1px solid var(--border-light);
+  font-family:var(--font-mono);letter-spacing:0.5px;
+}
+.sidebar-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:92;
+  opacity:0;pointer-events:none;transition:opacity 0.35s ease;
+}
 .sidebar-overlay.show{opacity:1;pointer-events:auto;}
 body.no-scroll{overflow:hidden;}
+
 #app{max-width:900px;margin:0 auto;width:100%;padding:20px 4px 0 4px;}
-.card{background:var(--bg-card);border:1.5px solid var(--profile-accent);border-radius:12px;padding:20px;margin-bottom:16px;transition:border-color var(--transition),box-shadow var(--transition);animation:cardIn 0.4s ease forwards;}
+
+.card{
+  background:var(--bg-card);border:1.5px solid var(--profile-accent);
+  border-radius:12px;padding:20px;margin-bottom:16px;
+  transition:border-color var(--transition),box-shadow var(--transition);
+  animation:cardIn 0.4s ease forwards;
+}
 @keyframes cardIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.card-title{
+  font-size:0.9rem;font-weight:600;font-family:var(--font-serif);
+  letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
 .card-title .sym{color:var(--profile-accent);}
+
 .content-block{display:none;}
 .content-block.active{display:block;}
 
 /* 时辰横幅 */
-.chrono-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);padding:20px 24px;}
+.chrono-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);
+  padding:20px 24px;
+}
 .chrono-banner .hour-block{display:flex;align-items:baseline;gap:10px;}
 .chrono-banner .hour-name{font-size:2rem;font-weight:700;color:var(--profile-accent);letter-spacing:2px;}
 .chrono-banner .hour-sub{font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);}
@@ -57,7 +178,10 @@ body.no-scroll{overflow:hidden;}
 
 /* 今日要闻 */
 .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.news-card{background:var(--bg-card);border:1px solid var(--border-light);border-left:3px solid var(--profile-accent);border-radius:8px;padding:14px;transition:all var(--transition);}
+.news-card{
+  background:var(--bg-card);border:1px solid var(--border-light);border-left:3px solid var(--profile-accent);
+  border-radius:8px;padding:14px;transition:all var(--transition);
+}
 .news-card:hover{border-color:var(--profile-accent);background:var(--bg-hover);}
 .news-card .tag{font-size:0.65rem;font-family:var(--font-mono);color:var(--text-muted);letter-spacing:0.5px;margin-bottom:6px;display:block;}
 .news-card .title{font-size:0.95rem;font-weight:600;margin-bottom:6px;color:var(--text-primary);}
@@ -74,13 +198,20 @@ body.no-scroll{overflow:hidden;}
 .story-update{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);padding-top:8px;border-top:1px solid var(--border-light);}
 
 /* 待办委托 */
-.quest-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light);font-size:0.9rem;}
+.quest-item{
+  display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light);
+  font-size:0.9rem;cursor:pointer;transition:all 0.2s;
+}
 .quest-item:last-child{border-bottom:none;}
+.quest-item:hover{background:var(--bg-accent-soft);margin:0 -12px;padding:10px 12px;border-radius:6px;}
 .quest-item .sym{color:var(--profile-accent);font-size:1rem;width:20px;text-align:center;}
 .quest-item .title{flex:1;color:var(--text-primary);font-weight:500;}
 .quest-item .publisher{font-size:0.8rem;color:var(--text-muted);width:80px;text-align:center;}
 .quest-item .deadline{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);width:70px;text-align:center;}
-.quest-item .status{font-size:0.7rem;padding:2px 10px;border-radius:10px;font-family:var(--font-mono);border:1px solid var(--border-light);color:var(--text-muted);white-space:nowrap;}
+.quest-item .status{
+  font-size:0.7rem;padding:2px 10px;border-radius:10px;font-family:var(--font-mono);
+  border:1px solid var(--border-light);color:var(--text-muted);white-space:nowrap;
+}
 .quest-item .status.doing{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-accent-soft);}
 .quest-item .status.done{opacity:0.5;text-decoration:line-through;}
 
@@ -99,21 +230,41 @@ body.no-scroll{overflow:hidden;}
 .whisper .quote{font-size:1rem;font-style:italic;color:var(--text-secondary);line-height:1.8;}
 .whisper .source{font-size:0.75rem;color:var(--text-muted);margin-top:8px;font-family:var(--font-mono);}
 
-@media(max-width:768px){body{padding:0 12px 30px 12px;}.top-header{padding:16px 0 12px 0;}.top-header .page-title{font-size:1rem;}.profile-toggle button{padding:4px 12px;font-size:0.8rem;}.news-grid{grid-template-columns:1fr;}.chrono-banner .hour-name{font-size:1.6rem;}.quest-item{flex-wrap:wrap;gap:6px 12px;}.quest-item .publisher,.quest-item .deadline{width:auto;text-align:left;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:16px;}}
-@media(max-width:480px){.chrono-banner{flex-direction:column;align-items:flex-start;}.chrono-banner .meta-list{gap:10px;}.story-header{flex-direction:column;align-items:flex-start;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}}
+@media(max-width:768px){
+  body{padding:0 12px 30px 12px;}
+  .top-header{padding:16px 0 12px 0;}
+  .top-header .page-title{font-size:1rem;}
+  .profile-toggle button{padding:4px 12px;font-size:0.8rem;}
+  .news-grid{grid-template-columns:1fr;}
+  .chrono-banner .hour-name{font-size:1.6rem;}
+  .quest-item{flex-wrap:wrap;gap:6px 12px;}
+  .quest-item .publisher,.quest-item .deadline{width:auto;text-align:left;}
+  .sidebar-panel{width:210px;padding:20px 14px 16px 14px;}
+  .sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}
+  .card{padding:16px;}
+}
+@media(max-width:480px){
+  .chrono-banner{flex-direction:column;align-items:flex-start;}
+  .chrono-banner .meta-list{gap:10px;}
+  .story-header{flex-direction:column;align-items:flex-start;}
+  .float-group{top:12px;right:12px;gap:6px;}
+  .float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}
+}
 </style>
 </head>
 <body data-profile="linxiwu">
 
 <div class="float-group">
-  <a class="float-btn" href="./index"><span style="margin-right:2px;">←</span> 返回</a>
-  <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span id="themeIcon">☀️</span> <span id="themeLabel">日间</span></button>
+  <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+  <button class="float-btn" id="themeBtn" onclick="GZD.ThemeManager.toggle()">
+    <span id="themeIcon">☀️</span> <span id="themeLabel">日间</span>
+  </button>
 </div>
 
-<div class="sidebar-tab" onclick="toggleSidebar()"><span class="sym">◈</span> 导航</div>
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar-tab" onclick="GZD.Sidebar.toggle()"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="GZD.Sidebar.close()"></div>
 <div class="sidebar-panel" id="sidebarPanel">
-  <button class="close-btn" onclick="closeSidebar()">✕</button>
+  <button class="close-btn" onclick="GZD.Sidebar.close()">✕</button>
   <div class="panel-title">◈ 归终殿 · 导航</div>
   <a class="nav-item active" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
   <a class="nav-item" href="#"><span class="sym">✦</span> 引渡人档案</a>
@@ -131,8 +282,8 @@ body.no-scroll{overflow:hidden;}
 <div class="top-header">
   <div class="page-title"><span class="sym">◈</span> 命簿纪事</div>
   <div class="profile-toggle">
-    <button data-profile="linxiwu" onclick="switchProfile('linxiwu')">✿ 林栖梧</button>
-    <button data-profile="luojin" onclick="switchProfile('luojin')">✦ 罗烬</button>
+    <button data-profile="linxiwu" onclick="GZD.ProfileManager.switch('linxiwu')">✿ 林栖梧</button>
+    <button data-profile="luojin" onclick="GZD.ProfileManager.switch('luojin')">✦ 罗烬</button>
   </div>
 </div>
 
@@ -155,23 +306,22 @@ body.no-scroll{overflow:hidden;}
   <!-- ===== 林栖梧内容 ===== -->
   <div class="content-block active" id="content-linxiwu">
 
-    <!-- 今日要闻 -->
     <div class="card">
       <div class="card-title"><span class="sym">✿</span> 今日要闻</div>
       <div class="news-grid">
-        <div class="news-card">
+        <div class="news-card" data-news-id="news-lin-1">
           <span class="tag">殿务公告</span>
           <div class="title">下月升席挑战报名开启</div>
           <div class="excerpt">有意挑战第十席之位的弟子，请于本月晦日前至归终正殿登记。需通过讲武堂基础体术考核方可报名。</div>
           <div class="time">辰时三刻 · 殿务司</div>
         </div>
-        <div class="news-card">
+        <div class="news-card" data-news-id="news-lin-2">
           <span class="tag">人间异动</span>
           <div class="title">青州锁龙井封印松动</div>
           <div class="excerpt">司序君下令加固地脉，归终殿已派第三席前往勘查。近期或需增派人手协防。</div>
           <div class="time">卯时初 · 人间司</div>
         </div>
-        <div class="news-card">
+        <div class="news-card" data-news-id="news-lin-3">
           <span class="tag">同僚动态</span>
           <div class="title">音律坊新曲试奏</div>
           <div class="excerpt">魏元璟携摧城笛于音律坊试奏新谱，程木栖以古琴相和。据说一曲终了，浮生树落瓣如雨。</div>
@@ -180,29 +330,28 @@ body.no-scroll{overflow:hidden;}
       </div>
     </div>
 
-    <!-- 命簿主线 -->
     <div class="card">
       <div class="card-title"><span class="sym">◈</span> 命簿主线</div>
       <div class="story-header">
         <div class="story-title">第一章 · 初入归终殿</div>
-        <div class="story-pct">12%</div>
+        <div class="story-pct" id="storyPct-lin">12%</div>
       </div>
-      <div class="progress-track"><div class="progress-fill" style="width:12%;"></div></div>
+      <div class="progress-track"><div class="progress-fill" id="storyBar-lin" style="width:12%;"></div></div>
       <div class="story-desc">你踏入归终殿的那一刻，广场中央的浮生树忽然无风自动。引渡人罗修站在殿前石阶上，双刀未出鞘，目光却像已经把你看了个透彻。他说："归终殿不要废物，也不要英雄。我们要的是能活着把亡魂送过河的人。"</div>
       <div class="story-update">最近更新：苍珩四百三十五年 · 霜月 · 入门试炼</div>
     </div>
 
-    <!-- 待办委托 -->
     <div class="card">
       <div class="card-title"><span class="sym">◆</span> 待办委托</div>
-      <div class="quest-item"><span class="sym">◈</span><span class="title">巡逻忘川河畔（东段）</span><span class="publisher">殿务司</span><span class="deadline">今日酉时前</span><span class="status">未接</span></div>
-      <div class="quest-item"><span class="sym">✿</span><span class="title">替符修院整理残卷</span><span class="publisher">栾方棋</span><span class="deadline">三日内</span><span class="status doing">进行中</span></div>
-      <div class="quest-item"><span class="sym">✦</span><span class="title">砺峰阁晨课陪练</span><span class="publisher">魏元璟</span><span class="deadline">每日卯时</span><span class="status doing">进行中</span></div>
-      <div class="quest-item"><span class="sym">✧</span><span class="title">采集浮生花瓣（制药用）</span><span class="publisher">程木栖</span><span class="deadline">本月晦日</span><span class="status">未接</span></div>
-      <div class="quest-item"><span class="sym">❖</span><span class="title">修补孽镜台碎片（丙级）</span><span class="publisher">卞城王殿</span><span class="deadline">无时限</span><span class="status done">已完成</span></div>
+      <div class="quest-list" id="questList-lin">
+        <div class="quest-item" data-quest-id="lin-q1"><span class="sym">◈</span><span class="title">巡逻忘川河畔（东段）</span><span class="publisher">殿务司</span><span class="deadline">今日酉时前</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="lin-q2"><span class="sym">✿</span><span class="title">替符修院整理残卷</span><span class="publisher">栾方棋</span><span class="deadline">三日内</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="lin-q3"><span class="sym">✦</span><span class="title">砺峰阁晨课陪练</span><span class="publisher">魏元璟</span><span class="deadline">每日卯时</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="lin-q4"><span class="sym">✧</span><span class="title">采集浮生花瓣（制药用）</span><span class="publisher">程木栖</span><span class="deadline">本月晦日</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="lin-q5"><span class="sym">❖</span><span class="title">修补孽镜台碎片（丙级）</span><span class="publisher">卞城王殿</span><span class="deadline">无时限</span><span class="status">未接</span></div>
+      </div>
     </div>
 
-    <!-- 最近纪事 -->
     <div class="card">
       <div class="card-title"><span class="sym">✶</span> 最近纪事</div>
       <div class="timeline">
@@ -229,28 +378,27 @@ body.no-scroll{overflow:hidden;}
       </div>
     </div>
 
-  </div><!-- /林栖梧 -->
+  </div>
 
   <!-- ===== 罗烬内容 ===== -->
   <div class="content-block" id="content-luojin">
 
-    <!-- 今日要闻 -->
     <div class="card">
       <div class="card-title"><span class="sym">✦</span> 今日要闻</div>
       <div class="news-grid">
-        <div class="news-card">
+        <div class="news-card" data-news-id="news-luo-1">
           <span class="tag">讲武堂</span>
           <div class="title">罗修首席亲授双刀技法</div>
           <div class="excerpt">本月讲武堂开设首席特别课程，仅限通过基础考核的弟子参加。据说罗修会在课上亲自喂招。</div>
           <div class="time">巳时初 · 讲武堂</div>
         </div>
-        <div class="news-card">
+        <div class="news-card" data-news-id="news-luo-2">
           <span class="tag">同僚动态</span>
           <div class="title">林栖梧于符修院开试讲课</div>
           <div class="excerpt">林栖梧以浮生树血脉之力演示符箓绘制，引得符修院弟子围观。栾方棋在旁点评："比我当年强点。"</div>
           <div class="time">昨日未时 · 符修院</div>
         </div>
-        <div class="news-card">
+        <div class="news-card" data-news-id="news-luo-3">
           <span class="tag">殿务公告</span>
           <div class="title">演武广场设施维护</div>
           <div class="excerpt">演武广场东侧石靶因长期使用出现裂痕，今日申时后暂停使用。讲武堂弟子请移步西侧场地。</div>
@@ -259,29 +407,28 @@ body.no-scroll{overflow:hidden;}
       </div>
     </div>
 
-    <!-- 命簿主线 -->
     <div class="card">
       <div class="card-title"><span class="sym">◈</span> 命簿主线</div>
       <div class="story-header">
         <div class="story-title">第一章 · 刀与火</div>
-        <div class="story-pct">8%</div>
+        <div class="story-pct" id="storyPct-luo">8%</div>
       </div>
-      <div class="progress-track"><div class="progress-fill" style="width:8%;"></div></div>
+      <div class="progress-track"><div class="progress-fill" id="storyBar-luo" style="width:8%;"></div></div>
       <div class="story-desc">你第一次握住刀的时候，掌心被烫了一下。罗修说那是九幽焚天焰的余温，"习惯了就好"。你问他要习惯多久，他说："五百年吧。"然后低低笑了一声，像是在开玩笑，又像不是。你后来才知道，他真的等了五百年。</div>
       <div class="story-update">最近更新：苍珩四百三十五年 · 霜月 · 拜师讲武堂</div>
     </div>
 
-    <!-- 待办委托 -->
     <div class="card">
       <div class="card-title"><span class="sym">◆</span> 待办委托</div>
-      <div class="quest-item"><span class="sym">◈</span><span class="title">演武广场石靶修缮协助</span><span class="publisher">工造司</span><span class="deadline">今日申时前</span><span class="status doing">进行中</span></div>
-      <div class="quest-item"><span class="sym">✦</span><span class="title">讲武堂双刀基础训练</span><span class="publisher">罗修</span><span class="deadline">每日辰时</span><span class="status doing">进行中</span></div>
-      <div class="quest-item"><span class="sym">✿</span><span class="title">替音律坊搬运古琴</span><span class="publisher">魏元璟</span><span class="deadline">今日午时前</span><span class="status">未接</span></div>
-      <div class="quest-item"><span class="sym">✧</span><span class="title">巡逻恶狗岭外围</span><span class="publisher">殿务司</span><span class="deadline">三日内</span><span class="status">未接</span></div>
-      <div class="quest-item"><span class="sym">❖</span><span class="title">砺峰阁抗压冥想（初级）</span><span class="publisher">魏元璟</span><span class="deadline">无时限</span><span class="status done">已完成</span></div>
+      <div class="quest-list" id="questList-luo">
+        <div class="quest-item" data-quest-id="luo-q1"><span class="sym">◈</span><span class="title">演武广场石靶修缮协助</span><span class="publisher">工造司</span><span class="deadline">今日申时前</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="luo-q2"><span class="sym">✦</span><span class="title">讲武堂双刀基础训练</span><span class="publisher">罗修</span><span class="deadline">每日辰时</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="luo-q3"><span class="sym">✿</span><span class="title">替音律坊搬运古琴</span><span class="publisher">魏元璟</span><span class="deadline">今日午时前</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="luo-q4"><span class="sym">✧</span><span class="title">巡逻恶狗岭外围</span><span class="publisher">殿务司</span><span class="deadline">三日内</span><span class="status">未接</span></div>
+        <div class="quest-item" data-quest-id="luo-q5"><span class="sym">❖</span><span class="title">砺峰阁抗压冥想（初级）</span><span class="publisher">魏元璟</span><span class="deadline">无时限</span><span class="status">未接</span></div>
+      </div>
     </div>
 
-    <!-- 最近纪事 -->
     <div class="card">
       <div class="card-title"><span class="sym">✶</span> 最近纪事</div>
       <div class="timeline">
@@ -308,7 +455,7 @@ body.no-scroll{overflow:hidden;}
       </div>
     </div>
 
-  </div><!-- /罗烬 -->
+  </div>
 
   <!-- 浮生树低语（共用） -->
   <div class="card whisper">
@@ -318,51 +465,7 @@ body.no-scroll{overflow:hidden;}
 
 </div>
 
-<script>
-/* ===== 主题切换 ===== */
-(function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='light'){document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.removeAttribute('data-theme');}}}catch(e){}})();
-function toggleTheme(){var html=document.documentElement;var isLight=html.getAttribute('data-theme')==='light';var newTheme=isLight?'dark':'light';if(newTheme==='light'){html.setAttribute('data-theme','light');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));updateThemeBtn();}
-function updateThemeBtn(){var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(!icon||!label)return;var isLight=document.documentElement.getAttribute('data-theme')==='light';icon.textContent=isLight?'🌙':'☀️';label.textContent=isLight?'夜间':'日间';}
-
-/* ===== 档案切换（内容隔离） ===== */
-function switchProfile(id){localStorage.setItem('activeProfile',id);document.body.setAttribute('data-profile',id);document.querySelectorAll('.profile-toggle button').forEach(function(b){b.classList.toggle('active',b.dataset.profile===id);});document.querySelectorAll('.content-block').forEach(function(blk){blk.classList.toggle('active',blk.id==='content-'+id);});}
-(function(){var saved=localStorage.getItem('activeProfile')||'linxiwu';document.body.setAttribute('data-profile',saved);document.querySelectorAll('.profile-toggle button').forEach(function(b){b.classList.toggle('active',b.dataset.profile===saved);});document.querySelectorAll('.content-block').forEach(function(blk){blk.classList.toggle('active',blk.id==='content-'+saved);});updateThemeBtn();})();
-
-/* ===== 侧边栏 ===== */
-var sidebarOpen=false;
-function toggleSidebar(){sidebarOpen=!sidebarOpen;document.getElementById('sidebarPanel').classList.toggle('open',sidebarOpen);document.getElementById('sidebarOverlay').classList.toggle('show',sidebarOpen);document.body.classList.toggle('no-scroll',sidebarOpen);}
-function closeSidebar(){if(sidebarOpen)toggleSidebar();}
-
-/* ===== 地府时辰 ===== */
-var earthlyHours=[
-{name:'子时',start:23,end:1,desc:'万籁俱寂，忘川水静。引渡人交班时分，归终殿广场上浮生树泛着幽微的银白光芒。',yinqi:'96%',weather:'浓雾',tree:'花叶低垂'},
-{name:'丑时',start:1,end:3,desc:'地府灯火阑珊，阴差换岗。偶有迷途亡魂在奈何桥畔徘徊，需引渡人前往安抚。',yinqi:'94%',weather:'阴风',tree:'静默'},
-{name:'寅时',start:3,end:5,desc:'夜将尽而未尽，阴气仍重。三生石前常有执念深重的魂魄驻足，不宜惊扰。',yinqi:'88%',weather:'薄霜',tree:'微光'},
-{name:'卯时',start:5,end:7,desc:'地府假天明，阴气渐收。弟子陆续起身前往砺峰阁晨训，脚步声在石板路上回响。',yinqi:'72%',weather:'薄雾',tree:'苏醒'},
-{name:'辰时',start:7,end:9,desc:'假日高升，各院阁开课。符修院传来符纸燃烧的气息，讲武堂响起兵器碰撞声。',yinqi:'60%',weather:'晴朗',tree:'摇曳'},
-{name:'巳时',start:9,end:11,desc:'阳气混入地府，部分敏感弟子略感不适。此时不宜进行高强度阴气修炼。',yinqi:'55%',weather:'晴朗',tree:'盛放'},
-{name:'午时',start:11,end:13,desc:'地府日中，阴气最弱。弟子多在此刻用膳、休整，或于栖梧馆疗伤。',yinqi:'45%',weather:'燥热',tree:'收敛'},
-{name:'未时',start:13,end:15,desc:'午后慵懒，藏经阁内弟子翻阅古籍的沙沙声与远处演武广场的呼喝交织。',yinqi:'50%',weather:'多云',tree:'低语'},
-{name:'申时',start:15,end:17,desc:'外勤引渡人陆续回殿，带回人间消息。殿前广场渐渐热闹，浮生树影拉长。',yinqi:'58%',weather:'微风',tree:'舒展'},
-{name:'酉时',start:17,end:19,desc:'假日落，地府入暮。各院阁陆续闭课，弟子或结伴前往忘川观落日余晖。',yinqi:'70%',weather:'霞光',tree:'泛光'},
-{name:'戌时',start:19,end:21,desc:'夜课开始，音律坊传出琴笛之声。部分弟子于浮生树下进行夜间冥想。',yinqi:'82%',weather:'薄雾',tree:'轻颤'},
-{name:'亥时',start:21,end:23,desc:'地府入夜，灯火次第亮起。归终殿弟子陆续归寝，只剩巡逻队在殿外游走。',yinqi:'90%',weather:'浓雾',tree:'沉睡'}
-];
-function getCurrentHour(){var h=new Date().getHours();for(var i=0;i<earthlyHours.length;i++){var e=earthlyHours[i];if(e.start>e.end){if(h>=e.start||h<e.end)return e;}else{if(h>=e.start&&h<e.end)return e;}}return earthlyHours[0];}
-(function(){var e=getCurrentHour();document.getElementById('hourName').textContent=e.name;document.getElementById('hourSub').textContent=e.name+' · '+e.yinqi+'阴气 · 地府第'+(earthlyHours.indexOf(e)+1)+'更';document.getElementById('hourDesc').textContent=e.desc;document.getElementById('yinqi').textContent=e.yinqi;document.getElementById('weather').textContent=e.weather;document.getElementById('treeStatus').textContent=e.tree;})();
-
-/* ===== 浮生树低语池 ===== */
-var whispers=[
-"每一段走过的黄泉路，每一次艰难的引渡，都将铸就独一无二的你。",
-"浮生花会谢，但树根记得每一朵花的重量。",
-"引渡人不是神，只是愿意在阴阳之间多站一会儿的人。",
-"刀会断，枪会折，符会燃尽——但归终殿还在。",
-"你若在忘川边遇到一个不肯渡河的魂，别催他。他只是在等一句告别。",
-"林淮等了二百年，罗修烧了五百年。时间在地府，不过是一场漫长的修行。",
-"浮生树从不挑选落在谁肩上的花瓣。它只负责开花。"
-];
-(function(){var idx=Math.floor(Math.random()*whispers.length);document.getElementById('whisperText').textContent='"'+whispers[idx]+'"';})();
-</script>
-
+<script src="./核心.js"></script>
+<script src="./命薄.js"></script>
 </body>
 </html>
