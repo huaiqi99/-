@@ -113,9 +113,12 @@ const ThemeManager = {
     toggle() { this.apply(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); },
     updateBtn() {
         const btn = document.getElementById('themeBtn');
-        if (!btn) return;
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        btn.innerHTML = isDark ? '<span class="icon">☀️</span> 日间' : '<span class="icon">🌙</span> 夜间';
+        if (btn) btn.innerHTML = isDark ? '<span class="icon">☀️</span> 日间' : '<span class="icon">🌙</span> 夜间';
+        if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+        if (label) label.textContent = isDark ? '日间' : '夜间';
     }
 };
 
@@ -571,11 +574,13 @@ const GameEngine = {
     openMenuCredits() { document.getElementById('creditsOverlay')?.classList.add('show'); },
     closeMenuCredits() { document.getElementById('creditsOverlay')?.classList.remove('show'); },
     updateBgmBtn() {
-        const btn = document.getElementById('bgmBtn');
-        if (!btn) return;
+        const icon = document.getElementById('bgmIcon');
+        const label = document.getElementById('bgmLabel');
+        if (!icon) return;
         const playing = this.audio?.isBgmPlaying();
-        btn.innerHTML = playing ? '<span class="icon">🔊</span> BGM' : '<span class="icon">🔇</span> BGM';
-        btn.style.opacity = this.audio?.initialized ? '1' : '0.5';
+        icon.textContent = playing ? '🔊' : '🔇';
+        if (label) label.textContent = playing ? '暂停' : 'BGM';
+        if (icon.parentElement) icon.parentElement.style.opacity = this.audio?.initialized ? '1' : '0.5';
     },
     toggleBgm() {
         if (!this.audio) return;
