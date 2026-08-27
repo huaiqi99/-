@@ -21,17 +21,17 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition);}
 .top-header .profile-name{font-size:0.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:0.5px;margin-left:2px;}
 .top-header .profile-name span{color:var(--profile-accent);font-weight:600;}
-.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:0.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none;}
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:0.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none;transform-style:flat;-webkit-transform-style:flat;}
 .sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent);}
 .sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,0.25);transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column;}
 .sidebar-panel.open{transform:translateX(0);}
 .sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition);}
 .sidebar-panel .close-btn:hover{color:var(--profile-accent);}
 .sidebar-panel .panel-title{font-size:0.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono);}
-.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:0.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none;}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:0.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none;transform-style:flat;-webkit-transform-style:flat;}
 .sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light);}
 .sidebar-panel .nav-item.active{background:rgba(138,58,42,0.04);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600;}
-.sidebar-panel .nav-item .sym{display:inline-block;width:22px;}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px;transform-style:flat;-webkit-transform-style:flat;}
 .sidebar-panel .panel-footer{margin-top:auto;font-size:0.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:0.5px;}
 .sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:0.85rem;cursor:pointer;transition:all 0.2s;width:100%;text-align:center;}
 .sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.04);}
@@ -41,43 +41,37 @@ body.no-scroll{overflow:hidden;}
 .content-block{display:none;}
 .content-block.active{display:block;}
 .card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition),transform 0.25s ease;animation:cardIn 0.45s ease forwards;line-height:1.6;}
+.card-grad{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .card::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,248,240,0.03) 0%,transparent 70%),radial-gradient(ellipse at 70% 80%,rgba(255,248,240,0.02) 0%,transparent 60%);z-index:0;}
-.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;}
-.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;pointer-events:none;}
+.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;transform-style:flat;-webkit-transform-style:flat;}
+.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;pointer-events:none;transform-style:flat;-webkit-transform-style:flat;}
 .card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 6px 20px rgba(0,0,0,0.12);}
 .card:hover::after,.card:hover .corner-deco{opacity:1;transform:scale(1.1);}
 .card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1;}
 .card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px;}
-.cover-wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;z-index:1;}
-.cover-avatar{width:72px;height:72px;background:var(--bg-hover);border:1px solid var(--border-card);transform:rotate(45deg);display:flex;align-items:center;justify-content:center;margin:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;}
-.cover-avatar-inner{transform:rotate(-45deg);font-size:2rem;color:var(--profile-accent);}
-.cover-info{flex:1;min-width:200px;}
-.cover-info .name{font-size:1.3rem;font-weight:700;letter-spacing:1px;}
+.cover-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;position:relative;z-index:1;}
+.cover-avatar{width:120px;height:120px;background:var(--bg-hover);border:1px solid var(--border-card);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.cover-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.cover-avatar-inner{font-size:3rem;color:var(--profile-accent);}
+.cover-info{flex:1;min-width:180px;}
+.cover-info .name{font-size:1.5rem;font-weight:700;letter-spacing:1px;color:var(--text-primary);}
 .cover-info .sub{font-size:0.85rem;color:var(--text-secondary);margin-top:2px;font-style:italic;}
-.cover-info .meta-list{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:8px;font-size:0.8rem;color:var(--text-secondary);font-family:var(--font-mono);}
+.cover-info .meta-list{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:8px;font-size:0.8rem;color:var(--text-secondary);font-family:var(--font-mono);}
 .cover-info .meta-list .label{color:var(--text-muted);}
 .cover-info .meta-list .value{color:var(--profile-accent);font-weight:600;}
 .cover-info .badge{display:inline-block;font-size:0.65rem;padding:2px 10px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-muted);margin-top:6px;font-family:var(--font-mono);}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;position:relative;z-index:1;}
-@media(max-width:600px){.info-grid{grid-template-columns:1fr;}}
-.info-item{font-size:0.85rem;padding:4px 0;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;}
-.info-item:last-child{border-bottom:none;}
-.info-item .label{color:var(--text-muted);}
-.info-item .val{color:var(--text-primary);font-weight:500;}
-.radar-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:1;}
-@media(max-width:700px){.radar-row{grid-template-columns:1fr;}}
-.radar-wrap{display:flex;justify-content:center;align-items:center;padding:8px 0;min-height:280px;}
-.radar-wrap svg{width:100%;max-width:260px;height:auto;aspect-ratio:1/1;}
-.attr-list{display:flex;flex-direction:column;gap:10px;justify-content:center;}
-.attr-item{display:flex;align-items:center;gap:10px;font-size:0.85rem;}
-.attr-item .label{width:60px;color:var(--text-muted);text-align:right;flex-shrink:0;}
-.attr-item .bar-wrap{flex:1;height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;}
-.attr-item .bar-fill{height:100%;background:var(--profile-accent);border-radius:4px;transition:width 1s ease;}
-.attr-item .val{width:60px;color:var(--text-primary);font-weight:500;flex-shrink:0;}
+.info-table{width:100%;border-collapse:collapse;position:relative;z-index:1;}
+.info-table td{padding:6px 10px;border:1px solid var(--border-light);vertical-align:top;}
+.info-table .label{font-size:0.8rem;font-weight:700;color:var(--text-secondary);letter-spacing:0.3px;white-space:nowrap;width:1%;}
+.info-table .val{font-size:0.9rem;color:var(--text-primary);font-weight:500;word-break:break-word;}
+.info-table .cell-full td{padding:6px 10px;border:1px solid var(--border-light);}
+.info-table .cell-full .label{font-size:0.8rem;font-weight:700;color:var(--text-secondary);letter-spacing:0.3px;display:inline-block;margin-right:12px;}
+.info-table .cell-full .val{font-size:0.9rem;color:var(--text-primary);font-weight:500;}
+@media(max-width:600px){.info-table td{padding:4px 8px;font-size:0.85rem;}.info-table .label{font-size:0.7rem;}.info-table .val{font-size:0.8rem;}}
 .weapon-block{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8;}
 .weapon-block .w-name{font-weight:600;color:var(--text-primary);font-family:var(--font-serif);font-size:1rem;margin-bottom:4px;}
-.weapon-block .quote{font-style:italic;color:var(--text-muted);padding-left:12px;border-left:2px solid var(--profile-accent);margin-top:6px;font-size:0.82rem;}
+.weapon-block .quote{color:var(--text-muted);padding-left:12px;border-left:2px solid var(--profile-accent);margin-top:6px;font-size:0.82rem;}
 .timeline{position:relative;padding-left:20px;z-index:1;}
 .timeline::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:1.5px;background:var(--border-light);}
 .timeline-item{position:relative;margin-bottom:16px;opacity:0;transform:translateX(-12px);transition:opacity 0.5s ease,transform 0.5s ease;}
@@ -88,15 +82,14 @@ body.no-scroll{overflow:hidden;}
 .timeline-item .date{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:2px;}
 .timeline-item .title{font-size:0.95rem;font-weight:600;color:var(--text-primary);margin-bottom:2px;}
 .timeline-item .desc{font-size:0.88rem;color:var(--text-secondary);line-height:1.6;}
-.timeline-item .note{font-size:0.75rem;color:var(--text-muted);font-style:italic;margin-top:2px;padding-left:8px;border-left:2px solid var(--border-light);}
 .remarks{position:relative;z-index:1;font-size:0.85rem;color:var(--text-secondary);line-height:1.8;}
 .remarks .remark-item{padding:6px 0;border-bottom:1px solid var(--border-light);}
 .remarks .remark-item:last-child{border-bottom:none;}
 .remarks .remark-item .from{font-weight:600;color:var(--text-primary);font-family:var(--font-serif);}
-.remarks .remark-item .text{padding-left:12px;border-left:2px solid var(--profile-accent);margin-top:2px;font-style:italic;}
+.remarks .remark-item .text{padding-left:12px;border-left:2px solid var(--profile-accent);margin-top:2px;}
 .remarks .remark-item .from::after{content:' · ';color:var(--text-muted);font-weight:400;font-family:var(--font-mono);font-size:0.75rem;}
 .remarks .remark-item .from .title{color:var(--text-muted);font-weight:400;font-size:0.75rem;font-family:var(--font-mono);}
-.archive-note{position:relative;z-index:1;font-size:0.85rem;color:var(--text-secondary);line-height:1.8;padding:8px 12px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-accent);font-style:italic;}
+.archive-note{position:relative;z-index:1;font-size:0.85rem;color:var(--text-secondary);line-height:1.8;padding:8px 12px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-accent);}
 .status-wrap{position:relative;z-index:1;}
 .status-wrap .status-line{font-size:0.9rem;color:var(--text-primary);margin-bottom:4px;}
 .status-wrap .status-line .label{color:var(--text-muted);}
@@ -104,14 +97,18 @@ body.no-scroll{overflow:hidden;}
 .status-wrap .quest-link{font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;}
 .status-wrap .quest-link a{color:var(--profile-accent);text-decoration:none;}
 .status-wrap .quest-link a:hover{text-decoration:underline;}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.top-header .page-title{font-size:1.1rem;}.cover-avatar{width:60px;height:60px;}.cover-avatar-inner{font-size:1.6rem;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;line-height:1.5;}.modal-content{padding:20px 18px 18px 18px;margin:12px;}}
-@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.cover-wrap{flex-direction:column;align-items:flex-start;}.cover-avatar{margin-left:0;}}
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden;}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;transform-style:flat;-webkit-transform-style:flat;animation:petalFall linear infinite;}
+@keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
+.sym,.sidebar-tab,.sidebar-tab .sym,.sidebar-panel .nav-item,.sidebar-panel .nav-item .sym,.sidebar-panel .profile-switch-btn,.card::after,.card .corner-deco,.petal-char{transform-style:flat!important;-webkit-transform-style:flat!important;}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.top-header .page-title{font-size:1.1rem;}.cover-avatar{width:80px;height:80px;}.cover-avatar-inner{font-size:2.2rem;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;line-height:1.5;}}
+@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.cover-wrap{flex-direction:row;align-items:center;gap:12px;}.cover-avatar{width:70px;height:70px;}.cover-avatar-inner{font-size:1.8rem;}}
 </style>
 </head>
 <body data-profile="linxiwu">
 
 <div class="float-group">
-<a class="float-btn" href="./命薄.html"><span style="margin-right:2px;">←</span> 返回</a>
+<a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
 <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
 </div>
 
@@ -144,8 +141,8 @@ body.no-scroll{overflow:hidden;}
 <!-- ===== 林栖梧 ===== -->
 <div class="content-block active" id="content-linxiwu">
 
-<!-- 封面 -->
-<div class="card" data-corner="❀">
+<!-- 封面 · 渐变 -->
+<div class="card card-grad" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="cover-wrap">
 <div class="cover-avatar"><div class="cover-avatar-inner">❀</div></div>
@@ -166,26 +163,13 @@ body.no-scroll{overflow:hidden;}
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">基础信息</div>
-<div class="info-grid">
-<div class="info-item"><span class="label">姓名</span><span class="val">林栖梧</span></div>
-<div class="info-item"><span class="label">籍属</span><span class="val">归终殿 · 符修院</span></div>
-<div class="info-item"><span class="label">身份</span><span class="val">符修院弟子</span></div>
-<div class="info-item"><span class="label">授业师长</span><span class="val">栾方棋（符法）、林淮（体术）</span></div>
-<div class="info-item"><span class="label">入殿时间</span><span class="val">苍珩四百三十五年 · 霜月 · 初三</span></div>
-<div class="info-item"><span class="label">当前席位</span><span class="val">暂无</span></div>
-<div class="info-item"><span class="label">修行方向</span><span class="val">符箓 · 控场 · 辅助</span></div>
-<div class="info-item"><span class="label">性格侧写</span><span class="val">端方自持，处事有条理。符法天赋在同辈中属中上，精血催符尚不稳定。</span></div>
-</div>
-</div>
-
-<!-- 六维 -->
-<div class="card" data-corner="❀">
-<span class="corner-deco">❀</span>
-<div class="card-title">六维能力</div>
-<div class="radar-row">
-<div class="radar-wrap" id="radar-lin"><svg viewBox="-18 -18 336 336" id="radar-svg-lin"></svg></div>
-<div class="attr-list" id="attr-list-lin"></div>
-</div>
+<table class="info-table">
+<tr><td class="label">姓名</td><td class="val">林栖梧</td><td class="label">籍属</td><td class="val">归终殿 · 符修院</td></tr>
+<tr><td class="label">身份</td><td class="val">符修院弟子</td><td class="label">授业师长</td><td class="val">栾方棋（符法）、林淮（体术）</td></tr>
+<tr><td class="label">入殿时间</td><td class="val">苍珩四百三十五年 · 菊月初三</td><td class="label">当前席位</td><td class="val">暂无</td></tr>
+<tr><td class="label">修行方向</td><td class="val" colspan="3">符箓 · 控场 · 辅助</td></tr>
+<tr><td class="label">性格侧写</td><td class="val" colspan="3">端方自持，处事有条理。符法天赋在同辈中属上乘，精血催符仍在打磨阶段。</td></tr>
+</table>
 </div>
 
 <!-- 专精与武器 -->
@@ -194,9 +178,9 @@ body.no-scroll{overflow:hidden;}
 <div class="card-title">专精与武器</div>
 <div class="weapon-block">
 <div class="w-name">修行专精</div>
-<div>主修符法，擅长聚灵、镇魂、防御类符箓。布阵速度在同辈中较快，战场定位偏向控场与辅助。精血催符亦有尝试，但使用后明显脱力，尚未形成稳定战力。</div>
+<div>主修符法，擅长聚灵、镇魂、防御类符箓。布阵速度在同辈中较快，战场定位偏向控场与辅助。精血催符已有尝试，但使用后明显脱力，尚未形成稳定战力。</div>
 <div class="w-name" style="margin-top:12px;">本命武器 · 千机伞</div>
-<div>符文流转于伞面，可作防御，也可辅助符箓瞬发。目前尚在磨合期，伞面符文偶尔会出现滞涩，需以魂力温养。</div>
+<div>符文流转于伞面，可作防御，也可辅助符箓瞬发。目前尚在磨合期，伞面符文偶有滞涩，需以魂力温养。</div>
 <div class="quote">「伞骨比符纸硬，但比人心软。—— 程木栖」</div>
 </div>
 </div>
@@ -207,40 +191,34 @@ body.no-scroll{overflow:hidden;}
 <div class="card-title">近期纪事</div>
 <div class="timeline">
 <div class="timeline-item">
-<div class="date">霜月 · 初三</div>
-<div class="title">入门归终殿</div>
-<div class="desc">通过入门试炼，拜入符修院。浮生树无风自动，档案司记录为「异常共振」，原因待查。</div>
-<div class="note">档案司批注：「树动了。没人碰它。—— 档案司·甲」</div>
+<div class="date">菊月 · 十八</div>
+<div class="title">统修期中考核</div>
+<div class="desc">统修期中考核，符法排名第一，综合排名第二。栾方棋于课后单独点评符箓布阵节奏，指出精血催符的发力方式需调整。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 初七</div>
-<div class="title">首次独立引渡亡魂</div>
-<div class="desc">于忘川东段引渡一名滞留七年的老妪魂魄。老妪渡河前赠铜钱一枚，称「买路钱」。</div>
-<div class="note">档案司批注：「买路钱已上交殿务司，登记为「杂物-丙字-柒」。—— 档案司·甲」</div>
+<div class="date">良月 · 初七</div>
+<div class="title">罗修与林淮切磋</div>
+<div class="desc">罗修与林淮于演武场切磋。双方未出全力，余波震裂地面约三丈。在场观习弟子十余人，半数被气浪掀翻，演武场东侧石靶全数碎裂。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 初九</div>
-<div class="title">独立绘制高阶符箓</div>
-<div class="desc">在符修院独立完成一道高阶镇魂符，未炸符。栾方棋现场观摩后给出评语。</div>
-<div class="note">档案司批注：「还行。—— 栾方棋」</div>
+<div class="date">良月 · 十五</div>
+<div class="title">浑天鉴紧急文书</div>
+<div class="desc">第三席从人间返回，带回浑天鉴紧急文书：京城北郊出现空间裂隙，疑为神器残留。首席罗修决意带队前往，破例允两名新弟子随行观摩。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 十二</div>
-<div class="title">旁听十席议事</div>
-<div class="desc">因任务汇报出色，被允许旁听归终殿月度议事。罗修首席当场否决了增加弟子俸禄的提案。</div>
-<div class="note">档案司批注：「首席否了。她没说话。—— 档案司·甲」</div>
+<div class="date">良月 · 廿二</div>
+<div class="title">随行观摩封印</div>
+<div class="desc">随首席及第三席前往人间京城北郊。裂隙中残留魂力异常，与百年前断魂剑断裂时的气息相似。全程观摩首席及第三席协同封印裂隙，未参与实操。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 十五</div>
-<div class="title">浮生树下冥想</div>
-<div class="desc">首次在浮生树下完成完整时辰的冥想。醒来时肩上落了一片红白相间的花瓣。</div>
-<div class="note">档案司批注：「花瓣已取样，与栾方棋的浮生树样本一致。—— 档案司·甲」</div>
+<div class="date">霜月初三</div>
+<div class="title">返回地府</div>
+<div class="desc">裂隙已封，相关记录入档。此行被记入弟子随行档案，作为统修期实践考核依据。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 二十</div>
-<div class="title">演武场与同辈切磋</div>
-<div class="desc">于演武广场与讲武堂弟子罗烬切磋，以符阵困住对方约半刻钟，后双方各自收手，未分胜负。</div>
-<div class="note">档案司批注：「平局。双方均未受伤，战后各自离开。—— 档案司·甲」</div>
+<div class="date">霜月十八</div>
+<div class="title">统修考核结束</div>
+<div class="desc">统修考核结束。总分同期第二，符法第一。志愿表提交：符修院。</div>
 </div>
 </div>
 </div>
@@ -252,15 +230,23 @@ body.no-scroll{overflow:hidden;}
 <div class="remarks">
 <div class="remark-item">
 <span class="from">栾方棋<span class="title">第五席 · 符修院</span></span>
-<div class="text">「符箓底子还行，精血催符别急着用，先稳准头。」</div>
+<div class="text">「符箓底子扎实，精血催符尚欠火候。布阵节奏在同辈中属上乘，但临场判断仍需积累。」</div>
 </div>
 <div class="remark-item">
 <span class="from">林淮<span class="title">第二席 · 枪阁</span></span>
-<div class="text">「体术勉强能自保，遇到近战别硬扛，跑。」</div>
+<div class="text">「体术基础够用，近身经验不足。统修期内未出过失误，亦未见突破。」</div>
+</div>
+<div class="remark-item">
+<span class="from">第三席<span class="title">阵法</span></span>
+<div class="text">「阵法理论掌握较快，实战布阵速度仍需提升。整体表现稳定。」</div>
 </div>
 <div class="remark-item">
 <span class="from">程木栖<span class="title">前第二席 · 栖梧馆</span></span>
-<div class="text">「采药认得全，比讲武堂那帮小子强。就是话少。」</div>
+<div class="text">「医药基础扎实，采药识药全勤。」</div>
+</div>
+<div class="remark-item">
+<span class="from">罗修<span class="title">首席 · 讲武堂</span></span>
+<div class="text">「综合表现中上，符法单项突出。无明显短板，亦无明显莽撞。」</div>
 </div>
 </div>
 </div>
@@ -270,7 +256,7 @@ body.no-scroll{overflow:hidden;}
 <span class="corner-deco">❀</span>
 <div class="card-title">档案司批注</div>
 <div class="archive-note">
-该弟子入殿以来未惹过事，符修院出勤率全优。唯一异常：每月固定去演武广场三次，理由均为「路过」。<br><br>
+符修院出勤率全优，统修期间无违规记录。<br><br>
 —— 档案司 · 甲字记录员 · 霜月二十日
 </div>
 </div>
@@ -292,8 +278,8 @@ body.no-scroll{overflow:hidden;}
 <!-- ===== 罗烬 ===== -->
 <div class="content-block" id="content-luojin">
 
-<!-- 封面 -->
-<div class="card" data-corner="◈">
+<!-- 封面 · 渐变 -->
+<div class="card card-grad" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="cover-wrap">
 <div class="cover-avatar"><div class="cover-avatar-inner">◈</div></div>
@@ -314,26 +300,13 @@ body.no-scroll{overflow:hidden;}
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="card-title">基础信息</div>
-<div class="info-grid">
-<div class="info-item"><span class="label">姓名</span><span class="val">罗烬</span></div>
-<div class="info-item"><span class="label">籍属</span><span class="val">归终殿 · 讲武堂</span></div>
-<div class="info-item"><span class="label">身份</span><span class="val">讲武堂弟子</span></div>
-<div class="info-item"><span class="label">授业师长</span><span class="val">罗修（刀法）、魏元璟（魂力控制）</span></div>
-<div class="info-item"><span class="label">入殿时间</span><span class="val">苍珩四百三十五年 · 霜月 · 初五</span></div>
-<div class="info-item"><span class="label">当前席位</span><span class="val">暂无</span></div>
-<div class="info-item"><span class="label">修行方向</span><span class="val">双刀 · 体术 · 正面突进</span></div>
-<div class="info-item"><span class="label">性格侧写</span><span class="val">赤诚跳脱，行事直接。体能优异，实战反应快，偶尔莽撞。对林淮第二席表现出非比寻常的敬畏。</span></div>
-</div>
-</div>
-
-<!-- 六维 -->
-<div class="card" data-corner="◈">
-<span class="corner-deco">◈</span>
-<div class="card-title">六维能力</div>
-<div class="radar-row">
-<div class="radar-wrap" id="radar-luo"><svg viewBox="-18 -18 336 336" id="radar-svg-luo"></svg></div>
-<div class="attr-list" id="attr-list-luo"></div>
-</div>
+<table class="info-table">
+<tr><td class="label">姓名</td><td class="val">罗烬</td><td class="label">籍属</td><td class="val">归终殿 · 讲武堂</td></tr>
+<tr><td class="label">身份</td><td class="val">讲武堂弟子</td><td class="label">授业师长</td><td class="val">罗修（刀法）、魏元璟（魂力控制）</td></tr>
+<tr><td class="label">入殿时间</td><td class="val">苍珩四百三十五年 · 菊月初三</td><td class="label">当前席位</td><td class="val">暂无</td></tr>
+<tr><td class="label">修行方向</td><td class="val" colspan="3">双刀 · 体术 · 正面突进</td></tr>
+<tr><td class="label">性格侧写</td><td class="val" colspan="3">赤诚直率，行事果断。体能优异，实战反应快，偶尔因过于直接而吃亏。</td></tr>
+</table>
 </div>
 
 <!-- 专精与武器 -->
@@ -342,11 +315,11 @@ body.no-scroll{overflow:hidden;}
 <div class="card-title">专精与武器</div>
 <div class="weapon-block">
 <div class="w-name">修行专精</div>
-<div>主修双刀体术，深得罗修与魏元璟真传。架势已有几分首席的影子，但经验尚欠。体能优异，实战反应快，偶尔因莽撞被罗修一脚踹翻。魂力控制尚在打磨，训练中曾意外引燃自身血脉魂焰，但控制极不稳定。</div>
+<div>主修双刀体术，深得罗修与魏元璟真传。架势已有几分首席的影子，但经验尚欠。体能优异，实战反应快，偶因过于直接而吃亏。魂力控制尚在打磨，体能训练全勤，力量与爆发力在同辈中属前列，但持久战经验不足，后半程节奏容易散。</div>
 <div class="w-name" style="margin-top:12px;">本命武器 · 双生刃</div>
 <div>双刀一对，攻守兼备，刀身刻有讲武堂徽记。目前仍在熟悉中，双刀配合尚欠默契，偶尔会出现左右刀速不一致的情况。</div>
 <div class="quote">「比当年拿木棍强点。—— 罗修」</div>
-<div class="quote">「比你爹当年好看点。—— 魏元璟」</div>
+<div class="quote">「架势像样了，收尾还差口气。—— 魏元璟」</div>
 </div>
 </div>
 
@@ -356,40 +329,34 @@ body.no-scroll{overflow:hidden;}
 <div class="card-title">近期纪事</div>
 <div class="timeline">
 <div class="timeline-item">
-<div class="date">霜月 · 初五</div>
-<div class="title">拜入讲武堂</div>
-<div class="desc">通过罗修首席的入门考核，在首席刀下撑过两招半，获准成为讲武堂正式弟子。</div>
-<div class="note">档案司批注：「两招半。首席未置评，但收刀时顿了一下。—— 档案司·甲」</div>
+<div class="date">菊月 · 十八</div>
+<div class="title">统修期中考核</div>
+<div class="desc">统修期中考核，刀法排名第一，综合排名第七。阵法和符法两科低空过线，魏元璟于课后对其魂力控制稳定性提出要求。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 初九</div>
-<div class="title">训练中引燃魂焰</div>
-<div class="desc">训练中意外引动体内血脉共鸣，刀锋浮现墨色魂焰。罗修看了很久，没有夸，也没有骂。</div>
-<div class="note">档案司批注：「首席看了很久。最后只说了一句：收住。—— 档案司·甲」</div>
+<div class="date">良月 · 初七</div>
+<div class="title">罗修与林淮切磋</div>
+<div class="desc">罗修与林淮于演武场切磋。刀气与枪意对撞，演武场地面崩裂，碎石飞溅，在场观习弟子十余人均受波及。罗烬距离较近，被石块击中肩部，未造成实质损伤。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 十二</div>
-<div class="title">旁听十席议事</div>
-<div class="desc">因搬运古琴至音律坊，偶然撞见十席月度议事。魏元璟将其按在门外，未准入内。</div>
-<div class="note">档案司批注：「魏元璟说：小孩别偷听大人说话。—— 档案司·甲」</div>
+<div class="date">良月 · 十五</div>
+<div class="title">浑天鉴紧急文书</div>
+<div class="desc">第三席从人间返回，带回浑天鉴紧急文书：京城北郊出现空间裂隙，疑为神器残留。首席罗修破例允两名新弟子随行观摩。罗烬获选，系讲武堂统修期刀法排名第一。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 十四</div>
-<div class="title">损坏演武广场石靶</div>
-<div class="desc">训练中一刀劈裂演武广场东侧石靶，工造司已记录损坏并索赔。</div>
-<div class="note">档案司批注：「该弟子称「是刀自己动的」。工造司不接受此说法。—— 档案司·甲」</div>
+<div class="date">良月 · 廿二</div>
+<div class="title">随行观摩封印</div>
+<div class="desc">随首席及第三席前往人间京城北郊。裂隙中残留魂力异常，疑似百年前大战残留。首席全程未让新弟子靠近裂隙中心，仅于外围观察封印流程。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 十八</div>
-<div class="title">演武场与同辈切磋</div>
-<div class="desc">于演武广场与符修院弟子林栖梧切磋，被符阵困住后以双刀破符，双方各自收手，未分胜负。</div>
-<div class="note">档案司批注：「平局。对手为符修院林栖梧。战后双方各自离开。—— 档案司·甲」</div>
+<div class="date">霜月初三</div>
+<div class="title">返回地府</div>
+<div class="desc">裂隙已封。此行被记入弟子随行档案，作为统修期实践考核依据。</div>
 </div>
 <div class="timeline-item">
-<div class="date">霜月 · 二十</div>
-<div class="title">砺峰阁抗压冥想</div>
-<div class="desc">首次完成砺峰阁完整时辰的抗压冥想，未中途退出。魏元璟未置评。</div>
-<div class="note">档案司批注：「没跑。比上个月强。—— 魏元璟」</div>
+<div class="date">霜月十八</div>
+<div class="title">统修考核结束</div>
+<div class="desc">统修考核结束。刀法第一，两科擦线过。志愿表提交：讲武堂。</div>
 </div>
 </div>
 </div>
@@ -401,15 +368,23 @@ body.no-scroll{overflow:hidden;}
 <div class="remarks">
 <div class="remark-item">
 <span class="from">罗修<span class="title">首席 · 讲武堂</span></span>
-<div class="text">「架势已有三分，经验尚欠七分。刀比人稳，是好事，也是坏事。」</div>
+<div class="text">「架势已有三分，经验尚欠七分。刀比人稳，是优势，亦需警惕。」</div>
 </div>
 <div class="remark-item">
 <span class="from">魏元璟<span class="title">第七席 · 砺峰阁</span></span>
-<div class="text">「魂焰引燃比预期早，但控制还嫩。再烧两次，讲武堂的屋顶该换了。」</div>
+<div class="text">「魂力底子不差，但静不下心。统修期内能拿刀法第一，说明天赋到位。专注力仍需打磨。」</div>
+</div>
+<div class="remark-item">
+<span class="from">第三席<span class="title">阵法</span></span>
+<div class="text">「阵法基础薄弱，勉强不挂科。不建议选择阵法方向。」</div>
+</div>
+<div class="remark-item">
+<span class="from">栾方棋<span class="title">第五席 · 符修院</span></span>
+<div class="text">「符法理论扎实，实操混乱。不建议选修符修院。」</div>
 </div>
 <div class="remark-item">
 <span class="from">程木栖<span class="title">前第二席 · 栖梧馆</span></span>
-<div class="text">「试药不喊疼，比罗修当年强。就是喝完药跑得比鬼还快。」</div>
+<div class="text">「体能极好，试药不跑。适合近战体术方向。」</div>
 </div>
 </div>
 </div>
@@ -419,7 +394,7 @@ body.no-scroll{overflow:hidden;}
 <span class="corner-deco">◈</span>
 <div class="card-title">档案司批注</div>
 <div class="archive-note">
-本月损坏演武广场石靶一具，工造司已索赔。该弟子称「是刀自己动的」。另，该弟子每次经过第二席林淮居所时，行走速度会不自觉放慢，原因待观察。<br><br>
+统修期间刀法表现突出，但阵法与符法两科薄弱。建议后续专精方向聚焦体术与刀法，避免分散精力。<br><br>
 —— 档案司 · 甲字记录员 · 霜月二十日
 </div>
 </div>
@@ -430,7 +405,7 @@ body.no-scroll{overflow:hidden;}
 <div class="card-title">当前状态与目标</div>
 <div class="status-wrap">
 <div class="status-line"><span class="label">档案状态：</span>讲武堂弟子 · 暂无席位</div>
-<div class="status-line"><span class="label">近期目标：</span>控制血脉魂焰不暴走，双刀配合达到同步</div>
+<div class="status-line"><span class="label">近期目标：</span>提升双刀配合的同步率，改善持久战中后期节奏松散的问题</div>
 <div class="goal">在办委托：见下方列表，或返回命簿纪事查看全部。</div>
 <div class="quest-link" id="luo-quest-link"><a href="./命薄.html">前往命簿纪事 →</a></div>
 </div>
@@ -439,6 +414,8 @@ body.no-scroll{overflow:hidden;}
 </div>
 
 </div>
+
+<div id="petal-container"></div>
 
 <script src="./核心.js"></script>
 <script src="./档案.js"></script>
