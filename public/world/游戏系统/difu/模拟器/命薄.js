@@ -51,7 +51,7 @@ renderQuests();
 
 // ===== 6. 新闻弹窗 =====
 const modal=document.getElementById('newsModal'),modalTag=document.getElementById('modalTag'),modalTitle=document.getElementById('modalTitle'),modalBody=document.getElementById('modalBody'),modalTime=document.getElementById('modalTime'),modalClose=document.getElementById('modalClose');
-function openNewsModal(tag,title,body,time){if(modalTag)modalTag.textContent=tag||'资讯';if(modalTitle)modalTitle.textContent=title||'无标题';if(modalBody)modalBody.textContent=body.replace(/\\\\n/g,'\n')||'暂无详细内容。';if(modalTime)modalTime.textContent=time||'';if(modal){modal.classList.add('active');document.body.style.overflow='hidden';}}
+function openNewsModal(tag,title,body,time){if(modalTag)modalTag.textContent=tag||'资讯';if(modalTitle)modalTitle.textContent=title||'无标题';if(modalBody)modalBody.textContent=body.replace(/\\n/g,'\n')||'暂无详细内容。';if(modalTime)modalTime.textContent=time||'';if(modal){modal.classList.add('active');document.body.style.overflow='hidden';}}
 function closeNewsModal(){if(modal)modal.classList.remove('active');document.body.style.overflow='';}
 if(modalClose)modalClose.addEventListener('click',closeNewsModal);
 if(modal)modal.addEventListener('click',function(e){if(e.target===this)closeNewsModal();});
