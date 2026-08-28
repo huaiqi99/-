@@ -37,7 +37,7 @@ function drawRadar(svgId,stats){
   while(svg.firstChild)svg.removeChild(svg.firstChild);
   const cx=150,cy=150,maxR=130;
   const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);
-  const labels=['魂力','体术','法术','学识','意志','敏捷'];
+  const labels=['魂力','体术','法术','防御','意志','敏捷'];
   const accent='var(--profile-accent)';
   // 网格层 - 深灰色
   [0.3,0.5,0.7,1.0].forEach(function(ratio){const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});
@@ -64,8 +64,8 @@ function drawRadar(svgId,stats){
   const labelOff=maxR+22;
   labels.forEach(function(label,i){const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});
 }
-drawRadar('radar-svg-lin',[55,35,80,75,70,50]);
-drawRadar('radar-svg-luo',[60,85,75,40,55,80]);
+drawRadar('radar-svg-lin',[55,35,80,45,70,80]);
+drawRadar('radar-svg-luo',[60,85,75,60,55,70]);
 
 // ===== 5. 状态条浮动（范围 ±5） =====
 function initStatusBars(){
