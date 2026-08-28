@@ -15,8 +15,8 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
 .float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
 .float-btn:hover{border-color:var(--accent);color:var(--accent);}
-#app{max-width:900px;margin:0 auto;width:100%;padding:20px 4px 0 4px;}
-.top-header{max-width:900px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--border-light);}
+#app{max-width:960px;margin:0 auto;width:100%;padding:20px 4px 0 4px;}
+.top-header{max-width:960px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--border-light);}
 .top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px;}
 .top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition);}
 .top-header .profile-name{font-size:0.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:0.5px;margin-left:2px;}
@@ -48,6 +48,8 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1;}
 .card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px;}
 .gradient-card{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
+.dual-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:700px){.dual-col{grid-template-columns:1fr;}}
 
 /* ===== 学期总览 ===== */
 .overview-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8;}
@@ -57,45 +59,83 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .overview-text .value.accent{color:var(--profile-accent);font-weight:600;}
 .overview-note{font-size:0.82rem;color:var(--text-muted);font-style:italic;margin-top:8px;padding-top:8px;border-top:1px solid var(--border-light);position:relative;z-index:1;}
 
-/* ===== 成绩单 ===== */
-.score-table{position:relative;z-index:1;width:100%;border-collapse:collapse;font-size:0.85rem;}
-.score-table th{text-align:left;padding:6px 8px;font-weight:600;color:var(--text-muted);font-size:0.75rem;font-family:var(--font-mono);border-bottom:1px solid var(--border-light);}
-.score-table td{padding:7px 8px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);}
-.score-table td.score{font-family:var(--font-mono);font-weight:600;text-align:center;}
-.score-table td.score.high{color:var(--profile-accent);}
-.score-table td.score.low{color:var(--text-muted);opacity:0.6;}
-.score-table tr:last-child td{border-bottom:none;font-weight:600;color:var(--text-primary);}
-.score-table .tag{display:inline-block;font-size:0.6rem;padding:1px 8px;border-radius:10px;margin-right:6px;font-family:var(--font-mono);}
-.tag-wen{background:var(--tag-wen);color:var(--profile-accent);border:1px solid var(--profile-accent);opacity:0.7;}
-.tag-wu{background:var(--tag-wu);color:var(--text-secondary);border:1px solid var(--border-card);opacity:0.7;}
-.tag-tong{background:var(--tag-tong);color:var(--text-muted);border:1px solid var(--border-light);}
-
-/* ===== 倒计时 ===== */
-.countdown-wrap{position:relative;z-index:1;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.hourglass-box{display:flex;align-items:center;justify-content:center;width:56px;height:56px;flex-shrink:0;}
-.hourglass-box .ti{font-size:2.2rem;color:var(--profile-accent);animation:hourglassFlip 6s ease-in-out infinite;transform-origin:center center;}
+/* ===== 倒计时卡片（压缩版） ===== */
+.countdown-card{padding:12px 18px 10px 18px;}
+.countdown-card .card-title{margin-bottom:6px;}
+.countdown-wrap{position:relative;z-index:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.hourglass-box{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;}
+.hourglass-box .ti{font-size:1.8rem;color:var(--profile-accent);animation:hourglassFlip 6s ease-in-out infinite;transform-origin:center center;}
 @keyframes hourglassFlip{0%{transform:rotate(0deg);}50%{transform:rotate(180deg);}100%{transform:rotate(360deg);}}
-.countdown-info{flex:1;min-width:180px;}
-.countdown-info .title{font-size:0.85rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:4px;}
-.countdown-info .num{font-size:1.6rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);letter-spacing:1px;}
-.countdown-info .num .unit{font-size:0.9rem;color:var(--text-secondary);font-weight:400;margin-left:2px;}
-.countdown-info .sub{font-size:0.8rem;color:var(--text-muted);margin-top:4px;}
-.countdown-note{font-size:0.82rem;color:var(--text-muted);font-style:italic;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light);position:relative;z-index:1;}
+.countdown-info{flex:1;min-width:160px;}
+.countdown-info .title{font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:2px;letter-spacing:0.5px;}
+.countdown-info .num{font-size:1.4rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);letter-spacing:1px;}
+.countdown-info .num .unit{font-size:0.8rem;color:var(--text-secondary);font-weight:400;margin-left:2px;}
+.countdown-info .sub{font-size:0.7rem;color:var(--text-muted);margin-top:2px;font-family:var(--font-mono);}
+.countdown-note{font-size:0.75rem;color:var(--text-muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border-light);position:relative;z-index:1;font-style:italic;}
+
+/* ===== 成绩卡片 ===== */
+.score-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.score-card-item{background:var(--bg-hover);border-radius:6px;padding:8px 10px;border-left:3px solid var(--profile-accent);transition:all 0.2s;cursor:default;position:relative;}
+.score-card-item .top{display:flex;justify-content:space-between;align-items:center;}
+.score-card-item .subject{font-size:0.82rem;color:var(--text-secondary);}
+.score-card-item .score{font-size:0.95rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);}
+.score-card-item .rank{font-size:0.65rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;}
+.score-card-item .rank.top{color:var(--profile-accent);font-weight:600;}
+.score-card-item .tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border-card);border-radius:6px;padding:8px 12px;font-size:0.75rem;color:var(--text-secondary);width:200px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:20;line-height:1.5;font-style:italic;}
+.score-card-item .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border-card);}
+.score-card-item:hover .tooltip{display:block;}
+.score-card-item .tooltip .from{display:block;font-style:normal;font-size:0.65rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;}
+.score-total-row{grid-column:1/-1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:6px;padding:6px 10px;display:flex;justify-content:space-between;font-weight:600;font-size:0.85rem;color:var(--text-primary);margin-top:2px;}
+.score-total-row .rank{font-weight:400;color:var(--profile-accent);font-family:var(--font-mono);font-size:0.8rem;}
+
+/* ===== 课程进度 + 预习打卡 ===== */
+.progress-list{display:flex;flex-direction:column;gap:10px;}
+.progress-item{display:flex;align-items:center;gap:8px;}
+.progress-item .p-info{flex:1;min-width:0;}
+.progress-item .p-top{display:flex;justify-content:space-between;font-size:0.75rem;}
+.progress-item .p-top .name{color:var(--text-secondary);font-weight:500;}
+.progress-item .p-top .info{color:var(--text-muted);font-family:var(--font-mono);font-size:0.65rem;}
+.progress-item .p-bar{width:100%;height:4px;background:var(--border-light);border-radius:2px;overflow:hidden;margin-top:2px;}
+.progress-item .p-bar .fill{height:100%;border-radius:2px;background:var(--profile-accent);transition:width 1s ease;width:0%;}
+.progress-item .p-check{flex-shrink:0;display:flex;align-items:center;gap:4px;font-size:0.6rem;color:var(--text-muted);font-family:var(--font-mono);cursor:pointer;padding:2px 8px;border:1px solid var(--border-light);border-radius:12px;transition:all 0.2s;background:var(--bg-card);user-select:none;}
+.progress-item .p-check:hover{border-color:var(--profile-accent);color:var(--profile-accent);}
+.progress-item .p-check.done{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.06);}
+.progress-item .p-check .ti{font-size:0.8rem;}
 
 /* ===== 课表 ===== */
 .schedule-wrap{position:relative;z-index:1;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
-.schedule-grid{display:grid;grid-template-columns:50px repeat(7,1fr);gap:3px;min-width:600px;}
-.schedule-grid .cell{padding:6px 4px;text-align:center;font-size:0.72rem;border-radius:4px;line-height:1.4;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.schedule-grid .head{background:var(--bg-hover);color:var(--text-muted);font-family:var(--font-mono);font-size:0.65rem;border:1px solid var(--border-light);}
-.schedule-grid .time-label{background:var(--bg-hover);color:var(--text-muted);font-family:var(--font-mono);font-size:0.65rem;border:1px solid var(--border-light);}
+.schedule-grid{display:grid;grid-template-columns:52px repeat(7,1fr);gap:2px;min-width:680px;}
+.schedule-grid .cell{padding:4px 3px;text-align:center;font-size:0.68rem;border-radius:3px;line-height:1.3;min-height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:all 0.2s;position:relative;}
+.schedule-grid .cell.clickable{cursor:pointer;}
+.schedule-grid .cell.clickable:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(0,0,0,0.08);z-index:2;}
+.schedule-grid .head{background:var(--bg-hover);color:var(--text-muted);font-family:var(--font-mono);font-size:0.6rem;border:1px solid var(--border-light);cursor:default;}
+.schedule-grid .head:hover{transform:none;box-shadow:none;}
+.schedule-grid .time-label{background:var(--bg-hover);color:var(--text-muted);font-family:var(--font-mono);font-size:0.6rem;border:1px solid var(--border-light);cursor:default;}
+.schedule-grid .time-label:hover{transform:none;box-shadow:none;}
 .schedule-grid .required{background:#fff;border:1.5px solid var(--profile-accent);color:var(--text-primary);}
 .schedule-grid .elective{background:#fff;border:1px dashed var(--border-card);color:var(--text-secondary);}
 .schedule-grid .free{background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-muted);}
-.schedule-grid .rest{background:var(--bg-hover);border:1px solid transparent;color:var(--text-muted);opacity:0.5;}
-.schedule-grid .cell .sub{font-size:0.6rem;color:var(--text-muted);margin-top:1px;}
-.schedule-legend{display:flex;gap:12px;margin-top:10px;font-size:0.7rem;color:var(--text-muted);position:relative;z-index:1;}
+.schedule-grid .free:hover{transform:none;box-shadow:none;cursor:default;}
+.schedule-grid .rest{background:var(--bg-hover);border:1px solid transparent;color:var(--text-muted);opacity:0.4;cursor:default;}
+.schedule-grid .rest:hover{transform:none;box-shadow:none;}
+.schedule-grid .cell .sub{font-size:0.55rem;color:var(--text-muted);margin-top:1px;}
+.schedule-grid .cell .tag-icon{font-size:0.5rem;color:var(--text-muted);margin-top:1px;letter-spacing:0.5px;font-family:var(--font-mono);}
+.schedule-legend{display:flex;gap:12px;margin-top:8px;font-size:0.65rem;color:var(--text-muted);position:relative;z-index:1;flex-wrap:wrap;}
 .schedule-legend .item{display:flex;align-items:center;gap:4px;}
 .schedule-legend .dot{width:10px;height:10px;border-radius:2px;}
+
+/* ===== 课程详情弹窗 ===== */
+.course-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.course-popup-overlay.active{display:flex;}
+.course-popup{background:var(--bg-card);border:1px solid var(--border-card);border-radius:10px;padding:20px 24px 18px 24px;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2);position:relative;animation:popIn 0.25s ease;}
+@keyframes popIn{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
+.course-popup .close-popup{position:absolute;top:8px;right:12px;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;transition:color 0.2s;font-family:var(--font-serif);}
+.course-popup .close-popup:hover{color:var(--profile-accent);}
+.course-popup .pop-title{font-size:1.05rem;font-weight:700;color:var(--text-primary);margin-bottom:2px;}
+.course-popup .pop-teacher{font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:6px;}
+.course-popup .pop-location{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:6px;}
+.course-popup .pop-desc{font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:6px;}
+.course-popup .pop-meta{font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);padding-top:6px;border-top:1px solid var(--border-light);}
 
 /* ===== 修习日志 ===== */
 .timeline{position:relative;padding-left:20px;z-index:1;}
@@ -110,7 +150,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .timeline-item .desc{font-size:0.85rem;color:var(--text-secondary);line-height:1.6;}
 .timeline-item .desc .status-icon{margin-left:4px;font-size:0.9rem;}
 
-/* ===== 评语 ===== */
+/* ===== 师长评语 ===== */
 .remark-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8;font-style:italic;}
 .remark-sign{margin-top:8px;font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);text-align:right;}
 .remark-meta{font-size:0.75rem;color:var(--text-muted);margin-top:6px;position:relative;z-index:1;font-family:var(--font-mono);}
@@ -120,8 +160,13 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;transform-style:flat !important;-webkit-transform-style:flat !important;}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
 
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;line-height:1.5;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.countdown-info .num{font-size:1.3rem;}.hourglass-box{width:48px;height:48px;}.hourglass-box .ti{font-size:1.8rem;}.schedule-grid .cell{padding:5px 2px;font-size:0.65rem;min-height:38px;}.schedule-grid .cell .sub{font-size:0.55rem;}}
-@media(max-width:480px){.schedule-grid{grid-template-columns:42px repeat(7,1fr);gap:2px;}.schedule-grid .cell{padding:4px 2px;font-size:0.6rem;min-height:34px;}}
+/* ===== 2D 警告符号 ===== */
+.status-icon-2d{display:inline-block;font-size:0.85rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-serif);transform:scale(1);}
+.status-icon-2d.warn{color:#c4a77d;}
+.status-icon-2d.fail{color:#b86b6b;}
+
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;line-height:1.5;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.countdown-card{padding:10px 14px 8px 14px;}.countdown-info .num{font-size:1.2rem;}.hourglass-box{width:36px;height:36px;}.hourglass-box .ti{font-size:1.4rem;}.schedule-grid{grid-template-columns:40px repeat(7,1fr);gap:1.5px;min-width:520px;}.schedule-grid .cell{padding:3px 2px;font-size:0.58rem;min-height:30px;}.schedule-grid .cell .sub{font-size:0.5rem;}.score-card-grid{grid-template-columns:1fr;}.score-card-item .tooltip{width:160px;font-size:0.7rem;left:0;transform:none;}.score-card-item .tooltip::after{left:20px;}}
+@media(max-width:480px){.schedule-grid{grid-template-columns:34px repeat(7,1fr);gap:1px;}.schedule-grid .cell{padding:2px 1px;font-size:0.5rem;min-height:26px;}.schedule-grid .cell .sub{font-size:0.45rem;}}
 </style>
 </head>
 <body data-profile="linxiwu">
@@ -160,7 +205,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <!-- ===== 林栖梧 ===== -->
 <div class="content-block active" id="content-linxiwu">
 
-<!-- 学期总览 -->
+<!-- 卡片1：学期总览 -->
 <div class="card gradient-card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">学期总览</div>
@@ -173,26 +218,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="overview-note">十席轮流授课制：法术类与体术类分堂而授，每周轮换。</div>
 </div>
 
-<!-- 期末成绩 -->
-<div class="card" data-corner="❀">
+<!-- 卡片2：入门考核倒计时 -->
+<div class="card gradient-card countdown-card" data-corner="❀" style="order:0;">
 <span class="corner-deco">❀</span>
-<div class="card-title">上学期期末成绩 · 统修期</div>
-<table class="score-table">
-<tr><th>科目</th><th style="text-align:center">林栖梧</th><th style="text-align:center">罗烬</th></tr>
-<tr><td><span class="tag tag-wen">法术</span>符法基础</td><td class="score high">88</td><td class="score low">62</td></tr>
-<tr><td><span class="tag tag-wen">法术</span>阵法与暗器概览</td><td class="score high">75</td><td class="score low">58</td></tr>
-<tr><td><span class="tag tag-wu">体术</span>兵器使用</td><td class="score">68</td><td class="score high">85</td></tr>
-<tr><td><span class="tag tag-wu">体术</span>体术与实战</td><td class="score">60</td><td class="score high">90</td></tr>
-<tr><td><span class="tag tag-tong">通用</span>引渡实务</td><td class="score high">92</td><td class="score high">78</td></tr>
-<tr><td><span class="tag tag-tong">通用</span>魂力运转与音律</td><td class="score high">80</td><td class="score low">55</td></tr>
-<tr><td>综合评定</td><td class="score high" style="font-size:1rem">乙上</td><td class="score" style="font-size:1rem;color:var(--text-secondary)">乙中</td></tr>
-</table>
-</div>
-
-<!-- 倒计时 -->
-<div class="card gradient-card" data-corner="❀">
-<span class="corner-deco">❀</span>
-<div class="card-title">升席挑战倒计时</div>
+<div class="card-title">入门考核倒计时</div>
 <div class="countdown-wrap">
 <div class="hourglass-box"><i class="ti ti-hourglass"></i></div>
 <div class="countdown-info">
@@ -201,73 +230,57 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="sub">苍珩四百三十五年 · 晦月朔日 · 归终正殿</div>
 </div>
 </div>
-<div class="countdown-note">沙漏翻转一次，便近一日。—— 档案司</div>
+<div class="countdown-note">「沙漏停不住，但笔下的符可以。」—— 栾方棋</div>
 </div>
 
-<!-- 下学期课表 -->
+<!-- 卡片3+4：两列并排（成绩 + 进度） -->
+<div class="dual-col">
+<!-- 左：期末成绩 -->
+<div class="card" data-corner="❀" style="margin-bottom:0;">
+<span class="corner-deco">❀</span>
+<div class="card-title">上学期期末成绩 · 统修期</div>
+<div class="score-card-grid" id="score-grid-lin">
+<!-- JS 动态渲染 -->
+</div>
+</div>
+
+<!-- 右：课程进度 + 预习打卡 -->
+<div class="card" data-corner="❀" style="margin-bottom:0;">
+<span class="corner-deco">❀</span>
+<div class="card-title">本学期课程进度</div>
+<div class="progress-list" id="progress-lin">
+<!-- JS 动态渲染 -->
+</div>
+</div>
+</div>
+
+<!-- 卡片5：课表 -->
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
-<div class="card-title">下学期课表 · 分修期</div>
+<div class="card-title">下学期课表 · 分修期 <span style="font-size:0.65rem;font-weight:400;color:var(--text-muted);font-family:var(--font-mono);margin-left:8px;">点击课程查看详情</span></div>
 <div class="schedule-wrap">
-<div class="schedule-grid">
-<div class="cell head">时间</div><div class="cell head">一</div><div class="cell head">二</div><div class="cell head">三</div><div class="cell head">四</div><div class="cell head">五</div><div class="cell head">六</div><div class="cell head">日</div>
-<div class="cell time-label">辰时<br><span style="font-size:0.55rem">必修</span></div>
-<div class="cell required">高阶符箓<div class="sub">栾方棋</div></div>
-<div class="cell elective">符阵实战<div class="sub">第三席</div></div>
-<div class="cell required">高阶符箓<div class="sub">栾方棋</div></div>
-<div class="cell elective">符阵实战<div class="sub">第三席</div></div>
-<div class="cell required">高阶符箓<div class="sub">栾方棋</div></div>
-<div class="cell free">自习</div>
-<div class="cell free">引渡外勤</div>
-<div class="cell time-label">未时<br><span style="font-size:0.55rem">辅修</span></div>
-<div class="cell elective">浮生树<div class="sub">冥想</div></div>
-<div class="cell elective">药理辨识</div>
-<div class="cell elective">体术自保</div>
-<div class="cell elective">音律基础</div>
-<div class="cell elective">浮生树<div class="sub">冥想</div></div>
-<div class="cell free">残卷整理</div>
-<div class="cell rest">—</div>
-<div class="cell time-label">戌时<br><span style="font-size:0.55rem">自修</span></div>
-<div class="cell free">自习</div>
-<div class="cell free">自习</div>
-<div class="cell free">引渡实践</div>
-<div class="cell free">自习</div>
-<div class="cell free">自习</div>
-<div class="cell rest">—</div>
-<div class="cell rest">—</div>
+<div class="schedule-grid" id="schedule-grid-lin">
+<!-- JS 动态渲染 -->
 </div>
 </div>
 <div class="schedule-legend">
 <div class="item"><div class="dot required" style="border:1.5px solid var(--profile-accent);background:#fff;"></div>必修</div>
 <div class="item"><div class="dot elective" style="border:1px dashed var(--border-card);background:#fff;"></div>辅修</div>
 <div class="item"><div class="dot free" style="background:var(--bg-hover);border:1px solid var(--border-light);"></div>自习/外勤</div>
+<div class="item"><span style="font-size:0.6rem;color:var(--text-muted);">点击任意课程查看详情</span></div>
 </div>
 </div>
 
-<!-- 修习日志 -->
+<!-- 卡片6：修习日志 -->
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">修习日志</div>
-<div class="timeline">
-<div class="timeline-item">
-<div class="date">霜月初一 · 辰时</div>
-<div class="title">高阶符箓课出勤</div>
-<div class="desc">首次进入高阶符阵课堂，独立完成基础纹路辨识。<span class="status-icon">✓</span></div>
-</div>
-<div class="timeline-item">
-<div class="date">霜月初三 · 未时</div>
-<div class="title">体术自保课迟到</div>
-<div class="desc">因魂力亏空未愈，迟到一刻钟。林淮未置评，但多留了一刻钟。<span class="status-icon">⚠</span></div>
-</div>
-<div class="timeline-item">
-<div class="date">霜月初七 · 戌时</div>
-<div class="title">浮生树冥想缺课</div>
-<div class="desc">精血催符后遗症发作，栖梧馆建议静养。程木栖代为请假。<span class="status-icon">✗</span></div>
-</div>
+<div class="timeline" id="timeline-lin">
+<!-- JS 动态渲染 -->
 </div>
 </div>
 
-<!-- 师长评语 -->
+<!-- 卡片7：师长评语 -->
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">师长学期评语</div>
@@ -281,7 +294,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <!-- ===== 罗烬 ===== -->
 <div class="content-block" id="content-luojin">
 
-<!-- 学期总览 -->
+<!-- 卡片1：学期总览 -->
 <div class="card gradient-card" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="card-title">学期总览</div>
@@ -294,26 +307,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="overview-note">十席轮流授课制：法术类与体术类分堂而授，每周轮换。</div>
 </div>
 
-<!-- 期末成绩 -->
-<div class="card" data-corner="◈">
+<!-- 卡片2：入门考核倒计时 -->
+<div class="card gradient-card countdown-card" data-corner="◈">
 <span class="corner-deco">◈</span>
-<div class="card-title">上学期期末成绩 · 统修期</div>
-<table class="score-table">
-<tr><th>科目</th><th style="text-align:center">林栖梧</th><th style="text-align:center">罗烬</th></tr>
-<tr><td><span class="tag tag-wen">法术</span>符法基础</td><td class="score high">88</td><td class="score low">62</td></tr>
-<tr><td><span class="tag tag-wen">法术</span>阵法与暗器概览</td><td class="score high">75</td><td class="score low">58</td></tr>
-<tr><td><span class="tag tag-wu">体术</span>兵器使用</td><td class="score">68</td><td class="score high">85</td></tr>
-<tr><td><span class="tag tag-wu">体术</span>体术与实战</td><td class="score">60</td><td class="score high">90</td></tr>
-<tr><td><span class="tag tag-tong">通用</span>引渡实务</td><td class="score high">92</td><td class="score high">78</td></tr>
-<tr><td><span class="tag tag-tong">通用</span>魂力运转与音律</td><td class="score high">80</td><td class="score low">55</td></tr>
-<tr><td>综合评定</td><td class="score" style="font-size:1rem;color:var(--text-secondary)">乙上</td><td class="score high" style="font-size:1rem">乙中</td></tr>
-</table>
-</div>
-
-<!-- 倒计时 -->
-<div class="card gradient-card" data-corner="◈">
-<span class="corner-deco">◈</span>
-<div class="card-title">升席挑战倒计时</div>
+<div class="card-title">入门考核倒计时</div>
 <div class="countdown-wrap">
 <div class="hourglass-box"><i class="ti ti-hourglass"></i></div>
 <div class="countdown-info">
@@ -322,73 +319,54 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="sub">苍珩四百三十五年 · 晦月朔日 · 归终正殿</div>
 </div>
 </div>
-<div class="countdown-note">沙漏翻转一次，便近一日。—— 档案司</div>
+<div class="countdown-note">「沙漏停不住，但握刀的手可以。」—— 罗修</div>
 </div>
 
-<!-- 下学期课表 -->
+<!-- 卡片3+4：两列并排 -->
+<div class="dual-col">
+<div class="card" data-corner="◈" style="margin-bottom:0;">
+<span class="corner-deco">◈</span>
+<div class="card-title">上学期期末成绩 · 统修期</div>
+<div class="score-card-grid" id="score-grid-luo">
+<!-- JS 动态渲染 -->
+</div>
+</div>
+<div class="card" data-corner="◈" style="margin-bottom:0;">
+<span class="corner-deco">◈</span>
+<div class="card-title">本学期课程进度</div>
+<div class="progress-list" id="progress-luo">
+<!-- JS 动态渲染 -->
+</div>
+</div>
+</div>
+
+<!-- 卡片5：课表 -->
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
-<div class="card-title">下学期课表 · 分修期</div>
+<div class="card-title">下学期课表 · 分修期 <span style="font-size:0.65rem;font-weight:400;color:var(--text-muted);font-family:var(--font-mono);margin-left:8px;">点击课程查看详情</span></div>
 <div class="schedule-wrap">
-<div class="schedule-grid">
-<div class="cell head">时间</div><div class="cell head">一</div><div class="cell head">二</div><div class="cell head">三</div><div class="cell head">四</div><div class="cell head">五</div><div class="cell head">六</div><div class="cell head">日</div>
-<div class="cell time-label">辰时<br><span style="font-size:0.55rem">必修</span></div>
-<div class="cell required">双刀进阶<div class="sub">罗修</div></div>
-<div class="cell elective">魂力控制<div class="sub">魏元璟</div></div>
-<div class="cell required">双刀进阶<div class="sub">罗修</div></div>
-<div class="cell elective">魂力控制<div class="sub">魏元璟</div></div>
-<div class="cell required">双刀进阶<div class="sub">罗修</div></div>
-<div class="cell free">自习</div>
-<div class="cell free">引渡外勤</div>
-<div class="cell time-label">未时<br><span style="font-size:0.55rem">辅修</span></div>
-<div class="cell elective">抗压冥想<div class="sub">砺峰阁</div></div>
-<div class="cell elective">符箓基础<div class="sub">栾方棋</div></div>
-<div class="cell elective">体术特训</div>
-<div class="cell elective">音律感知<div class="sub">音律坊</div></div>
-<div class="cell elective">抗压冥想<div class="sub">砺峰阁</div></div>
-<div class="cell free">石靶赔偿<div class="sub">工造司</div></div>
-<div class="cell rest">—</div>
-<div class="cell time-label">戌时<br><span style="font-size:0.55rem">自修</span></div>
-<div class="cell free">自习</div>
-<div class="cell free">自习</div>
-<div class="cell free">引渡实践</div>
-<div class="cell free">自习</div>
-<div class="cell free">自习</div>
-<div class="cell rest">—</div>
-<div class="cell rest">—</div>
+<div class="schedule-grid" id="schedule-grid-luo">
+<!-- JS 动态渲染 -->
 </div>
 </div>
 <div class="schedule-legend">
 <div class="item"><div class="dot required" style="border:1.5px solid var(--profile-accent);background:#fff;"></div>必修</div>
 <div class="item"><div class="dot elective" style="border:1px dashed var(--border-card);background:#fff;"></div>辅修</div>
 <div class="item"><div class="dot free" style="background:var(--bg-hover);border:1px solid var(--border-light);"></div>自习/外勤</div>
+<div class="item"><span style="font-size:0.6rem;color:var(--text-muted);">点击任意课程查看详情</span></div>
 </div>
 </div>
 
-<!-- 修习日志 -->
+<!-- 卡片6：修习日志 -->
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="card-title">修习日志</div>
-<div class="timeline">
-<div class="timeline-item">
-<div class="date">霜月初一 · 辰时</div>
-<div class="title">双刀进阶课出勤</div>
-<div class="desc"> Chief未出刀，先让跑了十圈。跑完 Chief 说：「还行，没吐。」<span class="status-icon">✓</span></div>
-</div>
-<div class="timeline-item">
-<div class="date">霜月初三 · 未时</div>
-<div class="title">魂力控制课走神</div>
-<div class="desc">冥想时睡着，被魏元璟用笛子敲醒。未记过，但多留了一刻钟。<span class="status-icon">⚠</span></div>
-</div>
-<div class="timeline-item">
-<div class="date">霜月初五 · 辰时</div>
-<div class="title">演武广场损坏公物</div>
-<div class="desc">训练中一刀劈裂石靶，工造司已记录。Chief 收刀时顿了一下，没骂人。<span class="status-icon">✗</span></div>
-</div>
+<div class="timeline" id="timeline-luo">
+<!-- JS 动态渲染 -->
 </div>
 </div>
 
-<!-- 师长评语 -->
+<!-- 卡片7：师长评语 -->
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="card-title">师长学期评语</div>
@@ -399,6 +377,18 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 
 </div>
 
+</div>
+
+<!-- ===== 课程详情弹窗 ===== -->
+<div class="course-popup-overlay" id="coursePopup">
+<div class="course-popup">
+<button class="close-popup" id="popupClose">✕</button>
+<div class="pop-title" id="popTitle">课程名称</div>
+<div class="pop-teacher" id="popTeacher">授课师长</div>
+<div class="pop-location" id="popLocation">上课地点</div>
+<div class="pop-desc" id="popDesc">课程简介</div>
+<div class="pop-meta" id="popMeta">考核方式</div>
+</div>
 </div>
 
 <div id="petal-container"></div>
