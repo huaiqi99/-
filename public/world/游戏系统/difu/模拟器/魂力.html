@@ -7,8 +7,8 @@
 <style>
 :root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;}
 [data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;}
-body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);--c1:#D49A9A;--c2:#C4A77D;--c3:#8FB8A8;--c4:#A8B8D0;--c5:#D4B8A8;--c6:#B8C4A8;--st1:#D49A9A;--st2:#C4A77D;--st3:#8FB8A8;--st4:#A8B8D0;}
-body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c2:#7D8B8A;--c3:#8A7D8B;--c4:#6B8E9F;--c5:#8A9A8A;--c6:#7D8B9A;--st1:#4E5A64;--st2:#7D8B8A;--st3:#8A7D8B;--st4:#6B8E9F;}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);--c1:#D49A9A;--c2:#C4A77D;--c3:#8FB8A8;--c4:#A8B8D0;--c5:#D4B8A8;--c6:#B8C4A8;--st1:#D49A9A;--st2:#C4A77D;--st3:#8FB8A8;--st4:#A8B8D0;--seal-color:#D49A9A;}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c2:#7D8B8A;--c3:#8A7D8B;--c4:#6B8E9F;--c5:#8A9A8A;--c6:#7D8B9A;--st1:#4E5A64;--st2:#7D8B8A;--st3:#8A7D8B;--st4:#6B8E9F;--seal-color:#4E5A64;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px;}
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
 .float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
@@ -47,8 +47,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px;}
 .gradient-card{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
 .overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:1;}
-.radar-wrap{display:flex;justify-content:center;align-items:center;padding:0;min-height:220px;}
+.radar-wrap{display:flex;justify-content:center;align-items:center;padding:0;min-height:220px;position:relative;}
 .radar-wrap svg{width:100%;max-width:300px;height:auto;aspect-ratio:1/1;}
+.radar-label{position:absolute;bottom:4px;right:8px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;opacity:0.7;pointer-events:none;}
 .status-bars{display:flex;flex-direction:column;gap:12px;justify-content:center;}
 .status-item{position:relative;}
 .status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.82rem;}
@@ -58,6 +59,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .st-bar-wrap{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;}
 .st-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
 .status-note{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light);position:relative;z-index:1;font-style:italic;}
+.status-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light);flex-wrap:wrap;gap:8px;}
+.status-seal{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85;}
+.status-seal .seal-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--seal-color);margin-right:2px;}
+.status-seal .seal-grade{font-weight:700;color:var(--seal-color);font-size:0.75rem;}
 .assess-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8;}
 .assess-text .sign{margin-top:8px;font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);text-align:right;}
 .ability-list{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;}
@@ -65,7 +70,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .ability-item.visible{opacity:1;transform:translateY(0);}
 .ability-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.85rem;}
 .ability-top .ab-label{color:var(--text-secondary);font-weight:500;}
-.ability-top .ab-text{font-family:var(--font-mono);color:var(--text-muted);font-size:0.8rem;}
+.ability-top .ab-text{font-family:var(--font-mono);color:var(--text-muted);font-size:0.8rem;font-weight:600;}
 .ability-bar-wrap{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;margin-bottom:3px;}
 .ability-bar-fill{height:100%;border-radius:3px;width:0%;transition:width 1s ease;}
 .ability-note{font-size:0.8rem;color:var(--text-muted);font-style:italic;padding-left:10px;border-left:2px solid var(--border-light);line-height:1.5;}
@@ -79,14 +84,14 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden;}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
-@media(max-width:720px){.overview-grid{grid-template-columns:1fr;gap:14px;}.radar-wrap{min-height:180px;}.radar-wrap svg{max-width:260px;}.status-bars{gap:10px;}.ability-list{gap:10px;}.quest-grid{gap:8px;}.quest-cell{padding:6px 2px;}.quest-cell .num{font-size:1.1rem;}.card{padding:14px 14px 12px 14px;}.st-bar-wrap{height:5px;}.ability-bar-wrap{height:5px;}.quest-track{height:5px;}.status-note{margin-top:10px;padding-top:8px;}}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}}
+@media(max-width:720px){.overview-grid{grid-template-columns:1fr;gap:14px;}.radar-wrap{min-height:180px;}.radar-wrap svg{max-width:260px;}.status-bars{gap:10px;}.ability-list{gap:10px;}.quest-grid{gap:8px;}.quest-cell{padding:6px 2px;}.quest-cell .num{font-size:1.1rem;}.card{padding:14px 14px 12px 14px;}.st-bar-wrap{height:5px;}.ability-bar-wrap{height:5px;}.quest-track{height:5px;}.status-note{margin-top:10px;padding-top:8px;}.status-footer{flex-direction:column;align-items:flex-start;}}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.radar-label{font-size:0.45rem;bottom:2px;right:4px;}}
 </style>
 </head>
 <body data-profile="linxiwu">
 
 <div class="float-group">
-<a class="float-btn" href="./命薄.html"><span style="margin-right:2px;">←</span> 返回</a>
+<a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
 <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
 </div>
 
@@ -124,7 +129,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <span class="corner-deco">❀</span>
 <div class="card-title">实时状态监测</div>
 <div class="overview-grid">
-<div class="radar-wrap" id="radar-lin"><svg viewBox="-25 -25 350 350" id="radar-svg-lin"></svg></div>
+<div class="radar-wrap" id="radar-wrap-lin">
+<svg viewBox="-25 -25 350 350" id="radar-svg-lin"></svg>
+<span class="radar-label">参考标准归终殿弟子</span>
+</div>
 <div class="status-bars">
 <div class="status-item" data-base="65" data-type="normal">
 <div class="status-top"><span class="st-label">魂力储备</span><span class="st-value">65%</span><span class="st-badge">平稳</span></div>
@@ -147,6 +155,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <div class="status-note">
 魂力储备平稳，精血催符后体力尚未完全恢复。栖梧馆建议三日内避免再次使用高阶符箓，每日于浮生树下冥想半个时辰以加速恢复。
 </div>
+<div class="status-footer">
+<div class="status-seal"><span class="seal-dot"></span> 魂力评级 <span class="seal-grade">乙等 · 中品</span></div>
+</div>
 </div>
 
 <!-- 战力评估 -->
@@ -164,32 +175,32 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <span class="corner-deco">❀</span>
 <div class="card-title">综合能力体检表</div>
 <div class="ability-list">
-<div class="ability-item" data-value="80">
+<div class="ability-item" data-value="80" data-profile="linxiwu">
 <div class="ability-top"><span class="ab-label">学习能力</span><span class="ab-text">约八成</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c1)"></div></div>
 <div class="ability-note">理论课笔记被借抄率居符修院首位。</div>
 </div>
-<div class="ability-item" data-value="65">
+<div class="ability-item" data-value="65" data-profile="linxiwu">
 <div class="ability-top"><span class="ab-label">应变能力</span><span class="ab-text">约六成五</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c2)"></div></div>
 <div class="ability-note">实战中符阵变换速度在同辈中较快，但面对突发近战仍有迟疑。</div>
 </div>
-<div class="ability-item" data-value="90" id="lin-task-rate">
-<div class="ability-top"><span class="ab-label">任务完成率</span><span class="ab-text">约九成</span></div>
-<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c3)"></div></div>
-<div class="ability-note">委托处理及时，未出现逾期记录。</div>
+<div class="ability-item" data-value="0" data-profile="linxiwu" id="lin-task-rate">
+<div class="ability-top"><span class="ab-label">任务完成率</span><span class="ab-text" id="lin-task-text">约二成</span></div>
+<div class="ability-bar-wrap"><div class="ability-bar-fill" id="lin-task-bar" style="background:var(--c3);width:0%;"></div></div>
+<div class="ability-note" id="lin-task-note">暂无完成记录，前往命簿纪事领取委托。</div>
 </div>
-<div class="ability-item" data-value="90">
-<div class="ability-top"><span class="ab-label">出勤率</span><span class="ab-text">约九成</span></div>
-<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c4)"></div></div>
+<div class="ability-item" data-value="100" data-profile="linxiwu">
+<div class="ability-top"><span class="ab-label">出勤率</span><span class="ab-text">约十成</span></div>
+<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c4);width:100%;"></div></div>
 <div class="ability-note">符修院出勤全优，无迟到记录。</div>
 </div>
-<div class="ability-item" data-value="55">
+<div class="ability-item" data-value="55" data-profile="linxiwu">
 <div class="ability-top"><span class="ab-label">魂力恢复效率</span><span class="ab-text">约五成五</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c5)"></div></div>
 <div class="ability-note">浮生树冥想后恢复速度正常，但精血催符后的亏空恢复偏慢。</div>
 </div>
-<div class="ability-item" data-value="50">
+<div class="ability-item" data-value="50" data-profile="linxiwu">
 <div class="ability-top"><span class="ab-label">伤势恢复力</span><span class="ab-text">约五成</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c6)"></div></div>
 <div class="ability-note">魂体损伤愈合速度一般，建议多往栖梧馆走动。</div>
@@ -232,7 +243,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <span class="corner-deco">◈</span>
 <div class="card-title">实时状态监测</div>
 <div class="overview-grid">
-<div class="radar-wrap" id="radar-luo"><svg viewBox="-25 -25 350 350" id="radar-svg-luo"></svg></div>
+<div class="radar-wrap" id="radar-wrap-luo">
+<svg viewBox="-25 -25 350 350" id="radar-svg-luo"></svg>
+<span class="radar-label">参考标准归终殿弟子</span>
+</div>
 <div class="status-bars">
 <div class="status-item" data-base="78" data-type="normal">
 <div class="status-top"><span class="st-label">魂力储备</span><span class="st-value">78%</span><span class="st-badge">充盈</span></div>
@@ -255,6 +269,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <div class="status-note">
 魂力储备充盈，体能状态良好。双刀磨合期偶发震颤，不影响日常训练。精神稳定度尚可，抗压冥想课本月未再中途退出。工造司催缴石靶赔偿一事已记录在案。
 </div>
+<div class="status-footer">
+<div class="status-seal"><span class="seal-dot"></span> 魂力评级 <span class="seal-grade">乙等 · 下品</span></div>
+</div>
 </div>
 
 <!-- 战力评估 -->
@@ -272,32 +289,32 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <span class="corner-deco">◈</span>
 <div class="card-title">综合能力体检表</div>
 <div class="ability-list">
-<div class="ability-item" data-value="50">
+<div class="ability-item" data-value="50" data-profile="luojin">
 <div class="ability-top"><span class="ab-label">学习能力</span><span class="ab-text">约五成</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c1)"></div></div>
 <div class="ability-note">理论课出勤率与合格率勉强持平。—— 符修院 · 栾方棋</div>
 </div>
-<div class="ability-item" data-value="70">
+<div class="ability-item" data-value="70" data-profile="luojin">
 <div class="ability-top"><span class="ab-label">应变能力</span><span class="ab-text">约七成</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c2)"></div></div>
 <div class="ability-note">实战中反应快，但偶尔因莽撞陷入被动。</div>
 </div>
-<div class="ability-item" data-value="60" id="luo-task-rate">
-<div class="ability-top"><span class="ab-label">任务完成率</span><span class="ab-text">约六成</span></div>
-<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c3)"></div></div>
-<div class="ability-note">委托处理速度尚可，偶有逾期。</div>
+<div class="ability-item" data-value="0" data-profile="luojin" id="luo-task-rate">
+<div class="ability-top"><span class="ab-label">任务完成率</span><span class="ab-text" id="luo-task-text">约二成</span></div>
+<div class="ability-bar-wrap"><div class="ability-bar-fill" id="luo-task-bar" style="background:var(--c3);width:0%;"></div></div>
+<div class="ability-note" id="luo-task-note">暂无完成记录，前往命簿纪事领取委托。</div>
 </div>
-<div class="ability-item" data-value="70">
-<div class="ability-top"><span class="ab-label">出勤率</span><span class="ab-text">约七成</span></div>
-<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c4)"></div></div>
+<div class="ability-item" data-value="60" data-profile="luojin">
+<div class="ability-top"><span class="ab-label">出勤率</span><span class="ab-text">约六成</span></div>
+<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c4);width:60%;"></div></div>
 <div class="ability-note">讲武堂出勤尚可，但本月有损坏公物记录，工造司已记过一次。</div>
 </div>
-<div class="ability-item" data-value="75">
-<div class="ability-top"><span class="ab-label">魂力恢复效率</span><span class="ab-text">约七成五</span></div>
-<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c5)"></div></div>
+<div class="ability-item" data-value="90" data-profile="luojin">
+<div class="ability-top"><span class="ab-label">魂力恢复效率</span><span class="ab-text">约九成</span></div>
+<div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c5);width:90%;"></div></div>
 <div class="ability-note">体修恢复速度优于同辈，冥想后魂力回升快。</div>
 </div>
-<div class="ability-item" data-value="75">
+<div class="ability-item" data-value="75" data-profile="luojin">
 <div class="ability-top"><span class="ab-label">伤势恢复力</span><span class="ab-text">约七成五</span></div>
 <div class="ability-bar-wrap"><div class="ability-bar-fill" style="background:var(--c6)"></div></div>
 <div class="ability-note">皮实，试药不喊疼。—— 栖梧馆 · 程木栖</div>

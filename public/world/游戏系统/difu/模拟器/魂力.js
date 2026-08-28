@@ -39,10 +39,10 @@ function drawRadar(svgId,stats){
   const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);
   const labels=['魂力','体术','法术','学识','意志','敏捷'];
   const accent='var(--profile-accent)';
-  // 网格层
-  [0.3,0.5,0.7,1.0].forEach(function(ratio){const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','var(--border-light)');poly.setAttribute('stroke-width',ratio===1.0?'0.8':'0.5');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});
-  // 轴线
-  angles.forEach(function(a){const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','var(--border-light)');line.setAttribute('stroke-width','0.4');line.setAttribute('stroke-dasharray','2,3');svg.appendChild(line);});
+  // 网格层 - 深灰色
+  [0.3,0.5,0.7,1.0].forEach(function(ratio){const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#8a8a8a');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});
+  // 轴线 - 深灰色
+  angles.forEach(function(a){const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#8a8a8a');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});
   // 数据多边形
   const vertices=stats.map(function(val,i){const r=(val/100)*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});
   const centerPts=angles.map(function(){return cx+','+cy;}).join(' ');
@@ -54,10 +54,8 @@ function drawRadar(svgId,stats){
   poly.appendChild(anim);svg.appendChild(poly);
   // 顶点 + 数值
   vertices.forEach(function(v,i){const a=angles[i];
-    // 圆点
     const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');
     const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);
-    // 数值
     const vOff=18;const vx=vOff*Math.sin(a);const vy=-vOff*Math.cos(a);
     const vt=document.createElementNS('http://www.w3.org/2000/svg','text');vt.setAttribute('x',v.x+vx);vt.setAttribute('y',v.y+vy);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor','middle');vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');
     const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);
@@ -69,7 +67,7 @@ function drawRadar(svgId,stats){
 drawRadar('radar-svg-lin',[55,35,80,75,70,50]);
 drawRadar('radar-svg-luo',[60,85,75,40,55,80]);
 
-// ===== 5. 状态条波动 =====
+// ===== 5. 状态条浮动（范围 ±5） =====
 function initStatusBars(){
   document.querySelectorAll('.status-item').forEach(function(item){
     const base=parseInt(item.dataset.base,10);
@@ -78,7 +76,7 @@ function initStatusBars(){
     const badge=item.querySelector('.st-badge');
     const type=item.dataset.type;
     function update(){
-      const diff=Math.floor(Math.random()*5)-2;
+      const diff=Math.floor(Math.random()*11)-5;
       let cur=base+diff;cur=Math.max(0,Math.min(100,cur));
       fill.style.width=cur+'%';valEl.textContent=cur+'%';
       if(type==='injury'){
@@ -103,7 +101,11 @@ const abilityObserver=new IntersectionObserver(function(entries){
       const item=entry.target;
       const fill=item.querySelector('.ability-bar-fill');
       const val=item.dataset.value;
-      if(fill&&val)fill.style.width=val+'%';
+      if(fill&&val){
+        // 如果是任务完成率，由 renderQuestStats 控制，不在这里触发
+        const isTaskRate=item.id==='lin-task-rate'||item.id==='luo-task-rate';
+        if(!isTaskRate)fill.style.width=val+'%';
+      }
       item.classList.add('visible');
       abilityObserver.unobserve(item);
     }
@@ -126,11 +128,35 @@ function renderQuestStats(){
     const dEl=document.getElementById(prefix+'-q-done'),doEl=document.getElementById(prefix+'-q-doing'),pEl=document.getElementById(prefix+'-q-pending'),rEl=document.getElementById(prefix+'-q-rate'),bEl=document.getElementById(prefix+'-q-bar'),tEl=document.getElementById(prefix+'-task-rate');
     if(dEl)dEl.textContent=data.done;if(doEl)doEl.textContent=data.doing;if(pEl)pEl.textContent=data.pending;if(rEl)rEl.textContent=data.rate+'%';
     if(bEl)setTimeout(function(){bEl.style.width=data.rate+'%';},300);
-    if(tEl){const txt=tEl.querySelector('.ab-text');if(txt)txt.textContent=data.rate>=80?'约八成':data.rate>=60?'约六成':data.rate>=40?'约四成':'约二成';const note=tEl.querySelector('.ability-note');if(note)note.textContent=data.done===0?'暂无完成记录，前往命簿纪事领取委托。':data.rate>=80?'委托处理及时，未出现逾期记录。':'委托处理速度尚可，偶有逾期。';}
+    // 更新综合能力体检表中的任务完成率
+    if(tEl){
+      const bar=tEl.querySelector('.ability-bar-fill');
+      const text=tEl.querySelector('.ab-text');
+      const note=tEl.querySelector('.ability-note');
+      if(bar){
+        bar.style.width=data.rate+'%';
+        // 强制触发重绘
+        bar.style.transition='width 1s ease';
+      }
+      if(text){
+        if(data.rate>=80)text.textContent='约八成';
+        else if(data.rate>=60)text.textContent='约六成';
+        else if(data.rate>=40)text.textContent='约四成';
+        else if(data.rate>=20)text.textContent='约二成';
+        else text.textContent='约一成';
+      }
+      if(note){
+        if(data.done===0)note.textContent='暂无完成记录，前往命簿纪事领取委托。';
+        else if(data.rate>=80)note.textContent='委托处理及时，未出现逾期记录。';
+        else if(data.rate>=60)note.textContent='委托处理速度尚可，偶有逾期。';
+        else note.textContent='委托完成率偏低，建议合理安排时间。';
+      }
+    }
   }
   update('lin',lin);update('luo',luo);
 }
 renderQuestStats();
 window.addEventListener('profilechange',function(){setTimeout(renderQuestStats,100);});
 
-console.log('🌙 归终殿 · 魂力与状态 v1.1 已加载');})();
+console.log('🌙 归终殿 · 魂力与状态 v1.1 已加载');
+})();
