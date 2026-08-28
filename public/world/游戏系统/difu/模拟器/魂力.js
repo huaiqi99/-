@@ -27,31 +27,49 @@ function updateProfileUI(profile){const nameMap={'linxiwu':'林栖梧','luojin':
 (function(){const saved=GZD.Storage.getProfile();updateProfileUI(saved);})();
 window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.profile);});
 
-// ===== 3. 雷达图绘制 =====
+// ===== 3. 花瓣特效 =====
+const PETAL_CHARS=['❀','✿','✽'],petalContainer=document.getElementById('petal-container');
+if(petalContainer){for(let i=0;i<12;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
+
+// ===== 4. 雷达图绘制 =====
 function drawRadar(svgId,stats){
   const svg=document.getElementById(svgId);if(!svg)return;
   while(svg.firstChild)svg.removeChild(svg.firstChild);
-  const cx=150,cy=150,maxR=110,angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);
+  const cx=150,cy=150,maxR=130;
+  const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);
+  const labels=['魂力','体术','法术','学识','意志','敏捷'];
   const accent='var(--profile-accent)';
+  // 网格层
   [0.3,0.5,0.7,1.0].forEach(function(ratio){const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','var(--border-light)');poly.setAttribute('stroke-width',ratio===1.0?'0.8':'0.5');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});
+  // 轴线
   angles.forEach(function(a){const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','var(--border-light)');line.setAttribute('stroke-width','0.4');line.setAttribute('stroke-dasharray','2,3');svg.appendChild(line);});
-  const vertices=stats.map(function(val,i){const r=(val/100)*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a)};});
+  // 数据多边形
+  const vertices=stats.map(function(val,i){const r=(val/100)*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});
   const centerPts=angles.map(function(){return cx+','+cy;}).join(' ');
   const targetPts=vertices.map(function(v){return v.x+','+v.y;}).join(' ');
   const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-  poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.12');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2');poly.setAttribute('stroke-linejoin','round');
+  poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.22');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');
   const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');
   anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');
   poly.appendChild(anim);svg.appendChild(poly);
-  vertices.forEach(function(v){const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','3');c.setAttribute('fill',accent);c.setAttribute('opacity','0');const fade=document.createElementNS('http://www.w3.org/2000/svg','animate');fade.setAttribute('attributeName','opacity');fade.setAttribute('from','0');fade.setAttribute('to','1');fade.setAttribute('dur','0.3s');fade.setAttribute('begin','0.8s');fade.setAttribute('fill','freeze');c.appendChild(fade);svg.appendChild(c);});
-  const labels=['魂力','体术','法术','学识','意志','敏捷'];
-  const labelPositions=[{x:150,y:18,anchor:'middle'},{x:268,y:110,anchor:'start'},{x:252,y:210,anchor:'start'},{x:150,y:290,anchor:'middle'},{x:50,y:214,anchor:'end'},{x:34,y:106,anchor:'end'}];
-  labelPositions.forEach(function(lp,i){const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',lp.x);t.setAttribute('y',lp.y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','8');t.setAttribute('text-anchor',lp.anchor);t.setAttribute('dominant-baseline','central');t.textContent=labels[i];svg.appendChild(t);});
+  // 顶点 + 数值
+  vertices.forEach(function(v,i){const a=angles[i];
+    // 圆点
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');
+    const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);
+    // 数值
+    const vOff=18;const vx=vOff*Math.sin(a);const vy=-vOff*Math.cos(a);
+    const vt=document.createElementNS('http://www.w3.org/2000/svg','text');vt.setAttribute('x',v.x+vx);vt.setAttribute('y',v.y+vy);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor','middle');vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');
+    const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);
+  });
+  // 标签
+  const labelOff=maxR+22;
+  labels.forEach(function(label,i){const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});
 }
 drawRadar('radar-svg-lin',[55,35,80,75,70,50]);
 drawRadar('radar-svg-luo',[60,85,75,40,55,80]);
 
-// ===== 4. 状态条波动 =====
+// ===== 5. 状态条波动 =====
 function initStatusBars(){
   document.querySelectorAll('.status-item').forEach(function(item){
     const base=parseInt(item.dataset.base,10);
@@ -78,7 +96,7 @@ function initStatusBars(){
 }
 initStatusBars();
 
-// ===== 5. 综合能力滚动触发 =====
+// ===== 6. 综合能力滚动触发 =====
 const abilityObserver=new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
     if(entry.isIntersecting){
@@ -93,7 +111,7 @@ const abilityObserver=new IntersectionObserver(function(entries){
 },{threshold:0.5});
 document.querySelectorAll('.ability-item').forEach(function(item){abilityObserver.observe(item);});
 
-// ===== 6. 委托统计联动 =====
+// ===== 7. 委托统计联动 =====
 function renderQuestStats(){
   const quests=GZD.Storage.getQuests();
   const linIds=['lin-q1','lin-q2','lin-q3','lin-q4','lin-q5'];
@@ -115,4 +133,4 @@ function renderQuestStats(){
 renderQuestStats();
 window.addEventListener('profilechange',function(){setTimeout(renderQuestStats,100);});
 
-console.log('🌙 归终殿 · 魂力与状态 v1.0 已加载');})();
+console.log('🌙 归终殿 · 魂力与状态 v1.1 已加载');})();

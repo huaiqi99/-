@@ -45,39 +45,42 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .card:hover::after,.card:hover .corner-deco{opacity:1;transform:scale(1.1);}
 .card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1;}
 .card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px;}
+.gradient-card{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
 .overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:1;}
-@media(max-width:720px){.overview-grid{grid-template-columns:1fr;}}
-.radar-wrap{display:flex;justify-content:center;align-items:center;padding:4px 0;min-height:260px;}
-.radar-wrap svg{width:100%;max-width:240px;height:auto;aspect-ratio:1/1;}
-.status-bars{display:flex;flex-direction:column;gap:14px;justify-content:center;}
+.radar-wrap{display:flex;justify-content:center;align-items:center;padding:0;min-height:220px;}
+.radar-wrap svg{width:100%;max-width:300px;height:auto;aspect-ratio:1/1;}
+.status-bars{display:flex;flex-direction:column;gap:12px;justify-content:center;}
 .status-item{position:relative;}
-.status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:0.82rem;}
+.status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.82rem;}
 .status-top .st-label{color:var(--text-secondary);font-weight:500;}
 .status-top .st-value{font-family:var(--font-mono);color:var(--text-primary);font-weight:600;min-width:36px;text-align:right;}
 .status-top .st-badge{font-size:0.65rem;padding:1px 8px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-muted);font-family:var(--font-mono);margin-left:6px;transition:color 0.3s;}
-.st-bar-wrap{width:100%;height:10px;background:var(--border-light);border-radius:5px;overflow:hidden;}
-.st-bar-fill{height:100%;border-radius:5px;transition:width 0.6s ease;}
-.status-note{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-light);position:relative;z-index:1;font-style:italic;}
+.st-bar-wrap{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;}
+.st-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.status-note{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light);position:relative;z-index:1;font-style:italic;}
 .assess-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8;}
 .assess-text .sign{margin-top:8px;font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);text-align:right;}
-.ability-list{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1;}
+.ability-list{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;}
 .ability-item{opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s ease;}
 .ability-item.visible{opacity:1;transform:translateY(0);}
 .ability-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.85rem;}
 .ability-top .ab-label{color:var(--text-secondary);font-weight:500;}
 .ability-top .ab-text{font-family:var(--font-mono);color:var(--text-muted);font-size:0.8rem;}
-.ability-bar-wrap{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.ability-bar-wrap{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;margin-bottom:3px;}
 .ability-bar-fill{height:100%;border-radius:3px;width:0%;transition:width 1s ease;}
 .ability-note{font-size:0.8rem;color:var(--text-muted);font-style:italic;padding-left:10px;border-left:2px solid var(--border-light);line-height:1.5;}
-.quest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative;z-index:1;margin-bottom:10px;}
-@media(max-width:600px){.quest-grid{grid-template-columns:repeat(2,1fr);}}
-.quest-cell{text-align:center;padding:10px;background:var(--bg-hover);border-radius:8px;border:1px solid var(--border-light);}
-.quest-cell .num{font-size:1.3rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);}
+.quest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;position:relative;z-index:1;margin-bottom:8px;}
+.quest-cell{text-align:center;padding:8px 4px;background:var(--bg-hover);border-radius:8px;border:1px solid var(--border-light);}
+.quest-cell .num{font-size:1.2rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);}
 .quest-cell .label{font-size:0.7rem;color:var(--text-muted);margin-top:2px;font-family:var(--font-mono);}
-.quest-track{width:100%;height:8px;background:var(--border-light);border-radius:4px;overflow:hidden;position:relative;z-index:1;}
-.quest-fill{height:100%;background:var(--profile-accent);border-radius:4px;transition:width 1s ease;width:0%;}
+.quest-track{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden;position:relative;z-index:1;}
+.quest-fill{height:100%;background:var(--profile-accent);border-radius:3px;transition:width 1s ease;width:0%;}
 .archive-note{position:relative;z-index:1;font-size:0.85rem;color:var(--text-secondary);line-height:1.8;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-accent);font-style:italic;}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;line-height:1.5;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}}
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden;}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;}
+@keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
+@media(max-width:720px){.overview-grid{grid-template-columns:1fr;gap:14px;}.radar-wrap{min-height:180px;}.radar-wrap svg{max-width:260px;}.status-bars{gap:10px;}.ability-list{gap:10px;}.quest-grid{gap:8px;}.quest-cell{padding:6px 2px;}.quest-cell .num{font-size:1.1rem;}.card{padding:14px 14px 12px 14px;}.st-bar-wrap{height:5px;}.ability-bar-wrap{height:5px;}.quest-track{height:5px;}.status-note{margin-top:10px;padding-top:8px;}}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}}
 </style>
 <base target="_blank">
 </head>
@@ -118,11 +121,11 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <div class="content-block active" id="content-linxiwu">
 
 <!-- 状态总览 -->
-<div class="card" data-corner="❀">
+<div class="card gradient-card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">实时状态监测</div>
 <div class="overview-grid">
-<div class="radar-wrap" id="radar-lin"><svg viewBox="-18 -18 336 336" id="radar-svg-lin"></svg></div>
+<div class="radar-wrap" id="radar-lin"><svg viewBox="-25 -25 350 350" id="radar-svg-lin"></svg></div>
 <div class="status-bars">
 <div class="status-item" data-base="65" data-type="normal">
 <div class="status-top"><span class="st-label">魂力储备</span><span class="st-value">65%</span><span class="st-badge">平稳</span></div>
@@ -226,11 +229,11 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <div class="content-block" id="content-luojin">
 
 <!-- 状态总览 -->
-<div class="card" data-corner="◈">
+<div class="card gradient-card" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="card-title">实时状态监测</div>
 <div class="overview-grid">
-<div class="radar-wrap" id="radar-luo"><svg viewBox="-18 -18 336 336" id="radar-svg-luo"></svg></div>
+<div class="radar-wrap" id="radar-luo"><svg viewBox="-25 -25 350 350" id="radar-svg-luo"></svg></div>
 <div class="status-bars">
 <div class="status-item" data-base="78" data-type="normal">
 <div class="status-top"><span class="st-label">魂力储备</span><span class="st-value">78%</span><span class="st-badge">充盈</span></div>
@@ -331,6 +334,8 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 </div>
 
 </div>
+
+<div id="petal-container"></div>
 
 <script src="./核心.js"></script>
 <script src="./魂力.js"></script>
