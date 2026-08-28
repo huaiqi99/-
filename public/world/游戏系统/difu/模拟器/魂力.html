@@ -49,7 +49,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:1;}
 .radar-wrap{display:flex;justify-content:center;align-items:center;padding:0;min-height:220px;position:relative;}
 .radar-wrap svg{width:100%;max-width:300px;height:auto;aspect-ratio:1/1;}
-.radar-label{position:absolute;bottom:4px;right:8px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;opacity:0.7;pointer-events:none;}
+.radar-label{position:absolute;bottom:4px;left:8px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;opacity:0.7;pointer-events:none;}
 .status-bars{display:flex;flex-direction:column;gap:12px;justify-content:center;}
 .status-item{position:relative;}
 .status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.82rem;}
@@ -60,9 +60,12 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .st-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
 .status-note{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light);position:relative;z-index:1;font-style:italic;}
 .status-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light);flex-wrap:wrap;gap:8px;}
-.status-seal{display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85;}
+.status-seal{display:flex;align-items:center;gap:6px 12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85;flex-wrap:wrap;}
 .status-seal .seal-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--seal-color);margin-right:2px;}
 .status-seal .seal-grade{font-weight:700;color:var(--seal-color);font-size:0.75rem;}
+.status-seal .seal-period{color:var(--text-muted);font-weight:400;}
+.status-seal .seal-value{color:var(--text-secondary);font-weight:600;font-size:0.7rem;}
+.seal-divider{color:var(--border-light);font-weight:300;padding:0 2px;}
 .assess-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8;}
 .assess-text .sign{margin-top:8px;font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);text-align:right;}
 .ability-list{display:flex;flex-direction:column;gap:12px;position:relative;z-index:1;}
@@ -85,7 +88,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
 @media(max-width:720px){.overview-grid{grid-template-columns:1fr;gap:14px;}.radar-wrap{min-height:180px;}.radar-wrap svg{max-width:260px;}.status-bars{gap:10px;}.ability-list{gap:10px;}.quest-grid{gap:8px;}.quest-cell{padding:6px 2px;}.quest-cell .num{font-size:1.1rem;}.card{padding:14px 14px 12px 14px;}.st-bar-wrap{height:5px;}.ability-bar-wrap{height:5px;}.quest-track{height:5px;}.status-note{margin-top:10px;padding-top:8px;}.status-footer{flex-direction:column;align-items:flex-start;}}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.radar-label{font-size:0.45rem;bottom:2px;right:4px;}}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.radar-label{font-size:0.45rem;bottom:2px;left:4px;}}
 </style>
 </head>
 <body data-profile="linxiwu">
@@ -131,7 +134,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <div class="overview-grid">
 <div class="radar-wrap" id="radar-wrap-lin">
 <svg viewBox="-25 -25 350 350" id="radar-svg-lin"></svg>
-<span class="radar-label">参考标准归终殿弟子</span>
+<span class="radar-label" id="radar-label-lin">统修期 · 上限100</span>
 </div>
 <div class="status-bars">
 <div class="status-item" data-base="65" data-type="normal">
@@ -156,7 +159,14 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 魂力储备平稳，精血催符后体力尚未完全恢复。栖梧馆建议三日内避免再次使用高阶符箓，每日于浮生树下冥想半个时辰以加速恢复。
 </div>
 <div class="status-footer">
-<div class="status-seal"><span class="seal-dot"></span> 魂力评级 <span class="seal-grade">乙等 · 中品</span></div>
+<div class="status-seal">
+<span class="seal-dot"></span>
+<span class="seal-period">统修期</span>
+<span class="seal-divider">·</span>
+<span class="seal-grade">甲等下品</span>
+<span class="seal-divider">|</span>
+<span class="seal-value">战力 60.8</span>
+</div>
 </div>
 </div>
 
@@ -165,7 +175,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <span class="corner-deco">❀</span>
 <div class="card-title">战力综合评估</div>
 <div class="assess-text">
-魂力在同辈中属中上，法术造诣已有小成，符阵变换速度在符修院同辈中排得上号。体术仍是明显短板，遇近战不宜硬扛。学识扎实，符修院理论课成绩稳居前列。意志稳定，抗压冥想未出现中途退出的记录。敏捷中规中矩，布阵手速弥补了移动速度的不足。
+魂力在同辈中属中上，法术造诣已有小成，符阵变换速度在符修院同辈中排得上号。体术仍是明显短板，遇近战不宜硬扛。防御意识尚可，但缺乏实战检验。意志稳定，抗压冥想未出现中途退出的记录。敏捷中规中矩，布阵手速弥补了移动速度的不足。
 <div class="sign">—— 砺峰阁 · 魏元璟 · 霜月二十日</div>
 </div>
 </div>
@@ -245,7 +255,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <div class="overview-grid">
 <div class="radar-wrap" id="radar-wrap-luo">
 <svg viewBox="-25 -25 350 350" id="radar-svg-luo"></svg>
-<span class="radar-label">参考标准归终殿弟子</span>
+<span class="radar-label" id="radar-label-luo">统修期 · 上限100</span>
 </div>
 <div class="status-bars">
 <div class="status-item" data-base="78" data-type="normal">
@@ -270,7 +280,14 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 魂力储备充盈，体能状态良好。双刀磨合期偶发震颤，不影响日常训练。精神稳定度尚可，抗压冥想课本月未再中途退出。工造司催缴石靶赔偿一事已记录在案。
 </div>
 <div class="status-footer">
-<div class="status-seal"><span class="seal-dot"></span> 魂力评级 <span class="seal-grade">乙等 · 中品</span></div>
+<div class="status-seal">
+<span class="seal-dot"></span>
+<span class="seal-period">统修期</span>
+<span class="seal-divider">·</span>
+<span class="seal-grade">甲等下品</span>
+<span class="seal-divider">|</span>
+<span class="seal-value">战力 67.5</span>
+</div>
 </div>
 </div>
 
@@ -279,7 +296,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--c1:#4E5A64;--c
 <span class="corner-deco">◈</span>
 <div class="card-title">战力综合评估</div>
 <div class="assess-text">
-体术在同辈中拔尖，刀法架势已有首席三分影子，双刀配合日渐默契。法术控制尚欠火候，魂力引动时偶有震颤。学识是明显短板，理论课勉强及格。意志中等，遇强则强，遇弱则容易轻敌。敏捷优异，演武广场折返跑记录保持者。防御靠体术硬撑，缺乏系统格挡训练。
+体术在同辈中拔尖，刀法架势已有首席三分影子，双刀配合日渐默契。法术控制尚欠火候，魂力引动时偶有震颤。防御意识中等，主要靠体术硬撑。意志中等，遇强则强，遇弱则容易轻敌。敏捷优异，演武广场折返跑记录保持者。
 <div class="sign">—— 砺峰阁 · 魏元璟 · 霜月二十日</div>
 </div>
 </div>

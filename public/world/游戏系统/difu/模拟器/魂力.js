@@ -29,56 +29,129 @@ window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.pro
 
 // ===== 3. 花瓣特效 =====
 const PETAL_CHARS=['❀','✿','✽'],petalContainer=document.getElementById('petal-container');
-if(petalContainer){for(let i=0;i<12;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
+if(petalContainer){for(let i=0;i<20;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
 
-// ===== 4. 雷达图绘制 =====
-function drawRadar(svgId,stats){
-  const svg=document.getElementById(svgId);if(!svg)return;
+// ===== 4. 战力评级工具 =====
+function computeRank(stats, periodLabel, maxValue){
+  var sum=0;
+  for(var i=0;i<stats.length;i++){sum+=stats[i];}
+  var avg=sum/stats.length;
+  var avgRounded=Math.round(avg*10)/10;
+  var grade='';
+  var rankText='';
+  if(avg>=86){grade='甲等上品';}
+  else if(avg>=71){grade='甲等中品';}
+  else if(avg>=56){grade='甲等下品';}
+  else if(avg>=41){grade='乙等上品';}
+  else if(avg>=26){grade='乙等中品';}
+  else if(avg>=11){grade='乙等下品';}
+  else if(avg>=6){grade='丙等上品';}
+  else if(avg>=3){grade='丙等中品';}
+  else{grade='丙等下品';}
+  return {avg:avgRounded, grade:grade, period:periodLabel, maxValue:maxValue||100};
+}
+
+// ===== 5. 雷达图绘制 =====
+function drawRadar(svgId, stats, maxValue, periodLabel){
+  var svg=document.getElementById(svgId);
+  if(!svg)return;
   while(svg.firstChild)svg.removeChild(svg.firstChild);
-  const cx=150,cy=150,maxR=130;
-  const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);
-  const labels=['魂力','体术','法术','防御','意志','敏捷'];
-  const accent='var(--profile-accent)';
+  var cx=150,cy=150,maxR=130;
+  var angles=[0,60,120,180,240,300].map(function(d){return d*Math.PI/180;});
+  var labels=['魂力','体术','法术','防御','意志','敏捷'];
+  var accent='var(--profile-accent)';
   // 网格层 - 深灰色
-  [0.3,0.5,0.7,1.0].forEach(function(ratio){const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});
+  [0.3,0.5,0.7,1.0].forEach(function(ratio){var r=maxR*ratio;var pts=angles.map(function(a){return (cx+r*Math.sin(a))+','+(cy-r*Math.cos(a));}).join(' ');var poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});
   // 轴线 - 深灰色
-  angles.forEach(function(a){const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#666666');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});
+  angles.forEach(function(a){var x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);var line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#666666');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});
   // 数据多边形
-  const vertices=stats.map(function(val,i){const r=(val/100)*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});
-  const centerPts=angles.map(function(){return cx+','+cy;}).join(' ');
-  const targetPts=vertices.map(function(v){return v.x+','+v.y;}).join(' ');
-  const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-  poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.22');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');
-  const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');
-  anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');
-  poly.appendChild(anim);svg.appendChild(poly);
+  var vertices=stats.map(function(val,i){var r=(val/100)*maxR;var a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});
+  var centerPts=angles.map(function(){return cx+','+cy;}).join(' ');
+  var targetPts=vertices.map(function(v){return v.x+','+v.y;}).join(' ');
+  var poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points',centerPts);
+  poly.setAttribute('fill',accent);
+  poly.setAttribute('fill-opacity','0.22');
+  poly.setAttribute('stroke',accent);
+  poly.setAttribute('stroke-width','2.5');
+  poly.setAttribute('stroke-linejoin','round');
+  var anim=document.createElementNS('http://www.w3.org/2000/svg','animate');
+  anim.setAttribute('attributeName','points');
+  anim.setAttribute('from',centerPts);
+  anim.setAttribute('to',targetPts);
+  anim.setAttribute('dur','1.2s');
+  anim.setAttribute('fill','freeze');
+  anim.setAttribute('calcMode','spline');
+  anim.setAttribute('keySplines','0.25 0.1 0.25 1');
+  poly.appendChild(anim);
+  svg.appendChild(poly);
   // 顶点 + 数值
-  vertices.forEach(function(v,i){const a=angles[i];
-    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');
-    const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);
-    const vOff=18;const vx=vOff*Math.sin(a);const vy=-vOff*Math.cos(a);
-    const vt=document.createElementNS('http://www.w3.org/2000/svg','text');vt.setAttribute('x',v.x+vx);vt.setAttribute('y',v.y+vy);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor','middle');vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');
-    const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);
+  vertices.forEach(function(v,i){var a=angles[i];
+    var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',v.x);
+    c.setAttribute('cy',v.y);
+    c.setAttribute('r','4');
+    c.setAttribute('fill',accent);
+    c.setAttribute('opacity','0');
+    var cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');
+    cfade.setAttribute('attributeName','opacity');
+    cfade.setAttribute('from','0');
+    cfade.setAttribute('to','1');
+    cfade.setAttribute('dur','0.3s');
+    cfade.setAttribute('begin','0.8s');
+    cfade.setAttribute('fill','freeze');
+    c.appendChild(cfade);
+    svg.appendChild(c);
+    var vOff=18;
+    var vx=vOff*Math.sin(a);
+    var vy=-vOff*Math.cos(a);
+    var vt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    vt.setAttribute('x',v.x+vx);
+    vt.setAttribute('y',v.y+vy);
+    vt.setAttribute('fill',accent);
+    vt.setAttribute('font-size','12');
+    vt.setAttribute('font-weight','700');
+    vt.setAttribute('text-anchor','middle');
+    vt.setAttribute('dominant-baseline','central');
+    vt.textContent=v.val;
+    vt.setAttribute('opacity','0');
+    var vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');
+    vfade.setAttribute('attributeName','opacity');
+    vfade.setAttribute('from','0');
+    vfade.setAttribute('to','1');
+    vfade.setAttribute('dur','0.3s');
+    vfade.setAttribute('begin','1s');
+    vfade.setAttribute('fill','freeze');
+    vt.appendChild(vfade);
+    svg.appendChild(vt);
   });
   // 标签
-  const labelOff=maxR+22;
-  labels.forEach(function(label,i){const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});
+  var labelOff=maxR+22;
+  labels.forEach(function(label,i){var a=angles[i];var x=cx+labelOff*Math.sin(a);var y=cy-labelOff*Math.cos(a);var anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});
+  // 更新标注
+  var labelId=svgId.replace('radar-svg-','radar-label-');
+  var labelEl=document.getElementById(labelId);
+  if(labelEl){
+    var periodText=periodLabel||'统修期';
+    var maxText=maxValue||100;
+    labelEl.textContent=periodText+' · 上限'+maxText;
+  }
 }
-drawRadar('radar-svg-lin',[55,35,80,45,70,80]);
-drawRadar('radar-svg-luo',[60,85,75,60,55,70]);
 
-// ===== 5. 状态条浮动（范围 ±5） =====
+// ===== 6. 状态条浮动 =====
 function initStatusBars(){
   document.querySelectorAll('.status-item').forEach(function(item){
-    const base=parseInt(item.dataset.base,10);
-    const fill=item.querySelector('.st-bar-fill');
-    const valEl=item.querySelector('.st-value');
-    const badge=item.querySelector('.st-badge');
-    const type=item.dataset.type;
+    var base=parseInt(item.dataset.base,10);
+    var fill=item.querySelector('.st-bar-fill');
+    var valEl=item.querySelector('.st-value');
+    var badge=item.querySelector('.st-badge');
+    var type=item.dataset.type;
     function update(){
-      const diff=Math.floor(Math.random()*11)-5;
-      let cur=base+diff;cur=Math.max(0,Math.min(100,cur));
-      fill.style.width=cur+'%';valEl.textContent=cur+'%';
+      var diff=Math.floor(Math.random()*11)-5;
+      var cur=base+diff;
+      cur=Math.max(0,Math.min(100,cur));
+      fill.style.width=cur+'%';
+      valEl.textContent=cur+'%';
       if(type==='injury'){
         if(cur>=70){badge.textContent='危急';badge.style.color='#B86B6B';}
         else if(cur>=40){badge.textContent='需观察';badge.style.color='#B08D6A';}
@@ -89,21 +162,21 @@ function initStatusBars(){
         else{badge.textContent='亏空';badge.style.color='#B08D6A';}
       }
     }
-    update();setInterval(update,2500);
+    update();
+    setInterval(update,2500);
   });
 }
 initStatusBars();
 
-// ===== 6. 综合能力滚动触发 =====
-const abilityObserver=new IntersectionObserver(function(entries){
+// ===== 7. 综合能力滚动触发 =====
+var abilityObserver=new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
     if(entry.isIntersecting){
-      const item=entry.target;
-      const fill=item.querySelector('.ability-bar-fill');
-      const val=item.dataset.value;
+      var item=entry.target;
+      var fill=item.querySelector('.ability-bar-fill');
+      var val=item.dataset.value;
       if(fill&&val){
-        // 如果是任务完成率，由 renderQuestStats 控制，不在这里触发
-        const isTaskRate=item.id==='lin-task-rate'||item.id==='luo-task-rate';
+        var isTaskRate=item.id==='lin-task-rate'||item.id==='luo-task-rate';
         if(!isTaskRate)fill.style.width=val+'%';
       }
       item.classList.add('visible');
@@ -113,29 +186,35 @@ const abilityObserver=new IntersectionObserver(function(entries){
 },{threshold:0.5});
 document.querySelectorAll('.ability-item').forEach(function(item){abilityObserver.observe(item);});
 
-// ===== 7. 委托统计联动 =====
+// ===== 8. 委托统计联动 =====
 function renderQuestStats(){
-  const quests=GZD.Storage.getQuests();
-  const linIds=['lin-q1','lin-q2','lin-q3','lin-q4','lin-q5'];
-  const luoIds=['luo-q1','luo-q2','luo-q3','luo-q4','luo-q5'];
+  var quests=GZD.Storage.getQuests();
+  var linIds=['lin-q1','lin-q2','lin-q3','lin-q4','lin-q5'];
+  var luoIds=['luo-q1','luo-q2','luo-q3','luo-q4','luo-q5'];
   function calc(ids){
-    let done=0,doing=0,total=ids.length;
-    ids.forEach(function(id){const s=quests[id]?.status;if(s==='已完成')done++;else if(s==='进行中')doing++;});
-    return{done,doing,total,pending:total-done-doing,rate:Math.round(done/total*100)};
+    var done=0,doing=0,total=ids.length;
+    ids.forEach(function(id){var s=quests[id]?.status;if(s==='已完成')done++;else if(s==='进行中')doing++;});
+    return{done:done,doing:doing,total:total,pending:total-done-doing,rate:Math.round(done/total*100)};
   }
-  const lin=calc(linIds),luo=calc(luoIds);
+  var lin=calc(linIds),luo=calc(luoIds);
   function update(prefix,data){
-    const dEl=document.getElementById(prefix+'-q-done'),doEl=document.getElementById(prefix+'-q-doing'),pEl=document.getElementById(prefix+'-q-pending'),rEl=document.getElementById(prefix+'-q-rate'),bEl=document.getElementById(prefix+'-q-bar'),tEl=document.getElementById(prefix+'-task-rate');
-    if(dEl)dEl.textContent=data.done;if(doEl)doEl.textContent=data.doing;if(pEl)pEl.textContent=data.pending;if(rEl)rEl.textContent=data.rate+'%';
+    var dEl=document.getElementById(prefix+'-q-done');
+    var doEl=document.getElementById(prefix+'-q-doing');
+    var pEl=document.getElementById(prefix+'-q-pending');
+    var rEl=document.getElementById(prefix+'-q-rate');
+    var bEl=document.getElementById(prefix+'-q-bar');
+    var tEl=document.getElementById(prefix+'-task-rate');
+    if(dEl)dEl.textContent=data.done;
+    if(doEl)doEl.textContent=data.doing;
+    if(pEl)pEl.textContent=data.pending;
+    if(rEl)rEl.textContent=data.rate+'%';
     if(bEl)setTimeout(function(){bEl.style.width=data.rate+'%';},300);
-    // 更新综合能力体检表中的任务完成率
     if(tEl){
-      const bar=tEl.querySelector('.ability-bar-fill');
-      const text=tEl.querySelector('.ab-text');
-      const note=tEl.querySelector('.ability-note');
+      var bar=tEl.querySelector('.ability-bar-fill');
+      var text=tEl.querySelector('.ab-text');
+      var note=tEl.querySelector('.ability-note');
       if(bar){
         bar.style.width=data.rate+'%';
-        // 强制触发重绘
         bar.style.transition='width 1s ease';
       }
       if(text){
@@ -153,10 +232,50 @@ function renderQuestStats(){
       }
     }
   }
-  update('lin',lin);update('luo',luo);
+  update('lin',lin);
+  update('luo',luo);
 }
 renderQuestStats();
 window.addEventListener('profilechange',function(){setTimeout(renderQuestStats,100);});
 
-console.log('🌙 归终殿 · 魂力与状态 v1.1 已加载');
+// ===== 9. 战力评级更新到印章 =====
+function updateRankSeals(){
+  // 林栖梧
+  var linStats=[55,35,80,45,70,80];
+  var linRank=computeRank(linStats,'统修期',100);
+  var linSeal=document.querySelector('#content-linxiwu .status-seal');
+  if(linSeal){
+    var periodEl=linSeal.querySelector('.seal-period');
+    var gradeEl=linSeal.querySelector('.seal-grade');
+    var valueEl=linSeal.querySelector('.seal-value');
+    if(periodEl)periodEl.textContent=linRank.period;
+    if(gradeEl)gradeEl.textContent=linRank.grade;
+    if(valueEl)valueEl.textContent='战力 '+linRank.avg;
+  }
+  // 罗烬
+  var luoStats=[60,85,75,60,55,70];
+  var luoRank=computeRank(luoStats,'统修期',100);
+  var luoSeal=document.querySelector('#content-luojin .status-seal');
+  if(luoSeal){
+    var periodEl2=luoSeal.querySelector('.seal-period');
+    var gradeEl2=luoSeal.querySelector('.seal-grade');
+    var valueEl2=luoSeal.querySelector('.seal-value');
+    if(periodEl2)periodEl2.textContent=luoRank.period;
+    if(gradeEl2)gradeEl2.textContent=luoRank.grade;
+    if(valueEl2)valueEl2.textContent='战力 '+luoRank.avg;
+  }
+}
+
+// ===== 10. 初始化所有 =====
+function initAll(){
+  // 绘制雷达图（带 maxValue 和 periodLabel）
+  drawRadar('radar-svg-lin',[55,35,80,45,70,80],100,'统修期');
+  drawRadar('radar-svg-luo',[60,85,75,60,55,70],100,'统修期');
+  // 更新印章
+  updateRankSeals();
+}
+
+setTimeout(initAll,200);
+
+console.log('🌙 归终殿 · 魂力与状态 v2.0 已加载');
 })();
