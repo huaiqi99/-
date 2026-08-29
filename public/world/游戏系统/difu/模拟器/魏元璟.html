@@ -89,20 +89,20 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;transform-style:flat;-webkit-transform-style:flat;animation:petalFall linear infinite;color:rgba(201,168,75,0.5)}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0}}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:200px;align-items:center}.radar-wrap svg{max-width:260px}.radar-label{text-align:center}}
-@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:220px}}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:200px;align-items:center}.radar-wrap svg{max-width:280px}.radar-label{text-align:center}}
+@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:240px}}
 </style>
 </head>
 <body>
 <div class="float-group"><a class="float-btn" href="./同僚.html"><span style="margin-right:2px;">←</span> 返回</a><button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button></div>
 <div class="top-header"><div class="page-title"><span class="sym">✦</span> 引渡人档案</div><div class="profile-name">当前：<span id="currentProfileName">魏元璟</span></div></div>
 <div id="app">
-<div class="card card-grad" data-corner="❀"><span class="corner-deco">❀</span>
-<div class="cover-wrap"><div class="cover-avatar"><img src="魏元璟.jpg" alt="魏元璟" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="fallback" style="display:none;">❀</span></div>
+<div class="card card-grad" data-corner="◈"><span class="corner-deco">◈</span>
+<div class="cover-wrap"><div class="cover-avatar"><img src="魏元璟.jpg" alt="魏元璟" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="fallback" style="display:none;">◈</span></div>
 <div class="cover-info"><div class="name">魏元璟</div><div class="sub">第七席引渡人 · 砺峰阁主事</div>
 <div class="meta-list"><span class="item"><span class="label">封号</span><span class="value">璟</span></span><span class="item"><span class="label">编号</span><span class="value">GZD-砺峰-甲-零零柒</span></span><span class="item"><span class="label">密级</span><span class="value">殿内高级</span></span><span class="item"><span class="label">建档</span><span class="value">苍珩 · 景德二十六年</span></span></div><span class="badge">持镇魂破虚引 · 与罗修缔结婚约</span></div></div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">战力评估与专精</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">战力评估与专精</div>
 <div class="overview-grid">
 <div class="radar-wrap"><svg viewBox="-25 -25 350 350" id="radar-svg-wei"></svg><div class="radar-label">十席 · 上限 1000</div></div>
 <div class="status-bars"><div class="bars-title">专精掌握程度</div>
@@ -114,25 +114,25 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="status-note">魏元璟体术造诣较高，双刀技法承自罗修，融入宫廷刀舞的旋身与折枝，实战中兼具杀伤力与灵活性。音律共鸣与魂力控制相辅相成，摧城笛已形成稳定战力。镇魂术偏弱，但足以应对常规任务。</div>
 <div class="status-footer"><div class="status-seal"><span class="seal-dot"></span><span class="seal-period">第七席</span><span class="seal-divider">·</span><span class="seal-grade">甲等上品</span><span class="seal-divider">｜</span><span class="seal-value">战力 870.0</span></div><div class="status-tag"><span class="tag-dot"></span><span class="tag-text">砺峰阁主事</span></div></div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">归终殿综合评价</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">归终殿综合评价</div>
 <div class="assess-text"><span class="eval-title">◈ 殿内评估</span>体术与双刀技法在同席中突出，兼具近身作战与音律控场能力。摧城笛的运用趋于稳定，能有效进行远程压制与魂力干扰。战斗定位明确，灵活性强，不擅长时间正面硬抗，但具备优秀的牵制与支援能力。京城镇乱后魂体融合状态稳定，未出现异常波动。</div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">身份与席位</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">身份与席位</div>
 <div class="info-grid"><div class="info-cell"><span class="label">姓名</span><span class="val">魏元璟</span></div><div class="info-cell"><span class="label">封号</span><span class="val">璟</span></div><div class="info-cell"><span class="label">席位</span><span class="val">第七席</span></div><div class="info-cell"><span class="label">隶属</span><span class="val">归终殿 · 砺峰阁</span></div><div class="info-cell"><span class="label">入殿时间</span><span class="val">苍珩四一二年</span></div><div class="info-cell"><span class="label">状态</span><span class="val" style="color:var(--profile-accent);">在职</span></div><div class="info-cell span-full"><span class="label">身份说明</span><span class="val">第七席引渡人，京城镇乱后以融合魂体重塑归终殿，经席位挑战位列第十席，后升至第七席，负责砺峰阁的教学事务，主授魂力控制与抗压训练，同时兼任音律坊笛音指导。魂体由魏元璟残魂与顾执命格融合而成，经多年稳定，已无排异反应。</span></div></div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">专精与武器</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">专精与武器</div>
 <div class="weapon-block"><div class="w-name">修行专精</div><div>主修魂力控制与音律共鸣，辅修双刀近战技法。擅长以摧城笛进行全场压制与魂力干扰，双刀「对影」用于近身防御与补刀。战斗定位以控场与辅助为主，不擅长时间正面缠斗。</div>
 <div class="w-name" style="margin-top:12px;">本命武器 · 对影</div><div>一对双刀，由罗修以九幽焰为引、取魏元璟一缕精魂凝练而成，刀在人在，刀碎魂伤。双刀薄如蝉翼，挥动时泛出淡金色流光，刀法承自罗修，加入宫廷刀舞的旋身与折枝。</div>
 <div class="w-name" style="margin-top:12px;">专属神器 · 镇魂破虚引（摧城笛）</div><div>玉质长笛，笛身刻有暗纹，吹奏时泛起幽绿微光，可驱散邪祟、打断术法、令听者失神。经多年磨合，现已建立稳定器魂共鸣。</div>
 <div class="quote">「平时挂着好看，真要用的时候……算了，希望别再用到。—— 魏元璟」</div></div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">当前职责</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">当前职责</div>
 <ul class="duty-list"><li>负责砺峰阁的教学事务：魂力引导、抗压训练、冥想课程</li><li>每周授课三到四次：魂力控制基础、抗压冥想进阶、音律共鸣入门</li><li>兼任音律坊笛音指导，与程木栖协作开展魂力与音律联合教学</li><li>定期向罗修汇报砺峰阁教学进度</li><li>砺峰阁现有在册弟子约二百人</li></ul></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">重要关系</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">重要关系</div>
 <div style="font-size:0.9rem;color:var(--text-secondary);line-height:1.8;position:relative;z-index:1;">与罗修为道侣，两人在京城镇乱后成婚。罗修现任首席引渡人，负责讲武堂。因摧城笛与九幽焰的联动特性，两人在任务调度上通常保持协同。与栾方棋、程木栖等人有公务往来，栾方棋为符修院主事，程木栖为音律坊共创者，在音律教学上有定期合作。</div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">主要经历</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">主要经历</div>
 <div class="timeline" id="timeline-wei">
 <div class="timeline-item"><div class="date">苍珩四一一年 · 秋</div><div class="title">京城决战 · 战死</div><div class="desc">于京城决战中被白禾川以摧城笛操控心智，被罗修亲手斩杀。魂魄与顾执遗落的命格融合，形成全新的融合魂体。</div></div>
 <div class="timeline-item"><div class="date">苍珩四一二年</div><div class="title">融合魂体重塑 · 入归终殿</div><div class="desc">融合魂体在归终殿驻地苏醒，以「念安」之名被罗修抚养，心智停留在少年时期，随罗修学习基础术法与魂力控制。</div></div>
@@ -140,10 +140,10 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="timeline-item"><div class="date">苍珩四三五年</div><div class="title">升第七席 · 掌砺峰阁</div><div class="desc">因席位调整与实力提升，由第十席升至第七席，任砺峰阁主事，负责魂力控制与抗压训练教学。同年正式执掌镇魂破虚引，建立稳定器魂共鸣。</div></div>
 </div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">当前状态</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">当前状态</div>
 <div class="status-wrap"><div class="status-line"><span class="label">档案状态：</span>在职 · 砺峰阁主事</div><div class="status-line"><span class="label">魂体状态：</span>稳定，融合魂体无异常波动，摧城笛共鸣正常</div><div class="status-line"><span class="label">近期外勤：</span>无长期任务，偶有重大外勤随队</div></div></div>
 
-<div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">档案司批注</div>
+<div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">档案司批注</div>
 <div class="archive-note">魏元璟在职状态正常，砺峰阁教学进度稳步推进。魂体融合状态稳定，摧城笛共鸣正常。与罗修为道侣关系，任务调度时需考虑双方协同性。建议每半年进行一次魂体稳定性复检。<br><br>—— 档案司 · 甲字记录员 · 霜月二十日</div></div>
 </div>
 <div id="petal-container"></div>
@@ -154,7 +154,7 @@ document.querySelectorAll('.st-bar-fill').forEach(function(bar){const target=par
 function revealTimeline(){document.querySelectorAll('.timeline-item:not(.visible)').forEach(function(item){if(item.getBoundingClientRect().top<window.innerHeight*0.85){item.classList.add('visible');}});}
 setTimeout(revealTimeline,400);window.addEventListener('scroll',revealTimeline);
 document.getElementById('themeBtn')?.addEventListener('click',function(){const html=document.documentElement;const isLight=html.getAttribute('data-theme')==='light';html.setAttribute('data-theme',isLight?'dark':'light');const icon=document.getElementById('themeIcon');const label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=isLight?'☀️':'🌙';label.textContent=isLight?'日间':'夜间';}});
-(function(){const chars=['❀','✿','✽'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
+(function(){const chars=['◈','❖'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 console.log('🌙 归终殿 · 魏元璟档案 v1.0 已加载');
 })();
 </script>
