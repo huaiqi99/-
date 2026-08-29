@@ -78,8 +78,9 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .status-seal .seal-period{color:var(--text-muted);font-weight:400}
 .status-seal .seal-value{color:var(--text-secondary);font-weight:600;font-size:0.7rem}
 .seal-divider{color:var(--border-light);font-weight:300;padding:0 2px}
-.status-tag{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85}
+.status-tag{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.7rem;padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85}
 .status-tag .tag-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--seal-color);margin-right:2px}
+.status-tag .tag-text{color:var(--profile-accent);font-weight:600}
 .assess-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8}
 .assess-text .eval-title{font-weight:600;color:var(--text-primary);font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.5px;display:block;margin-bottom:2px}
 .duty-list{list-style:none;padding:0;margin:0;position:relative;z-index:1}
@@ -88,8 +89,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;transform-style:flat;-webkit-transform-style:flat;animation:petalFall linear infinite;color:rgba(139,26,26,0.35)}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0}}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:200px;align-items:center}.radar-wrap svg{max-width:240px}.radar-label{text-align:center}}
-@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:200px}}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:200px;align-items:center}.radar-wrap svg{max-width:260px}.radar-label{text-align:center}}
+@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:220px}}
 </style>
 </head>
 <body>
@@ -111,7 +112,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="status-item"><div class="status-top"><span class="st-label">阵法结界</span><span class="st-value">约八成五</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c4);width:0%;" data-target="85"></div></div></div>
 <div class="status-item"><div class="status-top"><span class="st-label">封印术</span><span class="st-value">约七成</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c5);width:0%;" data-target="70"></div></div></div></div></div>
 <div class="status-note">栾方棋在符箓一道上造诣深厚，攻击符箓与辅助符箓均达九成以上，防御符箓与阵法结界亦有成熟运用。精血催符与符阵变体已形成稳定战力，整体符法水平在归终殿位居前列。封印术稍弱，但足以应对常规任务。</div>
-<div class="status-footer"><div class="status-seal"><span class="seal-dot"></span><span class="seal-period">十席 · 甲等上品</span><span class="seal-divider">｜</span><span class="seal-value">战力 950.2</span></div><div class="status-tag"><span class="tag-dot"></span>符修院主事</div></div></div>
+<div class="status-footer"><div class="status-seal"><span class="seal-dot"></span><span class="seal-period">十席</span><span class="seal-divider">·</span><span class="seal-grade">甲等上品</span><span class="seal-divider">｜</span><span class="seal-value">战力 950.2</span></div><div class="status-tag"><span class="tag-dot"></span><span class="tag-text">符修院主事</span></div></div></div>
 
 <div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">归终殿综合评价</div>
 <div class="assess-text"><span class="eval-title">◈ 殿内评估</span>符法与神树操控能力突出，在归终殿符修中位列前茅。魂力充沛，可支撑大规模符阵与神树召唤。体术与近身反应为明显短板，战斗定位明确，不擅脱离阵地的缠斗。整体战力稳定，京城镇乱后魂体修复完整，未出现衰减迹象。</div></div>
@@ -151,8 +152,8 @@ document.querySelectorAll('.st-bar-fill').forEach(function(bar){const target=par
 function revealTimeline(){document.querySelectorAll('.timeline-item:not(.visible)').forEach(function(item){if(item.getBoundingClientRect().top<window.innerHeight*0.85){item.classList.add('visible');}});}
 setTimeout(revealTimeline,400);window.addEventListener('scroll',revealTimeline);
 document.getElementById('themeBtn')?.addEventListener('click',function(){const html=document.documentElement;const isLight=html.getAttribute('data-theme')==='light';html.setAttribute('data-theme',isLight?'dark':'light');const icon=document.getElementById('themeIcon');const label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=isLight?'☀️':'🌙';label.textContent=isLight?'日间':'夜间';}});
-(function(){const chars=['❀','✦',];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
-console.log('🌙 归终殿 · 栾方棋档案 v4.2 已加载');
+(function(){const chars=['❀','✧',];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
+console.log('🌙 归终殿 · 栾方棋档案 v4.3 已加载');
 })();
 </script>
 </body>
