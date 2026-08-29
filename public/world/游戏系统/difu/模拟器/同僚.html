@@ -38,6 +38,8 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:92;opacity:0;pointer-events:none;transition:opacity 0.35s ease;}
 .sidebar-overlay.show{opacity:1;pointer-events:auto;}body.no-scroll{overflow:hidden;}
 .content-block{display:none;}.content-block.active{display:block;}
+
+/* ===== 卡片样式 ===== */
 .card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition),transform 0.25s ease;animation:cardIn 0.45s ease forwards;line-height:1.6;}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 .card::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,248,240,0.03) 0%,transparent 70%),radial-gradient(ellipse at 70% 80%,rgba(255,248,240,0.02) 0%,transparent 60%);z-index:0;}
@@ -55,11 +57,11 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .intro-text .highlight{color:var(--profile-accent);font-weight:600;}
 .intro-text .break{margin-top:8px;display:block;}
 
-/* ===== 十席表格 ===== */
-.rank-table-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px;}
-.rank-table{width:100%;border-collapse:collapse;font-size:0.95rem;}
-.rank-table th{background:var(--bg-hover);color:var(--text-muted);font-weight:600;padding:10px 10px;text-align:left;border-bottom:2px solid var(--profile-accent);font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.5px;}
-.rank-table td{padding:9px 10px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);vertical-align:middle;font-size:0.92rem;}
+/* ===== 十席表格（左右滑动，防止压缩） ===== */
+.rank-table-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px;-webkit-overflow-scrolling:touch;}
+.rank-table{width:100%;min-width:600px;border-collapse:collapse;font-size:0.95rem;white-space:nowrap;}
+.rank-table th{background:var(--bg-hover);color:var(--text-muted);font-weight:600;padding:10px 12px;text-align:left;border-bottom:2px solid var(--profile-accent);font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.5px;}
+.rank-table td{padding:9px 12px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);vertical-align:middle;font-size:0.92rem;}
 .rank-table .rank-num{font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);font-size:0.95rem;text-align:center;width:55px;}
 .rank-table .name{font-weight:600;color:var(--text-primary);font-size:0.95rem;}
 .rank-table .name a{color:var(--profile-accent);text-decoration:none;transition:color 0.2s;}
@@ -134,8 +136,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;transform-style:flat !important;-webkit-transform-style:flat !important;}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
 
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.rank-table{font-size:0.85rem;}.rank-table th{padding:7px 6px;font-size:0.7rem;}.rank-table td{padding:7px 6px;font-size:0.82rem;}.rank-table .rank-num{font-size:0.85rem;width:40px;}.rank-table .weapon{font-size:0.75rem;}.tab-btn{padding:4px 10px;font-size:0.7rem;}.hall-detail .hall-name{font-size:1rem;}.hall-detail .info-line{font-size:0.82rem;}.hall-detail .info-line .label{font-size:0.7rem;min-width:48px;}.hall-detail .hall-dyn{font-size:0.78rem;}.friend-card{flex:0 0 170px;min-width:140px;}.friend-card .f-name{font-size:0.82rem;}.friend-card .f-desc{font-size:0.72rem;}.search-result-card{padding:10px 12px;}.search-result-card .info .name{font-size:0.82rem;}.search-result-card .info .desc{font-size:0.75rem;}}
-@media(max-width:480px){.rank-table{font-size:0.75rem;}.rank-table th{padding:5px 3px;font-size:0.6rem;}.rank-table td{padding:5px 3px;font-size:0.7rem;}.rank-table .rank-num{font-size:0.7rem;width:30px;}.rank-table .weapon{font-size:0.65rem;}.tab-btn{padding:3px 8px;font-size:0.65rem;}.hall-detail .info-line{flex-direction:column;gap:2px;}.hall-detail .info-line .label{min-width:auto;}.friend-card{flex:0 0 150px;min-width:120px;}.friend-card .f-name{font-size:0.75rem;}.friend-card .f-desc{font-size:0.68rem;}.search-wrap{flex-direction:column;}.search-input{width:100%;min-width:auto;}}
+/* ===== 手机端适配 ===== */
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.rank-table-wrap{margin:0 -4px;padding:0 4px;}.rank-table{min-width:550px;font-size:0.85rem;white-space:nowrap;}.rank-table th{padding:7px 8px;font-size:0.7rem;}.rank-table td{padding:7px 8px;font-size:0.82rem;}.rank-table .rank-num{font-size:0.85rem;width:40px;}.rank-table .weapon{font-size:0.75rem;}.tab-btn{padding:4px 10px;font-size:0.7rem;}.hall-detail .hall-name{font-size:1rem;}.hall-detail .info-line{font-size:0.82rem;}.hall-detail .info-line .label{font-size:0.7rem;min-width:48px;}.hall-detail .hall-dyn{font-size:0.78rem;}.friend-card{flex:0 0 170px;min-width:140px;}.friend-card .f-name{font-size:0.82rem;}.friend-card .f-desc{font-size:0.72rem;}.search-result-card{padding:10px 12px;}.search-result-card .info .name{font-size:0.82rem;}.search-result-card .info .desc{font-size:0.75rem;}}
+@media(max-width:480px){.rank-table{min-width:480px;font-size:0.75rem;}.rank-table th{padding:5px 4px;font-size:0.6rem;}.rank-table td{padding:5px 4px;font-size:0.7rem;}.rank-table .rank-num{font-size:0.7rem;width:30px;}.rank-table .weapon{font-size:0.65rem;}.tab-btn{padding:3px 8px;font-size:0.65rem;}.hall-detail .info-line{flex-direction:column;gap:2px;}.hall-detail .info-line .label{min-width:auto;}.friend-card{flex:0 0 150px;min-width:120px;}.friend-card .f-name{font-size:0.75rem;}.friend-card .f-desc{font-size:0.68rem;}.search-wrap{flex-direction:column;}.search-input{width:100%;min-width:auto;}}
 </style>
 </head>
 <body data-profile="linxiwu">
@@ -229,7 +232,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <span class="corner-deco">❀</span>
 <div class="card-title">人物索引</div>
 <div class="search-wrap">
-<input class="search-input" id="search-input-lin" placeholder="搜索人名或地名 … 例：栾方棋、枪阁" autocomplete="off">
+<input class="search-input" id="search-input-lin" placeholder="搜索人名或地名 … 例：栾方棋、点苍阁" autocomplete="off">
 <button class="search-btn" id="search-btn-lin">搜索</button>
 </div>
 <div class="search-results" id="search-results-lin">
@@ -248,10 +251,12 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <div class="card-title">归终殿 · 沿革</div>
 <div class="intro-text">
 归终殿最初由六殿卞城王于约六百年前设立，名义上为“处理滞留在人间的特殊魂魄”，实则是一个临时性的收容部门。
+<span class="break"></span>
 其成员被称为“引渡人”，因拥有实体且能自由穿梭阴阳，具备普通阴差不具备的现场干预能力。但该部门长期未获正式编制，殿址简陋、人手紧缺，十席引渡人常年在外奔波，归终殿在地府地位极低。
 <span class="break"></span>
 转折点发生在苍珩四百一十一年的京城大战。狐妖白禾川以五大神器吞噬京城、试图重建青丘，归终殿全体引渡人奉命参战，最终以惨烈代价击溃白禾川。
-此战使地府高层认识到引渡人的不可替代性，战后阎君下旨：<span class="highlight">归终殿升格为地府第十殿，与阎罗十殿同列。</span>十席引渡人获封号、可开坛收徒，殿内编制扩充至数百人，并配备医官、讲武堂等完整设施。
+<span class="break"></span>
+此战使地府高层认识到引渡人的不可替代性，战后阎君下旨：<span class="highlight">归终殿升格扩建。</span>十席引渡人获封号、可开坛收徒，殿内编制扩充至数百人，并配备医官、讲武堂等完整设施。
 </div>
 </div>
 
@@ -295,7 +300,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <span class="corner-deco">◈</span>
 <div class="card-title">人物索引</div>
 <div class="search-wrap">
-<input class="search-input" id="search-input-luo" placeholder="搜索人名或地名 … 例：栾方棋、枪阁" autocomplete="off">
+<input class="search-input" id="search-input-luo" placeholder="搜索人名或地名 … 例：栾方棋、点苍阁" autocomplete="off">
 <button class="search-btn" id="search-btn-luo">搜索</button>
 </div>
 <div class="search-results" id="search-results-luo">

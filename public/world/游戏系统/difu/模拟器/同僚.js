@@ -33,7 +33,7 @@ if(petalContainer){for(var i=0;i<12;i++){var el=document.createElement('div');el
 
 // ===== 4. 数据 =====
 
-// 十席数据（修改版：姓名未公开用"未公开"，其余用"—"）
+// 十席数据
 var RANK_DATA = [
   { rank: 1, name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html' },
   { rank: 2, name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html' },
@@ -47,7 +47,7 @@ var RANK_DATA = [
   { rank: 10, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null }
 ];
 
-// 院阁数据（删除了织云阁和栖云阁）
+// 院阁数据
 var HALL_DATA = [
   {
     id: 'fuxiu',
@@ -78,7 +78,7 @@ var HALL_DATA = [
   {
     id: 'diangcang',
     name: '点苍阁',
-    icon: 'ti-spear',
+    icon: 'ti-crosshair',  // 替换为存在的图标
     master: '林淮',
     masterLink: '林淮.html',
     desc: '枪法专精 · 近战武器 · 单点爆发',
@@ -286,7 +286,6 @@ function renderHallDetail(containerId, index) {
     ? hall.dynamics.map(function(d) { return '<div class="item"><span class="dot">·</span> ' + d + '</div>'; }).join('')
     : '<div class="item"><span class="dot">·</span> 暂无近期动态</div>';
 
-  // 详细资料+跳转按钮
   var detailHtml = hall.detail || '暂无详细资料。';
   var btnHtml = hall.masterLink
     ? '<a class="detail-btn" href="' + hall.masterLink + '">查看完整资料 →</a>'
