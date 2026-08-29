@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归终殿 · 同僚与十席</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px;}
+.sym,.ti,.sidebar-tab,.sidebar-tab .sym,.sidebar-panel .nav-item,.sidebar-panel .nav-item .sym,.sidebar-panel .profile-switch-btn{transform-style:flat !important;-webkit-transform-style:flat !important;}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
+.float-btn:hover{border-color:var(--accent);color:var(--accent);}
+#app{max-width:960px;margin:0 auto;width:100%;padding:20px 4px 0 4px;}
+.top-header{max-width:960px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--border-light);}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px;}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition);}
+.top-header .profile-name{font-size:0.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:0.5px;margin-left:2px;}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600;}
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,0.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:0.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none;}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent);}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,0.25);transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.22,0.61,0.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column;}
+.sidebar-panel.open{transform:translateX(0);}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition);}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent);}
+.sidebar-panel .panel-title{font-size:0.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono);}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:0.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none;}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light);}
+.sidebar-panel .nav-item.active{background:rgba(138,58,42,0.04);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600;}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px;}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:0.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:0.5px;}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:0.85rem;cursor:pointer;transition:all 0.2s;width:100%;text-align:center;}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.04);}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:92;opacity:0;pointer-events:none;transition:opacity 0.35s ease;}
+.sidebar-overlay.show{opacity:1;pointer-events:auto;}body.no-scroll{overflow:hidden;}
+.content-block{display:none;}.content-block.active{display:block;}
+.card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;padding:18px 20px 16px 20px;margin-bottom:16px;box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition);}
+.card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;position:relative;padding-bottom:6px;}
+.card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px;}
+.card-title .ti{font-size:1.1rem;color:var(--profile-accent);}
+.gradient-card{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
+
+/* ===== 十席表格 ===== */
+.rank-table-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px;}
+.rank-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.rank-table th{background:var(--bg-hover);color:var(--text-muted);font-weight:600;padding:8px 8px;text-align:left;border-bottom:2px solid var(--profile-accent);font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.5px;}
+.rank-table td{padding:7px 8px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);vertical-align:middle;}
+.rank-table .rank-num{font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);font-size:0.85rem;text-align:center;width:50px;}
+.rank-table .name{font-weight:600;color:var(--text-primary);}
+.rank-table .name a{color:var(--profile-accent);text-decoration:none;transition:color 0.2s;}
+.rank-table .name a:hover{text-decoration:underline;}
+.rank-table .badge{display:inline-block;font-size:0.6rem;padding:1px 8px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-muted);font-family:var(--font-mono);}
+.rank-table .badge.active{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.04);}
+.rank-table .badge.retired{color:var(--text-muted);opacity:0.6;}
+.rank-table .empty{color:var(--text-muted);font-size:0.75rem;}
+.rank-table .weapon{font-family:var(--font-mono);font-size:0.75rem;color:var(--text-secondary);}
+.rank-table .weapon .highlight{color:var(--profile-accent);font-weight:600;}
+.rank-table .weapon .shared{font-size:0.65rem;color:var(--text-muted);}
+.rank-table .weapon .empty{color:var(--text-muted);font-size:0.65rem;}
+
+/* ===== 院阁切换按钮栏 ===== */
+.tab-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;position:relative;z-index:1;}
+.tab-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-secondary);font-family:var(--font-serif);font-size:0.8rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.tab-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-hover);}
+.tab-btn.active{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.04);font-weight:600;}
+
+/* ===== 院阁详情 ===== */
+.hall-detail{display:none;animation:fadeIn 0.35s ease;}
+.hall-detail.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.hall-detail .hall-name{font-size:1.2rem;font-weight:700;color:var(--text-primary);letter-spacing:1px;margin-bottom:4px;}
+.hall-detail .hall-name .ti{font-size:1.1rem;color:var(--profile-accent);margin-right:6px;}
+.hall-detail .hall-divider{height:1px;background:var(--border-light);margin:4px 0 10px 0;}
+.hall-detail .info-line{display:flex;gap:8px;flex-wrap:wrap;font-size:0.9rem;padding:4px 0;color:var(--text-secondary);}
+.hall-detail .info-line .label{color:var(--text-muted);font-family:var(--font-mono);font-size:0.78rem;min-width:60px;}
+.hall-detail .info-line .value{color:var(--text-primary);font-weight:500;}
+.hall-detail .info-line .value a{color:var(--profile-accent);text-decoration:none;}
+.hall-detail .info-line .value a:hover{text-decoration:underline;}
+.hall-detail .info-line .value .tag{font-size:0.7rem;color:var(--text-muted);font-weight:400;}
+.hall-detail .hall-dyn{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;padding:4px 0;}
+.hall-detail .hall-dyn .item{padding:2px 0;display:flex;gap:6px;}
+.hall-detail .hall-dyn .item .dot{color:var(--profile-accent);}
+.hall-detail .status-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;padding:3px 14px;border-radius:14px;background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-secondary);font-family:var(--font-mono);margin-top:4px;}
+.hall-detail .status-tag .dot{display:inline-block;width:8px;height:8px;border-radius:50%;}
+.hall-detail .status-tag .dot.normal{background:#8FB8A8;}
+.hall-detail .status-tag .dot.busy{background:#c4a77d;}
+.hall-detail .status-tag .dot.maintenance{background:#b86b6b;}
+
+/* ===== 人物索引 ===== */
+.index-wrap{display:flex;flex-wrap:wrap;gap:6px 12px;padding:4px 0;}
+.index-item{font-size:0.85rem;color:var(--text-secondary);}
+.index-item a{color:var(--text-secondary);text-decoration:none;transition:color 0.2s;border-bottom:1px dotted transparent;}
+.index-item a:hover{color:var(--profile-accent);border-bottom-color:var(--profile-accent);}
+.index-item .sep{color:var(--border-light);margin:0 4px;}
+
+/* ===== 花瓣 ===== */
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden;}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;transform-style:flat !important;-webkit-transform-style:flat !important;}
+@keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
+
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.rank-table{font-size:0.7rem;}.rank-table th{padding:5px 4px;font-size:0.6rem;}.rank-table td{padding:5px 4px;}.rank-table .rank-num{width:30px;font-size:0.7rem;}.rank-table .weapon{font-size:0.65rem;}.tab-btn{padding:4px 10px;font-size:0.7rem;}.hall-detail .hall-name{font-size:1rem;}.hall-detail .info-line{font-size:0.82rem;}.hall-detail .info-line .label{font-size:0.7rem;min-width:48px;}.hall-detail .hall-dyn{font-size:0.78rem;}.index-item{font-size:0.78rem;}}
+@media(max-width:480px){.rank-table{font-size:0.62rem;}.rank-table th{padding:4px 2px;font-size:0.55rem;}.rank-table td{padding:4px 2px;}.rank-table .rank-num{width:22px;font-size:0.6rem;}.rank-table .weapon{font-size:0.58rem;}.tab-btn{padding:3px 8px;font-size:0.65rem;}.hall-detail .info-line{flex-direction:column;gap:2px;}.hall-detail .info-line .label{min-width:auto;}.hall-detail .hall-dyn .item{font-size:0.75rem;}}
+</style>
+</head>
+<body data-profile="linxiwu">
+
+<div class="float-group">
+<a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+<button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+<button class="close-btn">✕</button>
+<div class="panel-title">◈ 归终殿 · 导航</div>
+<a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+<a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
+<a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
+<a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
+<a class="nav-item active" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
+<a class="nav-item" href="#"><span class="sym">◆</span> 差事与外勤</a>
+<a class="nav-item" href="#"><span class="sym">❤</span> 血脉羁绊</a>
+<a class="nav-item" href="#"><span class="sym">✶</span> 升席纪事</a>
+<a class="nav-item" href="#"><span class="sym">✉</span> 传讯符</a>
+<a class="nav-item" href="#"><span class="sym">⚙</span> 设置</a>
+<button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+<div class="panel-footer">归终殿弟子手册 · 内部流通</div>
+</div>
+
+<div class="top-header">
+<div class="page-title"><span class="sym">✧</span> 同僚与十席</div>
+<div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
+</div>
+
+<div id="app">
+
+<!-- ===== 林栖梧 ===== -->
+<div class="content-block active" id="content-linxiwu">
+
+<!-- 卡片：十席排名 -->
+<div class="card" data-corner="✧">
+<div class="card-title"><span class="ti ti-crown"></span> 十席引渡人</div>
+<div class="rank-table-wrap">
+<table class="rank-table" id="rank-table-lin">
+<thead><tr><th>席次</th><th>姓名</th><th>封号</th><th>本命武器</th><th>专属神器</th><th>归属院阁</th></tr></thead>
+<tbody id="rank-body-lin">
+<!-- JS 渲染 -->
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- 卡片：院阁切换 + 详情 -->
+<div class="card" data-corner="✧">
+<div class="card-title"><span class="ti ti-building"></span> 院阁详情</div>
+<div class="tab-bar" id="hall-tabs-lin">
+<!-- JS 渲染 -->
+</div>
+<div id="hall-detail-lin">
+<!-- JS 渲染当前选中的院阁 -->
+</div>
+</div>
+
+<!-- 卡片：人物索引 -->
+<div class="card" data-corner="✧">
+<div class="card-title"><span class="ti ti-list"></span> 人物索引</div>
+<div class="index-wrap" id="index-lin">
+<!-- JS 渲染 -->
+</div>
+</div>
+
+</div>
+
+<!-- ===== 罗烬 ===== -->
+<div class="content-block" id="content-luojin">
+
+<!-- 卡片：十席排名 -->
+<div class="card" data-corner="✧">
+<div class="card-title"><span class="ti ti-crown"></span> 十席引渡人</div>
+<div class="rank-table-wrap">
+<table class="rank-table" id="rank-table-luo">
+<thead><tr><th>席次</th><th>姓名</th><th>封号</th><th>本命武器</th><th>专属神器</th><th>归属院阁</th></tr></thead>
+<tbody id="rank-body-luo">
+<!-- JS 渲染 -->
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- 卡片：院阁切换 + 详情 -->
+<div class="card" data-corner="✧">
+<div class="card-title"><span class="ti ti-building"></span> 院阁详情</div>
+<div class="tab-bar" id="hall-tabs-luo">
+<!-- JS 渲染 -->
+</div>
+<div id="hall-detail-luo">
+<!-- JS 渲染当前选中的院阁 -->
+</div>
+</div>
+
+<!-- 卡片：人物索引 -->
+<div class="card" data-corner="✧">
+<div class="card-title"><span class="ti ti-list"></span> 人物索引</div>
+<div class="index-wrap" id="index-luo">
+<!-- JS 渲染 -->
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div id="petal-container"></div>
+
+<script src="./核心.js"></script>
+<script src="./同僚.js"></script>
+</body>
+</html>
