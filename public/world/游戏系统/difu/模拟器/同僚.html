@@ -57,20 +57,36 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .intro-text .highlight{color:var(--profile-accent);font-weight:600;}
 .intro-text .break{margin-top:8px;display:block;}
 
-/* ===== 十席表格（左右滑动，防止压缩） ===== */
-.rank-table-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px;-webkit-overflow-scrolling:touch;}
-.rank-table{width:100%;min-width:600px;border-collapse:collapse;font-size:0.95rem;white-space:nowrap;}
-.rank-table th{background:var(--bg-hover);color:var(--text-muted);font-weight:600;padding:10px 12px;text-align:left;border-bottom:2px solid var(--profile-accent);font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.5px;}
-.rank-table td{padding:9px 12px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);vertical-align:middle;font-size:0.92rem;}
-.rank-table .rank-num{font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);font-size:0.95rem;text-align:center;width:55px;}
-.rank-table .name{font-weight:600;color:var(--text-primary);font-size:0.95rem;}
-.rank-table .name a{color:var(--profile-accent);text-decoration:none;transition:color 0.2s;}
-.rank-table .name a:hover{text-decoration:underline;}
-.rank-table .empty{color:var(--text-muted);font-size:0.85rem;}
-.rank-table .weapon{font-family:var(--font-mono);font-size:0.85rem;color:var(--text-secondary);}
-.rank-table .weapon .highlight{color:var(--profile-accent);font-weight:600;}
-.rank-table .weapon .shared{font-size:0.7rem;color:var(--text-muted);}
-.rank-table .weapon .empty{color:var(--text-muted);font-size:0.75rem;}
+/* ===== 手风琴样式 ===== */
+.rank-accordion{display:flex;flex-direction:column;gap:6px;}
+.accordion-item{border:1px solid var(--border-card);border-radius:6px;background:var(--bg-card);overflow:hidden;transition:border-color var(--transition),box-shadow var(--transition);}
+.accordion-item:hover{border-color:var(--profile-accent);}
+.accordion-item .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;transition:background 0.2s;gap:12px;}
+.accordion-item .accordion-header:hover{background:var(--bg-hover);}
+.accordion-item .accordion-header .left{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;flex:1;}
+.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.85rem;font-weight:600;min-width:4.2em;display:inline-block;color:var(--text-muted);letter-spacing:0.3px;}
+.accordion-item .accordion-header .name{font-size:1rem;font-weight:600;min-width:4.8em;display:inline-block;font-family:var(--font-serif);}
+.accordion-item .accordion-header .sub-info{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;}
+.accordion-item .accordion-header .toggle-icon{font-size:1.2rem;color:var(--text-muted);transition:transform 0.3s ease;flex-shrink:0;}
+.accordion-item.open .toggle-icon{transform:rotate(45deg);}
+.accordion-item .accordion-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 14px;background:var(--bg-hover);}
+.accordion-item.open .accordion-body{max-height:400px;padding:12px 14px 14px 14px;}
+.accordion-body .detail-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:0.88rem;color:var(--text-secondary);}
+.accordion-body .detail-grid .label{color:var(--text-muted);font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.2px;}
+.accordion-body .detail-grid .value{font-weight:400;}
+.accordion-body .detail-grid .value .empty{color:var(--text-muted);font-style:italic;}
+.accordion-body .detail-btn{display:inline-block;margin-top:10px;padding:4px 16px;border:1px solid var(--profile-accent);border-radius:20px;color:var(--profile-accent);font-size:0.78rem;text-decoration:none;transition:all 0.2s;font-family:var(--font-mono);}
+.accordion-body .detail-btn:hover{background:var(--profile-accent);color:var(--bg-card);}
+.accordion-body .unavailable{font-size:0.85rem;color:var(--text-muted);font-style:italic;}
+
+/* 未公开特殊样式 */
+.accordion-item.vacant{border-style:dashed;background:var(--bg-card);}
+.accordion-item.vacant .name{color:var(--text-muted);}
+.accordion-item.vacant .rank-label{color:var(--text-muted);}
+
+/* 特殊角色（退役） */
+.accordion-item.special{border-color:var(--border-card);background:var(--bg-card);}
+.accordion-item.special .rank-label{color:var(--text-secondary);}
 
 /* ===== 院阁切换按钮栏 ===== */
 .tab-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;position:relative;z-index:1;}
@@ -136,7 +152,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;transform-style:flat !important;-webkit-transform-style:flat !important;}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
 
-/* ===== 手机端适配（只改表格和同期好友） ===== */
+/* ===== 响应式 ===== */
 @media(max-width:768px){
   body{padding:0 12px 30px 12px;font-size:15px;}
   .top-header{padding:14px 0 10px 0;}
@@ -145,37 +161,35 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
   .card{padding:14px 14px 12px 14px;}
   .float-group{top:12px;right:12px;gap:6px;}
   .float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}
-  /* 表格放大 */
-  .rank-table-wrap{margin:0 -4px;padding:0 4px;}
-  .rank-table{min-width:550px;font-size:0.95rem;white-space:nowrap;}
-  .rank-table th{padding:7px 8px;font-size:0.8rem;}
-  .rank-table td{padding:7px 8px;font-size:0.95rem;}
-  .rank-table .rank-num{font-size:0.95rem;width:40px;}
-  .rank-table .weapon{font-size:0.9rem;}
-  /* 同期好友放大 */
+  .accordion-item .accordion-header{padding:8px 12px;}
+  .accordion-item .accordion-header .rank-label{font-size:0.8rem;min-width:3.8em;}
+  .accordion-item .accordion-header .name{font-size:0.95rem;min-width:4.4em;}
+  .accordion-item .accordion-header .sub-info{font-size:0.7rem;}
+  .accordion-body .detail-grid{font-size:0.82rem;gap:3px 12px;}
+  .accordion-body .detail-grid .label{font-size:0.68rem;}
+  .accordion-item.open .accordion-body{padding:10px 12px 12px 12px;}
   .friend-scroll{gap:14px;}
   .friend-card{flex:0 0 210px;min-width:170px;padding:14px 16px;}
   .friend-card .f-name{font-size:1rem;}
   .friend-card .f-tag{font-size:0.75rem;}
   .friend-card .f-desc{font-size:0.88rem;}
   .friend-card .f-exp{font-size:0.78rem;}
-  /* 院阁详情保持原样 */
   .hall-detail .hall-name{font-size:1rem;}
   .hall-detail .info-line{font-size:0.82rem;}
   .hall-detail .info-line .label{font-size:0.7rem;min-width:48px;}
   .hall-detail .hall-dyn{font-size:0.78rem;}
-  /* 搜索保持原样 */
   .search-result-card{padding:10px 12px;}
   .search-result-card .info .name{font-size:0.82rem;}
   .search-result-card .info .desc{font-size:0.75rem;}
 }
-
 @media(max-width:480px){
-  .rank-table{min-width:480px;font-size:0.9rem;}
-  .rank-table th{padding:5px 4px;font-size:0.75rem;}
-  .rank-table td{padding:5px 4px;font-size:0.9rem;}
-  .rank-table .rank-num{font-size:0.85rem;width:30px;}
-  .rank-table .weapon{font-size:0.85rem;}
+  .accordion-item .accordion-header{padding:6px 10px;}
+  .accordion-item .accordion-header .rank-label{font-size:0.7rem;min-width:3.4em;}
+  .accordion-item .accordion-header .name{font-size:0.85rem;min-width:3.8em;}
+  .accordion-item .accordion-header .sub-info{font-size:0.65rem;}
+  .accordion-body .detail-grid{font-size:0.78rem;gap:2px 8px;}
+  .accordion-body .detail-grid .label{font-size:0.65rem;}
+  .accordion-item.open .accordion-body{padding:8px 10px 10px 10px;}
   .friend-card{flex:0 0 190px;min-width:150px;padding:12px 14px;}
   .friend-card .f-name{font-size:0.95rem;}
   .friend-card .f-desc{font-size:0.82rem;}
@@ -242,13 +256,8 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">十席引渡人</div>
-<div class="rank-table-wrap">
-<table class="rank-table">
-<thead><tr><th>席次</th><th>姓名</th><th>封号</th><th>本命武器</th><th>专属神器</th><th>归属院阁</th></tr></thead>
-<tbody id="rank-body-lin">
+<div class="rank-accordion" id="rank-list-lin">
 <!-- JS 渲染 -->
-</tbody>
-</table>
 </div>
 </div>
 
@@ -310,13 +319,8 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="card-title">十席引渡人</div>
-<div class="rank-table-wrap">
-<table class="rank-table">
-<thead><tr><th>席次</th><th>姓名</th><th>封号</th><th>本命武器</th><th>专属神器</th><th>归属院阁</th></tr></thead>
-<tbody id="rank-body-luo">
+<div class="rank-accordion" id="rank-list-luo">
 <!-- JS 渲染 -->
-</tbody>
-</table>
 </div>
 </div>
 

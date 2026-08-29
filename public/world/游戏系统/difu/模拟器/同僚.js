@@ -33,18 +33,24 @@ if(petalContainer){for(var i=0;i<12;i++){var el=document.createElement('div');el
 
 // ===== 4. 数据 =====
 
-// 十席数据
+// 十席数据（包含颜色）
 var RANK_DATA = [
-  { rank: 1, name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html' },
-  { rank: 2, name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html' },
-  { rank: 3, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '阵法堂', link: null },
-  { rank: 4, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '工造司', link: null },
-  { rank: 5, name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html' },
-  { rank: 6, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '澄心堂', link: null },
-  { rank: 7, name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html' },
-  { rank: 8, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '百草堂', link: null },
-  { rank: 9, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null },
-  { rank: 10, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null }
+  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#9b59b6' },   // 紫色
+  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#2980b9' }, // 青蓝
+  { rank: 3, label: '第三席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
+  { rank: 4, label: '第四席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
+  { rank: 5, label: '第五席', name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html', color: '#e74c3c' }, // 红色
+  { rank: 6, label: '第六席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
+  { rank: 7, label: '第七席', name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html', color: '#f1c40f' }, // 金色
+  { rank: 8, label: '第八席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
+  { rank: 9, label: '第九席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
+  { rank: 10, label: '第十席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' }
+];
+
+// 特殊角色（退役/特殊）
+var SPECIAL_DATA = [
+  { label: '退役', name: '程木栖', title: '栖', weapon: '归江', divine: '无', hall: '栖梧馆', link: '程木栖.html', color: '#6c7a89' },
+  { label: '退役', name: '蔡可', title: '可', weapon: '玄铁弓', divine: '无', hall: '栖梧馆', link: '蔡可.html', color: '#6c7a89' }
 ];
 
 // 院阁数据
@@ -187,9 +193,10 @@ var SEARCH_DATA = [
   { name: '林淮', tags: ['第二席', '点苍阁', '枪法'], desc: '点苍阁掌门，银枪惊鸿。', link: '林淮.html' },
   { name: '罗修', tags: ['首席', '讲武堂', '双刀'], desc: '讲武堂掌门，九幽焚天焰共主。', link: '罗修.html' },
   { name: '魏元璟', tags: ['第七席', '砺峰阁', '音律'], desc: '砺峰阁掌门，对影双刀，镇魂破虚引持有者。', link: '魏元璟.html' },
+  { name: '程木栖', tags: ['栖梧馆', '音律坊', '医药'], desc: '栖梧馆掌门，音律坊共创者。', link: '程木栖.html' },
+  { name: '蔡可', tags: ['栖梧馆', '弓术'], desc: '栖梧馆弓术教官，玄铁弓持有者。', link: '蔡可.html' },
   { name: '林栖梧', tags: ['符修院', '弟子', '符箓'], desc: '符修院弟子，栾方棋之女。', link: '档案.html#linxiwu' },
   { name: '罗烬', tags: ['讲武堂', '弟子', '双刀'], desc: '讲武堂弟子，罗修之子。', link: '档案.html#luojin' },
-  { name: '程木栖', tags: ['栖梧馆', '音律坊', '医药'], desc: '栖梧馆掌门，音律坊共创者。', link: null },
   { name: '第三席', tags: ['阵法堂', '阵法', '符阵'], desc: '阵法堂执掌者，行踪不定。', link: null },
   { name: '第四席', tags: ['工造司', '锻造', '维修'], desc: '工造司执掌者，兵器大师。', link: null },
   { name: '第六席', tags: ['澄心堂', '剑修', '剑法'], desc: '澄心堂执掌者，剑法宗师。', link: null },
@@ -214,28 +221,133 @@ var FRIEND_DATA = {
   ]
 };
 
-// ===== 5. 渲染十席排名 =====
+// ===== 5. 渲染十席排名（手风琴） =====
 function renderRank(containerId) {
-  var tbody = document.getElementById(containerId);
-  if (!tbody) return;
-  tbody.innerHTML = '';
-  RANK_DATA.forEach(function(item) {
-    var tr = document.createElement('tr');
-    var nameHtml = item.name;
-    if (item.name !== '未公开' && item.link) {
-      nameHtml = '<a href="' + item.link + '">' + item.name + '</a>';
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
+  // 合并数据：十席 + 特殊角色
+  var allItems = RANK_DATA.concat(SPECIAL_DATA);
+
+  allItems.forEach(function(item, index) {
+    var isVacant = (item.name === '未公开');
+    var isSpecial = (item.label === '退役');
+    var itemDiv = document.createElement('div');
+    itemDiv.className = 'accordion-item';
+    if (isVacant) itemDiv.classList.add('vacant');
+    if (isSpecial) itemDiv.classList.add('special');
+
+    // --- 头部 ---
+    var header = document.createElement('div');
+    header.className = 'accordion-header';
+
+    // 席次标签（固定宽度确保对齐）
+    var rankLabel = item.label;
+    // 对于未公开的席次，保留“第三席”等
+    // 特殊角色用“退役”
+    var rankSpan = document.createElement('span');
+    rankSpan.className = 'rank-label';
+    rankSpan.textContent = rankLabel;
+    // 颜色：未公开灰色，特殊灰色，其他用数据中的颜色
+    var color = isVacant ? '#8a8a8a' : (isSpecial ? '#6c7a89' : item.color);
+    rankSpan.style.color = color;
+
+    // 姓名（处理对齐：两个字中间加空格）
+    var nameDisplay = item.name;
+    if (!isVacant && nameDisplay.length === 2) {
+      nameDisplay = nameDisplay.charAt(0) + ' ' + nameDisplay.charAt(1);
     }
-    var titleDisplay = item.title !== '—' ? item.title : '—';
-    var weaponDisplay = item.weapon !== '—' ? item.weapon : '—';
-    var divineDisplay = item.divine !== '—' ? item.divine : '—';
-    var hallDisplay = item.hall || '—';
-    tr.innerHTML = '<td class="rank-num">' + item.rank + '</td>' +
-      '<td class="name">' + nameHtml + '</td>' +
-      '<td>' + titleDisplay + '</td>' +
-      '<td class="weapon">' + weaponDisplay + '</td>' +
-      '<td class="weapon">' + divineDisplay + '</td>' +
-      '<td>' + hallDisplay + '</td>';
-    tbody.appendChild(tr);
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'name';
+    nameSpan.textContent = nameDisplay;
+    nameSpan.style.color = color;
+
+    // 副标题：显示封号或归属（仅非未公开且非特殊？未公开不显示副标题）
+    var subInfo = document.createElement('span');
+    subInfo.className = 'sub-info';
+    if (!isVacant) {
+      if (item.title && item.title !== '—') {
+        subInfo.textContent = '封号 ' + item.title;
+      } else if (item.hall && item.hall !== '—') {
+        subInfo.textContent = '院阁 ' + item.hall;
+      } else {
+        subInfo.textContent = '—';
+      }
+    } else {
+      subInfo.textContent = '';
+    }
+
+    var leftDiv = document.createElement('div');
+    leftDiv.className = 'left';
+    leftDiv.appendChild(rankSpan);
+    leftDiv.appendChild(nameSpan);
+    leftDiv.appendChild(subInfo);
+
+    var iconSpan = document.createElement('span');
+    iconSpan.className = 'toggle-icon';
+    iconSpan.textContent = '+';
+
+    header.appendChild(leftDiv);
+    header.appendChild(iconSpan);
+
+    // --- 主体 ---
+    var body = document.createElement('div');
+    body.className = 'accordion-body';
+
+    var detailsHtml = '';
+    if (isVacant) {
+      // 未公开：只显示“未公开”
+      detailsHtml = '<div class="unavailable">未公开</div>';
+    } else {
+      // 正常或特殊角色
+      var detailLines = [];
+      if (item.title && item.title !== '—') {
+        detailLines.push({label: '封号', value: item.title});
+      }
+      if (item.weapon && item.weapon !== '—') {
+        detailLines.push({label: '本命武器', value: item.weapon});
+      }
+      if (item.divine && item.divine !== '—') {
+        detailLines.push({label: '专属神器', value: item.divine});
+      }
+      if (item.hall && item.hall !== '—') {
+        detailLines.push({label: '归属院阁', value: item.hall});
+      }
+      if (detailLines.length === 0) {
+        detailsHtml = '<div class="unavailable">暂无详细信息</div>';
+      } else {
+        var gridHtml = '<div class="detail-grid">';
+        detailLines.forEach(function(line) {
+          gridHtml += '<span class="label">' + line.label + '</span>';
+          gridHtml += '<span class="value">' + line.value + '</span>';
+        });
+        gridHtml += '</div>';
+        detailsHtml = gridHtml;
+      }
+
+      // 查看档案按钮
+      if (item.link) {
+        detailsHtml += '<a class="detail-btn" href="' + item.link + '">查看档案 →</a>';
+      } else {
+        detailsHtml += '<span style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);">档案暂未开放</span>';
+      }
+    }
+
+    body.innerHTML = detailsHtml;
+
+    itemDiv.appendChild(header);
+    itemDiv.appendChild(body);
+    container.appendChild(itemDiv);
+
+    // --- 点击切换 ---
+    header.addEventListener('click', function(e) {
+      var isOpen = itemDiv.classList.contains('open');
+      // 可自由展开多个，不互斥
+      itemDiv.classList.toggle('open');
+      var icon = header.querySelector('.toggle-icon');
+      icon.textContent = isOpen ? '+' : '−';
+    });
   });
 }
 
@@ -366,7 +478,7 @@ function setupSearch(inputId, btnId, resultsId) {
 function initAll() {
   var profile = document.body.getAttribute('data-profile') || 'linxiwu';
   var prefix = profile === 'linxiwu' ? 'lin' : 'luo';
-  renderRank('rank-body-' + prefix);
+  renderRank('rank-list-' + prefix);
   renderHallTabs('hall-tabs-' + prefix, 'hall-detail-' + prefix);
   renderFriends('friends-' + prefix, profile);
   setupSearch('search-input-' + prefix, 'search-btn-' + prefix, 'search-results-' + prefix);
@@ -378,5 +490,5 @@ window.addEventListener('profilechange', function() {
 
 setTimeout(initAll, 200);
 
-console.log('🌙 归终殿 · 同僚与十席 v2.0 已加载');
+console.log('🌙 归终殿 · 同僚与十席 v3.0 手风琴版已加载');
 })();
