@@ -60,12 +60,12 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 /* ===== 手风琴样式 ===== */
 .rank-accordion{display:flex;flex-direction:column;gap:6px;}
 .accordion-item{border:1px solid var(--border-card);border-radius:6px;background:var(--bg-card);overflow:hidden;transition:border-color var(--transition),box-shadow var(--transition);}
-.accordion-item:hover{border-color:var(--profile-accent);}
+.accordion-item:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08);}
 .accordion-item .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;transition:background 0.2s;gap:12px;}
 .accordion-item .accordion-header:hover{background:var(--bg-hover);}
 .accordion-item .accordion-header .left{display:flex;align-items:baseline;gap:10px;flex-wrap:nowrap;flex:1;min-width:0;}
-.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.85rem;font-weight:600;width:4.6em;flex-shrink:0;display:inline-block;color:var(--text-muted);letter-spacing:0.3px;}
-.accordion-item .accordion-header .name{font-size:1rem;font-weight:600;width:4.8em;flex-shrink:0;display:inline-block;font-family:var(--font-serif);}
+.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.85rem;font-weight:600;width:4.8em;flex-shrink:0;display:inline-block;color:var(--text-muted);letter-spacing:0.3px;text-align:left;}
+.accordion-item .accordion-header .name{font-size:1rem;font-weight:600;width:4.8em;flex-shrink:0;display:inline-block;font-family:var(--font-serif);text-align:left;}
 .accordion-item .accordion-header .sub-info{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .accordion-item .accordion-header .toggle-icon{font-size:1.2rem;color:var(--text-muted);transition:transform 0.3s ease;flex-shrink:0;margin-left:4px;}
 .accordion-item.open .toggle-icon{transform:rotate(45deg);}
