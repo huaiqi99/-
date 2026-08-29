@@ -58,23 +58,24 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .intro-text .break{margin-top:8px;display:block;}
 
 /* ===== 手风琴样式 ===== */
-.rank-accordion{display:flex;flex-direction:column;gap:6px;}
+.rank-accordion{display:flex;flex-direction:column;gap:5px;}
 .accordion-item{border:1px solid var(--border-card);border-radius:6px;background:var(--bg-card);overflow:hidden;transition:border-color var(--transition),box-shadow var(--transition);}
 .accordion-item:hover{border-color:var(--profile-accent);}
-.accordion-item .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;transition:background 0.2s;gap:12px;}
+.accordion-item .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;cursor:pointer;user-select:none;transition:background 0.2s;gap:12px;}
 .accordion-item .accordion-header:hover{background:var(--bg-hover);}
 .accordion-item .accordion-header .left{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;flex:1;}
-.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.85rem;font-weight:600;min-width:4.2em;display:inline-block;color:var(--text-muted);letter-spacing:0.3px;}
-.accordion-item .accordion-header .name{font-size:1rem;font-weight:600;min-width:4.8em;display:inline-block;font-family:var(--font-serif);}
-.accordion-item .accordion-header .sub-info{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;}
+.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.82rem;font-weight:600;min-width:5.2em;display:inline-block;color:var(--text-muted);letter-spacing:0.3px;}
+.accordion-item .accordion-header .name{font-size:0.98rem;font-weight:600;min-width:4.6em;display:inline-block;font-family:var(--font-serif);}
+.accordion-item .accordion-header .sub-info{font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.2px;}
 .accordion-item .accordion-header .toggle-icon{font-size:1.2rem;color:var(--text-muted);transition:transform 0.3s ease;flex-shrink:0;}
 .accordion-item.open .toggle-icon{transform:rotate(45deg);}
 .accordion-item .accordion-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 14px;background:var(--bg-hover);}
-.accordion-item.open .accordion-body{max-height:400px;padding:12px 14px 14px 14px;}
-.accordion-body .detail-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:0.88rem;color:var(--text-secondary);}
+.accordion-item.open .accordion-body{max-height:420px;padding:12px 14px 14px 14px;}
+.accordion-body .detail-grid{display:grid;grid-template-columns:auto 1fr;gap:3px 16px;font-size:0.88rem;color:var(--text-secondary);}
 .accordion-body .detail-grid .label{color:var(--text-muted);font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.2px;}
 .accordion-body .detail-grid .value{font-weight:400;}
 .accordion-body .detail-grid .value .empty{color:var(--text-muted);font-style:italic;}
+.accordion-body .note-line{font-size:0.82rem;color:var(--text-muted);font-style:italic;margin:4px 0 6px 0;padding:4px 10px;background:var(--bg-card);border-radius:4px;border-left:2px solid var(--profile-accent);}
 .accordion-body .detail-btn{display:inline-block;margin-top:10px;padding:4px 16px;border:1px solid var(--profile-accent);border-radius:20px;color:var(--profile-accent);font-size:0.78rem;text-decoration:none;transition:all 0.2s;font-family:var(--font-mono);}
 .accordion-body .detail-btn:hover{background:var(--profile-accent);color:var(--bg-card);}
 .accordion-body .unavailable{font-size:0.85rem;color:var(--text-muted);font-style:italic;}
@@ -162,9 +163,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
   .float-group{top:12px;right:12px;gap:6px;}
   .float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}
   .accordion-item .accordion-header{padding:8px 12px;}
-  .accordion-item .accordion-header .rank-label{font-size:0.8rem;min-width:3.8em;}
-  .accordion-item .accordion-header .name{font-size:0.95rem;min-width:4.4em;}
-  .accordion-item .accordion-header .sub-info{font-size:0.7rem;}
+  .accordion-item .accordion-header .rank-label{font-size:0.78rem;min-width:4.8em;}
+  .accordion-item .accordion-header .name{font-size:0.92rem;min-width:4.2em;}
+  .accordion-item .accordion-header .sub-info{font-size:0.68rem;}
   .accordion-body .detail-grid{font-size:0.82rem;gap:3px 12px;}
   .accordion-body .detail-grid .label{font-size:0.68rem;}
   .accordion-item.open .accordion-body{padding:10px 12px 12px 12px;}
@@ -184,9 +185,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 }
 @media(max-width:480px){
   .accordion-item .accordion-header{padding:6px 10px;}
-  .accordion-item .accordion-header .rank-label{font-size:0.7rem;min-width:3.4em;}
+  .accordion-item .accordion-header .rank-label{font-size:0.7rem;min-width:4.2em;}
   .accordion-item .accordion-header .name{font-size:0.85rem;min-width:3.8em;}
-  .accordion-item .accordion-header .sub-info{font-size:0.65rem;}
+  .accordion-item .accordion-header .sub-info{font-size:0.6rem;}
   .accordion-body .detail-grid{font-size:0.78rem;gap:2px 8px;}
   .accordion-body .detail-grid .label{font-size:0.65rem;}
   .accordion-item.open .accordion-body{padding:8px 10px 10px 10px;}

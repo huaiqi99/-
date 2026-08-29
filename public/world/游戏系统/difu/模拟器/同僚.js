@@ -33,24 +33,26 @@ if(petalContainer){for(var i=0;i<12;i++){var el=document.createElement('div');el
 
 // ===== 4. 数据 =====
 
-// 十席数据（包含颜色）
+// 十席数据（柔和色）
+// 颜色说明：罗修-紫灰 #8b7a9e，林淮-青灰 #4a8baa，栾方棋-砖红 #b57a6a，魏元璟-暖金 #b8a06a
 var RANK_DATA = [
-  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#9b59b6' },   // 紫色
-  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#2980b9' }, // 青蓝
-  { rank: 3, label: '第三席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
-  { rank: 4, label: '第四席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
-  { rank: 5, label: '第五席', name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html', color: '#e74c3c' }, // 红色
-  { rank: 6, label: '第六席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
-  { rank: 7, label: '第七席', name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html', color: '#f1c40f' }, // 金色
-  { rank: 8, label: '第八席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
-  { rank: 9, label: '第九席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
-  { rank: 10, label: '第十席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' }
+  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#8b7a9e' },
+  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#4a8baa' },
+  // 三~四席合并
+  { rank: '3~4', label: '三~四席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '第三席 · 阵法堂 / 第四席 · 工造司', link: null, color: '#9a9a9a', isMerged: true, 
+    mergedDetail: '第三席归属阵法堂，第四席归属工造司。两位引渡人因公务繁忙，席位详情暂未公开。' },
+  { rank: 5, label: '第五席', name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html', color: '#b57a6a' },
+  { rank: 6, label: '第六席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#9a9a9a' },
+  { rank: 7, label: '第七席', name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html', color: '#b8a06a' },
+  // 八~十席合并
+  { rank: '8~10', label: '八~十席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '第八席 · 百草堂 / 第九席 · 未知 / 第十席 · 未知', link: null, color: '#9a9a9a', isMerged: true,
+    mergedDetail: '第八席归属百草堂，第九席与第十席暂未分配归属。三位引渡人因公务繁忙，席位详情暂未公开。' }
 ];
 
 // 特殊角色（退役/特殊）
 var SPECIAL_DATA = [
-  { label: '退役', name: '程木栖', title: '栖', weapon: '归江', divine: '无', hall: '栖梧馆', link: '程木栖.html', color: '#6c7a89' },
-  { label: '退役', name: '蔡可', title: '可', weapon: '玄铁弓', divine: '无', hall: '栖梧馆', link: '蔡可.html', color: '#6c7a89' }
+  { label: '退役', name: '程木栖', title: '栖', weapon: '归江', divine: '无', hall: '栖梧馆', link: '程木栖.html', color: '#8a8a7a' },
+  { label: '退役', name: '蔡可', title: '可', weapon: '玄铁弓', divine: '无', hall: '栖梧馆', link: '蔡可.html', color: '#8a8a7a' }
 ];
 
 // 院阁数据
@@ -233,6 +235,7 @@ function renderRank(containerId) {
   allItems.forEach(function(item, index) {
     var isVacant = (item.name === '未公开');
     var isSpecial = (item.label === '退役');
+    var isMerged = item.isMerged || false;
     var itemDiv = document.createElement('div');
     itemDiv.className = 'accordion-item';
     if (isVacant) itemDiv.classList.add('vacant');
@@ -242,37 +245,39 @@ function renderRank(containerId) {
     var header = document.createElement('div');
     header.className = 'accordion-header';
 
-    // 席次标签（固定宽度确保对齐）
-    var rankLabel = item.label;
-    // 对于未公开的席次，保留“第三席”等
-    // 特殊角色用“退役”
+    // 席次标签
     var rankSpan = document.createElement('span');
     rankSpan.className = 'rank-label';
-    rankSpan.textContent = rankLabel;
-    // 颜色：未公开灰色，特殊灰色，其他用数据中的颜色
-    var color = isVacant ? '#8a8a8a' : (isSpecial ? '#6c7a89' : item.color);
+    rankSpan.textContent = item.label;
+    var color = isVacant ? '#9a9a9a' : (isSpecial ? '#8a8a7a' : item.color);
     rankSpan.style.color = color;
 
-    // 姓名（处理对齐：两个字中间加空格）
-    var nameDisplay = item.name;
-    if (!isVacant && nameDisplay.length === 2) {
-      nameDisplay = nameDisplay.charAt(0) + ' ' + nameDisplay.charAt(1);
-    }
+    // 姓名
     var nameSpan = document.createElement('span');
     nameSpan.className = 'name';
-    nameSpan.textContent = nameDisplay;
+    nameSpan.textContent = item.name;
     nameSpan.style.color = color;
 
-    // 副标题：显示封号或归属（仅非未公开且非特殊？未公开不显示副标题）
+    // 副标题：已公开角色显示封号或院阁，未公开不显示
     var subInfo = document.createElement('span');
     subInfo.className = 'sub-info';
-    if (!isVacant) {
+    if (!isVacant && !isMerged) {
       if (item.title && item.title !== '—') {
         subInfo.textContent = '封号 ' + item.title;
       } else if (item.hall && item.hall !== '—') {
         subInfo.textContent = '院阁 ' + item.hall;
       } else {
-        subInfo.textContent = '—';
+        subInfo.textContent = '';
+      }
+    } else if (isMerged) {
+      // 合并条目显示简略归属
+      var hallParts = item.hall ? item.hall.split('/') : [];
+      var shortHall = hallParts.length > 0 ? hallParts[0].trim() : '';
+      if (shortHall) {
+        var hallMatch = shortHall.match(/[^·]+$/);
+        subInfo.textContent = hallMatch ? hallMatch[0].trim() : shortHall;
+      } else {
+        subInfo.textContent = '';
       }
     } else {
       subInfo.textContent = '';
@@ -296,11 +301,46 @@ function renderRank(containerId) {
     body.className = 'accordion-body';
 
     var detailsHtml = '';
-    if (isVacant) {
-      // 未公开：只显示“未公开”
-      detailsHtml = '<div class="unavailable">未公开</div>';
+
+    if (isVacant && isMerged) {
+      // 合并未公开：显示详细归属
+      var detailLines = [];
+      // 解析归属信息
+      if (item.hall && item.hall !== '—') {
+        var parts = item.hall.split('/');
+        parts.forEach(function(p) {
+          var trimmed = p.trim();
+          if (trimmed) {
+            // 提取席位和归属
+            var match = trimmed.match(/(第?[一二三四五六七八九十]+席)\s*[·\-—]\s*(.+)/);
+            if (match) {
+              detailLines.push({label: match[1], value: match[2]});
+            } else {
+              detailLines.push({label: '席位', value: trimmed});
+            }
+          }
+        });
+      }
+      if (detailLines.length === 0) {
+        detailsHtml = '<div class="unavailable">未公开</div>';
+      } else {
+        var gridHtml = '<div class="detail-grid">';
+        detailLines.forEach(function(line) {
+          gridHtml += '<span class="label">' + line.label + '</span>';
+          gridHtml += '<span class="value">' + line.value + '</span>';
+        });
+        gridHtml += '</div>';
+        detailsHtml = gridHtml;
+      }
+      // 添加说明
+      if (item.mergedDetail) {
+        detailsHtml += '<div class="note-line">' + item.mergedDetail + '</div>';
+      }
+    } else if (isVacant && !isMerged) {
+      // 单独未公开（第六席）
+      detailsHtml = '<div class="unavailable">该席引渡人因公务繁忙，席位详情暂未公开。</div>';
     } else {
-      // 正常或特殊角色
+      // 已公开角色
       var detailLines = [];
       if (item.title && item.title !== '—') {
         detailLines.push({label: '封号', value: item.title});
@@ -325,7 +365,6 @@ function renderRank(containerId) {
         gridHtml += '</div>';
         detailsHtml = gridHtml;
       }
-
       // 查看档案按钮
       if (item.link) {
         detailsHtml += '<a class="detail-btn" href="' + item.link + '">查看档案 →</a>';
@@ -343,7 +382,6 @@ function renderRank(containerId) {
     // --- 点击切换 ---
     header.addEventListener('click', function(e) {
       var isOpen = itemDiv.classList.contains('open');
-      // 可自由展开多个，不互斥
       itemDiv.classList.toggle('open');
       var icon = header.querySelector('.toggle-icon');
       icon.textContent = isOpen ? '+' : '−';
@@ -490,5 +528,5 @@ window.addEventListener('profilechange', function() {
 
 setTimeout(initAll, 200);
 
-console.log('🌙 归终殿 · 同僚与十席 v3.0 手风琴版已加载');
+console.log('🌙 归终殿 · 同僚与十席 v3.1 手风琴版已加载');
 })();
