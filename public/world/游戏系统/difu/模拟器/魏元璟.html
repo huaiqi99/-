@@ -59,9 +59,9 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .status-wrap .status-line{font-size:0.9rem;color:var(--text-primary);margin-bottom:4px}
 .status-wrap .status-line .label{color:var(--text-muted)}
 .overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:1}
-.radar-wrap{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:260px;position:relative;padding:4px 0}
+.radar-wrap{display:flex;justify-content:center;align-items:center;padding:0;min-height:220px;position:relative}
 .radar-wrap svg{width:100%;max-width:300px;height:auto;aspect-ratio:1/1}
-.radar-label{font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;opacity:0.7;margin-top:2px;text-align:left;padding-left:4px}
+.radar-label{position:absolute;bottom:4px;left:8px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;opacity:0.7;pointer-events:none}
 .status-bars{display:flex;flex-direction:column;gap:12px;justify-content:center}
 .status-bars .bars-title{font-size:0.8rem;font-weight:600;color:var(--text-secondary);font-family:var(--font-serif);letter-spacing:0.3px;margin-bottom:4px;padding-bottom:2px;border-bottom:1px solid var(--border-light)}
 .status-item{position:relative}
@@ -89,8 +89,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;transform-style:flat;-webkit-transform-style:flat;animation:petalFall linear infinite;color:rgba(201,168,75,0.5)}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0}}
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:200px;align-items:center}.radar-wrap svg{max-width:280px}.radar-label{text-align:center}}
-@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:240px}}
+@media(max-width:720px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:180px}.radar-wrap svg{max-width:260px}.status-bars{gap:10px}.status-note{margin-top:10px;padding-top:8px}.status-footer{flex-direction:column;align-items:flex-start}}
+@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:260px}}
 </style>
 </head>
 <body>
@@ -104,7 +104,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
 <div class="card" data-corner="◈"><span class="corner-deco">◈</span><div class="card-title">战力评估与专精</div>
 <div class="overview-grid">
-<div class="radar-wrap"><svg viewBox="-25 -25 350 350" id="radar-svg-wei"></svg><div class="radar-label">十席 · 上限 1000</div></div>
+<div class="radar-wrap"><svg viewBox="-25 -25 350 350" id="radar-svg-wei"></svg><span class="radar-label">十席 · 上限 1000</span></div>
 <div class="status-bars"><div class="bars-title">专精掌握程度</div>
 <div class="status-item"><div class="status-top"><span class="st-label">双刀技法</span><span class="st-value">约九成</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c1);width:0%;" data-target="90"></div></div></div>
 <div class="status-item"><div class="status-top"><span class="st-label">魂力控制</span><span class="st-value">约八成五</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c2);width:0%;" data-target="85"></div></div></div>
