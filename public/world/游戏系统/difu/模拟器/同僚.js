@@ -9,7 +9,7 @@ GZD.Sidebar={open:false,toggle(){this.open=!this.open;const p=document.getElemen
 GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();
 }
 
-// ===== 侧边栏与主题按钮 =====
+// ===== 1. 侧边栏与主题按钮 =====
 document.addEventListener('click',function(e){
   var target=e.target;
   if(target.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}
@@ -22,38 +22,38 @@ document.getElementById('themeBtn').addEventListener('click',function(){GZD.Them
 function updateThemeBtn(){var b=document.getElementById('themeBtn'),isLight=document.documentElement.getAttribute('data-theme')==='light';if(b)b.innerHTML='<span id="themeIcon">'+(isLight?'🌙':'☀️')+'</span> <span id="themeLabel">'+(isLight?'夜间':'日间')+'</span>';}
 updateThemeBtn();
 
-// ===== 角色切换UI =====
+// ===== 2. 角色切换UI =====
 function updateProfileUI(profile){var nameMap={'linxiwu':'林栖梧','luojin':'罗烬'};var nameEl=document.getElementById('currentProfileName');if(nameEl)nameEl.textContent=nameMap[profile]||'林栖梧';var switchBtn=document.getElementById('profileSwitchBtn');if(switchBtn)switchBtn.textContent='切换到 '+(profile==='linxiwu'?'罗烬':'林栖梧');}
 (function(){var saved=GZD.Storage.getProfile();updateProfileUI(saved);})();
 window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.profile);});
 
-// ===== 花瓣特效 =====
+// ===== 3. 花瓣特效 =====
 var PETAL_CHARS=['❀','✿','✽'],petalContainer=document.getElementById('petal-container');
 if(petalContainer){for(var i=0;i<12;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
 
-// ===== 数据 =====
+// ===== 4. 数据 =====
 
-// 十席数据（颜色已修正）
+// 十席数据 - 柔和雅致色系
 var RANK_DATA = [
-  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#b07cc6' },
-  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#4a8baa' },
+  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#b8a0c4' },   // 淡紫灰
+  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#5a8aaa' }, // 柔和青蓝
   { rank: 3, label: '第三席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '阵法堂', link: null, color: '#8a8a8a' },
   { rank: 4, label: '第四席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '工造司', link: null, color: '#8a8a8a' },
-  { rank: 5, label: '第五席', name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html', color: '#c0392b' },
+  { rank: 5, label: '第五席', name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html', color: '#c4907a' }, // 柔和红陶
   { rank: 6, label: '第六席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '澄心堂', link: null, color: '#8a8a8a' },
-  { rank: 7, label: '第七席', name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html', color: '#c9a84c' },
+  { rank: 7, label: '第七席', name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html', color: '#d4b87a' }, // 淡香槟金
   { rank: 8, label: '第八席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '百草堂', link: null, color: '#8a8a8a' },
   { rank: 9, label: '第九席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' },
   { rank: 10, label: '第十席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null, color: '#8a8a8a' }
 ];
 
-// 特殊角色
+// 特殊角色 - 柔和色
 var SPECIAL_DATA = [
-  { label: '退役', name: '程木栖', title: '栖', weapon: '归江', divine: '无', hall: '栖梧馆', link: '程木栖.html', color: '#2e8b57' },
-  { label: '退役', name: '蔡可', title: '可', weapon: '玄铁弓', divine: '无', hall: '栖梧馆', link: '蔡可.html', color: '#c94c7a' }
+  { label: '退役', name: '程木栖', title: '栖', weapon: '归江', divine: '无', hall: '栖梧馆', link: '程木栖.html', color: '#6a9a7a' }, // 柔和翠绿
+  { label: '退役', name: '蔡可', title: '可', weapon: '玄铁弓', divine: '无', hall: '栖梧馆', link: '蔡可.html', color: '#c08a9a' }   // 柔和玫瑰
 ];
 
-// 院阁数据（省略，与你原来一致，此处保留完整）
+// 院阁数据
 var HALL_DATA = [
   {id:'fuxiu',name:'符修院',icon:'ti-books',master:'栾方棋',masterLink:'栾方棋.html',desc:'符箓专精 · 法术理论 · 符阵基础',detail:'符修院是归终殿符箓与法术理论的核心院阁，由第五席栾方棋执掌。',students:'林栖梧（统修期符法第一）',dynamics:['栾方棋带领弟子完成青州锁龙井加固任务','符修院新增《符箓变体十二式》课程'],status:'正常',statusDot:'normal'},
   {id:'jiangwu',name:'讲武堂',icon:'ti-swords',master:'罗修',masterLink:'罗修.html',desc:'双刀 · 体术 · 实战对抗',detail:'讲武堂是归终殿体术与双刀的核心院阁，由首席罗修执掌。',students:'罗烬（讲武堂新晋弟子）',dynamics:['首席特别课程「双刀进阶」已开课','演武广场石靶维修完成，恢复使用'],status:'繁忙',statusDot:'busy'},
@@ -100,20 +100,19 @@ var FRIEND_DATA = {
   ]
 };
 
-// ===== 渲染手风琴 =====
+// ===== 5. 渲染手风琴 =====
 function renderRank(containerId) {
   var container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = '';
 
-  // 构建显示顺序
   var displayItems = [];
 
-  // 1. 先加首席、第二席
-  displayItems.push(RANK_DATA[0]); // 罗修
-  displayItems.push(RANK_DATA[1]); // 林淮
+  // 首席、第二席
+  displayItems.push(RANK_DATA[0]);
+  displayItems.push(RANK_DATA[1]);
 
-  // 2. 三~四席合并
+  // 三~四席合并
   displayItems.push({
     type: 'merged',
     label: '三~四席',
@@ -126,10 +125,10 @@ function renderRank(containerId) {
     link: null
   });
 
-  // 3. 第五席（栾方棋）
+  // 第五席
   displayItems.push(RANK_DATA[4]);
 
-  // 4. 第六席（单独未公开）
+  // 第六席（单独）
   displayItems.push({
     type: 'single_vacant',
     label: '第六席',
@@ -139,10 +138,10 @@ function renderRank(containerId) {
     link: null
   });
 
-  // 5. 第七席（魏元璟）
+  // 第七席
   displayItems.push(RANK_DATA[6]);
 
-  // 6. 八~十席合并
+  // 八~十席合并
   displayItems.push({
     type: 'merged',
     label: '八~十席',
@@ -156,10 +155,8 @@ function renderRank(containerId) {
     link: null
   });
 
-  // 7. 特殊角色（退役）
-  SPECIAL_DATA.forEach(function(item) {
-    displayItems.push(item);
-  });
+  // 特殊角色
+  SPECIAL_DATA.forEach(function(item) { displayItems.push(item); });
 
   // 渲染
   displayItems.forEach(function(item) {
@@ -173,8 +170,8 @@ function renderRank(containerId) {
     if (isMerged) itemDiv.classList.add('vacant-merged');
     if (isSpecial) itemDiv.classList.add('special');
 
-    // 边框颜色
     var color = item.color || '#8a8a8a';
+    // 边框颜色用印象色（柔和版）
     itemDiv.style.borderColor = color;
 
     // 头部
@@ -290,6 +287,7 @@ function renderRank(containerId) {
     itemDiv.appendChild(body);
     container.appendChild(itemDiv);
 
+    // 点击切换
     header.addEventListener('click', function(e) {
       var isOpen = itemDiv.classList.contains('open');
       itemDiv.classList.toggle('open');
@@ -299,7 +297,7 @@ function renderRank(containerId) {
   });
 }
 
-// ===== 院阁、好友、搜索 =====
+// ===== 6-10. 院阁、好友、搜索 =====
 function renderHallTabs(tabContainerId, detailContainerId) {
   var tabContainer = document.getElementById(tabContainerId);
   var detailContainer = document.getElementById(detailContainerId);
@@ -405,5 +403,5 @@ function initAll() {
 window.addEventListener('profilechange', function(){ setTimeout(initAll, 100); });
 setTimeout(initAll, 200);
 
-console.log('🌙 归终殿 · 同僚与十席 v5.0 已加载');
+console.log('🌙 归终殿 · 同僚与十席 v6.0 柔和色系已加载');
 })();

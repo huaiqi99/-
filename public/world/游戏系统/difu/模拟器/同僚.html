@@ -57,38 +57,41 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .intro-text .highlight{color:var(--profile-accent);font-weight:600;}
 .intro-text .break{margin-top:8px;display:block;}
 
-/* ===== 手风琴样式 ===== */
+/* ===== 手风琴样式 - 全新设计 ===== */
 .rank-accordion{display:flex;flex-direction:column;gap:6px;}
-.accordion-item{border:1px solid var(--border-card);border-radius:6px;background:var(--bg-card);overflow:hidden;transition:border-color var(--transition),box-shadow var(--transition);}
-.accordion-item:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.accordion-item .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;user-select:none;transition:background 0.2s;gap:12px;}
+.accordion-item{border:1px solid var(--border-card);border-radius:8px;background:var(--bg-card);overflow:hidden;transition:border-color 0.3s,box-shadow 0.3s;}
+.accordion-item:hover{box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+.accordion-item .accordion-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;user-select:none;transition:background 0.2s;gap:12px;}
 .accordion-item .accordion-header:hover{background:var(--bg-hover);}
-.accordion-item .accordion-header .left{display:flex;align-items:baseline;gap:10px;flex-wrap:nowrap;flex:1;min-width:0;}
-.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.85rem;font-weight:600;width:4.8em;flex-shrink:0;display:inline-block;color:var(--text-muted);letter-spacing:0.3px;text-align:left;}
+.accordion-item .accordion-header .left{display:flex;align-items:baseline;gap:12px;flex-wrap:nowrap;flex:1;min-width:0;}
+.accordion-item .accordion-header .rank-label{font-family:var(--font-mono);font-size:0.82rem;font-weight:600;width:4.8em;flex-shrink:0;display:inline-block;color:var(--text-muted);letter-spacing:0.2px;text-align:left;}
 .accordion-item .accordion-header .name{font-size:1rem;font-weight:600;width:4.8em;flex-shrink:0;display:inline-block;font-family:var(--font-serif);text-align:left;}
-.accordion-item .accordion-header .sub-info{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.accordion-item .accordion-header .sub-info{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.2px;flex-shrink:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .accordion-item .accordion-header .toggle-icon{font-size:1.2rem;color:var(--text-muted);transition:transform 0.3s ease;flex-shrink:0;margin-left:4px;}
 .accordion-item.open .toggle-icon{transform:rotate(45deg);}
-.accordion-item .accordion-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.35s ease;padding:0 14px;background:var(--bg-hover);}
-.accordion-item.open .accordion-body{max-height:400px;padding:12px 14px 14px 14px;}
-.accordion-body .detail-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:0.88rem;color:var(--text-secondary);}
-.accordion-body .detail-grid .label{color:var(--text-muted);font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.2px;}
-.accordion-body .detail-grid .value{font-weight:400;}
+
+/* 展开区域 - 干净雅致 */
+.accordion-item .accordion-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.4s ease,background 0.3s;padding:0 16px;background:transparent;}
+.accordion-item.open .accordion-body{max-height:500px;padding:14px 16px 16px 16px;background:rgba(247,244,239,0.6);border-top:1px solid var(--border-light);}
+[data-theme="dark"] .accordion-item.open .accordion-body{background:rgba(36,32,28,0.6);}
+
+.accordion-body .detail-grid{display:grid;grid-template-columns:auto 1fr;gap:3px 16px;font-size:0.88rem;color:var(--text-secondary);}
+.accordion-body .detail-grid .label{color:var(--text-muted);font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.2px;padding:2px 0;}
+.accordion-body .detail-grid .value{font-weight:400;padding:2px 0;}
 .accordion-body .detail-grid .value .empty{color:var(--text-muted);font-style:italic;}
-.accordion-body .detail-btn{display:inline-block;margin-top:10px;padding:4px 16px;border:1px solid var(--profile-accent);border-radius:20px;color:var(--profile-accent);font-size:0.78rem;text-decoration:none;transition:all 0.2s;font-family:var(--font-mono);}
+.accordion-body .detail-btn{display:inline-block;margin-top:10px;padding:3px 16px;border:1px solid var(--profile-accent);border-radius:20px;color:var(--profile-accent);font-size:0.75rem;text-decoration:none;transition:all 0.2s;font-family:var(--font-mono);}
 .accordion-body .detail-btn:hover{background:var(--profile-accent);color:var(--bg-card);}
 .accordion-body .unavailable{font-size:0.85rem;color:var(--text-muted);font-style:italic;}
 .accordion-body .vacant-note{font-size:0.82rem;color:var(--text-secondary);padding:4px 0;line-height:1.7;}
-.accordion-body .vacant-note .highlight{color:var(--profile-accent);}
-.accordion-body .vacant-sub{font-size:0.8rem;color:var(--text-muted);padding-left:12px;border-left:2px solid var(--border-light);margin:2px 0;}
+.accordion-body .vacant-sub{font-size:0.78rem;color:var(--text-muted);padding-left:14px;border-left:2px solid var(--border-light);margin:2px 0;line-height:1.6;}
 
 /* 未公开合并条目 */
-.accordion-item.vacant-merged{border-color:var(--border-card);background:var(--bg-card);}
+.accordion-item.vacant-merged{border-color:var(--border-card);}
 .accordion-item.vacant-merged .rank-label{color:var(--text-muted);}
 .accordion-item.vacant-merged .name{color:var(--text-muted);}
 
 /* 特殊角色（退役） */
-.accordion-item.special{border-color:var(--border-card);background:var(--bg-card);}
+.accordion-item.special{border-color:var(--border-card);}
 .accordion-item.special .rank-label{color:var(--text-secondary);}
 
 /* ===== 院阁切换按钮栏 ===== */
@@ -164,14 +167,15 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
   .card{padding:14px 14px 12px 14px;}
   .float-group{top:12px;right:12px;gap:6px;}
   .float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}
-  .accordion-item .accordion-header{padding:8px 12px;}
-  .accordion-item .accordion-header .rank-label{font-size:0.8rem;width:4.2em;}
-  .accordion-item .accordion-header .name{font-size:0.95rem;width:4.4em;}
-  .accordion-item .accordion-header .sub-info{font-size:0.7rem;}
-  .accordion-body .detail-grid{font-size:0.82rem;gap:3px 12px;}
+  .accordion-item .accordion-header{padding:8px 12px;gap:8px;}
+  .accordion-item .accordion-header .rank-label{font-size:0.78rem;width:4.2em;}
+  .accordion-item .accordion-header .name{font-size:0.92rem;width:4.2em;}
+  .accordion-item .accordion-header .sub-info{font-size:0.68rem;}
+  .accordion-item.open .accordion-body{padding:12px 12px 14px 12px;}
+  .accordion-body .detail-grid{font-size:0.82rem;gap:2px 12px;}
   .accordion-body .detail-grid .label{font-size:0.68rem;}
-  .accordion-item.open .accordion-body{padding:10px 12px 12px 12px;}
   .accordion-body .vacant-note{font-size:0.78rem;}
+  .accordion-body .vacant-sub{font-size:0.74rem;}
   .friend-scroll{gap:14px;}
   .friend-card{flex:0 0 210px;min-width:170px;padding:14px 16px;}
   .friend-card .f-name{font-size:1rem;}
@@ -187,14 +191,15 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
   .search-result-card .info .desc{font-size:0.75rem;}
 }
 @media(max-width:480px){
-  .accordion-item .accordion-header{padding:6px 10px;gap:8px;}
-  .accordion-item .accordion-header .rank-label{font-size:0.72rem;width:3.8em;}
-  .accordion-item .accordion-header .name{font-size:0.85rem;width:3.8em;}
-  .accordion-item .accordion-header .sub-info{font-size:0.62rem;}
-  .accordion-body .detail-grid{font-size:0.78rem;gap:2px 8px;}
-  .accordion-body .detail-grid .label{font-size:0.65rem;}
-  .accordion-item.open .accordion-body{padding:8px 10px 10px 10px;}
+  .accordion-item .accordion-header{padding:6px 10px;gap:6px;}
+  .accordion-item .accordion-header .rank-label{font-size:0.7rem;width:3.8em;}
+  .accordion-item .accordion-header .name{font-size:0.82rem;width:3.8em;}
+  .accordion-item .accordion-header .sub-info{font-size:0.6rem;}
+  .accordion-item.open .accordion-body{padding:10px 10px 12px 10px;}
+  .accordion-body .detail-grid{font-size:0.76rem;gap:2px 8px;}
+  .accordion-body .detail-grid .label{font-size:0.64rem;}
   .accordion-body .vacant-note{font-size:0.74rem;}
+  .accordion-body .vacant-sub{font-size:0.7rem;}
   .friend-card{flex:0 0 190px;min-width:150px;padding:12px 14px;}
   .friend-card .f-name{font-size:0.95rem;}
   .friend-card .f-desc{font-size:0.82rem;}
