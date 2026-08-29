@@ -109,9 +109,9 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .progress-item .p-check.done{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.06);}
 .progress-item .p-check .ti{font-size:0.8rem;}
 
-/* ===== 课表（固定列宽，可滑动） ===== */
+/* ===== 课表 ===== */
 .schedule-wrap{position:relative;z-index:1;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px;}
-.schedule-grid{display:grid;grid-template-columns:64px repeat(7,80px);gap:4px;min-width:680px;width:max-content;}
+.schedule-grid{display:grid;grid-template-columns:64px repeat(7,1fr);gap:4px;}
 .schedule-grid .cell{padding:6px 4px;text-align:center;font-size:0.78rem;border-radius:4px;line-height:1.4;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;transition:all 0.2s;position:relative;}
 .schedule-grid .cell.clickable{cursor:pointer;}
 .schedule-grid .cell.clickable:hover{transform:scale(1.04);box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:2;}
@@ -126,7 +126,6 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 .schedule-grid .rest{background:var(--bg-hover);border:1px solid transparent;color:var(--text-muted);opacity:0.4;cursor:default;}
 .schedule-grid .rest:hover{transform:none;box-shadow:none;}
 .schedule-grid .cell .sub{font-size:0.6rem;color:var(--text-muted);margin-top:2px;}
-.schedule-grid .cell .tag-icon{font-size:0.5rem;color:var(--text-muted);margin-top:1px;letter-spacing:0.5px;font-family:var(--font-mono);}
 .schedule-legend{display:flex;gap:12px;margin-top:8px;font-size:0.65rem;color:var(--text-muted);position:relative;z-index:1;flex-wrap:wrap;}
 .schedule-legend .item{display:flex;align-items:center;gap:4px;}
 .schedule-legend .dot{width:10px;height:10px;border-radius:2px;}
@@ -172,7 +171,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
 
 @media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;line-height:1.5;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.countdown-card{padding:10px 14px 8px 14px;}.countdown-info .num{font-size:1.2rem;}.hourglass-box{width:36px;height:36px;}.hourglass-box .ti{font-size:1.4rem;}.dual-col{gap:12px;margin-bottom:12px;}.schedule-grid{grid-template-columns:56px repeat(7,72px);gap:3px;min-width:580px;}.schedule-grid .cell{padding:6px 3px;font-size:0.75rem;min-height:44px;}.schedule-grid .cell .sub{font-size:0.6rem;}.schedule-grid .head{font-size:0.6rem;}.schedule-grid .time-label{font-size:0.6rem;}.score-card-grid{grid-template-columns:1fr;}.score-card-item .tooltip{width:160px;font-size:0.7rem;left:0;transform:none;}.score-card-item .tooltip::after{left:20px;}.course-popup{padding:18px 20px 16px 20px;max-width:320px;}}
-@media(max-width:480px){.schedule-grid{grid-template-columns:48px repeat(7,62px);gap:2px;min-width:490px;}.schedule-grid .cell{padding:4px 2px;font-size:0.7rem;min-height:38px;}.schedule-grid .cell .sub{font-size:0.55rem;}.schedule-grid .head{font-size:0.55rem;}.schedule-grid .time-label{font-size:0.55rem;}}
+@media(max-width:480px){.schedule-grid{grid-template-columns:48px repeat(7,58px);gap:2px;min-width:460px;}.schedule-grid .cell{padding:4px 2px;font-size:0.68rem;min-height:36px;}.schedule-grid .cell .sub{font-size:0.5rem;}.schedule-grid .head{font-size:0.5rem;}.schedule-grid .time-label{font-size:0.5rem;}}
 </style>
 </head>
 <body data-profile="linxiwu">
@@ -243,7 +242,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="dual-col">
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
-<div class="card-title">上学期期末成绩 · 统修期</div>
+<div class="card-title">上学期期末成绩 · 统修期<span style="font-size:0.65rem;font-weight:400;color:var(--text-muted);font-family:var(--font-mono);margin-left:8px;">点击查看评语</span></div>
 <div class="score-card-grid" id="score-grid-lin">
 <!-- JS 动态渲染 -->
 </div>
@@ -287,7 +286,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="card-title">师长学期评语</div>
-<div class="remark-text">「下学期开始接触高阶符阵，别急着画，先看懂纹路。符是死的，阵是活的，纹路里藏着阵眼。」</div>
+<div class="remark-text">「符法天赋突出，体术是短板。建议在符修院深耕的同时，不要完全放弃近战自保能力。」</div>
 <div class="remark-sign">—— 栾方棋 · 第五席 · 符修院</div>
 <div class="remark-meta">升席备忘：距报名截止还有 15 日 6 时辰 · 苍珩四百三十五年 · 晦月朔日</div>
 </div>
@@ -329,7 +328,7 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--tag-wen:rgba(7
 <div class="dual-col">
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
-<div class="card-title">上学期期末成绩 · 统修期</div>
+<div class="card-title">上学期期末成绩 · 统修期<span style="font-size:0.65rem;font-weight:400;color:var(--text-muted);font-family:var(--font-mono);margin-left:8px;">点击查看评语</span></div>
 <div class="score-card-grid" id="score-grid-luo">
 <!-- JS 动态渲染 -->
 </div>
