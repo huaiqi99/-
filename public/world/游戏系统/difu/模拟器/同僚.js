@@ -78,7 +78,7 @@ var HALL_DATA = [
   {
     id: 'diangcang',
     name: '点苍阁',
-    icon: 'ti-crosshair',  // 替换为存在的图标
+    icon: 'ti-crosshair',
     master: '林淮',
     masterLink: '林淮.html',
     desc: '枪法专精 · 近战武器 · 单点爆发',
