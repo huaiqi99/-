@@ -35,8 +35,8 @@ if(petalContainer){for(var i=0;i<12;i++){var el=document.createElement('div');el
 
 // 十席数据 - 柔和雅致色系
 var RANK_DATA = [
-  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#b8a0c4' },   // 淡紫灰
-  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#5a8aaa' }, // 柔和青蓝
+  { rank: 1, label: '首席', name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html', color: '#b07cc6' },   // 淡紫灰
+  { rank: 2, label: '第二席', name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html', color: '#4a8baa' }, // 柔和青蓝
   { rank: 3, label: '第三席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '阵法堂', link: null, color: '#8a8a8a' },
   { rank: 4, label: '第四席', name: '未公开', title: '—', weapon: '—', divine: '—', hall: '工造司', link: null, color: '#8a8a8a' },
   { rank: 5, label: '第五席', name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html', color: '#c4907a' }, // 柔和红陶
