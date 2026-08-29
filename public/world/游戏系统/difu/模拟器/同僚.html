@@ -11,7 +11,7 @@
 body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);}
 body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px;}
-.sym,.ti,.sidebar-tab,.sidebar-tab .sym,.sidebar-panel .nav-item,.sidebar-panel .nav-item .sym,.sidebar-panel .profile-switch-btn{transform-style:flat !important;-webkit-transform-style:flat !important;}
+.sym,.ti,.sidebar-tab,.sidebar-tab .sym,.sidebar-panel .nav-item,.sidebar-panel .nav-item .sym,.sidebar-panel .profile-switch-btn,.card::after,.card .corner-deco{transform-style:flat !important;-webkit-transform-style:flat !important;}
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
 .float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
 .float-btn:hover{border-color:var(--accent);color:var(--accent);}
@@ -38,35 +38,44 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:92;opacity:0;pointer-events:none;transition:opacity 0.35s ease;}
 .sidebar-overlay.show{opacity:1;pointer-events:auto;}body.no-scroll{overflow:hidden;}
 .content-block{display:none;}.content-block.active{display:block;}
-.card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;padding:18px 20px 16px 20px;margin-bottom:16px;box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition);}
-.card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;position:relative;padding-bottom:6px;}
+.card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition),transform 0.25s ease;animation:cardIn 0.45s ease forwards;line-height:1.6;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,248,240,0.03) 0%,transparent 70%),radial-gradient(ellipse at 70% 80%,rgba(255,248,240,0.02) 0%,transparent 60%);z-index:0;}
+.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;}
+.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;pointer-events:none;}
+.card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 6px 20px rgba(0,0,0,0.12);}
+.card:hover::after,.card:hover .corner-deco{opacity:1;transform:scale(1.1);}
+.gradient-card{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
+.card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1;}
 .card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px;}
 .card-title .ti{font-size:1.1rem;color:var(--profile-accent);}
-.gradient-card{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%);}
+
+/* ===== 介绍卡片 ===== */
+.intro-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.9;}
+.intro-text .highlight{color:var(--profile-accent);font-weight:600;}
+.intro-text .break{margin-top:8px;display:block;}
 
 /* ===== 十席表格 ===== */
 .rank-table-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px;}
-.rank-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
-.rank-table th{background:var(--bg-hover);color:var(--text-muted);font-weight:600;padding:8px 8px;text-align:left;border-bottom:2px solid var(--profile-accent);font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.5px;}
-.rank-table td{padding:7px 8px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);vertical-align:middle;}
-.rank-table .rank-num{font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);font-size:0.85rem;text-align:center;width:50px;}
-.rank-table .name{font-weight:600;color:var(--text-primary);}
+.rank-table{width:100%;border-collapse:collapse;font-size:0.95rem;}
+.rank-table th{background:var(--bg-hover);color:var(--text-muted);font-weight:600;padding:10px 10px;text-align:left;border-bottom:2px solid var(--profile-accent);font-family:var(--font-mono);font-size:0.78rem;letter-spacing:0.5px;}
+.rank-table td{padding:9px 10px;border-bottom:1px solid var(--border-light);color:var(--text-secondary);vertical-align:middle;font-size:0.92rem;}
+.rank-table .rank-num{font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);font-size:0.95rem;text-align:center;width:55px;}
+.rank-table .name{font-weight:600;color:var(--text-primary);font-size:0.95rem;}
 .rank-table .name a{color:var(--profile-accent);text-decoration:none;transition:color 0.2s;}
 .rank-table .name a:hover{text-decoration:underline;}
-.rank-table .badge{display:inline-block;font-size:0.6rem;padding:1px 8px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-muted);font-family:var(--font-mono);}
-.rank-table .badge.active{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.04);}
-.rank-table .badge.retired{color:var(--text-muted);opacity:0.6;}
-.rank-table .empty{color:var(--text-muted);font-size:0.75rem;}
-.rank-table .weapon{font-family:var(--font-mono);font-size:0.75rem;color:var(--text-secondary);}
+.rank-table .empty{color:var(--text-muted);font-size:0.85rem;}
+.rank-table .weapon{font-family:var(--font-mono);font-size:0.85rem;color:var(--text-secondary);}
 .rank-table .weapon .highlight{color:var(--profile-accent);font-weight:600;}
-.rank-table .weapon .shared{font-size:0.65rem;color:var(--text-muted);}
-.rank-table .weapon .empty{color:var(--text-muted);font-size:0.65rem;}
+.rank-table .weapon .shared{font-size:0.7rem;color:var(--text-muted);}
+.rank-table .weapon .empty{color:var(--text-muted);font-size:0.75rem;}
 
 /* ===== 院阁切换按钮栏 ===== */
 .tab-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;position:relative;z-index:1;}
 .tab-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-secondary);font-family:var(--font-serif);font-size:0.8rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .tab-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-hover);}
 .tab-btn.active{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,0.04);font-weight:600;}
+.tab-btn .ti{font-size:0.8rem;vertical-align:middle;margin-right:4px;}
 
 /* ===== 院阁详情 ===== */
 .hall-detail{display:none;animation:fadeIn 0.35s ease;}
@@ -89,21 +98,44 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 .hall-detail .status-tag .dot.normal{background:#8FB8A8;}
 .hall-detail .status-tag .dot.busy{background:#c4a77d;}
 .hall-detail .status-tag .dot.maintenance{background:#b86b6b;}
+.hall-detail .detail-btn{margin-top:8px;display:inline-block;padding:4px 16px;border:1px solid var(--profile-accent);border-radius:20px;color:var(--profile-accent);font-size:0.78rem;text-decoration:none;transition:all 0.2s;font-family:var(--font-mono);}
+.hall-detail .detail-btn:hover{background:var(--profile-accent);color:var(--bg-card);}
 
-/* ===== 人物索引 ===== */
-.index-wrap{display:flex;flex-wrap:wrap;gap:6px 12px;padding:4px 0;}
-.index-item{font-size:0.85rem;color:var(--text-secondary);}
-.index-item a{color:var(--text-secondary);text-decoration:none;transition:color 0.2s;border-bottom:1px dotted transparent;}
-.index-item a:hover{color:var(--profile-accent);border-bottom-color:var(--profile-accent);}
-.index-item .sep{color:var(--border-light);margin:0 4px;}
+/* ===== 搜索栏 ===== */
+.search-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;position:relative;z-index:1;}
+.search-input{flex:1;min-width:180px;padding:8px 14px;border:1px solid var(--border-light);border-radius:20px;background:var(--bg-card);color:var(--text-primary);font-family:var(--font-serif);font-size:0.85rem;outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--profile-accent);}
+.search-input::placeholder{color:var(--text-muted);font-family:var(--font-mono);font-size:0.75rem;}
+.search-btn{padding:6px 18px;border:1px solid var(--border-light);border-radius:20px;background:var(--bg-card);color:var(--text-secondary);cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;transition:all 0.2s;}
+.search-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);}
+.search-results{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.search-result-card{padding:12px 14px;background:var(--bg-hover);border:1px solid var(--border-light);border-radius:6px;border-left:3px solid var(--profile-accent);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.search-result-card .info .name{font-weight:600;color:var(--text-primary);font-size:0.92rem;}
+.search-result-card .info .desc{font-size:0.82rem;color:var(--text-secondary);}
+.search-result-card .info .tags{display:flex;gap:6px;margin-top:2px;flex-wrap:wrap;}
+.search-result-card .info .tags .tag{font-size:0.6rem;padding:1px 8px;border-radius:10px;background:var(--bg-card);border:1px solid var(--border-light);color:var(--text-muted);font-family:var(--font-mono);}
+.search-result-card .link-btn{padding:4px 14px;border:1px solid var(--profile-accent);border-radius:16px;color:var(--profile-accent);font-size:0.75rem;text-decoration:none;transition:all 0.2s;font-family:var(--font-mono);white-space:nowrap;}
+.search-result-card .link-btn:hover{background:var(--profile-accent);color:var(--bg-card);}
+.search-empty{font-size:0.85rem;color:var(--text-muted);padding:8px 0;font-style:italic;}
+
+/* ===== 同期好友 ===== */
+.friend-scroll{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px 2px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+.friend-scroll::-webkit-scrollbar{height:4px;}
+.friend-scroll::-webkit-scrollbar-track{background:var(--border-light);border-radius:2px;}
+.friend-scroll::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:2px;}
+.friend-card{flex:0 0 200px;min-width:160px;background:var(--bg-hover);border:1px solid var(--border-light);border-radius:8px;padding:12px 14px;scroll-snap-align:start;border-left:3px solid var(--profile-accent);}
+.friend-card .f-name{font-weight:600;color:var(--text-primary);font-size:0.92rem;}
+.friend-card .f-tag{font-size:0.65rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:4px;}
+.friend-card .f-desc{font-size:0.78rem;color:var(--text-secondary);line-height:1.5;}
+.friend-card .f-exp{font-size:0.72rem;color:var(--text-muted);margin-top:4px;padding-top:4px;border-top:1px solid var(--border-light);font-style:italic;}
 
 /* ===== 花瓣 ===== */
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden;}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;transform-style:flat !important;-webkit-transform-style:flat !important;}
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0;}}
 
-@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.rank-table{font-size:0.7rem;}.rank-table th{padding:5px 4px;font-size:0.6rem;}.rank-table td{padding:5px 4px;}.rank-table .rank-num{width:30px;font-size:0.7rem;}.rank-table .weapon{font-size:0.65rem;}.tab-btn{padding:4px 10px;font-size:0.7rem;}.hall-detail .hall-name{font-size:1rem;}.hall-detail .info-line{font-size:0.82rem;}.hall-detail .info-line .label{font-size:0.7rem;min-width:48px;}.hall-detail .hall-dyn{font-size:0.78rem;}.index-item{font-size:0.78rem;}}
-@media(max-width:480px){.rank-table{font-size:0.62rem;}.rank-table th{padding:4px 2px;font-size:0.55rem;}.rank-table td{padding:4px 2px;}.rank-table .rank-num{width:22px;font-size:0.6rem;}.rank-table .weapon{font-size:0.58rem;}.tab-btn{padding:3px 8px;font-size:0.65rem;}.hall-detail .info-line{flex-direction:column;gap:2px;}.hall-detail .info-line .label{min-width:auto;}.hall-detail .hall-dyn .item{font-size:0.75rem;}}
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px;}.top-header{padding:14px 0 10px 0;}.sidebar-panel{width:210px;padding:20px 14px 16px 14px;}.sidebar-tab{padding:8px 8px 8px 4px;font-size:0.65rem;}.card{padding:14px 14px 12px 14px;}.float-group{top:12px;right:12px;gap:6px;}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem;}.rank-table{font-size:0.85rem;}.rank-table th{padding:7px 6px;font-size:0.7rem;}.rank-table td{padding:7px 6px;font-size:0.82rem;}.rank-table .rank-num{font-size:0.85rem;width:40px;}.rank-table .weapon{font-size:0.75rem;}.tab-btn{padding:4px 10px;font-size:0.7rem;}.hall-detail .hall-name{font-size:1rem;}.hall-detail .info-line{font-size:0.82rem;}.hall-detail .info-line .label{font-size:0.7rem;min-width:48px;}.hall-detail .hall-dyn{font-size:0.78rem;}.friend-card{flex:0 0 170px;min-width:140px;}.friend-card .f-name{font-size:0.82rem;}.friend-card .f-desc{font-size:0.72rem;}.search-result-card{padding:10px 12px;}.search-result-card .info .name{font-size:0.82rem;}.search-result-card .info .desc{font-size:0.75rem;}}
+@media(max-width:480px){.rank-table{font-size:0.75rem;}.rank-table th{padding:5px 3px;font-size:0.6rem;}.rank-table td{padding:5px 3px;font-size:0.7rem;}.rank-table .rank-num{font-size:0.7rem;width:30px;}.rank-table .weapon{font-size:0.65rem;}.tab-btn{padding:3px 8px;font-size:0.65rem;}.hall-detail .info-line{flex-direction:column;gap:2px;}.hall-detail .info-line .label{min-width:auto;}.friend-card{flex:0 0 150px;min-width:120px;}.friend-card .f-name{font-size:0.75rem;}.friend-card .f-desc{font-size:0.68rem;}.search-wrap{flex-direction:column;}.search-input{width:100%;min-width:auto;}}
 </style>
 </head>
 <body data-profile="linxiwu">
@@ -142,11 +174,27 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <!-- ===== 林栖梧 ===== -->
 <div class="content-block active" id="content-linxiwu">
 
-<!-- 卡片：十席排名 -->
-<div class="card" data-corner="✧">
-<div class="card-title"><span class="ti ti-crown"></span> 十席引渡人</div>
+<!-- 卡片1：归终殿介绍 -->
+<div class="card gradient-card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">归终殿 · 沿革</div>
+<div class="intro-text">
+归终殿最初由六殿卞城王于约六百年前设立，名义上为“处理滞留在人间的特殊魂魄”，实则是一个临时性的收容部门。
+<span class="break"></span>
+其成员被称为“引渡人”，因拥有实体且能自由穿梭阴阳，具备普通阴差不具备的现场干预能力。但该部门长期未获正式编制，殿址简陋、人手紧缺，十席引渡人常年在外奔波，归终殿在地府地位极低。
+<span class="break"></span>
+转折点发生在苍珩四百一十一年的京城大战。狐妖白禾川以五大神器吞噬京城、试图重建青丘，归终殿全体引渡人奉命参战，最终以惨烈代价击溃白禾川。
+<span class="break"></span>
+此战使地府高层认识到引渡人的不可替代性，战后阎君下旨：<span class="highlight">归终殿升格为地府第十殿，与阎罗十殿同列。</span>十席引渡人获封号、可开坛收徒，殿内编制扩充至数百人，并配备医官、讲武堂等完整设施。
+</div>
+</div>
+
+<!-- 卡片2：十席排名 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">十席引渡人</div>
 <div class="rank-table-wrap">
-<table class="rank-table" id="rank-table-lin">
+<table class="rank-table">
 <thead><tr><th>席次</th><th>姓名</th><th>封号</th><th>本命武器</th><th>专属神器</th><th>归属院阁</th></tr></thead>
 <tbody id="rank-body-lin">
 <!-- JS 渲染 -->
@@ -155,9 +203,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 </div>
 </div>
 
-<!-- 卡片：院阁切换 + 详情 -->
-<div class="card" data-corner="✧">
-<div class="card-title"><span class="ti ti-building"></span> 院阁详情</div>
+<!-- 卡片3：院阁切换 + 详情 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">院阁详情</div>
 <div class="tab-bar" id="hall-tabs-lin">
 <!-- JS 渲染 -->
 </div>
@@ -166,10 +215,24 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 </div>
 </div>
 
-<!-- 卡片：人物索引 -->
-<div class="card" data-corner="✧">
-<div class="card-title"><span class="ti ti-list"></span> 人物索引</div>
-<div class="index-wrap" id="index-lin">
+<!-- 卡片4：同期好友 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">同期好友</div>
+<div class="friend-scroll" id="friends-lin">
+<!-- JS 渲染 -->
+</div>
+</div>
+
+<!-- 卡片5：人物搜索 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">人物索引</div>
+<div class="search-wrap">
+<input class="search-input" id="search-input-lin" placeholder="搜索人名或地名 … 例：栾方棋、枪阁" autocomplete="off">
+<button class="search-btn" id="search-btn-lin">搜索</button>
+</div>
+<div class="search-results" id="search-results-lin">
 <!-- JS 渲染 -->
 </div>
 </div>
@@ -179,11 +242,25 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 <!-- ===== 罗烬 ===== -->
 <div class="content-block" id="content-luojin">
 
-<!-- 卡片：十席排名 -->
-<div class="card" data-corner="✧">
-<div class="card-title"><span class="ti ti-crown"></span> 十席引渡人</div>
+<!-- 卡片1：归终殿介绍 -->
+<div class="card gradient-card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">归终殿 · 沿革</div>
+<div class="intro-text">
+归终殿最初由六殿卞城王于约六百年前设立，名义上为“处理滞留在人间的特殊魂魄”，实则是一个临时性的收容部门。
+其成员被称为“引渡人”，因拥有实体且能自由穿梭阴阳，具备普通阴差不具备的现场干预能力。但该部门长期未获正式编制，殿址简陋、人手紧缺，十席引渡人常年在外奔波，归终殿在地府地位极低。
+<span class="break"></span>
+转折点发生在苍珩四百一十一年的京城大战。狐妖白禾川以五大神器吞噬京城、试图重建青丘，归终殿全体引渡人奉命参战，最终以惨烈代价击溃白禾川。
+此战使地府高层认识到引渡人的不可替代性，战后阎君下旨：<span class="highlight">归终殿升格为地府第十殿，与阎罗十殿同列。</span>十席引渡人获封号、可开坛收徒，殿内编制扩充至数百人，并配备医官、讲武堂等完整设施。
+</div>
+</div>
+
+<!-- 卡片2：十席排名 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">十席引渡人</div>
 <div class="rank-table-wrap">
-<table class="rank-table" id="rank-table-luo">
+<table class="rank-table">
 <thead><tr><th>席次</th><th>姓名</th><th>封号</th><th>本命武器</th><th>专属神器</th><th>归属院阁</th></tr></thead>
 <tbody id="rank-body-luo">
 <!-- JS 渲染 -->
@@ -192,9 +269,10 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 </div>
 </div>
 
-<!-- 卡片：院阁切换 + 详情 -->
-<div class="card" data-corner="✧">
-<div class="card-title"><span class="ti ti-building"></span> 院阁详情</div>
+<!-- 卡片3：院阁切换 + 详情 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">院阁详情</div>
 <div class="tab-bar" id="hall-tabs-luo">
 <!-- JS 渲染 -->
 </div>
@@ -203,10 +281,24 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);}
 </div>
 </div>
 
-<!-- 卡片：人物索引 -->
-<div class="card" data-corner="✧">
-<div class="card-title"><span class="ti ti-list"></span> 人物索引</div>
-<div class="index-wrap" id="index-luo">
+<!-- 卡片4：同期好友 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">同期好友</div>
+<div class="friend-scroll" id="friends-luo">
+<!-- JS 渲染 -->
+</div>
+</div>
+
+<!-- 卡片5：人物搜索 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">人物索引</div>
+<div class="search-wrap">
+<input class="search-input" id="search-input-luo" placeholder="搜索人名或地名 … 例：栾方棋、枪阁" autocomplete="off">
+<button class="search-btn" id="search-btn-luo">搜索</button>
+</div>
+<div class="search-results" id="search-results-luo">
 <!-- JS 渲染 -->
 </div>
 </div>

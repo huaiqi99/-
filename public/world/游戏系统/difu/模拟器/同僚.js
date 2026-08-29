@@ -33,29 +33,30 @@ if(petalContainer){for(var i=0;i<12;i++){var el=document.createElement('div');el
 
 // ===== 4. 数据 =====
 
-// 十席数据
+// 十席数据（修改版：姓名未公开用"未公开"，其余用"—"）
 var RANK_DATA = [
-  { rank: 1, name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '—', hall: '讲武堂', link: '罗修.html' },
-  { rank: 2, name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（共有）', hall: '枪阁', link: '林淮.html' },
-  { rank: 3, name: '—', title: '—', weapon: '—', divine: '—', hall: '阵法堂', link: null },
-  { rank: 4, name: '—', title: '—', weapon: '—', divine: '—', hall: '工造司', link: null },
-  { rank: 5, name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '—', hall: '符修院', link: '栾方棋.html' },
-  { rank: 6, name: '—', title: '—', weapon: '—', divine: '—', hall: '澄心堂', link: null },
-  { rank: 7, name: '魏元璟', title: '璟', weapon: '对影', divine: '摧城笛', hall: '砺峰阁', link: '魏元璟.html' },
-  { rank: 8, name: '—', title: '—', weapon: '—', divine: '—', hall: '百草堂', link: null },
-  { rank: 9, name: '顾行舟', title: '舟', weapon: '千机·缠丝', divine: '—', hall: '织云阁', link: null },
-  { rank: 10, name: '沈栖云', title: '云', weapon: '听风·双刃', divine: '—', hall: '栖云阁', link: null }
+  { rank: 1, name: '罗修', title: '修', weapon: '九幽焚天焰', divine: '九幽焚天焰', hall: '讲武堂', link: '罗修.html' },
+  { rank: 2, name: '林淮', title: '淮', weapon: '惊鸿', divine: '灵枢轮回木（与栾方棋共有）', hall: '点苍阁', link: '林淮.html' },
+  { rank: 3, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '阵法堂', link: null },
+  { rank: 4, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '工造司', link: null },
+  { rank: 5, name: '栾方棋', title: '棋', weapon: '灵枢轮回木', divine: '灵枢轮回木', hall: '符修院', link: '栾方棋.html' },
+  { rank: 6, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '澄心堂', link: null },
+  { rank: 7, name: '魏元璟', title: '璟', weapon: '对影', divine: '镇魂破虚引', hall: '砺峰阁', link: '魏元璟.html' },
+  { rank: 8, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '百草堂', link: null },
+  { rank: 9, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null },
+  { rank: 10, name: '未公开', title: '—', weapon: '—', divine: '—', hall: '—', link: null }
 ];
 
-// 院阁数据（按展示顺序）
+// 院阁数据（删除了织云阁和栖云阁）
 var HALL_DATA = [
   {
     id: 'fuxiu',
     name: '符修院',
     icon: 'ti-books',
-    master: '栾方棋（第五席）',
+    master: '栾方棋',
     masterLink: '栾方棋.html',
     desc: '符箓专精 · 法术理论 · 符阵基础',
+    detail: '符修院是归终殿符箓与法术理论的核心院阁，由第五席栾方棋执掌。',
     students: '林栖梧（统修期符法第一）',
     dynamics: ['栾方棋带领弟子完成青州锁龙井加固任务', '符修院新增《符箓变体十二式》课程'],
     status: '正常',
@@ -65,23 +66,25 @@ var HALL_DATA = [
     id: 'jiangwu',
     name: '讲武堂',
     icon: 'ti-swords',
-    master: '罗修（首席）',
+    master: '罗修',
     masterLink: '罗修.html',
     desc: '双刀 · 体术 · 实战对抗',
+    detail: '讲武堂是归终殿体术与双刀的核心院阁，由首席罗修执掌。',
     students: '罗烬（讲武堂新晋弟子）',
     dynamics: ['首席特别课程「双刀进阶」已开课', '演武广场石靶维修完成，恢复使用'],
     status: '繁忙',
     statusDot: 'busy'
   },
   {
-    id: 'qiangge',
-    name: '枪阁',
+    id: 'diangcang',
+    name: '点苍阁',
     icon: 'ti-spear',
-    master: '林淮（第二席）',
+    master: '林淮',
     masterLink: '林淮.html',
     desc: '枪法专精 · 近战武器 · 单点爆发',
+    detail: '点苍阁是归终殿枪法专精院阁，由第二席林淮执掌。',
     students: '暂无',
-    dynamics: ['林淮带队完成忘川河畔巡逻任务', '枪阁新弟子报名通道开启'],
+    dynamics: ['林淮带队完成忘川河畔巡逻任务', '点苍阁新弟子报名通道开启'],
     status: '正常',
     statusDot: 'normal'
   },
@@ -89,9 +92,10 @@ var HALL_DATA = [
     id: 'lifeng',
     name: '砺峰阁',
     icon: 'ti-mountain',
-    master: '魏元璟（第七席）',
+    master: '魏元璟',
     masterLink: '魏元璟.html',
     desc: '魂力控制 · 冥想 · 抗压训练',
+    detail: '砺峰阁是归终殿魂力与冥想的核心院阁，由第七席魏元璟执掌。',
     students: '罗烬（兼修·抗压课程）',
     dynamics: ['魏元璟于音律坊试奏新曲《忘川渡》', '砺峰阁抗压课程升级，新增魂力冲击模拟'],
     status: '正常',
@@ -104,6 +108,7 @@ var HALL_DATA = [
     master: '魏元璟 · 程木栖',
     masterLink: null,
     desc: '音律 · 魂力共鸣 · 笛琴合奏',
+    detail: '音律坊由魏元璟与程木栖共同创办，以笛琴合奏引导魂力共鸣。',
     students: '暂无',
     dynamics: ['魏元璟与程木栖合奏新曲《忘川渡》获得好评', '音律坊计划招收新弟子'],
     status: '正常',
@@ -113,9 +118,10 @@ var HALL_DATA = [
     id: 'qiwu',
     name: '栖梧馆',
     icon: 'ti-medical-cross',
-    master: '程木栖（退役）',
+    master: '程木栖',
     masterLink: null,
     desc: '医药 · 伤患治疗 · 药理',
+    detail: '栖梧馆是归终殿医药与伤患治疗的核心院阁，由程木栖执掌。',
     students: '林栖梧（兼修·药理辨识）',
     dynamics: ['程木栖完成新药方试制', '栖梧馆药材储备充足，已开放外借'],
     status: '正常',
@@ -125,9 +131,10 @@ var HALL_DATA = [
     id: 'zhenfa',
     name: '阵法堂',
     icon: 'ti-layout-grid',
-    master: '第三席（未知）',
+    master: '第三席',
     masterLink: null,
     desc: '阵法 · 符阵 · 暗器',
+    detail: '阵法堂由第三席执掌，专攻阵法与符阵的实战应用。',
     students: '暂无',
     dynamics: ['阵法课程调整，部分课程延期', '第三席行踪不定，暂由符修院代管'],
     status: '维护中',
@@ -137,9 +144,10 @@ var HALL_DATA = [
     id: 'gongzao',
     name: '工造司',
     icon: 'ti-tools',
-    master: '第四席（未知）',
+    master: '第四席',
     masterLink: null,
     desc: '兵器锻造 · 维修 · 定制',
+    detail: '工造司由第四席执掌，负责归终殿兵器锻造与维修。',
     students: '不适用',
     dynamics: ['引魂刀批量交付讲武堂', '工造司新增定制武器服务'],
     status: '正常',
@@ -149,9 +157,10 @@ var HALL_DATA = [
     id: 'chengxin',
     name: '澄心堂',
     icon: 'ti-blade',
-    master: '第六席（未知）',
+    master: '第六席',
     masterLink: null,
     desc: '剑修 · 剑法传授',
+    detail: '澄心堂由第六席执掌，专攻剑修与剑法传承。',
     students: '暂无',
     dynamics: ['澄心堂剑法课程筹备中', '第六席近期于人间行走未归'],
     status: '正常',
@@ -161,57 +170,49 @@ var HALL_DATA = [
     id: 'baicao',
     name: '百草堂',
     icon: 'ti-leaf',
-    master: '第八席（未知）',
+    master: '第八席',
     masterLink: null,
     desc: '用毒 · 药理（与栖梧馆合作）',
+    detail: '百草堂由第八席执掌，专攻用毒与药理，与栖梧馆深度合作。',
     students: '暂无',
     dynamics: ['百草堂与栖梧馆联合研制新药', '用毒课程选修人数较少，暂不开放'],
-    status: '正常',
-    statusDot: 'normal'
-  },
-  {
-    id: 'zhiyun',
-    name: '织云阁',
-    icon: 'ti-cloud',
-    master: '顾行舟（第九席）',
-    masterLink: null,
-    desc: '追迹 · 软兵器 · 侦查',
-    students: '暂无',
-    dynamics: ['织云阁追踪术课程筹备中', '顾行舟近期于人间执行外勤'],
-    status: '正常',
-    statusDot: 'normal'
-  },
-  {
-    id: 'qiyun',
-    name: '栖云阁',
-    icon: 'ti-wind',
-    master: '沈栖云（第十席）',
-    masterLink: null,
-    desc: '速度 · 双刃 · 突袭',
-    students: '暂无',
-    dynamics: ['沈栖云加入归终殿，初任第十席', '栖云阁课程规划中'],
     status: '正常',
     statusDot: 'normal'
   }
 ];
 
-// 人物索引
-var INDEX_DATA = [
-  { name: '林栖梧', link: '档案.html#linxiwu' },
-  { name: '罗烬', link: '档案.html#luojin' },
-  { name: '栾方棋', link: '栾方棋.html' },
-  { name: '林淮', link: '林淮.html' },
-  { name: '罗修', link: '罗修.html' },
-  { name: '魏元璟', link: '魏元璟.html' },
-  { name: '程木栖', link: null },
-  { name: '蔡可', link: null },
-  { name: '第三席', link: null },
-  { name: '第四席', link: null },
-  { name: '第六席', link: null },
-  { name: '第八席', link: null },
-  { name: '顾行舟', link: null },
-  { name: '沈栖云', link: null }
+// 人物搜索数据
+var SEARCH_DATA = [
+  { name: '栾方棋', tags: ['第五席', '符修院', '符箓'], desc: '符修院掌门，灵枢轮回木共主。', link: '栾方棋.html' },
+  { name: '林淮', tags: ['第二席', '点苍阁', '枪法'], desc: '点苍阁掌门，银枪惊鸿。', link: '林淮.html' },
+  { name: '罗修', tags: ['首席', '讲武堂', '双刀'], desc: '讲武堂掌门，九幽焚天焰共主。', link: '罗修.html' },
+  { name: '魏元璟', tags: ['第七席', '砺峰阁', '音律'], desc: '砺峰阁掌门，对影双刀，镇魂破虚引持有者。', link: '魏元璟.html' },
+  { name: '林栖梧', tags: ['符修院', '弟子', '符箓'], desc: '符修院弟子，栾方棋之女。', link: '档案.html#linxiwu' },
+  { name: '罗烬', tags: ['讲武堂', '弟子', '双刀'], desc: '讲武堂弟子，罗修之子。', link: '档案.html#luojin' },
+  { name: '程木栖', tags: ['栖梧馆', '音律坊', '医药'], desc: '栖梧馆掌门，音律坊共创者。', link: null },
+  { name: '第三席', tags: ['阵法堂', '阵法', '符阵'], desc: '阵法堂执掌者，行踪不定。', link: null },
+  { name: '第四席', tags: ['工造司', '锻造', '维修'], desc: '工造司执掌者，兵器大师。', link: null },
+  { name: '第六席', tags: ['澄心堂', '剑修', '剑法'], desc: '澄心堂执掌者，剑法宗师。', link: null },
+  { name: '第八席', tags: ['百草堂', '用毒', '药理'], desc: '百草堂执掌者，与栖梧馆合作。', link: null },
+  { name: '枪阁', tags: ['地点', '点苍阁', '枪法'], desc: '归终殿枪法专精院阁，现名点苍阁。', link: null },
+  { name: '点苍阁', tags: ['地点', '枪阁', '林淮'], desc: '归终殿枪法专精院阁，林淮执掌。', link: null },
+  { name: '符修院', tags: ['地点', '栾方棋', '符箓'], desc: '归终殿符箓与法术理论核心院阁。', link: null },
+  { name: '讲武堂', tags: ['地点', '罗修', '双刀'], desc: '归终殿体术与双刀核心院阁。', link: null }
 ];
+
+// 同期好友数据
+var FRIEND_DATA = {
+  linxiwu: [
+    { name: '谢听澜', tag: '符修院 · 画搭子', desc: '沉默专注，画符时能一坐三个时辰不抬头。', exp: '统修期期末一起熬夜补完符箓变体课作业。' },
+    { name: '陆沉舟', tag: '点苍阁 · 安静枪修', desc: '讲武堂里最安静的枪修，话少但靠谱。', exp: '良月十五一起跟林淮出忘川巡逻任务，替她挡了一记阴风。' },
+    { name: '慕晚棠', tag: '音律坊 · 听曲人', desc: '音律坊常客，每次魏元璟试奏新曲必到。', exp: '霜月初七在音律坊听《忘川渡》时，两人同时听走了神。' }
+  ],
+  luojin: [
+    { name: '楚宴', tag: '讲武堂 · 练刀搭子', desc: '和罗烬同期进讲武堂，两人经常一起加练到深夜。', exp: '被罗修罚跑十圈时互相拽着跑完最后一圈，瘫在地上笑了半天。' },
+    { name: '江未晞', tag: '砺峰阁 · 冥想不睡者', desc: '魂力冥想课唯一能和罗烬一起清醒到下课的人。', exp: '魏元璟试奏《忘川渡》时，两人同时走神被笛子敲醒。' },
+    { name: '何照野', tag: '符修院 · 符纸供货商', desc: '符修院弟子，专门给罗烬提供画废的符纸当草稿。', exp: '罗烬符法课挂科那天，何照野悄悄塞了一摞符纸说“下次我帮你画”。' }
+  ]
+};
 
 // ===== 5. 渲染十席排名 =====
 function renderRank(containerId) {
@@ -221,7 +222,7 @@ function renderRank(containerId) {
   RANK_DATA.forEach(function(item) {
     var tr = document.createElement('tr');
     var nameHtml = item.name;
-    if (item.name !== '—' && item.link) {
+    if (item.name !== '未公开' && item.link) {
       nameHtml = '<a href="' + item.link + '">' + item.name + '</a>';
     }
     var titleDisplay = item.title !== '—' ? item.title : '—';
@@ -248,7 +249,7 @@ function renderHallTabs(tabContainerId, detailContainerId) {
     var btn = document.createElement('button');
     btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
     btn.dataset.index = idx;
-    btn.innerHTML = '<i class="ti ' + hall.icon + '" style="font-size:0.8rem;vertical-align:middle;margin-right:4px;"></i> ' + hall.name;
+    btn.innerHTML = '<i class="ti ' + hall.icon + '"></i> ' + hall.name;
     btn.addEventListener('click', function() {
       var parent = this.parentElement;
       parent.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -257,7 +258,6 @@ function renderHallTabs(tabContainerId, detailContainerId) {
     });
     tabContainer.appendChild(btn);
   });
-  // 默认显示第一个
   renderHallDetail(detailContainerId, 0);
 }
 
@@ -286,51 +286,98 @@ function renderHallDetail(containerId, index) {
     ? hall.dynamics.map(function(d) { return '<div class="item"><span class="dot">·</span> ' + d + '</div>'; }).join('')
     : '<div class="item"><span class="dot">·</span> 暂无近期动态</div>';
 
+  // 详细资料+跳转按钮
+  var detailHtml = hall.detail || '暂无详细资料。';
+  var btnHtml = hall.masterLink
+    ? '<a class="detail-btn" href="' + hall.masterLink + '">查看完整资料 →</a>'
+    : '<span style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);">档案暂未开放</span>';
+
   container.innerHTML = '<div class="hall-detail active">' +
     '<div class="hall-name"><i class="ti ' + hall.icon + '"></i> ' + hall.name + '</div>' +
     '<div class="hall-divider"></div>' +
     '<div class="info-line"><span class="label">负责人</span><span class="value">' + masterHtml + '</span></div>' +
     '<div class="info-line"><span class="label">职能</span><span class="value">' + hall.desc + '</span></div>' +
-    '<div class="info-line"><span class="label">优秀学生</span><span class="value">' + studentsHtml + '</span></div>' +
-    '<div class="info-line" style="margin-top:6px;"><span class="label">近期动态</span></div>' +
+    '<div class="info-line"><span class="label">详细资料</span><span class="value" style="font-weight:400;font-size:0.88rem;">' + detailHtml + '</span></div>' +
+    '<div style="margin:2px 0 6px 0;">' + btnHtml + '</div>' +
+    '<div class="info-line" style="margin-top:4px;"><span class="label">优秀学生</span><span class="value">' + studentsHtml + '</span></div>' +
+    '<div class="info-line" style="margin-top:4px;"><span class="label">近期动态</span></div>' +
     '<div class="hall-dyn">' + dynHtml + '</div>' +
     '<div class="status-tag"><span class="dot ' + dotMap[hall.statusDot] + '"></span> ' + (statusMap[hall.status] || hall.status) + '</div>' +
     '</div>';
 }
 
-// ===== 8. 渲染人物索引 =====
-function renderIndex(containerId) {
+// ===== 8. 渲染同期好友 =====
+function renderFriends(containerId, profile) {
   var container = document.getElementById(containerId);
   if (!container) return;
+  var friends = FRIEND_DATA[profile] || FRIEND_DATA.linxiwu;
   container.innerHTML = '';
-  var items = [];
-  INDEX_DATA.forEach(function(person) {
-    var html = '';
-    if (person.link) {
-      html = '<a href="' + person.link + '">' + person.name + '</a>';
-    } else {
-      html = '<span style="color:var(--text-muted);">' + person.name + '</span>';
-    }
-    items.push('<span class="index-item">' + html + '</span>');
+  friends.forEach(function(f) {
+    var div = document.createElement('div');
+    div.className = 'friend-card';
+    div.innerHTML = '<div class="f-name">' + f.name + '</div>' +
+      '<div class="f-tag">' + f.tag + '</div>' +
+      '<div class="f-desc">' + f.desc + '</div>' +
+      '<div class="f-exp">' + f.exp + '</div>';
+    container.appendChild(div);
   });
-  container.innerHTML = items.join('');
 }
 
-// ===== 9. 初始化所有 =====
+// ===== 9. 搜索功能 =====
+function setupSearch(inputId, btnId, resultsId) {
+  var input = document.getElementById(inputId);
+  var btn = document.getElementById(btnId);
+  var results = document.getElementById(resultsId);
+  if (!input || !btn || !results) return;
+
+  function doSearch() {
+    var q = input.value.trim().toLowerCase();
+    if (!q) {
+      results.innerHTML = '<div class="search-empty">输入人名或地名开始搜索</div>';
+      return;
+    }
+    var matched = SEARCH_DATA.filter(function(item) {
+      var name = item.name.toLowerCase();
+      var tagMatch = item.tags.some(function(t) { return t.toLowerCase().includes(q); });
+      return name.includes(q) || tagMatch;
+    });
+    if (matched.length === 0) {
+      results.innerHTML = '<div class="search-empty">未找到匹配结果。试试：栾方棋、点苍阁</div>';
+      return;
+    }
+    results.innerHTML = '';
+    matched.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'search-result-card';
+      var tagHtml = item.tags.map(function(t) { return '<span class="tag">' + t + '</span>'; }).join('');
+      var linkHtml = item.link
+        ? '<a class="link-btn" href="' + item.link + '">查看档案 →</a>'
+        : '<span style="font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);">档案暂未开放</span>';
+      div.innerHTML = '<div class="info"><div class="name">' + item.name + '</div><div class="desc">' + item.desc + '</div><div class="tags">' + tagHtml + '</div></div>' +
+        linkHtml;
+      results.appendChild(div);
+    });
+  }
+
+  btn.addEventListener('click', doSearch);
+  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') doSearch(); });
+}
+
+// ===== 10. 初始化所有 =====
 function initAll() {
   var profile = document.body.getAttribute('data-profile') || 'linxiwu';
   var prefix = profile === 'linxiwu' ? 'lin' : 'luo';
   renderRank('rank-body-' + prefix);
   renderHallTabs('hall-tabs-' + prefix, 'hall-detail-' + prefix);
-  renderIndex('index-' + prefix);
+  renderFriends('friends-' + prefix, profile);
+  setupSearch('search-input-' + prefix, 'search-btn-' + prefix, 'search-results-' + prefix);
 }
 
-// 监听角色切换
 window.addEventListener('profilechange', function() {
   setTimeout(initAll, 100);
 });
 
 setTimeout(initAll, 200);
 
-console.log('🌙 归终殿 · 同僚与十席 v1.0 已加载');
+console.log('🌙 归终殿 · 同僚与十席 v2.0 已加载');
 })();
