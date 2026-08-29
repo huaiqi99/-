@@ -1,6 +1,5 @@
 (function(){'use strict';
 
-// ===== 保底 =====
 if(!window.GZD){window.GZD={};
 GZD.Storage={get(k,d){try{const r=localStorage.getItem(k);return r?JSON.parse(r):d;}catch(e){return d;}},set(k,v){localStorage.setItem(k,JSON.stringify(v));},getTheme(){const r=this.get('theme',null);return r&&r.value?r.value:'dark';},getProfile(){try{return localStorage.getItem('activeProfile')||'linxiwu';}catch(e){return'linxiwu';}},getQuests(){return this.get('gzd_quests',{});}};
 GZD.ThemeManager={init(){const t=GZD.Storage.getTheme();const h=document.documentElement;if(t==='light')h.setAttribute('data-theme','light');else h.removeAttribute('data-theme');},toggle(){const isLight=document.documentElement.getAttribute('data-theme')==='light';const h=document.documentElement;if(isLight)h.removeAttribute('data-theme');else h.setAttribute('data-theme','light');GZD.Storage.set('theme',{value:isLight?'dark':'light'});}};
@@ -9,7 +8,6 @@ GZD.Sidebar={open:false,toggle(){this.open=!this.open;const p=document.getElemen
 GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();
 }
 
-// ===== 1. 侧边栏与主题按钮 =====
 document.addEventListener('click',function(e){
   const target=e.target;
   if(target.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}
@@ -22,18 +20,13 @@ document.getElementById('themeBtn').addEventListener('click',function(){GZD.Them
 function updateThemeBtn(){const b=document.getElementById('themeBtn'),isLight=document.documentElement.getAttribute('data-theme')==='light';if(b)b.innerHTML='<span id="themeIcon">'+(isLight?'🌙':'☀️')+'</span> <span id="themeLabel">'+(isLight?'夜间':'日间')+'</span>';}
 updateThemeBtn();
 
-// ===== 2. 角色切换UI =====
 function updateProfileUI(profile){const nameMap={'linxiwu':'林栖梧','luojin':'罗烬'};const nameEl=document.getElementById('currentProfileName');if(nameEl)nameEl.textContent=nameMap[profile]||'林栖梧';const switchBtn=document.getElementById('profileSwitchBtn');if(switchBtn)switchBtn.textContent='切换到 '+(profile==='linxiwu'?'罗烬':'林栖梧');}
 (function(){const saved=GZD.Storage.getProfile();updateProfileUI(saved);})();
 window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.profile);});
 
-// ===== 3. 花瓣特效 =====
 const PETAL_CHARS=['❀','✿','✽'],petalContainer=document.getElementById('petal-container');
 if(petalContainer){for(let i=0;i<12;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
 
-// ===== 4. 数据 =====
-
-// 成绩数据
 var SCORE_DATA = {
   linxiwu: {
     subjects: [
@@ -61,7 +54,6 @@ var SCORE_DATA = {
   }
 };
 
-// 课程进度数据
 var PROGRESS_DATA = {
   linxiwu: [
     { name: '高阶符箓', current: 6, total: 20, checked: false },
@@ -77,16 +69,11 @@ var PROGRESS_DATA = {
   ]
 };
 
-// ===== 课表数据 =====
-// 时间: 卯(1) 辰(2) 巳(3) 午(4) 未(5)
-// 周一~周日 (7列)
-
 var SCHEDULE_DATA = {
   linxiwu: {
     timeLabels: ['卯时', '辰时', '巳时', '午时', '未时'],
     days: ['一', '二', '三', '四', '五', '六', '日'],
     fullSchedule: [
-      // 周一
       [
         { name: '体术自保', type: 'required', teacher: '林淮', location: '演武场', desc: '基础体术与近战自保课程，重点训练闪避与格挡意识。', exam: '对抗演练：需在模拟战中保持三回合不倒地。' },
         { name: '高阶符箓', type: 'required', teacher: '栾方棋', location: '符修院·丙字堂', desc: '高阶符箓绘制与实战应用，本周开始学习聚灵符的变体画法。', exam: '符箓实操：独立完成三道聚灵符变体。' },
@@ -94,7 +81,6 @@ var SCHEDULE_DATA = {
         null,
         null
       ],
-      // 周二
       [
         null,
         { name: '符阵实战', type: 'required', teacher: '第三席', location: '阵法堂', desc: '符阵实战应用与布阵技巧，重点训练快速布阵与阵眼识别。', exam: '阵纹绘制：限时完成一个基础防御阵。' },
@@ -102,7 +88,6 @@ var SCHEDULE_DATA = {
         { name: '魂力冥想', type: 'elective', teacher: '魏元璟', location: '砺峰阁', desc: '魂力稳定与深度冥想训练，本周主题是"魂力归位"。', exam: '冥想记录：提交一份冥想心得。' },
         null
       ],
-      // 周三
       [
         { name: '体术自保', type: 'required', teacher: '林淮', location: '演武场', desc: '基础体术与近战自保课程，本周加练短距离冲刺与急停。', exam: '对抗演练：需在模拟战中保持三回合不倒地。' },
         { name: '高阶符箓', type: 'required', teacher: '栾方棋', location: '符修院·丙字堂', desc: '高阶符箓绘制与实战应用，重点讲解符箓的灵力注入技巧。', exam: '符箓实操：独立完成三道聚灵符变体。' },
@@ -110,7 +95,6 @@ var SCHEDULE_DATA = {
         null,
         null
       ],
-      // 周四
       [
         null,
         { name: '符阵实战', type: 'required', teacher: '第三席', location: '阵法堂', desc: '符阵实战应用与布阵技巧，本周开始学习双阵联动。', exam: '阵纹绘制：限时完成一个基础防御阵。' },
@@ -118,7 +102,6 @@ var SCHEDULE_DATA = {
         { name: '魂力冥想', type: 'elective', teacher: '魏元璟', location: '砺峰阁', desc: '魂力稳定与深度冥想训练，本周主题是"魂力归位"。', exam: '冥想记录：提交一份冥想心得。' },
         null
       ],
-      // 周五
       [
         null,
         { name: '高阶符箓', type: 'required', teacher: '栾方棋', location: '符修院·丙字堂', desc: '高阶符箓绘制与实战应用，本周进行随堂小测。', exam: '符箓实操：独立完成三道聚灵符变体。' },
@@ -126,9 +109,7 @@ var SCHEDULE_DATA = {
         null,
         null
       ],
-      // 周六
       [null, null, null, null, null],
-      // 周日
       [null, null, null, null, null]
     ]
   },
@@ -136,7 +117,6 @@ var SCHEDULE_DATA = {
     timeLabels: ['卯时', '辰时', '巳时', '午时', '未时'],
     days: ['一', '二', '三', '四', '五', '六', '日'],
     fullSchedule: [
-      // 周一
       [
         { name: '体术特训', type: 'required', teacher: '罗修', location: '讲武堂', desc: '高强度体能与力量训练，本周重点训练下肢爆发力。', exam: '体能测试：折返跑与深蹲负重。' },
         { name: '双刀进阶', type: 'required', teacher: '罗修', location: '讲武堂', desc: '双刀技法进阶与实战，本周开始学习双刀连招的衔接。', exam: '刀法演示：完整展示一套双刀连招。' },
@@ -144,7 +124,6 @@ var SCHEDULE_DATA = {
         null,
         null
       ],
-      // 周二
       [
         null,
         { name: '魂力控制', type: 'elective', teacher: '魏元璟', location: '砺峰阁', desc: '魂力精准控制与引导，本周重点是魂力外放与回收。', exam: '魂力测试：在冥想中稳定魂力波动三刻钟。' },
@@ -152,7 +131,6 @@ var SCHEDULE_DATA = {
         { name: '抗压冥想', type: 'elective', teacher: '魏元璟', location: '砺峰阁', desc: '抗压与专注力训练，本周引入"魂力冲击"模拟对抗。', exam: '冥想记录：提交一份抗压体验报告。' },
         null
       ],
-      // 周三
       [
         { name: '体术特训', type: 'required', teacher: '罗修', location: '讲武堂', desc: '高强度体能与力量训练，本周加练负重冲刺。', exam: '体能测试：折返跑与深蹲负重。' },
         { name: '双刀进阶', type: 'required', teacher: '罗修', location: '讲武堂', desc: '双刀技法进阶与实战，本周进行双刀对抗模拟。', exam: '刀法演示：完整展示一套双刀连招。' },
@@ -160,7 +138,6 @@ var SCHEDULE_DATA = {
         null,
         null
       ],
-      // 周四
       [
         null,
         { name: '魂力控制', type: 'elective', teacher: '魏元璟', location: '砺峰阁', desc: '魂力精准控制与引导，本周重点是魂力外放与回收。', exam: '魂力测试：在冥想中稳定魂力波动三刻钟。' },
@@ -168,7 +145,6 @@ var SCHEDULE_DATA = {
         { name: '抗压冥想', type: 'elective', teacher: '魏元璟', location: '砺峰阁', desc: '抗压与专注力训练，本周引入"魂力冲击"模拟对抗。', exam: '冥想记录：提交一份抗压体验报告。' },
         null
       ],
-      // 周五
       [
         { name: '体术特训', type: 'required', teacher: '罗修', location: '讲武堂', desc: '高强度体能与力量训练，本周进行本周体能综合测试。', exam: '体能测试：折返跑与深蹲负重。' },
         { name: '双刀进阶', type: 'required', teacher: '罗修', location: '讲武堂', desc: '双刀技法进阶与实战，本周进行双刀对抗模拟。', exam: '刀法演示：完整展示一套双刀连招。' },
@@ -176,15 +152,12 @@ var SCHEDULE_DATA = {
         null,
         null
       ],
-      // 周六
       [null, null, null, null, null],
-      // 周日
       [null, null, null, null, null]
     ]
   }
 };
 
-// 修习日志数据
 var TIMELINE_DATA = {
   linxiwu: [
     { date: '霜月初一 · 辰时', title: '高阶符箓课出勤', desc: '首次进入高阶符阵课堂，独立完成基础纹路辨识。', status: 'ok' },
@@ -198,7 +171,6 @@ var TIMELINE_DATA = {
   ]
 };
 
-// ===== 5. 渲染成绩卡片 =====
 function renderScores(profile) {
   var data = SCORE_DATA[profile];
   var container = document.getElementById('score-grid-' + (profile === 'linxiwu' ? 'lin' : 'luo'));
@@ -209,8 +181,7 @@ function renderScores(profile) {
     div.className = 'score-card-item';
     var rankText = s.rank === 1 ? '第 1 名' : '第 ' + s.rank + ' 名';
     var rankClass = s.rank <= 3 ? 'top' : '';
-    var isHigh = s.score >= 80;
-    div.innerHTML = '<div class="top"><span class="subject">' + s.name + '</span><span class="score' + (isHigh ? '' : '') + '">' + s.score + '</span></div>' +
+    div.innerHTML = '<div class="top"><span class="subject">' + s.name + '</span><span class="score">' + s.score + '</span></div>' +
       '<div class="rank ' + rankClass + '">' + rankText + '</div>' +
       '<div class="tooltip">' + s.comment + '<span class="from">—— ' + s.from + '</span></div>';
     container.appendChild(div);
@@ -221,7 +192,6 @@ function renderScores(profile) {
   container.appendChild(total);
 }
 
-// ===== 6. 渲染课程进度 =====
 function renderProgress(profile) {
   var data = PROGRESS_DATA[profile];
   var container = document.getElementById('progress-' + (profile === 'linxiwu' ? 'lin' : 'luo'));
@@ -248,7 +218,6 @@ function renderProgress(profile) {
   });
 }
 
-// ===== 7. 渲染课表 =====
 function renderSchedule(profile) {
   var data = SCHEDULE_DATA[profile];
   var container = document.getElementById('schedule-grid-' + (profile === 'linxiwu' ? 'lin' : 'luo'));
@@ -258,7 +227,6 @@ function renderSchedule(profile) {
   var timeLabels = data.timeLabels;
   var days = data.days;
 
-  // 表头
   var headRow = document.createElement('div');
   headRow.className = 'cell head';
   headRow.textContent = '时间';
@@ -270,7 +238,6 @@ function renderSchedule(profile) {
     container.appendChild(cell);
   });
 
-  // 每个时间段一行
   timeLabels.forEach(function(tlabel, rowIdx) {
     var timeCell = document.createElement('div');
     timeCell.className = 'cell time-label';
@@ -297,7 +264,6 @@ function renderSchedule(profile) {
   });
 }
 
-// ===== 8. 课程详情弹窗 =====
 function openCoursePopup(course) {
   var overlay = document.getElementById('coursePopup');
   if (!overlay) return;
@@ -322,7 +288,6 @@ document.getElementById('coursePopup').addEventListener('click', function(e) {
   if (e.target === this) closeCoursePopup();
 });
 
-// ===== 9. 渲染修习日志 =====
 function renderTimeline(profile) {
   var data = TIMELINE_DATA[profile];
   var container = document.getElementById('timeline-' + (profile === 'linxiwu' ? 'lin' : 'luo'));
@@ -347,7 +312,6 @@ function renderTimeline(profile) {
   }, 300);
 }
 
-// ===== 10. 初始化 =====
 function initAll() {
   var profile = document.body.getAttribute('data-profile') || 'linxiwu';
   renderScores(profile);
