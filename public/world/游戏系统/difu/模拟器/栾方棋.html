@@ -91,7 +91,149 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 @keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0}}
 @media(max-width:720px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:180px}.radar-wrap svg{max-width:260px}.status-bars{gap:10px}.status-note{margin-top:10px;padding-top:8px}.status-footer{flex-direction:column;align-items:flex-start}}
 @media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:260px}}
+
+/* ====== 林淮 · 桌边小像 ====== */
+#desk-pet {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: default;
+  user-select: none;
+  animation: petFloat 3s ease-in-out infinite;
+  pointer-events: none;
+}
+#desk-pet > * { pointer-events: auto; }
+
+.bubble-wrap {
+  position: relative;
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  animation: bubbleIn 0.5s ease forwards 0.6s;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.bubble-wrap:hover { transform: scale(1.02); }
+.bubble-wrap:active { transform: scale(0.98); }
+
+.bubble {
+  min-width: 150px;
+  max-width: 280px;
+  padding: 14px 22px;
+  background: var(--bg-card);
+  border: 2px solid var(--profile-accent);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(139,26,26,0.04);
+  position: relative;
+  text-align: center;
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 16px solid var(--profile-accent);
+}
+.bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 13px solid var(--bg-card);
+  z-index: 1;
+}
+.bubble-text {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: opacity 0.25s;
+  font-family: var(--font-serif);
+}
+.bubble-hint {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  opacity: 0.6;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+.think-dots {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+  opacity: 0.55;
+}
+.think-dots span {
+  display: block;
+  border: 2px solid var(--profile-accent);
+  border-radius: 50%;
+  background: transparent;
+}
+.think-dots span:nth-child(1) { width: 14px; height: 14px; }
+.think-dots span:nth-child(2) { width: 10px; height: 10px; margin-top: 8px; }
+.think-dots span:nth-child(3) { width: 7px; height: 7px; margin-top: 14px; }
+.char-img {
+  width: 200px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
+  cursor: pointer;
+  transition: filter 0.3s, transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.char-img:hover {
+  filter: drop-shadow(0 8px 20px rgba(139,26,26,0.18));
+}
+.char-img.bounce-anim {
+  animation: petBounce 0.5s ease;
+}
+
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes petBounce {
+  0%   { transform: scale(1) rotate(0deg); }
+  25%  { transform: scale(0.92) rotate(-3deg) translateY(4px); }
+  55%  { transform: scale(1.06) rotate(2deg) translateY(-10px); }
+  80%  { transform: scale(0.98) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes bubbleIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes textFade {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.text-fade-in { animation: textFade 0.3s ease forwards; }
+
+@media (max-width: 640px) {
+  #desk-pet { bottom: 12px; right: 8px; }
+  .char-img { width: 150px; }
+  .bubble { padding: 10px 16px; min-width: 130px; max-width: 220px; }
+  .bubble-text { font-size: 0.9rem; }
+  .think-dots { gap: 6px; }
+  .think-dots span:nth-child(1) { width: 10px; height: 10px; }
+  .think-dots span:nth-child(2) { width: 7px; height: 7px; margin-top: 6px; }
+  .think-dots span:nth-child(3) { width: 5px; height: 5px; margin-top: 10px; }
+}
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="float-group"><a class="float-btn" href="./同僚.html"><span style="margin-right:2px;">←</span> 返回</a><button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button></div>
@@ -144,6 +286,20 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="card" data-corner="❀"><span class="corner-deco">❀</span><div class="card-title">档案司批注</div>
 <div class="archive-note">栾方棋在职状态正常，符修院教学进度稳步推进。魂体无异常，灵枢轮回木稳定。与林淮为共生契约关系，任务调度时需考虑双方同步性。白发为京城镇乱期间消耗性损伤，不影响战力。<br><br>—— 档案司 · 甲字记录员 · 霜月二十日</div></div>
 </div>
+
+<!-- 林淮 · 桌边小像 -->
+<div id="desk-pet">
+  <div class="bubble-wrap" id="bubbleWrap" title="点击换台词">
+    <div class="bubble">
+      <div class="bubble-text" id="bubbleText">……方棋？</div>
+      <div class="bubble-hint">◈ 点击切换</div>
+    </div>
+  </div>
+  <div class="think-dots">
+    <span></span><span></span><span></span>
+  </div>
+  <img src="linhuai.png" class="char-img" id="charImg" alt="林淮" title="点我一下">
+</div>
 <div id="petal-container"></div>
 <script>
 (function(){function drawRadar(svgId,stats,gridMax){const svg=document.getElementById(svgId);if(!svg)return;while(svg.firstChild)svg.removeChild(svg.firstChild);const cx=150,cy=150,maxR=130;const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);const labels=['魂力','体术','法术','防御','意志','敏捷'];const accent='var(--profile-accent)';[0.3,0.5,0.7,1.0].forEach(ratio=>{const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});angles.forEach(a=>{const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#666');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});const vertices=stats.map((val,i)=>{const ratio=val/gridMax;const r=ratio*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});const centerPts=angles.map(()=>cx+','+cy).join(' ');const targetPts=vertices.map(v=>v.x+','+v.y).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.2');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');poly.appendChild(anim);svg.appendChild(poly);vertices.forEach((v,i)=>{const a=angles[i];const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);const vOff=18;const vx=vOff*Math.sin(a);const vy=-vOff*Math.cos(a);const vt=document.createElementNS('http://www.w3.org/2000/svg','text');let tx,ty,anchor;if(i===0){tx=v.x+28;ty=v.y+18;anchor='start';}else{tx=v.x+vx;ty=v.y+vy;anchor='middle';}vt.setAttribute('x',tx);vt.setAttribute('y',ty);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor',anchor);vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);});const labelOff=maxR+22;labels.forEach((label,i)=>{const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});}
@@ -155,6 +311,56 @@ document.getElementById('themeBtn')?.addEventListener('click',function(){const h
 (function(){const chars=['❀','✧',];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 console.log('🌙 归终殿 · 栾方棋档案 v5.0 已加载');
 })();
+
+
+// ====== 林淮 · 桌边小像 ======
+(function(){
+  const lines = [
+    "……方棋？",
+    "点苍阁的卷宗，我替你批了一半。",
+    "共生契约既在，你我便同生共死。",
+    "京城的伤……早就不疼了。",
+    "符箓用完了？我这边还有。",
+    "别总熬夜画符，伤身。",
+    "归终殿的月色，还是老样子。",
+    "有事唤我，我一直在。",
+    "符修院那群孩子，倒是挺吵的。",
+    "今日空闲，要出去走走吗？"
+  ];
+  let idx = 0;
+  const bubbleWrap = document.getElementById('bubbleWrap');
+  const bubbleText = document.getElementById('bubbleText');
+  const charImg = document.getElementById('charImg');
+  if (!bubbleWrap || !charImg) return;
+
+  bubbleWrap.addEventListener('click', function(e) {
+    e.stopPropagation();
+    idx = (idx + 1) % lines.length;
+    bubbleText.style.opacity = '0';
+    setTimeout(() => {
+      bubbleText.textContent = lines[idx];
+      bubbleText.classList.remove('text-fade-in');
+      void bubbleText.offsetWidth;
+      bubbleText.classList.add('text-fade-in');
+      bubbleText.style.opacity = '1';
+    }, 220);
+  });
+
+  charImg.addEventListener('click', function(e) {
+    e.stopPropagation();
+    charImg.classList.remove('bounce-anim');
+    void charImg.offsetWidth;
+    charImg.classList.add('bounce-anim');
+    setTimeout(() => charImg.classList.remove('bounce-anim'), 500);
+  });
+
+  setInterval(() => {
+    if (Math.random() > 0.6 && bubbleWrap) bubbleWrap.click();
+  }, 20000);
+
+  console.log('🌙 林淮 · 桌边小像 已加载');
+})();
+
 </script>
 </body>
 </html>
