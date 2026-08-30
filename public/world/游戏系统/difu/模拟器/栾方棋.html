@@ -92,145 +92,59 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 @media(max-width:720px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:180px}.radar-wrap svg{max-width:260px}.status-bars{gap:10px}.status-note{margin-top:10px;padding-top:8px}.status-footer{flex-direction:column;align-items:flex-start}}
 @media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:260px}}
 
-/* ====== 林淮 · 桌边小像 ====== */
+/* ====== 林淮 · 桌边小像 v2 ====== */
 #desk-pet {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;
+  right: 20px;
   z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: default;
+  width: 260px;
+  cursor: pointer;
   user-select: none;
-  animation: petFloat 3s ease-in-out infinite;
-  pointer-events: none;
-}
-#desk-pet > * { pointer-events: auto; }
-
-.bubble-wrap {
-  position: relative;
-  margin-bottom: 10px;
-  opacity: 0;
-  transform: translateY(8px) scale(0.95);
-  animation: bubbleIn 0.5s ease forwards 0.6s;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.bubble-wrap:hover { transform: scale(1.02); }
-.bubble-wrap:active { transform: scale(0.98); }
-
-.bubble {
-  min-width: 150px;
-  max-width: 280px;
-  padding: 14px 22px;
-  background: var(--bg-card);
-  border: 2px solid var(--profile-accent);
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(139,26,26,0.04);
-  position: relative;
-  text-align: center;
-}
-.bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 16px solid var(--profile-accent);
-}
-.bubble::before {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 13px solid var(--bg-card);
-  z-index: 1;
-}
-.bubble-text {
-  font-size: 1rem;
-  color: var(--text-primary);
-  line-height: 1.5;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: opacity 0.25s;
-  font-family: var(--font-serif);
-}
-.bubble-hint {
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  margin-top: 6px;
-  opacity: 0.6;
-  font-family: var(--font-mono);
-  letter-spacing: 0.5px;
-}
-.think-dots {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 6px;
-  opacity: 0.55;
-}
-.think-dots span {
-  display: block;
-  border: 2px solid var(--profile-accent);
-  border-radius: 50%;
-  background: transparent;
-}
-.think-dots span:nth-child(1) { width: 14px; height: 14px; }
-.think-dots span:nth-child(2) { width: 10px; height: 10px; margin-top: 8px; }
-.think-dots span:nth-child(3) { width: 7px; height: 7px; margin-top: 14px; }
-.char-img {
-  width: 200px;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.12));
-  cursor: pointer;
-  transition: filter 0.3s, transform 0.2s;
+  transform-origin: bottom center;
   -webkit-tap-highlight-color: transparent;
 }
-.char-img:hover {
-  filter: drop-shadow(0 8px 20px rgba(139,26,26,0.18));
+#desk-pet .char-img {
+  width: 100%;
+  display: block;
+  pointer-events: none;
 }
-.char-img.bounce-anim {
-  animation: petBounce 0.5s ease;
+#desk-pet .bubble-text-wrap {
+  position: absolute;
+  left: 8%;
+  top: 7%;
+  width: 64%;
+  height: 28%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+  pointer-events: auto;
 }
-
-@keyframes petFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+#desk-pet .bubble-text {
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  word-break: break-word;
 }
-@keyframes petBounce {
-  0%   { transform: scale(1) rotate(0deg); }
-  25%  { transform: scale(0.92) rotate(-3deg) translateY(4px); }
-  55%  { transform: scale(1.06) rotate(2deg) translateY(-10px); }
-  80%  { transform: scale(0.98) rotate(-1deg); }
-  100% { transform: scale(1) rotate(0deg); }
+#desk-pet.q-pop {
+  animation: qPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-@keyframes bubbleIn {
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes qPop {
+  0%   { transform: scale(1, 1) translateY(0); }
+  18%  { transform: scale(0.96, 0.94) translateY(4px); }
+  38%  { transform: scale(1.04, 1.06) translateY(-8px); }
+  58%  { transform: scale(0.97, 0.96) translateY(2px); }
+  78%  { transform: scale(1.02, 1.03) translateY(-3px); }
+  100% { transform: scale(1, 1) translateY(0); }
 }
-@keyframes textFade {
-  0% { opacity: 0; transform: translateY(4px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.text-fade-in { animation: textFade 0.3s ease forwards; }
-
 @media (max-width: 640px) {
-  #desk-pet { bottom: 12px; right: 8px; }
-  .char-img { width: 150px; }
-  .bubble { padding: 10px 16px; min-width: 130px; max-width: 220px; }
-  .bubble-text { font-size: 0.9rem; }
-  .think-dots { gap: 6px; }
-  .think-dots span:nth-child(1) { width: 10px; height: 10px; }
-  .think-dots span:nth-child(2) { width: 7px; height: 7px; margin-top: 6px; }
-  .think-dots span:nth-child(3) { width: 5px; height: 5px; margin-top: 10px; }
+  #desk-pet { width: 200px; bottom: 12px; right: 12px; }
+  #desk-pet .bubble-text { font-size: 0.78rem; }
 }
 </style>
 <base target="_blank">
@@ -287,18 +201,12 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="archive-note">栾方棋在职状态正常，符修院教学进度稳步推进。魂体无异常，灵枢轮回木稳定。与林淮为共生契约关系，任务调度时需考虑双方同步性。白发为京城镇乱期间消耗性损伤，不影响战力。<br><br>—— 档案司 · 甲字记录员 · 霜月二十日</div></div>
 </div>
 
-<!-- 林淮 · 桌边小像 -->
+<!-- 林淮 · 桌边小像 v2 -->
 <div id="desk-pet">
-  <div class="bubble-wrap" id="bubbleWrap" title="点击换台词">
-    <div class="bubble">
-      <div class="bubble-text" id="bubbleText">……方棋？</div>
-      <div class="bubble-hint">◈ 点击切换</div>
-    </div>
+  <div class="bubble-text-wrap" id="bubbleWrap" title="点击换台词">
+    <div class="bubble-text" id="bubbleText">……方棋？</div>
   </div>
-  <div class="think-dots">
-    <span></span><span></span><span></span>
-  </div>
-  <img src="linhuai.png" class="char-img" id="charImg" alt="林淮" title="点我一下">
+  <img src="栾方棋桌宠.png" class="char-img" alt="林淮">
 </div>
 <div id="petal-container"></div>
 <script>
@@ -313,7 +221,7 @@ console.log('🌙 归终殿 · 栾方棋档案 v5.0 已加载');
 })();
 
 
-// ====== 林淮 · 桌边小像 ======
+// ====== 林淮 · 桌边小像 v2 ======
 (function(){
   const lines = [
     "……方棋？",
@@ -328,37 +236,26 @@ console.log('🌙 归终殿 · 栾方棋档案 v5.0 已加载');
     "今日空闲，要出去走走吗？"
   ];
   let idx = 0;
+  const pet = document.getElementById('desk-pet');
   const bubbleWrap = document.getElementById('bubbleWrap');
   const bubbleText = document.getElementById('bubbleText');
-  const charImg = document.getElementById('charImg');
-  if (!bubbleWrap || !charImg) return;
+  if (!pet || !bubbleWrap) return;
 
-  bubbleWrap.addEventListener('click', function(e) {
-    e.stopPropagation();
+  // 点击气泡：硬切下一句（事件冒泡到容器触发弹跳）
+  bubbleWrap.addEventListener('click', function() {
     idx = (idx + 1) % lines.length;
-    bubbleText.style.opacity = '0';
-    setTimeout(() => {
-      bubbleText.textContent = lines[idx];
-      bubbleText.classList.remove('text-fade-in');
-      void bubbleText.offsetWidth;
-      bubbleText.classList.add('text-fade-in');
-      bubbleText.style.opacity = '1';
-    }, 220);
+    bubbleText.textContent = lines[idx];
   });
 
-  charImg.addEventListener('click', function(e) {
-    e.stopPropagation();
-    charImg.classList.remove('bounce-anim');
-    void charImg.offsetWidth;
-    charImg.classList.add('bounce-anim');
-    setTimeout(() => charImg.classList.remove('bounce-anim'), 500);
+  // 点击整体：Q弹（角色+气泡+文字一体）
+  pet.addEventListener('click', function() {
+    pet.classList.remove('q-pop');
+    void pet.offsetWidth;
+    pet.classList.add('q-pop');
+    setTimeout(() => pet.classList.remove('q-pop'), 400);
   });
 
-  setInterval(() => {
-    if (Math.random() > 0.6 && bubbleWrap) bubbleWrap.click();
-  }, 20000);
-
-  console.log('🌙 林淮 · 桌边小像 已加载');
+  console.log('🌙 林淮 · 桌边小像 v2 已加载');
 })();
 
 </script>
