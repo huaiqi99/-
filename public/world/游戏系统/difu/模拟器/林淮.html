@@ -17,10 +17,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .top-header .profile-name{font-size:0.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:0.5px;margin-left:2px}
 .top-header .profile-name span{color:var(--profile-accent);font-weight:600}
 .card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition),transform 0.25s ease;animation:cardIn 0.45s ease forwards;line-height:1.6}
-/* 第一张卡用渐变背景，和栾方棋一样 */
 .card-grad{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%)}
-/* 所有卡片的 ::before 伪元素全部移除，跟栾方棋的效果一样 */
-.card::before{display:none}
 @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;transform-style:flat;-webkit-transform-style:flat}
 .card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;pointer-events:none;transform-style:flat;-webkit-transform-style:flat}
@@ -243,8 +240,12 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 function drawRadar(svgId,stats,gridMax){const svg=document.getElementById(svgId);if(!svg)return;while(svg.firstChild)svg.removeChild(svg.firstChild);const cx=150,cy=150,maxR=130;const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);const labels=['魂力','体术','法术','防御','意志','敏捷'];const accent='var(--profile-accent)';[0.3,0.5,0.7,1.0].forEach(ratio=>{const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});angles.forEach(a=>{const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#666');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});const vertices=stats.map((val,i)=>{const ratio=val/gridMax;const r=ratio*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});const centerPts=angles.map(()=>cx+','+cy).join(' ');const targetPts=vertices.map(v=>v.x+','+v.y).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.2');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');poly.appendChild(anim);svg.appendChild(poly);
 vertices.forEach((v,i)=>{const a=angles[i];const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);
 const vOff=18;let vx=vOff*Math.sin(a);let vy=-vOff*Math.cos(a);let tx,ty,anchor;
-if(i===1){const labelOff2=maxR+22;const lx=cx+labelOff2*Math.sin(a);const ly=cy-labelOff2*Math.cos(a);tx=lx;ty=ly+20;anchor='middle';}
-else if(i===0){tx=v.x+32;ty=v.y+0;anchor='start';}
+if(i===1){
+  const labelOff2=maxR+22;
+  const lx=cx+labelOff2*Math.sin(a);
+  const ly=cy-labelOff2*Math.cos(a);
+  tx=lx+15; ty=ly+22; anchor='middle';
+}else if(i===0){tx=v.x+32;ty=v.y+0;anchor='start';}
 else{tx=v.x+vx;ty=v.y+vy;anchor='middle';}
 const vt=document.createElementNS('http://www.w3.org/2000/svg','text');vt.setAttribute('x',tx);vt.setAttribute('y',ty);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor',anchor);vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);});
 const labelOff=maxR+22;labels.forEach((label,i)=>{const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});}
@@ -289,14 +290,15 @@ if (themeBtn) {
   var lines = [
     "……嗯。",
     "方棋在哪儿？",
-    "你说，我听。",
+    "……",
     "走丢了。",
-    "我会找到你。",
-    "早点回来。",
-    "……没事。",
-    "回去吧。",
-    "别走太远。",
-    "放心。"
+    "我没有一拳打爆金鸡山。",
+    "那是拿枪劈开的。",
+    "……什么叫都差不多。",
+    "你开心就好。",
+    "搞么子。",
+    "别找我。",
+    "告诉罗修我请假了。"
   ];
   var idx = 0;
   var pet = document.getElementById('desk-pet');
