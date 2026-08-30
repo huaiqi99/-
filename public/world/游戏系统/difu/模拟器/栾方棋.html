@@ -92,11 +92,11 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 @media(max-width:720px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:180px}.radar-wrap svg{max-width:260px}.status-bars{gap:10px}.status-note{margin-top:10px;padding-top:8px}.status-footer{flex-direction:column;align-items:flex-start}}
 @media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:260px}}
 
-/* ====== 林淮 · 桌边小像 v2 ====== */
+/* ====== 林淮 · 桌边小像 ====== */
 #desk-pet {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: -2px;
+  right: 12px;
   z-index: 9999;
   width: 260px;
   cursor: pointer;
@@ -112,15 +112,15 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 #desk-pet .bubble-text-wrap {
   position: absolute;
   left: 8%;
-  top: 7%;
+  top: 10%;
   width: 64%;
-  height: 28%;
+  height: 26%;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   z-index: 2;
-  pointer-events: auto;
+  pointer-events: none;
 }
 #desk-pet .bubble-text {
   font-family: var(--font-serif);
@@ -131,19 +131,16 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   letter-spacing: 0.5px;
   word-break: break-word;
 }
-#desk-pet.q-pop {
-  animation: qPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+#desk-pet.q-squash {
+  animation: qSquash 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
-@keyframes qPop {
+@keyframes qSquash {
   0%   { transform: scale(1, 1) translateY(0); }
-  18%  { transform: scale(0.96, 0.94) translateY(4px); }
-  38%  { transform: scale(1.04, 1.06) translateY(-8px); }
-  58%  { transform: scale(0.97, 0.96) translateY(2px); }
-  78%  { transform: scale(1.02, 1.03) translateY(-3px); }
+  30%  { transform: scale(0.96, 0.90) translateY(3px); }
   100% { transform: scale(1, 1) translateY(0); }
 }
 @media (max-width: 640px) {
-  #desk-pet { width: 200px; bottom: 12px; right: 12px; }
+  #desk-pet { width: 200px; right: 6px; bottom: -2px; }
   #desk-pet .bubble-text { font-size: 0.78rem; }
 }
 </style>
@@ -201,12 +198,12 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="archive-note">栾方棋在职状态正常，符修院教学进度稳步推进。魂体无异常，灵枢轮回木稳定。与林淮为共生契约关系，任务调度时需考虑双方同步性。白发为京城镇乱期间消耗性损伤，不影响战力。<br><br>—— 档案司 · 甲字记录员 · 霜月二十日</div></div>
 </div>
 
-<!-- 林淮 · 桌边小像 v2 -->
+<!-- 林淮 · 桌边小像 -->
 <div id="desk-pet">
-  <div class="bubble-text-wrap" id="bubbleWrap" title="点击换台词">
+  <div class="bubble-text-wrap">
     <div class="bubble-text" id="bubbleText">……方棋？</div>
   </div>
-  <img src="栾方棋桌宠.png" class="char-img" alt="林淮">
+  <img src="linhuai_v2.png" class="char-img" alt="林淮">
 </div>
 <div id="petal-container"></div>
 <script>
@@ -221,7 +218,7 @@ console.log('🌙 归终殿 · 栾方棋档案 v5.0 已加载');
 })();
 
 
-// ====== 林淮 · 桌边小像 v2 ======
+// ====== 林淮 · 桌边小像 ======
 (function(){
   const lines = [
     "……方棋？",
@@ -237,25 +234,19 @@ console.log('🌙 归终殿 · 栾方棋档案 v5.0 已加载');
   ];
   let idx = 0;
   const pet = document.getElementById('desk-pet');
-  const bubbleWrap = document.getElementById('bubbleWrap');
   const bubbleText = document.getElementById('bubbleText');
-  if (!pet || !bubbleWrap) return;
+  if (!pet) return;
 
-  // 点击气泡：硬切下一句（事件冒泡到容器触发弹跳）
-  bubbleWrap.addEventListener('click', function() {
+  pet.addEventListener('click', function() {
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
-  });
-
-  // 点击整体：Q弹（角色+气泡+文字一体）
-  pet.addEventListener('click', function() {
-    pet.classList.remove('q-pop');
+    pet.classList.remove('q-squash');
     void pet.offsetWidth;
-    pet.classList.add('q-pop');
-    setTimeout(() => pet.classList.remove('q-pop'), 400);
+    pet.classList.add('q-squash');
+    setTimeout(() => pet.classList.remove('q-squash'), 350);
   });
 
-  console.log('🌙 林淮 · 桌边小像 v2 已加载');
+  console.log('🌙 林淮 · 桌边小像 已加载');
 })();
 
 </script>
