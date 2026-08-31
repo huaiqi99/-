@@ -216,14 +216,14 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   <div class="bubble-text-wrap">
     <div class="bubble-text" id="bubbleText">……烦死了。</div>
   </div>
-  <img src="魏元璟桌宠.jpg" class="char-img" alt="魏元璟">
+  <img src="魏元璟桌宠.png" class="char-img" alt="魏元璟">
 </div>
 <div id="petal-container"></div>
 
 <script>
 (function(){
 
-// ====== 主题初始化（读取 localStorage） ======
+// ====== 主题初始化 ======
 (function initTheme() {
   try {
     var raw = localStorage.getItem('theme');
@@ -241,16 +241,16 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
 // ====== 雷达图 ======
 function drawRadar(svgId,stats,gridMax){const svg=document.getElementById(svgId);if(!svg)return;while(svg.firstChild)svg.removeChild(svg.firstChild);const cx=150,cy=150,maxR=130;const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);const labels=['魂力','体术','法术','防御','意志','敏捷'];const accent='var(--profile-accent)';[0.3,0.5,0.7,1.0].forEach(ratio=>{const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});angles.forEach(a=>{const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#666');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});const vertices=stats.map((val,i)=>{const ratio=val/gridMax;const r=ratio*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});const centerPts=angles.map(()=>cx+','+cy).join(' ');const targetPts=vertices.map(v=>v.x+','+v.y).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.2');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');poly.appendChild(anim);svg.appendChild(poly);vertices.forEach((v,i)=>{const a=angles[i];const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);const vt=document.createElementNS('http://www.w3.org/2000/svg','text');let tx,ty,anchor;if(i===0){tx=v.x;ty=v.y-20;anchor='middle';}else if(i===1){tx=v.x+14;ty=v.y+16;anchor='start';}else if(i===5){tx=v.x-18;ty=v.y+12;anchor='end';}else{const vOff=18;const vx=vOff*Math.sin(a);const vy=-vOff*Math.cos(a);tx=v.x+vx;ty=v.y+vy;anchor='middle';}vt.setAttribute('x',tx);vt.setAttribute('y',ty);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor',anchor);vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);});const labelOff=maxR+22;labels.forEach((label,i)=>{const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});}
-const weiStats=[782,1073,812,698,893,962];drawRadar('radar-svg-wei',weiStats,1000);
+var weiStats=[782,1073,812,698,893,962];drawRadar('radar-svg-wei',weiStats,1000);
 
 // ====== 进度条动画 ======
-document.querySelectorAll('.st-bar-fill').forEach(function(bar){const target=parseFloat(bar.dataset.target);if(!isNaN(target)){setTimeout(function(){bar.style.width=target+'%';},300);}});
+document.querySelectorAll('.st-bar-fill').forEach(function(bar){var target=parseFloat(bar.dataset.target);if(!isNaN(target)){setTimeout(function(){bar.style.width=target+'%';},300);}});
 
 // ====== 时间轴渐入 ======
 function revealTimeline(){document.querySelectorAll('.timeline-item:not(.visible)').forEach(function(item){if(item.getBoundingClientRect().top<window.innerHeight*0.85){item.classList.add('visible');}});}
 setTimeout(revealTimeline,400);window.addEventListener('scroll',revealTimeline);
 
-// ====== 主题切换按钮 ======
+// ====== 主题切换 ======
 var themeBtn = document.getElementById('themeBtn');
 if (themeBtn) {
   var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -275,9 +275,9 @@ if (themeBtn) {
 }
 
 // ====== 花瓣特效 ======
-(function(){const chars=['◈','❖'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
+(function(){var chars=['◈','❖'];var container=document.getElementById('petal-container');if(!container)return;for(var i=0;i<14;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ====== 桌边小像（含音效） ======
+// ====== 桌边小像（按下→松开→切换，带音效） ======
 (function(){
   var lines = [
     "……烦死了。",
@@ -296,33 +296,39 @@ if (themeBtn) {
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  // 预加载音效（防止首次点击延迟）
-  var audio1 = new Audio('Ya1.mp3');
-  var audio2 = new Audio('Ya2.mp3');
-  audio1.preload = 'auto';
-  audio2.preload = 'auto';
-  // 音量调到最大
-  audio1.volume = 1.0;
-  audio2.volume = 1.0;
+  // 预加载音效
+  var audioDown = new Audio('Ya1.mp3');
+  var audioUp = new Audio('Ya2.mp3');
+  audioDown.preload = 'auto';
+  audioUp.preload = 'auto';
+  audioDown.volume = 1.0;
+  audioUp.volume = 1.0;
 
-  // 定义点击处理函数
-  function handleTap(e) {
-    // 同时播放两个音效（声音叠加，听起来更大）
-    audio1.currentTime = 0;
-    audio2.currentTime = 0;
-    Promise.all([
-      audio1.play().catch(function(err) {
-        console.log('Ya1 播放被阻止:', err);
-      }),
-      audio2.play().catch(function(err) {
-        console.log('Ya2 播放被阻止:', err);
-      })
-    ]);
+  // 记录是否正在按下状态（防止鼠标/触摸冲突）
+  var isDown = false;
 
+  // ---- 按下时播放 Ya1 ----
+  function onPress(e) {
+    if (isDown) return;
+    isDown = true;
+    audioDown.currentTime = 0;
+    audioDown.play().catch(function(err) {
+      console.log('Ya1 播放被阻止:', err);
+    });
+  }
+
+  // ---- 松开时播放 Ya2 + 切换文字 + 动画 ----
+  function onRelease(e) {
+    if (!isDown) return;
+    isDown = false;
+    // 播放松开音效
+    audioUp.currentTime = 0;
+    audioUp.play().catch(function(err) {
+      console.log('Ya2 播放被阻止:', err);
+    });
     // 切换气泡文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
-
     // 挤压动画
     pet.classList.remove('q-squash');
     void pet.offsetWidth;
@@ -330,16 +336,27 @@ if (themeBtn) {
     setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
   }
 
-  // 电脑端：click 事件
-  pet.addEventListener('click', handleTap);
-  // 手机端：touchstart 事件（防止点击穿透延迟）
+  // ---- 鼠标事件 ----
+  pet.addEventListener('mousedown', onPress);
+  pet.addEventListener('mouseup', onRelease);
+  pet.addEventListener('mouseleave', function(e) {
+    // 鼠标移出时如果还按着，视为松开（防止卡住）
+    if (isDown) {
+      onRelease(e);
+    }
+  });
+
+  // ---- 触摸事件（手机） ----
   pet.addEventListener('touchstart', function(e) {
-    handleTap(e);
-    // 阻止触发后续的 click 重复执行
+    onPress(e);
+    e.preventDefault(); // 防止触发鼠标事件
+  }, { passive: false });
+  pet.addEventListener('touchend', function(e) {
+    onRelease(e);
     e.preventDefault();
   }, { passive: false });
 
-  // ====== 隐藏按钮 ======
+  // ---- 隐藏按钮 ----
   var hideBtn = document.getElementById('hidePetBtn');
   if (hideBtn) {
     hideBtn.addEventListener('click', function() {
@@ -355,7 +372,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('◈ 魏元璟 · 桌边小像 已加载（含音效）');
+  console.log('◈ 魏元璟 · 桌边小像 已加载（按键音）');
 })();
 
 console.log('◈ 归终殿 · 魏元璟档案 v1.1 已加载');
