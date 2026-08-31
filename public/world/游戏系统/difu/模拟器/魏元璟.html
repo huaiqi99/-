@@ -216,7 +216,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   <div class="bubble-text-wrap">
     <div class="bubble-text" id="bubbleText">……烦死了。</div>
   </div>
-  <img src="魏元璟桌宠.png" class="char-img" alt="魏元璟">
+  <img src="魏元璟桌宠.jpg" class="char-img" alt="魏元璟">
 </div>
 <div id="petal-container"></div>
 
@@ -233,7 +233,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       if (parsed && parsed.value === 'dark') {
         html.setAttribute('data-theme', 'dark');
       } else if (parsed && parsed.value === 'light') {
-        html.removeAttribute('data-theme','light');
+        html.removeAttribute('data-theme');
       }
     }
   } catch(e) {}
@@ -277,34 +277,69 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){const chars=['◈','❖'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ====== 桌边小像 ======
+// ====== 桌边小像（含音效） ======
 (function(){
   var lines = [
-    "……好困好困。",
+    "……烦死了。",
     "罗修人呢？",
-    "觉得我的发簪好看，想看看？",
-    "只给你看一下哦。",
-    "……收魂的时候会不会不方便？",
-    "收魂的时候当然不戴这么长的。",
-    "悄悄告诉你，",
-    "这簪子是我从人间的皇宫带回来的。",
-    "什么时候的事？",
-    "当然不能告诉你。"
+    "贡酒……还行吧。",
+    "本宫累了。",
+    "你再说一遍？",
+    "……知道了。",
+    "哼。",
+    "孤可不是好惹的。",
+    "欠我的酒什么时候还？",
+    "……算了。"
   ];
   var idx = 0;
   var pet = document.getElementById('desk-pet');
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  pet.addEventListener('click', function() {
+  // 预加载音效（防止首次点击延迟）
+  var audio1 = new Audio('Ya1.mp3');
+  var audio2 = new Audio('Ya2.mp3');
+  audio1.preload = 'auto';
+  audio2.preload = 'auto';
+  // 音量调到最大
+  audio1.volume = 1.0;
+  audio2.volume = 1.0;
+
+  // 定义点击处理函数
+  function handleTap(e) {
+    // 同时播放两个音效（声音叠加，听起来更大）
+    audio1.currentTime = 0;
+    audio2.currentTime = 0;
+    Promise.all([
+      audio1.play().catch(function(err) {
+        console.log('Ya1 播放被阻止:', err);
+      }),
+      audio2.play().catch(function(err) {
+        console.log('Ya2 播放被阻止:', err);
+      })
+    ]);
+
+    // 切换气泡文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
+
+    // 挤压动画
     pet.classList.remove('q-squash');
     void pet.offsetWidth;
     pet.classList.add('q-squash');
     setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
-  });
+  }
 
+  // 电脑端：click 事件
+  pet.addEventListener('click', handleTap);
+  // 手机端：touchstart 事件（防止点击穿透延迟）
+  pet.addEventListener('touchstart', function(e) {
+    handleTap(e);
+    // 阻止触发后续的 click 重复执行
+    e.preventDefault();
+  }, { passive: false });
+
+  // ====== 隐藏按钮 ======
   var hideBtn = document.getElementById('hidePetBtn');
   if (hideBtn) {
     hideBtn.addEventListener('click', function() {
@@ -320,7 +355,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('◈ 魏元璟 · 桌边小像 已加载');
+  console.log('◈ 魏元璟 · 桌边小像 已加载（含音效）');
 })();
 
 console.log('◈ 归终殿 · 魏元璟档案 v1.1 已加载');
