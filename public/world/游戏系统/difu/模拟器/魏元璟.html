@@ -277,19 +277,19 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){var chars=['◈','❖'];var container=document.getElementById('petal-container');if(!container)return;for(var i=0;i<14;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ====== 桌边小像（按住→缩小+循环Ya1，松开→回弹+Ya2） ======
+// ====== 桌边小像（按下→松开→切换，带音效） ======
 (function(){
   var lines = [
-    "……烦死了。",
+    "……好困好困。",
     "罗修人呢？",
-    "贡酒……还行吧。",
-    "本宫累了。",
-    "你再说一遍？",
-    "……知道了。",
-    "哼。",
-    "孤可不是好惹的。",
-    "欠我的酒什么时候还？",
-    "……算了。"
+    "觉得我的发簪好看，想看看？",
+    "只给你看一下哦。",
+    "……收魂的时候会不会不方便？",
+    "收魂的时候当然不戴这么长的。",
+    "悄悄告诉你，",
+    "这簪子是我从人间的皇宫带回来的。",
+    "什么时候的事？",
+    "当然不能告诉你。"
   ];
   var idx = 0;
   var pet = document.getElementById('desk-pet');
@@ -304,38 +304,29 @@ if (themeBtn) {
   audioDown.volume = 1.0;
   audioUp.volume = 1.0;
 
+  // 记录是否正在按下状态（防止鼠标/触摸冲突）
   var isDown = false;
 
+  // ---- 按下时播放 Ya1 ----
   function onPress(e) {
     if (isDown) return;
     isDown = true;
-    // 缩小
-    pet.style.transform = 'scale(0.92)';
-    pet.style.transition = 'transform 0.08s ease';
-    // 循环播放 Ya1
-    audioDown.loop = true;
     audioDown.currentTime = 0;
     audioDown.play().catch(function(err) {
-      console.log('Ya1 循环播放被阻止:', err);
+      console.log('Ya1 播放被阻止:', err);
     });
   }
 
+  // ---- 松开时播放 Ya2 + 切换文字 + 动画 ----
   function onRelease(e) {
     if (!isDown) return;
     isDown = false;
-    // 停止 Ya1
-    audioDown.loop = false;
-    audioDown.pause();
-    audioDown.currentTime = 0;
-    // 播放 Ya2
+    // 播放松开音效
     audioUp.currentTime = 0;
     audioUp.play().catch(function(err) {
       console.log('Ya2 播放被阻止:', err);
     });
-    // 回弹
-    pet.style.transform = 'scale(1)';
-    pet.style.transition = 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-    // 切换气泡
+    // 切换气泡文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
     // 挤压动画
@@ -345,27 +336,27 @@ if (themeBtn) {
     setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
   }
 
-  function onCancel(e) {
-    if (isDown) onRelease(e);
-  }
-
-  // 鼠标
+  // ---- 鼠标事件 ----
   pet.addEventListener('mousedown', onPress);
   pet.addEventListener('mouseup', onRelease);
-  pet.addEventListener('mouseleave', onCancel);
+  pet.addEventListener('mouseleave', function(e) {
+    // 鼠标移出时如果还按着，视为松开（防止卡住）
+    if (isDown) {
+      onRelease(e);
+    }
+  });
 
-  // 触摸（手机）
+  // ---- 触摸事件（手机） ----
   pet.addEventListener('touchstart', function(e) {
     onPress(e);
-    e.preventDefault();
+    e.preventDefault(); // 防止触发鼠标事件
   }, { passive: false });
   pet.addEventListener('touchend', function(e) {
     onRelease(e);
     e.preventDefault();
   }, { passive: false });
-  pet.addEventListener('touchcancel', onCancel);
 
-  // 隐藏按钮
+  // ---- 隐藏按钮 ----
   var hideBtn = document.getElementById('hidePetBtn');
   if (hideBtn) {
     hideBtn.addEventListener('click', function() {
@@ -381,7 +372,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('◈ 魏元璟 · 桌边小像 已加载（按住循环音效）');
+  console.log('◈ 魏元璟 · 桌边小像 已加载（按键音）');
 })();
 
 console.log('◈ 归终殿 · 魏元璟档案 v1.1 已加载');

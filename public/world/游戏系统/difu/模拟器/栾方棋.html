@@ -295,14 +295,65 @@ if (themeBtn) {
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  pet.addEventListener('click', function() {
+  // 预加载音效
+  var audioDown = new Audio('Ya1.mp3');
+  var audioUp = new Audio('Ya2.mp3');
+  audioDown.preload = 'auto';
+  audioUp.preload = 'auto';
+  audioDown.volume = 1.0;
+  audioUp.volume = 1.0;
+
+  // 记录是否正在按下状态（防止鼠标/触摸冲突）
+  var isDown = false;
+
+  // ---- 按下时播放 Ya1 ----
+  function onPress(e) {
+    if (isDown) return;
+    isDown = true;
+    audioDown.currentTime = 0;
+    audioDown.play().catch(function(err) {
+      console.log('Ya1 播放被阻止:', err);
+    });
+  }
+
+  // ---- 松开时播放 Ya2 + 切换文字 + 动画 ----
+  function onRelease(e) {
+    if (!isDown) return;
+    isDown = false;
+    // 播放松开音效
+    audioUp.currentTime = 0;
+    audioUp.play().catch(function(err) {
+      console.log('Ya2 播放被阻止:', err);
+    });
+    // 切换气泡文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
+    // 挤压动画
     pet.classList.remove('q-squash');
     void pet.offsetWidth;
     pet.classList.add('q-squash');
     setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
+  }
+
+  // ---- 鼠标事件 ----
+  pet.addEventListener('mousedown', onPress);
+  pet.addEventListener('mouseup', onRelease);
+  pet.addEventListener('mouseleave', function(e) {
+    // 鼠标移出时如果还按着，视为松开（防止卡住）
+    if (isDown) {
+      onRelease(e);
+    }
   });
+
+  // ---- 触摸事件（手机） ----
+  pet.addEventListener('touchstart', function(e) {
+    onPress(e);
+    e.preventDefault(); // 防止触发鼠标事件
+  }, { passive: false });
+  pet.addEventListener('touchend', function(e) {
+    onRelease(e);
+    e.preventDefault();
+  }, { passive: false });
 
   // ====== 隐藏按钮 ======
   var hideBtn = document.getElementById('hidePetBtn');
