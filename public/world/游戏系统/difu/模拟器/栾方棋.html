@@ -230,7 +230,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       if (parsed && parsed.value === 'dark') {
         html.setAttribute('data-theme', 'dark');
       } else if (parsed && parsed.value === 'light') {
-        html.removeAttribute('data-theme');
+        html.removeAttribute('data-theme','light');
       }
     }
   } catch(e) {}
