@@ -19,18 +19,20 @@ GZD.init();
 	    if(pageTrack!==null&&pageTrack!==''){try{window.parent.GZD.Shell.requestTrack(parseInt(pageTrack,10)||0);}catch(e){}}
 	    // 隐藏内页自己的音乐按钮（壳左下已有，避免双按钮）
 	    var ib=document.getElementById('bgmBtn');if(ib)ib.style.display='none';
-	    // ★ 无缝的实现点：拦截站内链接 → 交给壳换 iframe，音乐所在的外壳不动
+        
+	    // ★ 拦截规则：殿内页面照旧无缝换页；指向模拟器外的链接 → 整个标签页跳出壳
 	    document.addEventListener('click',function(e){
 	      var a=e.target.closest?e.target.closest('a'):null;
 	      if(!a)return;
 	      var href=a.getAttribute('href')||'';
-	      if(!href||href.charAt(0)==='#'||/^(https?:|mailto:|tel:)/i.test(href))return; // 锚点/外链不拦
-          if(a.target&&a.target!=='_self')return; // 带 target 的链接不拦截，让浏览器原生跳转
+	      if(!href||href.charAt(0)==='#')return;              // 锚点不管
+	      if(a.target&&a.target!=='_self')return;              // 明确指定了目标的链接不管
+	      // 出殿：../、/、http 开头的链接 = 模拟器之外的世界 → 接管整个标签页，壳与音乐就此退出
+	      if(/^(\.\.[\/\\]|\/|https?:|mailto:|tel:)/i.test(href)){a.target='_top';return;}
 	      e.preventDefault();
 	      try{window.parent.GZD.Shell.load(href);}catch(err){}
 	    },true);
-	    return;
-	  }
+
 	  /* —— 单独打开（未经壳）→ 接续播放：同曲同进度，首次触摸响起 —— */
 	  var LIST=GZD.BGM_LIST,VOL=GZD.Storage.getSettings().bgmVolume||0.35,KEY='gzd_bgm';
 	  var st={on:true,index:0,times:{}};

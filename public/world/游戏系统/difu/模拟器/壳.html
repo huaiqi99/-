@@ -1,23 +1,34 @@
 	<!DOCTYPE html>
-	<html lang="zh-CN" data-theme="dark">
+	<html lang="zh-CN">
 	<head>
-    <script>
-	/* 防套娃：壳只能当最外层。若发现自己被装进了某个窗口，立即抢占整个页面 */
-	if(window.self!==window.top){try{top.location.replace(location.pathname+location.search);}catch(e){}}
-	</script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="theme-color" content="#1a1614">
 	<title>归终殿 · 弟子手册</title>
+	<script>
+	/* 防套娃保险丝：壳只能当最外层 */
+	if(window.self!==window.top){try{top.location.replace(location.pathname+location.search);}catch(e){}}
+	/* 主题先行：按用户的主题设置先上底色，日间模式进殿不再闪黑 */
+	try{
+	  var __t='dark',__r=localStorage.getItem('theme');
+	  if(__r){var __v=JSON.parse(__r).value;if(__v)__t=__v;}
+	  document.documentElement.setAttribute('data-theme',__t);
+	  var __m=document.querySelector('meta[name="theme-color"]');
+	  if(__m)__m.setAttribute('content',__t==='light'?'#f7f4ef':'#1a1614');
+	}catch(e){}
+	</script>
 	<style>
-	  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#1a1614}
+	  :root{--shell-bg:#1a1614}
+	  html[data-theme="light"]{--shell-bg:#f7f4ef}
+	  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--shell-bg)}
 	  .frame-wrap{position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
-	  #pageFrame{width:100%;height:100%;min-height:100%;border:0;display:block}
-	  /* 音乐坞：常驻左下角（内页浮动按钮在右上、桌宠在右下，互不遮挡） */
+	  #pageFrame{width:100%;height:100%;min-height:100%;border:0;display:block;background:var(--shell-bg)}
 	  .bgm-dock{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:9999;display:flex;gap:6px}
 	  .bgm-dock button{background:rgba(30,26,22,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
 	    border:1px solid rgba(200,180,160,.25);border-radius:24px;padding:7px 14px;color:#c8b8a0;
 	    font-size:.72rem;font-family:"Courier New",monospace;cursor:pointer;letter-spacing:.5px}
 	  .bgm-dock button:active{transform:scale(.96)}
+	  html[data-theme="light"] .bgm-dock button{background:rgba(255,255,255,.85);border-color:rgba(138,58,42,.25);color:#8a3a2a}
 	</style>
 	</head>
 	<body>
@@ -45,20 +56,19 @@
 	  fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur);audio.volume=from+(to-from)*k;
 	    if(k>=1){clearInterval(fadeT);if(done)done();}},40);}
 	function play(){var p=audio.play();
-	  if(p&&p.catch)p.catch(function(){        // 首次被自动播放策略拦 → 绑定壳上任意触摸即响
+	  if(p&&p.catch)p.catch(function(){
 	    if(bound)return;bound=true;
 	    var go=function(){audio.play().catch(function(){});fade(VOL,800);};
 	    document.addEventListener('touchstart',go,{once:true,passive:true});
 	    document.addEventListener('touchend',go,{once:true,passive:true});
 	    document.addEventListener('click',go,{once:true});
 	  });}
-	/* —— 对内页开放的接口 —— */
 	GZD.Shell={
-	  load:function(href){                     // 内页换页（BGM 不中断）
+	  load:function(href){
 	    frame.src=href;
-	    try{history.replaceState(null,'','#'+encodeURIComponent(href));}catch(e){}
+	    try{history.replaceState(null,'','#'+encodeURIComponent(href.replace(/^\.\//,'')));}catch(e){}
 	  },
-	  requestTrack:function(i){                // 内页请求换曲（data-bgm）
+	  requestTrack:function(i){
 	    i=((i%LIST.length)+LIST.length)%LIST.length;
 	    var same=(i===idx);idx=i;setSrc();updateBtn();save();
 	    if(want){play();fade(VOL,same?400:600);}
@@ -66,11 +76,33 @@
 	};
 	loadSt();setSrc();updateBtn();
 	if(want){play();fade(VOL,900);}
-	/* 从 hash 恢复上次的内页（刷新/收藏不丢） */
+	/* 从 #记号 恢复上次的内页（刷新/收藏不丢）；只认殿内页面 */
 	try{var h=decodeURIComponent(location.hash.slice(1));
-	  if(h&&/\.html?$/i.test(h))frame.src=h;}catch(e){}
-	/* 内页标题同步到标签页 */
-	frame.addEventListener('load',function(){try{document.title=frame.contentDocument.title;}catch(e){}});
+	  if(h&&!/^(\.\.[\/\\]|https?:|\/)/i.test(h)&&/\.html?$/i.test(h))frame.src='./'+h;}catch(e){}
+	/* 每次换页：同步主题（底色+手机边条颜色）和标签页标题 */
+	function syncThemeUI(){
+	  var light=document.documentElement.getAttribute('data-theme')==='light';
+	  var m=document.querySelector('meta[name="theme-color"]');
+	  if(m)m.setAttribute('content',light?'#f7f4ef':'#1a1614');
+	}
+	frame.addEventListener('load',function(){
+	  try{
+	    var raw=localStorage.getItem('theme');
+	    if(raw){var v=JSON.parse(raw).value;
+	      if(v&&GZD&&GZD.ThemeManager)GZD.ThemeManager.apply(v,false);}
+	  }catch(e){}
+	  syncThemeUI();
+	  try{document.title=frame.contentDocument.title;}catch(e){}
+	});
+	/* 内页切主题时，壳实时跟随 */
+	window.addEventListener('storage',function(e){
+	  if(e.key==='theme'){
+	    try{var v=JSON.parse(e.newValue).value;
+	      if(v&&GZD&&GZD.ThemeManager)GZD.ThemeManager.apply(v,false);
+	    }catch(err){}
+	    syncThemeUI();
+	  }
+	});
 	document.getElementById('bgmBtn').addEventListener('click',function(){
 	  want=!want;
 	  if(want){play();fade(VOL,500);}else{fade(0,350,function(){audio.pause();});}
