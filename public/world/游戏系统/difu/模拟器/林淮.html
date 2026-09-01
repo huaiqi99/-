@@ -287,132 +287,140 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ============================================================
-// ====== 桌边小像 · Web Audio 优先 + <audio> 回退 ======
-// ============================================================
-(function(){
-  var lines = [
-    "……嗯。",
-    "方棋在哪儿？",
-    "……",
-    "走丢了。",
-    "我没有一拳打爆金鸡山。",
-    "那是拿枪劈开的。",
-    "……什么叫都差不多。",
-    "你开心就好。",
-    "搞么子。",
-    "别找我。",
-    "告诉罗修我请假了。"
-  ];
-  var idx = 0;
-  var pet = document.getElementById('desk-pet');
-  var bubbleText = document.getElementById('bubbleText');
-  if (!pet) return;
-
-  // ---- 音频系统 ----
-  var audioCtx = null;
-  var audioBuffer = null;
-  var fallbackAudio = new Audio('音效.wav');
-  fallbackAudio.preload = 'auto';
-
-  // 使用 XMLHttpRequest 加载音频（兼容 file://）
-  function loadAudio() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '音效.wav', true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function() {
-      if (xhr.status === 200 || xhr.status === 0) {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        audioCtx.decodeAudioData(xhr.response, function(buffer) {
-          audioBuffer = buffer;
-          console.log('Web Audio 解码成功');
-        }, function(e) {
-          console.warn('解码失败，使用回退', e);
-        });
-      } else {
-        console.warn('加载失败，使用回退');
-      }
-    };
-    xhr.onerror = function() { console.warn('加载失败，使用回退'); };
-    xhr.send();
-  }
-
-  // 页面加载后立即预加载
-  loadAudio();
-
-  // ---- 播放函数：优先 Web Audio，失败则回退 ----
-  function playSound() {
-    // 1. 尝试 Web Audio
-    if (audioBuffer) {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      try {
-        var source = audioCtx.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(audioCtx.destination);
-        source.start(0);
-        return; // 成功播放，退出
-      } catch(e) {
-        console.warn('Web Audio 播放失败，回退', e);
-      }
-    }
-
-    // 2. 回退到 <audio>
-    fallbackAudio.currentTime = 0;
-    fallbackAudio.play().catch(function(err) {
-      console.warn('回退音频播放失败', err);
-    });
-  }
-
-  // ---- 核心交互 ----
-  function handleInteraction(e) {
-    if (e.cancelable) e.preventDefault();
-
-    // 切换文字
-    idx = (idx + 1) % lines.length;
-    bubbleText.textContent = lines[idx];
-
-    // 触发动画（双帧强制回流）
-    pet.classList.remove('q-squash');
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        pet.classList.add('q-squash');
-      });
-    });
-
-    // 播放声音
-    playSound();
-  }
-
-  // 事件绑定
-  pet.addEventListener('mousedown', handleInteraction);
-  pet.addEventListener('touchstart', handleInteraction, { passive: false });
-  pet.addEventListener('dragstart', function(e) { e.preventDefault(); });
-
-  // 隐藏按钮
-  var hideBtn = document.getElementById('hidePetBtn');
-  if (hideBtn) {
-    hideBtn.addEventListener('click', function() {
-      pet.classList.toggle('hidden');
-      var hideIcon = document.getElementById('hidePetIcon');
-      if (pet.classList.contains('hidden')) {
-        hideIcon.textContent = '✦';
-        this.innerHTML = '<span id="hidePetIcon">✦</span> 显示';
-      } else {
-        hideIcon.textContent = '✕';
-        this.innerHTML = '<span id="hidePetIcon">✕</span> 隐藏';
-      }
-    });
-  }
-
-  console.log('✧ 林淮 · 桌边小像 已加载（Web Audio 优先 + 回退）');
-})();
+	// ============================================================
+	// ====== 桌边小像 · 音频通道分流版 ======
+	// iOS/iPadOS：仅用 <audio>（媒体通道，不受静音开关影响）
+	// 其他平台：Web Audio 优先（低延迟）+ <audio> 回退
+	// ============================================================
+	(function(){
+	  var lines = [
+	    "……嗯。",
+	    "方棋在哪儿？",
+	    "……",
+	    "走丢了。",
+	    "我没有一拳打爆金鸡山。",
+	    "那是拿枪劈开的。",
+	    "……什么叫都差不多。",
+	    "你开心就好。",
+	    "搞么子。",
+	    "别找我。",
+	    "告诉罗修我请假了。"
+	  ];
+	  var idx = 0;
+	  var pet = document.getElementById('desk-pet');
+	  var bubbleText = document.getElementById('bubbleText');
+	  if (!pet) return;
+	  // ---- 平台检测：iPhone / iPad / iPadOS 13+（UA 伪装成 Mac 的 Safari）----
+	  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+	              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+	  // ---- 音频系统 ----
+	  var audioCtx = null;
+	  var audioBuffer = null;
+	  var fallbackAudio = new Audio('音效.wav');
+	  // iOS 靠它发声所以预载；其他平台仅作回退，preload 设 none 避免与 XHR 双重下载
+	  fallbackAudio.preload = isIOS ? 'auto' : 'none';
+	  // Web Audio 仅在非 iOS 平台加载
+	  // （iOS 上其输出会被静音开关切断，加载了也无意义，还多下载一份）
+	  function loadAudio() {
+	    if (isIOS) return;
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('GET', '音效.wav', true);
+	    xhr.responseType = 'arraybuffer';
+	    xhr.onload = function() {
+	      if (xhr.status === 200 || xhr.status === 0) {
+	        try {
+	          if (!audioCtx) {
+	            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	          }
+	          audioCtx.decodeAudioData(xhr.response, function(buffer) {
+	            audioBuffer = buffer;
+	          }, function(e) {
+	            console.warn('解码失败，将回退 <audio>', e);
+	            fallbackAudio.load(); // 预热回退通道
+	          });
+	        } catch(e) {
+	          console.warn('AudioContext 不可用，将回退 <audio>', e);
+	        }
+	      }
+	    };
+	    xhr.onerror = function() {};
+	    xhr.send();
+	  }
+	  loadAudio();
+	  // iOS 预热：iOS 不会真正执行页面加载时的预下载，
+	  // 首次任意触摸时触发 load()，可显著降低首次点击的出声延迟
+	  if (isIOS) {
+	    var warmup = function() { fallbackAudio.load(); };
+	    document.addEventListener('touchstart', warmup, { once: true, passive: true });
+	    document.addEventListener('click', warmup, { once: true });
+	  }
+	  // ---- <audio> 播放（媒体通道：不受物理静音开关影响）----
+	  function playFallback() {
+	    try { fallbackAudio.currentTime = 0; } catch(e) {}
+	    var p = fallbackAudio.play();
+	    if (p && p.catch) {
+	      p.catch(function(err) { console.warn('audio 播放失败', err); });
+	    }
+	  }
+	  // ---- 播放调度 ----
+	  function playSound() {
+	    // iOS：必须直接走 <audio>。
+	    // Safari 把 AudioContext 输出归入 ambient 音效通道，静音开关打开时无声，
+	    // 且 source.start() 不报错、JS 无法感知，无法事后回退——只能在此提前分流。
+	    if (isIOS) {
+	      playFallback();
+	      return;
+	    }
+	    // 其他平台：Web Audio 优先（低延迟、可叠加）
+	    if (audioBuffer) {
+	      if (!audioCtx) {
+	        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	      }
+	      if (audioCtx.state === 'suspended') {
+	        audioCtx.resume();
+	      }
+	      try {
+	        var source = audioCtx.createBufferSource();
+	        source.buffer = audioBuffer;
+	        source.connect(audioCtx.destination);
+	        source.start(0);
+	        return;
+	      } catch(e) {
+	        console.warn('Web Audio 播放失败，回退 <audio>', e);
+	      }
+	    }
+	    playFallback();
+	  }
+	  // ---- 核心交互 ----
+	  function handleInteraction(e) {
+	    if (e.cancelable) e.preventDefault();
+	    idx = (idx + 1) % lines.length;
+	    bubbleText.textContent = lines[idx];
+	    pet.classList.remove('q-squash');
+	    requestAnimationFrame(function() {
+	      requestAnimationFrame(function() {
+	        pet.classList.add('q-squash');
+	      });
+	    });
+	    playSound();
+	  }
+	  pet.addEventListener('mousedown', handleInteraction);
+	  pet.addEventListener('touchstart', handleInteraction, { passive: false });
+	  pet.addEventListener('dragstart', function(e) { e.preventDefault(); });
+	  // 隐藏按钮
+	  var hideBtn = document.getElementById('hidePetBtn');
+	  if (hideBtn) {
+	    hideBtn.addEventListener('click', function() {
+	      pet.classList.toggle('hidden');
+	      if (pet.classList.contains('hidden')) {
+	        this.innerHTML = '<span id="hidePetIcon">✦</span> 显示';
+	      } else {
+	        this.innerHTML = '<span id="hidePetIcon">✕</span> 隐藏';
+	      }
+	    });
+	  }
+	  console.log('✧ 林淮 · 桌边小像 已加载（iOS=<audio> / 其他=Web Audio）');
+	})();
 
 console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
 })();
