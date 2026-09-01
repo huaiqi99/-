@@ -428,6 +428,16 @@
         .sidebar-link .sidebar-link-icon {
             margin-right: 6px;
         }
+
+        	/* ===== BGM 控制按钮 ===== */
+        .float-btn.compact { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
+	    #bgmBtn #bgmLabel {
+	        max-width: 88px; overflow: hidden; text-overflow: ellipsis;
+	        white-space: nowrap; display: inline-block; vertical-align: bottom;
+	    }
+	    #bgmBtn.playing .icon { animation: bgmPulse 2.4s ease-in-out infinite; }
+	    @keyframes bgmPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.9); } }
+
     </style>
 
     <script>
@@ -938,6 +948,127 @@
             }
         }
 
+        	// ================= BGM 背景音乐 =================
+	const BGM_LIST = [
+	    { name: '曲目一', src: '口哨.mp3' },
+	    { name: '曲目二', src: 'bgm2.mp3' }
+	    // 想几首加几首；name 显示在按钮上，src 是同目录文件名
+	];
+	const BGM_KEY = 'bgmState';      // 记忆：开关 + 曲目 + 进度（跨页面共享）
+	const BGM_VOLUME = 0.45;         // 音量 0~1
+	let bgm = null, bgmIndex = 0, bgmWantPlay = false,
+	    bgmGestureBound = false, bgmFadeTimer = null;
+	function bgmSave() {
+	    try {
+	        localStorage.setItem(BGM_KEY, JSON.stringify({
+	            on: bgmWantPlay, index: bgmIndex,
+	            time: bgm ? bgm.currentTime : 0
+	        }));
+	    } catch (e) {}
+	}
+	function bgmUpdateBtn() {
+	    const btn = document.getElementById('bgmBtn');
+	    const label = document.getElementById('bgmLabel');
+	    if (!btn || !label) return;
+	    if (bgmWantPlay) {
+	        btn.classList.add('playing');
+	        label.textContent = BGM_LIST[bgmIndex].name;
+	    } else {
+	        btn.classList.remove('playing');
+	        label.textContent = '音乐关';
+	    }
+	}
+	function bgmFade(to, dur, done) {          // 简易音量淡入淡出
+	    clearInterval(bgmFadeTimer);
+	    if (!bgm) { if (done) done(); return; }
+	    const from = bgm.volume, t0 = Date.now();
+	    bgmFadeTimer = setInterval(function () {
+	        const k = Math.min(1, (Date.now() - t0) / dur);
+	        bgm.volume = from + (to - from) * k;
+	        if (k >= 1) { clearInterval(bgmFadeTimer); if (done) done(); }
+	    }, 40);
+	}
+	// 尝试播放；被自动播放策略拦截时 → 绑定"首次任意交互即响"
+	function bgmTryPlay() {
+	    if (!bgm) return;
+	    const p = bgm.play();
+	    if (p && p.catch) {
+	        p.catch(function () {
+	            if (bgmGestureBound) return;
+	            bgmGestureBound = true;
+	            const go = function () {
+	                bgm.volume = 0;
+	                bgm.play().catch(function () {});
+	                bgmFade(BGM_VOLUME, 900);
+	                document.removeEventListener('touchstart', go);
+	                document.removeEventListener('touchend', go);
+	                document.removeEventListener('click', go);
+	                document.removeEventListener('keydown', go);
+	            };
+	            document.addEventListener('touchstart', go, { passive: true });
+	            document.addEventListener('touchend',   go, { passive: true });
+	            document.addEventListener('click', go);
+	            document.addEventListener('keydown', go);
+	        });
+	    }
+	}
+	function toggleBGM() {
+	    if (!bgm) return;
+	    bgmWantPlay = !bgmWantPlay;
+	    if (bgmWantPlay) {
+	        bgm.volume = 0;
+	        bgmTryPlay();
+	        bgmFade(BGM_VOLUME, 700);
+	    } else {
+	        bgmFade(0, 400, function () { bgm.pause(); });
+	    }
+	    bgmUpdateBtn();
+	    bgmSave();
+	}
+	function nextTrack(dir) {
+	    if (!bgm) return;
+	    const len = BGM_LIST.length;
+	    bgmIndex = (((bgmIndex + (dir || 1)) % len) + len) % len;
+	    bgmWantPlay = true;                    // 切歌就是要听
+	    bgm.src = BGM_LIST[bgmIndex].src;      // 换 src 自动归零进度
+	    bgm.volume = 0;
+	    bgmTryPlay();
+	    bgmFade(BGM_VOLUME, 700);
+	    bgmUpdateBtn();
+	    bgmSave();
+	}
+	function bgmInit() {
+	    let state = null;
+	    try { state = JSON.parse(localStorage.getItem(BGM_KEY) || 'null'); } catch (e) {}
+	    bgm = new Audio();
+	    bgm.preload = 'auto';
+	    bgm.volume = BGM_VOLUME;
+	    const len = BGM_LIST.length;
+	    bgmIndex = state && isFinite(state.index) ? ((state.index % len) + len) % len : 0;
+	    bgmWantPlay = state ? !!state.on : true;    // 首次访问默认想开（首次交互时响起）
+	    bgm.src = BGM_LIST[bgmIndex].src;
+	    // 恢复上次进度（需等元数据加载完才能设 currentTime）
+	    if (state && state.time > 0) {
+	        bgm.addEventListener('loadedmetadata', function () {
+	            if (bgm.duration && state.time < bgm.duration - 2) {
+	                try { bgm.currentTime = state.time; } catch (e) {}
+	            }
+	        }, { once: true });
+	    }
+	    // 播完自动切下一首（列表只有一首 = 从头重播）
+	    bgm.addEventListener('ended', function () { nextTrack(1); });
+	    if (bgmWantPlay) {
+	        bgm.volume = 0;
+	        bgmTryPlay();                          // 大概率被拦 → 等首次交互
+	        bgmFade(BGM_VOLUME, 900);
+	    }
+	    // 离开页面 / 每 5 秒存档 → 跳到其他页面自动续播
+	    window.addEventListener('pagehide', bgmSave);
+	    window.addEventListener('visibilitychange', function () { if (document.hidden) bgmSave(); });
+	    setInterval(bgmSave, 5000);
+	    bgmUpdateBtn();
+	}
+
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('themeBtn');
             if (btn) {
@@ -952,19 +1083,26 @@
             }
             renderSidebar();
             renderCard('ling');
+            bgmInit();
         });
     </script>
 </head>
 <body>
 
-    <div class="float-group">
-        <a class="float-btn" href="../index">
-            <span class="icon icon-back">←</span> 返回
-        </a>
-        <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
-            <span class="icon">🌙</span> 夜间
-        </button>
-    </div>
+	<div class="float-group">
+	    <a class="float-btn" href="../index">
+	        <span class="icon icon-back">←</span> 返回
+	    </a>
+	    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
+	        <span class="icon">🌙</span> 夜间
+	    </button>
+	    <button class="float-btn" id="bgmBtn" onclick="toggleBGM()">
+	        <span class="icon" id="bgmIcon">🎵</span> <span id="bgmLabel">音乐</span>
+	    </button>
+	    <button class="float-btn compact" onclick="nextTrack(1)">
+	        <span class="icon">⏭</span> 切歌
+	    </button>
+	</div>
 
     <div class="sidebar-tab" onclick="toggleSidebar()">
         <span class="icon">📋</span> 档案
