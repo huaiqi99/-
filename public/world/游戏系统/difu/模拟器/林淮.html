@@ -104,7 +104,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   transform-origin: bottom center;
   -webkit-tap-highlight-color: transparent;
   transition: filter 0.3s ease;
-  touch-action: none;  /* 阻止浏览器默认触摸行为，消除延迟 */
+  touch-action: none;
+  will-change: transform;
 }
 [data-theme="dark"] #desk-pet {
   filter: brightness(0.88);
@@ -287,7 +288,7 @@ if (themeBtn) {
 (function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
 // ============================================================
-// ====== 桌边小像 · 统一交互（电脑 + 手机 完全一致） ======
+// ====== 桌边小像 · 极速无锁连点 ======
 // ============================================================
 (function(){
   var lines = [
@@ -308,51 +309,45 @@ if (themeBtn) {
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  // ---- 使用音效.wav ----
   var audio = new Audio('音效.wav');
   audio.preload = 'auto';
   audio.volume = 1.0;
 
-  var isProcessing = false;
-
+  // 无任何锁，每次点击直接执行
   function handleInteraction(e) {
-    if (isProcessing) return;
-    isProcessing = true;
+    // 阻止默认行为（仅对可取消的事件）
+    if (e.cancelable) e.preventDefault();
 
-    // 1. 播放音效（重置到开头，确保每次点击都能播）
-    audio.currentTime = 0;
-    audio.play().catch(function(err) {
-      console.log('音效播放被阻止:', err);
-    });
-
-    // 2. 切换气泡文字
+    // 切换文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
 
-    // 3. 挤压动画
+    // 强制重绘动画：移除类 → 强制回流 → 添加类
     pet.classList.remove('q-squash');
-    void pet.offsetWidth; // 强制回流，确保动画重新触发
+    void pet.offsetWidth;  // 强制回流
     pet.classList.add('q-squash');
 
-    // 动画结束后解锁 + 移除样式
-    setTimeout(function(){
+    // 播放音效：重置并播放
+    audio.pause();
+    audio.currentTime = 0;
+    audio.play().catch(function() { /* 忽略 */ });
+
+    // 动画结束后移除类（不影响下次点击）
+    // 注意：这个定时器不会阻止下一次点击的类添加
+    setTimeout(function() {
       pet.classList.remove('q-squash');
-      isProcessing = false;
     }, 350);
   }
 
-  // ---- 使用 pointerdown：同时支持鼠标、触摸、触控笔，无延迟 ----
-  pet.addEventListener('pointerdown', function(e) {
-    e.preventDefault();
-    handleInteraction(e);
-  });
+  // 电脑端使用 mousedown（最快，无延迟）
+  pet.addEventListener('mousedown', handleInteraction);
+  // 手机端使用 touchstart（最快，无延迟）
+  pet.addEventListener('touchstart', handleInteraction, { passive: false });
 
-  // 额外阻止拖拽
-  pet.addEventListener('dragstart', function(e) {
-    e.preventDefault();
-  });
+  // 阻止拖拽
+  pet.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
-  // ---- 隐藏/显示按钮 ----
+  // 隐藏/显示按钮
   var hideBtn = document.getElementById('hidePetBtn');
   if (hideBtn) {
     hideBtn.addEventListener('click', function() {
@@ -368,7 +363,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('✧ 林淮 · 桌边小像 已加载（音效.wav）');
+  console.log('✧ 林淮 · 桌边小像 已加载（无锁连点）');
 })();
 
 console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
