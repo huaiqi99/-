@@ -300,88 +300,162 @@ if (themeBtn) {
     "……他让我自己画符？",
     "真是几天不见胆肥了。"
   ];
-  var idx = 0;
-  var pet = document.getElementById('desk-pet');
-  var bubbleText = document.getElementById('bubbleText');
-  if (!pet) return;
-
-  // 预加载音效
-  var audioDown = new Audio('Ya1.mp3');
-  var audioUp = new Audio('Ya2.mp3');
-  audioDown.preload = 'auto';
-  audioUp.preload = 'auto';
-  audioDown.volume = 1.0;
-  audioUp.volume = 1.0;
-
-  // 记录是否正在按下状态（防止鼠标/触摸冲突）
-  var isDown = false;
-
-  // ---- 按下时播放 Ya1 ----
-  function onPress(e) {
-    if (isDown) return;
-    isDown = true;
-    audioDown.currentTime = 0;
-    audioDown.play().catch(function(err) {
-      console.log('Ya1 播放被阻止:', err);
-    });
-  }
-
-  // ---- 松开时播放 Ya2 + 切换文字 + 动画 ----
-  function onRelease(e) {
-    if (!isDown) return;
-    isDown = false;
-    // 播放松开音效
-    audioUp.currentTime = 0;
-    audioUp.play().catch(function(err) {
-      console.log('Ya2 播放被阻止:', err);
-    });
-    // 切换气泡文字
-    idx = (idx + 1) % lines.length;
-    bubbleText.textContent = lines[idx];
-    // 挤压动画
-    pet.classList.remove('q-squash');
-    void pet.offsetWidth;
-    pet.classList.add('q-squash');
-    setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
-  }
-
-  // ---- 鼠标事件 ----
-  pet.addEventListener('mousedown', onPress);
-  pet.addEventListener('mouseup', onRelease);
-  pet.addEventListener('mouseleave', function(e) {
-    // 鼠标移出时如果还按着，视为松开（防止卡住）
-    if (isDown) {
-      onRelease(e);
-    }
-  });
-
-  // ---- 触摸事件（手机） ----
-  pet.addEventListener('touchstart', function(e) {
-    onPress(e);
-    e.preventDefault(); // 防止触发鼠标事件
-  }, { passive: false });
-  pet.addEventListener('touchend', function(e) {
-    onRelease(e);
-    e.preventDefault();
-  }, { passive: false });
-
-  var hideBtn = document.getElementById('hidePetBtn');
-  if (hideBtn) {
-    hideBtn.addEventListener('click', function() {
-      pet.classList.toggle('hidden');
-      var hideIcon = document.getElementById('hidePetIcon');
-      if (pet.classList.contains('hidden')) {
-        hideIcon.textContent = '✦';
-        this.innerHTML = '<span id="hidePetIcon">✦</span> 显示';
-      } else {
-        hideIcon.textContent = '✕';
-        this.innerHTML = '<span id="hidePetIcon">✕</span> 隐藏';
-      }
-    });
-  }
-
-  console.log('❖ 罗修 · 桌边小像 已加载');
-})();
+    var idx = 0;
+	  var pet = document.getElementById('desk-pet');
+	  var bubbleText = document.getElementById('bubbleText');
+	  if (!pet) return;
+	  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+	              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+	  // ---------- ① Web Audio：预取 + 预解码 ----------
+	  var audioCtx = null;
+	  var audioBuffer = null;
+	  try {
+	    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	  } catch (e) { initFallback(); }
+	  if (audioCtx) {
+	    var xhr = new XMLHttpRequest();
+	    xhr.open('GET', '音效.wav', true);
+	    xhr.responseType = 'arraybuffer';
+	    xhr.onload = function () {
+	      if (xhr.status === 200 || xhr.status === 0) {
+	        // 关键：解码是离线操作，AudioContext 处于 suspended 也能完成
+	        audioCtx.decodeAudioData(xhr.response,
+	          function (buf) { audioBuffer = buf; },
+	          function ()    { initFallback(); });
+	      } else { initFallback(); }
+	    };
+	    xhr.onerror = function () { initFallback(); };
+	    xhr.send();
+	  }
+	  // ---------- ② iOS 静音解锁：动态生成低振幅 WAV ----------
+	  function makeSilentWavURL() {
+	    var sampleRate = 8000;  // 低采样率，体积小（约 16KB）
+	    var duration   = 1;     // 1 秒循环
+	    var freq       = 55;    // 低频，人耳几乎不可闻
+	    var amp        = 0.002; // 极低振幅（约 -54dB）
+	    var n = sampleRate * duration;
+	    var buf = new ArrayBuffer(44 + n * 2);
+	    var v = new DataView(buf);
+	    function str(off, s) { for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); }
+	    str(0, 'RIFF');  v.setUint32(4, 36 + n * 2, true);  str(8, 'WAVE');
+	    str(12, 'fmt '); v.setUint32(16, 16, true);
+	    v.setUint16(20, 1, true);              // PCM
+	    v.setUint16(22, 1, true);              // 单声道
+	    v.setUint32(24, sampleRate, true);
+	    v.setUint32(28, sampleRate * 2, true); // byteRate
+	    v.setUint16(32, 2, true);              // blockAlign
+	    v.setUint16(34, 16, true);             // 16bit
+	    str(36, 'data'); v.setUint32(40, n * 2, true);
+	    for (var i = 0; i < n; i++) {
+	      var s = Math.sin(2 * Math.PI * freq * i / sampleRate) * amp * 32767;
+	      v.setInt16(44 + i * 2, Math.round(s), true);
+	    }
+	    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+	  }
+	  var unlockAudio = null;
+	  if (isIOS) {
+	    try {
+	      unlockAudio = new Audio(makeSilentWavURL());
+	      unlockAudio.loop = true;
+	      unlockAudio.preload = 'auto';
+	      // 注意：不要设 volume=0、不要用全零采样的文件——
+	      // 部分 iOS 版本会因"无实际音频输出"而不切换会话类别
+	    } catch (e) { unlockAudio = null; }
+	  }
+	  // 幂等：保证解锁音频在播（每次点击都调，后台回来被暂停也能自愈）
+	  function ensureMediaSession() {
+	    if (!isIOS || !unlockAudio) return;
+	    if (unlockAudio.paused) {
+	      try {
+	        var p = unlockAudio.play(); // 在手势事件内调用，合法
+	        if (p && p.catch) p.catch(function () {});
+	      } catch (e) {}
+	    }
+	  }
+	  // 早期全局解锁：用户触摸页面任意位置即完成（滑动浏览时顺便解锁），
+	  // 之后点桌宠时通道早已就绪，连第一次点击都零延迟
+	  if (isIOS) {
+	    var earlyUnlock = function () {
+	      ensureMediaSession();
+	      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+	    };
+	    document.addEventListener('touchstart', earlyUnlock, { once: true, passive: true });
+	    document.addEventListener('click', earlyUnlock, { once: true });
+	  }
+	  // ---------- ③ 降级：<audio> + blob 预载（仅 Web Audio 不可用时）----------
+	  var fallbackAudio = null;
+	  function initFallback() {
+	    if (fallbackAudio) return;
+	    fallbackAudio = new Audio();
+	    fallbackAudio.preload = 'auto';
+	    var x = new XMLHttpRequest();
+	    x.open('GET', '音效.wav', true);
+	    x.responseType = 'blob';
+	    x.onload = function () {
+	      if (x.status === 200 || x.status === 0) {
+	        fallbackAudio.src = URL.createObjectURL(x.response); // blob 预载，避免 iOS 首播再下载
+	      }
+	    };
+	    x.send();
+	  }
+	  function playFallback() {
+	    if (!fallbackAudio) { initFallback(); return; }
+	    try { fallbackAudio.currentTime = 0; } catch (e) {}
+	    var p = fallbackAudio.play();
+	    if (p && p.catch) p.catch(function () {});
+	  }
+	  // ---------- ④ 播放调度 ----------
+	  function playSound() {
+	    ensureMediaSession();               // iOS：把会话钉在媒体通道（不受静音开关影响）
+	    if (audioBuffer && audioCtx) {
+	      if (audioCtx.state === 'suspended') {
+	        audioCtx.resume();              // 手势内激活（仅首次需要）
+	      }
+	      try {
+	        var src = audioCtx.createBufferSource();
+	        src.buffer = audioBuffer;
+	        src.connect(audioCtx.destination);
+	        src.start(0);                   // 预解码 buffer，即刻出声，与动画同步
+	        return;
+	      } catch (e) {}
+	    }
+	    playFallback();
+	  }
+	  // ---------- 交互 ----------
+	  function handleInteraction(e) {
+	    if (e.cancelable) e.preventDefault();
+	    idx = (idx + 1) % lines.length;
+	    bubbleText.textContent = lines[idx];
+	    pet.classList.remove('q-squash');
+	    requestAnimationFrame(function () {
+	      requestAnimationFrame(function () { pet.classList.add('q-squash'); });
+	    });
+	    playSound();
+	  }
+	  pet.addEventListener('mousedown', handleInteraction);
+	  pet.addEventListener('touchstart', handleInteraction, { passive: false });
+	  pet.addEventListener('dragstart', function (e) { e.preventDefault(); });
+	  // 切后台会话可能被系统回收 → 回前台尝试恢复（失败无害，下次点击自愈）
+	  document.addEventListener('visibilitychange', function () {
+	    if (!document.hidden && isIOS && unlockAudio && unlockAudio.paused) {
+	      var p = unlockAudio.play();
+	      if (p && p.catch) p.catch(function () {});
+	    }
+	  });
+	  // 隐藏按钮（原有逻辑）
+	  var hideBtn = document.getElementById('hidePetBtn');
+	  if (hideBtn) {
+	    hideBtn.addEventListener('click', function () {
+	      pet.classList.toggle('hidden');
+	      if (pet.classList.contains('hidden')) {
+	        this.innerHTML = '<span id="hidePetIcon">✦</span> 显示';
+	      } else {
+	        this.innerHTML = '<span id="hidePetIcon">✕</span> 隐藏';
+	      }
+	    });
+	  }
+	  console.log('✧ 林淮 · 桌边小像 已加载（静音解锁 + Web Audio 零延迟）');
+	})();
 
 console.log('❖ 归终殿 · 罗修档案 v1.0 已加载');
 })();
