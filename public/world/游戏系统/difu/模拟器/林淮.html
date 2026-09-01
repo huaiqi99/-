@@ -285,12 +285,15 @@ if (themeBtn) {
 }
 
 // ====== 花瓣特效 ======
-(function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
+(function(){const chars=['✧','❀','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
 	// ============================================================
-	// ====== 桌边小像 · 音频通道分流版 ======
-	// iOS/iPadOS：仅用 <audio>（媒体通道，不受静音开关影响）
-	// 其他平台：Web Audio 优先（低延迟）+ <audio> 回退
+	// ====== 桌边小像 · iOS 静音解锁 + Web Audio 零延迟 ======
+	// ① 页面加载即预取音效并 decodeAudioData 预解码（suspended 状态下也可解码）
+	// ② iOS 首次触摸时，播放一段内嵌生成的"几乎无声"循环 <audio>，
+	//    把 Safari 音频会话钉在"媒体播放"类别 —— 该类别不受物理静音开关影响，
+	//    且整个页面（含 AudioContext）的输出都随之改走媒体通道
+	// ③ 音效本体始终用 Web Audio 播放：预解码 buffer，点击即出声，可叠加
 	// ============================================================
 	(function(){
 	  var lines = [
@@ -310,107 +313,148 @@ if (themeBtn) {
 	  var pet = document.getElementById('desk-pet');
 	  var bubbleText = document.getElementById('bubbleText');
 	  if (!pet) return;
-	  // ---- 平台检测：iPhone / iPad / iPadOS 13+（UA 伪装成 Mac 的 Safari）----
 	  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 	              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-	  // ---- 音频系统 ----
+	  // ---------- ① Web Audio：预取 + 预解码 ----------
 	  var audioCtx = null;
 	  var audioBuffer = null;
-	  var fallbackAudio = new Audio('音效.wav');
-	  // iOS 靠它发声所以预载；其他平台仅作回退，preload 设 none 避免与 XHR 双重下载
-	  fallbackAudio.preload = isIOS ? 'auto' : 'none';
-	  // Web Audio 仅在非 iOS 平台加载
-	  // （iOS 上其输出会被静音开关切断，加载了也无意义，还多下载一份）
-	  function loadAudio() {
-	    if (isIOS) return;
+	  try {
+	    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	  } catch (e) { initFallback(); }
+	  if (audioCtx) {
 	    var xhr = new XMLHttpRequest();
 	    xhr.open('GET', '音效.wav', true);
 	    xhr.responseType = 'arraybuffer';
-	    xhr.onload = function() {
+	    xhr.onload = function () {
 	      if (xhr.status === 200 || xhr.status === 0) {
-	        try {
-	          if (!audioCtx) {
-	            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-	          }
-	          audioCtx.decodeAudioData(xhr.response, function(buffer) {
-	            audioBuffer = buffer;
-	          }, function(e) {
-	            console.warn('解码失败，将回退 <audio>', e);
-	            fallbackAudio.load(); // 预热回退通道
-	          });
-	        } catch(e) {
-	          console.warn('AudioContext 不可用，将回退 <audio>', e);
-	        }
-	      }
+	        // 关键：解码是离线操作，AudioContext 处于 suspended 也能完成
+	        audioCtx.decodeAudioData(xhr.response,
+	          function (buf) { audioBuffer = buf; },
+	          function ()    { initFallback(); });
+	      } else { initFallback(); }
 	    };
-	    xhr.onerror = function() {};
+	    xhr.onerror = function () { initFallback(); };
 	    xhr.send();
 	  }
-	  loadAudio();
-	  // iOS 预热：iOS 不会真正执行页面加载时的预下载，
-	  // 首次任意触摸时触发 load()，可显著降低首次点击的出声延迟
+	  // ---------- ② iOS 静音解锁：动态生成低振幅 WAV ----------
+	  function makeSilentWavURL() {
+	    var sampleRate = 8000;  // 低采样率，体积小（约 16KB）
+	    var duration   = 1;     // 1 秒循环
+	    var freq       = 55;    // 低频，人耳几乎不可闻
+	    var amp        = 0.002; // 极低振幅（约 -54dB）
+	    var n = sampleRate * duration;
+	    var buf = new ArrayBuffer(44 + n * 2);
+	    var v = new DataView(buf);
+	    function str(off, s) { for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); }
+	    str(0, 'RIFF');  v.setUint32(4, 36 + n * 2, true);  str(8, 'WAVE');
+	    str(12, 'fmt '); v.setUint32(16, 16, true);
+	    v.setUint16(20, 1, true);              // PCM
+	    v.setUint16(22, 1, true);              // 单声道
+	    v.setUint32(24, sampleRate, true);
+	    v.setUint32(28, sampleRate * 2, true); // byteRate
+	    v.setUint16(32, 2, true);              // blockAlign
+	    v.setUint16(34, 16, true);             // 16bit
+	    str(36, 'data'); v.setUint32(40, n * 2, true);
+	    for (var i = 0; i < n; i++) {
+	      var s = Math.sin(2 * Math.PI * freq * i / sampleRate) * amp * 32767;
+	      v.setInt16(44 + i * 2, Math.round(s), true);
+	    }
+	    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+	  }
+	  var unlockAudio = null;
 	  if (isIOS) {
-	    var warmup = function() { fallbackAudio.load(); };
-	    document.addEventListener('touchstart', warmup, { once: true, passive: true });
-	    document.addEventListener('click', warmup, { once: true });
+	    try {
+	      unlockAudio = new Audio(makeSilentWavURL());
+	      unlockAudio.loop = true;
+	      unlockAudio.preload = 'auto';
+	      // 注意：不要设 volume=0、不要用全零采样的文件——
+	      // 部分 iOS 版本会因"无实际音频输出"而不切换会话类别
+	    } catch (e) { unlockAudio = null; }
 	  }
-	  // ---- <audio> 播放（媒体通道：不受物理静音开关影响）----
-	  function playFallback() {
-	    try { fallbackAudio.currentTime = 0; } catch(e) {}
-	    var p = fallbackAudio.play();
-	    if (p && p.catch) {
-	      p.catch(function(err) { console.warn('audio 播放失败', err); });
+	  // 幂等：保证解锁音频在播（每次点击都调，后台回来被暂停也能自愈）
+	  function ensureMediaSession() {
+	    if (!isIOS || !unlockAudio) return;
+	    if (unlockAudio.paused) {
+	      try {
+	        var p = unlockAudio.play(); // 在手势事件内调用，合法
+	        if (p && p.catch) p.catch(function () {});
+	      } catch (e) {}
 	    }
 	  }
-	  // ---- 播放调度 ----
-	  function playSound() {
-	    // iOS：必须直接走 <audio>。
-	    // Safari 把 AudioContext 输出归入 ambient 音效通道，静音开关打开时无声，
-	    // 且 source.start() 不报错、JS 无法感知，无法事后回退——只能在此提前分流。
-	    if (isIOS) {
-	      playFallback();
-	      return;
-	    }
-	    // 其他平台：Web Audio 优先（低延迟、可叠加）
-	    if (audioBuffer) {
-	      if (!audioCtx) {
-	        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	  // 早期全局解锁：用户触摸页面任意位置即完成（滑动浏览时顺便解锁），
+	  // 之后点桌宠时通道早已就绪，连第一次点击都零延迟
+	  if (isIOS) {
+	    var earlyUnlock = function () {
+	      ensureMediaSession();
+	      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+	    };
+	    document.addEventListener('touchstart', earlyUnlock, { once: true, passive: true });
+	    document.addEventListener('click', earlyUnlock, { once: true });
+	  }
+	  // ---------- ③ 降级：<audio> + blob 预载（仅 Web Audio 不可用时）----------
+	  var fallbackAudio = null;
+	  function initFallback() {
+	    if (fallbackAudio) return;
+	    fallbackAudio = new Audio();
+	    fallbackAudio.preload = 'auto';
+	    var x = new XMLHttpRequest();
+	    x.open('GET', '音效.wav', true);
+	    x.responseType = 'blob';
+	    x.onload = function () {
+	      if (x.status === 200 || x.status === 0) {
+	        fallbackAudio.src = URL.createObjectURL(x.response); // blob 预载，避免 iOS 首播再下载
 	      }
+	    };
+	    x.send();
+	  }
+	  function playFallback() {
+	    if (!fallbackAudio) { initFallback(); return; }
+	    try { fallbackAudio.currentTime = 0; } catch (e) {}
+	    var p = fallbackAudio.play();
+	    if (p && p.catch) p.catch(function () {});
+	  }
+	  // ---------- ④ 播放调度 ----------
+	  function playSound() {
+	    ensureMediaSession();               // iOS：把会话钉在媒体通道（不受静音开关影响）
+	    if (audioBuffer && audioCtx) {
 	      if (audioCtx.state === 'suspended') {
-	        audioCtx.resume();
+	        audioCtx.resume();              // 手势内激活（仅首次需要）
 	      }
 	      try {
-	        var source = audioCtx.createBufferSource();
-	        source.buffer = audioBuffer;
-	        source.connect(audioCtx.destination);
-	        source.start(0);
+	        var src = audioCtx.createBufferSource();
+	        src.buffer = audioBuffer;
+	        src.connect(audioCtx.destination);
+	        src.start(0);                   // 预解码 buffer，即刻出声，与动画同步
 	        return;
-	      } catch(e) {
-	        console.warn('Web Audio 播放失败，回退 <audio>', e);
-	      }
+	      } catch (e) {}
 	    }
 	    playFallback();
 	  }
-	  // ---- 核心交互 ----
+	  // ---------- 交互 ----------
 	  function handleInteraction(e) {
 	    if (e.cancelable) e.preventDefault();
 	    idx = (idx + 1) % lines.length;
 	    bubbleText.textContent = lines[idx];
 	    pet.classList.remove('q-squash');
-	    requestAnimationFrame(function() {
-	      requestAnimationFrame(function() {
-	        pet.classList.add('q-squash');
-	      });
+	    requestAnimationFrame(function () {
+	      requestAnimationFrame(function () { pet.classList.add('q-squash'); });
 	    });
 	    playSound();
 	  }
 	  pet.addEventListener('mousedown', handleInteraction);
 	  pet.addEventListener('touchstart', handleInteraction, { passive: false });
-	  pet.addEventListener('dragstart', function(e) { e.preventDefault(); });
-	  // 隐藏按钮
+	  pet.addEventListener('dragstart', function (e) { e.preventDefault(); });
+	  // 切后台会话可能被系统回收 → 回前台尝试恢复（失败无害，下次点击自愈）
+	  document.addEventListener('visibilitychange', function () {
+	    if (!document.hidden && isIOS && unlockAudio && unlockAudio.paused) {
+	      var p = unlockAudio.play();
+	      if (p && p.catch) p.catch(function () {});
+	    }
+	  });
+	  // 隐藏按钮（原有逻辑）
 	  var hideBtn = document.getElementById('hidePetBtn');
 	  if (hideBtn) {
-	    hideBtn.addEventListener('click', function() {
+	    hideBtn.addEventListener('click', function () {
 	      pet.classList.toggle('hidden');
 	      if (pet.classList.contains('hidden')) {
 	        this.innerHTML = '<span id="hidePetIcon">✦</span> 显示';
@@ -419,7 +463,7 @@ if (themeBtn) {
 	      }
 	    });
 	  }
-	  console.log('✧ 林淮 · 桌边小像 已加载（iOS=<audio> / 其他=Web Audio）');
+	  console.log('✧ 林淮 · 桌边小像 已加载（静音解锁 + Web Audio 零延迟）');
 	})();
 
 console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
