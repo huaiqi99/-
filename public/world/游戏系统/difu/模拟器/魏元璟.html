@@ -277,6 +277,7 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){var chars=['◈','❖'];var container=document.getElementById('petal-container');if(!container)return;for(var i=0;i<14;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
+// ====== 桌边小像 ======
 (function(){
   var lines = [
     "……烦死了。",
@@ -302,8 +303,13 @@ if (themeBtn) {
   audio1.volume = 1.0;
   audio2.volume = 1.0;
 
+  var isPlaying = false;
+
   function doClick() {
-    // 动画
+    if (isPlaying) return;
+    isPlaying = true;
+
+    // 动画同步执行
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
     pet.classList.remove('q-squash');
@@ -311,27 +317,36 @@ if (themeBtn) {
     pet.classList.add('q-squash');
     setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
 
-    // 音频顺序播放
+    // 播 Ya1
     audio1.currentTime = 0;
     audio1.play().catch(function(err){});
-    setTimeout(function() {
+
+    // Ya1 播完后自动播 Ya2
+    audio1.onended = function() {
+      audio1.onended = null;
       audio2.currentTime = 0;
       audio2.play().catch(function(err){});
-    }, 30);
+      // Ya2 播完后解锁
+      audio2.onended = function() {
+        audio2.onended = null;
+        isPlaying = false;
+      };
+    };
   }
 
-  // 手机端秒响应
-  pet.addEventListener('touchstart', function(e) {
-    doClick();
-    e.preventDefault();
-  }, { passive: false });
+  // 检测是否触屏设备
+  var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-  // 电脑端用 click
-  pet.addEventListener('click', function(e) {
-    // 如果是触屏设备，touchstart 已经处理了，跳过 click
-    if (document.documentElement.ontouchstart !== undefined) return;
-    doClick();
-  });
+  if (isTouchDevice) {
+    // 手机：只用 touchstart
+    pet.addEventListener('touchstart', function(e) {
+      doClick();
+      e.preventDefault();
+    }, { passive: false });
+  } else {
+    // 电脑：只用 click
+    pet.addEventListener('click', doClick);
+  }
 
   // 隐藏按钮
   var hideBtn = document.getElementById('hidePetBtn');
@@ -348,6 +363,8 @@ if (themeBtn) {
       }
     });
   }
+
+  console.log('◈ 魏元璟 · 桌边小像 已加载');
 })();
 
 console.log('◈ 归终殿 · 魏元璟档案 v1.1 已加载');
