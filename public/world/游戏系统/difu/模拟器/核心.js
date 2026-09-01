@@ -5,54 +5,70 @@ ProfileManager:{init(){const id=GZD.Storage.getProfile();this.apply(id,false);},
 Sidebar:{open:false,toggle(){this.open=!this.open;const p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close(){if(this.open){this.open=false;const p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}},setActive(page){document.querySelectorAll('.sidebar-panel .nav-item').forEach(item=>{const h=item.getAttribute('href')||'';item.classList.toggle('active',h.includes(page));});}},
 init(){this.ThemeManager.init();this.ProfileManager.init();this.ThemeManager.updateBtn();}};
 GZD.init();
+
 	/* ===== BGM：壳内真无缝 / 单页接续播放 ===== */
-	GZD.BGM_LIST=[{name:'浮生若梦',src:'./歌曲/口哨.mp3'},{name:'忘川引',src:'./歌曲/单独个体.mp3'}];
+	GZD.BGM_LIST=[
+	  {name:'单独个体',src:'歌曲/单独个体.mp3'},
+	  {name:'口哨',src:'歌曲/口哨.mp3'}
+	];
 	(function(){
 	  var isShellDoc=!!window.__GZD_SHELL__;
 	  var inShell=false;
 	  try{inShell=isShellDoc||(window.parent!==window&&window.parent.GZD&&window.parent.GZD.Shell);}catch(e){}
 	  var pageTrack=document.body?document.body.getAttribute('data-bgm'):null;
-	  if(isShellDoc)return; // 壳文档自己不装（内联脚本里有专属播放器）
+	  if(isShellDoc)return;   /* 壳文档：播放器由壳.html自己负责 */
 	  if(inShell){
-	    /* —— 在壳里的内页 —— */
-	    // 本页指定了曲目（<body data-bgm="1">）→ 通知壳淡入切换
 	    if(pageTrack!==null&&pageTrack!==''){try{window.parent.GZD.Shell.requestTrack(parseInt(pageTrack,10)||0);}catch(e){}}
-	    // 隐藏内页自己的音乐按钮（壳左下已有，避免双按钮）
 	    var ib=document.getElementById('bgmBtn');if(ib)ib.style.display='none';
-        
-	    // ★ 拦截规则：殿内页面照旧无缝换页；指向模拟器外的链接 → 整个标签页跳出壳
+	    /* ★ 手势转告：窗口里的页面会吃掉所有触摸，壳自己等不到——由内页代为转告 */
+	    var told=0;
+	    function tellShell(){
+	      if(told>=5)return;told++;
+	      try{window.parent.GZD.Shell.userGesture();}catch(e){}
+	    }
+	    document.addEventListener('touchstart',tellShell,{passive:true});
+	    document.addEventListener('touchend',tellShell,{passive:true});
+	    document.addEventListener('click',tellShell);
+	    /* ★ 主题转告：内页切日间/夜间，壳的底色和手机状态栏颜色秒跟 */
+	    try{
+	      new MutationObserver(function(){
+	        try{window.parent.GZD.Shell.syncTheme(document.documentElement.getAttribute('data-theme'));}catch(e){}
+	      }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+	    }catch(e){}
+	    /* ★ 换页规则：殿内链接无缝换页；殿外链接整个标签页跳出壳 */
 	    document.addEventListener('click',function(e){
 	      var a=e.target.closest?e.target.closest('a'):null;
 	      if(!a)return;
 	      var href=a.getAttribute('href')||'';
-	      if(!href||href.charAt(0)==='#')return;              // 锚点不管
-	      if(a.target&&a.target!=='_self')return;              // 明确指定了目标的链接不管
-	      // 出殿：../、/、http 开头的链接 = 模拟器之外的世界 → 接管整个标签页，壳与音乐就此退出
+	      if(!href||href.charAt(0)==='#')return;
+	      if(a.target&&a.target!=='_self')return;
 	      if(/^(\.\.[\/\\]|\/|https?:|mailto:|tel:)/i.test(href)){a.target='_top';return;}
 	      e.preventDefault();
 	      try{window.parent.GZD.Shell.load(href);}catch(err){}
 	    },true);
-
-	  /* —— 单独打开（未经壳）→ 接续播放：同曲同进度，首次触摸响起 —— */
+	    return;
+	  }
+	  /* —— 单独打开（不经壳）：接续播放，首次触摸响起 —— */
 	  var LIST=GZD.BGM_LIST,VOL=GZD.Storage.getSettings().bgmVolume||0.35,KEY='gzd_bgm';
 	  var st={on:true,index:0,times:{}};
 	  try{var s=JSON.parse(localStorage.getItem(KEY)||'null');
 	    if(s){st.on=s.on!==false;st.index=s.index||0;st.times=s.times||{};}}catch(e){}
 	  if(pageTrack!==null&&pageTrack!==''){st.index=((parseInt(pageTrack,10)||0)%LIST.length+LIST.length)%LIST.length;}
-	  var a=new Audio();a.loop=true;a.volume=VOL;a.preload='auto';a.src=LIST[st.index].src;
+	  var au=new Audio();au.loop=true;au.volume=VOL;au.preload='auto';au.src=LIST[st.index].src;
+	  au.addEventListener('error',function(){console.warn('⚠ BGM 加载失败：'+LIST[st.index].src);});
 	  var bound=false;
-	  function save(){try{st.times[st.index]=a.currentTime;localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
-	  function play(){var p=a.play();if(p&&p.catch)p.catch(function(){
+	  function save(){try{st.times[st.index]=au.currentTime;localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+	  function play(){var p=au.play();if(p&&p.catch)p.catch(function(){
 	    if(bound)return;bound=true;
-	    var go=function(){a.play().catch(function(){});};
+	    var go=function(){au.play().catch(function(){});};
 	    document.addEventListener('touchstart',go,{once:true,passive:true});
 	    document.addEventListener('click',go,{once:true});});}
-	  a.addEventListener('loadedmetadata',function(){var t=st.times[st.index]||0;
-	    if(t>0&&t<(a.duration||1e9)-2){try{a.currentTime=t;}catch(e){}}},{once:true});
+	  au.addEventListener('loadedmetadata',function(){var t=st.times[st.index]||0;
+	    if(t>0&&t<(au.duration||1e9)-2){try{au.currentTime=t;}catch(e){}}},{once:true});
 	  if(st.on)play();
 	  setInterval(save,5000);window.addEventListener('pagehide',save);
 	  var btn=document.getElementById('bgmBtn');
 	  if(btn){btn.textContent=st.on?('🎵 '+LIST[st.index].name):'🔇 音乐';
-	    btn.addEventListener('click',function(){st.on=!st.on;if(st.on)play();else a.pause();save();
+	    btn.addEventListener('click',function(){st.on=!st.on;if(st.on)play();else au.pause();save();
 	      btn.textContent=st.on?('🎵 '+LIST[st.index].name):'🔇 音乐';});}
 	})();

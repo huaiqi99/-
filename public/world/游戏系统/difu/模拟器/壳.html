@@ -6,9 +6,9 @@
 	<meta name="theme-color" content="#1a1614">
 	<title>归终殿 · 弟子手册</title>
 	<script>
-	/* 防套娃保险丝：壳只能当最外层 */
+	/* 保险丝①：壳只能当最外层，被装进窗口就抢占整个页面 */
 	if(window.self!==window.top){try{top.location.replace(location.pathname+location.search);}catch(e){}}
-	/* 主题先行：按用户的主题设置先上底色，日间模式进殿不再闪黑 */
+	/* 保险丝②：进殿前先按用户主题上底色（日间不闪黑） */
 	try{
 	  var __t='dark',__r=localStorage.getItem('theme');
 	  if(__r){var __v=JSON.parse(__r).value;if(__v)__t=__v;}
@@ -42,12 +42,23 @@
 	<script>
 	(function(){
 	'use strict';
-	var LIST=(window.GZD&&GZD.BGM_LIST)||[{name:'浮生若梦',src:'./歌曲/口哨.mp3'},{name:'忘川引',src:'./歌曲/单独个体.mp3'}];
+	var LIST=(window.GZD&&GZD.BGM_LIST)||[{name:'浮生若梦',src:'./bgm1.mp3'},{name:'忘川引',src:'./bgm2.mp3'}];
 	var VOL=(window.GZD&&GZD.Storage)?(GZD.Storage.getSettings().bgmVolume||0.35):0.35;
 	var KEY='gzd_bgm',frame=document.getElementById('pageFrame');
+	var BASE=location.pathname.replace(/[^\/]*$/,'');   /* 模拟器目录 = 殿的边界 */
 	var audio=new Audio();audio.loop=true;audio.volume=0;audio.preload='auto';
-	var idx=0,want=true,times={},fadeT=null,bound=false;
-	function save(){try{localStorage.setItem(KEY,JSON.stringify({on:want,index:idx,times:times}));}catch(e){}}
+	var idx=0,want=true,times={},fadeT=null,restored=false;
+	/* 文件找不到时直接在按钮上报警（路径自查器） */
+	audio.addEventListener('error',function(){
+	  console.warn('⚠ BGM 加载失败，检查文件与路径：'+LIST[idx].src+'（GitHub Pages 区分大小写，.MP3 ≠ .mp3）');
+	  var b=document.getElementById('bgmBtn');if(b)b.textContent='⚠ 音乐文件没找到';
+	});
+	audio.addEventListener('loadedmetadata',function(){
+	  if(restored)return;restored=true;
+	  var t=times[idx]||0;
+	  if(t>0&&audio.duration&&t<audio.duration-2){try{audio.currentTime=t;}catch(e){}}
+	});
+	function save(){try{times[idx]=audio.currentTime;localStorage.setItem(KEY,JSON.stringify({on:want,index:idx,times:times}));}catch(e){}}
 	function loadSt(){try{var s=JSON.parse(localStorage.getItem(KEY)||'null');
 	  if(s){want=s.on!==false;if(isFinite(s.index))idx=((s.index%LIST.length)+LIST.length)%LIST.length;times=s.times||{};}}catch(e){}}
 	function setSrc(){audio.src=LIST[idx].src;}
@@ -55,57 +66,58 @@
 	function fade(to,dur,done){clearInterval(fadeT);var from=audio.volume,t0=Date.now();
 	  fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur);audio.volume=from+(to-from)*k;
 	    if(k>=1){clearInterval(fadeT);if(done)done();}},40);}
-	function play(){var p=audio.play();
-	  if(p&&p.catch)p.catch(function(){
-	    if(bound)return;bound=true;
-	    var go=function(){audio.play().catch(function(){});fade(VOL,800);};
-	    document.addEventListener('touchstart',go,{once:true,passive:true});
-	    document.addEventListener('touchend',go,{once:true,passive:true});
-	    document.addEventListener('click',go,{once:true});
-	  });}
+	function tryPlay(){var p=audio.play();if(p&&p.catch)p.catch(function(){});}
 	GZD.Shell={
 	  load:function(href){
+	    try{ /* 已在此页则不重载 */
+	      if(new URL(href,location.href).pathname===frame.contentWindow.location.pathname)return;
+	    }catch(e){}
 	    frame.src=href;
 	    try{history.replaceState(null,'','#'+encodeURIComponent(href.replace(/^\.\//,'')));}catch(e){}
 	  },
 	  requestTrack:function(i){
 	    i=((i%LIST.length)+LIST.length)%LIST.length;
-	    var same=(i===idx);idx=i;setSrc();updateBtn();save();
-	    if(want){play();fade(VOL,same?400:600);}
+	    if(i===idx&&!audio.paused)return;      /* 同曲在播：不动，避免重头再来 */
+	    var same=(i===idx);idx=i;restored=true;setSrc();updateBtn();save();
+	    if(want){tryPlay();fade(VOL,same?400:600);}
+	  },
+	  /* 内页转告"用户碰屏幕了" → 壳拿到出声许可 */
+	  userGesture:function(){
+	    if(want&&audio.paused){tryPlay();fade(VOL,800);}
+	  },
+	  /* 内页切主题 → 壳的底色、手机状态栏颜色实时跟随 */
+	  syncTheme:function(t){
+	    if(t)document.documentElement.setAttribute('data-theme',t);
+	    var light=document.documentElement.getAttribute('data-theme')==='light';
+	    var m=document.querySelector('meta[name="theme-color"]');
+	    if(m)m.setAttribute('content',light?'#f7f4ef':'#1a1614');
 	  }
 	};
 	loadSt();setSrc();updateBtn();
-	if(want){play();fade(VOL,900);}
-	/* 从 #记号 恢复上次的内页（刷新/收藏不丢）；只认殿内页面 */
+	if(want){tryPlay();fade(VOL,900);}
+	/* 恢复上次内页（刷新/收藏不丢） */
 	try{var h=decodeURIComponent(location.hash.slice(1));
 	  if(h&&!/^(\.\.[\/\\]|https?:|\/)/i.test(h)&&/\.html?$/i.test(h))frame.src='./'+h;}catch(e){}
-	/* 每次换页：同步主题（底色+手机边条颜色）和标签页标题 */
-	function syncThemeUI(){
-	  var light=document.documentElement.getAttribute('data-theme')==='light';
-	  var m=document.querySelector('meta[name="theme-color"]');
-	  if(m)m.setAttribute('content',light?'#f7f4ef':'#1a1614');
-	}
 	frame.addEventListener('load',function(){
+	  /* 保险丝③：窗口里混进殿外页面 → 整个标签页自动跳出去，壳与音乐彻底退场 */
 	  try{
-	    var raw=localStorage.getItem('theme');
-	    if(raw){var v=JSON.parse(raw).value;
-	      if(v&&GZD&&GZD.ThemeManager)GZD.ThemeManager.apply(v,false);}
+	    var wloc=frame.contentWindow.location;
+	    if(wloc.pathname.indexOf(BASE)!==0){top.location.replace(wloc.href);return;}
 	  }catch(e){}
-	  syncThemeUI();
+	  try{var raw=localStorage.getItem('theme');
+	    if(raw){var v=JSON.parse(raw).value;if(v)GZD.Shell.syncTheme(v);}
+	  }catch(e){}
 	  try{document.title=frame.contentDocument.title;}catch(e){}
 	});
-	/* 内页切主题时，壳实时跟随 */
 	window.addEventListener('storage',function(e){
-	  if(e.key==='theme'){
-	    try{var v=JSON.parse(e.newValue).value;
-	      if(v&&GZD&&GZD.ThemeManager)GZD.ThemeManager.apply(v,false);
-	    }catch(err){}
-	    syncThemeUI();
-	  }
+	  if(e.key==='theme'){try{var v=JSON.parse(e.newValue).value;if(v)GZD.Shell.syncTheme(v);}catch(err){}}
 	});
+	setInterval(save,5000);
+	window.addEventListener('pagehide',save);
+	document.addEventListener('visibilitychange',function(){if(document.hidden)save();});
 	document.getElementById('bgmBtn').addEventListener('click',function(){
 	  want=!want;
-	  if(want){play();fade(VOL,500);}else{fade(0,350,function(){audio.pause();});}
+	  if(want){tryPlay();fade(VOL,500);}else{fade(0,350,function(){audio.pause();});}
 	  updateBtn();save();
 	});
 	document.getElementById('bgmNextBtn').addEventListener('click',function(){

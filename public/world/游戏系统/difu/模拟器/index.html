@@ -74,18 +74,19 @@ h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
   <a href="./壳.html" class="start-btn" id="startBtn">开始人生</a>
 	<script>
 	(function(){
-	  var btn=document.getElementById('startBtn');
-	  if(!btn)return;
-	  btn.addEventListener('click',function(e){
-	    try{
-	      /* 如果本页正显示在壳的窗口里：不新开壳，直接让壳把窗口换回命薄 */
-	      if(window.self!==window.top&&window.parent&&window.parent.GZD&&window.parent.GZD.Shell){
-	        e.preventDefault();
-	        window.parent.GZD.Shell.load('./命薄.html');
-	      }
-	    }catch(err){}
-	    /* 不在壳里（正常从浏览器打开）→ 走默认 href，正常进入壳 */
-	  });
+	  /* index 不加载核心.js，出殿规则与防套娃自带一份 */
+	  var inShell=false;
+	  try{inShell=window.self!==window.top&&window.parent&&window.parent.GZD&&window.parent.GZD.Shell;}catch(e){}
+	  document.addEventListener('click',function(e){
+	    var a=e.target.closest?e.target.closest('a'):null;
+	    if(!a)return;
+	    var href=a.getAttribute('href')||'';
+	    if(!href||href.charAt(0)==='#')return;
+	    /* 已在壳里点"开始人生" → 不开新壳，让现有壳换回命薄 */
+	    if(a.id==='startBtn'&&inShell){e.preventDefault();try{window.parent.GZD.Shell.load('./命薄.html');}catch(err){}return;}
+	    /* 出殿：../、/、http 开头的链接 → 整个标签页跳出壳，音乐与按钮彻底退场 */
+	    if(/^(\.\.[\/\\]|\/|https?:|mailto:|tel:)/i.test(href)){a.target='_top';}
+	  },false);
 	})();
 	</script>
 
