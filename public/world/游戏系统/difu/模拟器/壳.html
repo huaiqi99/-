@@ -6,9 +6,9 @@
 	<meta name="theme-color" content="#1a1614">
 	<title>归终殿 · 弟子手册</title>
 	<script>
-	/* 保险丝①：壳只能当最外层，被装进窗口就抢占整个页面 */
+	/* 保险丝①：壳只能当最外层 */
 	if(window.self!==window.top){try{top.location.replace(location.pathname+location.search);}catch(e){}}
-	/* 保险丝②：进殿前先按用户主题上底色（日间不闪黑） */
+	/* 保险丝②：进殿前先按用户主题上底色 */
 	try{
 	  var __t='dark',__r=localStorage.getItem('theme');
 	  if(__r){var __v=JSON.parse(__r).value;if(__v)__t=__v;}
@@ -45,12 +45,11 @@
 	var LIST=(window.GZD&&GZD.BGM_LIST)||[{name:'浮生若梦',src:'./bgm1.mp3'},{name:'忘川引',src:'./bgm2.mp3'}];
 	var VOL=(window.GZD&&GZD.Storage)?(GZD.Storage.getSettings().bgmVolume||0.35):0.35;
 	var KEY='gzd_bgm',frame=document.getElementById('pageFrame');
-	var BASE=location.pathname.replace(/[^\/]*$/,'');   /* 模拟器目录 = 殿的边界 */
+	var BASE=location.pathname.replace(/[^\/]*$/,'');
 	var audio=new Audio();audio.loop=true;audio.volume=0;audio.preload='auto';
 	var idx=0,want=true,times={},fadeT=null,restored=false;
-	/* 文件找不到时直接在按钮上报警（路径自查器） */
 	audio.addEventListener('error',function(){
-	  console.warn('⚠ BGM 加载失败，检查文件与路径：'+LIST[idx].src+'（GitHub Pages 区分大小写，.MP3 ≠ .mp3）');
+	  console.warn('⚠ BGM 加载失败，检查文件与路径：'+LIST[idx].src);
 	  var b=document.getElementById('bgmBtn');if(b)b.textContent='⚠ 音乐文件没找到';
 	});
 	audio.addEventListener('loadedmetadata',function(){
@@ -67,9 +66,19 @@
 	  fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur);audio.volume=from+(to-from)*k;
 	    if(k>=1){clearInterval(fadeT);if(done)done();}},40);}
 	function tryPlay(){var p=audio.play();if(p&&p.catch)p.catch(function(){});}
+	/* ★ 换标签法：删旧 meta、插新 meta —— 浏览器把它当作"新的颜色声明"立即重读，
+	   专治"运行中改颜色拖一拍"的问题 */
+	function setThemeColor(color){
+	  var old=document.querySelector('meta[name="theme-color"]');
+	  if(old)old.remove();
+	  var m=document.createElement('meta');
+	  m.setAttribute('name','theme-color');
+	  m.setAttribute('content',color);
+	  document.head.appendChild(m);
+	}
 	GZD.Shell={
 	  load:function(href){
-	    try{ /* 已在此页则不重载 */
+	    try{
 	      if(new URL(href,location.href).pathname===frame.contentWindow.location.pathname)return;
 	    }catch(e){}
 	    frame.src=href;
@@ -77,20 +86,17 @@
 	  },
 	  requestTrack:function(i){
 	    i=((i%LIST.length)+LIST.length)%LIST.length;
-	    if(i===idx&&!audio.paused)return;      /* 同曲在播：不动，避免重头再来 */
+	    if(i===idx&&!audio.paused)return;
 	    var same=(i===idx);idx=i;restored=true;setSrc();updateBtn();save();
 	    if(want){tryPlay();fade(VOL,same?400:600);}
 	  },
-	  /* 内页转告"用户碰屏幕了" → 壳拿到出声许可 */
 	  userGesture:function(){
 	    if(want&&audio.paused){tryPlay();fade(VOL,800);}
 	  },
-	  /* 内页切主题 → 壳的底色、手机状态栏颜色实时跟随 */
 	  syncTheme:function(t){
 	    if(t)document.documentElement.setAttribute('data-theme',t);
 	    var light=document.documentElement.getAttribute('data-theme')==='light';
-	    var m=document.querySelector('meta[name="theme-color"]');
-	    if(m)m.setAttribute('content',light?'#f7f4ef':'#1a1614');
+	    setThemeColor(light?'#f7f4ef':'#1a1614');
 	  }
 	};
 	loadSt();setSrc();updateBtn();
@@ -98,8 +104,19 @@
 	/* 恢复上次内页（刷新/收藏不丢） */
 	try{var h=decodeURIComponent(location.hash.slice(1));
 	  if(h&&!/^(\.\.[\/\\]|https?:|\/)/i.test(h)&&/\.html?$/i.test(h))frame.src='./'+h;}catch(e){}
+	/* ★ 壳侧观察员：壳亲自盯着窗口里页面的主题属性，谁切了主题（包括大门页）都立刻申报新颜色 */
+	function watchInnerTheme(){
+	  try{
+	    var doc=frame.contentDocument;
+	    if(!doc||!doc.documentElement)return;
+	    new MutationObserver(function(){
+	      var t=doc.documentElement.getAttribute('data-theme');
+	      GZD.Shell.syncTheme(t==='light'?'light':'dark');
+	    }).observe(doc.documentElement,{attributes:true,attributeFilter:['data-theme']});
+	  }catch(e){}
+	}
 	frame.addEventListener('load',function(){
-	  /* 保险丝③：窗口里混进殿外页面 → 整个标签页自动跳出去，壳与音乐彻底退场 */
+	  /* 保险丝③：殿外页面混入窗口 → 整页跳出 */
 	  try{
 	    var wloc=frame.contentWindow.location;
 	    if(wloc.pathname.indexOf(BASE)!==0){top.location.replace(wloc.href);return;}
@@ -107,6 +124,7 @@
 	  try{var raw=localStorage.getItem('theme');
 	    if(raw){var v=JSON.parse(raw).value;if(v)GZD.Shell.syncTheme(v);}
 	  }catch(e){}
+	  watchInnerTheme();
 	  try{document.title=frame.contentDocument.title;}catch(e){}
 	});
 	window.addEventListener('storage',function(e){

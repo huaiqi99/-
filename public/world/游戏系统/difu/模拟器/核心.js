@@ -17,6 +17,19 @@ GZD.init();
 	  try{inShell=isShellDoc||(window.parent!==window&&window.parent.GZD&&window.parent.GZD.Shell);}catch(e){}
 	  var pageTrack=document.body?document.body.getAttribute('data-bgm'):null;
 	  if(isShellDoc)return;   /* 壳文档：播放器由壳.html自己负责 */
+    /* ★ 主题直报：每次切换主题都直接通知壳（实时检查，免疫加载时序问题） */
+	  (function(){
+	    var orig=GZD.ThemeManager&&GZD.ThemeManager.apply;
+	    if(!orig)return;
+	    GZD.ThemeManager.apply=function(t,save){
+	      orig.call(GZD.ThemeManager,t,save);
+	      try{
+	        if(window.parent&&window.parent!==window&&window.parent.GZD&&window.parent.GZD.Shell){
+	          window.parent.GZD.Shell.syncTheme(t);
+	        }
+	      }catch(e){}
+	    };
+	  })();
 	  if(inShell){
 	    if(pageTrack!==null&&pageTrack!==''){try{window.parent.GZD.Shell.requestTrack(parseInt(pageTrack,10)||0);}catch(e){}}
 	    var ib=document.getElementById('bgmBtn');if(ib)ib.style.display='none';
