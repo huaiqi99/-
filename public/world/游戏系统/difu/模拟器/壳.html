@@ -8,14 +8,13 @@
 	<script>
 	/* 保险丝①：壳只能当最外层 */
 	if(window.self!==window.top){try{top.location.replace(location.pathname+location.search);}catch(e){}}
-	/* 保险丝②：进殿前先按用户主题上底色 */
-	try{
-	  var __t='dark',__r=localStorage.getItem('theme');
-	  if(__r){var __v=JSON.parse(__r).value;if(__v)__t=__v;}
-	  document.documentElement.setAttribute('data-theme',__t);
-	  var __m=document.querySelector('meta[name="theme-color"]');
-	  if(__m)__m.setAttribute('content',__t==='light'?'#f7f4ef':'#1a1614');
-	}catch(e){}
+	/* 保险丝②：进殿前先按用户主题上底色（默认日间；读不懂也照样正确上色） */
+	var __t='light';
+	try{var __r=localStorage.getItem('theme');
+	if(__r){try{var __p=JSON.parse(__r);if(__p==='light'||__p==='dark')__t=__p;else if(__p&&__p.value&&(__p.value==='light'||__p.value==='dark'))__t=__p.value;}catch(e){if(__r==='light'||__r==='dark')__t=__r;}}}catch(e){}
+	document.documentElement.setAttribute('data-theme',__t);
+	var __m=document.querySelector('meta[name="theme-color"]');
+	if(__m)__m.setAttribute('content',__t==='light'?'#f7f4ef':'#1a1614');
 	</script>
 	<style>
 	  :root{--shell-bg:#1a1614}
