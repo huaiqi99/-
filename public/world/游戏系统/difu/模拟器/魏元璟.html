@@ -93,64 +93,72 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 @media(max-width:720px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:180px}.radar-wrap svg{max-width:260px}.status-bars{gap:10px}.status-note{margin-top:10px;padding-top:8px}.status-footer{flex-direction:column;align-items:flex-start}}
 @media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.float-btn.hide-btn{font-size:0.55rem;padding:3px 8px 3px 6px}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:260px}}
 
-/* ====== 桌边小像 ====== */
-#desk-pet {
-  position: fixed;
-  bottom: -2px;
-  right: 0;
-  z-index: 9999;
-  width: 260px;
-  cursor: pointer;
-  user-select: none;
-  transform-origin: bottom center;
-  -webkit-tap-highlight-color: transparent;
-  transition: filter 0.3s ease;
-}
-[data-theme="dark"] #desk-pet {
-  filter: brightness(0.88);
-}
-#desk-pet .char-img {
-  width: 100%;
-  display: block;
-  pointer-events: none;
-}
-#desk-pet .bubble-text-wrap {
-  position: absolute;
-  left: 12%;
-  top: 15%;
-  width: 64%;
-  height: 26%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  z-index: 2;
-  pointer-events: none;
-}
-#desk-pet .bubble-text {
-  font-family: var(--font-serif);
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  line-height: 1.4;
-  letter-spacing: 0.5px;
-  word-break: break-word;
-}
-#desk-pet.q-squash {
-  animation: qSquash 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-@keyframes qSquash {
-  0%   { transform: scale(1, 1) translateY(0); }
-  30%  { transform: scale(0.96, 0.90) translateY(3px); }
-  100% { transform: scale(1, 1) translateY(0); }
-}
-#desk-pet.hidden {
-  display: none !important;
-}
-@media (max-width: 640px) {
-  #desk-pet { width: 200px; right: 0; bottom: -2px; }
-  #desk-pet .bubble-text { font-size: 0.78rem; }
-}
+	/* ====== 桌边小像（可拖动版）====== */
+	#desk-pet {
+	  position: fixed;
+	  bottom: -2px;
+	  right: 0;
+	  z-index: 9999;
+	  width: 260px;
+	  cursor: grab;                      /* 桌面端提示可抓取 */
+	  user-select: none;
+	  -webkit-user-select: none;
+	  -webkit-touch-callout: none;       /* 禁掉 iOS 长按图片菜单 */
+	  transform-origin: bottom center;
+	  -webkit-tap-highlight-color: transparent;
+	  touch-action: none;                /* 关键：按在小像上时浏览器不抢手势去滚页面 */
+	  transition: filter 0.3s ease;
+	  will-change: transform;
+	  --drag-x: 0px;                     /* 拖动位移，JS 只改这两个变量（合成器层，不掉帧） */
+	  --drag-y: 0px;
+	  transform: translate3d(var(--drag-x), var(--drag-y), 0);
+	}
+	[data-theme="dark"] #desk-pet { filter: brightness(0.88); }
+	#desk-pet .char-img {
+	  width: 100%;
+	  display: block;
+	  pointer-events: none;
+	  transition: filter 0.25s ease;     /* 被拎起时阴影渐显 */
+	}
+	#desk-pet .bubble-text-wrap {
+	  position: absolute;
+	  left: 5%; top: 15%;
+	  width: 64%; height: 26%;
+	  display: flex; align-items: center; justify-content: center;
+	  text-align: center;
+	  z-index: 2;
+	  pointer-events: none;
+	}
+	#desk-pet .bubble-text {
+	  font-family: var(--font-serif);
+	  font-size: 0.92rem;
+	  font-weight: 600;
+	  color: #1a1a1a;
+	  line-height: 1.4;
+	  letter-spacing: 0.5px;
+	  word-break: break-word;
+	}
+	/* 拖动中：轻微放大 + 投影（drop-shadow 会自动贴合 PNG 透明轮廓，像被拎离桌面） */
+	#desk-pet.dragging {
+	  cursor: grabbing;
+	  transform: translate3d(var(--drag-x), var(--drag-y), 0) scale(1.04);
+	}
+	#desk-pet.dragging .char-img {
+	  filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.30));
+	}
+	#desk-pet.q-squash { animation: qSquash 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+	/* 关键帧带上拖动位移变量：squash 在任意落点原地播放，绝不会跳回右下角 */
+	@keyframes qSquash {
+	  0%   { transform: translate3d(var(--drag-x), var(--drag-y), 0) scale(1, 1) translateY(0); }
+	  30%  { transform: translate3d(var(--drag-x), var(--drag-y), 0) scale(0.96, 0.90) translateY(3px); }
+	  100% { transform: translate3d(var(--drag-x), var(--drag-y), 0) scale(1, 1) translateY(0); }
+	}
+	#desk-pet.hidden { display: none !important; }
+	@media (max-width: 640px) {
+	  #desk-pet { width: 200px; }
+	  #desk-pet .bubble-text { font-size: 0.78rem; }
+	}
+
 </style>
 </head>
 <body>
@@ -277,39 +285,40 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){var chars=['◈','❖'];var container=document.getElementById('petal-container');if(!container)return;for(var i=0;i<14;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ====== 桌边小像（最终版） ======
-(function() {
-  var lines = [
-    "……好困好困。",
+	// ============================================================
+	// ====== 桌边小像 · 静音解锁 + Web Audio 零延迟 + 可拖动 ======
+	// 按下 → 立刻说话+音效+squash（与原版手感一致）
+	// 按住移动超 8px → 拖动，松手落在原地并记住位置
+	// ============================================================
+	(function(){
+	  var lines = [
+	  "……好困好困。",
     "罗修人呢？",
     "觉得我的发簪好看，想看看？",
     "只给你看一下哦。",
-    "…收魂的时候会不会不方便？",
+    "……收魂的时候会不会不方便？",
     "收魂的时候当然不戴这么长的。",
     "悄悄告诉你，",
     "这簪子是我从人间的皇宫带回来的。",
     "什么时候的事？",
     "当然不能告诉你。"
-  ];
-  var idx = 0;
+	  ];
+	  var idx = 0;
 	  var pet = document.getElementById('desk-pet');
 	  var bubbleText = document.getElementById('bubbleText');
 	  if (!pet) return;
 	  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
 	              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-	  // ---------- ① Web Audio：预取 + 预解码 ----------
+	  /* ---------- 音频（与上一版一致） ---------- */
 	  var audioCtx = null;
 	  var audioBuffer = null;
-	  try {
-	    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-	  } catch (e) { initFallback(); }
+	  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { initFallback(); }
 	  if (audioCtx) {
 	    var xhr = new XMLHttpRequest();
 	    xhr.open('GET', '音效.wav', true);
 	    xhr.responseType = 'arraybuffer';
 	    xhr.onload = function () {
 	      if (xhr.status === 200 || xhr.status === 0) {
-	        // 关键：解码是离线操作，AudioContext 处于 suspended 也能完成
 	        audioCtx.decodeAudioData(xhr.response,
 	          function (buf) { audioBuffer = buf; },
 	          function ()    { initFallback(); });
@@ -318,28 +327,20 @@ if (themeBtn) {
 	    xhr.onerror = function () { initFallback(); };
 	    xhr.send();
 	  }
-	  // ---------- ② iOS 静音解锁：动态生成低振幅 WAV ----------
 	  function makeSilentWavURL() {
-	    var sampleRate = 8000;  // 低采样率，体积小（约 16KB）
-	    var duration   = 1;     // 1 秒循环
-	    var freq       = 55;    // 低频，人耳几乎不可闻
-	    var amp        = 0.002; // 极低振幅（约 -54dB）
+	    var sampleRate = 8000, duration = 1, freq = 55, amp = 0.002;
 	    var n = sampleRate * duration;
 	    var buf = new ArrayBuffer(44 + n * 2);
 	    var v = new DataView(buf);
 	    function str(off, s) { for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); }
 	    str(0, 'RIFF');  v.setUint32(4, 36 + n * 2, true);  str(8, 'WAVE');
 	    str(12, 'fmt '); v.setUint32(16, 16, true);
-	    v.setUint16(20, 1, true);              // PCM
-	    v.setUint16(22, 1, true);              // 单声道
-	    v.setUint32(24, sampleRate, true);
-	    v.setUint32(28, sampleRate * 2, true); // byteRate
-	    v.setUint16(32, 2, true);              // blockAlign
-	    v.setUint16(34, 16, true);             // 16bit
+	    v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+	    v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true);
+	    v.setUint16(32, 2, true); v.setUint16(34, 16, true);
 	    str(36, 'data'); v.setUint32(40, n * 2, true);
 	    for (var i = 0; i < n; i++) {
-	      var s = Math.sin(2 * Math.PI * freq * i / sampleRate) * amp * 32767;
-	      v.setInt16(44 + i * 2, Math.round(s), true);
+	      v.setInt16(44 + i * 2, Math.round(Math.sin(2 * Math.PI * freq * i / sampleRate) * amp * 32767), true);
 	    }
 	    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
 	  }
@@ -349,22 +350,17 @@ if (themeBtn) {
 	      unlockAudio = new Audio(makeSilentWavURL());
 	      unlockAudio.loop = true;
 	      unlockAudio.preload = 'auto';
-	      // 注意：不要设 volume=0、不要用全零采样的文件——
-	      // 部分 iOS 版本会因"无实际音频输出"而不切换会话类别
 	    } catch (e) { unlockAudio = null; }
 	  }
-	  // 幂等：保证解锁音频在播（每次点击都调，后台回来被暂停也能自愈）
 	  function ensureMediaSession() {
 	    if (!isIOS || !unlockAudio) return;
 	    if (unlockAudio.paused) {
 	      try {
-	        var p = unlockAudio.play(); // 在手势事件内调用，合法
+	        var p = unlockAudio.play();
 	        if (p && p.catch) p.catch(function () {});
 	      } catch (e) {}
 	    }
 	  }
-	  // 早期全局解锁：用户触摸页面任意位置即完成（滑动浏览时顺便解锁），
-	  // 之后点桌宠时通道早已就绪，连第一次点击都零延迟
 	  if (isIOS) {
 	    var earlyUnlock = function () {
 	      ensureMediaSession();
@@ -373,7 +369,6 @@ if (themeBtn) {
 	    document.addEventListener('touchstart', earlyUnlock, { once: true, passive: true });
 	    document.addEventListener('click', earlyUnlock, { once: true });
 	  }
-	  // ---------- ③ 降级：<audio> + blob 预载（仅 Web Audio 不可用时）----------
 	  var fallbackAudio = null;
 	  function initFallback() {
 	    if (fallbackAudio) return;
@@ -384,7 +379,7 @@ if (themeBtn) {
 	    x.responseType = 'blob';
 	    x.onload = function () {
 	      if (x.status === 200 || x.status === 0) {
-	        fallbackAudio.src = URL.createObjectURL(x.response); // blob 预载，避免 iOS 首播再下载
+	        fallbackAudio.src = URL.createObjectURL(x.response);
 	      }
 	    };
 	    x.send();
@@ -395,45 +390,157 @@ if (themeBtn) {
 	    var p = fallbackAudio.play();
 	    if (p && p.catch) p.catch(function () {});
 	  }
-	  // ---------- ④ 播放调度 ----------
 	  function playSound() {
-	    ensureMediaSession();               // iOS：把会话钉在媒体通道（不受静音开关影响）
+	    ensureMediaSession();
 	    if (audioBuffer && audioCtx) {
-	      if (audioCtx.state === 'suspended') {
-	        audioCtx.resume();              // 手势内激活（仅首次需要）
-	      }
+	      if (audioCtx.state === 'suspended') audioCtx.resume();
 	      try {
 	        var src = audioCtx.createBufferSource();
 	        src.buffer = audioBuffer;
 	        src.connect(audioCtx.destination);
-	        src.start(0);                   // 预解码 buffer，即刻出声，与动画同步
+	        src.start(0);
 	        return;
 	      } catch (e) {}
 	    }
 	    playFallback();
 	  }
-	  // ---------- 交互 ----------
-	  function handleInteraction(e) {
-	    if (e.cancelable) e.preventDefault();
-	    idx = (idx + 1) % lines.length;
-	    bubbleText.textContent = lines[idx];
-	    pet.classList.remove('q-squash');
-	    requestAnimationFrame(function () {
-	      requestAnimationFrame(function () { pet.classList.add('q-squash'); });
-	    });
-	    playSound();
-	  }
-	  pet.addEventListener('mousedown', handleInteraction);
-	  pet.addEventListener('touchstart', handleInteraction, { passive: false });
-	  pet.addEventListener('dragstart', function (e) { e.preventDefault(); });
-	  // 切后台会话可能被系统回收 → 回前台尝试恢复（失败无害，下次点击自愈）
 	  document.addEventListener('visibilitychange', function () {
 	    if (!document.hidden && isIOS && unlockAudio && unlockAudio.paused) {
 	      var p = unlockAudio.play();
 	      if (p && p.catch) p.catch(function () {});
 	    }
 	  });
-	  // 隐藏按钮（原有逻辑）
+	  /* ---------- 拖动 ---------- */
+	  var THRESHOLD = 8;            // 位移超过 8px 才算拖动，否则视为点击
+	  var POS_KEY = 'deskPetPos';   // 位置记忆（localStorage）
+	  var activeId = null;          // 当前按下的指针（多指时只认第一根）
+	  var startX = 0, startY = 0;   // 按下时的指针坐标
+	  var baseX = 0, baseY = 0;     // 按下时小像左上角坐标
+	  var dragging = false;
+	  var freed = false;            // 是否已脱离右下角默认停靠位
+	  // 从 CSS 默认停靠位（bottom/right）切换为自由坐标定位
+	  function toFree() {
+	    if (freed) return;
+	    freed = true;
+	    var s = pet.style;
+	    s.left = '0px'; s.top = '0px';
+	    s.right = 'auto'; s.bottom = 'auto';
+	  }
+	  // 钳制规则：中心点不许出屏 → 任意方向最多藏一半，永远拖不丢
+	  function clamp(x, y) {
+	    var w = pet.offsetWidth || 200, h = pet.offsetHeight || 200;
+	    var vw = window.innerWidth, vh = window.innerHeight;
+	    x = Math.max(-w / 2, Math.min(vw - w / 2, x));
+	    y = Math.max(-h / 2, Math.min(vh - h / 2, y));
+	    return [x, y];
+	  }
+	  function setPos(x, y) {
+	    var p = clamp(x, y);
+	    pet.style.setProperty('--drag-x', p[0] + 'px');
+	    pet.style.setProperty('--drag-y', p[1] + 'px');
+	  }
+	  function getPos() {
+	    return [
+	      parseFloat(pet.style.getPropertyValue('--drag-x')) || 0,
+	      parseFloat(pet.style.getPropertyValue('--drag-y')) || 0
+	    ];
+	  }
+	  function savePos() {
+	    try {
+	      var p = getPos();
+	      localStorage.setItem(POS_KEY, JSON.stringify({ x: p[0], y: p[1] }));
+	    } catch (e) {}
+	  }
+	  function restartSquash() {
+	    pet.classList.remove('q-squash');
+	    void pet.offsetWidth;   // 强制回流 → 动画重启
+	    pet.classList.add('q-squash');
+	  }
+	  // 说话+音效+squash：按下瞬间触发，与原版一致
+	  function triggerTap() {
+	    idx = (idx + 1) % lines.length;
+	    bubbleText.textContent = lines[idx];
+	    restartSquash();
+	    playSound();
+	  }
+	  function onDown(e) {
+	    if (activeId !== null) return;   // 多指：只认第一根
+	    activeId = e.pointerId;
+	    try { pet.setPointerCapture(e.pointerId); } catch (err) {}
+	    // 先掐掉进行中的 squash 再量位置 → 读到的是静止坐标，拖动起点不会跳
+	    pet.classList.remove('q-squash');
+	    var r = pet.getBoundingClientRect();
+	    baseX = r.left; baseY = r.top;
+	    startX = e.clientX; startY = e.clientY;
+	    dragging = false;
+	    triggerTap();   // 按下即出声，零延迟
+	  }
+	  function onMove(e) {
+	    if (activeId === null || e.pointerId !== activeId) return;
+	    var dx = e.clientX - startX;
+	    var dy = e.clientY - startY;
+	    if (!dragging) {
+	      if (dx * dx + dy * dy < THRESHOLD * THRESHOLD) return;
+	      dragging = true;
+	      toFree();
+	      pet.classList.remove('q-squash');  // 让位给"拎起"状态
+	      pet.classList.add('dragging');
+	    }
+	    setPos(baseX + dx, baseY + dy);
+	  }
+	  function onUp(e) {
+	    if (e.pointerId !== activeId) return;
+	    activeId = null;
+	    if (dragging) {
+	      pet.classList.remove('dragging');
+	      restartSquash();   // 落地小蹲一下（复用同一动画，不发声）
+	      savePos();
+	    }
+	    dragging = false;
+	  }
+	  function onCancel(e) {
+	    if (e.pointerId !== activeId) return;
+	    activeId = null;
+	    if (dragging) { pet.classList.remove('dragging'); savePos(); }
+	    dragging = false;
+	  }
+	  pet.addEventListener('pointerdown', onDown);
+	  pet.addEventListener('pointermove', onMove);
+	  pet.addEventListener('pointerup', onUp);
+	  pet.addEventListener('pointercancel', onCancel);
+	  pet.addEventListener('dragstart', function (e) { e.preventDefault(); });
+	  pet.addEventListener('contextmenu', function (e) { e.preventDefault(); }); // 长按/右键菜单
+	  // ---- 位置记忆：图片加载完才有真实高度，恢复后再钳边（转屏/换设备不跑丢） ----
+	  var petImg = pet.querySelector('.char-img');
+	  function tryRestore() {
+	    if (petImg && !petImg.complete) return;
+	    var raw = null;
+	    try { raw = localStorage.getItem(POS_KEY); } catch (e) {}
+	    if (!raw) return;
+	    try {
+	      var pos = JSON.parse(raw);
+	      if (pos && isFinite(pos.x) && isFinite(pos.y)) {
+	        toFree();
+	        setPos(pos.x, pos.y);
+	      }
+	    } catch (e) {}
+	  }
+	  if (petImg) {
+	    if (petImg.complete) tryRestore();
+	    else petImg.addEventListener('load', tryRestore, { once: true });
+	  }
+	  window.addEventListener('load', tryRestore);
+	  // 窗口尺寸变化（转屏/缩放）→ 重新钳制回屏内
+	  var rz = null;
+	  window.addEventListener('resize', function () {
+	    clearTimeout(rz);
+	    rz = setTimeout(function () {
+	      if (!freed) return;
+	      var p = getPos();
+	      setPos(p[0], p[1]);
+	    }, 150);
+	  });
+	  // ---- 隐藏按钮（原有逻辑） ----
 	  var hideBtn = document.getElementById('hidePetBtn');
 	  if (hideBtn) {
 	    hideBtn.addEventListener('click', function () {
@@ -445,7 +552,7 @@ if (themeBtn) {
 	      }
 	    });
 	  }
-	  console.log('✧ 林淮 · 桌边小像 已加载（静音解锁 + Web Audio 零延迟）');
+	  console.log('✧ 林淮 · 桌边小像 已加载（静音解锁 + 零延迟 + 可拖动）');
 	})();
 
 console.log('◈ 归终殿 · 魏元璟档案 v1.1 已加载');
