@@ -11,6 +11,13 @@ GZD.init();
 	  {name:'单独个体',src:'歌曲/单独个体.mp3'},
 	  {name:'口哨',src:'歌曲/口哨.mp3'}
 	];
+    GZD.BGM_VOLUME=(function(){
+	  var v=(GZD.Storage&&GZD.Storage.getSettings().bgmVolume)||0.35;   /* 电脑端基准音量 */
+	  var mobile=/Android|iPhone|iPad|iPod|iOS|Mobile/i.test(navigator.userAgent)
+	             ||(('ontouchstart' in window)&&Math.min(screen.width,screen.height)<820);
+	  if(mobile)v=Math.min(v,0.15);   /* ★ 手机端封顶音量：调这个数字，越小越安静（范围 0~1） */
+	  return v;
+	})();
 	(function(){
 	  var isShellDoc=!!window.__GZD_SHELL__;
 	  var inShell=false;
@@ -62,7 +69,7 @@ GZD.init();
 	    return;
 	  }
 	  /* —— 单独打开（不经壳）：接续播放，首次触摸响起 —— */
-	  var LIST=GZD.BGM_LIST,VOL=GZD.Storage.getSettings().bgmVolume||0.35,KEY='gzd_bgm';
+	  var LIST=GZD.BGM_LIST,VOL=GZD.BGM_VOLUME,KEY='gzd_bgm';
 	  var st={on:true,index:0,times:{}};
 	  try{var s=JSON.parse(localStorage.getItem(KEY)||'null');
 	    if(s){st.on=s.on!==false;st.index=s.index||0;st.times=s.times||{};}}catch(e){}

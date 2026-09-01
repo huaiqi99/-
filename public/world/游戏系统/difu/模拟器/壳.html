@@ -42,7 +42,7 @@
 	(function(){
 	'use strict';
 	var LIST=(window.GZD&&GZD.BGM_LIST)||[{name:'浮生若梦',src:'./bgm1.mp3'},{name:'忘川引',src:'./bgm2.mp3'}];
-	var VOL=(window.GZD&&GZD.Storage)?(GZD.Storage.getSettings().bgmVolume||0.35):0.35;
+	var VOL=(window.GZD&&typeof GZD.BGM_VOLUME==='number')?GZD.BGM_VOLUME:0.35;
 	var KEY='gzd_bgm',frame=document.getElementById('pageFrame');
 	var BASE=location.pathname.replace(/[^\/]*$/,'');
 	var audio=new Audio();audio.loop=true;audio.volume=0;audio.preload='auto';
