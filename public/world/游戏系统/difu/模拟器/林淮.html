@@ -104,6 +104,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   transform-origin: bottom center;
   -webkit-tap-highlight-color: transparent;
   transition: filter 0.3s ease;
+  touch-action: none;  /* 阻止浏览器默认触摸行为，消除延迟 */
 }
 [data-theme="dark"] #desk-pet {
   filter: brightness(0.88);
@@ -220,7 +221,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <script>
 (function(){
 
-// ====== 主题初始化（读取 localStorage） ======
+// ====== 主题初始化 ======
 (function initTheme() {
   try {
     var raw = localStorage.getItem('theme');
@@ -285,7 +286,9 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ====== 桌边小像 ======
+// ============================================================
+// ====== 桌边小像 · 统一交互（电脑 + 手机 完全一致） ======
+// ============================================================
 (function(){
   var lines = [
     "……嗯。",
@@ -305,66 +308,54 @@ if (themeBtn) {
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  // 预加载音效
-  var audioDown = new Audio('Ya1.mp3');
-  var audioUp = new Audio('Ya2.mp3');
-  audioDown.preload = 'auto';
-  audioUp.preload = 'auto';
-  audioDown.volume = 1.0;
-  audioUp.volume = 1.0;
+  // ---- 只使用一个音效，简单稳定 ----
+  var audio = new Audio('Ya1.mp3');
+  audio.preload = 'auto';
+  audio.volume = 1.0;
 
-  // 记录是否正在按下状态（防止鼠标/触摸冲突）
-  var isDown = false;
+  var isProcessing = false;
 
-  // ---- 按下时播放 Ya1 ----
-  function onPress(e) {
-    if (isDown) return;
-    isDown = true;
-    audioDown.currentTime = 0;
-    audioDown.play().catch(function(err) {
-      console.log('Ya1 播放被阻止:', err);
+  function handleInteraction(e) {
+    // 防止快速连点导致音效叠加/混乱
+    if (isProcessing) return;
+    isProcessing = true;
+
+    // 1. 播放音效（重置到开头，确保每次点击都能播）
+    audio.currentTime = 0;
+    audio.play().catch(function(err) {
+      // 移动端浏览器可能因策略阻止自动播放，但用户手势触发的 play 通常被允许
+      console.log('音效播放被阻止（罕见）:', err);
     });
-  }
 
-  // ---- 松开时播放 Ya2 + 切换文字 + 动画 ----
-  function onRelease(e) {
-    if (!isDown) return;
-    isDown = false;
-    // 播放松开音效
-    audioUp.currentTime = 0;
-    audioUp.play().catch(function(err) {
-      console.log('Ya2 播放被阻止:', err);
-    });
-    // 切换气泡文字
+    // 2. 切换气泡文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
-    // 挤压动画
+
+    // 3. 挤压动画
     pet.classList.remove('q-squash');
-    void pet.offsetWidth;
+    void pet.offsetWidth; // 强制回流，确保动画重新触发
     pet.classList.add('q-squash');
-    setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
+
+    // 动画结束后解锁 + 移除样式
+    setTimeout(function(){
+      pet.classList.remove('q-squash');
+      isProcessing = false;
+    }, 350);
   }
 
-  // ---- 鼠标事件 ----
-  pet.addEventListener('mousedown', onPress);
-  pet.addEventListener('mouseup', onRelease);
-  pet.addEventListener('mouseleave', function(e) {
-    // 鼠标移出时如果还按着，视为松开（防止卡住）
-    if (isDown) {
-      onRelease(e);
-    }
+  // ---- 使用 pointerdown：同时支持鼠标、触摸、触控笔，无延迟 ----
+  pet.addEventListener('pointerdown', function(e) {
+    // 阻止默认行为（避免触发 click、文本选择、滚动等干扰）
+    e.preventDefault();
+    handleInteraction(e);
   });
 
-  // ---- 触摸事件（手机） ----
-  pet.addEventListener('touchstart', function(e) {
-    onPress(e);
-    e.preventDefault(); // 防止触发鼠标事件
-  }, { passive: false });
-  pet.addEventListener('touchend', function(e) {
-    onRelease(e);
+  // 额外阻止拖拽（防止图片被拖走）
+  pet.addEventListener('dragstart', function(e) {
     e.preventDefault();
-  }, { passive: false });
+  });
 
+  // ---- 隐藏/显示按钮 ----
   var hideBtn = document.getElementById('hidePetBtn');
   if (hideBtn) {
     hideBtn.addEventListener('click', function() {
@@ -380,7 +371,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('✧ 林淮 · 桌边小像 已加载');
+  console.log('✧ 林淮 · 桌边小像 已加载（统一交互）');
 })();
 
 console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
