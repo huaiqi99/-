@@ -277,7 +277,7 @@ if (themeBtn) {
 // ====== 花瓣特效 ======
 (function(){var chars=['◈','❖'];var container=document.getElementById('petal-container');if(!container)return;for(var i=0;i<14;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
-// ====== 桌边小像（动画与音频并行） ======
+// ====== 桌边小像 ======
 (function(){
   var lines = [
     "……烦死了。",
@@ -303,21 +303,8 @@ if (themeBtn) {
   audio1.volume = 1.0;
   audio2.volume = 1.0;
 
-  function playAudioSequence() {
-    // 播放 Ya1
-    audio1.currentTime = 0;
-    audio1.play().catch(function(err){});
-
-    // Ya1 播完后播 Ya2
-    audio1.onended = function() {
-      audio1.onended = null;
-      audio2.currentTime = 0;
-      audio2.play().catch(function(err){});
-    };
-  }
-
   function handleClick(e) {
-    // 【动画】立即执行，不等音频
+    // 动画同步执行
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
     pet.classList.remove('q-squash');
@@ -325,8 +312,14 @@ if (themeBtn) {
     pet.classList.add('q-squash');
     setTimeout(function(){ pet.classList.remove('q-squash'); }, 350);
 
-    // 【音频】异步后台播放，不阻塞动画
-    playAudioSequence();
+    // 音频异步连续播放，无延迟
+    audio1.currentTime = 0;
+    audio1.play().catch(function(err){});
+    audio1.onended = function() {
+      audio1.onended = null;
+      audio2.currentTime = 0;
+      audio2.play().catch(function(err){});
+    };
   }
 
   pet.addEventListener('click', handleClick);
@@ -345,8 +338,6 @@ if (themeBtn) {
       }
     });
   }
-
-  console.log('◈ 魏元璟 · 桌边小像 已加载');
 })();
 
 console.log('◈ 归终殿 · 魏元璟档案 v1.1 已加载');
