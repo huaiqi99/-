@@ -71,7 +71,24 @@ h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
       <div class="desc">讲武堂弟子 · 刀法传承<br>双父：罗修 × 魏元璟</div>
     </div>
   </div>
-  <a href="./壳.html" class="start-btn">开始人生</a>
+  <a href="./壳.html" class="start-btn" id="startBtn">开始人生</a>
+	<script>
+	(function(){
+	  var btn=document.getElementById('startBtn');
+	  if(!btn)return;
+	  btn.addEventListener('click',function(e){
+	    try{
+	      /* 如果本页正显示在壳的窗口里：不新开壳，直接让壳把窗口换回命薄 */
+	      if(window.self!==window.top&&window.parent&&window.parent.GZD&&window.parent.GZD.Shell){
+	        e.preventDefault();
+	        window.parent.GZD.Shell.load('./命薄.html');
+	      }
+	    }catch(err){}
+	    /* 不在壳里（正常从浏览器打开）→ 走默认 href，正常进入壳 */
+	  });
+	})();
+	</script>
+
   <div class="footer-note" id="footerNote">当前档案：林栖梧</div>
 </div>
 

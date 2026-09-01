@@ -1,6 +1,10 @@
 	<!DOCTYPE html>
 	<html lang="zh-CN" data-theme="dark">
 	<head>
+    <script>
+	/* 防套娃：壳只能当最外层。若发现自己被装进了某个窗口，立即抢占整个页面 */
+	if(window.self!==window.top){try{top.location.replace(location.pathname+location.search);}catch(e){}}
+	</script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<title>归终殿 · 弟子手册</title>

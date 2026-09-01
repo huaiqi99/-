@@ -25,6 +25,7 @@ GZD.init();
 	      if(!a)return;
 	      var href=a.getAttribute('href')||'';
 	      if(!href||href.charAt(0)==='#'||/^(https?:|mailto:|tel:)/i.test(href))return; // 锚点/外链不拦
+          if(a.target&&a.target!=='_self')return; // 带 target 的链接不拦截，让浏览器原生跳转
 	      e.preventDefault();
 	      try{window.parent.GZD.Shell.load(href);}catch(err){}
 	    },true);
