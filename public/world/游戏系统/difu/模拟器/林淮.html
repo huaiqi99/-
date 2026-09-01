@@ -288,7 +288,7 @@ if (themeBtn) {
 (function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
 // ============================================================
-// ====== 桌边小像 · 纯 <audio> 方案（兼容静音模式） ======
+// ====== 桌边小像 · Web Audio 优先 + <audio> 回退 ======
 // ============================================================
 (function(){
   var lines = [
@@ -309,11 +309,68 @@ if (themeBtn) {
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  // ---- 使用 <audio> 标签，预加载 ----
-  var audio = new Audio('音效.wav');
-  audio.preload = 'auto';
+  // ---- 音频系统 ----
+  var audioCtx = null;
+  var audioBuffer = null;
+  var fallbackAudio = new Audio('音效.wav');
+  fallbackAudio.preload = 'auto';
 
-  // ---- 无任何防连点锁，每次点击立即执行 ----
+  // 使用 XMLHttpRequest 加载音频（兼容 file://）
+  function loadAudio() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '音效.wav', true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+      if (xhr.status === 200 || xhr.status === 0) {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        audioCtx.decodeAudioData(xhr.response, function(buffer) {
+          audioBuffer = buffer;
+          console.log('Web Audio 解码成功');
+        }, function(e) {
+          console.warn('解码失败，使用回退', e);
+        });
+      } else {
+        console.warn('加载失败，使用回退');
+      }
+    };
+    xhr.onerror = function() { console.warn('加载失败，使用回退'); };
+    xhr.send();
+  }
+
+  // 页面加载后立即预加载
+  loadAudio();
+
+  // ---- 播放函数：优先 Web Audio，失败则回退 ----
+  function playSound() {
+    // 1. 尝试 Web Audio
+    if (audioBuffer) {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      try {
+        var source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start(0);
+        return; // 成功播放，退出
+      } catch(e) {
+        console.warn('Web Audio 播放失败，回退', e);
+      }
+    }
+
+    // 2. 回退到 <audio>
+    fallbackAudio.currentTime = 0;
+    fallbackAudio.play().catch(function(err) {
+      console.warn('回退音频播放失败', err);
+    });
+  }
+
+  // ---- 核心交互 ----
   function handleInteraction(e) {
     if (e.cancelable) e.preventDefault();
 
@@ -329,12 +386,11 @@ if (themeBtn) {
       });
     });
 
-    // 播放音频（重置并播放）
-    audio.currentTime = 0;
-    audio.play().catch(function() {});
+    // 播放声音
+    playSound();
   }
 
-  // 电脑端 mousedown，手机端 touchstart
+  // 事件绑定
   pet.addEventListener('mousedown', handleInteraction);
   pet.addEventListener('touchstart', handleInteraction, { passive: false });
   pet.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -355,7 +411,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('✧ 林淮 · 桌边小像 已加载（纯 audio 方案）');
+  console.log('✧ 林淮 · 桌边小像 已加载（Web Audio 优先 + 回退）');
 })();
 
 console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
