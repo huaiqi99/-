@@ -288,7 +288,7 @@ if (themeBtn) {
 (function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
 
 // ============================================================
-// ====== 桌边小像 · Web Audio 极速响应（零延迟） ======
+// ====== 桌边小像 · 兼容 Web Audio 与 回退（手机必响） ======
 // ============================================================
 (function(){
   var lines = [
@@ -309,70 +309,114 @@ if (themeBtn) {
   var bubbleText = document.getElementById('bubbleText');
   if (!pet) return;
 
-  // ---- 使用 Web Audio API 预解码，实现零延迟播放 ----
+  // ---- 音频系统 ----
   var audioCtx = null;
   var audioBuffer = null;
-  var isAudioLoading = false;
+  var fallbackAudio = null;
+  var isLoading = false;
+
+  // 使用 XMLHttpRequest 加载音频（兼容 file://）
+  function loadAudioWithXHR(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+      if (xhr.status === 200 || xhr.status === 0) {
+        callback(null, xhr.response);
+      } else {
+        callback(new Error('HTTP ' + xhr.status));
+      }
+    };
+    xhr.onerror = function() { callback(new Error('Network error')); };
+    xhr.send();
+  }
 
   function loadAudio() {
-    if (audioBuffer || isAudioLoading) return;
-    isAudioLoading = true;
-    fetch('音效.wav')
-      .then(res => {
-        if (!res.ok) throw new Error('网络错误');
-        return res.arrayBuffer();
-      })
-      .then(data => {
+    if (isLoading || audioBuffer) return;
+    isLoading = true;
+    loadAudioWithXHR('音效.wav', function(err, data) {
+      isLoading = false;
+      if (err) {
+        console.warn('Web Audio 加载失败，将使用回退方案', err);
+        // 创建回退音频
+        if (!fallbackAudio) {
+          fallbackAudio = new Audio('音效.wav');
+          fallbackAudio.preload = 'auto';
+        }
+        return;
+      }
+      try {
         if (!audioCtx) {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        return audioCtx.decodeAudioData(data);
-      })
-      .then(buffer => {
-        audioBuffer = buffer;
-        isAudioLoading = false;
-        console.log('音频解码完成');
-      })
-      .catch(err => {
-        console.warn('音频加载失败', err);
-        isAudioLoading = false;
-      });
+        audioCtx.decodeAudioData(data, function(buffer) {
+          audioBuffer = buffer;
+          console.log('Web Audio 解码成功');
+        }, function(e) {
+          console.warn('解码失败，使用回退', e);
+          if (!fallbackAudio) {
+            fallbackAudio = new Audio('音效.wav');
+            fallbackAudio.preload = 'auto';
+          }
+        });
+      } catch(e) {
+        console.warn('Web Audio 不可用，使用回退', e);
+        if (!fallbackAudio) {
+          fallbackAudio = new Audio('音效.wav');
+          fallbackAudio.preload = 'auto';
+        }
+      }
+    });
   }
 
   function playSound() {
-    // 确保 AudioContext 存在并激活
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    // 1. 尝试 Web Audio
     if (audioBuffer) {
-      // 直接创建 BufferSource 播放，无延迟
-      var source = audioCtx.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(audioCtx.destination);
-      source.start(0);
-    } else {
-      // 如果未加载，尝试加载（首次点击可能无声，后续正常）
-      if (!isAudioLoading) {
-        loadAudio();
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      try {
+        var source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioCtx.destination);
+        source.start(0);
+        return;
+      } catch(e) {
+        console.warn('Web Audio 播放失败，回退', e);
+      }
+    }
+
+    // 2. 回退到 Audio 标签
+    if (!fallbackAudio) {
+      fallbackAudio = new Audio('音效.wav');
+      fallbackAudio.preload = 'auto';
+    }
+    fallbackAudio.currentTime = 0;
+    fallbackAudio.play().catch(function(err) {
+      console.warn('回退音频播放失败', err);
+    });
+
+    // 如果 Web Audio 还没加载好，触发加载
+    if (!audioBuffer && !isLoading) {
+      loadAudio();
     }
   }
 
-  // 页面加载后预加载音频
+  // 预加载（页面加载后尝试）
   loadAudio();
 
-  // ---- 核心交互：无锁，每次点击立即执行所有动作 ----
+  // ---- 核心交互 ----
   function handleInteraction(e) {
     if (e.cancelable) e.preventDefault();
 
-    // 1. 切换文字
+    // 切换文字
     idx = (idx + 1) % lines.length;
     bubbleText.textContent = lines[idx];
 
-    // 2. 强制重置动画（双帧 requestAnimationFrame 确保强制回流）
+    // 触发动画（双帧强制回流）
     pet.classList.remove('q-squash');
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
@@ -380,18 +424,16 @@ if (themeBtn) {
       });
     });
 
-    // 3. 播放声音（立即，无延迟）
+    // 播放声音
     playSound();
   }
 
-  // ---- 电脑端 mousedown，手机端 touchstart ----
+  // 事件绑定
   pet.addEventListener('mousedown', handleInteraction);
   pet.addEventListener('touchstart', handleInteraction, { passive: false });
-
-  // 阻止拖拽
   pet.addEventListener('dragstart', function(e) { e.preventDefault(); });
 
-  // 隐藏/显示按钮
+  // 隐藏按钮
   var hideBtn = document.getElementById('hidePetBtn');
   if (hideBtn) {
     hideBtn.addEventListener('click', function() {
@@ -407,7 +449,7 @@ if (themeBtn) {
     });
   }
 
-  console.log('✧ 林淮 · 桌边小像 已加载（Web Audio 零延迟）');
+  console.log('✧ 林淮 · 桌边小像 已加载（Web Audio + 回退）');
 })();
 
 console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
