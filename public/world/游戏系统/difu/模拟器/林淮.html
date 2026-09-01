@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>归终殿 · 林淮 · 引渡人档案</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#2a6b8a;--profile-accent:#2a6b8a;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--spec-c1:#6B8EAA;--spec-c2:#5D9BB0;--spec-c3:#6BAF9E;--spec-c4:#E8B4B8;--spec-c5:#E8D5A3;--seal-color:#2a6b8a;}
+[data-theme="dark"]{--bg-body:#181614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#cfc8c0;--text-secondary:#9a948c;--text-muted:#6a6560;--accent:#5a9bb8;--profile-accent:#5a9bb8;--spec-c1:#6B8EAA;--spec-c2:#5D9BB0;--spec-c3:#6BAF9E;--spec-c4:#E8B4B8;--spec-c5:#E8D5A3;--seal-color:#5a9bb8;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+.float-btn.hide-btn{font-size:0.6rem;padding:4px 10px 4px 8px;gap:4px}
+#app{max-width:900px;margin:0 auto;width:100%;padding:20px 4px 0 4px}
+.top-header{max-width:900px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--border-light)}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition)}
+.top-header .profile-name{font-size:0.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:0.5px;margin-left:2px}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600}
+.card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.06);transition:border-color var(--transition),box-shadow var(--transition),transform 0.25s ease;animation:cardIn 0.45s ease forwards;line-height:1.6}
+.card-grad{background:linear-gradient(135deg,var(--bg-card) 0%,var(--bg-hover) 100%)}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;transform-style:flat;-webkit-transform-style:flat}
+.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:0.75;z-index:2;transition:all 0.3s;pointer-events:none;transform-style:flat;-webkit-transform-style:flat}
+.card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 6px 20px rgba(0,0,0,0.12)}
+.card:hover::after,.card:hover .corner-deco{opacity:1;transform:scale(1.1)}
+.card-title{font-size:0.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:0.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1}
+.card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:0.5;border-radius:1px}
+.cover-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;position:relative;z-index:1}
+.cover-avatar{width:120px;height:120px;background:var(--bg-hover);border:1px solid var(--border-card);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.cover-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-avatar .fallback{font-size:3rem;color:var(--profile-accent)}
+.cover-info{flex:1;min-width:180px}
+.cover-info .name{font-size:1.5rem;font-weight:700;letter-spacing:1px;color:var(--text-primary)}
+.cover-info .sub{font-size:0.85rem;color:var(--text-secondary);margin-top:2px;font-style:italic}
+.cover-info .meta-list{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:8px;font-size:0.8rem;color:var(--text-secondary);font-family:var(--font-mono)}
+.cover-info .meta-list .label{color:var(--text-muted)}
+.cover-info .meta-list .value{color:var(--profile-accent);font-weight:600}
+.cover-info .badge{display:inline-block;font-size:0.65rem;padding:2px 10px;border-radius:10px;background:var(--bg-hover);border:1px solid var(--border-light);color:var(--text-muted);margin-top:6px;font-family:var(--font-mono)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:1}
+.info-grid .info-cell{background:var(--bg-card);padding:6px 10px 5px 10px;border-radius:4px;border:1px solid var(--border-light)}
+.info-grid .info-cell .label{font-size:0.65rem;font-weight:700;color:var(--text-secondary);letter-spacing:0.3px;display:block;margin-bottom:1px}
+.info-grid .info-cell .val{font-size:0.85rem;color:var(--text-primary);font-weight:500;word-break:break-word}
+.info-grid .info-cell.span-full{grid-column:1/-1}
+.weapon-block{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8}
+.weapon-block .w-name{font-weight:600;color:var(--text-primary);font-family:var(--font-serif);font-size:1rem;margin-bottom:4px}
+.weapon-block .quote{color:var(--text-muted);padding-left:12px;border-left:2px solid var(--profile-accent);margin-top:6px;font-size:0.82rem}
+.timeline{position:relative;padding-left:20px;z-index:1}
+.timeline::before{content:'';position:absolute;left:5px;top:6px;bottom:6px;width:1.5px;background:var(--border-light)}
+.timeline-item{position:relative;margin-bottom:16px;opacity:0;transform:translateX(-12px);transition:opacity 0.5s ease,transform 0.5s ease}
+.timeline-item.visible{opacity:1;transform:translateX(0)}
+.timeline-item:last-child{margin-bottom:0}
+.timeline-item::before{content:'';position:absolute;left:-17.5px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--bg-body);border:2px solid var(--profile-accent);transition:background 0.3s,box-shadow 0.3s}
+.timeline-item:hover::before{background:var(--profile-accent);box-shadow:0 0 12px var(--profile-accent)}
+.timeline-item .date{font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:2px}
+.timeline-item .title{font-size:0.95rem;font-weight:600;color:var(--text-primary);margin-bottom:2px}
+.timeline-item .desc{font-size:0.88rem;color:var(--text-secondary);line-height:1.6}
+.archive-note{position:relative;z-index:1;font-size:0.85rem;color:var(--text-secondary);line-height:1.8;padding:8px 12px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-accent)}
+.status-wrap{position:relative;z-index:1}
+.status-wrap .status-line{font-size:0.9rem;color:var(--text-primary);margin-bottom:4px}
+.status-wrap .status-line .label{color:var(--text-muted)}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:1}
+.radar-wrap{display:flex;justify-content:center;align-items:center;padding:0;min-height:220px;position:relative}
+.radar-wrap svg{width:100%;max-width:300px;height:auto;aspect-ratio:1/1}
+.radar-label{position:absolute;bottom:4px;left:8px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.3px;opacity:0.7;pointer-events:none}
+.status-bars{display:flex;flex-direction:column;gap:12px;justify-content:center}
+.status-bars .bars-title{font-size:0.8rem;font-weight:600;color:var(--text-secondary);font-family:var(--font-serif);letter-spacing:0.3px;margin-bottom:4px;padding-bottom:2px;border-bottom:1px solid var(--border-light)}
+.status-item{position:relative}
+.status-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:0.82rem}
+.status-top .st-label{color:var(--text-secondary);font-weight:500}
+.status-top .st-value{font-family:var(--font-mono);color:var(--text-primary);font-weight:600;min-width:48px;text-align:right}
+.st-bar-wrap{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
+.st-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;width:0%}
+.status-note{font-size:0.85rem;color:var(--text-secondary);line-height:1.7;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light);position:relative;z-index:1;font-style:italic}
+.status-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light);flex-wrap:wrap;gap:8px}
+.status-seal{display:flex;align-items:center;gap:6px 12px;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85;flex-wrap:wrap}
+.status-seal .seal-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--seal-color);margin-right:2px}
+.status-seal .seal-grade{font-weight:700;color:var(--seal-color);font-size:0.75rem}
+.status-seal .seal-period{color:var(--text-muted);font-weight:400}
+.status-seal .seal-value{color:var(--text-secondary);font-weight:600;font-size:0.7rem}
+.seal-divider{color:var(--border-light);font-weight:300;padding:0 2px}
+.status-tag{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:0.7rem;padding:4px 12px 4px 10px;border:1.5px solid var(--seal-color);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:0.85}
+.status-tag .tag-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--seal-color);margin-right:2px}
+.status-tag .tag-text{color:var(--profile-accent);font-weight:600}
+.assess-text{position:relative;z-index:1;font-size:0.9rem;color:var(--text-secondary);line-height:1.8}
+.assess-text .eval-title{font-weight:600;color:var(--text-primary);font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.5px;display:block;margin-bottom:2px}
+.duty-list{list-style:none;padding:0;margin:0;position:relative;z-index:1}
+.duty-list li{padding:4px 0 4px 18px;position:relative;font-size:0.9rem;color:var(--text-secondary);line-height:1.7}
+.duty-list li::before{content:'—';position:absolute;left:0;color:var(--profile-accent);font-weight:700}
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;transform-style:flat;-webkit-transform-style:flat;animation:petalFall linear infinite;color:rgba(42,107,138,0.30)}
+@keyframes petalFall{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(calc(100vh + 50px)) rotate(360deg);opacity:0}}
+@media(max-width:720px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.cover-avatar{width:90px;height:90px}.cover-avatar .fallback{font-size:2.2rem}.cover-info .name{font-size:1.2rem}.cover-info .sub{font-size:0.75rem}.cover-info .meta-list{font-size:0.7rem;gap:4px 12px}.card{padding:14px 14px 12px 14px;line-height:1.5}.overview-grid{grid-template-columns:1fr;gap:14px}.radar-wrap{min-height:180px}.radar-wrap svg{max-width:260px}.status-bars{gap:10px}.status-note{margin-top:10px;padding-top:8px}.status-footer{flex-direction:column;align-items:flex-start}}
+@media(max-width:480px){.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:0.65rem}.float-btn.hide-btn{font-size:0.55rem;padding:3px 8px 3px 6px}.cover-wrap{gap:12px}.cover-avatar{width:80px;height:80px}.cover-avatar .fallback{font-size:1.8rem}.cover-info .name{font-size:1.05rem}.cover-info .sub{font-size:0.7rem}.cover-info .meta-list{font-size:0.65rem;gap:4px 8px}.cover-info .badge{font-size:0.55rem;padding:1px 8px}.info-grid{gap:4px}.info-grid .info-cell{padding:3px 6px 2px 6px}.info-grid .info-cell .val{font-size:0.7rem}.info-grid .info-cell .label{font-size:0.55rem}.overview-grid{gap:10px}.radar-wrap svg{max-width:260px}}
+
+/* ====== 桌边小像 ====== */
+#desk-pet {
+  position: fixed;
+  bottom: -2px;
+  right: 0;
+  z-index: 9999;
+  width: 260px;
+  cursor: pointer;
+  user-select: none;
+  transform-origin: bottom center;
+  -webkit-tap-highlight-color: transparent;
+  transition: filter 0.3s ease;
+  touch-action: none;  /* 阻止浏览器默认触摸行为，消除延迟 */
+}
+[data-theme="dark"] #desk-pet {
+  filter: brightness(0.88);
+}
+#desk-pet .char-img {
+  width: 100%;
+  display: block;
+  pointer-events: none;
+}
+#desk-pet .bubble-text-wrap {
+  position: absolute;
+  left: 8%;
+  top: 15%;
+  width: 64%;
+  height: 26%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+  pointer-events: none;
+}
+#desk-pet .bubble-text {
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  word-break: break-word;
+}
+#desk-pet.q-squash {
+  animation: qSquash 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes qSquash {
+  0%   { transform: scale(1, 1) translateY(0); }
+  30%  { transform: scale(0.96, 0.90) translateY(3px); }
+  100% { transform: scale(1, 1) translateY(0); }
+}
+#desk-pet.hidden {
+  display: none !important;
+}
+@media (max-width: 640px) {
+  #desk-pet { width: 200px; right: 0; bottom: -2px; }
+  #desk-pet .bubble-text { font-size: 0.78rem; }
+}
+</style>
+</head>
+<body>
+<div class="float-group">
+  <a class="float-btn" href="./同僚.html"><span style="margin-right:2px;">←</span> 返回</a>
+  <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+  <button class="float-btn hide-btn" id="hidePetBtn"><span id="hidePetIcon">✕</span> 隐藏</button>
+</div>
+<div class="top-header"><div class="page-title"><span class="sym">✦</span> 引渡人档案</div><div class="profile-name">当前：<span id="currentProfileName">林淮</span></div></div>
+<div id="app">
+<div class="card card-grad" data-corner="✧"><span class="corner-deco">✧</span>
+<div class="cover-wrap"><div class="cover-avatar"><img src="林淮.png" alt="林淮" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><span class="fallback" style="display:none;">✧</span></div>
+<div class="cover-info"><div class="name">林淮</div><div class="sub">第二席引渡人 · 点苍阁主事</div>
+<div class="meta-list"><span class="item"><span class="label">封号</span><span class="value">淮</span></span><span class="item"><span class="label">编号</span><span class="value">GZD-枪修-甲-零零贰</span></span><span class="item"><span class="label">密级</span><span class="value">殿内高级</span></span><span class="item"><span class="label">建档</span><span class="value">苍珩 · 景德二十六年</span></span></div><span class="badge">与栾方棋缔结共生契约</span></div></div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">战力评估与专精</div>
+<div class="overview-grid">
+<div class="radar-wrap"><svg viewBox="-25 -25 350 350" id="radar-svg-lin"></svg><span class="radar-label">十席 · 上限 1000</span></div>
+<div class="status-bars"><div class="bars-title">专精掌握程度</div>
+<div class="status-item"><div class="status-top"><span class="st-label">枪术</span><span class="st-value">约九成九</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c1);width:0%;" data-target="99"></div></div></div>
+<div class="status-item"><div class="status-top"><span class="st-label">体术格斗</span><span class="st-value">约九成八</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c2);width:0%;" data-target="98"></div></div></div>
+<div class="status-item"><div class="status-top"><span class="st-label">长兵作战</span><span class="st-value">约九成五</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c3);width:0%;" data-target="95"></div></div></div>
+<div class="status-item"><div class="status-top"><span class="st-label">战场应变</span><span class="st-value">约九成</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c4);width:0%;" data-target="90"></div></div></div>
+<div class="status-item"><div class="status-top"><span class="st-label">魂力控制</span><span class="st-value">约六成</span></div><div class="st-bar-wrap"><div class="st-bar-fill" style="background:var(--spec-c5);width:0%;" data-target="60"></div></div></div></div></div>
+<div class="status-note">林淮在枪术与体术上造诣极高，枪术与体术格斗均达九成九以上，长兵作战与战场应变亦属顶尖水平。魂力控制相对较弱，但足以支撑其战斗节奏。近战压制力位居归终殿首位，正面接战能力极强。</div>
+<div class="status-footer"><div class="status-seal"><span class="seal-dot"></span><span class="seal-period">第二席</span><span class="seal-divider">·</span><span class="seal-grade">甲等上品</span><span class="seal-divider">｜</span><span class="seal-value">战力 1108.3</span></div><div class="status-tag"><span class="tag-dot"></span><span class="tag-text">点苍阁主事</span></div></div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">归终殿综合评价</div>
+<div class="assess-text"><span class="eval-title">◈ 殿内评估</span>体术战力位居归终殿首位，枪法凌厉，正面接战能力极强，可在极短时间内突破敌方防线。不擅法术与远程手段，战斗方式以贴身压制为主。魂力稳定，共生契约未发现异常波动。路痴属性为已知限制，外勤时须由熟悉地形的同僚陪同或提前规划路线。</div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">身份与席位</div>
+<div class="info-grid"><div class="info-cell"><span class="label">姓名</span><span class="val">林淮</span></div><div class="info-cell"><span class="label">封号</span><span class="val">淮</span></div><div class="info-cell"><span class="label">席位</span><span class="val">第二席</span></div><div class="info-cell"><span class="label">隶属</span><span class="val">归终殿 · 点苍阁</span></div><div class="info-cell"><span class="label">入殿时间</span><span class="val">约三百年前</span></div><div class="info-cell"><span class="label">状态</span><span class="val" style="color:var(--profile-accent);">在职</span></div><div class="info-cell span-full"><span class="label">身份说明</span><span class="val">原第三席引渡人，京城镇乱后晋升第二席。此后负责点苍阁枪修教学，偶有高级外勤支援。与栾方棋为道侣，两人通过灵枢轮回木缔结共生契约，生死绑定。</span></div></div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">专精与武器</div>
+<div class="weapon-block"><div class="w-name">修行专精</div><div>主修枪术，辅修体术与长兵战术。战斗风格以近身压制为主，不依赖法术手段。长枪操控精准，可在高速移动中维持连续攻势。路痴属性为已知短板，但从未因此贻误战机。</div>
+<div class="w-name" style="margin-top:12px;">本命武器 · 银枪「惊鸿」</div><div>林淮的本命武器是银枪「惊鸿」，伴随他两世。前世是边塞战场上用的普通银枪，转世成为引渡人后，本命武器随魂魄重塑为这杆枪。枪身通体银白，枪尖在阴气中会泛起青金色光芒。京城决战中曾断裂过，后被浮生树的枝干缠绕修复，枪身上多了一道暗红色的纹路——那是栾方棋的血。</div>
+<div class="w-name" style="margin-top:12px;">常规武器</div><div>无备用武器。林淮不携带冷兵器以外的装备。</div><div class="quote">「一枪破万法。—— 林淮」</div></div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">当前职责</div>
+<ul class="duty-list"><li>负责点苍阁枪修教学与课程安排</li><li>定期为归终殿外勤队提供战力支持</li><li>指导弟子枪术与体术的实战训练</li><li>不参与日常行政事务</li></ul></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">重要关系</div>
+<div style="font-size:0.9rem;color:var(--text-secondary);line-height:1.8;position:relative;z-index:1;">与栾方棋为道侣，京城镇乱后成婚。两人通过灵枢轮回木缔结共生契约，任务调度时需考虑同步性。与罗修、程木栖等人为长期同僚，日常往来以公务为主。因路痴属性，出外勤时通常由栾方棋或熟悉地形的同僚陪同。</div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">主要经历</div>
+<div class="timeline" id="timeline-lin">
+<div class="timeline-item"><div class="date">生前</div><div class="title">死士局 · 影卫</div><div class="desc">出身死士局，十五岁时被秦墨予选为影卫，摆脱奴隶身份。在商烈国师府接受秦墨予教导，习字明理，两人逐渐产生深厚情愫。秦墨予死后，投身北境军营，最终战死沙场。死后因执念化为地缚灵，后被罗修引入地府。</div></div>
+<div class="timeline-item"><div class="date">约三百年前</div><div class="title">入归终殿 · 第三席</div><div class="desc">成为归终殿第三席引渡人。期间执行大量引渡任务，长期保持沉默少言的工作状态。因战力突出，数年之间便升至第三席。</div></div>
+<div class="timeline-item"><div class="date">苍珩四〇〇年代</div><div class="title">与栾方棋相遇</div><div class="desc">在执行任务途中偶遇栾方棋（秦墨予转世）的亡魂，将其引入地府。此后在无涯村、皇宫、观音庙等任务中与栾方棋多次合作，逐步揭露其前世今生与浮生树的秘密。</div></div>
+<div class="timeline-item"><div class="date">苍珩四一一年 · 秋</div><div class="title">京城决战</div><div class="desc">在对抗白禾川的京城决战中，为保护栾方棋被断魂剑重创，近乎魂飞魄散。栾方棋以自身生命本源为代价，与其缔结共生契约，保住其性命。</div></div>
+<div class="timeline-item"><div class="date">苍珩四一二年</div><div class="title">升第二席 · 掌点苍阁</div><div class="desc">战后归终殿升格，林淮由第三席升至第二席，负责掌教点苍阁（枪修院）事务，教授弟子枪术与体术。因教学方式偏向实战演示与自由领悟，门下弟子常向同僚请教基础课业。</div></div></div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">当前状态</div>
+<div class="status-wrap"><div class="status-line"><span class="label">档案状态：</span>在职 · 点苍阁主事</div><div class="status-line"><span class="label">魂体状态：</span>稳定，银枪无异常波动</div><div class="status-line"><span class="label">近期外勤：</span>视需求支援重大外勤，无长期任务</div></div></div>
+
+<div class="card" data-corner="✧"><span class="corner-deco">✧</span><div class="card-title">档案司批注</div>
+<div class="archive-note">林淮在职状态正常，点苍阁教学与外勤支援均按预期推进。魂体稳定，银枪无异常波动。与栾方棋为共生契约关系，任务调度时需确保双方同步性。路痴属性为已知限制，外勤时须由熟悉地形的同僚或栾方棋陪同。<br><br>—— 档案司 · 甲字记录员 · 霜月二十日</div></div>
+</div>
+
+<!-- 桌边小像 -->
+<div id="desk-pet">
+  <div class="bubble-text-wrap">
+    <div class="bubble-text" id="bubbleText">……嗯。</div>
+  </div>
+  <img src="林淮桌宠.png" class="char-img" alt="林淮">
+</div>
+<div id="petal-container"></div>
+<script>
+(function(){
+
+// ====== 主题初始化 ======
+(function initTheme() {
+  try {
+    var raw = localStorage.getItem('theme');
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      var html = document.documentElement;
+      if (parsed && parsed.value === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+      } else if (parsed && parsed.value === 'light') {
+        html.removeAttribute('data-theme','light');
+      }
+    }
+  } catch(e) {}
+})();
+
+// ====== 雷达图 ======
+function drawRadar(svgId,stats,gridMax){const svg=document.getElementById(svgId);if(!svg)return;while(svg.firstChild)svg.removeChild(svg.firstChild);const cx=150,cy=150,maxR=130;const angles=[0,60,120,180,240,300].map(d=>d*Math.PI/180);const labels=['魂力','体术','法术','防御','意志','敏捷'];const accent='var(--profile-accent)';[0.3,0.5,0.7,1.0].forEach(ratio=>{const r=maxR*ratio;const pts=angles.map(a=>(cx+r*Math.sin(a))+','+(cy-r*Math.cos(a))).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#666');poly.setAttribute('stroke-width',ratio===1.0?'1.2':'0.8');if(ratio!==1.0)poly.setAttribute('stroke-dasharray','4,4');svg.appendChild(poly);});angles.forEach(a=>{const x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',x);line.setAttribute('y2',y);line.setAttribute('stroke','#666');line.setAttribute('stroke-width','0.6');line.setAttribute('stroke-dasharray','3,4');svg.appendChild(line);});const vertices=stats.map((val,i)=>{const ratio=val/gridMax;const r=ratio*maxR;const a=angles[i];return{x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),val:val};});const centerPts=angles.map(()=>cx+','+cy).join(' ');const targetPts=vertices.map(v=>v.x+','+v.y).join(' ');const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');poly.setAttribute('points',centerPts);poly.setAttribute('fill',accent);poly.setAttribute('fill-opacity','0.2');poly.setAttribute('stroke',accent);poly.setAttribute('stroke-width','2.5');poly.setAttribute('stroke-linejoin','round');const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');anim.setAttribute('attributeName','points');anim.setAttribute('from',centerPts);anim.setAttribute('to',targetPts);anim.setAttribute('dur','1.2s');anim.setAttribute('fill','freeze');anim.setAttribute('calcMode','spline');anim.setAttribute('keySplines','0.25 0.1 0.25 1');poly.appendChild(anim);svg.appendChild(poly);
+vertices.forEach((v,i)=>{const a=angles[i];const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',v.x);c.setAttribute('cy',v.y);c.setAttribute('r','4');c.setAttribute('fill',accent);c.setAttribute('opacity','0');const cfade=document.createElementNS('http://www.w3.org/2000/svg','animate');cfade.setAttribute('attributeName','opacity');cfade.setAttribute('from','0');cfade.setAttribute('to','1');cfade.setAttribute('dur','0.3s');cfade.setAttribute('begin','0.8s');cfade.setAttribute('fill','freeze');c.appendChild(cfade);svg.appendChild(c);
+const vOff=18;let vx=vOff*Math.sin(a);let vy=-vOff*Math.cos(a);let tx,ty,anchor;
+if(i===1){
+  const labelOff2=maxR+22;
+  const lx=cx+labelOff2*Math.sin(a);
+  const ly=cy-labelOff2*Math.cos(a);
+  tx=lx+15; ty=ly+22; anchor='middle';
+}else if(i===0){tx=v.x+32;ty=v.y+0;anchor='start';}
+else{tx=v.x+vx;ty=v.y+vy;anchor='middle';}
+const vt=document.createElementNS('http://www.w3.org/2000/svg','text');vt.setAttribute('x',tx);vt.setAttribute('y',ty);vt.setAttribute('fill',accent);vt.setAttribute('font-size','12');vt.setAttribute('font-weight','700');vt.setAttribute('text-anchor',anchor);vt.setAttribute('dominant-baseline','central');vt.textContent=v.val;vt.setAttribute('opacity','0');const vfade=document.createElementNS('http://www.w3.org/2000/svg','animate');vfade.setAttribute('attributeName','opacity');vfade.setAttribute('from','0');vfade.setAttribute('to','1');vfade.setAttribute('dur','0.3s');vfade.setAttribute('begin','1s');vfade.setAttribute('fill','freeze');vt.appendChild(vfade);svg.appendChild(vt);});
+const labelOff=maxR+22;labels.forEach((label,i)=>{const a=angles[i];const x=cx+labelOff*Math.sin(a);const y=cy-labelOff*Math.cos(a);let anchor='middle';if(x>cx+15)anchor='start';else if(x<cx-15)anchor='end';const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('fill','var(--text-muted)');t.setAttribute('font-size','12');t.setAttribute('font-weight','500');t.setAttribute('text-anchor',anchor);t.setAttribute('dominant-baseline','central');t.textContent=label;svg.appendChild(t);});}
+const linStats=[1100,1450,650,900,1200,1350];drawRadar('radar-svg-lin',linStats,1000);
+
+// ====== 进度条动画 ======
+document.querySelectorAll('.st-bar-fill').forEach(function(bar){const target=parseFloat(bar.dataset.target);if(!isNaN(target)){setTimeout(function(){bar.style.width=target+'%';},300);}});
+
+// ====== 时间轴渐入 ======
+function revealTimeline(){document.querySelectorAll('.timeline-item:not(.visible)').forEach(function(item){if(item.getBoundingClientRect().top<window.innerHeight*0.85){item.classList.add('visible');}});}
+setTimeout(revealTimeline,400);window.addEventListener('scroll',revealTimeline);
+
+// ====== 主题切换按钮 ======
+var themeBtn = document.getElementById('themeBtn');
+if (themeBtn) {
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var icon = document.getElementById('themeIcon');
+  var label = document.getElementById('themeLabel');
+  if (icon && label) {
+    icon.textContent = isDark ? '☀️' : '🌙';
+    label.textContent = isDark ? '日间' : '夜间';
+  }
+  themeBtn.addEventListener('click', function() {
+    var html = document.documentElement;
+    var isLight = html.getAttribute('data-theme') === 'light';
+    html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+    localStorage.setItem('theme', JSON.stringify({value: isLight ? 'dark' : 'light'}));
+    var icon = document.getElementById('themeIcon');
+    var label = document.getElementById('themeLabel');
+    if (icon && label) {
+      icon.textContent = isLight ? '☀️' : '🌙';
+      label.textContent = isLight ? '日间' : '夜间';
+    }
+  });
+}
+
+// ====== 花瓣特效 ======
+(function(){const chars=['✧','✦','·'];const container=document.getElementById('petal-container');if(!container)return;for(let i=0;i<14;i++){const el=document.createElement('div');el.className='petal-char';el.textContent=chars[Math.floor(Math.random()*chars.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*14)+'px';el.style.animationDuration=(12+Math.random()*14)+'s';el.style.animationDelay=(Math.random()*14)+'s';container.appendChild(el);}})();
+
+// ============================================================
+// ====== 桌边小像 · 统一交互（电脑 + 手机 完全一致） ======
+// ============================================================
+(function(){
+  var lines = [
+    "……嗯。",
+    "方棋在哪儿？",
+    "……",
+    "走丢了。",
+    "我没有一拳打爆金鸡山。",
+    "那是拿枪劈开的。",
+    "……什么叫都差不多。",
+    "你开心就好。",
+    "搞么子。",
+    "别找我。",
+    "告诉罗修我请假了。"
+  ];
+  var idx = 0;
+  var pet = document.getElementById('desk-pet');
+  var bubbleText = document.getElementById('bubbleText');
+  if (!pet) return;
+
+  // ---- 使用音效.wav ----
+  var audio = new Audio('音效.wav');
+  audio.preload = 'auto';
+  audio.volume = 1.0;
+
+  var isProcessing = false;
+
+  function handleInteraction(e) {
+    if (isProcessing) return;
+    isProcessing = true;
+
+    // 1. 播放音效（重置到开头，确保每次点击都能播）
+    audio.currentTime = 0;
+    audio.play().catch(function(err) {
+      console.log('音效播放被阻止:', err);
+    });
+
+    // 2. 切换气泡文字
+    idx = (idx + 1) % lines.length;
+    bubbleText.textContent = lines[idx];
+
+    // 3. 挤压动画
+    pet.classList.remove('q-squash');
+    void pet.offsetWidth; // 强制回流，确保动画重新触发
+    pet.classList.add('q-squash');
+
+    // 动画结束后解锁 + 移除样式
+    setTimeout(function(){
+      pet.classList.remove('q-squash');
+      isProcessing = false;
+    }, 350);
+  }
+
+  // ---- 使用 pointerdown：同时支持鼠标、触摸、触控笔，无延迟 ----
+  pet.addEventListener('pointerdown', function(e) {
+    e.preventDefault();
+    handleInteraction(e);
+  });
+
+  // 额外阻止拖拽
+  pet.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+  });
+
+  // ---- 隐藏/显示按钮 ----
+  var hideBtn = document.getElementById('hidePetBtn');
+  if (hideBtn) {
+    hideBtn.addEventListener('click', function() {
+      pet.classList.toggle('hidden');
+      var hideIcon = document.getElementById('hidePetIcon');
+      if (pet.classList.contains('hidden')) {
+        hideIcon.textContent = '✦';
+        this.innerHTML = '<span id="hidePetIcon">✦</span> 显示';
+      } else {
+        hideIcon.textContent = '✕';
+        this.innerHTML = '<span id="hidePetIcon">✕</span> 隐藏';
+      }
+    });
+  }
+
+  console.log('✧ 林淮 · 桌边小像 已加载（音效.wav）');
+})();
+
+console.log('✧ 归终殿 · 林淮档案 v1.0 已加载');
+})();
+</script>
+</body>
+</html>
