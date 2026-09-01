@@ -412,7 +412,23 @@ if (themeBtn) {
 	  });
 	  /* ---------- 拖动 ---------- */
 	  var THRESHOLD = 8;            // 位移超过 8px 才算拖动，否则视为点击
-	  var POS_KEY = 'deskPetPos';   // 位置记忆（localStorage）
+	  // localStorage 按"源"共享，本地 file:// 的多个页面同源——
+	  // 固定键名会让所有页面的桌宠共用一个位置（串台）。
+	  // 改用"桌宠图片文件名"作为身份标识，每只小像各记各的，代码无需逐页修改。
+	  var PET_ID = 'default';
+	  try {
+	    var petImgEl = pet.querySelector('.char-img');
+	    if (petImgEl) {
+	      var src = petImgEl.getAttribute('src') || '';
+	      var m = src.match(/([^\/\\]+?)(?:\.[a-zA-Z0-9]+)?$/);  // 取文件名去扩展名
+	      if (m && m[1]) PET_ID = m[1];
+	    }
+	    if (PET_ID === 'default') {  // 兜底：没有图片时用页面文件名
+	      PET_ID = (location.pathname.split(/[\/\\]/).pop() || 'default')
+	               .replace(/\.html?$/i, '');
+	    }
+	  } catch (e) {}
+	  var POS_KEY = 'deskPetPos:' + PET_ID;
 	  var activeId = null;          // 当前按下的指针（多指时只认第一根）
 	  var startX = 0, startY = 0;   // 按下时的指针坐标
 	  var baseX = 0, baseY = 0;     // 按下时小像左上角坐标
