@@ -1,0 +1,125 @@
+	<!DOCTYPE html>
+	<html lang="zh-CN">
+	<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HTML 文件上传组件</title>
+	<style>
+	  :root{
+	    --primary:#4f6ef7; --primary-light:#eef1fe;
+	    --danger:#e5484d; --danger-bg:#fef3f3;
+	    --success:#30a46c;
+	    --text:#1f2430; --sub:#6b7280; --border:#e4e7ec; --bg:#f8f9fb;
+	  }
+	  *{margin:0;padding:0;box-sizing:border-box}
+	  body{
+	    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+	    background:var(--bg);min-height:100vh;display:flex;
+	    align-items:center;justify-content:center;padding:24px;
+	  }
+	  .card{width:100%;max-width:580px;background:#fff;border-radius:16px;
+	    padding:32px;box-shadow:0 4px 24px rgba(31,36,48,.06)}
+	  h1{font-size:20px;color:var(--text);margin-bottom:20px}
+	  .drop-zone{border:2px dashed var(--border);border-radius:12px;
+	    padding:40px 20px;text-align:center;cursor:pointer;transition:.25s}
+	  .drop-zone:hover,.drop-zone.dragover{
+	    border-color:var(--primary);background:var(--primary-light)}
+	  .drop-zone .icon{font-size:38px;margin-bottom:10px}
+	  .drop-zone .tip{font-size:15px;color:var(--text)}
+	  .drop-zone .hint{font-size:13px;color:var(--sub);margin-top:6px}
+	  .file-item{display:flex;align-items:center;gap:12px;padding:12px 14px;
+	    border:1px solid var(--border);border-radius:10px;margin-top:12px;
+	    animation:in .3s ease}
+	  @keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+	  .file-item.error{border-color:var(--danger);background:var(--danger-bg)}
+	  .file-info{flex:1;min-width:0}
+	  .file-name{font-size:14px;color:var(--text);white-space:nowrap;
+	    overflow:hidden;text-overflow:ellipsis}
+	  .file-meta{font-size:12px;color:var(--sub);margin-top:2px}
+	  .status{font-size:12px;white-space:nowrap}
+	  .status.ok{color:var(--success)} .status.fail{color:var(--danger)}
+	  .btn-preview{border:none;background:none;color:var(--primary);
+	    font-size:12px;cursor:pointer}
+	  iframe.preview{width:100%;height:220px;border:1px solid var(--border);
+	    border-radius:8px;margin-top:10px;background:#fff}
+	</style>
+	</head>
+	<body>
+	<div class="card">
+	  <h1>上传 HTML 文件</h1>
+	  <div class="drop-zone" id="dropZone">
+	    <div class="icon">📄</div>
+	    <p class="tip">拖拽文件到此处，或点击选择</p>
+	    <p class="hint">支持 .html / .htm，单个文件不超过 10MB</p>
+	  </div>
+	  <!-- 关键：accept 显式放行 HTML，且带 name 属性 -->
+	  <input type="file" id="fileInput" name="file"
+	         accept=".html,.htm,text/html" multiple hidden>
+	  <div id="fileList"></div>
+	</div>
+	<script>
+	const dropZone  = document.getElementById('dropZone');
+	const fileInput = document.getElementById('fileInput');
+	const fileList  = document.getElementById('fileList');
+	const MAX_SIZE  = 10 * 1024 * 1024;          // 与服务端限制保持一致
+	const ALLOWED   = ['.html', '.htm'];
+	dropZone.addEventListener('click', () => fileInput.click());
+	fileInput.addEventListener('change', e => handleFiles(e.target.files));
+	['dragenter','dragover'].forEach(ev =>
+	  dropZone.addEventListener(ev, e => {
+	    e.preventDefault(); dropZone.classList.add('dragover');
+	  }));
+	['dragleave','drop'].forEach(ev =>
+	  dropZone.addEventListener(ev, e => {
+	    e.preventDefault(); dropZone.classList.remove('dragover');
+	  }));
+	dropZone.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
+	function handleFiles(files) {
+	  [...files].forEach(file => {
+	    const ext = '.' + file.name.split('.').pop().toLowerCase();
+	    let reason = null;
+	    if (!ALLOWED.includes(ext) && file.type !== 'text/html')
+	      reason = '类型被拒：仅支持 .html / .htm';
+	    else if (file.size > MAX_SIZE)
+	      reason = `大小超限：${fmt(file.size)}，超过 10MB`;
+	    addFileItem(file, reason);       // 校验失败也会明确告知"为什么"
+	  });
+	  fileInput.value = '';              // 允许重复选择同一个文件
+	}
+	function addFileItem(file, reason) {
+	  const item = document.createElement('div');
+	  item.className = 'file-item' + (reason ? ' error' : '');
+	  item.innerHTML = `
+	    <div class="file-info">
+	      <div class="file-name">${escapeHtml(file.name)}</div>
+	      <div class="file-meta">${fmt(file.size)}${file.type ? ' · ' + file.type : ''}</div>
+	    </div>
+	    ${reason ? '' : '<button class="btn-preview">预览</button>'}
+	    <div class="status ${reason ? 'fail' : 'ok'}">${reason || '✓ 校验通过'}</div>`;
+	  fileList.appendChild(item);
+	  if (!reason) {
+	    item.querySelector('.btn-preview').onclick = () => {
+	      let frame = item.querySelector('iframe.preview');
+	      if (frame) { frame.remove(); return; }   // 再次点击收起
+	      const reader = new FileReader();
+	      reader.onload = () => {
+	        frame = document.createElement('iframe');
+	        frame.className = 'preview';
+	        frame.setAttribute('sandbox', '');     // 关键：禁用脚本，防 XSS
+	        frame.srcdoc = reader.result;
+	        item.appendChild(frame);
+	      };
+	      reader.readAsText(file);
+	    };
+	  }
+	}
+	function fmt(b){
+	  return b > 1048576 ? (b/1048576).toFixed(1)+' MB' : (b/1024).toFixed(1)+' KB';
+	}
+	function escapeHtml(s){
+	  return s.replace(/[&<>"']/g, c =>
+	    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+	}
+	</script>
+	</body>
+	</html>
