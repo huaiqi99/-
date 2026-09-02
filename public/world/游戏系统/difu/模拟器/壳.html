@@ -47,6 +47,7 @@
 	var BASE=location.pathname.replace(/[^\/]*$/,'');
 	var audio=new Audio();audio.loop=true;audio.volume=0;audio.preload='auto';
 	var idx=0,want=true,times={},fadeT=null,restored=false;
+	var __lastThemeColor=null; /* ★ 修复②：记录当前已生效的地址栏颜色，用于同色去重 */
 	audio.addEventListener('error',function(){
 	  console.warn('⚠ BGM 加载失败，检查文件与路径：'+LIST[idx].src);
 	  var b=document.getElementById('bgmBtn');if(b)b.textContent='⚠ 音乐文件没找到';
@@ -65,15 +66,17 @@
 	  fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur);audio.volume=from+(to-from)*k;
 	    if(k>=1){clearInterval(fadeT);if(done)done();}},40);}
 	function tryPlay(){var p=audio.play();if(p&&p.catch)p.catch(function(){});}
-	/* ★ 换标签法：删旧 meta、插新 meta —— 浏览器把它当作"新的颜色声明"立即重读，
-	   专治"运行中改颜色拖一拍"的问题 */
+	/* ★ 修复①：换标签法 2.0 —— 先插新 meta、再删旧 meta。
+	   原版"先删后插"存在一瞬"页面没有任何 theme-color"的空窗，Safari 底部地址栏在空窗时
+	   会掉回"采样页面旧颜色"的推断模式，之后又懒得重算 → 底部栏恒慢一拍 = 看起来颜色反了。
+	   先插后删保证全程至少有一个 meta，Safari 读到的始终是明确声明的新颜色。 */
 	function setThemeColor(color){
-	  var old=document.querySelector('meta[name="theme-color"]');
-	  if(old)old.remove();
 	  var m=document.createElement('meta');
 	  m.setAttribute('name','theme-color');
 	  m.setAttribute('content',color);
-	  document.head.appendChild(m);
+	  document.head.appendChild(m);                     /* 先插新的（挂在 head 末尾） */
+	  var all=document.querySelectorAll('meta[name="theme-color"]');
+	  for(var i=0;i<all.length-1;i++)all[i].remove();   /* 再删旧的（保留最后插入的那个） */
 	}
 	GZD.Shell={
 	  load:function(href){
@@ -95,7 +98,20 @@
 	  syncTheme:function(t){
 	    if(t)document.documentElement.setAttribute('data-theme',t);
 	    var light=document.documentElement.getAttribute('data-theme')==='light';
-	    setThemeColor(light?'#f7f4ef':'#1a1614');
+	    var c=light?'#f7f4ef':'#1a1614';
+	    /* ★ 修复②：主题直报、内页 MutationObserver、壳侧观察员三条通道对同一次切换
+	       会重复报到 2~3 次 —— 同色直接跳过，一次切换只真正动一次 meta，不反复折腾 Safari */
+	    if(c===__lastThemeColor)return;
+	    __lastThemeColor=c;
+	    setThemeColor(c);
+	    /* ★ 修复③：下一帧 + 400ms 后各轻推 iframe 内页 1px 再推回（视觉无感）。
+	       Safari 收到滚动信号时会老实重算底部地址栏颜色，专治"底部栏不肯刷新"；
+	       第二脚等内页 0.3s 背景过渡完全结束后补上，双保险。对安卓/桌面无害。 */
+	    function nudge(){
+	      try{var w=frame.contentWindow;w.scrollBy(0,1);w.scrollBy(0,-1);}catch(e){}
+	    }
+	    requestAnimationFrame(nudge);
+	    setTimeout(nudge,400);
 	  }
 	};
 	loadSt();setSrc();updateBtn();
