@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1a1614">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="归终殿">
 <title>归终殿 · 弟子手册</title>
 <script>
 /* 保险丝①：壳只能当最外层 */
@@ -17,10 +20,10 @@ var __m=document.querySelector('meta[name="theme-color"]');
 if(__m)__m.setAttribute('content',__t==='light'?'#f7f4ef':'#1a1614');
 </script>
 <style>
-  :root{--shell-bg:#1a1614}
-  html[data-theme="light"]{--shell-bg:#f7f4ef}
+  :root{--shell-bg:#1a1614;color-scheme:dark}
+  html[data-theme="light"]{--shell-bg:#f7f4ef;color-scheme:light}
   html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--shell-bg)}
-  .frame-wrap{position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .frame-wrap{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #pageFrame{width:100%;height:100%;min-height:100%;border:0;display:block;background:var(--shell-bg)}
   .bgm-dock{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:9999;display:flex;gap:6px}
   .bgm-dock button{background:rgba(30,26,22,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
@@ -77,11 +80,10 @@ function swapMeta(color){
 }
 function setThemeColor(color){
   swapMeta(color);
-  /* ★ 补一拍：部分 iOS Safari 的底部地址栏"永远慢一次修改才更新"——
-     那就把同一颜色再替换一遍，慢的那一拍正好落在正确的颜色上。
-     同一颜色替换两遍无任何视觉副作用；不起作用也无害。 */
+  /* 补一拍：给直接用 Safari 访问（不添加主屏幕）的访客兜底。
+     全屏模式下没有地址栏，这段等于自动闲置，留着无害。 */
   setTimeout(function(){
-    if(__lastThemeColor!==color)return; /* 期间用户又切了一次主题就放弃，避免把旧色写回 */
+    if(__lastThemeColor!==color)return;
     swapMeta(color);
   },150);
 }
@@ -106,7 +108,7 @@ GZD.Shell={
     if(t)document.documentElement.setAttribute('data-theme',t);
     var light=document.documentElement.getAttribute('data-theme')==='light';
     var c=light?'#f7f4ef':'#1a1614';
-    if(c===__lastThemeColor)return; /* 三条通道重复报到，同色只动一次 meta */
+    if(c===__lastThemeColor)return;
     __lastThemeColor=c;
     setThemeColor(c);
   }
@@ -116,7 +118,7 @@ if(want){tryPlay();fade(VOL,900);}
 /* 恢复上次内页（刷新/收藏不丢） */
 try{var h=decodeURIComponent(location.hash.slice(1));
   if(h&&!/^(\.\.[\/\\]|https?:|\/)/i.test(h)&&/\.html?$/i.test(h))frame.src='./'+h;}catch(e){}
-/* ★ 壳侧观察员：壳亲自盯着窗口里页面的主题属性，谁切了主题（包括大门页）都立刻申报新颜色 */
+/* 壳侧观察员：壳亲自盯着窗口里页面的主题属性，谁切了主题（包括大门页）都立刻申报新颜色 */
 function watchInnerTheme(){
   try{
     var doc=frame.contentDocument;
