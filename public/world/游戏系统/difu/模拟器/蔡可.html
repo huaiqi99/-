@@ -96,7 +96,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 #desk-pet{position:fixed;bottom:-2px;right:0;z-index:9999;width:260px;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transform-origin:bottom center;-webkit-tap-highlight-color:transparent;touch-action:none;transition:filter 0.3s ease;will-change:transform;--drag-x:0px;--drag-y:0px;transform:translate3d(var(--drag-x),var(--drag-y),0);}
 [data-theme="dark"] #desk-pet{filter:brightness(0.88);}
 #desk-pet .char-img{width:100%;display:block;pointer-events:none;transition:filter 0.25s ease;}
-#desk-pet .bubble-text-wrap{position:absolute;left:8%;top:15%;width:64%;height:26%;display:flex;align-items:center;justify-content:center;text-align:center;z-index:2;pointer-events:none;}
+#desk-pet .bubble-text-wrap{position:absolute;left:4%;top:11%;width:64%;height:26%;display:flex;align-items:center;justify-content:center;text-align:center;z-index:2;pointer-events:none;}
 #desk-pet .bubble-text{font-family:var(--font-serif);font-size:0.92rem;font-weight:600;color:#1a1a1a;line-height:1.4;letter-spacing:0.5px;word-break:break-word;}
 #desk-pet.dragging{cursor:grabbing;transform:translate3d(var(--drag-x),var(--drag-y),0) scale(1.04);}
 #desk-pet.dragging .char-img{filter:drop-shadow(0 14px 16px rgba(0,0,0,0.30));}
@@ -229,7 +229,7 @@ if (themeBtn) {
 
 // 桌边小像
 (function(){
-  var lines = ["药好像煎糊了。","……","今天来医馆的人不多。","你说我的手怎么样了？不用担心。","铁匠铺给我装了法器义肢，用起来其实很灵活。","还是能拉开弓的。","……想看我射箭的样子？","当然可以。","那等你课程结束，我们演武场见吧？"];
+  var lines = ["药好像煎糊了。","……","你说我的手怎么样了？不用担心。","铁匠铺给我装了法器义肢，用起来其实很灵活。","还是能拉开弓的。","……想看我射箭的样子？","当然可以。","那等你课程结束，我们演武场见吧？"];
     var idx = 0;
 	  var pet = document.getElementById('desk-pet');
 	  var bubbleText = document.getElementById('bubbleText');
