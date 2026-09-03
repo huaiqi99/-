@@ -399,7 +399,7 @@
             border-radius: 1px;
         }
 
-        /* ===== 差事筛选栏 ===== */
+        /* ===== 筛选栏 ===== */
         .filter-bar {
             display: flex;
             flex-wrap: wrap;
@@ -520,7 +520,7 @@
             border: 1px solid var(--border-light);
         }
 
-        /* ===== 进度跟踪 ===== */
+        /* ===== 进度条 ===== */
         .progress-track {
             display: flex;
             align-items: center;
@@ -564,7 +564,7 @@
             opacity: 0.4;
         }
 
-        /* ===== 弹窗（差事详情） ===== */
+        /* ===== 弹窗 ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -719,6 +719,25 @@
             margin-top: 2px;
         }
 
+        /* ===== 重置按钮 ===== */
+        .reset-btn {
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            background: none;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.5;
+        }
+        .reset-btn:hover {
+            opacity: 1;
+            border-color: var(--profile-accent);
+            color: var(--profile-accent);
+        }
+
         /* ===== 花瓣 ===== */
         #petal-container {
             position: fixed;
@@ -858,11 +877,11 @@
         <a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
         <a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
         <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
-        <a class="nav-item active" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
-        <a class="nav-item" href="./血脉.html"><span class="sym">❤</span> 血脉羁绊</a>
-        <a class="nav-item" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
-        <a class="nav-item" href="./传讯.html"><span class="sym">✉</span> 传讯符</a>
-        <a class="nav-item" href="./设置.html"><span class="sym">⚙</span> 设置</a>
+        <a class="nav-item active" href="#"><span class="sym">◆</span> 差事与外勤</a>
+        <a class="nav-item" href="#"><span class="sym">❤</span> 血脉羁绊</a>
+        <a class="nav-item" href="#"><span class="sym">✶</span> 升席纪事</a>
+        <a class="nav-item" href="#"><span class="sym">✉</span> 传讯符</a>
+        <a class="nav-item" href="#"><span class="sym">⚙</span> 设置</a>
         <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
         <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
     </div>
@@ -879,10 +898,12 @@
         <!-- ========== 林栖梧 ========== -->
         <div class="content-block active" id="content-linxiwu">
 
-            <!-- 筛选栏 -->
             <div class="card card-grad" data-corner="❀">
                 <span class="corner-deco">❀</span>
-                <div class="card-title">差事看板</div>
+                <div class="card-title">
+                    差事看板
+                    <button class="reset-btn" id="resetLin" style="margin-left:auto;">↻ 重置所有</button>
+                </div>
                 <div class="filter-bar" id="filterBarLin">
                     <button class="filter-btn active" data-filter="all">全部</button>
                     <button class="filter-btn" data-filter="符修院">符修院</button>
@@ -895,21 +916,18 @@
                 <div class="quest-list" id="questListLin"></div>
             </div>
 
-            <!-- 外勤日志 -->
             <div class="card" data-corner="❀">
                 <span class="corner-deco">❀</span>
                 <div class="card-title">外勤日志 · 归档</div>
                 <div id="logListLin"></div>
             </div>
 
-            <!-- 快捷联动 -->
             <div class="card" data-corner="❀">
                 <span class="corner-deco">❀</span>
                 <div class="card-title">联动</div>
                 <div style="font-size:0.85rem;color:var(--text-secondary);position:relative;z-index:1;">
                     差事进度同步至 <a href="./命薄.html" style="color:var(--profile-accent);text-decoration:none;">命簿纪事</a>
                     与 <a href="./魂力.html" style="color:var(--profile-accent);text-decoration:none;">魂力状态</a>。
-                    完成差事将自动更新委托统计与任务完成率。
                 </div>
             </div>
 
@@ -918,10 +936,12 @@
         <!-- ========== 罗烬 ========== -->
         <div class="content-block" id="content-luojin">
 
-            <!-- 筛选栏 -->
             <div class="card card-grad" data-corner="◈">
                 <span class="corner-deco">◈</span>
-                <div class="card-title">差事看板</div>
+                <div class="card-title">
+                    差事看板
+                    <button class="reset-btn" id="resetLuo" style="margin-left:auto;">↻ 重置所有</button>
+                </div>
                 <div class="filter-bar" id="filterBarLuo">
                     <button class="filter-btn active" data-filter="all">全部</button>
                     <button class="filter-btn" data-filter="符修院">符修院</button>
@@ -934,21 +954,18 @@
                 <div class="quest-list" id="questListLuo"></div>
             </div>
 
-            <!-- 外勤日志 -->
             <div class="card" data-corner="◈">
                 <span class="corner-deco">◈</span>
                 <div class="card-title">外勤日志 · 归档</div>
                 <div id="logListLuo"></div>
             </div>
 
-            <!-- 快捷联动 -->
             <div class="card" data-corner="◈">
                 <span class="corner-deco">◈</span>
                 <div class="card-title">联动</div>
                 <div style="font-size:0.85rem;color:var(--text-secondary);position:relative;z-index:1;">
                     差事进度同步至 <a href="./命薄.html" style="color:var(--profile-accent);text-decoration:none;">命簿纪事</a>
                     与 <a href="./魂力.html" style="color:var(--profile-accent);text-decoration:none;">魂力状态</a>。
-                    完成差事将自动更新委托统计与任务完成率。
                 </div>
             </div>
 
@@ -956,16 +973,16 @@
 
     </div>
 
-    <!-- ===== 差事详情弹窗 ===== -->
+    <!-- ===== 弹窗 ===== -->
     <div class="modal-overlay" id="questModal">
         <div class="modal-box">
             <button class="modal-close" id="modalClose">✕</button>
             <div class="modal-title" id="modalTitle">差事名称</div>
             <div class="modal-sub" id="modalSub">发布人 · 地点</div>
             <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer" id="modalFooter">
+            <div class="modal-footer">
                 <button class="btn" id="modalCancel">关闭</button>
-                <button class="btn btn-primary" id="modalAction">接取差事</button>
+                <button class="btn btn-primary" id="modalAction">操作</button>
             </div>
         </div>
     </div>
@@ -974,6 +991,6 @@
     <div id="petal-container"></div>
 
     <script src="./核心.js"></script>
-    <script src="./外勤.js"></script>
+    <script src="./差事与外勤.js"></script>
 </body>
 </html>
