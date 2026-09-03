@@ -200,7 +200,6 @@
         var container = document.getElementById('questList' + (profile === 'linxiwu' ? 'Lin' : 'Luo'));
         if (!container) return;
         var raw = QUEST_DB[profile] || [];
-        // 从Storage读取状态覆盖
         var stored = GZD.Storage.getQuests() || {};
         var data = raw.map(function(q) {
             var s = stored[q.id];
@@ -267,7 +266,6 @@
         });
         container.innerHTML = html;
 
-        // 点击差事打开详情
         container.querySelectorAll('.quest-item').forEach(function(el) {
             el.addEventListener('click', function() {
                 var id = this.dataset.id;
@@ -300,22 +298,24 @@
         container.innerHTML = html;
     }
 
-    // ===== 5. 弹窗逻辑（修复：为archived状态添加"重新打开"按钮） =====
+    // ===== 5. 弹窗逻辑（修复：使用 addEventListener + 克隆替换） =====
     var modal = document.getElementById('questModal');
     var modalTitle = document.getElementById('modalTitle');
     var modalSub = document.getElementById('modalSub');
     var modalBody = document.getElementById('modalBody');
-    var modalAction = document.getElementById('modalAction');
     var modalCancel = document.getElementById('modalCancel');
     var modalClose = document.getElementById('modalClose');
+    var modalAction = document.getElementById('modalAction');
     var currentModalId = null;
     var currentModalProfile = null;
+    var actionListener = null; // 保存当前监听器引用
 
     function openQuestModal(profile, id) {
         var raw = QUEST_DB[profile] || [];
         var stored = GZD.Storage.getQuests() || {};
         var q = raw.find(function(item) { return item.id === id; });
         if (!q) return;
+
         // 合并storage状态
         var s = stored[q.id];
         if (s) {
@@ -354,47 +354,53 @@
         }
         modalBody.innerHTML = bodyHtml;
 
-        // ===== 按钮逻辑（修复点：添加 archived 状态处理） =====
-        // 确保按钮先显示
+        // ★★★ 修复：先克隆替换按钮，清除所有旧事件 ★★★
+        var oldAction = document.getElementById('modalAction');
+        var newAction = oldAction.cloneNode(true);
+        oldAction.parentNode.replaceChild(newAction, oldAction);
+        modalAction = document.getElementById('modalAction');
         modalAction.style.display = 'inline-block';
 
+        // 根据状态绑定不同的事件
         if (q.status === 'available') {
             modalAction.textContent = '接取差事';
-            modalAction.onclick = function() {
+            modalAction.addEventListener('click', function(e) {
+                e.stopPropagation();
                 updateQuestStatus(profile, id, 'doing', 0.05);
                 modal.classList.remove('open');
                 renderAll(profile);
-            };
+            });
         } else if (q.status === 'doing') {
             modalAction.textContent = '推进进度 (+10%)';
-            modalAction.onclick = function() {
+            modalAction.addEventListener('click', function(e) {
+                e.stopPropagation();
                 advanceQuest(profile, id);
                 modal.classList.remove('open');
                 renderAll(profile);
-            };
+            });
         } else if (q.status === 'done') {
             modalAction.textContent = '归档';
-            modalAction.onclick = function() {
+            modalAction.addEventListener('click', function(e) {
+                e.stopPropagation();
                 updateQuestStatus(profile, id, 'archived', 1);
-                // 同时加入外勤日志
                 addLog(profile, q);
                 modal.classList.remove('open');
                 renderAll(profile);
-                // 触发魂力页面更新
                 window.dispatchEvent(new CustomEvent('questupdate', { detail: { profile: profile } }));
-            };
+            });
         } else if (q.status === 'archived') {
-            // ★ 修复：为已归档任务提供"重新打开"按钮
             modalAction.textContent = '重新打开';
-            modalAction.onclick = function() {
+            modalAction.addEventListener('click', function(e) {
+                e.stopPropagation();
                 updateQuestStatus(profile, id, 'available', 0);
                 modal.classList.remove('open');
                 renderAll(profile);
-            };
+            });
         } else {
-            // 未知状态：隐藏按钮（理论上不会发生）
             modalAction.style.display = 'none';
         }
+
+        modal.classList.add('open');
     }
 
     function closeModal() {
@@ -416,7 +422,6 @@
         stored[id].status = status;
         stored[id].progress = progress || 0;
         GZD.Storage.set('gzd_quests', stored);
-        // 同时更新 QUEST_DB 中的状态（用于列表即时刷新）
         var raw = QUEST_DB[profile] || [];
         var q = raw.find(function(item) { return item.id === id; });
         if (q) {
@@ -433,7 +438,6 @@
         stored[id].progress = p;
         if (p >= 1) {
             stored[id].status = 'done';
-            // 自动归档并加入日志
             var raw = QUEST_DB[profile] || [];
             var q = raw.find(function(item) { return item.id === id; });
             if (q) {
@@ -445,7 +449,6 @@
                 }, 200);
             }
         }
-        // 同步更新 QUEST_DB
         var raw2 = QUEST_DB[profile] || [];
         var q2 = raw2.find(function(item) { return item.id === id; });
         if (q2) {
@@ -471,7 +474,6 @@
         logs.unshift(entry);
         if (logs.length > 20) logs.pop();
         LOG_DB[profile] = logs;
-        // 持久化到localStorage
         GZD.Storage.set('gzd_logs_' + profile, logs);
     }
 
@@ -511,7 +513,6 @@
         var luoLogs = GZD.Storage.get('gzd_logs_luojin', null);
         if (linLogs) LOG_DB.linxiwu = linLogs;
         if (luoLogs) LOG_DB.luojin = luoLogs;
-        // 同步恢复任务状态到 QUEST_DB
         var stored = GZD.Storage.getQuests() || {};
         for (var profile in QUEST_DB) {
             var raw = QUEST_DB[profile] || [];
@@ -528,7 +529,6 @@
     // ===== 10. 全部渲染 =====
     function renderAll(profile) {
         profile = profile || document.body.getAttribute('data-profile') || 'linxiwu';
-        // 获取当前激活的筛选
         var bar = document.getElementById('filterBar' + (profile === 'linxiwu' ? 'Lin' : 'Luo'));
         var filter = 'all';
         if (bar) {
@@ -546,15 +546,13 @@
     initFilters('luojin');
     renderAll(initialProfile);
 
-    // 监听角色切换重新渲染
     window.addEventListener('profilechange', function(e) {
         renderAll(e.detail.profile);
     });
 
-    // 监听差事更新事件（用于魂力联动）
     window.addEventListener('questupdate', function(e) {
-        // 魂力页面会自己监听storage变化，我们只负责触发事件
+        // 魂力页面自己监听storage变化
     });
 
-    console.log('🌙 归终殿 · 差事与外勤 v1.1 已加载（修复归档状态按钮缺失）');
+    console.log('🌙 归终殿 · 差事与外勤 v1.2 已加载（修复按钮点击问题）');
 })();
