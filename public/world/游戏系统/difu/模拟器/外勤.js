@@ -298,7 +298,7 @@
         container.innerHTML = html;
     }
 
-    // ===== 5. 弹窗逻辑（修复：使用 addEventListener + 克隆替换） =====
+    // ===== 5. 弹窗逻辑（使用事件委托，不再克隆按钮） =====
     var modal = document.getElementById('questModal');
     var modalTitle = document.getElementById('modalTitle');
     var modalSub = document.getElementById('modalSub');
@@ -306,9 +306,58 @@
     var modalCancel = document.getElementById('modalCancel');
     var modalClose = document.getElementById('modalClose');
     var modalAction = document.getElementById('modalAction');
+
+    // 当前弹窗状态
     var currentModalId = null;
     var currentModalProfile = null;
-    var actionListener = null; // 保存当前监听器引用
+    var currentModalStatus = null;
+
+    // ★★★ 统一的事件监听器：用事件委托处理按钮点击 ★★★
+    // 先移除任何之前绑定的监听器（使用新函数替换）
+    var actionHandler = function(e) {
+        e.stopPropagation();
+        if (!currentModalId || !currentModalProfile) return;
+
+        var status = currentModalStatus;
+        var profile = currentModalProfile;
+        var id = currentModalId;
+
+        if (status === 'available') {
+            // 接取差事
+            updateQuestStatus(profile, id, 'doing', 0.05);
+            modal.classList.remove('open');
+            renderAll(profile);
+        } else if (status === 'doing') {
+            // 推进进度
+            advanceQuest(profile, id);
+            modal.classList.remove('open');
+            renderAll(profile);
+        } else if (status === 'done') {
+            // 归档
+            var raw = QUEST_DB[profile] || [];
+            var q = raw.find(function(item) { return item.id === id; });
+            updateQuestStatus(profile, id, 'archived', 1);
+            if (q) addLog(profile, q);
+            modal.classList.remove('open');
+            renderAll(profile);
+            window.dispatchEvent(new CustomEvent('questupdate', { detail: { profile: profile } }));
+        } else if (status === 'archived') {
+            // 重新打开
+            updateQuestStatus(profile, id, 'available', 0);
+            modal.classList.remove('open');
+            renderAll(profile);
+        } else {
+            // 未知状态，啥也不做
+        }
+    };
+
+    // 替换掉之前绑定的所有监听器：使用新的事件监听方式
+    // 移除旧的监听器（如果有），然后添加新的
+    // 由于不知道之前绑了多少，我们使用一个标记来确保只绑一次
+    if (!modalAction._handlerAttached) {
+        modalAction.addEventListener('click', actionHandler);
+        modalAction._handlerAttached = true;
+    }
 
     function openQuestModal(profile, id) {
         var raw = QUEST_DB[profile] || [];
@@ -325,6 +374,7 @@
 
         currentModalId = id;
         currentModalProfile = profile;
+        currentModalStatus = q.status;
 
         modalTitle.textContent = q.title;
         modalSub.textContent = q.issuer + ' · ' + q.location;
@@ -354,48 +404,19 @@
         }
         modalBody.innerHTML = bodyHtml;
 
-        // ★★★ 修复：先克隆替换按钮，清除所有旧事件 ★★★
-        var oldAction = document.getElementById('modalAction');
-        var newAction = oldAction.cloneNode(true);
-        oldAction.parentNode.replaceChild(newAction, oldAction);
-        modalAction = document.getElementById('modalAction');
-        modalAction.style.display = 'inline-block';
-
-        // 根据状态绑定不同的事件
+        // ★★★ 根据状态修改按钮文字 ★★★
         if (q.status === 'available') {
             modalAction.textContent = '接取差事';
-            modalAction.addEventListener('click', function(e) {
-                e.stopPropagation();
-                updateQuestStatus(profile, id, 'doing', 0.05);
-                modal.classList.remove('open');
-                renderAll(profile);
-            });
+            modalAction.style.display = 'inline-block';
         } else if (q.status === 'doing') {
             modalAction.textContent = '推进进度 (+10%)';
-            modalAction.addEventListener('click', function(e) {
-                e.stopPropagation();
-                advanceQuest(profile, id);
-                modal.classList.remove('open');
-                renderAll(profile);
-            });
+            modalAction.style.display = 'inline-block';
         } else if (q.status === 'done') {
             modalAction.textContent = '归档';
-            modalAction.addEventListener('click', function(e) {
-                e.stopPropagation();
-                updateQuestStatus(profile, id, 'archived', 1);
-                addLog(profile, q);
-                modal.classList.remove('open');
-                renderAll(profile);
-                window.dispatchEvent(new CustomEvent('questupdate', { detail: { profile: profile } }));
-            });
+            modalAction.style.display = 'inline-block';
         } else if (q.status === 'archived') {
             modalAction.textContent = '重新打开';
-            modalAction.addEventListener('click', function(e) {
-                e.stopPropagation();
-                updateQuestStatus(profile, id, 'available', 0);
-                modal.classList.remove('open');
-                renderAll(profile);
-            });
+            modalAction.style.display = 'inline-block';
         } else {
             modalAction.style.display = 'none';
         }
@@ -407,6 +428,7 @@
         modal.classList.remove('open');
         currentModalId = null;
         currentModalProfile = null;
+        currentModalStatus = null;
     }
 
     modalCancel.addEventListener('click', closeModal);
@@ -554,5 +576,5 @@
         // 魂力页面自己监听storage变化
     });
 
-    console.log('🌙 归终殿 · 差事与外勤 v1.2 已加载（修复按钮点击问题）');
+    console.log('🌙 归终殿 · 差事与外勤 v1.3 已加载（事件委托修复按钮点击）');
 })();
