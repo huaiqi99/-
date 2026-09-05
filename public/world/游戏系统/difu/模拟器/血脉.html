@@ -3,59 +3,24 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>归终殿 · 血脉羁绊</title>
+    <title>血脉羁绊 · 淮棋线</title>
     <style>
-        /* ===== 全局 ===== */
         :root {
             --bg-body: #f7f4ef;
             --bg-card: #ffffff;
-            --bg-hover: #f2eee9;
             --border-light: #ece6de;
             --border-card: #d5c8b8;
             --text-primary: #2c2c2c;
-            --text-secondary: #4a4a4a;
             --text-muted: #8a8a8a;
-            --accent: #8a3a2a;
-            --profile-lin: #D49A9A;
-            --profile-luo: #4E5A64;
+            --text-secondary: #4a4a4a;
             --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
             --font-mono: "Courier New", "Source Code Pro", monospace;
-            --transition: 0.3s ease;
-            --sidebar-width: 240px;
-            /* 印象色 */
             --lin-blue: #2a6b8a;
-            --luan-red: #8B1A1A;
-            --luo-purple: #7b4b8a;
-            --wei-gold: #c9a84b;
-        }
-
-        [data-theme="dark"] {
-            --bg-body: #1a1614;
-            --bg-card: #24201c;
-            --bg-hover: #2d2824;
-            --border-light: #3d3732;
-            --border-card: #4a443e;
-            --text-primary: #e8e0d5;
-            --text-secondary: #b8aea4;
-            --text-muted: #8a8078;
-            --accent: #c4b4a0;
-            --lin-blue: #4a8bae;
             --luan-red: #b05a4a;
-            --luo-purple: #9b6baa;
-            --wei-gold: #d4b85a;
-        }
-
-        body[data-profile="linxiwu"] {
-            --profile-accent: var(--profile-lin);
-            --center-color: #D49A9A;
-            --wave1-color: #2a6b8a;
-            --wave2-color: #b05a4a;
-        }
-        body[data-profile="luojin"] {
-            --profile-accent: var(--profile-luo);
-            --center-color: #4E5A64;
-            --wave1-color: #7b4b8a;
-            --wave2-color: #c9a84b;
+            --pink-flower: #e07070;
+            --blue-light: #7ab8d4;
+            --profile-accent: #D49A9A;
+            --detail-width: 260px;
         }
 
         * {
@@ -63,389 +28,100 @@
             padding: 0;
             box-sizing: border-box;
         }
-        html {
-            scroll-behavior: smooth;
-        }
+
         body {
             font-family: var(--font-serif);
             background: var(--bg-body);
             color: var(--text-primary);
-            font-size: 16px;
-            line-height: 1.6;
-            transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
             padding: 0 16px 40px 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
         }
 
-        /* ===== 浮动按钮 ===== */
-        .float-group {
-            position: fixed;
-            top: 20px;
-            right: 24px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-end;
-        }
-        .float-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 6px 14px 6px 12px;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: var(--font-mono);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            letter-spacing: 0.3px;
-            text-decoration: none;
-        }
-        .float-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        /* ===== 顶栏 ===== */
-        .top-header {
+        .app-wrap {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 4px 12px 4px;
+            width: 100%;
+            padding-top: 16px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            border-bottom: 1px solid var(--border-light);
+            gap: 14px;
         }
-        .top-header .page-title {
+
+        .header {
+            padding: 0 4px 10px 4px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .header h1 {
             font-size: 1.2rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-        .top-header .page-title .sym {
+        .header h1 .accent {
             color: var(--profile-accent);
-            transition: color var(--transition);
+            font-weight: 400;
         }
-        .top-header .profile-name {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            letter-spacing: 0.5px;
-            margin-left: 2px;
-        }
-        .top-header .profile-name span {
-            color: var(--profile-accent);
-            font-weight: 600;
-        }
-
-        /* ===== 侧边栏 ===== */
-        .sidebar-tab {
-            position: fixed;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 90;
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-left: none;
-            border-radius: 0 8px 8px 0;
-            padding: 10px 10px 10px 6px;
-            cursor: pointer;
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
-            transition: all var(--transition);
-            writing-mode: vertical-rl;
+        .header .sub {
             font-size: 0.7rem;
-            letter-spacing: 3px;
             color: var(--text-muted);
             font-family: var(--font-mono);
-            user-select: none;
-            transform-style: flat;
-            -webkit-transform-style: flat;
+            letter-spacing: 1.5px;
         }
-        .sidebar-tab:hover {
-            border-color: var(--profile-accent);
-            color: var(--profile-accent);
+
+        .main-row {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            align-items: stretch;
+            width: 100%;
         }
-        .sidebar-panel {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: var(--sidebar-width);
+
+        .main-card {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
             background: var(--bg-card);
-            border-right: 1px solid var(--border-card);
-            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
-            transform: translateX(-100%);
-            transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-            z-index: 95;
-            padding: 24px 16px 20px 16px;
-            overflow-y: auto;
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 14px 12px 12px 12px;
+            box-shadow: inset 0 0 0 1px var(--profile-accent), 0 2px 10px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
-        .sidebar-panel.open {
-            transform: translateX(0);
-        }
-        .sidebar-panel .close-btn {
-            align-self: flex-end;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 0 4px;
-            margin-bottom: 12px;
-            transition: color var(--transition);
-        }
-        .sidebar-panel .close-btn:hover {
-            color: var(--profile-accent);
-        }
-        .sidebar-panel .panel-title {
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-light);
-            font-family: var(--font-mono);
-        }
-        .sidebar-panel .nav-item {
-            display: block;
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            font-size: 0.85rem;
-            font-family: var(--font-serif);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition);
-            text-align: left;
-            background: none;
-            width: 100%;
-            margin-bottom: 2px;
-            text-decoration: none;
-            transform-style: flat;
-            -webkit-transform-style: flat;
-        }
-        .sidebar-panel .nav-item:hover {
-            background: var(--bg-hover);
-            border-color: var(--border-light);
-        }
-        .sidebar-panel .nav-item.active {
-            background: rgba(138, 58, 42, 0.04);
-            border-color: var(--profile-accent);
-            color: var(--profile-accent);
-            font-weight: 600;
-        }
-        .sidebar-panel .nav-item .sym {
-            display: inline-block;
-            width: 22px;
-            transform-style: flat;
-            -webkit-transform-style: flat;
-        }
-        .sidebar-panel .panel-footer {
-            margin-top: auto;
-            font-size: 0.6rem;
-            color: var(--text-muted);
-            text-align: center;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-light);
-            font-family: var(--font-mono);
-            letter-spacing: 0.5px;
-        }
-        .sidebar-panel .profile-switch-btn {
-            margin-top: 8px;
-            padding: 8px 12px;
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: var(--font-serif);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: center;
-        }
-        .sidebar-panel .profile-switch-btn:hover {
-            border-color: var(--profile-accent);
-            color: var(--profile-accent);
-            background: rgba(138, 58, 42, 0.04);
-        }
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.2);
-            z-index: 92;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.35s ease;
-        }
-        .sidebar-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        body.no-scroll {
-            overflow: hidden;
-        }
 
-        /* ===== 内容块 ===== */
-        .content-block {
-            display: none;
-        }
-        .content-block.active {
-            display: block;
-        }
-
-        /* ===== 卡片 ===== */
-        .card {
-            position: relative;
-            background: var(--bg-card);
-            padding: 18px 18px 16px 18px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-card);
-            box-shadow: inset 0 0 0 1px var(--profile-accent), 0 2px 10px rgba(0, 0, 0, 0.06);
-            transition: border-color var(--transition), box-shadow var(--transition), transform 0.25s ease;
-            animation: cardIn 0.45s ease forwards;
-            line-height: 1.6;
-        }
-        .card-grad {
-            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
-        }
-        @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background-image: radial-gradient(ellipse at 30% 20%, rgba(255, 248, 240, 0.03) 0%, transparent 70%), radial-gradient(ellipse at 70% 80%, rgba(255, 248, 240, 0.02) 0%, transparent 60%);
-            z-index: 0;
-        }
-        .card::after {
-            content: attr(data-corner);
-            position: absolute;
-            top: -7px;
-            left: 14px;
-            font-size: 1.2rem;
-            color: var(--profile-accent);
-            background: var(--bg-body);
-            padding: 0 3px;
-            opacity: 0.75;
-            z-index: 2;
-            transition: all 0.3s;
-            transform-style: flat;
-            -webkit-transform-style: flat;
-        }
-        .card .corner-deco {
-            position: absolute;
-            bottom: -7px;
-            right: 14px;
-            font-size: 1.2rem;
-            color: var(--profile-accent);
-            background: var(--bg-body);
-            padding: 0 3px;
-            opacity: 0.75;
-            z-index: 2;
-            transition: all 0.3s;
-            pointer-events: none;
-            transform-style: flat;
-            -webkit-transform-style: flat;
-        }
-        .card:hover {
-            border-color: var(--profile-accent);
-            box-shadow: inset 0 0 0 1px var(--profile-accent), 0 6px 20px rgba(0, 0, 0, 0.12);
-        }
-        .card:hover::after,
-        .card:hover .corner-deco {
-            opacity: 1;
-            transform: scale(1.1);
-        }
         .card-title {
             font-size: 0.9rem;
             font-weight: 600;
-            font-family: var(--font-serif);
-            letter-spacing: 0.5px;
             color: var(--text-muted);
-            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
             display: flex;
             align-items: center;
-            gap: 6px;
-            position: relative;
-            padding-bottom: 6px;
-            z-index: 1;
+            gap: 8px;
+            flex-shrink: 0;
         }
-        .card-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 3.2rem;
-            height: 2px;
-            background: var(--profile-accent);
-            opacity: 0.5;
-            border-radius: 1px;
+        .card-title .sym {
+            color: var(--profile-accent);
         }
 
-        /* ===== 柳枝图谱容器 ===== */
-        .vine-section {
-            padding: 4px 0;
+        .preview-wrap {
             position: relative;
-            z-index: 1;
-        }
-        .vine-section .section-label {
-            text-align: center;
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            padding: 4px 0 16px 0;
-            opacity: 0.5;
-        }
-
-        .vine-container {
-            display: flex;
-            flex-direction: row;
-            gap: 0;
-            justify-content: center;
-            align-items: stretch;
-            position: relative;
-            min-height: 500px;
-        }
-
-        .vine-col {
+            width: 100%;
+            overflow: auto;
+            background: var(--bg-body);
+            border-radius: 4px;
+            margin-top: 2px;
             flex: 1;
-            max-width: 480px;
-            min-width: 0;
-            position: relative;
-            padding: 0 4px;
-        }
-        .vine-col .col-label {
-            text-align: center;
-            font-size: 0.65rem;
-            font-family: var(--font-mono);
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            padding-bottom: 6px;
-            opacity: 0.4;
+            min-height: 400px;
+            max-height: 80vh;
         }
 
-        .vine-col svg {
+        .preview-wrap svg {
             display: block;
             width: 100%;
             height: auto;
@@ -453,258 +129,702 @@
             overflow: visible;
         }
 
-        .vine-divider {
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, var(--profile-accent), transparent);
-            opacity: 0.2;
+        /* ===== 详情面板 ===== */
+        .detail-panel {
+            width: var(--detail-width);
             flex-shrink: 0;
-            margin: 0 6px;
-            border-radius: 1px;
-        }
-
-        .link-note {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 16px 14px;
+            box-shadow: inset 0 0 0 1px var(--profile-accent), 0 2px 10px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
             font-size: 0.8rem;
             color: var(--text-secondary);
-            text-align: center;
-            padding: 12px 0 4px 0;
-            opacity: 0.6;
+            line-height: 1.8;
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-panel .panel-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .detail-panel .panel-title .sym {
+            color: var(--profile-accent);
+        }
+        .detail-panel .detail-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .detail-panel .detail-item {
+            padding: 6px 0 6px 8px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        .detail-panel .detail-item:hover {
+            background: var(--bg-body);
+        }
+        .detail-panel .detail-item .label {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            letter-spacing: 0.3px;
+        }
+        .detail-panel .detail-item .preview {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             font-style: italic;
-            position: relative;
-            z-index: 1;
+        }
+        .detail-panel .detail-item.active {
+            background: rgba(212, 154, 154, 0.12);
+            border-left: 2px solid var(--profile-accent);
         }
 
         /* ===== 图例 ===== */
         .legend {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px 20px;
-            justify-content: center;
-            padding-top: 14px;
+            gap: 6px 16px;
+            padding-top: 10px;
             margin-top: 4px;
             border-top: 1px solid var(--border-light);
+            flex-shrink: 0;
         }
         .legend-item {
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-family: var(--font-mono);
             color: var(--text-muted);
             letter-spacing: 0.3px;
         }
-        .legend-item .dot {
+        .legend-item .swatch {
+            width: 18px;
+            height: 3px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .legend-item .dot-swatch {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             flex-shrink: 0;
         }
+        .legend-item .sym-swatch {
+            font-size: 0.9rem;
+            line-height: 1;
+        }
 
-        /* ===== 花瓣 ===== */
-        #petal-container {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 8;
-            overflow: hidden;
-        }
-        .petal-char {
-            position: absolute;
-            top: -30px;
-            font-size: 18px;
-            will-change: transform, opacity;
-            opacity: 0;
-            user-select: none;
-            transform-style: flat;
-            -webkit-transform-style: flat;
-            animation: petalFall linear infinite;
-        }
-        @keyframes petalFall {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.4;
-            }
-            100% {
-                transform: translateY(calc(100vh + 50px)) rotate(360deg);
-                opacity: 0;
-            }
+        .status-msg {
+            font-size: 0.6rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 4px 0 0 0;
+            opacity: 0.3;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
         }
 
         /* ===== 响应式 ===== */
         @media (max-width: 820px) {
-            .vine-container {
+            .main-row {
                 flex-direction: column;
-                align-items: center;
-                gap: 20px;
-                min-height: auto;
             }
-            .vine-col {
-                max-width: 100%;
+            .detail-panel {
                 width: 100%;
+                position: static;
+                max-height: 200px;
+                order: 2;
             }
-            .vine-divider {
-                width: 50%;
-                height: 2px;
-                margin: 0 auto;
-                background: linear-gradient(to right, transparent, var(--profile-accent), transparent);
+            .main-card {
+                order: 1;
+            }
+            body {
+                padding: 0 10px 30px 10px;
+            }
+            .main-card {
+                padding: 10px 8px;
+            }
+            .preview-wrap {
+                max-height: 60vh;
+            }
+            .detail-panel .detail-item {
+                padding: 4px 0 4px 6px;
+            }
+            .detail-panel .detail-item .label {
+                font-size: 0.7rem;
+            }
+            .detail-panel .detail-item .preview {
+                font-size: 0.6rem;
             }
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 0 12px 30px 12px;
-                font-size: 15px;
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1rem;
             }
-            .top-header {
-                padding: 14px 0 10px 0;
-            }
-            .top-header .page-title {
-                font-size: 1.1rem;
-            }
-            .sidebar-panel {
-                width: 210px;
-                padding: 20px 14px 16px 14px;
-            }
-            .sidebar-tab {
-                padding: 8px 8px 8px 4px;
-                font-size: 0.65rem;
-            }
-            .float-group {
-                top: 12px;
-                right: 12px;
-                gap: 6px;
-            }
-            .float-btn {
-                padding: 4px 10px 4px 8px;
-                font-size: 0.65rem;
-            }
-            .legend {
-                gap: 6px 12px;
-            }
-            .legend-item {
+            .header .sub {
                 font-size: 0.55rem;
             }
-        }
-
-        .sym,
-        .sidebar-tab .sym,
-        .sidebar-panel .nav-item .sym,
-        .card::after,
-        .card .corner-deco,
-        .petal-char {
-            transform-style: flat !important;
-            -webkit-transform-style: flat !important;
+            .card-title {
+                font-size: 0.8rem;
+            }
+            .detail-panel {
+                max-height: 150px;
+                padding: 10px 10px;
+            }
+            .detail-panel .panel-title {
+                font-size: 0.75rem;
+            }
+            .preview-wrap {
+                max-height: 50vh;
+            }
         }
     </style>
 </head>
-<body data-profile="linxiwu">
+<body>
 
-    <div class="float-group">
-        <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
-        <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
-    </div>
+    <div class="app-wrap">
 
-    <div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="sidebar-panel" id="sidebarPanel">
-        <button class="close-btn">✕</button>
-        <div class="panel-title">◈ 归终殿 · 导航</div>
-        <a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
-        <a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
-        <a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
-        <a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
-        <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
-        <a class="nav-item active" href="#"><span class="sym">❤</span> 血脉羁绊</a>
-        <a class="nav-item" href="#"><span class="sym">✶</span> 升席纪事</a>
-        <a class="nav-item" href="#"><span class="sym">✉</span> 传讯符</a>
-        <a class="nav-item" href="#"><span class="sym">⚙</span> 设置</a>
-        <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
-        <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
-    </div>
-
-    <div class="top-header">
-        <div class="page-title"><span class="sym">❤</span> 血脉羁绊</div>
-        <div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
-    </div>
-
-    <div id="app">
-
-        <!-- ===== 林栖梧 ===== -->
-        <div class="content-block active" id="content-linxiwu">
-
-            <div class="card" data-corner="❀">
-                <span class="corner-deco">❀</span>
-                <div class="card-title">血脉图谱 · 一路走来</div>
-                <div class="vine-section">
-                    <div class="section-label">— 浮生树 · 归终殿 —</div>
-                    <div class="vine-container" id="vineContainerLin">
-                        <div class="vine-col" id="colLin">
-                            <div class="col-label">❀ 淮 · 棋</div>
-                            <svg id="svgLin" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
-                        </div>
-                        <div class="vine-divider"></div>
-                        <div class="vine-col" id="colXiu">
-                            <div class="col-label">◈ 修 · 璟</div>
-                            <svg id="svgXiu" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
-                        </div>
-                    </div>
-                    <div class="link-note">两脉枝桠，各自开出了花。</div>
-                </div>
-            </div>
-
-            <div class="legend">
-                <span class="legend-item"><span class="dot" style="background:#2a6b8a;"></span> 林淮</span>
-                <span class="legend-item"><span class="dot" style="background:#b05a4a;"></span> 栾方棋</span>
-                <span class="legend-item"><span class="dot" style="background:#7b4b8a;"></span> 罗修</span>
-                <span class="legend-item"><span class="dot" style="background:#c9a84b;"></span> 魏元璟</span>
-                <span class="legend-item"><span class="dot" style="background:#D49A9A;"></span> 归终交汇</span>
-            </div>
-
+        <div class="header">
+            <h1>❤ 血脉羁绊 · <span class="accent">淮棋线</span></h1>
+            <span class="sub">波峰间距 510px · 周期 14.5s</span>
         </div>
 
-        <!-- ===== 罗烬 ===== -->
-        <div class="content-block" id="content-luojin">
+        <div class="main-row">
 
-            <div class="card" data-corner="◈">
-                <span class="corner-deco">◈</span>
-                <div class="card-title">血脉图谱 · 一路走来</div>
-                <div class="vine-section">
-                    <div class="section-label">— 浮生树 · 归终殿 —</div>
-                    <div class="vine-container" id="vineContainerLuo">
-                        <div class="vine-col" id="colLinLuo">
-                            <div class="col-label">❀ 淮 · 棋</div>
-                            <svg id="svgLinLuo" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
-                        </div>
-                        <div class="vine-divider"></div>
-                        <div class="vine-col" id="colXiuLuo">
-                            <div class="col-label">◈ 修 · 璟</div>
-                            <svg id="svgXiuLuo" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
-                        </div>
-                    </div>
-                    <div class="link-note">两脉枝桠，各自开出了花。</div>
+            <!-- 主卡片 -->
+            <div class="main-card">
+                <div class="card-title"><span class="sym">❀</span> 林淮 · 栾方棋</div>
+
+                <div class="preview-wrap" id="scrollContainer">
+                    <svg id="wavePreview" viewBox="0 0 860 2400" preserveAspectRatio="xMidYMid meet"></svg>
                 </div>
+
+                <div class="legend">
+                    <span class="legend-item"><span class="swatch" style="background:#D49A9A;"></span> 中心线</span>
+                    <span class="legend-item"><span class="swatch" style="background:#2a6b8a;"></span> 波浪 1</span>
+                    <span class="legend-item"><span class="swatch" style="background:#b05a4a;"></span> 波浪 2</span>
+                    <span class="legend-item"><span class="sym-swatch">✦</span> 节点</span>
+                    <span class="legend-item"><span class="sym-swatch" style="color:#e07070;">❀</span> 花饰</span>
+                    <span class="legend-item"><span class="swatch" style="background:#e07070;"></span> 虚线</span>
+                    <span class="legend-item"><span class="dot-swatch" style="background:#2a6b8a;"></span> 林淮</span>
+                    <span class="legend-item"><span class="dot-swatch" style="background:#b05a4a;"></span> 栾方棋</span>
+                </div>
+
+                <div class="status-msg">⏳ 波形流动 · 对话左右交替 · 点击右侧详情跳转</div>
             </div>
 
-            <div class="legend">
-                <span class="legend-item"><span class="dot" style="background:#2a6b8a;"></span> 林淮</span>
-                <span class="legend-item"><span class="dot" style="background:#b05a4a;"></span> 栾方棋</span>
-                <span class="legend-item"><span class="dot" style="background:#7b4b8a;"></span> 罗修</span>
-                <span class="legend-item"><span class="dot" style="background:#c9a84b;"></span> 魏元璟</span>
-                <span class="legend-item"><span class="dot" style="background:#4E5A64;"></span> 归终交汇</span>
+            <!-- 详情面板 -->
+            <div class="detail-panel" id="detailPanel">
+                <div class="panel-title"><span class="sym">✦</span> 对话详情</div>
+                <div class="detail-list" id="detailList"></div>
             </div>
 
         </div>
 
     </div>
 
-    <div id="petal-container"></div>
+    <script>
+        (function() {
 
-    <script src="./核心.js"></script>
-    <script src="./血脉.js"></script>
+            var svg = document.getElementById('wavePreview');
+            var detailList = document.getElementById('detailList');
+            var scrollContainer = document.getElementById('scrollContainer');
+            var ns = 'http://www.w3.org/2000/svg';
+
+            // ===== 画布尺寸（加大到 2400px 确保所有内容可见） =====
+            var W = 860,
+                H = 2400;
+            var cx = 400;
+            var START_Y = 50;
+            var END_Y = 2350;
+
+            // ===== 固定参数 =====
+            var spacing = 510;
+            var amp = 11;
+            var opacity = 0.27;
+            var period = 14.5;
+            var phaseA = 0;
+            var phaseB = 0;
+            var lastTime = 0;
+
+            // ===== 对话数据 =====
+            var dialogData = [{
+                side: 'right',
+                label: '初识 · 国师府',
+                lines: [
+                    { speaker: '林淮', text: '「属下没有名字，只有编号卯九。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「你叫什么名字？」', color: '#b05a4a' },
+                    { speaker: '秦墨予', text: '「既然有名字，你以后就叫林淮。」', color: '#b05a4a' },
+                ],
+                ref: '——第77章'
+            }, {
+                side: 'left',
+                label: '走近 · 书房教字',
+                lines: [
+                    { speaker: '林淮', text: '「国师大人，这不合规矩。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「过来，我教你‘林淮’两个字怎么写。」', color: '#b05a4a' },
+                    { speaker: '秦墨予', text: '「在这里，我就是规矩。」', color: '#b05a4a' },
+                ],
+                ref: '——第77章'
+            }, {
+                side: 'right',
+                label: '第一次动心 · 柳州山洞',
+                lines: [
+                    { speaker: '林淮', text: '「我只是想见你。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「你这人脑子烧傻了吧？！」', color: '#b05a4a' },
+                ],
+                ref: '——第79章'
+            }, {
+                side: 'left',
+                label: '雪中分别 · 宫门口',
+                lines: [
+                    { speaker: '林淮', text: '「白头空负三生意，犹记寒阶共雪温。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「遥望卿云归雁尽，缘深终作浅痕存。」', color: '#b05a4a' },
+                ],
+                ref: '——第86章'
+            }, {
+                side: 'right',
+                label: '最后一面 · 国师府',
+                lines: [
+                    { speaker: '林淮', text: '「秦墨予。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「如果有一天，我做错了什么……一定要阻止我。」', color: '#b05a4a' },
+                ],
+                ref: '——第84章'
+            }, {
+                side: 'left',
+                label: '死后初遇 · 人间宅院',
+                lines: [
+                    { speaker: '林淮', text: '「我来送你最后一程。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「你是来送我上路的吗？」', color: '#b05a4a' },
+                    { speaker: '栾方棋', text: '「谢谢你。」', color: '#b05a4a' },
+                ],
+                ref: '——第90章'
+            }, {
+                side: 'right',
+                label: '无涯村重逢 · 竹林',
+                lines: [
+                    { speaker: '林淮', text: '「你……你竟然会这么想。」（笑）', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「……我只是不想给你添麻烦。」', color: '#b05a4a' },
+                ],
+                ref: '——第7章'
+            }, {
+                side: 'left',
+                label: '皇宫 · 观花卷之后',
+                lines: [
+                    { speaker: '林淮', text: '「只要我的灵魂还留在这世界上一天，\n你就不会只是一个人。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「……」', color: '#b05a4a' },
+                ],
+                ref: '——第69章'
+            }, {
+                side: 'right',
+                label: '浮生树下 · 告白',
+                lines: [
+                    { speaker: '林淮', text: '「我爱你，方棋。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「你是林淮……你是林淮。」', color: '#b05a4a' },
+                ],
+                ref: '——第112章'
+            }, {
+                side: 'left',
+                label: '成亲 · 归终殿',
+                lines: [
+                    { speaker: '林淮', text: '「一荣俱荣，一损俱损。\n浮生之契，同生共死。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「我要和林淮成亲了！」', color: '#b05a4a' },
+                ],
+                ref: '——第121章'
+            }];
+
+            var numNodes = dialogData.length;
+            var nodeSpacing = (END_Y - START_Y) / (numNodes - 1);
+
+            // ===== 生成波浪 =====
+            function generateWavePoints(sign, spacing, amp, phase) {
+                var pts = [];
+                var step = 3.5;
+                var totalHeight = (END_Y - START_Y) + spacing;
+                var numPoints = Math.floor(totalHeight / step) + 4;
+                for (var i = 0; i < numPoints; i++) {
+                    var y = START_Y - spacing / 2 + i * step;
+                    if (y < START_Y - spacing) continue;
+                    if (y > END_Y + spacing / 2) break;
+                    var angle = ((y - START_Y) / spacing) * 2 * Math.PI + phase;
+                    var x = cx + sign * amp * Math.sin(angle);
+                    pts.push({ x: x, y: y });
+                }
+                return pts;
+            }
+
+            function buildBezierPath(pts) {
+                if (pts.length < 2) return '';
+                var d = 'M ' + pts[0].x.toFixed(2) + ',' + pts[0].y.toFixed(2);
+                for (var i = 0; i < pts.length - 1; i++) {
+                    var p0 = pts[i];
+                    var p1 = pts[i + 1];
+                    var dy = p1.y - p0.y;
+                    if (Math.abs(dy) < 0.3) {
+                        d += ' L ' + p1.x.toFixed(2) + ',' + p1.y.toFixed(2);
+                        continue;
+                    }
+                    var cpx = p0.x;
+                    var cpx2 = p1.x;
+                    var cpy = p0.y + dy * 0.45;
+                    var cpy2 = p1.y - dy * 0.45;
+                    d += ' C ' + cpx.toFixed(2) + ',' + cpy.toFixed(2) +
+                        ' ' + cpx2.toFixed(2) + ',' + cpy2.toFixed(2) +
+                        ' ' + p1.x.toFixed(2) + ',' + p1.y.toFixed(2);
+                }
+                return d;
+            }
+
+            // ===== 文字换行 =====
+            function wrapText(text, maxChars) {
+                if (text.length <= maxChars) return [text];
+                var result = [];
+                var current = '';
+                for (var i = 0; i < text.length; i++) {
+                    current += text[i];
+                    if (current.length >= maxChars) {
+                        var lastBreak = current.lastIndexOf(' ');
+                        if (lastBreak === -1) lastBreak = current.length;
+                        result.push(current.substring(0, lastBreak));
+                        current = current.substring(lastBreak).trim();
+                    }
+                }
+                if (current.length > 0) result.push(current);
+                return result;
+            }
+
+            // ===== 绘制对话块（同一段内，同一说话人正常行距，不同说话人大行距） =====
+            function drawDialogBlock(svg, side, lines, ref, baseX, baseY) {
+                var anchor = (side === 'left') ? 'end' : 'start';
+                var textX = baseX;
+                var speakerOffset = (side === 'left') ? -4 : 4;
+
+                // 同一说话人内部行距
+                var SAME_SPEAKER_LINE = 26;
+                // 不同说话人之间额外加的行距
+                var DIFF_SPEAKER_EXTRA = 24;
+                // 总行距 = 26 + 24 = 50px
+
+                var currentY = baseY;
+                var lastSpeaker = null;
+
+                for (var j = 0; j < lines.length; j++) {
+                    var item = lines[j];
+                    var isNewSpeaker = (lastSpeaker !== null && lastSpeaker !== item.speaker);
+
+                    // 如果是新说话人，额外加间距
+                    if (isNewSpeaker) {
+                        currentY += DIFF_SPEAKER_EXTRA;
+                    }
+
+                    // 说话人标签
+                    var sp = document.createElementNS(ns, 'text');
+                    sp.setAttribute('x', textX + speakerOffset);
+                    sp.setAttribute('y', currentY);
+                    sp.setAttribute('text-anchor', anchor);
+                    sp.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                    sp.setAttribute('font-size', '14');
+                    sp.setAttribute('font-weight', '600');
+                    sp.setAttribute('fill', item.color);
+                    sp.setAttribute('opacity', '0.65');
+                    sp.setAttribute('letter-spacing', '0.5px');
+                    sp.textContent = '— ' + item.speaker;
+                    svg.appendChild(sp);
+
+                    currentY += 20;
+
+                    // 对话内容（自动换行）
+                    var lines2 = wrapText(item.text, 22);
+                    for (var k = 0; k < lines2.length; k++) {
+                        var t = document.createElementNS(ns, 'text');
+                        t.setAttribute('x', textX + speakerOffset);
+                        t.setAttribute('y', currentY + k * 22);
+                        t.setAttribute('text-anchor', anchor);
+                        t.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                        t.setAttribute('font-size', '16');
+                        t.setAttribute('fill', item.color);
+                        t.setAttribute('font-style', 'italic');
+                        t.setAttribute('font-weight', '400');
+                        t.setAttribute('opacity', '0.92');
+                        t.textContent = lines2[k];
+                        svg.appendChild(t);
+                    }
+
+                    // 更新 currentY：内容行数 * 行高 + 底部留白
+                    currentY += lines2.length * 22 + 6;
+
+                    lastSpeaker = item.speaker;
+                }
+
+                // 章节引用（在对话块下方）
+                var refY = currentY + 8;
+                var refEl = document.createElementNS(ns, 'text');
+                refEl.setAttribute('x', textX + speakerOffset);
+                refEl.setAttribute('y', refY);
+                refEl.setAttribute('text-anchor', anchor);
+                refEl.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                refEl.setAttribute('font-size', '12');
+                refEl.setAttribute('fill', '#555555');
+                refEl.setAttribute('opacity', '0.6');
+                refEl.setAttribute('letter-spacing', '0.3px');
+                refEl.textContent = ref;
+                svg.appendChild(refEl);
+
+                return refY + 16;
+            }
+
+            // ===== 详情面板 =====
+            function buildDetailPanel() {
+                detailList.innerHTML = '';
+                dialogData.forEach(function(d, idx) {
+                    var div = document.createElement('div');
+                    div.className = 'detail-item';
+                    div.dataset.index = idx;
+                    var label = document.createElement('div');
+                    label.className = 'label';
+                    label.textContent = (idx + 1) + '. ' + d.label;
+                    var preview = document.createElement('div');
+                    preview.className = 'preview';
+                    var firstLine = d.lines[0] ? d.lines[0].text : '';
+                    preview.textContent = firstLine.substring(0, 35) + (firstLine.length > 35 ? '…' : '');
+                    div.appendChild(label);
+                    div.appendChild(preview);
+                    div.addEventListener('click', function() {
+                        var index = parseInt(this.dataset.index);
+                        scrollToNode(index);
+                        document.querySelectorAll('.detail-item').forEach(function(el) {
+                            el.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    });
+                    detailList.appendChild(div);
+                });
+                var first = detailList.querySelector('.detail-item');
+                if (first) first.classList.add('active');
+            }
+
+            function scrollToNode(index) {
+                var y = START_Y + index * nodeSpacing;
+                var totalH = END_Y - START_Y + 60;
+                var percent = (y - 20) / totalH;
+                if (scrollContainer) {
+                    var target = scrollContainer.scrollHeight * Math.max(0, Math.min(1, percent));
+                    scrollContainer.scrollTo({ top: target - 80, behavior: 'smooth' });
+                }
+            }
+            window.scrollToNode = scrollToNode;
+
+            // ===== 主渲染 =====
+            function render() {
+                while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+                // 1. 中心线
+                var axis = document.createElementNS(ns, 'line');
+                axis.setAttribute('x1', cx);
+                axis.setAttribute('y1', START_Y - 20);
+                axis.setAttribute('x2', cx);
+                axis.setAttribute('y2', END_Y + 20);
+                axis.setAttribute('stroke', '#D49A9A');
+                axis.setAttribute('stroke-width', '4');
+                axis.setAttribute('opacity', '0.4');
+                axis.setAttribute('stroke-linecap', 'round');
+                svg.appendChild(axis);
+
+                // 2. 波浪线
+                var ptsA = generateWavePoints(1, spacing, amp, phaseA);
+                var ptsB = generateWavePoints(-1, spacing, amp, phaseB);
+
+                var pathA = document.createElementNS(ns, 'path');
+                pathA.setAttribute('d', buildBezierPath(ptsA));
+                pathA.setAttribute('stroke', '#2a6b8a');
+                pathA.setAttribute('stroke-width', '2');
+                pathA.setAttribute('fill', 'none');
+                pathA.setAttribute('stroke-linecap', 'round');
+                pathA.setAttribute('opacity', opacity);
+                svg.appendChild(pathA);
+
+                var pathB = document.createElementNS(ns, 'path');
+                pathB.setAttribute('d', buildBezierPath(ptsB));
+                pathB.setAttribute('stroke', '#b05a4a');
+                pathB.setAttribute('stroke-width', '2');
+                pathB.setAttribute('fill', 'none');
+                pathB.setAttribute('stroke-linecap', 'round');
+                pathB.setAttribute('opacity', opacity);
+                svg.appendChild(pathB);
+
+                // 3. 节点
+                for (var i = 0; i < numNodes; i++) {
+                    var y = START_Y + i * nodeSpacing;
+                    var data = dialogData[i];
+                    var side = data.side;
+
+                    // ---- 四角星 ----
+                    var star = document.createElementNS(ns, 'text');
+                    star.setAttribute('x', cx);
+                    star.setAttribute('y', y + 5);
+                    star.setAttribute('text-anchor', 'middle');
+                    star.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                    star.setAttribute('font-size', '28');
+                    star.setAttribute('fill', '#7ab8d4');
+                    star.setAttribute('opacity', '0.8');
+                    star.textContent = '✦';
+                    svg.appendChild(star);
+
+                    // ---- 虚线 + ❀ ----
+                    var dashY = y + 28;
+                    var lineHeight = 26;
+
+                    if (side === 'left') {
+                        var dashStart = 16;
+                        var dashEnd = cx - 28;
+                        var flowerX = dashStart + (dashEnd - dashStart) * 0.4;
+
+                        var dash = document.createElementNS(ns, 'line');
+                        dash.setAttribute('x1', dashStart);
+                        dash.setAttribute('y1', dashY);
+                        dash.setAttribute('x2', dashEnd);
+                        dash.setAttribute('y2', dashY);
+                        dash.setAttribute('stroke', '#e07070');
+                        dash.setAttribute('stroke-width', '2');
+                        dash.setAttribute('opacity', '0.5');
+                        dash.setAttribute('stroke-dasharray', '5,6');
+                        svg.appendChild(dash);
+
+                        var flower = document.createElementNS(ns, 'text');
+                        flower.setAttribute('x', flowerX);
+                        flower.setAttribute('y', dashY + 6);
+                        flower.setAttribute('text-anchor', 'middle');
+                        flower.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                        flower.setAttribute('font-size', '24');
+                        flower.setAttribute('fill', '#e07070');
+                        flower.setAttribute('opacity', '0.85');
+                        flower.textContent = '❀';
+                        svg.appendChild(flower);
+
+                    } else {
+                        var dashStart = cx + 28;
+                        var dashEnd = W - 16;
+                        var flowerX = dashStart + (dashEnd - dashStart) * 0.6;
+
+                        var dash = document.createElementNS(ns, 'line');
+                        dash.setAttribute('x1', dashStart);
+                        dash.setAttribute('y1', dashY);
+                        dash.setAttribute('x2', dashEnd);
+                        dash.setAttribute('y2', dashY);
+                        dash.setAttribute('stroke', '#7ab8d4');
+                        dash.setAttribute('stroke-width', '2');
+                        dash.setAttribute('opacity', '0.5');
+                        dash.setAttribute('stroke-dasharray', '5,6');
+                        svg.appendChild(dash);
+
+                        var flower = document.createElementNS(ns, 'text');
+                        flower.setAttribute('x', flowerX);
+                        flower.setAttribute('y', dashY + 6);
+                        flower.setAttribute('text-anchor', 'middle');
+                        flower.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                        flower.setAttribute('font-size', '24');
+                        flower.setAttribute('fill', '#e07070');
+                        flower.setAttribute('opacity', '0.85');
+                        flower.textContent = '❀';
+                        svg.appendChild(flower);
+                    }
+
+                    // ---- ★ 场景标签：放在虚线下方（虚线 y + 32），不是中间 ----
+                    var labelY = dashY + 32;
+                    var label = document.createElementNS(ns, 'text');
+                    label.setAttribute('x', cx);
+                    label.setAttribute('y', labelY);
+                    label.setAttribute('text-anchor', 'middle');
+                    label.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                    label.setAttribute('font-size', '14');
+                    label.setAttribute('font-weight', '600');
+                    label.setAttribute('fill', '#555555');
+                    label.setAttribute('opacity', '0.8');
+                    label.setAttribute('letter-spacing', '0.8px');
+                    label.textContent = data.label;
+                    svg.appendChild(label);
+
+                    // ---- 对话：在场景标签下方（labelY + 24） ----
+                    var textBaseX = (side === 'left') ? cx - 56 : cx + 56;
+                    var textStartY = labelY + 24;
+                    drawDialogBlock(svg, side, data.lines, data.ref, textBaseX, textStartY);
+                }
+
+                // 方向指示
+                function addDir(x, y, text, color) {
+                    var t = document.createElementNS(ns, 'text');
+                    t.setAttribute('x', x);
+                    t.setAttribute('y', y);
+                    t.setAttribute('text-anchor', 'middle');
+                    t.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                    t.setAttribute('font-size', '11');
+                    t.setAttribute('fill', color);
+                    t.setAttribute('opacity', '0.3');
+                    t.textContent = text;
+                    svg.appendChild(t);
+                }
+                addDir(28, 28, '↓', '#2a6b8a');
+                addDir(W - 28, 28, '↑', '#b05a4a');
+            }
+
+            // ===== 动画 =====
+            function animate(time) {
+                if (!lastTime) lastTime = time;
+                var delta = (time - lastTime) / 1000;
+                lastTime = time;
+
+                var omega = (2 * Math.PI) / period;
+                var dPhase = delta * omega;
+                phaseA += dPhase;
+                phaseB -= dPhase;
+
+                var twoPi = 2 * Math.PI;
+                while (phaseA > twoPi) phaseA -= twoPi;
+                while (phaseA < 0) phaseA += twoPi;
+                while (phaseB > twoPi) phaseB -= twoPi;
+                while (phaseB < 0) phaseB += twoPi;
+
+                render();
+                requestAnimationFrame(animate);
+            }
+
+            // ===== 启动 =====
+            buildDetailPanel();
+            phaseA = 0;
+            phaseB = Math.PI;
+            requestAnimationFrame(animate);
+
+            // 延迟一下让滚动条正常工作
+            setTimeout(function() {
+                if (scrollContainer) {
+                    // 确保滚动条出现
+                    scrollContainer.style.overflow = 'auto';
+                }
+            }, 100);
+
+            console.log('✅ 淮棋线 v4：滚动条保留，场景标签在虚线下方，不同说话人行距加大');
+        })();
+    </script>
+
 </body>
 </html>

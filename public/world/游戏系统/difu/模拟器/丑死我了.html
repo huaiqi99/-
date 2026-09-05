@@ -1,45 +1,28 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>血脉羁绊 · 预览</title>
+    <title>血脉羁绊 · 淮棋线</title>
     <style>
         :root {
-            --bg-body: #faf6ef;
+            --bg-body: #f7f4ef;
             --bg-card: #ffffff;
-            --bg-card-alt: #f2eee9;
-            --border-light: #e8e0d5;
+            --border-light: #ece6de;
             --border-card: #d5c8b8;
-            --text-primary: #1f1a16;
-            --text-secondary: #2c241e;
-            --text-muted: #5a4d42;
-            --text-muted-light: #8a7a6a;
-            --accent: #8a3a2a;
-            --accent-glow: rgba(138,58,42,0.25);
-            --lin-blue: #2a6b8a;
-            --luan-red: #8B1A1A;
-            --luo-purple: #7b4b8a;
-            --wei-gold: #c9a84b;
-            --linxiwu-pink: #D49A9A;
-            --luojin-gray: #4E5A64;
+            --text-primary: #2c2c2c;
+            --text-muted: #8a8a8a;
             --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
             --font-mono: "Courier New", "Source Code Pro", monospace;
-            --transition: 0.25s ease;
-        }
-
-        [data-theme="dark"] {
-            --bg-body: #1e1a16;
-            --bg-card: #2a2520;
-            --bg-card-alt: #24201c;
-            --border-light: #3a3530;
-            --border-card: #4a443e;
-            --text-primary: #cfc8c0;
-            --text-secondary: #b8aea4;
-            --text-muted: #8a8078;
-            --text-muted-light: #6a6560;
-            --accent: #b05a4a;
-            --accent-glow: rgba(176,90,74,0.30);
+            --lin-blue: #2a6b8a;
+            --luan-red: #b05a4a;
+            --pink-light: #f0c8c8;
+            --blue-light: #7ab8d4;
+            --star-color: #7ab8d4;
+            --profile-accent: #D49A9A;
+            --center-color: #D49A9A;
+            --wave1-color: #2a6b8a;
+            --wave2-color: #b05a4a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,16 +31,20 @@
             font-family: var(--font-serif);
             background: var(--bg-body);
             color: var(--text-primary);
-            transition: background var(--transition), color var(--transition);
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
             padding: 0 16px 40px 16px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
         }
 
-        .preview-header {
-            max-width: 1100px;
-            margin: 0 auto 16px auto;
-            padding: 20px 4px 12px 4px;
+        .app-wrap {
+            max-width: 860px;
+            width: 100%;
+            padding-top: 16px;
+        }
+
+        .header {
+            padding: 0 4px 12px 4px;
             border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
@@ -65,165 +52,127 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .preview-header h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .preview-header h1 .accent {
-            color: var(--linxiwu-pink);
-            font-weight: 400;
-        }
-        .preview-header .sub {
-            font-size: 0.7rem;
-            color: var(--text-muted-light);
-            font-family: var(--font-mono);
-            letter-spacing: 1.5px;
-        }
+        .header h1 { font-size: 1.1rem; font-weight: 700; }
+        .header h1 .accent { color: var(--profile-accent); font-weight: 400; }
+        .header .sub { font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 1.5px; }
 
-        .preview-container {
-            max-width: 1100px;
-            margin: 0 auto;
+        .card {
             background: var(--bg-card);
             border: 1px solid var(--border-card);
             border-radius: 8px;
-            padding: 20px 12px 16px 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+            padding: 16px 14px 14px 14px;
+            margin-top: 12px;
+            box-shadow: inset 0 0 0 1px var(--profile-accent), 0 2px 10px rgba(0, 0, 0, 0.04);
             overflow: hidden;
         }
 
-        .vine-rows {
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
             display: flex;
-            flex-direction: row;
-            gap: 0;
-            justify-content: center;
-            min-height: 600px;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .sym { color: var(--profile-accent); }
+
+        .preview-wrap {
             position: relative;
+            width: 100%;
+            overflow: visible;
+            background: var(--bg-body);
+            border-radius: 4px;
+            margin-top: 2px;
         }
 
-        .vine-col {
-            flex: 1;
-            max-width: 480px;
-            min-width: 0;
-            position: relative;
-            padding: 0 4px;
-        }
-        .vine-col .col-label {
-            text-align: center;
-            font-size: 0.65rem;
-            font-family: var(--font-mono);
-            letter-spacing: 2px;
-            color: var(--text-muted-light);
-            padding-bottom: 6px;
-            opacity: 0.5;
-        }
-
-        .vine-col svg {
+        .preview-wrap svg {
             display: block;
             width: 100%;
-            height: 600px;
+            height: auto;
             background: transparent;
             overflow: visible;
-        }
-
-        .vine-divider {
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, var(--linxiwu-pink), transparent);
-            opacity: 0.25;
-            flex-shrink: 0;
-            margin: 0 6px;
-            border-radius: 1px;
         }
 
         .legend {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px 20px;
-            justify-content: center;
-            padding-top: 14px;
-            margin-top: 4px;
+            gap: 8px 18px;
+            padding-top: 12px;
+            margin-top: 6px;
             border-top: 1px solid var(--border-light);
         }
         .legend-item {
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             font-family: var(--font-mono);
-            color: var(--text-muted-light);
+            color: var(--text-muted);
             letter-spacing: 0.3px;
         }
-        .legend-item .dot {
-            width: 10px;
-            height: 10px;
+        .legend-item .swatch {
+            width: 18px;
+            height: 3px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .legend-item .dot-swatch {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             flex-shrink: 0;
         }
+        .legend-item .sym-swatch { font-size: 0.9rem; line-height: 1; }
 
-        @media (max-width: 700px) {
-            .vine-rows {
-                flex-direction: column;
-                align-items: center;
-                min-height: auto;
-                gap: 20px;
-            }
-            .vine-col {
-                max-width: 100%;
-                width: 100%;
-            }
-            .vine-col svg {
-                height: 500px;
-            }
-            .vine-divider {
-                width: 50%;
-                height: 2px;
-                margin: 0 auto;
-                background: linear-gradient(to right, transparent, var(--linxiwu-pink), transparent);
-            }
-            .preview-container { padding: 12px 6px; }
+        .status-msg {
+            font-size: 0.6rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            text-align: center;
+            padding: 6px 0 0 0;
+            opacity: 0.35;
+            letter-spacing: 0.5px;
         }
 
-        @media (max-width: 480px) {
-            .vine-col svg { height: 420px; }
-            .preview-header h1 { font-size: 1rem; }
-            .legend { gap: 6px 12px; }
-            .legend-item { font-size: 0.55rem; }
+        @media (max-width: 600px) {
+            body { padding: 0 8px 30px 8px; }
+            .card { padding: 10px 8px; }
+            .legend { gap: 4px 12px; }
+            .legend-item { font-size: 0.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="preview-header">
-        <h1>❤ 血脉羁绊 · <span class="accent">预览</span></h1>
-        <span class="sub">柳枝垂落 · 对话交织</span>
-    </div>
+    <div class="app-wrap">
 
-    <div class="preview-container">
-
-        <div class="vine-rows">
-
-            <!-- 左：淮棋 -->
-            <div class="vine-col">
-                <div class="col-label">❀ 淮 · 棋</div>
-                <svg id="svgLin" viewBox="0 0 420 600" preserveAspectRatio="xMidYMid meet"></svg>
-            </div>
-
-            <div class="vine-divider"></div>
-
-            <!-- 右：修璟 -->
-            <div class="vine-col">
-                <div class="col-label">◈ 修 · 璟</div>
-                <svg id="svgXiu" viewBox="0 0 420 600" preserveAspectRatio="xMidYMid meet"></svg>
-            </div>
-
+        <div class="header">
+            <h1>❤ 血脉羁绊 · <span class="accent">淮棋线</span></h1>
+            <span class="sub">波峰间距 510px · 周期 14.5s</span>
         </div>
 
-        <div class="legend">
-            <span class="legend-item"><span class="dot" style="background:#2a6b8a;"></span> 林淮</span>
-            <span class="legend-item"><span class="dot" style="background:#b05a4a;"></span> 栾方棋</span>
-            <span class="legend-item"><span class="dot" style="background:#7b4b8a;"></span> 罗修</span>
-            <span class="legend-item"><span class="dot" style="background:#c9a84b;"></span> 魏元璟</span>
-            <span class="legend-item"><span class="dot" style="background:#D49A9A;"></span> 归终交汇</span>
+        <div class="card">
+            <div class="card-title"><span class="sym">❀</span> 林淮 · 栾方棋</div>
+
+            <div class="preview-wrap">
+                <svg id="wavePreview" viewBox="0 0 820 1600" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+
+            <div class="legend">
+                <span class="legend-item"><span class="swatch" style="background:#D49A9A;"></span> 中心线</span>
+                <span class="legend-item"><span class="swatch" style="background:#2a6b8a;"></span> 波浪 1</span>
+                <span class="legend-item"><span class="swatch" style="background:#b05a4a;"></span> 波浪 2</span>
+                <span class="legend-item"><span class="sym-swatch">✦</span> 节点</span>
+                <span class="legend-item"><span class="sym-swatch" style="color:#f0c8c8;">❀</span> 花饰</span>
+                <span class="legend-item"><span class="swatch" style="background:#f0c8c8;"></span> 虚线（粉）</span>
+                <span class="legend-item"><span class="swatch" style="background:#7ab8d4;"></span> 虚线（蓝）</span>
+                <span class="legend-item"><span class="dot-swatch" style="background:#2a6b8a;"></span> 林淮</span>
+                <span class="legend-item"><span class="dot-swatch" style="background:#b05a4a;"></span> 栾方棋</span>
+            </div>
+
+            <div class="status-msg">⏳ 波形流动 · 对话左右交替</div>
         </div>
 
     </div>
@@ -231,242 +180,416 @@
     <script>
         (function() {
 
-            // ===== 对话式台词 =====
-            var linData = [
-                { side: 'right', quote: '「我只是想见你。」', speaker: '林淮', color: '#2a6b8a' },
-                { side: 'left', quote: '「你……脑子烧傻了吧？」', speaker: '栾方棋', color: '#b05a4a' },
-                { side: 'right', quote: '「白头空负三生意，\n犹记寒阶共雪温。」', speaker: '林淮', color: '#2a6b8a' },
-                { side: 'left', quote: '「遥望卿云归雁尽，\n缘深终作浅痕存。」', speaker: '栾方棋', color: '#b05a4a' },
-                { side: 'right', quote: '「只要你活着，就好。」', speaker: '林淮', color: '#2a6b8a' },
-                { side: 'left', quote: '「一荣俱荣，一损俱损。」', speaker: '栾方棋', color: '#b05a4a' },
-                { side: 'right', quote: '「我爱你，方棋。」', speaker: '林淮', color: '#2a6b8a' },
-                { side: 'left', quote: '「……我也是。」', speaker: '栾方棋', color: '#b05a4a' },
-            ];
+            var svg = document.getElementById('wavePreview');
+            var ns = 'http://www.w3.org/2000/svg';
 
-            var xiuData = [
-                { side: 'left', quote: '「罗修！落月宫你这辈子都赔不起！！」', speaker: '魏元璟', color: '#c9a84b' },
-                { side: 'right', quote: '「赔？那就不赔了。」', speaker: '罗修', color: '#7b4b8a' },
-                { side: 'left', quote: '「你还想要酒吗？」', speaker: '魏元璟', color: '#c9a84b' },
-                { side: 'right', quote: '「不要了。」', speaker: '罗修', color: '#7b4b8a' },
-                { side: 'left', quote: '「师父，你想喝酒吗？」', speaker: '魏元璟', color: '#c9a84b' },
-                { side: 'right', quote: '「……嗯。」', speaker: '罗修', color: '#7b4b8a' },
-                { side: 'left', quote: '「不悔。」', speaker: '魏元璟', color: '#c9a84b' },
-                { side: 'right', quote: '「魂火为鉴，永生不离。」', speaker: '罗修', color: '#7b4b8a' },
-            ];
+            // ===== 画布尺寸（卡片大小，不占满屏幕） =====
+            var W = 820,
+                H = 1600;
+            var cx = 410;
+            var START_Y = 50;
+            var END_Y = 1550;
 
-            var W = 420,
-                H = 600;
-            var centerX = 210;
-            var waveAmp = 14; // 更浅的幅度
-            var period = 110;
-            var startY = 50;
+            // ===== 固定参数 =====
+            var spacing = 510;
+            var amp = 11;
+            var opacity = 0.27;
+            var period = 14.5;
+            var phaseA = 0;
+            var phaseB = 0;
+            var lastTime = 0;
 
-            // 节点位置：交替在直线左右
-            function getNodePositions(count) {
-                var positions = [];
-                for (var i = 0; i < count; i++) {
-                    var y = startY + i * period / 2 + 10;
-                    var isPeak = (i % 2 === 0);
-                    var xOffset = isPeak ? waveAmp : -waveAmp;
-                    positions.push({ y: y, xOffset: xOffset, isPeak: isPeak });
-                }
-                return positions;
-            }
+            // ===== 对话数据（左右交替） =====
+            // side: 'left' 或 'right'，表示这一段对话放在哪一侧
+            var dialogData = [{
+                side: 'right',
+                label: '初识 · 国师府',
+                lines: [
+                    { speaker: '林淮', text: '「属下没有名字，只有编号卯九。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「你叫什么名字？」', color: '#b05a4a' },
+                    { speaker: '秦墨予', text: '「既然有名字，你以后就叫林淮。」', color: '#b05a4a' },
+                ],
+                ref: '——第77章'
+            }, {
+                side: 'left',
+                label: '走近 · 书房教字',
+                lines: [
+                    { speaker: '林淮', text: '「国师大人，这不合规矩。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「过来，我教你‘林淮’两个字怎么写。」', color: '#b05a4a' },
+                    { speaker: '秦墨予', text: '「在这里，我就是规矩。」', color: '#b05a4a' },
+                ],
+                ref: '——第77章'
+            }, {
+                side: 'right',
+                label: '第一次动心 · 柳州山洞',
+                lines: [
+                    { speaker: '林淮', text: '「我只是想见你。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「你这人脑子烧傻了吧？！」', color: '#b05a4a' },
+                ],
+                ref: '——第79章'
+            }, {
+                side: 'left',
+                label: '雪中分别 · 宫门口',
+                lines: [
+                    { speaker: '林淮', text: '「白头空负三生意，犹记寒阶共雪温。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「遥望卿云归雁尽，缘深终作浅痕存。」', color: '#b05a4a' },
+                ],
+                ref: '——第86章'
+            }, {
+                side: 'right',
+                label: '最后一面 · 国师府',
+                lines: [
+                    { speaker: '林淮', text: '「秦墨予。」', color: '#2a6b8a' },
+                    { speaker: '秦墨予', text: '「如果有一天，我做错了什么……一定要阻止我。」', color: '#b05a4a' },
+                ],
+                ref: '——第84章'
+            }, {
+                side: 'left',
+                label: '死后初遇 · 人间宅院',
+                lines: [
+                    { speaker: '林淮', text: '「我来送你最后一程。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「你是来送我上路的吗？」', color: '#b05a4a' },
+                    { speaker: '栾方棋', text: '「谢谢你。」', color: '#b05a4a' },
+                ],
+                ref: '——第90章'
+            }, {
+                side: 'right',
+                label: '无涯村重逢 · 竹林',
+                lines: [
+                    { speaker: '林淮', text: '「你……你竟然会这么想。」（笑）', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「……我只是不想给你添麻烦。」', color: '#b05a4a' },
+                ],
+                ref: '——第7章'
+            }, {
+                side: 'left',
+                label: '皇宫 · 观花卷之后',
+                lines: [
+                    { speaker: '林淮', text: '「只要我的灵魂还留在这世界上一天，你就不会只是一个人。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「……」', color: '#b05a4a' },
+                ],
+                ref: '——第69章'
+            }, {
+                side: 'right',
+                label: '浮生树下 · 告白',
+                lines: [
+                    { speaker: '林淮', text: '「我爱你，方棋。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「你是林淮……你是林淮。」', color: '#b05a4a' },
+                ],
+                ref: '——第112章'
+            }, {
+                side: 'left',
+                label: '成亲 · 归终殿',
+                lines: [
+                    { speaker: '林淮', text: '「一荣俱荣，一损俱损。浮生之契，同生共死。」', color: '#2a6b8a' },
+                    { speaker: '栾方棋', text: '「我要和林淮成亲了！」', color: '#b05a4a' },
+                ],
+                ref: '——第121章'
+            }];
 
-            // 生成波浪路径（用sin）
-            function generateWavePoints(amp, period, startY, endY, steps) {
-                steps = steps || 300;
+            var numNodes = dialogData.length;
+            var nodeSpacing = (END_Y - START_Y) / (numNodes - 1);
+
+            // ===== 生成波浪点 =====
+            function generateWavePoints(sign, spacing, amp, phase) {
                 var pts = [];
-                for (var i = 0; i <= steps; i++) {
-                    var t = i / steps;
-                    var y = startY + t * (endY - startY);
-                    var x = centerX + amp * Math.sin((y - startY) / period * 2 * Math.PI);
+                var step = 3.5;
+                var totalHeight = (END_Y - START_Y) + spacing;
+                var numPoints = Math.floor(totalHeight / step) + 4;
+                for (var i = 0; i < numPoints; i++) {
+                    var y = START_Y - spacing / 2 + i * step;
+                    if (y < START_Y - spacing) continue;
+                    if (y > END_Y + spacing / 2) break;
+                    var angle = ((y - START_Y) / spacing) * 2 * Math.PI + phase;
+                    var x = cx + sign * amp * Math.sin(angle);
                     pts.push({ x: x, y: y });
                 }
                 return pts;
             }
 
-            function buildPath(pts) {
+            function buildBezierPath(pts) {
+                if (pts.length < 2) return '';
                 var d = 'M ' + pts[0].x.toFixed(2) + ',' + pts[0].y.toFixed(2);
-                for (var i = 1; i < pts.length; i++) {
-                    d += ' L ' + pts[i].x.toFixed(2) + ',' + pts[i].y.toFixed(2);
+                for (var i = 0; i < pts.length - 1; i++) {
+                    var p0 = pts[i];
+                    var p1 = pts[i + 1];
+                    var dy = p1.y - p0.y;
+                    if (Math.abs(dy) < 0.3) {
+                        d += ' L ' + p1.x.toFixed(2) + ',' + p1.y.toFixed(2);
+                        continue;
+                    }
+                    var cpx = p0.x;
+                    var cpx2 = p1.x;
+                    var cpy = p0.y + dy * 0.45;
+                    var cpy2 = p1.y - dy * 0.45;
+                    d += ' C ' + cpx.toFixed(2) + ',' + cpy.toFixed(2) +
+                        ' ' + cpx2.toFixed(2) + ',' + cpy2.toFixed(2) +
+                        ' ' + p1.x.toFixed(2) + ',' + p1.y.toFixed(2);
                 }
                 return d;
             }
 
-            // ===== 主渲染 =====
-            function renderVine(svgId, data, color1, color2, centerColor, label) {
-                var svg = document.getElementById(svgId);
-                if (!svg) return;
-                while (svg.firstChild) svg.removeChild(svg.firstChild);
+            // ===== 绘制多行文本（同一侧） =====
+            function drawLines(svg, x, y, lines, side, lineHeight) {
+                lineHeight = lineHeight || 16;
+                var anchor = (side === 'left') ? 'end' : 'start';
+                var textX = (side === 'left') ? x - 6 : x + 6;
 
-                var ns = 'http://www.w3.org/2000/svg';
-                var count = data.length;
-                var nodePos = getNodePositions(count);
-                var endY = startY + (count - 1) * period / 2 + 50;
-
-                // 1. 中间粗直线（加粗加深）
-                var axis = document.createElementNS(ns, 'line');
-                axis.setAttribute('x1', centerX);
-                axis.setAttribute('y1', startY - 10);
-                axis.setAttribute('x2', centerX);
-                axis.setAttribute('y2', endY);
-                axis.setAttribute('stroke', centerColor);
-                axis.setAttribute('stroke-width', '3.5');
-                axis.setAttribute('opacity', '0.5');
-                axis.setAttribute('stroke-linecap', 'round');
-                svg.appendChild(axis);
-
-                // 2. 两条波浪线（带动态效果：用class标记，CSS animation）
-                var pts1 = generateWavePoints(waveAmp, period, startY - 10, endY);
-                var pts2 = generateWavePoints(-waveAmp, period, startY - 10, endY);
-
-                var wave1 = document.createElementNS(ns, 'path');
-                wave1.setAttribute('d', buildPath(pts1));
-                wave1.setAttribute('stroke', color1);
-                wave1.setAttribute('stroke-width', '2');
-                wave1.setAttribute('fill', 'none');
-                wave1.setAttribute('stroke-linecap', 'round');
-                wave1.setAttribute('opacity', '0.4');
-                wave1.setAttribute('class', 'wave-drift');
-                svg.appendChild(wave1);
-
-                var wave2 = document.createElementNS(ns, 'path');
-                wave2.setAttribute('d', buildPath(pts2));
-                wave2.setAttribute('stroke', color2);
-                wave2.setAttribute('stroke-width', '2');
-                wave2.setAttribute('fill', 'none');
-                wave2.setAttribute('stroke-linecap', 'round');
-                wave2.setAttribute('opacity', '0.4');
-                wave2.setAttribute('class', 'wave-drift-2');
-                svg.appendChild(wave2);
-
-                // 2.5 动态效果style
-                var style = document.createElementNS(ns, 'style');
-                style.textContent = `
-                    .wave-drift { animation: drift1 4s ease-in-out infinite alternate; }
-                    .wave-drift-2 { animation: drift2 5s ease-in-out infinite alternate-reverse; }
-                    @keyframes drift1 {
-                        0% { transform: translateX(-8px); }
-                        100% { transform: translateX(8px); }
-                    }
-                    @keyframes drift2 {
-                        0% { transform: translateX(6px); }
-                        100% { transform: translateX(-6px); }
-                    }
-                `;
-                svg.appendChild(style);
-
-                // 3. 节点（在直线上！用纯符号）
-                for (var i = 0; i < count; i++) {
-                    var pos = nodePos[i];
-                    var item = data[i];
-
-                    // 节点在直线上的位置（x = centerX，y在波浪线上下轻微浮动）
-                    var nodeX = centerX;
-                    var nodeY = pos.y;
-
-                    // 节点符号（用文本，无圆无框）
-                    var sym = document.createElementNS(ns, 'text');
-                    sym.setAttribute('x', nodeX);
-                    sym.setAttribute('y', nodeY + 4);
-                    sym.setAttribute('text-anchor', 'middle');
-                    sym.setAttribute('font-family', 'var(--font-serif)');
-                    sym.setAttribute('font-size', '20');
-                    sym.setAttribute('fill', item.color);
-                    sym.setAttribute('opacity', '0.8');
-                    sym.textContent = (i % 2 === 0) ? '✦' : '✧';
-                    svg.appendChild(sym);
-
-                    // 分支虚线（横向伸出）
-                    var dir = (item.side === 'right') ? 1 : -1;
-                    var branchLen = 100;
-
-                    var bx1 = nodeX,
-                        by1 = nodeY;
-                    var bx2 = nodeX + dir * branchLen,
-                        by2 = nodeY;
-
-                    var branch = document.createElementNS(ns, 'line');
-                    branch.setAttribute('x1', bx1);
-                    branch.setAttribute('y1', by1);
-                    branch.setAttribute('x2', bx2);
-                    branch.setAttribute('y2', by2);
-                    branch.setAttribute('stroke', item.color);
-                    branch.setAttribute('stroke-width', '1.2');
-                    branch.setAttribute('opacity', '0.3');
-                    branch.setAttribute('stroke-dasharray', '3,5');
-                    svg.appendChild(branch);
-
-                    // 台词（在分支线下面，而不是末端）
-                    var lines = item.quote.split('\n');
-                    var fontSize = (lines.length > 1) ? 9.5 : 11;
-                    var lineHeight = fontSize + 2.5;
-                    var anchor = (dir === 1) ? 'start' : 'end';
-
-                    // 台词位置：分支线下面偏移
-                    var textX = nodeX + dir * (branchLen * 0.6);
-                    var textY = nodeY + (dir === 1 ? 18 : 18);
-
-                    for (var li = 0; li < lines.length; li++) {
-                        var t = document.createElementNS(ns, 'text');
-                        t.setAttribute('x', textX);
-                        t.setAttribute('y', textY + li * lineHeight);
-                        t.setAttribute('text-anchor', anchor);
-                        t.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
-                        t.setAttribute('font-size', fontSize);
-                        t.setAttribute('fill', item.color);
-                        t.setAttribute('font-style', 'italic');
-                        t.setAttribute('font-weight', '400');
-                        t.setAttribute('letter-spacing', '0.2px');
-                        t.setAttribute('opacity', '0.9');
-                        t.textContent = lines[li];
-                        svg.appendChild(t);
-                    }
-
-                    // 说话人（在台词下方更小）
+                // 说话人标签
+                for (var i = 0; i < lines.length; i++) {
+                    var item = lines[i];
+                    // 说话人小标签（在台词上方）
                     var sp = document.createElementNS(ns, 'text');
                     sp.setAttribute('x', textX);
-                    sp.setAttribute('y', textY + lines.length * lineHeight + 8);
+                    sp.setAttribute('y', y + i * lineHeight - 4);
                     sp.setAttribute('text-anchor', anchor);
                     sp.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
                     sp.setAttribute('font-size', '7');
                     sp.setAttribute('fill', item.color);
-                    sp.setAttribute('opacity', '0.35');
+                    sp.setAttribute('opacity', '0.4');
                     sp.setAttribute('letter-spacing', '0.5px');
                     sp.textContent = '— ' + item.speaker;
                     svg.appendChild(sp);
+
+                    // 台词
+                    var t = document.createElementNS(ns, 'text');
+                    t.setAttribute('x', textX);
+                    t.setAttribute('y', y + i * lineHeight + 6);
+                    t.setAttribute('text-anchor', anchor);
+                    t.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                    t.setAttribute('font-size', '9.5');
+                    t.setAttribute('fill', item.color);
+                    t.setAttribute('font-style', 'italic');
+                    t.setAttribute('font-weight', '400');
+                    t.setAttribute('opacity', '0.92');
+                    t.textContent = item.text;
+                    svg.appendChild(t);
                 }
-
-                // 顶部装饰
-                var topSym = document.createElementNS(ns, 'text');
-                topSym.setAttribute('x', centerX);
-                topSym.setAttribute('y', 22);
-                topSym.setAttribute('text-anchor', 'middle');
-                topSym.setAttribute('font-size', '16');
-                topSym.setAttribute('fill', centerColor);
-                topSym.setAttribute('opacity', '0.3');
-                topSym.textContent = (svgId === 'svgLin') ? '❀' : '◈';
-                svg.appendChild(topSym);
-
-                // 底部
-                var foot = document.createElementNS(ns, 'text');
-                foot.setAttribute('x', centerX);
-                foot.setAttribute('y', H - 8);
-                foot.setAttribute('text-anchor', 'middle');
-                foot.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
-                foot.setAttribute('font-size', '8');
-                foot.setAttribute('fill', centerColor);
-                foot.setAttribute('opacity', '0.2');
-                foot.setAttribute('letter-spacing', '1.5px');
-                foot.textContent = label;
-                svg.appendChild(foot);
             }
 
-            // ===== 执行 =====
-            renderVine('svgLin', linData, '#2a6b8a', '#b05a4a', '#D49A9A', '❀ 浮生之契 · 同生共死');
-            renderVine('svgXiu', xiuData, '#7b4b8a', '#c9a84b', '#4E5A64', '◈ 魂火为鉴 · 永生不离');
+            // ===== 主渲染 =====
+            function render() {
+                while (svg.firstChild) svg.removeChild(svg.firstChild);
 
+                // 1. 中心线
+                var axis = document.createElementNS(ns, 'line');
+                axis.setAttribute('x1', cx);
+                axis.setAttribute('y1', START_Y - 20);
+                axis.setAttribute('x2', cx);
+                axis.setAttribute('y2', END_Y + 20);
+                axis.setAttribute('stroke', '#D49A9A');
+                axis.setAttribute('stroke-width', '4');
+                axis.setAttribute('opacity', '0.4');
+                axis.setAttribute('stroke-linecap', 'round');
+                svg.appendChild(axis);
+
+                // 2. 波浪线
+                var ptsA = generateWavePoints(1, spacing, amp, phaseA);
+                var ptsB = generateWavePoints(-1, spacing, amp, phaseB);
+
+                var pathA = document.createElementNS(ns, 'path');
+                pathA.setAttribute('d', buildBezierPath(ptsA));
+                pathA.setAttribute('stroke', '#2a6b8a');
+                pathA.setAttribute('stroke-width', '2');
+                pathA.setAttribute('fill', 'none');
+                pathA.setAttribute('stroke-linecap', 'round');
+                pathA.setAttribute('opacity', opacity);
+                svg.appendChild(pathA);
+
+                var pathB = document.createElementNS(ns, 'path');
+                pathB.setAttribute('d', buildBezierPath(ptsB));
+                pathB.setAttribute('stroke', '#b05a4a');
+                pathB.setAttribute('stroke-width', '2');
+                pathB.setAttribute('fill', 'none');
+                pathB.setAttribute('stroke-linecap', 'round');
+                pathB.setAttribute('opacity', opacity);
+                svg.appendChild(pathB);
+
+                // 3. 节点
+                for (var i = 0; i < numNodes; i++) {
+                    var y = START_Y + i * nodeSpacing;
+                    var data = dialogData[i];
+                    var side = data.side;
+
+                    // ---- 四角星（中心线上） ----
+                    var star = document.createElementNS(ns, 'text');
+                    star.setAttribute('x', cx);
+                    star.setAttribute('y', y + 4);
+                    star.setAttribute('text-anchor', 'middle');
+                    star.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                    star.setAttribute('font-size', '20');
+                    star.setAttribute('fill', '#7ab8d4');
+                    star.setAttribute('opacity', '0.8');
+                    star.textContent = '✦';
+                    svg.appendChild(star);
+
+                    // ---- 两侧 ❀ + 虚线（加长） ----
+                    var leftX = cx - 70;
+                    var rightX = cx + 70;
+
+                    // 左侧 ❀
+                    var lf = document.createElementNS(ns, 'text');
+                    lf.setAttribute('x', leftX);
+                    lf.setAttribute('y', y + 3);
+                    lf.setAttribute('text-anchor', 'middle');
+                    lf.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                    lf.setAttribute('font-size', '16');
+                    lf.setAttribute('fill', '#f0c8c8');
+                    lf.setAttribute('opacity', '0.6');
+                    lf.textContent = '❀';
+                    svg.appendChild(lf);
+
+                    // 左侧虚线（加长到中轴线附近）
+                    var dashL = document.createElementNS(ns, 'line');
+                    dashL.setAttribute('x1', leftX + 8);
+                    dashL.setAttribute('y1', y);
+                    dashL.setAttribute('x2', cx - 14);
+                    dashL.setAttribute('y2', y);
+                    dashL.setAttribute('stroke', '#f0c8c8');
+                    dashL.setAttribute('stroke-width', '1.5');
+                    dashL.setAttribute('opacity', '0.45');
+                    dashL.setAttribute('stroke-dasharray', '4,5');
+                    svg.appendChild(dashL);
+
+                    // 右侧 ❀
+                    var rf = document.createElementNS(ns, 'text');
+                    rf.setAttribute('x', rightX);
+                    rf.setAttribute('y', y + 3);
+                    rf.setAttribute('text-anchor', 'middle');
+                    rf.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                    rf.setAttribute('font-size', '16');
+                    rf.setAttribute('fill', '#f0c8c8');
+                    rf.setAttribute('opacity', '0.6');
+                    rf.textContent = '❀';
+                    svg.appendChild(rf);
+
+                    // 右侧虚线（加长到中轴线附近）
+                    var dashR = document.createElementNS(ns, 'line');
+                    dashR.setAttribute('x1', rightX - 8);
+                    dashR.setAttribute('y1', y);
+                    dashR.setAttribute('x2', cx + 14);
+                    dashR.setAttribute('y2', y);
+                    dashR.setAttribute('stroke', '#7ab8d4');
+                    dashR.setAttribute('stroke-width', '1.5');
+                    dashR.setAttribute('opacity', '0.45');
+                    dashR.setAttribute('stroke-dasharray', '4,5');
+                    svg.appendChild(dashR);
+
+                    // ---- 场景标签 ----
+                    var labelY = y - nodeSpacing * 0.3;
+                    if (i === 0) labelY = START_Y - 6;
+                    var label = document.createElementNS(ns, 'text');
+                    label.setAttribute('x', cx);
+                    label.setAttribute('y', labelY);
+                    label.setAttribute('text-anchor', 'middle');
+                    label.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                    label.setAttribute('font-size', '8.5');
+                    label.setAttribute('fill', '#8a8a8a');
+                    label.setAttribute('opacity', '0.5');
+                    label.setAttribute('letter-spacing', '0.8px');
+                    label.textContent = data.label;
+                    svg.appendChild(label);
+
+                    // ---- 对话（放在对应侧） ----
+                    var lineHeight = 18;
+                    var textStartY = y + 12;
+
+                    // 根据 side 决定文字放在哪一侧
+                    // 对话文字放在 ❀ 更外侧，留出空间
+                    var textOffset = 50; // 从 ❀ 再往外偏移
+                    var textX = (side === 'left') ? leftX - textOffset : rightX + textOffset;
+                    var anchor = (side === 'left') ? 'end' : 'start';
+
+                    // 画对话
+                    for (var j = 0; j < data.lines.length; j++) {
+                        var item = data.lines[j];
+
+                        // 说话人标签（在台词上方）
+                        var sp = document.createElementNS(ns, 'text');
+                        sp.setAttribute('x', textX);
+                        sp.setAttribute('y', textStartY + j * lineHeight - 4);
+                        sp.setAttribute('text-anchor', anchor);
+                        sp.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                        sp.setAttribute('font-size', '7');
+                        sp.setAttribute('fill', item.color);
+                        sp.setAttribute('opacity', '0.35');
+                        sp.setAttribute('letter-spacing', '0.5px');
+                        sp.textContent = '— ' + item.speaker;
+                        svg.appendChild(sp);
+
+                        // 台词
+                        var t = document.createElementNS(ns, 'text');
+                        t.setAttribute('x', textX);
+                        t.setAttribute('y', textStartY + j * lineHeight + 6);
+                        t.setAttribute('text-anchor', anchor);
+                        t.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                        t.setAttribute('font-size', '9.5');
+                        t.setAttribute('fill', item.color);
+                        t.setAttribute('font-style', 'italic');
+                        t.setAttribute('font-weight', '400');
+                        t.setAttribute('opacity', '0.92');
+                        t.textContent = item.text;
+                        svg.appendChild(t);
+                    }
+
+                    // ---- 章节引用 ----
+                    var refY = textStartY + data.lines.length * lineHeight + 8;
+                    var ref = document.createElementNS(ns, 'text');
+                    ref.setAttribute('x', textX);
+                    ref.setAttribute('y', refY);
+                    ref.setAttribute('text-anchor', anchor);
+                    ref.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                    ref.setAttribute('font-size', '6.5');
+                    ref.setAttribute('fill', '#8a8a8a');
+                    ref.setAttribute('opacity', '0.25');
+                    ref.setAttribute('letter-spacing', '0.3px');
+                    ref.textContent = data.ref;
+                    svg.appendChild(ref);
+                }
+
+                // 方向指示
+                function addDir(x, y, text, color) {
+                    var t = document.createElementNS(ns, 'text');
+                    t.setAttribute('x', x);
+                    t.setAttribute('y', y);
+                    t.setAttribute('text-anchor', 'middle');
+                    t.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+                    t.setAttribute('font-size', '9');
+                    t.setAttribute('fill', color);
+                    t.setAttribute('opacity', '0.3');
+                    t.textContent = text;
+                    svg.appendChild(t);
+                }
+                addDir(30, 28, '↓', '#2a6b8a');
+                addDir(790, 28, '↑', '#b05a4a');
+            }
+
+            // ===== 动画 =====
+            function animate(time) {
+                if (!lastTime) lastTime = time;
+                var delta = (time - lastTime) / 1000;
+                lastTime = time;
+
+                var omega = (2 * Math.PI) / period;
+                var dPhase = delta * omega;
+                phaseA += dPhase;
+                phaseB -= dPhase;
+
+                var twoPi = 2 * Math.PI;
+                while (phaseA > twoPi) phaseA -= twoPi;
+                while (phaseA < 0) phaseA += twoPi;
+                while (phaseB > twoPi) phaseB -= twoPi;
+                while (phaseB < 0) phaseB += twoPi;
+
+                render();
+                requestAnimationFrame(animate);
+            }
+
+            // ===== 启动 =====
+            phaseA = 0;
+            phaseB = Math.PI;
+            requestAnimationFrame(animate);
+
+            console.log('✅ 淮棋线完整版已加载，10段对话左右交替');
         })();
     </script>
 
