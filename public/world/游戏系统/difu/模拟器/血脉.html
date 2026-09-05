@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>归终殿 · 血脉羁绊</title>
     <style>
         /* ===== 全局 ===== */
@@ -22,7 +22,13 @@
             --font-mono: "Courier New", "Source Code Pro", monospace;
             --transition: 0.3s ease;
             --sidebar-width: 240px;
+            /* 印象色 */
+            --lin-blue: #2a6b8a;
+            --luan-red: #8B1A1A;
+            --luo-purple: #7b4b8a;
+            --wei-gold: #c9a84b;
         }
+
         [data-theme="dark"] {
             --bg-body: #1a1614;
             --bg-card: #24201c;
@@ -33,17 +39,25 @@
             --text-secondary: #b8aea4;
             --text-muted: #8a8078;
             --accent: #c4b4a0;
+            --lin-blue: #4a8bae;
+            --luan-red: #b05a4a;
+            --luo-purple: #9b6baa;
+            --wei-gold: #d4b85a;
         }
+
         body[data-profile="linxiwu"] {
             --profile-accent: var(--profile-lin);
-            --line-color: #D49A9A;
-            --line-alpha: rgba(212,154,154,0.35);
+            --center-color: #D49A9A;
+            --wave1-color: #2a6b8a;
+            --wave2-color: #b05a4a;
         }
         body[data-profile="luojin"] {
             --profile-accent: var(--profile-luo);
-            --line-color: #4E5A64;
-            --line-alpha: rgba(78,90,100,0.35);
+            --center-color: #4E5A64;
+            --wave1-color: #7b4b8a;
+            --wave2-color: #c9a84b;
         }
+
         * {
             margin: 0;
             padding: 0;
@@ -63,6 +77,7 @@
             min-height: 100vh;
             padding: 0 16px 40px 16px;
         }
+
         /* ===== 浮动按钮 ===== */
         .float-group {
             position: fixed;
@@ -94,6 +109,7 @@
             border-color: var(--accent);
             color: var(--accent);
         }
+
         /* ===== 顶栏 ===== */
         .top-header {
             max-width: 1200px;
@@ -127,6 +143,7 @@
             color: var(--profile-accent);
             font-weight: 600;
         }
+
         /* ===== 侧边栏 ===== */
         .sidebar-tab {
             position: fixed;
@@ -278,6 +295,7 @@
         body.no-scroll {
             overflow: hidden;
         }
+
         /* ===== 内容块 ===== */
         .content-block {
             display: none;
@@ -285,6 +303,7 @@
         .content-block.active {
             display: block;
         }
+
         /* ===== 卡片 ===== */
         .card {
             position: relative;
@@ -296,6 +315,9 @@
             transition: border-color var(--transition), box-shadow var(--transition), transform 0.25s ease;
             animation: cardIn 0.45s ease forwards;
             line-height: 1.6;
+        }
+        .card-grad {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
         }
         @keyframes cardIn {
             from {
@@ -379,9 +401,10 @@
             opacity: 0.5;
             border-radius: 1px;
         }
-        /* ===== 柳枝图谱 ===== */
+
+        /* ===== 柳枝图谱容器 ===== */
         .vine-section {
-            padding: 8px 0 4px 0;
+            padding: 4px 0;
             position: relative;
             z-index: 1;
         }
@@ -392,295 +415,90 @@
             letter-spacing: 2px;
             color: var(--text-muted);
             padding: 4px 0 16px 0;
-            opacity: 0.6;
+            opacity: 0.5;
         }
+
         .vine-container {
             display: flex;
             flex-direction: row;
-            gap: 20px;
+            gap: 0;
             justify-content: center;
-            padding: 0 4px;
+            align-items: stretch;
             position: relative;
+            min-height: 500px;
         }
-        /* 单条主脉 */
-        .vine-main {
+
+        .vine-col {
             flex: 1;
-            max-width: 520px;
+            max-width: 480px;
             min-width: 0;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 8px;
+            padding: 0 4px;
         }
-        .vine-main .vine-label {
+        .vine-col .col-label {
+            text-align: center;
             font-size: 0.65rem;
             font-family: var(--font-mono);
             letter-spacing: 2px;
             color: var(--text-muted);
             padding-bottom: 6px;
-            opacity: 0.5;
+            opacity: 0.4;
         }
-        /* 主脉垂直线 */
-        .vine-trunk {
-            position: relative;
-            width: 2px;
-            min-height: 40px;
-            flex-shrink: 0;
-            background: var(--line-alpha);
-            border-radius: 1px;
-            margin-bottom: 4px;
-        }
-        .vine-trunk::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, var(--line-color), var(--line-alpha));
-            opacity: 0.3;
-            border-radius: 1px;
-        }
-        /* 顶部花苞装饰 */
-        .vine-top {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--line-color);
-            opacity: 0.25;
-            flex-shrink: 0;
-            margin-bottom: 2px;
-            position: relative;
-        }
-        .vine-top::after {
-            content: '✧';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.6rem;
-            color: var(--line-color);
-            opacity: 0.6;
-        }
-        /* 节点容器 */
-        .vine-node {
+
+        .vine-col svg {
+            display: block;
             width: 100%;
-            display: flex;
-            align-items: flex-start;
-            padding: 6px 0;
-            position: relative;
-            opacity: 0;
-            animation: nodeIn 0.6s ease forwards;
+            height: auto;
+            background: transparent;
+            overflow: visible;
         }
-        .vine-node:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        .vine-node:nth-child(2) {
-            animation-delay: 0.12s;
-        }
-        .vine-node:nth-child(3) {
-            animation-delay: 0.19s;
-        }
-        .vine-node:nth-child(4) {
-            animation-delay: 0.26s;
-        }
-        .vine-node:nth-child(5) {
-            animation-delay: 0.33s;
-        }
-        .vine-node:nth-child(6) {
-            animation-delay: 0.40s;
-        }
-        .vine-node:nth-child(7) {
-            animation-delay: 0.47s;
-        }
-        .vine-node:nth-child(8) {
-            animation-delay: 0.54s;
-        }
-        .vine-node:nth-child(9) {
-            animation-delay: 0.61s;
-        }
-        .vine-node:nth-child(10) {
-            animation-delay: 0.68s;
-        }
-        @keyframes nodeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        /* 左节点：斜线向左上 + 横线向左 */
-        .vine-node.left {
-            flex-direction: row;
-            padding-right: 10%;
-        }
-        .vine-node.left .node-line-wrap {
-            order: 1;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 8px;
-            min-width: 0;
-        }
-        .vine-node.left .node-line-wrap .node-line {
-            height: 1.5px;
-            flex: 1;
-            min-width: 12px;
-            background: var(--line-alpha);
-            position: relative;
-        }
-        .vine-node.left .node-line-wrap .node-line::before {
-            content: '';
-            position: absolute;
-            right: 100%;
-            bottom: 0;
-            width: 16px;
-            height: 20px;
-            border-right: 1.5px solid var(--line-alpha);
-            border-bottom: 1.5px solid var(--line-alpha);
-            border-bottom-right-radius: 2px;
-        }
-        .vine-node.left .node-text {
-            order: 0;
-            text-align: right;
-            padding-right: 8px;
-            flex-shrink: 1;
-            min-width: 0;
-            max-width: 70%;
-        }
-        /* 右节点：斜线向右上 + 横线向右 */
-        .vine-node.right {
-            flex-direction: row-reverse;
-            padding-left: 10%;
-        }
-        .vine-node.right .node-line-wrap {
-            order: 1;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding-left: 8px;
-            min-width: 0;
-        }
-        .vine-node.right .node-line-wrap .node-line {
-            height: 1.5px;
-            flex: 1;
-            min-width: 12px;
-            background: var(--line-alpha);
-            position: relative;
-        }
-        .vine-node.right .node-line-wrap .node-line::before {
-            content: '';
-            position: absolute;
-            left: 100%;
-            bottom: 0;
-            width: 16px;
-            height: 20px;
-            border-left: 1.5px solid var(--line-alpha);
-            border-bottom: 1.5px solid var(--line-alpha);
-            border-bottom-left-radius: 2px;
-        }
-        .vine-node.right .node-text {
-            order: 0;
-            text-align: left;
-            padding-left: 8px;
-            flex-shrink: 1;
-            min-width: 0;
-            max-width: 70%;
-        }
-        /* 节点文字 */
-        .node-text .node-quote {
-            font-size: 0.78rem;
-            line-height: 1.6;
-            color: var(--text-primary);
-            font-style: italic;
-            letter-spacing: 0.3px;
-            display: block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid var(--border-light);
-            transition: border-color 0.3s;
-            word-break: break-word;
-        }
-        .vine-node:hover .node-quote {
-            border-color: var(--line-color);
-        }
-        .node-text .node-speaker {
-            font-size: 0.55rem;
-            font-family: var(--font-mono);
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-            display: block;
-            margin-top: 2px;
-            opacity: 0.7;
-        }
-        .node-text .node-speaker .speaker-sym {
-            color: var(--line-color);
-            opacity: 0.6;
-        }
-        /* 节点连接点（小圆点） */
-        .vine-node .node-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--line-color);
-            opacity: 0.4;
-            flex-shrink: 0;
-            margin-top: 6px;
-            position: relative;
-            z-index: 2;
-            border: 1px solid var(--bg-body);
-            box-shadow: 0 0 0 1px var(--line-alpha);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .vine-node:hover .node-dot {
-            opacity: 0.8;
-            transform: scale(1.2);
-        }
-        /* 底部花苞 */
-        .vine-bottom {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--line-color);
-            opacity: 0.15;
-            flex-shrink: 0;
-            margin-top: 4px;
-            margin-bottom: 6px;
-        }
-        .vine-main .vine-end-label {
-            font-size: 0.55rem;
-            font-family: var(--font-mono);
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            opacity: 0.4;
-            padding-bottom: 4px;
-        }
-        /* ===== 分隔线 ===== */
+
         .vine-divider {
-            width: 1px;
-            background: var(--border-light);
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--profile-accent), transparent);
+            opacity: 0.2;
             flex-shrink: 0;
-            margin: 0 4px;
-            opacity: 0.4;
+            margin: 0 6px;
+            border-radius: 1px;
         }
-        /* ===== 联动说明 ===== */
+
         .link-note {
             font-size: 0.8rem;
             color: var(--text-secondary);
             text-align: center;
             padding: 12px 0 4px 0;
-            opacity: 0.7;
+            opacity: 0.6;
             font-style: italic;
             position: relative;
             z-index: 1;
         }
+
+        /* ===== 图例 ===== */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            justify-content: center;
+            padding-top: 14px;
+            margin-top: 4px;
+            border-top: 1px solid var(--border-light);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+        .legend-item .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
         /* ===== 花瓣 ===== */
         #petal-container {
             position: fixed;
@@ -716,74 +534,27 @@
                 opacity: 0;
             }
         }
+
         /* ===== 响应式 ===== */
         @media (max-width: 820px) {
             .vine-container {
                 flex-direction: column;
-                gap: 24px;
                 align-items: center;
+                gap: 20px;
+                min-height: auto;
             }
-            .vine-main {
+            .vine-col {
                 max-width: 100%;
                 width: 100%;
             }
             .vine-divider {
-                display: none;
-            }
-            .vine-node.left,
-            .vine-node.right {
-                padding-left: 4%;
-                padding-right: 4%;
-            }
-            .vine-node.left .node-text,
-            .vine-node.right .node-text {
-                max-width: 75%;
-            }
-            .vine-node.left .node-line-wrap,
-            .vine-node.right .node-line-wrap {
-                flex: 0 1 20%;
-            }
-            .node-text .node-quote {
-                font-size: 0.72rem;
-                padding: 3px 6px;
+                width: 50%;
+                height: 2px;
+                margin: 0 auto;
+                background: linear-gradient(to right, transparent, var(--profile-accent), transparent);
             }
         }
-        @media (max-width: 480px) {
-            .vine-node.left,
-            .vine-node.right {
-                padding-left: 2%;
-                padding-right: 2%;
-            }
-            .vine-node.left .node-text,
-            .vine-node.right .node-text {
-                max-width: 70%;
-            }
-            .vine-node.left .node-line-wrap,
-            .vine-node.right .node-line-wrap {
-                flex: 0 1 16%;
-            }
-            .node-text .node-quote {
-                font-size: 0.65rem;
-                padding: 2px 4px;
-                line-height: 1.5;
-            }
-            .node-text .node-speaker {
-                font-size: 0.5rem;
-            }
-            .vine-node .node-dot {
-                width: 6px;
-                height: 6px;
-                margin-top: 4px;
-            }
-            .vine-node.left .node-line-wrap .node-line::before,
-            .vine-node.right .node-line-wrap .node-line::before {
-                width: 10px;
-                height: 14px;
-            }
-            .vine-trunk {
-                min-height: 24px;
-            }
-        }
+
         @media (max-width: 768px) {
             body {
                 padding: 0 12px 30px 12px;
@@ -812,7 +583,14 @@
                 padding: 4px 10px 4px 8px;
                 font-size: 0.65rem;
             }
+            .legend {
+                gap: 6px 12px;
+            }
+            .legend-item {
+                font-size: 0.55rem;
+            }
         }
+
         .sym,
         .sidebar-tab .sym,
         .sidebar-panel .nav-item .sym,
@@ -826,13 +604,11 @@
 </head>
 <body data-profile="linxiwu">
 
-    <!-- ===== 浮动按钮 ===== -->
     <div class="float-group">
         <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
         <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
     </div>
 
-    <!-- ===== 侧边栏 ===== -->
     <div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="sidebar-panel" id="sidebarPanel">
@@ -851,13 +627,11 @@
         <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
     </div>
 
-    <!-- ===== 顶栏 ===== -->
     <div class="top-header">
         <div class="page-title"><span class="sym">❤</span> 血脉羁绊</div>
         <div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
     </div>
 
-    <!-- ===== 主内容 ===== -->
     <div id="app">
 
         <!-- ===== 林栖梧 ===== -->
@@ -869,53 +643,26 @@
                 <div class="vine-section">
                     <div class="section-label">— 浮生树 · 归终殿 —</div>
                     <div class="vine-container" id="vineContainerLin">
-                        <!-- 淮棋线 -->
-                        <div class="vine-main" id="vineLin">
-                            <div class="vine-label">❀ 淮 · 棋</div>
-                            <div class="vine-top"></div>
-                            <div class="vine-trunk" id="trunkLin">
-                                <!-- 节点由 JS 渲染 -->
-                            </div>
-                            <div class="vine-bottom"></div>
-                            <div class="vine-end-label">— 浮生之契 · 同生共死 —</div>
+                        <div class="vine-col" id="colLin">
+                            <div class="col-label">❀ 淮 · 棋</div>
+                            <svg id="svgLin" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
                         </div>
                         <div class="vine-divider"></div>
-                        <!-- 修璟线 -->
-                        <div class="vine-main" id="vineXiu">
-                            <div class="vine-label">◈ 修 · 璟</div>
-                            <div class="vine-top"></div>
-                            <div class="vine-trunk" id="trunkXiu">
-                                <!-- 节点由 JS 渲染 -->
-                            </div>
-                            <div class="vine-bottom"></div>
-                            <div class="vine-end-label">— 魂火为鉴 · 永生不离 —</div>
+                        <div class="vine-col" id="colXiu">
+                            <div class="col-label">◈ 修 · 璟</div>
+                            <svg id="svgXiu" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
                         </div>
                     </div>
-                    <div class="link-note">浮生树的两脉枝桠，各自开出了花。</div>
+                    <div class="link-note">两脉枝桠，各自开出了花。</div>
                 </div>
             </div>
 
-            <!-- 传承卡 -->
-            <div class="card" data-corner="❀">
-                <span class="corner-deco">❀</span>
-                <div class="card-title">血脉传承</div>
-                <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:12px;font-size:0.9rem;color:var(--text-secondary);">
-                    <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-lin);">
-                        <div style="font-weight:600;color:var(--text-primary);">符法天赋</div>
-                        <div style="font-size:0.8rem;">承自栾方棋 · 符修院一脉</div>
-                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-style:italic;">「符箓底子扎实，布阵节奏在同辈中属上乘。」</div>
-                    </div>
-                    <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-lin);">
-                        <div style="font-weight:600;color:var(--text-primary);">体术根骨</div>
-                        <div style="font-size:0.8rem;">承自林淮 · 点苍阁一脉</div>
-                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-style:italic;">「体术基础够用，近身经验不足。」</div>
-                    </div>
-                    <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-lin);">
-                        <div style="font-weight:600;color:var(--text-primary);">浮生花共鸣</div>
-                        <div style="font-size:0.8rem;">父母血脉交汇的印记</div>
-                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-style:italic;">「浮生之契，一荣俱荣，一损俱损。」</div>
-                    </div>
-                </div>
+            <div class="legend">
+                <span class="legend-item"><span class="dot" style="background:#2a6b8a;"></span> 林淮</span>
+                <span class="legend-item"><span class="dot" style="background:#b05a4a;"></span> 栾方棋</span>
+                <span class="legend-item"><span class="dot" style="background:#7b4b8a;"></span> 罗修</span>
+                <span class="legend-item"><span class="dot" style="background:#c9a84b;"></span> 魏元璟</span>
+                <span class="legend-item"><span class="dot" style="background:#D49A9A;"></span> 归终交汇</span>
             </div>
 
         </div>
@@ -929,60 +676,32 @@
                 <div class="vine-section">
                     <div class="section-label">— 浮生树 · 归终殿 —</div>
                     <div class="vine-container" id="vineContainerLuo">
-                        <!-- 淮棋线 -->
-                        <div class="vine-main" id="vineLinLuo">
-                            <div class="vine-label">❀ 淮 · 棋</div>
-                            <div class="vine-top"></div>
-                            <div class="vine-trunk" id="trunkLinLuo">
-                                <!-- 节点由 JS 渲染 -->
-                            </div>
-                            <div class="vine-bottom"></div>
-                            <div class="vine-end-label">— 浮生之契 · 同生共死 —</div>
+                        <div class="vine-col" id="colLinLuo">
+                            <div class="col-label">❀ 淮 · 棋</div>
+                            <svg id="svgLinLuo" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
                         </div>
                         <div class="vine-divider"></div>
-                        <!-- 修璟线 -->
-                        <div class="vine-main" id="vineXiuLuo">
-                            <div class="vine-label">◈ 修 · 璟</div>
-                            <div class="vine-top"></div>
-                            <div class="vine-trunk" id="trunkXiuLuo">
-                                <!-- 节点由 JS 渲染 -->
-                            </div>
-                            <div class="vine-bottom"></div>
-                            <div class="vine-end-label">— 魂火为鉴 · 永生不离 —</div>
+                        <div class="vine-col" id="colXiuLuo">
+                            <div class="col-label">◈ 修 · 璟</div>
+                            <svg id="svgXiuLuo" viewBox="0 0 480 720" preserveAspectRatio="xMidYMid meet"></svg>
                         </div>
                     </div>
-                    <div class="link-note">浮生树的两脉枝桠，各自开出了花。</div>
+                    <div class="link-note">两脉枝桠，各自开出了花。</div>
                 </div>
             </div>
 
-            <!-- 传承卡 -->
-            <div class="card" data-corner="◈">
-                <span class="corner-deco">◈</span>
-                <div class="card-title">血脉传承</div>
-                <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:12px;font-size:0.9rem;color:var(--text-secondary);">
-                    <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-luo);">
-                        <div style="font-weight:600;color:var(--text-primary);">双刀本能</div>
-                        <div style="font-size:0.8rem;">承自罗修 · 讲武堂一脉</div>
-                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-style:italic;">「架势已有三分，经验尚欠七分。刀比人稳。」</div>
-                    </div>
-                    <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-luo);">
-                        <div style="font-weight:600;color:var(--text-primary);">魂力韧性</div>
-                        <div style="font-size:0.8rem;">承自魏元璟 · 砺峰阁一脉</div>
-                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-style:italic;">「魂力底子不差，但静不下心。」</div>
-                    </div>
-                    <div style="flex:1;min-width:120px;padding:10px 14px;background:var(--bg-hover);border-radius:6px;border-left:3px solid var(--profile-luo);">
-                        <div style="font-weight:600;color:var(--text-primary);">双脉交汇</div>
-                        <div style="font-size:0.8rem;">罗修与魏元璟的血脉融合</div>
-                        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;font-style:italic;">「魂火为鉴，永生不离。」</div>
-                    </div>
-                </div>
+            <div class="legend">
+                <span class="legend-item"><span class="dot" style="background:#2a6b8a;"></span> 林淮</span>
+                <span class="legend-item"><span class="dot" style="background:#b05a4a;"></span> 栾方棋</span>
+                <span class="legend-item"><span class="dot" style="background:#7b4b8a;"></span> 罗修</span>
+                <span class="legend-item"><span class="dot" style="background:#c9a84b;"></span> 魏元璟</span>
+                <span class="legend-item"><span class="dot" style="background:#4E5A64;"></span> 归终交汇</span>
             </div>
 
         </div>
 
     </div>
 
-    <!-- ===== 花瓣 ===== -->
     <div id="petal-container"></div>
 
     <script src="./核心.js"></script>

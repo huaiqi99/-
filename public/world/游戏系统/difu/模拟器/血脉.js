@@ -121,119 +121,277 @@
     })();
     window.addEventListener('profilechange', function(e) {
         updateProfileUI(e.detail.profile);
-        // 重新渲染节点（切换角色时重新生成对应的曲线）
-        renderAllVines(e.detail.profile);
+        renderAll(e.detail.profile);
     });
 
-    // ===== 2. 台词数据 =====
-    var VINE_DATA = {
+    // ===== 2. 台词数据（对话式，成对出现） =====
+    var DATA = {
         linxiwu: {
-            // 淮棋线：林淮 & 栾方棋（从初识到成亲）
             hua: [
-                { side: 'right', quote: '「既然有名字，你以后就叫林淮。」', speaker: '秦墨予 · 国师府初识' },
-                { side: 'left', quote: '「我只是想见你。」', speaker: '林淮 · 柳州山洞' },
-                { side: 'right', quote: '「白头空负三生意，\n犹记寒阶共雪温。」', speaker: '林淮 · 雪中宫门' },
-                { side: 'left', quote: '「我来送你最后一程。」', speaker: '林淮 · 人间宅院' },
-                { side: 'right', quote: '「每一段走过的黄泉路，\n都将铸就独一无二的你。」', speaker: '栾方棋 · 浮生树低语' },
-                { side: 'left', quote: '「只要我的灵魂还留在这世界上一天，\n你就不会只是一个人。」', speaker: '林淮 · 归终殿' },
-                { side: 'right', quote: '「我爱你，方棋。」', speaker: '林淮 · 浮生树下' },
-                { side: 'left', quote: '「一荣俱荣，一损俱损。」', speaker: '栾方棋 · 归终殿成亲' }
+                { side: 'right', quote: '「我只是想见你。」', speaker: '林淮', color: '#2a6b8a' },
+                { side: 'left', quote: '「你……脑子烧傻了吧？」', speaker: '栾方棋', color: '#b05a4a' },
+                { side: 'right', quote: '「白头空负三生意，犹记寒阶共雪温。」', speaker: '林淮', color: '#2a6b8a' },
+                { side: 'left', quote: '「遥望卿云归雁尽，缘深终作浅痕存。」', speaker: '栾方棋', color: '#b05a4a' },
+                { side: 'right', quote: '「只要我的灵魂还留在这世界上一天，你就不会只是一个人。」', speaker: '林淮',
+                color: '#2a6b8a' },
+                { side: 'left', quote: '「一荣俱荣，一损俱损。」', speaker: '栾方棋', color: '#b05a4a' },
+                { side: 'right', quote: '「我爱你，方棋。」', speaker: '林淮', color: '#2a6b8a' },
+                { side: 'left', quote: '「……我也是。」', speaker: '栾方棋', color: '#b05a4a' },
             ],
-            // 修璟线：罗修 & 魏元璟
             xiu: [
-                { side: 'right', quote: '「罗修！落月宫你这辈子都赔不起！！」', speaker: '魏元璟 · 东宫初遇' },
-                { side: 'left', quote: '「本宫登基了，\n天天给你备着最好的酒。」', speaker: '魏元璟 · 宫外酒馆' },
-                { side: 'right', quote: '「你还想要酒吗？」', speaker: '魏元璟 · 长忆宫死别' },
-                { side: 'left', quote: '「师父，你想喝酒吗？」', speaker: '念安 · 忘川重生' },
-                { side: 'right', quote: '「你姓魏。\n以后，就叫魏元璟。」', speaker: '罗修 · 小院相认' },
-                { side: 'left', quote: '「不悔。」', speaker: '魏元璟 · 枕下字条' },
-                { side: 'right', quote: '「我爱你。\n不是对过去的补偿。\n我爱的是你，只是你。」', speaker: '罗修 · 告白' },
-                { side: 'left', quote: '「魂火为鉴，永生不离。」', speaker: '罗修 · 归终殿成亲' }
+                { side: 'left', quote: '「罗修！落月宫你这辈子都赔不起！！」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「赔？那就不赔了。」', speaker: '罗修', color: '#7b4b8a' },
+                { side: 'left', quote: '「你还想要酒吗？」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「不要了。」', speaker: '罗修', color: '#7b4b8a' },
+                { side: 'left', quote: '「师父，你想喝酒吗？」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「……嗯。」', speaker: '罗修', color: '#7b4b8a' },
+                { side: 'left', quote: '「不悔。」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「魂火为鉴，永生不离。」', speaker: '罗修', color: '#7b4b8a' },
             ]
         },
         luojin: {
             hua: [
-                { side: 'right', quote: '「既然有名字，你以后就叫林淮。」', speaker: '秦墨予 · 国师府初识' },
-                { side: 'left', quote: '「我只是想见你。」', speaker: '林淮 · 柳州山洞' },
-                { side: 'right', quote: '「白头空负三生意，\n犹记寒阶共雪温。」', speaker: '林淮 · 雪中宫门' },
-                { side: 'left', quote: '「我来送你最后一程。」', speaker: '林淮 · 人间宅院' },
-                { side: 'right', quote: '「每一段走过的黄泉路，\n都将铸就独一无二的你。」', speaker: '栾方棋 · 浮生树低语' },
-                { side: 'left', quote: '「只要我的灵魂还留在这世界上一天，\n你就不会只是一个人。」', speaker: '林淮 · 归终殿' },
-                { side: 'right', quote: '「我爱你，方棋。」', speaker: '林淮 · 浮生树下' },
-                { side: 'left', quote: '「一荣俱荣，一损俱损。」', speaker: '栾方棋 · 归终殿成亲' }
+                { side: 'right', quote: '「我只是想见你。」', speaker: '林淮', color: '#2a6b8a' },
+                { side: 'left', quote: '「你……脑子烧傻了吧？」', speaker: '栾方棋', color: '#b05a4a' },
+                { side: 'right', quote: '「白头空负三生意，犹记寒阶共雪温。」', speaker: '林淮', color: '#2a6b8a' },
+                { side: 'left', quote: '「遥望卿云归雁尽，缘深终作浅痕存。」', speaker: '栾方棋', color: '#b05a4a' },
+                { side: 'right', quote: '「只要我的灵魂还留在这世界上一天，你就不会只是一个人。」', speaker: '林淮',
+                color: '#2a6b8a' },
+                { side: 'left', quote: '「一荣俱荣，一损俱损。」', speaker: '栾方棋', color: '#b05a4a' },
+                { side: 'right', quote: '「我爱你，方棋。」', speaker: '林淮', color: '#2a6b8a' },
+                { side: 'left', quote: '「……我也是。」', speaker: '栾方棋', color: '#b05a4a' },
             ],
             xiu: [
-                { side: 'right', quote: '「罗修！落月宫你这辈子都赔不起！！」', speaker: '魏元璟 · 东宫初遇' },
-                { side: 'left', quote: '「本宫登基了，\n天天给你备着最好的酒。」', speaker: '魏元璟 · 宫外酒馆' },
-                { side: 'right', quote: '「你还想要酒吗？」', speaker: '魏元璟 · 长忆宫死别' },
-                { side: 'left', quote: '「师父，你想喝酒吗？」', speaker: '念安 · 忘川重生' },
-                { side: 'right', quote: '「你姓魏。\n以后，就叫魏元璟。」', speaker: '罗修 · 小院相认' },
-                { side: 'left', quote: '「不悔。」', speaker: '魏元璟 · 枕下字条' },
-                { side: 'right', quote: '「我爱你。\n不是对过去的补偿。\n我爱的是你，只是你。」', speaker: '罗修 · 告白' },
-                { side: 'left', quote: '「魂火为鉴，永生不离。」', speaker: '罗修 · 归终殿成亲' }
+                { side: 'left', quote: '「罗修！落月宫你这辈子都赔不起！！」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「赔？那就不赔了。」', speaker: '罗修', color: '#7b4b8a' },
+                { side: 'left', quote: '「你还想要酒吗？」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「不要了。」', speaker: '罗修', color: '#7b4b8a' },
+                { side: 'left', quote: '「师父，你想喝酒吗？」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「……嗯。」', speaker: '罗修', color: '#7b4b8a' },
+                { side: 'left', quote: '「不悔。」', speaker: '魏元璟', color: '#c9a84b' },
+                { side: 'right', quote: '「魂火为鉴，永生不离。」', speaker: '罗修', color: '#7b4b8a' },
             ]
         }
     };
 
-    // ===== 3. 渲染柳枝节点 =====
-    function renderVine(profile, trunkId, data, startSide) {
-        var trunk = document.getElementById(trunkId);
-        if (!trunk) return;
-        // 清空
-        trunk.innerHTML = '';
-        // 根据数据生成节点
-        var nodes = data || [];
-        var side = startSide || 'right';
-        nodes.forEach(function(item, index) {
-            var nodeDiv = document.createElement('div');
-            nodeDiv.className = 'vine-node ' + (item.side || side);
-            // 交替：如果没指定 side，则自动交替
-            if (!item.side) {
-                nodeDiv.className = 'vine-node ' + (index % 2 === 0 ? 'right' : 'left');
+    // ===== 3. 绘制一条柳枝图 =====
+    function drawVine(svgId, data, centerColor, wave1Color, wave2Color, label) {
+        var svg = document.getElementById(svgId);
+        if (!svg) return;
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        var ns = 'http://www.w3.org/2000/svg';
+        var count = data.length;
+        if (count === 0) return;
+
+        var W = 480,
+            H = 720;
+        var cx = 240;
+        var amp = 8; // 波幅 ±8px
+        var spacing = 80; // 节点间距
+        var startY = 50;
+        var endY = startY + (count - 1) * spacing + 30;
+
+        // --- 1. 中心线（粗，主体） ---
+        var axis = document.createElementNS(ns, 'line');
+        axis.setAttribute('x1', cx);
+        axis.setAttribute('y1', startY - 10);
+        axis.setAttribute('x2', cx);
+        axis.setAttribute('y2', endY);
+        axis.setAttribute('stroke', centerColor);
+        axis.setAttribute('stroke-width', '4');
+        axis.setAttribute('opacity', '0.5');
+        axis.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(axis);
+
+        // --- 2. 波浪线（贝塞尔曲线，浅淡） ---
+        // 生成波形的关键点：每个节点处为波峰/波谷交替
+        var points1 = [];
+        var points2 = [];
+        for (var i = 0; i < count; i++) {
+            var y = startY + i * spacing;
+            var phase = (i % 2 === 0) ? 1 : -1;
+            var x1 = cx + phase * amp;
+            var x2 = cx - phase * amp;
+            points1.push({ x: x1, y: y });
+            points2.push({ x: x2, y: y });
+        }
+
+        // 贝塞尔路径：用 C 指令连接
+        function buildBezierPath(pts) {
+            if (pts.length < 2) return '';
+            var d = 'M ' + pts[0].x.toFixed(2) + ',' + pts[0].y.toFixed(2);
+            for (var i = 0; i < pts.length - 1; i++) {
+                var p0 = pts[i];
+                var p1 = pts[i + 1];
+                var dy = p1.y - p0.y;
+                var cpx = p0.x;
+                var cpy = p0.y + dy * 0.5;
+                var cpx2 = p1.x;
+                var cpy2 = p1.y - dy * 0.5;
+                d += ' C ' + cpx.toFixed(2) + ',' + cpy.toFixed(2) + ' ' + cpx2.toFixed(2) + ',' + cpy2.toFixed(2) + ' ' + p1.x
+                    .toFixed(2) + ',' + p1.y.toFixed(2);
             }
-            // 小圆点
-            var dot = document.createElement('span');
-            dot.className = 'node-dot';
-            nodeDiv.appendChild(dot);
-            // 线条容器
-            var lineWrap = document.createElement('span');
-            lineWrap.className = 'node-line-wrap';
-            var line = document.createElement('span');
-            line.className = 'node-line';
-            lineWrap.appendChild(line);
-            nodeDiv.appendChild(lineWrap);
-            // 文字
-            var textWrap = document.createElement('span');
-            textWrap.className = 'node-text';
-            var quote = document.createElement('span');
-            quote.className = 'node-quote';
-            // 处理换行
-            var qText = item.quote || '';
-            qText = qText.replace(/\\n/g, '\n');
-            quote.textContent = qText;
-            textWrap.appendChild(quote);
-            var speaker = document.createElement('span');
-            speaker.className = 'node-speaker';
-            var sym = profile === 'linxiwu' ? '❀' : '◈';
-            speaker.innerHTML = '<span class="speaker-sym">' + sym + '</span> ' + (item.speaker || '');
-            textWrap.appendChild(speaker);
-            nodeDiv.appendChild(textWrap);
-            trunk.appendChild(nodeDiv);
-        });
+            return d;
+        }
+
+        var path1 = document.createElementNS(ns, 'path');
+        path1.setAttribute('d', buildBezierPath(points1));
+        path1.setAttribute('stroke', wave1Color);
+        path1.setAttribute('stroke-width', '2');
+        path1.setAttribute('fill', 'none');
+        path1.setAttribute('stroke-linecap', 'round');
+        path1.setAttribute('opacity', '0.25');
+        path1.setAttribute('class', 'wave-1');
+        svg.appendChild(path1);
+
+        var path2 = document.createElementNS(ns, 'path');
+        path2.setAttribute('d', buildBezierPath(points2));
+        path2.setAttribute('stroke', wave2Color);
+        path2.setAttribute('stroke-width', '2');
+        path2.setAttribute('fill', 'none');
+        path2.setAttribute('stroke-linecap', 'round');
+        path2.setAttribute('opacity', '0.25');
+        path2.setAttribute('class', 'wave-2');
+        svg.appendChild(path2);
+
+        // --- 3. 动态效果（上下平移） ---
+        var style = document.createElementNS(ns, 'style');
+        style.textContent = `
+            .wave-1 { animation: driftUp1 5s ease-in-out infinite alternate; }
+            .wave-2 { animation: driftUp2 6s ease-in-out infinite alternate-reverse; }
+            @keyframes driftUp1 {
+                0% { transform: translateY(-4px); }
+                100% { transform: translateY(4px); }
+            }
+            @keyframes driftUp2 {
+                0% { transform: translateY(3px); }
+                100% { transform: translateY(-3px); }
+            }
+        `;
+        svg.appendChild(style);
+
+        // --- 4. 节点 + 分支 + 台词 ---
+        for (var i = 0; i < count; i++) {
+            var item = data[i];
+            var y = startY + i * spacing;
+            var nodeX = cx;
+            var nodeY = y;
+
+            // 节点符号（在中心线上）
+            var sym = document.createElementNS(ns, 'text');
+            sym.setAttribute('x', nodeX);
+            sym.setAttribute('y', nodeY + 4);
+            sym.setAttribute('text-anchor', 'middle');
+            sym.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+            sym.setAttribute('font-size', '22');
+            sym.setAttribute('fill', item.color);
+            sym.setAttribute('opacity', '0.85');
+            var s = (i % 2 === 0) ? '✦' : '✧';
+            // 第一个节点用特殊符号
+            if (i === 0) s = '❀';
+            if (i === count - 1) s = '◈';
+            sym.textContent = s;
+            svg.appendChild(sym);
+
+            // 分支线（虚线横向伸出）
+            var dir = (item.side === 'right') ? 1 : -1;
+            var branchLen = 90;
+            var bx1 = nodeX,
+                by1 = nodeY;
+            var bx2 = nodeX + dir * branchLen,
+                by2 = nodeY;
+
+            var branch = document.createElementNS(ns, 'line');
+            branch.setAttribute('x1', bx1);
+            branch.setAttribute('y1', by1);
+            branch.setAttribute('x2', bx2);
+            branch.setAttribute('y2', by2);
+            branch.setAttribute('stroke', item.color);
+            branch.setAttribute('stroke-width', '1.2');
+            branch.setAttribute('opacity', '0.25');
+            branch.setAttribute('stroke-dasharray', '3,5');
+            svg.appendChild(branch);
+
+            // 台词（在分支线下方）
+            var lines = item.quote.split('\n');
+            var fontSize = (lines.length > 1 || item.quote.length > 18) ? 9 : 10.5;
+            var lineHeight = fontSize + 2.5;
+            var anchor = (dir === 1) ? 'start' : 'end';
+            var textX = nodeX + dir * (branchLen * 0.55);
+            var textY = nodeY + 16;
+
+            for (var li = 0; li < lines.length; li++) {
+                var t = document.createElementNS(ns, 'text');
+                t.setAttribute('x', textX);
+                t.setAttribute('y', textY + li * lineHeight);
+                t.setAttribute('text-anchor', anchor);
+                t.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
+                t.setAttribute('font-size', fontSize);
+                t.setAttribute('fill', item.color);
+                t.setAttribute('font-style', 'italic');
+                t.setAttribute('font-weight', '400');
+                t.setAttribute('letter-spacing', '0.2px');
+                t.setAttribute('opacity', '0.9');
+                t.textContent = lines[li];
+                svg.appendChild(t);
+            }
+
+            // 说话人
+            var sp = document.createElementNS(ns, 'text');
+            sp.setAttribute('x', textX);
+            sp.setAttribute('y', textY + lines.length * lineHeight + 8);
+            sp.setAttribute('text-anchor', anchor);
+            sp.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+            sp.setAttribute('font-size', '7');
+            sp.setAttribute('fill', item.color);
+            sp.setAttribute('opacity', '0.35');
+            sp.setAttribute('letter-spacing', '0.5px');
+            sp.textContent = '— ' + item.speaker;
+            svg.appendChild(sp);
+        }
+
+        // --- 5. 顶部装饰 ---
+        var top = document.createElementNS(ns, 'text');
+        top.setAttribute('x', cx);
+        top.setAttribute('y', 22);
+        top.setAttribute('text-anchor', 'middle');
+        top.setAttribute('font-size', '14');
+        top.setAttribute('fill', centerColor);
+        top.setAttribute('opacity', '0.25');
+        var topSym = (svgId === 'svgLin' || svgId === 'svgLinLuo') ? '❀' : '◈';
+        top.textContent = topSym;
+        svg.appendChild(top);
+
+        // --- 6. 底部标签 ---
+        var foot = document.createElementNS(ns, 'text');
+        foot.setAttribute('x', cx);
+        foot.setAttribute('y', H - 8);
+        foot.setAttribute('text-anchor', 'middle');
+        foot.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
+        foot.setAttribute('font-size', '8');
+        foot.setAttribute('fill', centerColor);
+        foot.setAttribute('opacity', '0.2');
+        foot.setAttribute('letter-spacing', '1.5px');
+        foot.textContent = label;
+        svg.appendChild(foot);
     }
 
-    function renderAllVines(profile) {
+    // ===== 4. 全部渲染 =====
+    function renderAll(profile) {
         profile = profile || document.body.getAttribute('data-profile') || 'linxiwu';
-        var data = VINE_DATA[profile] || VINE_DATA.linxiwu;
-        // 林栖梧视图
-        renderVine(profile, 'trunkLin', data.hua, 'right');
-        renderVine(profile, 'trunkXiu', data.xiu, 'right');
-        // 罗烬视图
-        renderVine(profile, 'trunkLinLuo', data.hua, 'right');
-        renderVine(profile, 'trunkXiuLuo', data.xiu, 'right');
+        var data = DATA[profile] || DATA.linxiwu;
+
+        var centerLin = (profile === 'linxiwu') ? '#D49A9A' : '#4E5A64';
+        var centerXiu = (profile === 'linxiwu') ? '#D49A9A' : '#4E5A64';
+
+        drawVine('svgLin', data.hua, centerLin, '#2a6b8a', '#b05a4a', '❀ 浮生之契 · 同生共死');
+        drawVine('svgXiu', data.xiu, centerXiu, '#7b4b8a', '#c9a84b', '◈ 魂火为鉴 · 永生不离');
+        drawVine('svgLinLuo', data.hua, centerLin, '#2a6b8a', '#b05a4a', '❀ 浮生之契 · 同生共死');
+        drawVine('svgXiuLuo', data.xiu, centerXiu, '#7b4b8a', '#c9a84b', '◈ 魂火为鉴 · 永生不离');
     }
 
-    // ===== 4. 花瓣特效 =====
+    // ===== 5. 花瓣 =====
     var PETAL_CHARS = ['❀', '◈', '✽'],
         petalContainer = document.getElementById('petal-container');
     if (petalContainer) {
@@ -249,13 +407,13 @@
         }
     }
 
-    // ===== 5. 初始化 =====
+    // ===== 6. 初始化 =====
     var initialProfile = document.body.getAttribute('data-profile') || 'linxiwu';
-    renderAllVines(initialProfile);
+    renderAll(initialProfile);
 
     window.addEventListener('profilechange', function(e) {
-        renderAllVines(e.detail.profile);
+        renderAll(e.detail.profile);
     });
 
-    console.log('🌙 归终殿 · 血脉羁绊 v1.0 已加载（柳枝式血脉图谱）');
+    console.log('🌙 归终殿 · 血脉羁绊 v1.0 已加载');
 })();
