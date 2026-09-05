@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>归终殿 · 血脉羁绊</title>
 <style>
-:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;--gold:#FFB90F;--purple:#9370DB;--axis-rose:#d4a0a8;--lin-blue:#2a6b8a;--luan-red:#b05a4a}
+:root{--bg-body:#f7f4ef;--bg-card:var(--bg-card);--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;--gold:#FFB90F;--purple:#9370DB;--axis-rose:#d4a0a8;--lin-blue:#2a6b8a;--luan-red:#b05a4a}
 [data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
 body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
 body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
@@ -139,14 +139,14 @@ body.no-scroll{overflow:hidden}
 <a class="nav-item" href="#"><span class="sym">❖</span> 魂力与状态</a>
 <a class="nav-item" href="#"><span class="sym">✿</span> 院阁修习表</a>
 <a class="nav-item" href="#"><span class="sym">✧</span> 同僚与十席</a>
-<a class="nav-item active" href="#"><span class="sym">❤</span> 血脉羁绊</a>
+<a class="nav-item active" href="#"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
 <a class="nav-item" href="#"><span class="sym">◆</span> 差事与外勤</a>
 <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
 <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
 </div>
 
 <div class="top-header">
-<div class="page-title"><span class="sym">❤</span> 血脉羁绊</div>
+<div class="page-title"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</div>
 <div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
 </div>
 
@@ -171,7 +171,7 @@ body.no-scroll{overflow:hidden}
 <div class="talent-grid" id="talentGridLin">
 <div class="talent-card"><div class="t-name"><span class="t-icon">✿</span>符法天赋</div><div class="t-source">继承自 栾方棋</div><div class="t-desc">布阵速度在符修院同辈中排得上号，精血催符已有尝试。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:85%;"></div></div><span class="t-pct">85%</span></div>
 <div class="talent-card"><div class="t-name"><span class="t-icon">❀</span>端方心性</div><div class="t-source">继承自 栾方棋</div><div class="t-desc">处事有条理，从不临阵慌乱，统修期内未出过失误。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:78%;"></div></div><span class="t-pct">78%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">⚔</span>体术根骨</div><div class="t-source">继承自 林淮</div><div class="t-desc">近身战有自保之力，体术基础够用，经验尚待积累。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:55%;"></div></div><span class="t-pct">55%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">⚔&#xFE0E;</span>体术根骨</div><div class="t-source">继承自 林淮</div><div class="t-desc">近身战有自保之力，体术基础够用，经验尚待积累。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:55%;"></div></div><span class="t-pct">55%</span></div>
 <div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>坚韧意志</div><div class="t-source">继承自 林淮</div><div class="t-desc">抗压冥想从未中途退出，遇强则稳，不轻易动摇。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:70%;"></div></div><span class="t-pct">70%</span></div>
 </div>
 </div>
@@ -227,7 +227,7 @@ body.no-scroll{overflow:hidden}
 <span class="corner-deco">◈</span>
 <div class="card-title">血脉传承 · 天赋</div>
 <div class="talent-grid" id="talentGridLuo">
-<div class="talent-card"><div class="t-name"><span class="t-icon">⚔</span>双刀本能</div><div class="t-source">继承自 罗修</div><div class="t-desc">刀法架势已有首席三分影子，实战反应快，天赋到位。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:90%;"></div></div><span class="t-pct">90%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">⚔&#xFE0E;</span>双刀本能</div><div class="t-source">继承自 罗修</div><div class="t-desc">刀法架势已有首席三分影子，实战反应快，天赋到位。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:90%;"></div></div><span class="t-pct">90%</span></div>
 <div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>魂力亲和</div><div class="t-source">继承自 罗修</div><div class="t-desc">引动阴气时偶有震颤，但根基扎实，潜力深厚。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:65%;"></div></div><span class="t-pct">65%</span></div>
 <div class="talent-card"><div class="t-name"><span class="t-icon">✦</span>魂力韧性</div><div class="t-source">继承自 魏元璟</div><div class="t-desc">抗压冥想课未再中途退出，精神稳定度尚可。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:60%;"></div></div><span class="t-pct">60%</span></div>
 <div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>帝王傲骨</div><div class="t-source">继承自 魏元璟</div><div class="t-desc">遇强则强，绝不轻易低头，骨子里有一股不服输的劲。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:75%;"></div></div><span class="t-pct">75%</span></div>

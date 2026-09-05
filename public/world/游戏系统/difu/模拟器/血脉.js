@@ -844,5 +844,5 @@
             initRiverCanvas(p);
             buildWaveSVG(p); }, 300); });
 
-    console.log('❤️ 血脉羁绊 · 光点已显眼化');
+    console.log('❤&#xFE0E;️ 血脉羁绊 · 光点已显眼化');
 })();
