@@ -2,8 +2,8 @@
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>血脉羁绊 · 预览（修复版）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>血脉羁绊 · 预览（1:1 缩放修复版）</title>
 <style>
 :root{--bg-body:#f7f4ef;--bg-card:#ffffff;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-muted:#8a8a8a;--profile-accent:#D49A9A;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--lin-blue:#2a6b8a;--luan-red:#b05a4a;--pink-flower:#e07070;--blue-light:#7ab8d4}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -17,11 +17,11 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .main-card{flex:2;min-width:0;width:100%;background:var(--bg-card);border:1px solid var(--border-card);border-radius:8px;padding:14px 12px 12px 12px;box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.04);overflow:hidden;display:flex;flex-direction:column}
 .card-title{font-size:0.9rem;font-weight:600;color:var(--text-muted);padding-bottom:8px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:8px;flex-shrink:0}
 .card-title .sym{color:var(--profile-accent)}
-.preview-wrap{position:relative;width:100%;overflow:auto;background:var(--bg-body);border-radius:4px;margin-top:2px;flex:1;min-height:300px;-webkit-overflow-scrolling:touch}
+.preview-wrap{position:relative;width:100%;overflow:auto;background:var(--bg-body);border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch}
 .preview-wrap::-webkit-scrollbar{width:6px;height:6px}
 .preview-wrap::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
 .preview-wrap::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:0.5}
-.preview-wrap svg{display:block;width:100%;height:100%;background:transparent;overflow:visible}
+.preview-wrap svg{display:block;width:100%;height:auto;background:transparent;overflow:visible}
 .detail-panel{flex:1;min-width:0;width:100%;background:var(--bg-card);border:1px solid var(--border-card);border-radius:8px;padding:16px 14px;box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.04);display:flex;flex-direction:column;overflow:hidden}
 .detail-panel .panel-title{font-weight:600;font-size:0.85rem;color:var(--text-primary);border-bottom:1px solid var(--border-light);padding-bottom:8px;margin-bottom:10px;letter-spacing:0.5px;flex-shrink:0}
 .detail-panel .panel-title .sym{color:var(--profile-accent)}
@@ -57,7 +57,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <div class="main-card">
 <div class="card-title"><span class="sym">❀</span> 林淮 · 栾方棋</div>
 <div class="preview-wrap" id="scrollContainer">
-<svg id="wavePreview" preserveAspectRatio="xMidYMid meet"></svg>
+<svg id="wavePreview" preserveAspectRatio="xMidYMin meet"></svg>
 </div>
 <div class="legend">
 <span class="legend-item"><span class="swatch" style="background:#D49A9A;"></span> 中心线</span>
@@ -91,6 +91,11 @@ var OPACITY=0.27;
 var PERIOD=14.5;
 var phaseA=0,phaseB=0,lastTime=0;
 
+/* 桌面端预览窗口的最大高度。
+   画布本体保证 >= 2200px；内容超出窗口的部分用滚动条滑动观看。
+   （如果你想要"窗口本身固定 2200px 高"，把下面的 innerHeight 换成 2200 即可） */
+var DESKTOP_WINDOW_MAX=2200;
+
 var dialogData=[
 {side:'right',label:'初识 · 国师府',lines:[{speaker:'林淮',text:'「属下没有名字，只有编号卯九。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「你叫什么名字？」',color:'#b05a4a'},{speaker:'秦墨予',text:'「既然有名字，你以后就叫林淮。」',color:'#b05a4a'}],ref:'——第77章'},
 {side:'left',label:'走近 · 书房教字',lines:[{speaker:'林淮',text:'「国师大人，这不合规矩。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「过来，我教你‘林淮’两个字怎么写。」',color:'#b05a4a'},{speaker:'秦墨予',text:'「在这里，我就是规矩。」',color:'#b05a4a'}],ref:'——第77章'},
@@ -106,139 +111,148 @@ var dialogData=[
 
 var numNodes=dialogData.length;
 
-// ===== 自适应布局计算 =====
-// 根据窗口宽度动态计算所有尺寸参数
-// 关键修复：
-//   1. 桌面端 cx = W/2（原 bug：cx=400 而 W=900，左右不对称）
-//   2. 手机端字体比桌面小（原 bug：手机 textSize=20 > 桌面 18）
-//   3. maxChars 根据可用宽度和字体大小动态计算（原 bug：硬编码且溢出）
-//   4. 行高随 textSize 缩放（原 bug：硬编码 26/24/20）
-//   5. nodeSpacing 足够容纳 3 行卡片内容（原 bug：卡片重叠）
-//   6. 桌面 viewBox 宽高比匹配容器，SVG 填满 2200px（原 bug：大量空白）
+/* =====================================================================
+   核心修复（针对"字小得跟沙子一样"）：
+   旧版思路是"固定 viewBox + preserveAspectRatio=meet 把画布缩放适配容器"，
+   而 .preview-wrap 又被 .main-card 的 flex 布局压扁（实际只有 ~450px 高），
+   于是 2200px 高的画布被整体塞进 450px：缩放比 ≈ 0.2，
+   viewBox 里写 12px 的字，屏幕上只有 ~2.5px；手机端更是被压到 ~0.1 倍。
+   只加大 viewBox 里的字号没用——缩放比才是主导。
+
+   新版思路：让缩放比恒等于 1，字体所见即所得。
+     1. viewBox 宽度 = 容器真实 CSS 宽度（1:1，不再缩小）
+     2. svg 元素高度 = 画布高度（真实像素），在窗口内滚动观看
+     3. 桌面端：画布保证 >= 2200px，超出窗口的内容用滚动条
+     4. 节点间距按每张卡片实际渲染行数动态计算，任何字号都不重叠
+   ===================================================================== */
 function getLayout(){
     var vw=window.innerWidth;
     var isMobile=vw<820;
+    var measured=(scrollContainer&&scrollContainer.clientWidth>0)?scrollContainer.clientWidth:0;
+    var W=Math.max(280,Math.round(measured||(isMobile?340:860)));
+    var cx=W/2;
 
-    // 通用参数
-    var centerGap=56;       // 文字基线距中心线的水平偏移 (textX = cx ± centerGap)
-    var speakerOffset=4;    // 说话者标签额外偏移
-    var sidePadding=16;     // SVG 左右边距
-
+    var p;
     if(isMobile){
-        // ===== 手机端 =====
-        // viewBox 360 宽，匹配常见手机屏宽
-        var W=360;
-        var cx=W/2;                          // 修复：cx 居中
-        var textSize=11;                     // 修复：从 20 降到 11（原 20px 在半屏 ~104px 宽里只能放 5 字）
-        var speakerSize=9;                   // 修复：从 16 降到 9
-        var refSize=7;                       // 修复：从 12 降到 7
-        var labelSize=9;                     // 修复：从 16 降到 9
-        var starSize=14;                     // 修复：从 22 降到 14
-        var flowerSize=11;                   // 修复：从 18 降到 11
-        var amp=5;
-        var spacing=240;
-        var startY=30;
-        var nodeSpacing=230;                 // 修复：从 160 增到 230（原值导致 3 行卡片重叠 122px）
-
-        // 行高随字体大小缩放（原 bug：硬编码 24/20/28）
-        var contentLine=Math.round(textSize*1.36);  // 11→15
-        var spOffset=Math.round(textSize*1.27);     // 11→14
-        var diffExtra=Math.round(textSize*1.64);    // 11→18
-
-        // 头部偏移（星标→虚线→标签→对话）随字体缩放
-        var dashOffset=15;
-        var labelOffset=15;
-        var dialogStartOffset=10;
-
-        // 动态计算 maxChars：可用宽度 = cx - centerGap - speakerOffset - sidePadding
-        // 中文字符宽度 ≈ 1em（即 textSize）
-        var availW=cx-centerGap-speakerOffset-sidePadding;  // 180-56-4-16=104
-        var maxChars=Math.max(4,Math.floor(availW/textSize)); // 104/11=9
-
-        // 最终高度：确保最后一张卡有足够空间
-        var finalHeight=startY+numNodes*nodeSpacing+40;
-
-        return{
-            isMobile:true,W:W,cx:cx,
-            textSize:textSize,speakerSize:speakerSize,refSize:refSize,labelSize:labelSize,
-            starSize:starSize,flowerSize:flowerSize,
-            amp:amp,spacing:spacing,startY:startY,nodeSpacing:nodeSpacing,
-            dashOffset:dashOffset,labelOffset:labelOffset,dialogStartOffset:dialogStartOffset,
-            contentLine:contentLine,spOffset:spOffset,diffExtra:diffExtra,
-            centerGap:centerGap,speakerOffsetVal:speakerOffset,sidePadding:sidePadding,
-            maxChars:maxChars,finalHeight:finalHeight,
-            containerHeight:'auto',containerMaxHeight:'60vh'
-        };
+        // ===== 手机端：15px 正文在 375px 屏上是正常阅读字号（缩放比=1，所见即所得） =====
+        p={centerGap:30,labelGap:20,speakerOffset:3,sidePadding:12,
+           textSize:15,speakerSize:12,refSize:10,labelSize:11,starSize:18,flowerSize:13,
+           amp:5,spacing:240,startY:36,nodeGap:34,minCanvasH:900,
+           dashOffset:17,labelOffset:20,dialogStartOffset:15};
     }else{
-        // ===== 桌面端 =====
-        // viewBox 550×2200，宽高比 0.25 ≈ 容器宽高比（~549/2200）
-        // 这样 SVG 能完整填满 2200px 容器，无空白
-        var W2=550;
-        var cx2=W2/2;                        // 修复：cx=275（原 bug：cx=400 而 W=900）
-        var textSize2=12;                    // 修复：从 18 降到 12（原 18 在 viewBox 900 里缩放后仅 ~11px）
-        var speakerSize2=10;                 // 修复：从 14 降到 10
-        var refSize2=8;                      // 修复：从 11 降到 8
-        var labelSize2=10;                   // 修复：从 14 降到 10
-        var starSize2=18;
-        var flowerSize2=14;
-        var amp2=7;
-        var spacing2=310;
-        var startY2=40;
-        var nodeSpacing2=215;                // 修复：确保 ≥ 3 行卡片高度(205)，原 220 在 textSize=18 时卡片高 282 严重重叠
-
-        var contentLine2=Math.round(textSize2*1.33);  // 12→16
-        var spOffset2=Math.round(textSize2*1.25);     // 12→15
-        var diffExtra2=Math.round(textSize2*1.67);    // 12→20
-
-        var dashOffset2=18;
-        var labelOffset2=18;
-        var dialogStartOffset2=12;
-
-        var availW2=cx2-centerGap-speakerOffset-sidePadding;  // 275-56-4-16=199
-        var maxChars2=Math.max(6,Math.floor(availW2/textSize2)); // 199/12=16
-
-        return{
-            isMobile:false,W:W2,cx:cx2,
-            textSize:textSize2,speakerSize:speakerSize2,refSize:refSize2,labelSize:labelSize2,
-            starSize:starSize2,flowerSize:flowerSize2,
-            amp:amp2,spacing:spacing2,startY:startY2,nodeSpacing:nodeSpacing2,
-            dashOffset:dashOffset2,labelOffset:labelOffset2,dialogStartOffset:dialogStartOffset2,
-            contentLine:contentLine2,spOffset:spOffset2,diffExtra:diffExtra2,
-            centerGap:centerGap,speakerOffsetVal:speakerOffset,sidePadding:sidePadding,
-            maxChars:maxChars2,finalHeight:2200,           // 修复：直接固定 2200（原 Math.max 总是取更大值 2690）
-            containerHeight:'2200px',containerMaxHeight:'2200px'
-        };
+        // ===== 桌面端：17px 正文（1:1 渲染，真实 17px） =====
+        p={centerGap:48,labelGap:60,speakerOffset:4,sidePadding:18,
+           textSize:17,speakerSize:13,refSize:11,labelSize:14,starSize:22,flowerSize:16,
+           amp:7,spacing:310,startY:50,nodeGap:44,minCanvasH:2200,
+           dashOffset:22,labelOffset:26,dialogStartOffset:20};
     }
+
+    // 行高随字号缩放
+    var contentLine=Math.round(p.textSize*1.42);
+    var spOffset=Math.round(p.textSize*1.3);
+    var diffExtra=Math.round(p.textSize*1.7);
+
+    // 动态计算每行可容纳字数：可用宽度 / 字号
+    var availW=cx-p.centerGap-p.speakerOffset-p.sidePadding;
+    var maxChars=Math.max(5,Math.floor(availW/p.textSize));
+
+    return{
+        isMobile:isMobile,W:W,cx:cx,
+        textSize:p.textSize,speakerSize:p.speakerSize,refSize:p.refSize,labelSize:p.labelSize,
+        starSize:p.starSize,flowerSize:p.flowerSize,
+        amp:p.amp,spacing:p.spacing,startY:p.startY,nodeGap:p.nodeGap,
+        dashOffset:p.dashOffset,labelOffset:p.labelOffset,dialogStartOffset:p.dialogStartOffset,
+        contentLine:contentLine,spOffset:spOffset,diffExtra:diffExtra,
+        centerGap:p.centerGap,labelGap:p.labelGap,
+        speakerOffsetVal:p.speakerOffset,sidePadding:p.sidePadding,
+        maxChars:maxChars,minCanvasH:p.minCanvasH
+    };
 }
 
 var L=getLayout();
+var nodeYs=[];       // 每个节点（星标）的绝对 Y 坐标
+var viewBoxH=2200;   // 画布（viewBox）总高度
 
-// 应用容器样式和 viewBox
+// ===== 文本换行（支持 \n 显式换行）=====
+function wrapText(text,maxChars){
+    var segments=text.split('\n');
+    var result=[];
+    for(var s=0;s<segments.length;s++){
+        var seg=segments[s];
+        if(seg.length<=maxChars){
+            result.push(seg);
+            continue;
+        }
+        var current='';
+        for(var i=0;i<seg.length;i++){
+            current+=seg[i];
+            if(current.length>=maxChars){
+                var lb=current.lastIndexOf(' ');
+                if(lb===-1)lb=current.length;
+                result.push(current.substring(0,lb));
+                current=current.substring(lb).trim();
+            }
+        }
+        if(current.length>0)result.push(current);
+    }
+    return result;
+}
+
+// ===== 节点动态布局：按每张卡片实际渲染行数排布，杜绝卡片重叠 =====
+function computeNodeLayout(){
+    nodeYs=[];
+    var y=L.startY;
+    for(var i=0;i<numNodes;i++){
+        nodeYs.push(y);
+        var block=L.dashOffset+L.labelOffset+L.dialogStartOffset; // 星标→虚线→标签→对话
+        var lastSpeaker=null;
+        var lines=dialogData[i].lines;
+        for(var j=0;j<lines.length;j++){
+            if(lastSpeaker!==null&&lastSpeaker!==lines[j].speaker)block+=L.diffExtra;
+            block+=L.spOffset;
+            block+=wrapText(lines[j].text,L.maxChars).length*L.contentLine;
+            block+=6;
+            lastSpeaker=lines[j].speaker;
+        }
+        block+=10+L.refSize+18; // 出处一行 + 尾部留白
+        y+=block+L.nodeGap;
+    }
+    // 画布高度 = 内容实际高度 + 边距，桌面端至少 2200px
+    viewBoxH=Math.max(L.minCanvasH,Math.round(y-L.nodeGap+40));
+}
+
+// ===== 应用布局：svg 高度 = 画布高度（真实像素），缩放比恒为 1 =====
 function applyLayout(){
     var wrap=document.querySelector('.preview-wrap');
     if(wrap){
-        wrap.style.height=L.containerHeight;
-        wrap.style.maxHeight=L.containerMaxHeight;
+        wrap.style.flex='0 0 auto';
+        if(L.isMobile){
+            wrap.style.height='auto';
+            wrap.style.maxHeight='60vh';
+        }else{
+            var winH=Math.min(DESKTOP_WINDOW_MAX,Math.max(600,window.innerHeight-240));
+            wrap.style.height=winH+'px';
+            wrap.style.maxHeight='none';
+        }
         wrap.style.overflow='auto';
     }
-    svg.setAttribute('viewBox','0 0 '+L.W+' '+L.finalHeight);
+    svg.setAttribute('viewBox','0 0 '+L.W+' '+viewBoxH);
+    svg.style.width='100%';
+    svg.style.height=viewBoxH+'px';
     var headerSub=document.getElementById('headerSub');
     if(headerSub){
-        headerSub.textContent='波峰间距 '+L.spacing+'px · 周期 '+PERIOD+'s · 每行'+L.maxChars+'字';
+        headerSub.textContent='波峰间距 '+L.spacing+'px · 周期 '+PERIOD+'s · 画布 '+viewBoxH+'px · 字号 '+L.textSize+'px · 缩放 1:1';
     }
 }
-applyLayout();
 
 // ===== 波浪线生成 =====
 function generateWavePoints(sign,spacing,amp,phase){
-    var pts=[],step=4,totalHeight2=L.finalHeight+spacing,numPoints=Math.floor(totalHeight2/step)+6;
+    var pts=[],step=4,numPoints=Math.floor((viewBoxH+spacing)/step)+6;
     for(var i=0;i<numPoints;i++){
         var y=-spacing/2+i*step;
-        if(y<-spacing/2)continue;
-        if(y>L.finalHeight+spacing/2)break;
+        if(y>viewBoxH+spacing/2)break;
         var angle=(y/spacing)*2*Math.PI+phase;
-        var x=L.cx+sign*amp*Math.sin(angle);
-        pts.push({x:x,y:y});
+        pts.push({x:L.cx+sign*amp*Math.sin(angle),y:y});
     }
     return pts;
 }
@@ -255,34 +269,50 @@ function buildBezierPath(pts){
     return d;
 }
 
-// ===== 文本换行（修复：支持 \n 显式换行）=====
-function wrapText(text,maxChars){
-    // 先按 \n 拆分（数据中存在显式换行的诗句）
-    var segments=text.split('\n');
-    var result=[];
-    for(var s=0;s<segments.length;s++){
-        var seg=segments[s];
-        if(seg.length<=maxChars){
-            result.push(seg);
-            continue;
-        }
-        // 超过 maxChars 时按字符数切分，优先在空格处断行
-        var current='';
-        for(var i=0;i<seg.length;i++){
-            current+=seg[i];
-            if(current.length>=maxChars){
-                var lb=current.lastIndexOf(' ');
-                if(lb===-1)lb=current.length;
-                result.push(current.substring(0,lb));
-                current=current.substring(lb).trim();
-            }
-        }
-        if(current.length>0)result.push(current);
-    }
-    return result;
+// ===== 图层：静态内容只建一次，动画每帧只更新波浪 path =====
+var waveG=null,staticG=null,pathA=null,pathB=null;
+
+function buildScene(){
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    var axisG=document.createElementNS(ns,'g');
+    waveG=document.createElementNS(ns,'g');
+    staticG=document.createElementNS(ns,'g');
+    svg.appendChild(axisG);
+    svg.appendChild(waveG);
+    svg.appendChild(staticG);
+
+    // 中心轴线
+    var axis=document.createElementNS(ns,'line');
+    axis.setAttribute('x1',L.cx);
+    axis.setAttribute('y1',L.startY);
+    axis.setAttribute('x2',L.cx);
+    axis.setAttribute('y2',viewBoxH-20);
+    axis.setAttribute('stroke','#D49A9A');
+    axis.setAttribute('stroke-width',4);
+    axis.setAttribute('opacity','0.4');
+    axis.setAttribute('stroke-linecap','round');
+    axisG.appendChild(axis);
+
+    // 波浪 path（每帧只更新 d 属性）
+    pathA=document.createElementNS(ns,'path');
+    pathA.setAttribute('stroke','#2a6b8a');
+    pathA.setAttribute('stroke-width',2);
+    pathA.setAttribute('fill','none');
+    pathA.setAttribute('stroke-linecap','round');
+    pathA.setAttribute('opacity',OPACITY);
+    waveG.appendChild(pathA);
+    pathB=document.createElementNS(ns,'path');
+    pathB.setAttribute('stroke','#b05a4a');
+    pathB.setAttribute('stroke-width',2);
+    pathB.setAttribute('fill','none');
+    pathB.setAttribute('stroke-linecap','round');
+    pathB.setAttribute('opacity',OPACITY);
+    waveG.appendChild(pathB);
+
+    buildStaticContent();
 }
 
-// ===== 绘制对话块（行高全部使用 L 中动态计算的值）=====
+// ===== 静态内容：节点、星标、虚线、花饰、标签、对话 =====
 function drawDialogBlock(side,lines,ref,baseX,baseY){
     var anchor=(side==='left')?'end':'start';
     var spOff=(side==='left')?-L.speakerOffsetVal:L.speakerOffsetVal;
@@ -293,7 +323,6 @@ function drawDialogBlock(side,lines,ref,baseX,baseY){
         var isNewSpeaker=(lastSpeaker!==null&&lastSpeaker!==item.speaker);
         if(isNewSpeaker)currentY+=L.diffExtra;
 
-        // 说话者标签
         var sp=document.createElementNS(ns,'text');
         sp.setAttribute('x',baseX+spOff);
         sp.setAttribute('y',currentY);
@@ -305,11 +334,10 @@ function drawDialogBlock(side,lines,ref,baseX,baseY){
         sp.setAttribute('opacity','0.65');
         sp.setAttribute('letter-spacing','0.5px');
         sp.textContent='— '+item.speaker;
-        svg.appendChild(sp);
+        staticG.appendChild(sp);
 
         currentY+=L.spOffset;
 
-        // 对话内容（自适应换行）
         var lines2=wrapText(item.text,L.maxChars);
         for(var k=0;k<lines2.length;k++){
             var t=document.createElementNS(ns,'text');
@@ -323,13 +351,12 @@ function drawDialogBlock(side,lines,ref,baseX,baseY){
             t.setAttribute('font-weight','400');
             t.setAttribute('opacity','0.92');
             t.textContent=lines2[k];
-            svg.appendChild(t);
+            staticG.appendChild(t);
         }
         currentY+=lines2.length*L.contentLine+6;
         lastSpeaker=item.speaker;
     }
 
-    // 参考文献
     var refY=currentY+10;
     var refEl=document.createElementNS(ns,'text');
     refEl.setAttribute('x',baseX+spOff);
@@ -341,9 +368,141 @@ function drawDialogBlock(side,lines,ref,baseX,baseY){
     refEl.setAttribute('opacity','0.6');
     refEl.setAttribute('letter-spacing','0.3px');
     refEl.textContent=ref;
-    svg.appendChild(refEl);
+    staticG.appendChild(refEl);
 
     return refY+16;
+}
+
+function buildStaticContent(){
+    for(var i=0;i<numNodes;i++){
+        var y=nodeYs[i];
+        var data=dialogData[i];
+        var side=data.side;
+
+        // 星标
+        var star=document.createElementNS(ns,'text');
+        star.setAttribute('x',L.cx);
+        star.setAttribute('y',y+5);
+        star.setAttribute('text-anchor','middle');
+        star.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
+        star.setAttribute('font-size',L.starSize);
+        star.setAttribute('fill','#7ab8d4');
+        star.setAttribute('opacity','0.8');
+        star.textContent='✦';
+        staticG.appendChild(star);
+
+        var dashY=y+L.dashOffset;
+
+        if(side==='left'){
+            var dashStart=L.sidePadding;
+            var dashEnd=L.cx-28;
+            var flowerX=dashStart+(dashEnd-dashStart)*0.4;
+            var dash=document.createElementNS(ns,'line');
+            dash.setAttribute('x1',dashStart);
+            dash.setAttribute('y1',dashY);
+            dash.setAttribute('x2',dashEnd);
+            dash.setAttribute('y2',dashY);
+            dash.setAttribute('stroke','#e07070');
+            dash.setAttribute('stroke-width',2);
+            dash.setAttribute('opacity','0.5');
+            dash.setAttribute('stroke-dasharray','5,6');
+            staticG.appendChild(dash);
+            var flower=document.createElementNS(ns,'text');
+            flower.setAttribute('x',flowerX);
+            flower.setAttribute('y',dashY+6);
+            flower.setAttribute('text-anchor','middle');
+            flower.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
+            flower.setAttribute('font-size',L.flowerSize);
+            flower.setAttribute('fill','#e07070');
+            flower.setAttribute('opacity','0.85');
+            flower.textContent='❀';
+            staticG.appendChild(flower);
+        }else{
+            var dashStart2=L.cx+28;
+            var dashEnd2=L.W-L.sidePadding;
+            var flowerX2=dashStart2+(dashEnd2-dashStart2)*0.6;
+            var dash2=document.createElementNS(ns,'line');
+            dash2.setAttribute('x1',dashStart2);
+            dash2.setAttribute('y1',dashY);
+            dash2.setAttribute('x2',dashEnd2);
+            dash2.setAttribute('y2',dashY);
+            dash2.setAttribute('stroke','#7ab8d4');
+            dash2.setAttribute('stroke-width',2);
+            dash2.setAttribute('opacity','0.5');
+            dash2.setAttribute('stroke-dasharray','5,6');
+            staticG.appendChild(dash2);
+            var flower2=document.createElementNS(ns,'text');
+            flower2.setAttribute('x',flowerX2);
+            flower2.setAttribute('y',dashY+6);
+            flower2.setAttribute('text-anchor','middle');
+            flower2.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
+            flower2.setAttribute('font-size',L.flowerSize);
+            flower2.setAttribute('fill','#e07070');
+            flower2.setAttribute('opacity','0.85');
+            flower2.textContent='❀';
+            staticG.appendChild(flower2);
+        }
+
+        var labelY=dashY+L.labelOffset;
+        var labelX=(side==='left')?L.cx-L.labelGap:L.cx+L.labelGap;
+        var anchorLabel=(side==='left')?'end':'start';
+        var label=document.createElementNS(ns,'text');
+        label.setAttribute('x',labelX);
+        label.setAttribute('y',labelY);
+        label.setAttribute('text-anchor',anchorLabel);
+        label.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
+        label.setAttribute('font-size',L.labelSize);
+        label.setAttribute('font-weight','600');
+        label.setAttribute('fill','#555555');
+        label.setAttribute('opacity','0.8');
+        label.setAttribute('letter-spacing','0.8px');
+        label.textContent=data.label;
+        staticG.appendChild(label);
+
+        var textBaseX=(side==='left')?L.cx-L.centerGap:L.cx+L.centerGap;
+        var textStartY=labelY+L.dialogStartOffset;
+        drawDialogBlock(side,data.lines,data.ref,textBaseX,textStartY);
+    }
+
+    // 方向箭头
+    function addDir(x,y,text,color){
+        var t=document.createElementNS(ns,'text');
+        t.setAttribute('x',x);
+        t.setAttribute('y',y);
+        t.setAttribute('text-anchor','middle');
+        t.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
+        t.setAttribute('font-size',L.refSize);
+        t.setAttribute('fill',color);
+        t.setAttribute('opacity','0.3');
+        t.textContent=text;
+        staticG.appendChild(t);
+    }
+    addDir(L.sidePadding+8,20,'↓','#2a6b8a');
+    addDir(L.W-L.sidePadding-8,20,'↑','#b05a4a');
+}
+
+// ===== 动画：每帧只重算两条波浪线，静态内容不再重建 =====
+function renderWaves(){
+    if(!pathA||!pathB)return;
+    pathA.setAttribute('d',buildBezierPath(generateWavePoints(1,L.spacing,L.amp,phaseA)));
+    pathB.setAttribute('d',buildBezierPath(generateWavePoints(-1,L.spacing,L.amp,phaseB)));
+}
+
+function animate(time){
+    if(!lastTime)lastTime=time;
+    var delta=(time-lastTime)/1000;
+    lastTime=time;
+    var omega=(2*Math.PI)/PERIOD;
+    var dPhase=delta*omega;
+    phaseA+=dPhase;
+    phaseB-=dPhase;
+    var twoPi=2*Math.PI;
+    while(phaseA>twoPi)phaseA-=twoPi;
+    while(phaseA<0)phaseA+=twoPi;
+    while(phaseB>twoPi)phaseB-=twoPi;
+    while(phaseB<0)phaseB+=twoPi;
+    renderWaves();
+    requestAnimationFrame(animate);
 }
 
 // ===== 详情面板 =====
@@ -374,213 +533,56 @@ function buildDetailPanel(){
     if(first)first.classList.add('active');
 }
 
+// 缩放比恒为 1，节点坐标即真实滚动像素，直接定位
 function scrollToNode(index){
-    var y=L.startY+index*L.nodeSpacing;
-    var totalH=L.finalHeight+60;
-    var percent=(y-20)/totalH;
-    if(scrollContainer){
-        var target=scrollContainer.scrollHeight*Math.max(0,Math.min(1,percent));
-        scrollContainer.scrollTo({top:target-80,behavior:'smooth'});
+    if(scrollContainer&&nodeYs[index]!=null){
+        scrollContainer.scrollTo({top:Math.max(0,nodeYs[index]-60),behavior:'smooth'});
     }
 }
 window.scrollToNode=scrollToNode;
 
-// ===== 渲染 =====
-function render(){
-    while(svg.firstChild)svg.removeChild(svg.firstChild);
-
-    // 中心轴线
-    var axis=document.createElementNS(ns,'line');
-    axis.setAttribute('x1',L.cx);
-    axis.setAttribute('y1',L.startY);
-    axis.setAttribute('x2',L.cx);
-    axis.setAttribute('y2',L.finalHeight-20);
-    axis.setAttribute('stroke','#D49A9A');
-    axis.setAttribute('stroke-width',4);
-    axis.setAttribute('opacity','0.4');
-    axis.setAttribute('stroke-linecap','round');
-    svg.appendChild(axis);
-
-    // 波浪线
-    var ptsA=generateWavePoints(1,L.spacing,L.amp,phaseA);
-    var ptsB=generateWavePoints(-1,L.spacing,L.amp,phaseB);
-    var pathA=document.createElementNS(ns,'path');
-    pathA.setAttribute('d',buildBezierPath(ptsA));
-    pathA.setAttribute('stroke','#2a6b8a');
-    pathA.setAttribute('stroke-width',2);
-    pathA.setAttribute('fill','none');
-    pathA.setAttribute('stroke-linecap','round');
-    pathA.setAttribute('opacity',OPACITY);
-    svg.appendChild(pathA);
-    var pathB=document.createElementNS(ns,'path');
-    pathB.setAttribute('d',buildBezierPath(ptsB));
-    pathB.setAttribute('stroke','#b05a4a');
-    pathB.setAttribute('stroke-width',2);
-    pathB.setAttribute('fill','none');
-    pathB.setAttribute('stroke-linecap','round');
-    pathB.setAttribute('opacity',OPACITY);
-    svg.appendChild(pathB);
-
-    // 节点
-    for(var i=0;i<numNodes;i++){
-        var y=L.startY+i*L.nodeSpacing;
-        var data=dialogData[i];
-        var side=data.side;
-
-        // 星标
-        var star=document.createElementNS(ns,'text');
-        star.setAttribute('x',L.cx);
-        star.setAttribute('y',y+5);
-        star.setAttribute('text-anchor','middle');
-        star.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-        star.setAttribute('font-size',L.starSize);
-        star.setAttribute('fill','#7ab8d4');
-        star.setAttribute('opacity','0.8');
-        star.textContent='✦';
-        svg.appendChild(star);
-
-        var dashY=y+L.dashOffset;
-
-        if(side==='left'){
-            var dashStart=L.sidePadding;
-            var dashEnd=L.cx-28;
-            var flowerX=dashStart+(dashEnd-dashStart)*0.4;
-            var dash=document.createElementNS(ns,'line');
-            dash.setAttribute('x1',dashStart);
-            dash.setAttribute('y1',dashY);
-            dash.setAttribute('x2',dashEnd);
-            dash.setAttribute('y2',dashY);
-            dash.setAttribute('stroke','#e07070');
-            dash.setAttribute('stroke-width',2);
-            dash.setAttribute('opacity','0.5');
-            dash.setAttribute('stroke-dasharray','5,6');
-            svg.appendChild(dash);
-            var flower=document.createElementNS(ns,'text');
-            flower.setAttribute('x',flowerX);
-            flower.setAttribute('y',dashY+6);
-            flower.setAttribute('text-anchor','middle');
-            flower.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-            flower.setAttribute('font-size',L.flowerSize);
-            flower.setAttribute('fill','#e07070');
-            flower.setAttribute('opacity','0.85');
-            flower.textContent='❀';
-            svg.appendChild(flower);
-        }else{
-            var dashStart2=L.cx+28;
-            var dashEnd2=L.W-L.sidePadding;
-            var flowerX2=dashStart2+(dashEnd2-dashStart2)*0.6;
-            var dash2=document.createElementNS(ns,'line');
-            dash2.setAttribute('x1',dashStart2);
-            dash2.setAttribute('y1',dashY);
-            dash2.setAttribute('x2',dashEnd2);
-            dash2.setAttribute('y2',dashY);
-            dash2.setAttribute('stroke','#7ab8d4');
-            dash2.setAttribute('stroke-width',2);
-            dash2.setAttribute('opacity','0.5');
-            dash2.setAttribute('stroke-dasharray','5,6');
-            svg.appendChild(dash2);
-            var flower2=document.createElementNS(ns,'text');
-            flower2.setAttribute('x',flowerX2);
-            flower2.setAttribute('y',dashY+6);
-            flower2.setAttribute('text-anchor','middle');
-            flower2.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-            flower2.setAttribute('font-size',L.flowerSize);
-            flower2.setAttribute('fill','#e07070');
-            flower2.setAttribute('opacity','0.85');
-            flower2.textContent='❀';
-            svg.appendChild(flower2);
-        }
-
-        var labelY=dashY+L.labelOffset;
-        var labelX=(side==='left')?L.cx-L.centerGap:L.cx+L.centerGap;
-        var anchorLabel=(side==='left')?'end':'start';
-        var label=document.createElementNS(ns,'text');
-        label.setAttribute('x',labelX);
-        label.setAttribute('y',labelY);
-        label.setAttribute('text-anchor',anchorLabel);
-        label.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
-        label.setAttribute('font-size',L.labelSize);
-        label.setAttribute('font-weight','600');
-        label.setAttribute('fill','#555555');
-        label.setAttribute('opacity','0.8');
-        label.setAttribute('letter-spacing','0.8px');
-        label.textContent=data.label;
-        svg.appendChild(label);
-
-        var textBaseX=(side==='left')?L.cx-L.centerGap:L.cx+L.centerGap;
-        var textStartY=labelY+L.dialogStartOffset;
-        drawDialogBlock(side,data.lines,data.ref,textBaseX,textStartY);
+// ===== 重建全部（初始化 / 窗口变化时） =====
+function rebuildAll(){
+    L=getLayout();
+    computeNodeLayout();
+    applyLayout();
+    buildScene();
+    renderWaves();
+    // 滚动条出现/消失会改变容器宽度，校准一次保持 1:1 精确
+    var w2=(scrollContainer?scrollContainer.clientWidth:0);
+    if(w2>0&&Math.abs(w2-L.W)>2){
+        L=getLayout();
+        computeNodeLayout();
+        applyLayout();
+        buildScene();
+        renderWaves();
     }
-
-    // 方向箭头（字号自适应）
-    function addDir(x,y,text,color){
-        var t=document.createElementNS(ns,'text');
-        t.setAttribute('x',x);
-        t.setAttribute('y',y);
-        t.setAttribute('text-anchor','middle');
-        t.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
-        t.setAttribute('font-size',L.refSize);
-        t.setAttribute('fill',color);
-        t.setAttribute('opacity','0.3');
-        t.textContent=text;
-        svg.appendChild(t);
-    }
-    addDir(L.sidePadding+8,20,'↓','#2a6b8a');
-    addDir(L.W-L.sidePadding-8,20,'↑','#b05a4a');
 }
 
-// ===== 动画 =====
-function animate(time){
-    if(!lastTime)lastTime=time;
-    var delta=(time-lastTime)/1000;
-    lastTime=time;
-    var omega=(2*Math.PI)/PERIOD;
-    var dPhase=delta*omega;
-    phaseA+=dPhase;
-    phaseB-=dPhase;
-    var twoPi=2*Math.PI;
-    while(phaseA>twoPi)phaseA-=twoPi;
-    while(phaseA<0)phaseA+=twoPi;
-    while(phaseB>twoPi)phaseB-=twoPi;
-    while(phaseB<0)phaseB+=twoPi;
-    render();
-    requestAnimationFrame(animate);
-}
-
-// ===== 窗口大小变化自适应（修复：原代码无 resize 监听）=====
 var resizeTimer=null;
 window.addEventListener('resize',function(){
     if(resizeTimer)clearTimeout(resizeTimer);
-    resizeTimer=setTimeout(function(){
-        L=getLayout();
-        applyLayout();
-    },200);
+    resizeTimer=setTimeout(rebuildAll,200);
 });
 
 // ===== 初始化 =====
 buildDetailPanel();
+rebuildAll();
 phaseA=0;
 phaseB=Math.PI;
 requestAnimationFrame(animate);
 
-setTimeout(function(){
-    if(scrollContainer)scrollContainer.style.overflow='auto';
-    var dl=document.getElementById('detailList');
-    if(dl)dl.style.overflowY='auto';
-},100);
-
-console.log('✅ 修复版已加载');
+console.log('✅ 1:1 缩放修复版已加载');
 console.log('  布局参数:',{
     isMobile:L.isMobile,
-    W:L.W,
-    cx:L.cx,
-    textSize:L.textSize,
-    maxChars:L.maxChars,
-    nodeSpacing:L.nodeSpacing,
-    finalHeight:L.finalHeight,
-    containerHeight:L.containerHeight
+    viewBox宽:L.W,
+    viewBox高:viewBoxH,
+    字号:L.textSize,
+    每行字数:L.maxChars,
+    窗口高:L.isMobile?'60vh':document.querySelector('.preview-wrap').style.height
 });
 })();
+
 </script>
 </body>
 </html>
