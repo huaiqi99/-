@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>归终殿 · 血脉羁绊</title>
 <style>
-:root{--bg-body:#f7f4ef;--bg-card:var(--bg-card);--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;--gold:#FFB90F;--purple:#9370DB;--axis-rose:#d4a0a8;--lin-blue:#2a6b8a;--luan-red:#b05a4a}
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;--gold:#FFB90F;--purple:#9370DB;--axis-rose:#d4a0a8;--lin-blue:#2a6b8a;--luan-red:#b05a4a}
 [data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
 body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
 body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
@@ -73,10 +73,11 @@ body.no-scroll{overflow:hidden}
 .river-btn:active{transform:scale(.96)}
 .river-hint{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.3px;opacity:.6;margin-top:2px;animation:hintPulse 2s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:.9}}
-.river-img-slot{position:absolute;top:12px;right:12px;width:45%;height:30%;border:1.5px dashed var(--border-card);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.5px;text-align:center;line-height:1.3;background:var(--bg-hover);opacity:.4;transition:opacity .3s;padding:4px;pointer-events:none;z-index:5}
+.river-img-slot{position:absolute;top:12px;right:12px;width:45%;height:30%;border:1.5px dashed var(--border-card);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.5px;text-align:center;line-height:1.3;background:var(--bg-hover);opacity:.4;transition:opacity .3s;padding:4px;pointer-events:none;z-index:5;overflow:hidden}
 .river-img-slot:hover{opacity:.7}
 .river-img-slot .slot-label{display:flex;flex-direction:column;align-items:center;gap:2px}
 .river-img-slot .slot-label .icon{font-size:1.6rem;opacity:.5}
+.river-img-slot img{width:100%;height:100%;object-fit:cover;border-radius:2px;display:block}
 .river-float-text{position:fixed;pointer-events:none;z-index:50;font-family:var(--font-serif);font-size:1.1rem;color:var(--profile-accent);opacity:0;transform:translateY(0)scale(.9);text-shadow:0 0 20px rgba(0,0,0,.05);max-width:300px;text-align:center;font-style:italic;line-height:1.5}
 .river-float-text.show{animation:floatUp 2.8s ease-out forwards}
 @keyframes floatUp{0%{opacity:0;transform:translateY(0)scale(.8)}20%{opacity:1;transform:translateY(-20px)scale(1)}80%{opacity:1;transform:translateY(-120px)scale(1)}100%{opacity:0;transform:translateY(-200px)scale(.9)}}
@@ -90,11 +91,15 @@ body.no-scroll{overflow:hidden}
 .wave-row{display:flex;gap:16px;align-items:stretch;width:100%}
 .wave-card{flex:2;min-width:0}
 .wave-detail{flex:1;min-width:0}
-.wave-preview-wrap{position:relative;width:100%;overflow:auto;background:var(--bg-body);border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch;max-height:560px}
+/* ===== 父母爱情 · 白底 + 渐变虚线内边框 ===== */
+.wave-preview-wrap{position:relative;width:100%;overflow:auto;background:#ffffff;border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch;max-height:560px;padding:3px;z-index:0}
+.wave-preview-wrap::before{content:'';position:absolute;inset:0;border-radius:4px;padding:2px;background:transparent;pointer-events:none;z-index:1;-webkit-mask:linear-gradient(#fff 0 0) content-box,repeating-linear-gradient(45deg,#000 0,#000 4px,transparent 4px,transparent 8px);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,repeating-linear-gradient(45deg,#000 0,#000 4px,transparent 4px,transparent 8px);mask-composite:exclude}
+body[data-profile="linxiwu"] .wave-preview-wrap::before{background:linear-gradient(135deg,#2a6b8a,#b05a4a)}
+body[data-profile="luojin"] .wave-preview-wrap::before{background:linear-gradient(135deg,#9370DB,#FFB90F)}
 .wave-preview-wrap::-webkit-scrollbar{width:6px;height:6px}
 .wave-preview-wrap::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
 .wave-preview-wrap::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:.5}
-.wave-preview-wrap svg{display:block;width:100%;height:auto;background:transparent;overflow:visible}
+.wave-preview-wrap svg{display:block;width:100%;height:auto;background:transparent;overflow:visible;position:relative;z-index:2}
 .detail-list-w{flex:1;overflow-y:auto;min-height:100px;-webkit-overflow-scrolling:touch;max-height:560px}
 .detail-list-w::-webkit-scrollbar{width:5px}
 .detail-list-w::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
@@ -181,7 +186,7 @@ body.no-scroll{overflow:hidden}
 <div class="card-title">羁绊共鸣 · 雨落长河</div>
 <div class="river-wrap" id="riverWrapLin">
 <canvas id="riverCanvasLin"></canvas>
-<div class="river-img-slot"><div class="river-img-slot"><img src="你的图片路径.jpg" alt="描述" style="width:100%;height:100%;object-fit:cover;border-radius:4px;" /></div>
+<div class="river-img-slot"><img src="你的图片路径.jpg" alt="描述" /></div>
 <div class="river-overlay">
 <div class="river-left">
 <div class="river-pct-row"><span class="river-pct" id="riverPctLin">42%</span><span class="river-stage" id="riverStageLin">花叶初展</span></div>
