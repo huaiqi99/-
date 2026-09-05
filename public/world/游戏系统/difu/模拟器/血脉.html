@@ -91,11 +91,15 @@ body.no-scroll{overflow:hidden}
 .wave-row{display:flex;gap:16px;align-items:stretch;width:100%}
 .wave-card{flex:2;min-width:0}
 .wave-detail{flex:1;min-width:0}
-/* ===== 父母爱情 · 白底 + 渐变虚线内边框 ===== */
-.wave-preview-wrap{position:relative;width:100%;overflow:auto;background:#ffffff;border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch;max-height:560px;padding:3px;z-index:0}
-.wave-preview-wrap::before{content:'';position:absolute;inset:0;border-radius:4px;padding:2px;background:transparent;pointer-events:none;z-index:1;-webkit-mask:linear-gradient(#fff 0 0) content-box,repeating-linear-gradient(45deg,#000 0,#000 4px,transparent 4px,transparent 8px);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,repeating-linear-gradient(45deg,#000 0,#000 4px,transparent 4px,transparent 8px);mask-composite:exclude}
-body[data-profile="linxiwu"] .wave-preview-wrap::before{background:linear-gradient(135deg,#2a6b8a,#b05a4a)}
-body[data-profile="luojin"] .wave-preview-wrap::before{background:linear-gradient(135deg,#9370DB,#FFB90F)}
+/* ===== 父母爱情 · 白底 + 渐变虚线内边框（真虚线 · 静止 · 不随滚动移动） ===== */
+.wave-preview-frame{position:relative}
+.wave-preview-wrap{position:relative;width:100%;overflow:auto;background:#ffffff;border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch;max-height:560px;padding:6px;z-index:0}
+/* 真虚线实现：SVG rect 描边指向渐变，stroke-dasharray 产生虚线。
+   边框层放在滚动容器外层，内容怎么滚、波形怎么动，边框都纹丝不动。 */
+.wave-dash-border{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.wave-dash-border rect{x:2px;y:2px;width:calc(100% - 4px);height:calc(100% - 4px);rx:2px;ry:2px;fill:none;stroke-width:2;stroke-dasharray:8 6}
+body[data-profile="linxiwu"] .wave-dash-border rect{stroke:url(#gradBluePink)}
+body[data-profile="luojin"] .wave-dash-border rect{stroke:url(#gradPurpleGold)}
 .wave-preview-wrap::-webkit-scrollbar{width:6px;height:6px}
 .wave-preview-wrap::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
 .wave-preview-wrap::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:.5}
@@ -128,6 +132,18 @@ body[data-profile="luojin"] .wave-preview-wrap::before{background:linear-gradien
 </style>
 </head>
 <body data-profile="linxiwu">
+
+<!-- 渐变定义：全页放这一份即可 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<linearGradient id="gradBluePink" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#2a6b8a"/><stop offset="0.55" stop-color="#7ab8d4"/><stop offset="1" stop-color="#e07070"/>
+</linearGradient>
+<linearGradient id="gradPurpleGold" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#9370DB"/><stop offset="0.55" stop-color="#b48ec7"/><stop offset="1" stop-color="#FFB90F"/>
+</linearGradient>
+</defs>
+</svg>
 
 <div class="float-group">
 <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
@@ -201,8 +217,11 @@ body[data-profile="luojin"] .wave-preview-wrap::before{background:linear-gradien
 <div class="wave-card card" data-corner="❀" style="margin-bottom:0;">
 <span class="corner-deco">❀</span>
 <div class="card-title">父母爱情 · 林淮 &amp; 栾方棋</div>
+<div class="wave-preview-frame">
+<svg class="wave-dash-border" aria-hidden="true"><rect x="2" y="2" width="100%" height="100%" rx="2"/></svg>
 <div class="wave-preview-wrap" id="waveScrollLin">
 <svg id="waveSvgLin" preserveAspectRatio="xMidYMin meet"></svg>
+</div>
 </div>
 <div style="font-size:.55rem;color:var(--text-muted);text-align:center;padding-top:4px;font-family:var(--font-mono);opacity:.4;letter-spacing:.3px;">波形流动 · 对话左右交替</div>
 </div>
@@ -259,8 +278,11 @@ body[data-profile="luojin"] .wave-preview-wrap::before{background:linear-gradien
 <div class="wave-card card" data-corner="◈" style="margin-bottom:0;">
 <span class="corner-deco">◈</span>
 <div class="card-title">父母爱情 · 罗修 &amp; 魏元璟</div>
+<div class="wave-preview-frame">
+<svg class="wave-dash-border" aria-hidden="true"><rect x="2" y="2" width="100%" height="100%" rx="2"/></svg>
 <div class="wave-preview-wrap" id="waveScrollLuo">
 <svg id="waveSvgLuo" preserveAspectRatio="xMidYMin meet"></svg>
+</div>
 </div>
 <div style="font-size:.55rem;color:var(--text-muted);text-align:center;padding-top:4px;font-family:var(--font-mono);opacity:.4;letter-spacing:.3px;">波形流动 · 对话左右交替</div>
 </div>
