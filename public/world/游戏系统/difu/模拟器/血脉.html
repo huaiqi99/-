@@ -3,539 +3,285 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>血脉羁绊 · 预览（1:1 缩放修复版）</title>
+<title>归终殿 · 血脉羁绊</title>
 <style>
-:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-muted:#8a8a8a;--profile-accent:#D49A9A;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--lin-blue:#2a6b8a;--luan-red:#b05a4a;--pink-flower:#e07070;--blue-light:#7ab8d4}
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;--gold:#FFB90F;--purple:#9370DB;--axis-rose:#d4a0a8;--lin-blue:#2a6b8a;--luan-red:#b05a4a}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);padding:0 16px 40px 16px;min-height:100vh;display:flex;justify-content:center}
-.app-wrap{max-width:900px;width:100%;padding-top:16px;display:flex;flex-direction:column;gap:14px}
-.header{padding:0 4px 10px 4px;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:6px}
-.header h1{font-size:1.2rem;font-weight:700}
-.header h1 .accent{color:var(--profile-accent);font-weight:400}
-.header .sub{font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:1.5px}
-.main-row{display:flex;flex-direction:row;gap:16px;align-items:stretch;width:100%;min-height:500px}
-.main-card{flex:2;min-width:0;width:100%;background:var(--bg-card);border:1px solid var(--border-card);border-radius:8px;padding:14px 12px 12px 12px;box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.04);overflow:hidden;display:flex;flex-direction:column}
-.card-title{font-size:0.9rem;font-weight:600;color:var(--text-muted);padding-bottom:8px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:8px;flex-shrink:0;margin-top:0}
-.card-title .sym{color:var(--profile-accent)}
-.preview-wrap{position:relative;width:100%;overflow:auto;background:var(--bg-body);border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch}
-.preview-wrap::-webkit-scrollbar{width:6px;height:6px}
-.preview-wrap::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
-.preview-wrap::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:0.5}
-.preview-wrap svg{display:block;width:100%;height:auto;background:transparent;overflow:visible}
-.detail-panel{flex:1;min-width:0;width:100%;background:var(--bg-card);border:1px solid var(--border-card);border-radius:8px;padding:16px 14px;box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,0.04);display:flex;flex-direction:column;overflow:hidden}
-.detail-panel .panel-title{font-weight:600;font-size:0.85rem;color:var(--text-primary);border-bottom:1px solid var(--border-light);padding-bottom:8px;margin-bottom:10px;letter-spacing:0.5px;flex-shrink:0}
-.detail-panel .panel-title .sym{color:var(--profile-accent)}
-.detail-list{flex:1;overflow-y:auto;min-height:100px;-webkit-overflow-scrolling:touch}
-.detail-list::-webkit-scrollbar{width:5px}
-.detail-list::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
-.detail-list::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:0.5}
-.detail-item{padding:6px 0 6px 8px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background 0.2s;border-radius:4px;font-size:0.75rem}
-.detail-item:hover{background:var(--bg-body)}
-.detail-item .label{font-weight:500;color:var(--text-primary);font-size:0.75rem;font-family:var(--font-mono);letter-spacing:0.3px}
-.detail-item .preview{font-size:0.65rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
-.detail-item.active{background:rgba(212,154,154,0.12);border-left:2px solid var(--profile-accent)}
-/* 已移除 .legend 样式，图例已删除 */
-.status-msg{font-size:0.6rem;font-family:var(--font-mono);color:var(--text-muted);text-align:center;padding:4px 0 0 0;opacity:0.3;letter-spacing:0.5px;flex-shrink:0}
-@media(max-width:820px){.main-row{flex-direction:column;min-height:70vh;gap:12px}.main-card,.detail-panel{flex:1;min-height:0;max-height:none;overflow:auto}.main-card{order:1}.detail-panel{order:2}.preview-wrap{min-height:200px;max-height:60vh;height:auto}.detail-list{min-height:60px}body{padding:0 10px 30px 10px}.main-card{padding:10px 8px}.detail-panel{padding:12px 10px}}
-@media(max-width:480px){.main-row{min-height:60vh}.header h1{font-size:1rem}.header .sub{font-size:0.55rem}.card-title{font-size:0.8rem}.detail-panel .panel-title{font-size:0.75rem}}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+#app{max-width:1020px;margin:0 auto;width:100%;padding:20px 4px 0 4px}
+.top-header{max-width:1020px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--border-light)}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition)}
+.top-header .profile-name{font-size:.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.5px;margin-left:2px}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600}
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,.25);transform:translateX(-100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-panel.open{transform:translateX(0)}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition)}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent)}
+.sidebar-panel .panel-title{font-size:.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono)}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.sidebar-panel .nav-item.active{background:rgba(138,58,42,.04);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s;width:100%;text-align:center}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,.04)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.sidebar-overlay.show{opacity:1;pointer-events:auto}
+body.no-scroll{overflow:hidden}
+.content-block{display:none}
+.content-block.active{display:block}
+.card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,.06);transition:border-color var(--transition),box-shadow var(--transition),transform .25s ease;animation:cardIn .45s ease forwards;line-height:1.6}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,248,240,.03)0%,transparent 70%),radial-gradient(ellipse at 70% 80%,rgba(255,248,240,.02)0%,transparent 60%);z-index:0}
+.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:.75;z-index:2;transition:all .3s}
+.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:.75;z-index:2;transition:all .3s;pointer-events:none}
+.card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 6px 20px rgba(0,0,0,.12)}
+.card:hover::after,.card:hover .corner-deco{opacity:1;transform:scale(1.1)}
+.card-title{font-size:.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1}
+.card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:.5;border-radius:1px}
+.card-grad{background:linear-gradient(135deg,var(--bg-card)0%,var(--bg-hover)100%)}
+.talent-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
+.talent-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:4px;padding:14px 16px 12px 16px;transition:all var(--transition);cursor:default}
+.talent-card:hover{border-color:var(--profile-accent);transform:translateY(-3px);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.talent-card .t-icon{font-size:1rem;color:var(--profile-accent);margin-right:6px}
+.talent-card .t-name{font-weight:600;font-size:.9rem;color:var(--text-primary);display:flex;align-items:center;gap:4px}
+.talent-card .t-source{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:1px}
+.talent-card .t-desc{font-size:.8rem;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+.talent-card .t-bar-wrap{width:100%;height:4px;background:var(--border-light);border-radius:2px;overflow:hidden;margin-top:8px}
+.talent-card .t-bar-fill{height:100%;border-radius:2px;transition:width 1.2s ease;width:0%;background:var(--profile-accent)}
+.talent-card .t-pct{font-size:.65rem;font-family:var(--font-mono);color:var(--text-muted);float:right;margin-top:-14px}
+.river-wrap{position:relative;z-index:1;border-radius:4px;overflow:hidden;border:1px solid var(--border-light);background:var(--bg-body);min-height:340px}
+.river-wrap canvas{display:block;width:100%;height:100%;min-height:340px;background:transparent}
+.river-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 16px 12px 16px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;background:linear-gradient(0deg,var(--bg-body)0%,transparent 100%);pointer-events:none}
+.river-overlay>*{pointer-events:auto}
+.river-left{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.river-pct-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.river-pct{font-size:1.6rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);letter-spacing:1px;line-height:1.2}
+.river-stage{font-size:.85rem;color:var(--text-secondary);font-style:italic}
+.river-btn{padding:5px 16px;border-radius:20px;border:1.5px solid var(--profile-accent);background:var(--bg-card);color:var(--profile-accent);font-family:var(--font-serif);font-size:.8rem;cursor:pointer;transition:all .25s;pointer-events:auto;margin-top:2px;letter-spacing:.5px}
+.river-btn:hover{background:var(--profile-accent);color:#fff;transform:scale(1.02)}
+.river-btn:active{transform:scale(.96)}
+.river-hint{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.3px;opacity:.6;margin-top:2px;animation:hintPulse 2s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:.9}}
+.river-img-slot{position:absolute;top:12px;right:12px;width:45%;height:30%;border:1.5px dashed var(--border-card);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.5px;text-align:center;line-height:1.3;background:var(--bg-hover);opacity:.4;transition:opacity .3s;padding:4px;pointer-events:none;z-index:5}
+.river-img-slot:hover{opacity:.7}
+.river-img-slot .slot-label{display:flex;flex-direction:column;align-items:center;gap:2px}
+.river-img-slot .slot-label .icon{font-size:1.6rem;opacity:.5}
+.river-float-text{position:fixed;pointer-events:none;z-index:50;font-family:var(--font-serif);font-size:1.1rem;color:var(--profile-accent);opacity:0;transform:translateY(0)scale(.9);text-shadow:0 0 20px rgba(0,0,0,.05);max-width:300px;text-align:center;font-style:italic;line-height:1.5}
+.river-float-text.show{animation:floatUp 2.8s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0)scale(.8)}20%{opacity:1;transform:translateY(-20px)scale(1)}80%{opacity:1;transform:translateY(-120px)scale(1)}100%{opacity:0;transform:translateY(-200px)scale(.9)}}
+.story-dot{position:absolute;width:36px;height:36px;border-radius:50%;cursor:pointer;z-index:20;pointer-events:auto;background:rgba(255,255,255,0.15);border:2px solid #fff;box-shadow:0 0 30px var(--profile-accent),0 0 60px var(--profile-accent),inset 0 0 20px rgba(255,255,255,0.3);animation:dotGlow 1.8s ease-in-out infinite;transition:transform .2s;display:flex;align-items:center;justify-content:center}
+.story-dot::after{content:'✦';font-size:16px;color:#fff;text-shadow:0 0 10px rgba(255,255,255,0.8);font-family:var(--font-serif)}
+.story-dot:hover{transform:scale(1.25);box-shadow:0 0 50px var(--profile-accent),0 0 90px var(--profile-accent),inset 0 0 30px rgba(255,255,255,0.5)}
+@keyframes dotGlow{0%,100%{box-shadow:0 0 30px var(--profile-accent),0 0 60px var(--profile-accent),inset 0 0 20px rgba(255,255,255,0.2);transform:scale(1)}50%{box-shadow:0 0 50px var(--profile-accent),0 0 100px var(--profile-accent),inset 0 0 30px rgba(255,255,255,0.4);transform:scale(1.05)}}
+.story-dot .dot-ring{position:absolute;width:70px;height:70px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);animation:ringExpand 2.5s ease-out infinite}
+.story-dot .dot-ring:nth-child(2){animation-delay:.8s;width:90px;height:90px}
+@keyframes ringExpand{0%{transform:scale(0.3);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+.wave-row{display:flex;gap:16px;align-items:stretch;width:100%}
+.wave-card{flex:2;min-width:0}
+.wave-detail{flex:1;min-width:0}
+.wave-preview-wrap{position:relative;width:100%;overflow:auto;background:var(--bg-body);border-radius:4px;margin-top:2px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch;max-height:560px}
+.wave-preview-wrap::-webkit-scrollbar{width:6px;height:6px}
+.wave-preview-wrap::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
+.wave-preview-wrap::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:.5}
+.wave-preview-wrap svg{display:block;width:100%;height:auto;background:transparent;overflow:visible}
+.detail-list-w{flex:1;overflow-y:auto;min-height:100px;-webkit-overflow-scrolling:touch;max-height:560px}
+.detail-list-w::-webkit-scrollbar{width:5px}
+.detail-list-w::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
+.detail-list-w::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:.5}
+.detail-item-w{padding:6px 0 6px 8px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background .2s;border-radius:4px;font-size:.75rem;display:flex;flex-direction:column}
+.detail-item-w:hover{background:var(--bg-body)}
+.detail-item-w .label{font-weight:500;color:var(--text-primary);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.3px}
+.detail-item-w .preview{font-size:.65rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
+.detail-item-w.active{background:rgba(138,58,42,.08);border-left:2px solid var(--profile-accent)}
+.story-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;opacity:0;pointer-events:none;transition:opacity .35s ease;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(2px)}
+.story-modal-overlay.open{opacity:1;pointer-events:auto}
+.story-modal{background:var(--bg-card);border:1px solid var(--border-card);border-radius:8px;max-width:480px;width:100%;padding:28px 28px 24px 28px;box-shadow:0 16px 48px rgba(0,0,0,.25);transform:translateY(20px)scale(.96);transition:transform .3s ease;position:relative;max-height:80vh;overflow-y:auto}
+.story-modal-overlay.open .story-modal{transform:translateY(0)scale(1)}
+.story-modal .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.4rem;color:var(--text-muted);cursor:pointer;transition:color .2s;font-family:var(--font-serif);line-height:1}
+.story-modal .modal-close:hover{color:var(--profile-accent)}
+.story-modal .modal-title{font-size:1.05rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;padding-right:28px;letter-spacing:.5px}
+.story-modal .modal-sub{font-size:.75rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:14px;letter-spacing:.3px}
+.story-modal .modal-body{font-size:.95rem;color:var(--text-secondary);line-height:1.8;padding:12px 0 4px 0;border-top:1px solid var(--border-light)}
+.story-modal .modal-body .story-quote{padding-left:12px;border-left:3px solid var(--profile-accent);font-style:italic}
+.story-modal .modal-body .story-desc{margin-top:12px;font-style:normal;color:var(--text-secondary)}
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
+@keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh + 50px))rotate(360deg);opacity:0}}
+@media(max-width:820px){.wave-row{flex-direction:column}.wave-card{order:1}.wave-detail{order:2}.talent-grid{grid-template-columns:1fr 1fr;gap:8px}.river-img-slot{width:40%;height:22%}.preview-wrap{min-height:200px;max-height:60vh;height:auto}.wave-preview-wrap{min-height:200px;max-height:50vh}body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}.talent-card{padding:10px 12px 10px 12px}.talent-card .t-name{font-size:.8rem}.talent-card .t-desc{font-size:.72rem}.river-wrap{min-height:260px}.river-wrap canvas{min-height:260px}.river-pct{font-size:1.3rem}.river-stage{font-size:.75rem}.river-btn{font-size:.72rem;padding:4px 12px}.river-img-slot{font-size:.45rem}.river-img-slot .slot-label .icon{font-size:1.2rem}.river-overlay{padding:8px 12px 10px 12px}.story-modal{padding:20px 18px 18px 18px;margin:12px}.story-modal .modal-title{font-size:.95rem}.story-modal .modal-body{font-size:.88rem}.wave-preview-wrap{max-height:400px}.detail-list-w{max-height:300px}.story-dot{width:30px;height:30px}.story-dot::after{font-size:13px}.story-dot .dot-ring{width:54px;height:54px}.story-dot .dot-ring:nth-child(2){width:70px;height:70px}}
+@media(max-width:480px){.talent-grid{grid-template-columns:1fr 1fr;gap:6px}.talent-card{padding:8px 10px 8px 10px}.talent-card .t-name{font-size:.75rem}.talent-card .t-desc{font-size:.68rem}.talent-card .t-source{font-size:.6rem}.river-wrap{min-height:200px}.river-wrap canvas{min-height:200px}.river-pct{font-size:1.1rem}.river-stage{font-size:.7rem}.river-btn{font-size:.65rem;padding:3px 10px;border-width:1.5px}.river-img-slot{width:45%;height:18%;font-size:.4rem;border-width:1px}.river-img-slot .slot-label .icon{font-size:.9rem}.river-overlay{padding:6px 10px 8px 10px;flex-wrap:wrap;gap:4px}.river-left{gap:2px}.river-pct-row{gap:4px}.story-modal{padding:16px 14px 14px 14px;margin:8px}.story-modal .modal-title{font-size:.88rem}.story-modal .modal-body{font-size:.82rem;padding:8px 0 2px 0}.story-modal .modal-body .story-quote{padding-left:8px}.wave-preview-wrap{max-height:300px}.detail-list-w{max-height:200px}.story-dot{width:26px;height:26px}.story-dot::after{font-size:11px}.story-dot .dot-ring{width:44px;height:44px}.story-dot .dot-ring:nth-child(2){width:58px;height:58px}}
 </style>
 </head>
-<body>
+<body data-profile="linxiwu">
 
-<div class="app-wrap">
-<div class="header">
-<h1>❤ 血脉羁绊 · <span class="accent">预览</span></h1>
-<span class="sub" id="headerSub">波峰间距 510px · 周期 14.5s</span>
+<div class="float-group">
+<a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+<button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
 </div>
 
-<div class="main-row">
-
-<div class="main-card">
-<div class="card-title"><span class="sym">❀</span> 林淮 · 栾方棋</div>
-<div class="preview-wrap" id="scrollContainer">
-<svg id="wavePreview" preserveAspectRatio="xMidYMin meet"></svg>
-</div>
-<!-- 图例已完全删除 -->
-<div class="status-msg">⏳ 波形流动 · 对话左右交替 · 点击右侧详情跳转</div>
-</div>
-
-<div class="detail-panel">
-<div class="panel-title"><span class="sym">✦</span> 对话详情</div>
-<div class="detail-list" id="detailList"></div>
-</div>
-
-</div>
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+<button class="close-btn">✕</button>
+<div class="panel-title">◈ 归终殿 · 导航</div>
+<a class="nav-item" href="#"><span class="sym">◈</span> 命簿纪事</a>
+<a class="nav-item" href="#"><span class="sym">✦</span> 引渡人档案</a>
+<a class="nav-item" href="#"><span class="sym">❖</span> 魂力与状态</a>
+<a class="nav-item" href="#"><span class="sym">✿</span> 院阁修习表</a>
+<a class="nav-item" href="#"><span class="sym">✧</span> 同僚与十席</a>
+<a class="nav-item active" href="#"><span class="sym">❤</span> 血脉羁绊</a>
+<a class="nav-item" href="#"><span class="sym">◆</span> 差事与外勤</a>
+<button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+<div class="panel-footer">归终殿弟子手册 · 内部流通</div>
 </div>
 
-<script>
-(function(){
-var svg=document.getElementById('wavePreview');
-var detailList=document.getElementById('detailList');
-var scrollContainer=document.getElementById('scrollContainer');
-var ns='http://www.w3.org/2000/svg';
+<div class="top-header">
+<div class="page-title"><span class="sym">❤</span> 血脉羁绊</div>
+<div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
+</div>
 
-/* 波浪参数（按要求调整） */
-var OPACITY=0.27;
-var PERIOD=14.5;
-var phaseA=0,phaseB=0,lastTime=0;
+<div id="app">
 
-var DESKTOP_WINDOW_MAX=2200;
+<!-- ===== 林栖梧 ===== -->
+<div class="content-block active" id="content-linxiwu">
 
-var dialogData=[
-{side:'right',label:'初识 · 国师府',lines:[{speaker:'林淮',text:'「属下没有名字，只有编号卯九。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「你叫什么名字？」',color:'#b05a4a'},{speaker:'秦墨予',text:'「既然有名字，你以后就叫林淮。」',color:'#b05a4a'}],ref:'——第77章'},
-{side:'left',label:'走近 · 书房教字',lines:[{speaker:'林淮',text:'「国师大人，这不合规矩。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「过来，我教你‘林淮’两个字怎么写。」',color:'#b05a4a'},{speaker:'秦墨予',text:'「在这里，我就是规矩。」',color:'#b05a4a'}],ref:'——第77章'},
-{side:'right',label:'第一次动心 · 柳州山洞',lines:[{speaker:'林淮',text:'「我只是想见你。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「你这人脑子烧傻了吧？！」',color:'#b05a4a'}],ref:'——第79章'},
-{side:'left',label:'雪中分别 · 宫门口',lines:[{speaker:'林淮',text:'「白头空负三生意，犹记寒阶共雪温。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「遥望卿云归雁尽，缘深终作浅痕存。」',color:'#b05a4a'}],ref:'——第86章'},
-{side:'right',label:'最后一面 · 国师府',lines:[{speaker:'林淮',text:'「秦墨予。」',color:'#2a6b8a'},{speaker:'秦墨予',text:'「如果有一天，我做错了什么……一定要阻止我。」',color:'#b05a4a'}],ref:'——第84章'},
-{side:'left',label:'死后初遇 · 人间宅院',lines:[{speaker:'林淮',text:'「我来送你最后一程。」',color:'#2a6b8a'},{speaker:'栾方棋',text:'「你是来送我上路的吗？」',color:'#b05a4a'},{speaker:'栾方棋',text:'「谢谢你。」',color:'#b05a4a'}],ref:'——第90章'},
-{side:'right',label:'无涯村重逢 · 竹林',lines:[{speaker:'林淮',text:'「你……你竟然会这么想。」（笑）',color:'#2a6b8a'},{speaker:'栾方棋',text:'「……我只是不想给你添麻烦。」',color:'#b05a4a'}],ref:'——第7章'},
-{side:'left',label:'皇宫 · 观花卷之后',lines:[{speaker:'林淮',text:'「只要我的灵魂还留在这世界上一天，\n你就不会只是一个人。」',color:'#2a6b8a'},{speaker:'栾方棋',text:'「……」',color:'#b05a4a'}],ref:'——第69章'},
-{side:'right',label:'浮生树下 · 告白',lines:[{speaker:'林淮',text:'「我爱你，方棋。」',color:'#2a6b8a'},{speaker:'栾方棋',text:'「你是林淮……你是林淮。」',color:'#b05a4a'}],ref:'——第112章'},
-{side:'left',label:'成亲 · 归终殿',lines:[{speaker:'林淮',text:'「一荣俱荣，一损俱损。\n浮生之契，同生共死。」',color:'#2a6b8a'},{speaker:'栾方棋',text:'「我要和林淮成亲了！」',color:'#b05a4a'}],ref:'——第121章'}
-];
+<div class="card" data-corner="❀ ◈">
+<span class="corner-deco">❀ ◈</span>
+<div class="card-title">灵枢轮回 · 血脉之始</div>
+<div style="font-size:.92rem;color:var(--text-secondary);line-height:1.9;position:relative;z-index:1;">
+<p style="margin-bottom:8px;"><strong style="color:var(--profile-accent);">林栖梧</strong> 与 <strong style="color:var(--profile-accent);">罗烬</strong>，归终殿统修期弟子，一为符修院方向，一为讲武堂方向。</p>
+<p style="margin-bottom:8px;">二人皆非寻常胎生——灵枢轮回木的创生之力与双方父母的血脉相融，方得此身。浮生树为根，魂血为引，故归终殿上下视二人如己出，并无分别。</p>
+<p>然灵枢轮回木自有其性，它并不认这两个从自身剥离的生命体为主。浮生树的根系只认 <strong style="color:var(--lin-blue);">林淮</strong> 与 <strong style="color:var(--luan-red);">栾方棋</strong> 的魂血，旁者不可僭越。此乃天命，亦是归终殿最深的温柔。</p>
+</div>
+</div>
 
-var numNodes=dialogData.length;
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">血脉传承 · 天赋</div>
+<div class="talent-grid" id="talentGridLin">
+<div class="talent-card"><div class="t-name"><span class="t-icon">✿</span>符法天赋</div><div class="t-source">继承自 栾方棋</div><div class="t-desc">布阵速度在符修院同辈中排得上号，精血催符已有尝试。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:85%;"></div></div><span class="t-pct">85%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">❀</span>端方心性</div><div class="t-source">继承自 栾方棋</div><div class="t-desc">处事有条理，从不临阵慌乱，统修期内未出过失误。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:78%;"></div></div><span class="t-pct">78%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">⚔</span>体术根骨</div><div class="t-source">继承自 林淮</div><div class="t-desc">近身战有自保之力，体术基础够用，经验尚待积累。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:55%;"></div></div><span class="t-pct">55%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>坚韧意志</div><div class="t-source">继承自 林淮</div><div class="t-desc">抗压冥想从未中途退出，遇强则稳，不轻易动摇。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:70%;"></div></div><span class="t-pct">70%</span></div>
+</div>
+</div>
 
-/* ===== 布局参数（字体：电脑15，手机13） ===== */
-function getLayout(){
-    var vw=window.innerWidth;
-    var isMobile=vw<820;
-    var measured=(scrollContainer&&scrollContainer.clientWidth>0)?scrollContainer.clientWidth:0;
-    var W=Math.max(280,Math.round(measured||(isMobile?340:860)));
-    var cx=W/2;
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">羁绊共鸣 · 雨落长河</div>
+<div class="river-wrap" id="riverWrapLin">
+<canvas id="riverCanvasLin"></canvas>
+<div class="river-img-slot"><span class="slot-label"><span class="icon">🌳</span>图片预留 · 1:2</span></div>
+<div class="river-overlay">
+<div class="river-left">
+<div class="river-pct-row"><span class="river-pct" id="riverPctLin">42%</span><span class="river-stage" id="riverStageLin">花叶初展</span></div>
+<button class="river-btn" data-profile="linxiwu">投入 · 共鸣</button>
+<div class="river-hint">✦ 点击水面光点查看血脉回响</div>
+</div>
+</div>
+</div>
+</div>
 
-    var p;
-    if(isMobile){
-        // 手机端：13px
-        p={centerGap:28,labelGap:18,speakerOffset:3,sidePadding:12,
-           textSize:13,speakerSize:11,refSize:9,labelSize:10,starSize:16,flowerSize:12,
-           amp:11,spacing:510,startY:40,nodeGap:32,minCanvasH:900,
-           dashOffset:16,labelOffset:18,dialogStartOffset:14};
-    }else{
-        // 电脑端：15px
-        p={centerGap:48,labelGap:58,speakerOffset:4,sidePadding:18,
-           textSize:15,speakerSize:12,refSize:10,labelSize:13,starSize:20,flowerSize:15,
-           amp:11,spacing:510,startY:50,nodeGap:42,minCanvasH:2200,
-           dashOffset:20,labelOffset:24,dialogStartOffset:18};
-    }
+<div class="wave-row">
+<div class="wave-card card" data-corner="❀" style="margin-bottom:0;">
+<span class="corner-deco">❀</span>
+<div class="card-title">父母爱情 · 林淮 &amp; 栾方棋</div>
+<div class="wave-preview-wrap" id="waveScrollLin">
+<svg id="waveSvgLin" preserveAspectRatio="xMidYMin meet"></svg>
+</div>
+<div style="font-size:.55rem;color:var(--text-muted);text-align:center;padding-top:4px;font-family:var(--font-mono);opacity:.4;letter-spacing:.3px;">波形流动 · 对话左右交替</div>
+</div>
+<div class="wave-detail card" data-corner="❀" style="margin-bottom:0;">
+<span class="corner-deco">❀</span>
+<div class="card-title">对话详情</div>
+<div class="detail-list-w" id="detailListLin"></div>
+</div>
+</div>
 
-    var contentLine=Math.round(p.textSize*1.42);
-    var spOffset=Math.round(p.textSize*1.3);
-    var diffExtra=Math.round(p.textSize*1.7);
+</div>
 
-    var availW=cx-p.centerGap-p.speakerOffset-p.sidePadding;
-    var maxChars=Math.max(5,Math.floor(availW/p.textSize));
+<!-- ===== 罗烬 ===== -->
+<div class="content-block" id="content-luojin">
 
-    return{
-        isMobile:isMobile,W:W,cx:cx,
-        textSize:p.textSize,speakerSize:p.speakerSize,refSize:p.refSize,labelSize:p.labelSize,
-        starSize:p.starSize,flowerSize:p.flowerSize,
-        amp:p.amp,spacing:p.spacing,startY:p.startY,nodeGap:p.nodeGap,
-        dashOffset:p.dashOffset,labelOffset:p.labelOffset,dialogStartOffset:p.dialogStartOffset,
-        contentLine:contentLine,spOffset:spOffset,diffExtra:diffExtra,
-        centerGap:p.centerGap,labelGap:p.labelGap,
-        speakerOffsetVal:p.speakerOffset,sidePadding:p.sidePadding,
-        maxChars:maxChars,minCanvasH:p.minCanvasH
-    };
-}
+<div class="card" data-corner="❀ ◈">
+<span class="corner-deco">❀ ◈</span>
+<div class="card-title">灵枢轮回 · 血脉之始</div>
+<div style="font-size:.92rem;color:var(--text-secondary);line-height:1.9;position:relative;z-index:1;">
+<p style="margin-bottom:8px;"><strong style="color:var(--profile-accent);">林栖梧</strong> 与 <strong style="color:var(--profile-accent);">罗烬</strong>，归终殿统修期弟子，一为符修院方向，一为讲武堂方向。</p>
+<p style="margin-bottom:8px;">二人皆非寻常胎生——灵枢轮回木的创生之力与双方父母的血脉相融，方得此身。浮生树为根，魂血为引，故归终殿上下视二人如己出，并无分别。</p>
+<p>然灵枢轮回木自有其性，它并不认这两个从自身剥离的生命体为主。浮生树的根系只认 <strong style="color:var(--lin-blue);">林淮</strong> 与 <strong style="color:var(--luan-red);">栾方棋</strong> 的魂血，旁者不可僭越。此乃天命，亦是归终殿最深的温柔。</p>
+</div>
+</div>
 
-var L=getLayout();
-var nodeYs=[];
-var viewBoxH=2200;
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">血脉传承 · 天赋</div>
+<div class="talent-grid" id="talentGridLuo">
+<div class="talent-card"><div class="t-name"><span class="t-icon">⚔</span>双刀本能</div><div class="t-source">继承自 罗修</div><div class="t-desc">刀法架势已有首席三分影子，实战反应快，天赋到位。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:90%;"></div></div><span class="t-pct">90%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>魂力亲和</div><div class="t-source">继承自 罗修</div><div class="t-desc">引动阴气时偶有震颤，但根基扎实，潜力深厚。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:65%;"></div></div><span class="t-pct">65%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">✦</span>魂力韧性</div><div class="t-source">继承自 魏元璟</div><div class="t-desc">抗压冥想课未再中途退出，精神稳定度尚可。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:60%;"></div></div><span class="t-pct">60%</span></div>
+<div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>帝王傲骨</div><div class="t-source">继承自 魏元璟</div><div class="t-desc">遇强则强，绝不轻易低头，骨子里有一股不服输的劲。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:75%;"></div></div><span class="t-pct">75%</span></div>
+</div>
+</div>
 
-function wrapText(text,maxChars){
-    var segments=text.split('\n');
-    var result=[];
-    for(var s=0;s<segments.length;s++){
-        var seg=segments[s];
-        if(seg.length<=maxChars){
-            result.push(seg);
-            continue;
-        }
-        var current='';
-        for(var i=0;i<seg.length;i++){
-            current+=seg[i];
-            if(current.length>=maxChars){
-                var lb=current.lastIndexOf(' ');
-                if(lb===-1)lb=current.length;
-                result.push(current.substring(0,lb));
-                current=current.substring(lb).trim();
-            }
-        }
-        if(current.length>0)result.push(current);
-    }
-    return result;
-}
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">羁绊共鸣 · 雨落长河</div>
+<div class="river-wrap" id="riverWrapLuo">
+<canvas id="riverCanvasLuo"></canvas>
+<div class="river-img-slot"><span class="slot-label"><span class="icon">🌳</span>图片预留 · 1:2</span></div>
+<div class="river-overlay">
+<div class="river-left">
+<div class="river-pct-row"><span class="river-pct" id="riverPctLuo">38%</span><span class="river-stage" id="riverStageLuo">血脉初醒</span></div>
+<button class="river-btn" data-profile="luojin">投入 · 共鸣</button>
+<div class="river-hint">✦ 点击水面光点查看血脉回响</div>
+</div>
+</div>
+</div>
+</div>
 
-function computeNodeLayout(){
-    nodeYs=[];
-    var y=L.startY;
-    for(var i=0;i<numNodes;i++){
-        nodeYs.push(y);
-        var block=L.dashOffset+L.labelOffset+L.dialogStartOffset;
-        var lastSpeaker=null;
-        var lines=dialogData[i].lines;
-        for(var j=0;j<lines.length;j++){
-            if(lastSpeaker!==null&&lastSpeaker!==lines[j].speaker)block+=L.diffExtra;
-            block+=L.spOffset;
-            block+=wrapText(lines[j].text,L.maxChars).length*L.contentLine;
-            block+=6;
-            lastSpeaker=lines[j].speaker;
-        }
-        block+=10+L.refSize+18;
-        y+=block+L.nodeGap;
-    }
-    viewBoxH=Math.max(L.minCanvasH,Math.round(y-L.nodeGap+40));
-}
+<div class="wave-row">
+<div class="wave-card card" data-corner="◈" style="margin-bottom:0;">
+<span class="corner-deco">◈</span>
+<div class="card-title">父母爱情 · 罗修 &amp; 魏元璟</div>
+<div class="wave-preview-wrap" id="waveScrollLuo">
+<svg id="waveSvgLuo" preserveAspectRatio="xMidYMin meet"></svg>
+</div>
+<div style="font-size:.55rem;color:var(--text-muted);text-align:center;padding-top:4px;font-family:var(--font-mono);opacity:.4;letter-spacing:.3px;">波形流动 · 对话左右交替</div>
+</div>
+<div class="wave-detail card" data-corner="◈" style="margin-bottom:0;">
+<span class="corner-deco">◈</span>
+<div class="card-title">对话详情</div>
+<div class="detail-list-w" id="detailListLuo"></div>
+</div>
+</div>
 
-function applyLayout(){
-    var wrap=document.querySelector('.preview-wrap');
-    if(wrap){
-        wrap.style.flex='0 0 auto';
-        if(L.isMobile){
-            wrap.style.height='auto';
-            wrap.style.maxHeight='60vh';
-        }else{
-            var winH=Math.min(DESKTOP_WINDOW_MAX,Math.max(600,window.innerHeight-240));
-            wrap.style.height=winH+'px';
-            wrap.style.maxHeight='none';
-        }
-        wrap.style.overflow='auto';
-    }
-    svg.setAttribute('viewBox','0 0 '+L.W+' '+viewBoxH);
-    svg.style.width='100%';
-    svg.style.height=viewBoxH+'px';
-    var headerSub=document.getElementById('headerSub');
-    if(headerSub){
-        headerSub.textContent='波峰间距 '+L.spacing+'px · 周期 '+PERIOD+'s · 画布 '+viewBoxH+'px · 字号 '+L.textSize+'px · 缩放 1:1';
-    }
-}
+</div>
 
-function generateWavePoints(sign,spacing,amp,phase){
-    var pts=[],step=4,numPoints=Math.floor((viewBoxH+spacing)/step)+6;
-    for(var i=0;i<numPoints;i++){
-        var y=-spacing/2+i*step;
-        if(y>viewBoxH+spacing/2)break;
-        var angle=(y/spacing)*2*Math.PI+phase;
-        pts.push({x:L.cx+sign*amp*Math.sin(angle),y:y});
-    }
-    return pts;
-}
+</div>
 
-function buildBezierPath(pts){
-    if(pts.length<2)return '';
-    var d='M '+pts[0].x.toFixed(2)+','+pts[0].y.toFixed(2);
-    for(var i=0;i<pts.length-1;i++){
-        var p0=pts[i],p1=pts[i+1],dy=p1.y-p0.y;
-        if(Math.abs(dy)<0.3){d+=' L '+p1.x.toFixed(2)+','+p1.y.toFixed(2);continue;}
-        var cpx=p0.x,cpx2=p1.x,cpy=p0.y+dy*0.45,cpy2=p1.y-dy*0.45;
-        d+=' C '+cpx.toFixed(2)+','+cpy.toFixed(2)+' '+cpx2.toFixed(2)+','+cpy2.toFixed(2)+' '+p1.x.toFixed(2)+','+p1.y.toFixed(2);
-    }
-    return d;
-}
+<div class="story-modal-overlay" id="storyModal">
+<div class="story-modal">
+<button class="modal-close" id="modalClose">✕</button>
+<div class="modal-title" id="modalTitle">对话</div>
+<div class="modal-sub" id="modalSub">出处</div>
+<div class="modal-body" id="modalBody"></div>
+</div>
+</div>
 
-var waveG=null,staticG=null,pathA=null,pathB=null;
+<div id="petal-container"></div>
 
-function buildScene(){
-    while(svg.firstChild)svg.removeChild(svg.firstChild);
-    var axisG=document.createElementNS(ns,'g');
-    waveG=document.createElementNS(ns,'g');
-    staticG=document.createElementNS(ns,'g');
-    svg.appendChild(axisG);
-    svg.appendChild(waveG);
-    svg.appendChild(staticG);
-
-    var axis=document.createElementNS(ns,'line');
-    axis.setAttribute('x1',L.cx);
-    axis.setAttribute('y1',L.startY);
-    axis.setAttribute('x2',L.cx);
-    axis.setAttribute('y2',viewBoxH-20);
-    axis.setAttribute('stroke','#D49A9A');
-    axis.setAttribute('stroke-width',4);
-    axis.setAttribute('opacity','0.4');
-    axis.setAttribute('stroke-linecap','round');
-    axisG.appendChild(axis);
-
-    pathA=document.createElementNS(ns,'path');
-    pathA.setAttribute('stroke','#2a6b8a');
-    pathA.setAttribute('stroke-width',2);
-    pathA.setAttribute('fill','none');
-    pathA.setAttribute('stroke-linecap','round');
-    pathA.setAttribute('opacity',OPACITY);
-    waveG.appendChild(pathA);
-    pathB=document.createElementNS(ns,'path');
-    pathB.setAttribute('stroke','#b05a4a');
-    pathB.setAttribute('stroke-width',2);
-    pathB.setAttribute('fill','none');
-    pathB.setAttribute('stroke-linecap','round');
-    pathB.setAttribute('opacity',OPACITY);
-    waveG.appendChild(pathB);
-
-    buildStaticContent();
-}
-
-function drawDialogBlock(side,lines,ref,baseX,baseY){
-    var anchor=(side==='left')?'end':'start';
-    var spOff=(side==='left')?-L.speakerOffsetVal:L.speakerOffsetVal;
-    var currentY=baseY,lastSpeaker=null;
-
-    for(var j=0;j<lines.length;j++){
-        var item=lines[j];
-        var isNewSpeaker=(lastSpeaker!==null&&lastSpeaker!==item.speaker);
-        if(isNewSpeaker)currentY+=L.diffExtra;
-
-        var sp=document.createElementNS(ns,'text');
-        sp.setAttribute('x',baseX+spOff);
-        sp.setAttribute('y',currentY);
-        sp.setAttribute('text-anchor',anchor);
-        sp.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
-        sp.setAttribute('font-size',L.speakerSize);
-        sp.setAttribute('font-weight','600');
-        sp.setAttribute('fill',item.color);
-        sp.setAttribute('opacity','0.65');
-        sp.setAttribute('letter-spacing','0.5px');
-        sp.textContent='— '+item.speaker;
-        staticG.appendChild(sp);
-
-        currentY+=L.spOffset;
-
-        var lines2=wrapText(item.text,L.maxChars);
-        for(var k=0;k<lines2.length;k++){
-            var t=document.createElementNS(ns,'text');
-            t.setAttribute('x',baseX+spOff);
-            t.setAttribute('y',currentY+k*L.contentLine);
-            t.setAttribute('text-anchor',anchor);
-            t.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-            t.setAttribute('font-size',L.textSize);
-            t.setAttribute('fill',item.color);
-            t.setAttribute('font-style','italic');
-            t.setAttribute('font-weight','400');
-            t.setAttribute('opacity','0.92');
-            t.textContent=lines2[k];
-            staticG.appendChild(t);
-        }
-        currentY+=lines2.length*L.contentLine+6;
-        lastSpeaker=item.speaker;
-    }
-
-    var refY=currentY+10;
-    var refEl=document.createElementNS(ns,'text');
-    refEl.setAttribute('x',baseX+spOff);
-    refEl.setAttribute('y',refY);
-    refEl.setAttribute('text-anchor',anchor);
-    refEl.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
-    refEl.setAttribute('font-size',L.refSize);
-    refEl.setAttribute('fill','#555555');
-    refEl.setAttribute('opacity','0.6');
-    refEl.setAttribute('letter-spacing','0.3px');
-    refEl.textContent=ref;
-    staticG.appendChild(refEl);
-
-    return refY+16;
-}
-
-function buildStaticContent(){
-    for(var i=0;i<numNodes;i++){
-        var y=nodeYs[i];
-        var data=dialogData[i];
-        var side=data.side;
-
-        var star=document.createElementNS(ns,'text');
-        star.setAttribute('x',L.cx);
-        star.setAttribute('y',y+5);
-        star.setAttribute('text-anchor','middle');
-        star.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-        star.setAttribute('font-size',L.starSize);
-        star.setAttribute('fill','#7ab8d4');
-        star.setAttribute('opacity','0.8');
-        star.textContent='✦';
-        staticG.appendChild(star);
-
-        var dashY=y+L.dashOffset;
-
-        if(side==='left'){
-            var dashStart=L.sidePadding;
-            var dashEnd=L.cx-28;
-            var flowerX=dashStart+(dashEnd-dashStart)*0.4;
-            var dash=document.createElementNS(ns,'line');
-            dash.setAttribute('x1',dashStart);
-            dash.setAttribute('y1',dashY);
-            dash.setAttribute('x2',dashEnd);
-            dash.setAttribute('y2',dashY);
-            dash.setAttribute('stroke','#e07070');
-            dash.setAttribute('stroke-width',2);
-            dash.setAttribute('opacity','0.5');
-            dash.setAttribute('stroke-dasharray','5,6');
-            staticG.appendChild(dash);
-            var flower=document.createElementNS(ns,'text');
-            flower.setAttribute('x',flowerX);
-            flower.setAttribute('y',dashY+6);
-            flower.setAttribute('text-anchor','middle');
-            flower.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-            flower.setAttribute('font-size',L.flowerSize);
-            flower.setAttribute('fill','#e07070');
-            flower.setAttribute('opacity','0.85');
-            flower.textContent='❀';
-            staticG.appendChild(flower);
-        }else{
-            var dashStart2=L.cx+28;
-            var dashEnd2=L.W-L.sidePadding;
-            var flowerX2=dashStart2+(dashEnd2-dashStart2)*0.6;
-            var dash2=document.createElementNS(ns,'line');
-            dash2.setAttribute('x1',dashStart2);
-            dash2.setAttribute('y1',dashY);
-            dash2.setAttribute('x2',dashEnd2);
-            dash2.setAttribute('y2',dashY);
-            dash2.setAttribute('stroke','#7ab8d4');
-            dash2.setAttribute('stroke-width',2);
-            dash2.setAttribute('opacity','0.5');
-            dash2.setAttribute('stroke-dasharray','5,6');
-            staticG.appendChild(dash2);
-            var flower2=document.createElementNS(ns,'text');
-            flower2.setAttribute('x',flowerX2);
-            flower2.setAttribute('y',dashY+6);
-            flower2.setAttribute('text-anchor','middle');
-            flower2.setAttribute('font-family','"Georgia","Times New Roman","Songti SC",serif');
-            flower2.setAttribute('font-size',L.flowerSize);
-            flower2.setAttribute('fill','#e07070');
-            flower2.setAttribute('opacity','0.85');
-            flower2.textContent='❀';
-            staticG.appendChild(flower2);
-        }
-
-        var labelY=dashY+L.labelOffset;
-        var labelX=(side==='left')?L.cx-L.labelGap:L.cx+L.labelGap;
-        var anchorLabel=(side==='left')?'end':'start';
-        var label=document.createElementNS(ns,'text');
-        label.setAttribute('x',labelX);
-        label.setAttribute('y',labelY);
-        label.setAttribute('text-anchor',anchorLabel);
-        label.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
-        label.setAttribute('font-size',L.labelSize);
-        label.setAttribute('font-weight','600');
-        label.setAttribute('fill','#555555');
-        label.setAttribute('opacity','0.8');
-        label.setAttribute('letter-spacing','0.8px');
-        label.textContent=data.label;
-        staticG.appendChild(label);
-
-        var textBaseX=(side==='left')?L.cx-L.centerGap:L.cx+L.centerGap;
-        var textStartY=labelY+L.dialogStartOffset;
-        drawDialogBlock(side,data.lines,data.ref,textBaseX,textStartY);
-    }
-
-    function addDir(x,y,text,color){
-        var t=document.createElementNS(ns,'text');
-        t.setAttribute('x',x);
-        t.setAttribute('y',y);
-        t.setAttribute('text-anchor','middle');
-        t.setAttribute('font-family','"Courier New","Source Code Pro",monospace');
-        t.setAttribute('font-size',L.refSize);
-        t.setAttribute('fill',color);
-        t.setAttribute('opacity','0.3');
-        t.textContent=text;
-        staticG.appendChild(t);
-    }
-    addDir(L.sidePadding+8,20,'↓','#2a6b8a');
-    addDir(L.W-L.sidePadding-8,20,'↑','#b05a4a');
-}
-
-function renderWaves(){
-    if(!pathA||!pathB)return;
-    pathA.setAttribute('d',buildBezierPath(generateWavePoints(1,L.spacing,L.amp,phaseA)));
-    pathB.setAttribute('d',buildBezierPath(generateWavePoints(-1,L.spacing,L.amp,phaseB)));
-}
-
-function animate(time){
-    if(!lastTime)lastTime=time;
-    var delta=(time-lastTime)/1000;
-    lastTime=time;
-    var omega=(2*Math.PI)/PERIOD;
-    var dPhase=delta*omega;
-    phaseA+=dPhase;
-    phaseB-=dPhase;
-    var twoPi=2*Math.PI;
-    while(phaseA>twoPi)phaseA-=twoPi;
-    while(phaseA<0)phaseA+=twoPi;
-    while(phaseB>twoPi)phaseB-=twoPi;
-    while(phaseB<0)phaseB+=twoPi;
-    renderWaves();
-    requestAnimationFrame(animate);
-}
-
-function buildDetailPanel(){
-    detailList.innerHTML='';
-    dialogData.forEach(function(d,idx){
-        var div=document.createElement('div');
-        div.className='detail-item';
-        div.dataset.index=idx;
-        var label=document.createElement('div');
-        label.className='label';
-        label.textContent=(idx+1)+'. '+d.label;
-        var preview=document.createElement('div');
-        preview.className='preview';
-        var firstLine=d.lines[0]?d.lines[0].text.replace(/\n/g,' '):'';
-        preview.textContent=firstLine.substring(0,35)+(firstLine.length>35?'…':'');
-        div.appendChild(label);
-        div.appendChild(preview);
-        div.addEventListener('click',function(){
-            var index=parseInt(this.dataset.index);
-            scrollToNode(index);
-            document.querySelectorAll('.detail-item').forEach(function(el){el.classList.remove('active');});
-            this.classList.add('active');
-        });
-        detailList.appendChild(div);
-    });
-    var first=detailList.querySelector('.detail-item');
-    if(first)first.classList.add('active');
-}
-
-function scrollToNode(index){
-    if(scrollContainer&&nodeYs[index]!=null){
-        scrollContainer.scrollTo({top:Math.max(0,nodeYs[index]-60),behavior:'smooth'});
-    }
-}
-window.scrollToNode=scrollToNode;
-
-function rebuildAll(){
-    L=getLayout();
-    computeNodeLayout();
-    applyLayout();
-    buildScene();
-    renderWaves();
-    var w2=(scrollContainer?scrollContainer.clientWidth:0);
-    if(w2>0&&Math.abs(w2-L.W)>2){
-        L=getLayout();
-        computeNodeLayout();
-        applyLayout();
-        buildScene();
-        renderWaves();
-    }
-}
-
-var resizeTimer=null;
-window.addEventListener('resize',function(){
-    if(resizeTimer)clearTimeout(resizeTimer);
-    resizeTimer=setTimeout(rebuildAll,200);
-});
-
-buildDetailPanel();
-rebuildAll();
-phaseA=0;
-phaseB=Math.PI;
-requestAnimationFrame(animate);
-
-console.log('✅ 最终调整版：字小幅缩小，波浪参数510/11/0.27/14.5，图例已移除，滚动时边框完整');
-console.log('  布局参数:',{
-    isMobile:L.isMobile,
-    viewBox宽:L.W,
-    viewBox高:viewBoxH,
-    字号:L.textSize,
-    每行字数:L.maxChars,
-    窗口高:L.isMobile?'60vh':document.querySelector('.preview-wrap').style.height
-});
-})();
-
-</script>
+<script src="./核心.js"></script>
+<script src="./血脉.js"></script>
 </body>
 </html>
