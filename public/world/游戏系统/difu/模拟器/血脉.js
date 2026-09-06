@@ -10,8 +10,8 @@
             getProfile: function() { try { return localStorage.getItem('activeProfile') || 'linxiwu'; } catch (e) { return 'linxiwu'; } }
         };
         GZD.ThemeManager = {
-            init: function() { var t = GZD.Storage.getTheme(), h = document.documentElement; if (t === 'light') h.setAttribute('data-theme', 'light'); else h.removeAttribute('data-theme'); },
-            toggle: function() { var isLight = document.documentElement.getAttribute('data-theme') === 'light', h = document.documentElement; if (isLight) h.removeAttribute('data-theme'); else h.setAttribute('data-theme', 'light'); GZD.Storage.set('theme', { value: isLight ? 'dark' : 'light' }); }
+            init: function() { var t = GZD.Storage.getTheme(), h = document.documentElement; h.setAttribute('data-theme', t === 'light' ? 'light' : 'dark'); },
+            toggle: function() { var isLight = document.documentElement.getAttribute('data-theme') === 'light', h = document.documentElement; h.setAttribute('data-theme', isLight ? 'dark' : 'light'); GZD.Storage.set('theme', { value: isLight ? 'dark' : 'light' }); }
         };
         GZD.ProfileManager = {
             init: function() { var id = GZD.Storage.getProfile(); document.body.setAttribute('data-profile', id); document.querySelectorAll('.content-block').forEach(function(b) { b.classList.toggle('active', b.id === 'content-' + id); }); },
@@ -245,9 +245,10 @@
         if (!canvas) return;
         var wrap = canvas.parentElement;
         var rect = wrap.getBoundingClientRect();
+        if (!rect.width || !rect.height) return; /* 隐藏视角跳过：避免回退值600×340污染内联尺寸，显示时由profilechange重建 */
         var dpr = window.devicePixelRatio || 1;
-        var w = rect.width || wrap.clientWidth || 600;
-        var h = Math.max(340, rect.height || 340);
+        var w = wrap.clientWidth || rect.width || 600;
+        var h = 340; /* 固定为CSS设计高度：双视角/双端完全统一，并杜绝rect含边框导致的每次+2px棘轮膨胀 */
         canvas.width = w * dpr;
         canvas.height = h * dpr;
         canvas.style.width = w + 'px';
@@ -485,6 +486,7 @@
         var detailList = document.getElementById(detailId);
         var scrollContainer = document.getElementById(scrollId);
         if (!svg || !detailList || !scrollContainer) return;
+        if (!scrollContainer.getBoundingClientRect().width) return; /* 隐藏视角跳过：避免按600回退宽度排版，切换显示时由switchWaveProfile重建 */
         var data = waveData[profile].data;
         var numNodes = data.length;
         var layout = getWaveLayout(scrollId);
@@ -880,9 +882,10 @@
 
     var resizeTimer;
     window.addEventListener('resize', function() { clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() { var p = document.body.getAttribute('data-profile') || 'linxiwu';
-            initRiverCanvas(p);
-            buildWaveSVG(p); }, 300); });
+        resizeTimer = setTimeout(function() { initRiverCanvas('linxiwu');
+            initRiverCanvas('luojin');
+            buildWaveSVG('linxiwu');
+            buildWaveSVG('luojin'); }, 300); });
 
     console.log('❤&#xFE0E;️ 血脉羁绊 · 光点已显眼化');
 })();
