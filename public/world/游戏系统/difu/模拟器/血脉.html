@@ -3,12 +3,69 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>归终殿 · 血脉羁绊</title>
+<title>归终殿 · 升席纪事</title>
 <style>
-:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px;--gold:#FFB90F;--purple:#9370DB;--axis-rose:#d4a0a8;--lin-blue:#2a6b8a;--luan-red:#b05a4a}
-[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--wave-bg:#2b2521}
-body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
-body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
+:root {
+    --bg-body: #f7f4ef;
+    --bg-card: #ffffff;
+    --bg-hover: #f2eee9;
+    --border-light: #ece6de;
+    --border-card: #d5c8b8;
+    --text-primary: #2c2c2c;
+    --text-secondary: #4a4a4a;
+    --text-muted: #8a8a8a;
+    --accent: #8a3a2a;
+    --profile-lin: #D49A9A;
+    --profile-luo: #4E5A64;
+    --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+    --font-mono: "Courier New", "Source Code Pro", monospace;
+    --transition: 0.3s ease;
+    --sidebar-width: 240px;
+}
+[data-theme="dark"] {
+    --bg-body: #1a1614;
+    --bg-card: #24201c;
+    --bg-hover: #2d2824;
+    --border-light: #3d3732;
+    --border-card: #4a443e;
+    --text-primary: #e8e0d5;
+    --text-secondary: #b8aea4;
+    --text-muted: #8a8078;
+    --accent: #c4b4a0;
+
+    /* ===== 金字塔夜间文字颜色调亮 ===== */
+    .pyramid-layer .p-pct,
+    .pyramid-layer .p-count {
+        color: #d0c8c0;
+    }
+    .pyramid-layer .p-label {
+        color: #e8e0d5;
+    }
+    .pyramid-right .p-title {
+        color: #e8e0d5;
+    }
+    .pyramid-right .p-sub {
+        color: #c0b8b0;
+    }
+    .pyramid-right .p-body {
+        color: #c8c0b8;
+    }
+    .pyramid-right .p-body .tag {
+        color: #b0a8a0;
+        background: #2d2824;
+        border-color: #3d3732;
+    }
+    .pyramid-right {
+        background: #1e1a18;
+        border-color: #3d3732;
+    }
+}
+body[data-profile="linxiwu"] {
+    --profile-accent: var(--profile-lin);
+}
+body[data-profile="luojin"] {
+    --profile-accent: var(--profile-luo);
+}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px}
@@ -50,81 +107,100 @@ body.no-scroll{overflow:hidden}
 .card-title{font-size:.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1}
 .card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:.5;border-radius:1px}
 .card-grad{background:linear-gradient(135deg,var(--bg-card)0%,var(--bg-hover)100%)}
-.talent-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
-.talent-card{background:var(--bg-card);border:1px solid var(--border-light);border-radius:4px;padding:14px 16px 12px 16px;transition:all var(--transition);cursor:default}
-.talent-card:hover{border-color:var(--profile-accent);transform:translateY(-3px);box-shadow:0 4px 14px rgba(0,0,0,.06)}
-.talent-card .t-icon{font-size:1rem;color:var(--profile-accent);margin-right:6px}
-.talent-card .t-name{font-weight:600;font-size:.9rem;color:var(--text-primary);display:flex;align-items:center;gap:4px}
-.talent-card .t-source{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:1px}
-.talent-card .t-desc{font-size:.8rem;color:var(--text-secondary);margin-top:4px;line-height:1.5}
-.talent-card .t-bar-wrap{width:100%;height:4px;background:var(--border-light);border-radius:2px;overflow:hidden;margin-top:8px}
-.talent-card .t-bar-fill{height:100%;border-radius:2px;transition:width 1.2s ease;width:0%;background:var(--profile-accent)}
-.talent-card .t-pct{font-size:.65rem;font-family:var(--font-mono);color:var(--text-muted);float:right;margin-top:-14px}
-.river-wrap{position:relative;z-index:1;border-radius:4px;overflow:hidden;border:1px solid var(--border-light);background:var(--bg-body);min-height:340px}
-.river-wrap canvas{display:block;width:100%;height:100%;min-height:340px;background:transparent}
-.river-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px 16px 12px 16px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;background:linear-gradient(0deg,var(--bg-body)0%,transparent 100%);pointer-events:none}
-.river-overlay>*{pointer-events:auto}
-.river-left{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-.river-pct-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.river-pct{font-size:1.6rem;font-weight:700;color:var(--profile-accent);font-family:var(--font-mono);letter-spacing:1px;line-height:1.2}
-.river-stage{font-size:.85rem;color:var(--text-secondary);font-style:italic}
-.river-btn{padding:5px 16px;border-radius:20px;border:1.5px solid var(--profile-accent);background:var(--bg-card);color:var(--profile-accent);font-family:var(--font-serif);font-size:.8rem;cursor:pointer;transition:all .25s;pointer-events:auto;margin-top:2px;letter-spacing:.5px}
-.river-btn:hover{background:var(--profile-accent);color:#fff;transform:scale(1.02)}
-.river-btn:active{transform:scale(.96)}
-.river-hint{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.3px;opacity:.6;margin-top:2px;animation:hintPulse 2s ease-in-out infinite}
-@keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:.9}}
-.river-float-text{position:absolute;pointer-events:none;z-index:50;font-family:var(--font-serif);font-size:1rem;color:var(--profile-accent);opacity:0;transform:translate(-50%,0)scale(.9);text-shadow:0 0 20px rgba(0,0,0,.05);max-width:min(64%,320px);text-align:center;font-style:italic;line-height:1.5}
-.river-float-text.show{animation:floatUp 2.6s ease-out forwards}
-@keyframes floatUp{0%{opacity:0;transform:translate(-50%,0)scale(.8)}20%{opacity:1;transform:translate(-50%,-22px)scale(1)}80%{opacity:1;transform:translate(-50%,-66px)scale(1)}100%{opacity:0;transform:translate(-50%,-110px)scale(.9)}}
-.story-dot{position:absolute;width:36px;height:36px;border-radius:50%;cursor:pointer;z-index:20;pointer-events:auto;background:rgba(255,255,255,0.15);border:2px solid #fff;box-shadow:0 0 30px var(--profile-accent),0 0 60px var(--profile-accent),inset 0 0 20px rgba(255,255,255,0.3);animation:dotGlow 1.8s ease-in-out infinite;transition:transform .2s;display:flex;align-items:center;justify-content:center}
-.story-dot::after{content:'✦';font-size:16px;color:#fff;text-shadow:0 0 10px rgba(255,255,255,0.8);font-family:var(--font-serif)}
-.story-dot:hover{transform:scale(1.25);box-shadow:0 0 50px var(--profile-accent),0 0 90px var(--profile-accent),inset 0 0 30px rgba(255,255,255,0.5)}
-@keyframes dotGlow{0%,100%{box-shadow:0 0 30px var(--profile-accent),0 0 60px var(--profile-accent),inset 0 0 20px rgba(255,255,255,0.2);transform:scale(1)}50%{box-shadow:0 0 50px var(--profile-accent),0 0 100px var(--profile-accent),inset 0 0 30px rgba(255,255,255,0.4);transform:scale(1.05)}}
-.story-dot .dot-ring{position:absolute;width:70px;height:70px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);animation:ringExpand 2.5s ease-out infinite}
-.story-dot .dot-ring:nth-child(2){animation-delay:.8s;width:90px;height:90px}
-@keyframes ringExpand{0%{transform:scale(0.3);opacity:.8}100%{transform:scale(1.8);opacity:0}}
-.wave-row{display:flex;gap:16px;align-items:stretch;width:100%}
-.wave-card{flex:2;min-width:0}
-.wave-detail{flex:1;min-width:0}
-/* ===== 父母爱情 · 白底（夜间深色）+ SVG 渐变虚线内边框（静止不随内容滚动） ===== */
-.wave-frame{position:relative;margin-top:2px}
-.wave-preview-wrap{position:relative;width:100%;overflow:auto;background:var(--wave-bg,#ffffff);border-radius:5px;flex:0 0 auto;min-height:0;-webkit-overflow-scrolling:touch;max-height:560px;padding:3px;z-index:0}
-.wave-preview-wrap svg.wave-svg{display:block;width:100%;height:auto;background:transparent;overflow:visible;position:relative;z-index:2}
-.wave-border-svg{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;display:block;overflow:hidden}
-.wave-border-svg .sa{stop-color:#2a6b8a}.wave-border-svg .sb{stop-color:#b05a4a}
-.wave-border-svg .sc{stop-color:#9370DB}.wave-border-svg .sd{stop-color:#FFB90F}
-[data-theme="dark"] .wave-border-svg .sa{stop-color:#5a9cbf}
-[data-theme="dark"] .wave-border-svg .sb{stop-color:#d47a66}
-[data-theme="dark"] .wave-border-svg .sc{stop-color:#a98ce8}
-[data-theme="dark"] .wave-border-svg .sd{stop-color:#ffc63a}
-.wave-preview-wrap::-webkit-scrollbar{width:6px;height:6px}
-.wave-preview-wrap::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
-.wave-preview-wrap::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:.5}
-.detail-list-w{flex:1;overflow-y:auto;min-height:100px;-webkit-overflow-scrolling:touch;max-height:560px}
-.detail-list-w::-webkit-scrollbar{width:5px}
-.detail-list-w::-webkit-scrollbar-track{background:var(--border-light);border-radius:3px}
-.detail-list-w::-webkit-scrollbar-thumb{background:var(--profile-accent);border-radius:3px;opacity:.5}
-.detail-item-w{padding:6px 0 6px 8px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background .2s;border-radius:4px;font-size:.75rem;display:flex;flex-direction:column}
-.detail-item-w:hover{background:var(--bg-body)}
-.detail-item-w .label{font-weight:500;color:var(--text-primary);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.3px}
-.detail-item-w .preview{font-size:.65rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
-.detail-item-w.active{background:rgba(138,58,42,.08);border-left:2px solid var(--profile-accent)}
-.story-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;opacity:0;pointer-events:none;transition:opacity .35s ease;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(2px)}
-.story-modal-overlay.open{opacity:1;pointer-events:auto}
-.story-modal{background:var(--bg-card);border:1px solid var(--border-card);border-radius:8px;max-width:480px;width:100%;padding:28px 28px 24px 28px;box-shadow:0 16px 48px rgba(0,0,0,.25);transform:translateY(20px)scale(.96);transition:transform .3s ease;position:relative;max-height:80vh;overflow-y:auto}
-.story-modal-overlay.open .story-modal{transform:translateY(0)scale(1)}
-.story-modal .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.4rem;color:var(--text-muted);cursor:pointer;transition:color .2s;font-family:var(--font-serif);line-height:1}
-.story-modal .modal-close:hover{color:var(--profile-accent)}
-.story-modal .modal-title{font-size:1.05rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;padding-right:28px;letter-spacing:.5px}
-.story-modal .modal-sub{font-size:.75rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:14px;letter-spacing:.3px}
-.story-modal .modal-body{font-size:.95rem;color:var(--text-secondary);line-height:1.8;padding:12px 0 4px 0;border-top:1px solid var(--border-light)}
-.story-modal .modal-body .story-quote{padding-left:12px;border-left:3px solid var(--profile-accent);font-style:italic}
-.story-modal .modal-body .story-desc{margin-top:12px;font-style:normal;color:var(--text-secondary)}
+.status-seal{display:inline-flex;align-items:center;gap:6px 12px;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);padding:4px 14px 4px 12px;border:1.5px solid var(--profile-accent);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:.85;flex-wrap:wrap}
+.status-seal .seal-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--profile-accent);margin-right:2px}
+.status-seal .seal-grade{font-weight:700;color:var(--profile-accent);font-size:.75rem}
+.status-seal .seal-period{color:var(--text-muted);font-weight:400}
+.status-seal .seal-value{color:var(--text-secondary);font-weight:600;font-size:.7rem}
+.seal-divider{color:var(--border-light);font-weight:300;padding:0 2px}
+.power-row{display:flex;gap:24px;flex-wrap:wrap;align-items:center;position:relative;z-index:1}
+.power-item{text-align:center}
+.power-item .label{font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.5px;display:block}
+.power-item .value{font-size:1.4rem;font-weight:700;color:var(--text-primary)}
+.power-item .value .accent{color:var(--profile-accent)}
+.power-item .sub{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)}
+.power-divider{width:1px;height:36px;background:var(--border-light);flex-shrink:0}
+.target-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;position:relative;z-index:1}
+.target-row label{font-size:.8rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.3px}
+.target-row input{width:80px;padding:4px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg-card);color:var(--text-primary);font-family:var(--font-mono);font-size:.85rem;outline:none;transition:border-color var(--transition)}
+.target-row input:focus{border-color:var(--profile-accent)}
+.target-row .btn-sm{padding:4px 16px;border-radius:16px;border:1px solid var(--profile-accent);background:var(--bg-card);color:var(--profile-accent);font-family:var(--font-serif);font-size:.75rem;cursor:pointer;transition:all .2s}
+.target-row .btn-sm:hover{background:var(--profile-accent);color:#fff}
+.target-row .btn-sm:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.progress-wrap{width:100%;margin-top:10px;position:relative;z-index:1}
+.progress-track{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:var(--profile-accent);transition:width .8s ease;width:0%}
+.progress-label{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px}
+.six-stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;position:relative;z-index:1}
+.six-stat .stat-item{font-size:.7rem;color:var(--text-secondary);font-family:var(--font-mono);background:var(--bg-hover);padding:2px 10px;border-radius:10px;border:1px solid var(--border-light)}
+.six-stat .stat-item .s-label{color:var(--text-muted)}
+.six-stat .stat-item .s-val{font-weight:600;color:var(--profile-accent)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
+.info-cell{background:var(--bg-hover);padding:8px 12px;border-radius:4px;border:1px solid var(--border-light)}
+.info-cell .label{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.3px;display:block;margin-bottom:2px}
+.info-cell .val{font-size:.9rem;color:var(--text-primary);font-weight:500}
+.info-cell .val .highlight{color:var(--profile-accent);font-weight:600}
+.info-cell.span-full{grid-column:1/-1}
+.rule-list{list-style:none;padding:0;position:relative;z-index:1}
+.rule-list li{padding:4px 0 4px 18px;position:relative;font-size:.85rem;color:var(--text-secondary);line-height:1.7;border-bottom:1px solid var(--border-light)}
+.rule-list li:last-child{border-bottom:none}
+.rule-list li::before{content:'◆';position:absolute;left:0;top:4px;color:var(--profile-accent);font-size:.6rem;opacity:.5}
+.pyramid-row{display:flex;gap:16px;align-items:stretch;width:100%;min-height:460px}
+.pyramid-left{flex:1.2;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:4px 0}
+.pyramid-right{flex:1;min-width:0;background:var(--bg-hover);border-radius:6px;border:1px solid var(--border-light);padding:16px 18px;overflow-y:auto;max-height:520px;display:flex;flex-direction:column;justify-content:center}
+.pyramid-right .p-title{font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+.pyramid-right .p-sub{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:10px}
+.pyramid-right .p-body{font-size:.88rem;color:var(--text-secondary);line-height:1.9}
+.pyramid-right .p-body strong{color:var(--text-primary)}
+.pyramid-right .p-body .tag{display:inline-block;font-size:.65rem;font-family:var(--font-mono);padding:0 10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-muted);margin-right:4px}
+.pyramid-layer{display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .25s ease;padding:6px 8px;border-radius:4px;border:1px solid transparent;position:relative;overflow:hidden}
+.pyramid-layer:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.pyramid-layer.active{background:rgba(138,58,42,.06);border-color:var(--profile-accent);box-shadow:0 2px 12px rgba(0,0,0,.06);transform:translateX(4px)}
+.pyramid-layer .p-bar{height:28px;border-radius:3px;flex-shrink:0;transition:width .9s cubic-bezier(.22,.61,.36,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.65rem;font-family:var(--font-mono);color:#fff;font-weight:600;letter-spacing:.3px;min-width:30px;width:0%}
+.pyramid-layer .p-label{font-size:.8rem;font-weight:600;color:var(--text-primary);white-space:nowrap;min-width:56px}
+.pyramid-layer .p-pct{font-size:.8rem;font-weight:600;color:#3a3a3a;font-family:var(--font-mono);white-space:nowrap;min-width:48px;text-align:right}
+.pyramid-layer .p-arrow{font-size:.6rem;color:var(--text-muted);opacity:0;transition:opacity .3s}
+.pyramid-layer.active .p-arrow{opacity:1;color:var(--profile-accent)}
+.pyramid-layer .p-count{font-size:.8rem;font-weight:600;color:#3a3a3a;font-family:var(--font-mono);white-space:nowrap}
+/* 林栖梧 粉蓝渐变（从下到上：杂役→十席） */
+body[data-profile="linxiwu"] .layer-zayi .p-bar{background:#E8C8D0}
+body[data-profile="linxiwu"] .layer-tongxiu .p-bar{background:#DEC8D8}
+body[data-profile="linxiwu"] .layer-rumen .p-bar{background:#D0C8E0}
+body[data-profile="linxiwu"] .layer-neimen .p-bar{background:#C0C8E8}
+body[data-profile="linxiwu"] .layer-zhun .p-bar{background:#B0C8E8}
+body[data-profile="linxiwu"] .layer-shixi .p-bar{background:#A6D2EB}
+body[data-profile="linxiwu"] .layer-zayi.active{border-color:#E8C8D0}
+body[data-profile="linxiwu"] .layer-tongxiu.active{border-color:#DEC8D8}
+body[data-profile="linxiwu"] .layer-rumen.active{border-color:#D0C8E0}
+body[data-profile="linxiwu"] .layer-neimen.active{border-color:#C0C8E8}
+body[data-profile="linxiwu"] .layer-zhun.active{border-color:#B0C8E8}
+body[data-profile="linxiwu"] .layer-shixi.active{border-color:#A6D2EB}
+/* 罗烬 紫金渐变（从下到上：杂役→十席）降低饱和度 */
+body[data-profile="luojin"] .layer-zayi .p-bar{background:#b8a0c8}
+body[data-profile="luojin"] .layer-tongxiu .p-bar{background:#c8b0d0}
+body[data-profile="luojin"] .layer-rumen .p-bar{background:#d4c0d8}
+body[data-profile="luojin"] .layer-neimen .p-bar{background:#e0d0d8}
+body[data-profile="luojin"] .layer-zhun .p-bar{background:#e8d8c8}
+body[data-profile="luojin"] .layer-shixi .p-bar{background:#e8c8a0}
+body[data-profile="luojin"] .layer-zayi.active{border-color:#b8a0c8}
+body[data-profile="luojin"] .layer-tongxiu.active{border-color:#c8b0d0}
+body[data-profile="luojin"] .layer-rumen.active{border-color:#d4c0d8}
+body[data-profile="luojin"] .layer-neimen.active{border-color:#e0d0d8}
+body[data-profile="luojin"] .layer-zhun.active{border-color:#e8d8c8}
+body[data-profile="luojin"] .layer-shixi.active{border-color:#e8c8a0}
+/* 条形成长动画 */
+@keyframes barGrow{from{width:0%}to{width:var(--target-width,30%)}}
+.pyramid-layer.animating .p-bar{animation:barGrow .9s cubic-bezier(.22,.61,.36,1) forwards}
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
 @keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh + 50px))rotate(360deg);opacity:0}}
-@media(max-width:820px){.wave-row{flex-direction:column}.wave-card{order:1}.wave-detail{order:2}.talent-grid{grid-template-columns:1fr 1fr;gap:8px}.preview-wrap{min-height:200px;max-height:60vh;height:auto}.wave-preview-wrap{min-height:300px;max-height:600px}body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}.talent-card{padding:10px 12px 10px 12px}.talent-card .t-name{font-size:.8rem}.talent-card .t-desc{font-size:.72rem}.river-wrap{min-height:260px}.river-wrap canvas{min-height:260px}.river-pct{font-size:1.3rem}.river-stage{font-size:.75rem}.river-btn{font-size:.72rem;padding:4px 12px}.river-overlay{padding:8px 12px 10px 12px}.story-modal{padding:20px 18px 18px 18px;margin:12px}.story-modal .modal-title{font-size:.95rem}.story-modal .modal-body{font-size:.88rem}.wave-preview-wrap{max-height:600px}.detail-list-w{max-height:300px}.story-dot{width:30px;height:30px}.story-dot::after{font-size:13px}.story-dot .dot-ring{width:54px;height:54px}.story-dot .dot-ring:nth-child(2){width:70px;height:70px}}
-@media(max-width:480px){.talent-grid{grid-template-columns:1fr 1fr;gap:6px}.talent-card{padding:8px 10px 8px 10px}.talent-card .t-name{font-size:.75rem}.talent-card .t-desc{font-size:.68rem}.talent-card .t-source{font-size:.6rem}.river-wrap{min-height:200px}.river-wrap canvas{min-height:200px}.river-pct{font-size:1.1rem}.river-stage{font-size:.7rem}.river-btn{font-size:.65rem;padding:3px 10px;border-width:1.5px}.river-overlay{padding:6px 10px 8px 10px;flex-wrap:wrap;gap:4px}.river-left{gap:2px}.river-pct-row{gap:4px}.story-modal{padding:16px 14px 14px 14px;margin:8px}.story-modal .modal-title{font-size:.88rem}.story-modal .modal-body{font-size:.82rem;padding:8px 0 2px 0}.story-modal .modal-body .story-quote{padding-left:8px}.wave-preview-wrap{max-height:450px}.detail-list-w{max-height:200px}.story-dot{width:26px;height:26px}.story-dot::after{font-size:11px}.story-dot .dot-ring{width:44px;height:44px}.story-dot .dot-ring:nth-child(2){width:58px;height:58px}}
+/* 右侧大卡片数值放大加深 */
+.pyramid-right .p-title{font-size:1.2rem;color:var(--text-primary)}
+.pyramid-right .p-sub{font-size:.85rem;color:#3a3a3a;font-weight:500}
+.pyramid-right .p-body{font-size:.95rem;color:#3a3a3a}
+.pyramid-right .p-body .tag{font-size:.7rem;color:#3a3a3a}
+@media(max-width:820px){.pyramid-row{flex-direction:column}.pyramid-left{order:1}.pyramid-right{order:2;max-height:300px}.power-row{gap:12px}.power-item .value{font-size:1.1rem}.info-grid{grid-template-columns:1fr 1fr}.pyramid-layer .p-label{font-size:.7rem;min-width:44px}.pyramid-layer .p-bar{height:24px;font-size:.6rem}.pyramid-layer .p-pct{font-size:.7rem;min-width:36px}.pyramid-layer .p-count{font-size:.7rem}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}body{padding:0 12px 30px 12px;font-size:15px}}
+@media(max-width:480px){.power-row{flex-direction:column;align-items:flex-start;gap:6px}.power-divider{display:none}.power-item .value{font-size:1rem}.info-grid{grid-template-columns:1fr}.target-row input{width:64px}.pyramid-layer{flex-wrap:wrap;gap:4px 8px}.pyramid-layer .p-label{font-size:.65rem;min-width:36px}.pyramid-layer .p-bar{height:20px;font-size:.5rem;min-width:24px}.pyramid-layer .p-pct{font-size:.65rem;min-width:30px}.pyramid-layer .p-count{font-size:.65rem}.pyramid-left{gap:2px}.pyramid-right{padding:12px 14px;max-height:240px}.pyramid-right .p-title{font-size:1rem}.pyramid-right .p-body{font-size:.85rem}}
 </style>
 </head>
 <body data-profile="linxiwu">
@@ -139,22 +215,22 @@ body.no-scroll{overflow:hidden}
 <div class="sidebar-panel" id="sidebarPanel">
 <button class="close-btn">✕</button>
 <div class="panel-title">◈ 归终殿 · 导航</div>
-        <a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
-        <a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
-        <a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
-        <a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
-        <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
-        <a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
-        <a class="nav-item active" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
-        <a class="nav-item" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
-        <a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
-        <a class="nav-item" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+<a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+<a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
+<a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
+<a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
+<a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
+<a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
+<a class="nav-item" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
+<a class="nav-item active" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
+<a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+<a class="nav-item" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
 <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
 <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
 </div>
 
 <div class="top-header">
-<div class="page-title"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</div>
+<div class="page-title"><span class="sym">✶</span> 升席纪事</div>
 <div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
 </div>
 
@@ -163,58 +239,136 @@ body.no-scroll{overflow:hidden}
 <!-- ===== 林栖梧 ===== -->
 <div class="content-block active" id="content-linxiwu">
 
-<div class="card" data-corner="❀ ◈">
-<span class="corner-deco">❀ ◈</span>
-<div class="card-title">灵枢轮回 · 血脉之始</div>
-<div style="font-size:.92rem;color:var(--text-secondary);line-height:1.9;position:relative;z-index:1;">
-<p style="margin-bottom:8px;"><strong style="color:var(--profile-accent);">林栖梧</strong> 与 <strong style="color:var(--profile-accent);">罗烬</strong>，归终殿统修期弟子，一为符修院方向，一为讲武堂方向。</p>
-<p style="margin-bottom:8px;">二人皆非寻常胎生——灵枢轮回木的创生之力与双方父母的血脉相融，方得此身。浮生树为根，魂血为引，故归终殿上下视二人如己出，并无分别。</p>
-<p>然灵枢轮回木自有其性，它并不认这两个从自身剥离的生命体为主。浮生树的根系只认 <strong style="color:var(--lin-blue);">林淮</strong> 与 <strong style="color:var(--luan-red);">栾方棋</strong> 的魂血，旁者不可僭越。此乃天命，亦是归终殿最深的温柔。</p>
-</div>
-</div>
-
+<!-- 卡片一：当前实力总览 -->
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
-<div class="card-title">血脉传承 · 天赋</div>
-<div class="talent-grid" id="talentGridLin">
-<div class="talent-card"><div class="t-name"><span class="t-icon">✿</span>符法天赋</div><div class="t-source">继承自 栾方棋</div><div class="t-desc">布阵速度在符修院同辈中排得上号，精血催符已有尝试。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:85%;"></div></div><span class="t-pct">85%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">❀</span>端方心性</div><div class="t-source">继承自 栾方棋</div><div class="t-desc">处事有条理，从不临阵慌乱，统修期内未出过失误。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:78%;"></div></div><span class="t-pct">78%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">⚔&#xFE0E;</span>体术根骨</div><div class="t-source">继承自 林淮</div><div class="t-desc">近身战有自保之力，体术基础够用，经验尚待积累。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:55%;"></div></div><span class="t-pct">55%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>坚韧意志</div><div class="t-source">继承自 林淮</div><div class="t-desc">抗压冥想从未中途退出，遇强则稳，不轻易动摇。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:70%;"></div></div><span class="t-pct">70%</span></div>
+<div class="card-title">当前实力总览</div>
+<div class="power-row">
+<div class="power-item"><span class="label">当前层级</span><span class="value" id="lin-level">统修期</span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">评级</span><span class="value"><span class="accent" id="lin-grade">甲等下品</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">战力值</span><span class="value"><span class="accent" id="lin-power">60.8</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">下一阶</span><span class="value" style="font-size:1rem;" id="lin-next">入门期</span><span class="sub" id="lin-next-need">需 ≥500</span></div>
+</div>
+<div class="target-row">
+<label>目标战力</label>
+<input type="number" id="lin-target" placeholder="500" min="0" step="1" />
+<button class="btn-sm" id="lin-target-btn">设定</button>
+<span style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);" id="lin-target-status">未设定</span>
+</div>
+<div class="progress-wrap">
+<div class="progress-track"><div class="progress-fill" id="lin-progress-fill" style="width:12.16%;"></div></div>
+<div class="progress-label"><span id="lin-progress-text">12.16%</span><span id="lin-progress-target">目标 500</span></div>
+</div>
+<div class="six-stat" id="lin-six-stat">
+<span class="stat-item"><span class="s-label">魂力</span> <span class="s-val">55</span></span>
+<span class="stat-item"><span class="s-label">体术</span> <span class="s-val">35</span></span>
+<span class="stat-item"><span class="s-label">法术</span> <span class="s-val">80</span></span>
+<span class="stat-item"><span class="s-label">防御</span> <span class="s-val">45</span></span>
+<span class="stat-item"><span class="s-label">意志</span> <span class="s-val">70</span></span>
+<span class="stat-item"><span class="s-label">敏捷</span> <span class="s-val">80</span></span>
 </div>
 </div>
 
+<!-- 卡片二：归终殿 · 弟子现状 -->
 <div class="card" data-corner="❀">
 <span class="corner-deco">❀</span>
-<div class="card-title">羁绊共鸣 · 雨落长河</div>
-<div class="river-wrap" id="riverWrapLin">
-<canvas id="riverCanvasLin"></canvas>
-<div class="river-overlay">
-<div class="river-left">
-<div class="river-pct-row"><span class="river-pct" id="riverPctLin">42%</span><span class="river-stage" id="riverStageLin">花叶初展</span></div>
-<button class="river-btn" data-profile="linxiwu">投入 · 共鸣</button>
-<div class="river-hint">✦ 点击水面光点查看血脉回响</div>
+<div class="card-title">归终殿 · 弟子现状</div>
+<div style="position:relative;z-index:1;">
+<p style="font-size:.9rem;color:var(--text-secondary);margin-bottom:10px;">归终殿现有弟子约 <strong style="color:var(--text-primary);">2000余人</strong>，共分六个层级：</p>
+<div class="info-grid">
+<div class="info-cell"><span class="label">杂役</span><span class="val">5% · <span class="highlight">~100人</span></span></div>
+<div class="info-cell"><span class="label">统修期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">入门期</span><span class="val">60% · <span class="highlight">~1200人</span></span></div>
+<div class="info-cell"><span class="label">内门期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">准十席级</span><span class="val">4.5% · <span class="highlight">~90人</span></span></div>
+<div class="info-cell"><span class="label">十席</span><span class="val">0.5% · <span class="highlight">10人</span></span></div>
 </div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">晋升规则</strong></p>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);line-height:1.8;">
+每月初一至初五，弟子可前往归终正殿「试炼司」预约战力测试。战力达标后，可向殿务司提出晋升申请。
+</p>
+<ul class="rule-list" style="margin-top:6px;">
+<li>统修期 → 入门期：六科统修考核均 ≥ 60分</li>
+<li>入门期 → 内门期：战力值 &gt; 500</li>
+<li>内门期 → 准十席级：战力值 &gt; 800</li>
+<li>准十席级 → 十席：战力值 &gt; 800，且挑战现十席成功</li>
+</ul>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">十席共十人，席位按战力排名。挑战者击败现任十席即可取而代之，原十席顺延一位，第十席被挤出前十。</p>
+</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:4px;"><strong style="color:var(--text-primary);">殿规</strong></p>
+<ul class="rule-list">
+<li><strong>不可轻视杂役：</strong>杂役虽身份低微，却是归终殿运转不可或缺的一部分。轻慢杂役者，罚抄殿规百遍；欺凌杂役者，逐出归终殿。</li>
+<li><strong>不可对十席不敬：</strong>十席引渡人皆为归终殿战力天花板。对十席不敬者，轻则罚俸三月，重则逐出归终殿。</li>
+<li><strong>晋升须经正规测试：</strong>私自挑战或冒充层级者，视同欺师灭祖，废除修为，逐出归终殿。</li>
+</ul>
 </div>
 </div>
 </div>
 
-<div class="wave-row">
-<div class="wave-card card" data-corner="❀" style="margin-bottom:0;">
+<!-- 卡片三：金字塔 -->
+<div class="card" data-corner="❀" id="pyramidCardLin">
 <span class="corner-deco">❀</span>
-<div class="card-title">父母爱情 · 林淮 &amp; 栾方棋</div>
-<div class="wave-frame">
-<svg class="wave-border-svg" aria-hidden="true"><defs><linearGradient id="waveBgLin" x1="0%" y1="0%" x2="100%" y2="100%"><stop class="sa" offset="0"/><stop class="sb" offset="1"/></linearGradient></defs><rect x="1.5" y="1.5" rx="5" fill="none" stroke="url(#waveBgLin)" stroke-width="2.5" stroke-dasharray="7,5" style="width:calc(100% - 3px);height:calc(100% - 3px)"/></svg>
-<div class="wave-preview-wrap" id="waveScrollLin">
-<svg id="waveSvgLin" class="wave-svg" preserveAspectRatio="xMidYMin meet"></svg>
+<div class="card-title">六层金字塔 · 归终殿层级</div>
+<div class="pyramid-row">
+<div class="pyramid-left" id="pyramidLeftLin">
+<div class="pyramid-layer layer-shixi" data-layer="shixi" data-width="26">
+<span class="p-label">十席</span>
+<span class="p-bar" style="width:0%;">0.5%</span>
+<span class="p-pct">0.5%</span>
+<span class="p-count">10人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-zhun" data-layer="zhun" data-width="44">
+<span class="p-label">准十席</span>
+<span class="p-bar" style="width:0%;">4.5%</span>
+<span class="p-pct">4.5%</span>
+<span class="p-count">~90人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-neimen" data-layer="neimen" data-width="62">
+<span class="p-label">内门期</span>
+<span class="p-bar" style="width:0%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-rumen" data-layer="rumen" data-width="86">
+<span class="p-label">入门期</span>
+<span class="p-bar" style="width:0%;">60%</span>
+<span class="p-pct">60%</span>
+<span class="p-count">~1200人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu" data-width="50">
+<span class="p-label">统修期</span>
+<span class="p-bar" style="width:0%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-zayi" data-layer="zayi" data-width="30">
+<span class="p-label">杂役</span>
+<span class="p-bar" style="width:0%;">5%</span>
+<span class="p-pct">5%</span>
+<span class="p-count">~100人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
 </div>
 </div>
-<div style="font-size:.55rem;color:var(--text-muted);text-align:center;padding-top:4px;font-family:var(--font-mono);opacity:.4;letter-spacing:.3px;">波形流动 · 对话左右交替</div>
+<div class="pyramid-right" id="pyramidRightLin">
+<div class="p-title">统修期</div>
+<div class="p-sub">15% · ~300人 · 战力上限 100</div>
+<div class="p-body">
+<p>统修期是新入殿弟子的第一阶段，为期三个月。符法、刀法、阵法、枪法、引渡实务、魂力控制、医药基础——什么都要学，什么都得练。</p>
+<p style="margin-top:6px;">三个月后，通过统修综合考核（六科均≥60分），即可升入入门期。未通过者可补考，三次考核未通过则转为杂役。</p>
+<p style="margin-top:6px;">每月可预约一次战力测试，了解自己的实力变化。统修期虽然短暂，却是每一位引渡人最难忘的时光——因为在这里，你第一次触摸到了“归终殿”三个字的重量。</p>
+<p style="margin-top:6px;color:var(--profile-accent);font-weight:500;">林栖梧与罗烬，目前正处于统修期。</p>
 </div>
-<div class="wave-detail card" data-corner="❀" style="margin-bottom:0;">
-<span class="corner-deco">❀</span>
-<div class="card-title">对话详情</div>
-<div class="detail-list-w" id="detailListLin"></div>
+</div>
 </div>
 </div>
 
@@ -223,77 +377,146 @@ body.no-scroll{overflow:hidden}
 <!-- ===== 罗烬 ===== -->
 <div class="content-block" id="content-luojin">
 
-<div class="card" data-corner="❀ ◈">
-<span class="corner-deco">❀ ◈</span>
-<div class="card-title">灵枢轮回 · 血脉之始</div>
-<div style="font-size:.92rem;color:var(--text-secondary);line-height:1.9;position:relative;z-index:1;">
-<p style="margin-bottom:8px;"><strong style="color:var(--profile-accent);">林栖梧</strong> 与 <strong style="color:var(--profile-accent);">罗烬</strong>，归终殿统修期弟子，一为符修院方向，一为讲武堂方向。</p>
-<p style="margin-bottom:8px;">二人皆非寻常胎生——灵枢轮回木的创生之力与双方父母的血脉相融，方得此身。浮生树为根，魂血为引，故归终殿上下视二人如己出，并无分别。</p>
-<p>然灵枢轮回木自有其性，它并不认这两个从自身剥离的生命体为主。浮生树的根系只认 <strong style="color:var(--lin-blue);">林淮</strong> 与 <strong style="color:var(--luan-red);">栾方棋</strong> 的魂血，旁者不可僭越。此乃天命，亦是归终殿最深的温柔。</p>
-</div>
-</div>
-
+<!-- 卡片一：当前实力总览 -->
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
-<div class="card-title">血脉传承 · 天赋</div>
-<div class="talent-grid" id="talentGridLuo">
-<div class="talent-card"><div class="t-name"><span class="t-icon">⚔&#xFE0E;</span>双刀本能</div><div class="t-source">继承自 罗修</div><div class="t-desc">刀法架势已有首席三分影子，实战反应快，天赋到位。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:90%;"></div></div><span class="t-pct">90%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>魂力亲和</div><div class="t-source">继承自 罗修</div><div class="t-desc">引动阴气时偶有震颤，但根基扎实，潜力深厚。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:65%;"></div></div><span class="t-pct">65%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">✦</span>魂力韧性</div><div class="t-source">继承自 魏元璟</div><div class="t-desc">抗压冥想课未再中途退出，精神稳定度尚可。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:60%;"></div></div><span class="t-pct">60%</span></div>
-<div class="talent-card"><div class="t-name"><span class="t-icon">◈</span>帝王傲骨</div><div class="t-source">继承自 魏元璟</div><div class="t-desc">遇强则强，绝不轻易低头，骨子里有一股不服输的劲。</div><div class="t-bar-wrap"><div class="t-bar-fill" style="width:75%;"></div></div><span class="t-pct">75%</span></div>
+<div class="card-title">当前实力总览</div>
+<div class="power-row">
+<div class="power-item"><span class="label">当前层级</span><span class="value" id="luo-level">统修期</span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">评级</span><span class="value"><span class="accent" id="luo-grade">甲等下品</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">战力值</span><span class="value"><span class="accent" id="luo-power">67.5</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">下一阶</span><span class="value" style="font-size:1rem;" id="luo-next">入门期</span><span class="sub" id="luo-next-need">需 ≥500</span></div>
+</div>
+<div class="target-row">
+<label>目标战力</label>
+<input type="number" id="luo-target" placeholder="500" min="0" step="1" />
+<button class="btn-sm" id="luo-target-btn">设定</button>
+<span style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);" id="luo-target-status">未设定</span>
+</div>
+<div class="progress-wrap">
+<div class="progress-track"><div class="progress-fill" id="luo-progress-fill" style="width:13.5%;"></div></div>
+<div class="progress-label"><span id="luo-progress-text">13.5%</span><span id="luo-progress-target">目标 500</span></div>
+</div>
+<div class="six-stat" id="luo-six-stat">
+<span class="stat-item"><span class="s-label">魂力</span> <span class="s-val">60</span></span>
+<span class="stat-item"><span class="s-label">体术</span> <span class="s-val">85</span></span>
+<span class="stat-item"><span class="s-label">法术</span> <span class="s-val">75</span></span>
+<span class="stat-item"><span class="s-label">防御</span> <span class="s-val">60</span></span>
+<span class="stat-item"><span class="s-label">意志</span> <span class="s-val">55</span></span>
+<span class="stat-item"><span class="s-label">敏捷</span> <span class="s-val">70</span></span>
 </div>
 </div>
 
+<!-- 卡片二：归终殿 · 弟子现状 -->
 <div class="card" data-corner="◈">
 <span class="corner-deco">◈</span>
-<div class="card-title">羁绊共鸣 · 雨落长河</div>
-<div class="river-wrap" id="riverWrapLuo">
-<canvas id="riverCanvasLuo"></canvas>
-<div class="river-overlay">
-<div class="river-left">
-<div class="river-pct-row"><span class="river-pct" id="riverPctLuo">38%</span><span class="river-stage" id="riverStageLuo">血脉初醒</span></div>
-<button class="river-btn" data-profile="luojin">投入 · 共鸣</button>
-<div class="river-hint">✦ 点击水面光点查看血脉回响</div>
+<div class="card-title">归终殿 · 弟子现状</div>
+<div style="position:relative;z-index:1;">
+<p style="font-size:.9rem;color:var(--text-secondary);margin-bottom:10px;">归终殿现有弟子约 <strong style="color:var(--text-primary);">2000余人</strong>，共分六个层级：</p>
+<div class="info-grid">
+<div class="info-cell"><span class="label">杂役</span><span class="val">5% · <span class="highlight">~100人</span></span></div>
+<div class="info-cell"><span class="label">统修期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">入门期</span><span class="val">60% · <span class="highlight">~1200人</span></span></div>
+<div class="info-cell"><span class="label">内门期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">准十席级</span><span class="val">4.5% · <span class="highlight">~90人</span></span></div>
+<div class="info-cell"><span class="label">十席</span><span class="val">0.5% · <span class="highlight">10人</span></span></div>
 </div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">晋升规则</strong></p>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);line-height:1.8;">
+每月初一至初五，弟子可前往归终正殿「试炼司」预约战力测试。战力达标后，可向殿务司提出晋升申请。
+</p>
+<ul class="rule-list" style="margin-top:6px;">
+<li>统修期 → 入门期：六科统修考核均 ≥ 60分</li>
+<li>入门期 → 内门期：战力值 &gt; 500</li>
+<li>内门期 → 准十席级：战力值 &gt; 800</li>
+<li>准十席级 → 十席：战力值 &gt; 800，且挑战现十席成功</li>
+</ul>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">十席共十人，席位按战力排名。挑战者击败现任十席即可取而代之，原十席顺延一位，第十席被挤出前十。</p>
+</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:4px;"><strong style="color:var(--text-primary);">殿规</strong></p>
+<ul class="rule-list">
+<li><strong>不可轻视杂役：</strong>杂役虽身份低微，却是归终殿运转不可或缺的一部分。轻慢杂役者，罚抄殿规百遍；欺凌杂役者，逐出归终殿。</li>
+<li><strong>不可对十席不敬：</strong>十席引渡人皆为归终殿战力天花板。对十席不敬者，轻则罚俸三月，重则逐出归终殿。</li>
+<li><strong>晋升须经正规测试：</strong>私自挑战或冒充层级者，视同欺师灭祖，废除修为，逐出归终殿。</li>
+</ul>
 </div>
 </div>
 </div>
 
-<div class="wave-row">
-<div class="wave-card card" data-corner="◈" style="margin-bottom:0;">
+<!-- 卡片三：金字塔 -->
+<div class="card" data-corner="◈" id="pyramidCardLuo">
 <span class="corner-deco">◈</span>
-<div class="card-title">父母爱情 · 罗修 &amp; 魏元璟</div>
-<div class="wave-frame">
-<svg class="wave-border-svg" aria-hidden="true"><defs><linearGradient id="waveBgLuo" x1="0%" y1="0%" x2="100%" y2="100%"><stop class="sc" offset="0"/><stop class="sd" offset="1"/></linearGradient></defs><rect x="1.5" y="1.5" rx="5" fill="none" stroke="url(#waveBgLuo)" stroke-width="2.5" stroke-dasharray="7,5" style="width:calc(100% - 3px);height:calc(100% - 3px)"/></svg>
-<div class="wave-preview-wrap" id="waveScrollLuo">
-<svg id="waveSvgLuo" class="wave-svg" preserveAspectRatio="xMidYMin meet"></svg>
+<div class="card-title">六层金字塔 · 归终殿层级</div>
+<div class="pyramid-row">
+<div class="pyramid-left" id="pyramidLeftLuo">
+<div class="pyramid-layer layer-shixi" data-layer="shixi" data-width="26">
+<span class="p-label">十席</span>
+<span class="p-bar" style="width:0%;">0.5%</span>
+<span class="p-pct">0.5%</span>
+<span class="p-count">10人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-zhun" data-layer="zhun" data-width="44">
+<span class="p-label">准十席</span>
+<span class="p-bar" style="width:0%;">4.5%</span>
+<span class="p-pct">4.5%</span>
+<span class="p-count">~90人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-neimen" data-layer="neimen" data-width="62">
+<span class="p-label">内门期</span>
+<span class="p-bar" style="width:0%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-rumen" data-layer="rumen" data-width="86">
+<span class="p-label">入门期</span>
+<span class="p-bar" style="width:0%;">60%</span>
+<span class="p-pct">60%</span>
+<span class="p-count">~1200人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu" data-width="50">
+<span class="p-label">统修期</span>
+<span class="p-bar" style="width:0%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
+</div>
+<div class="pyramid-layer layer-zayi" data-layer="zayi" data-width="30">
+<span class="p-label">杂役</span>
+<span class="p-bar" style="width:0%;">5%</span>
+<span class="p-pct">5%</span>
+<span class="p-count">~100人</span>
+<span class="p-arrow">▶&#xFE0E;</span>
 </div>
 </div>
-<div style="font-size:.55rem;color:var(--text-muted);text-align:center;padding-top:4px;font-family:var(--font-mono);opacity:.4;letter-spacing:.3px;">波形流动 · 对话左右交替</div>
+<div class="pyramid-right" id="pyramidRightLuo">
+<div class="p-title">统修期</div>
+<div class="p-sub">15% · ~300人 · 战力上限 100</div>
+<div class="p-body">
+<p>统修期是新入殿弟子的第一阶段，为期三个月。符法、刀法、阵法、枪法、引渡实务、魂力控制、医药基础——什么都要学，什么都得练。</p>
+<p style="margin-top:6px;">三个月后，通过统修综合考核（六科均≥60分），即可升入入门期。未通过者可补考，三次考核未通过则转为杂役。</p>
+<p style="margin-top:6px;">每月可预约一次战力测试，了解自己的实力变化。统修期虽然短暂，却是每一位引渡人最难忘的时光——因为在这里，你第一次触摸到了“归终殿”三个字的重量。</p>
+<p style="margin-top:6px;color:var(--profile-accent);font-weight:500;">林栖梧与罗烬，目前正处于统修期。</p>
 </div>
-<div class="wave-detail card" data-corner="◈" style="margin-bottom:0;">
-<span class="corner-deco">◈</span>
-<div class="card-title">对话详情</div>
-<div class="detail-list-w" id="detailListLuo"></div>
+</div>
 </div>
 </div>
 
 </div>
 
-</div>
-
-<div class="story-modal-overlay" id="storyModal">
-<div class="story-modal">
-<button class="modal-close" id="modalClose">✕</button>
-<div class="modal-title" id="modalTitle">对话</div>
-<div class="modal-sub" id="modalSub">出处</div>
-<div class="modal-body" id="modalBody"></div>
-</div>
 </div>
 
 <div id="petal-container"></div>
 
 <script src="./核心.js"></script>
-<script src="./血脉.js"></script>
+<script src="./纪事.js"></script>
 </body>
 </html>

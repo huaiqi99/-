@@ -51,16 +51,9 @@
             switchBtn = document.getElementById('profileSwitchBtn'); if (nameEl) nameEl.textContent = nameMap[profile] || '林栖梧'; if (switchBtn) switchBtn.textContent = '切换到 ' + (profile === 'linxiwu' ? '罗烬' : '林栖梧'); }
     (function() { var saved = GZD.Storage.getProfile();
         updateProfileUI(saved); })();
-    window.addEventListener('profilechange', function(e) { updateProfileUI(e.detail.profile); var p = e.detail.profile;
-        updateAllUI(p);
-        // 切换角色后重新触发动画
-        var cardId = p === 'linxiwu' ? 'pyramidCardLin' : 'pyramidCardLuo';
-        var card = document.getElementById(cardId);
-        if (card) {
-            // 先清除可能存在的observer，重新观察
-            if (window._pyramidObserver) window._pyramidObserver.disconnect();
-            observePyramid(p);
-        }
+    window.addEventListener('profilechange', function(e) { updateProfileUI(e.detail.profile);
+        updateAllUI(e.detail.profile);
+        // 金字塔动画由 IntersectionObserver 跟随卡片显隐自动触发/重置，无需手动重挂
     });
 
     var PETAL_CHARS = ['❀', '◈', '✽'],
@@ -149,15 +142,20 @@
         return levelMap[data.level] || 'tongxiu';
     }
 
+    function setText(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
+
     function updatePowerUI(profile) {
         var data = PLAYER_DATA[profile];
         if (!data) return;
-        var p = profile === 'linxiwu' ? '' : 'luo';
-        document.getElementById(p + '-level').textContent = data.level;
-        document.getElementById(p + '-grade').textContent = data.grade;
-        document.getElementById(p + '-power').textContent = data.power;
-        document.getElementById(p + '-next').textContent = data.nextLevel;
-        document.getElementById(p + '-next-need').textContent = '需 ≥' + data.nextNeed;
+        // 【关键修复】林栖梧的ID前缀是 lin-（原代码误写为空字符串，
+        // getElementById('-level') 返回 null 导致整个脚本初始化崩溃，
+        // 金字塔的滚动动画 Observer 因此从未注册成功）
+        var p = profile === 'linxiwu' ? 'lin' : 'luo';
+        setText(p + '-level', data.level);
+        setText(p + '-grade', data.grade);
+        setText(p + '-power', data.power);
+        setText(p + '-next', data.nextLevel);
+        setText(p + '-next-need', '需 ≥' + data.nextNeed);
         var stats = data.stats;
         var statLabels = ['魂力', '体术', '法术', '防御', '意志', '敏捷'];
         var container = document.getElementById(p + '-six-stat');
@@ -216,62 +214,113 @@
         updatePyramid(profile);
     }
 
-    // ===== 条形成长动画（滚动触发，照抄魂力逻辑） =====
-    function animatePyramid(profile) {
-        var leftId = 'pyramidLeft' + (profile === 'linxiwu' ? 'Lin' : 'Luo');
-        var left = document.getElementById(leftId);
+    // ===== 金字塔条形成长动画（滚动到视口才播放，离开视口自动重置，滚回可重播） =====
+    var pyramidPlayed = { linxiwu: false, luojin: false };
+    var pyramidVisible = { linxiwu: false, luojin: false };
+    var pyramidTimers = { linxiwu: [], luojin: [] };
+
+    function pyramidLeftEl(profile) { return document.getElementById(profile === 'linxiwu' ? 'pyramidLeftLin' : 'pyramidLeftLuo'); }
+    function pyramidCardEl(profile) { return document.getElementById(profile === 'linxiwu' ? 'pyramidCardLin' : 'pyramidCardLuo'); }
+
+    function clearPyramidTimers(profile) {
+        (pyramidTimers[profile] || []).forEach(function(t) { clearTimeout(t); });
+        pyramidTimers[profile] = [];
+    }
+
+    function resetPyramid(profile) {
+        clearPyramidTimers(profile);
+        var left = pyramidLeftEl(profile);
         if (!left) return;
-        var layers = left.querySelectorAll('.pyramid-layer');
-        layers.forEach(function(el, index) {
+        left.querySelectorAll('.pyramid-layer').forEach(function(el) {
+            el.classList.remove('animating');
+            var bar = el.querySelector('.p-bar');
+            if (!bar) return;
+            bar.style.transition = 'none';   // 重置时不播放收缩过渡
+            bar.style.width = '0%';
+        });
+        void left.offsetWidth;               // 强制重绘后再恢复过渡
+        left.querySelectorAll('.p-bar').forEach(function(bar) { bar.style.transition = ''; });
+        pyramidPlayed[profile] = false;
+    }
+
+    function animatePyramid(profile) {
+        var left = pyramidLeftEl(profile);
+        if (!left) return;
+        clearPyramidTimers(profile);
+        pyramidPlayed[profile] = true;
+        left.querySelectorAll('.pyramid-layer').forEach(function(el, index) {
             var targetWidth = parseInt(el.dataset.width, 10) || 30;
             var bar = el.querySelector('.p-bar');
             if (!bar) return;
-            // 重置动画
-            el.classList.remove('animating');
             bar.style.width = '0%';
-            // 强制重绘
-            void bar.offsetWidth;
-            bar.style.setProperty('--target-width', targetWidth + '%');
-            // 从底部开始延迟逐层触发（index 0=十席顶部，5=杂役底部）
-            var delay = (5 - index) * 140 + 200;
-            setTimeout(function() {
-                el.classList.add('animating');
-                bar.style.width = targetWidth + '%';
-            }, delay);
+            // 从底部开始逐层生长（index 0=十席顶部，5=杂役底部）
+            var delay = (5 - index) * 140 + 120;
+            pyramidTimers[profile].push(setTimeout(function() {
+                bar.style.width = targetWidth + '%';   // 宽度过渡由 CSS transition 完成
+            }, delay));
         });
     }
 
-    // 使用IntersectionObserver监控金字塔卡片，滚动到视口时触发动画
-    function observePyramid(profile) {
-        var cardId = profile === 'linxiwu' ? 'pyramidCardLin' : 'pyramidCardLuo';
-        var card = document.getElementById(cardId);
-        if (!card) return;
-        // 清除之前的observer
-        if (window._pyramidObserver) {
-            window._pyramidObserver.disconnect();
-            window._pyramidObserver = null;
-        }
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    // 检查是否已经播放过动画（可加标记防止重复触发，但允许切换角色后重新播放）
-                    var leftId = profile === 'linxiwu' ? 'pyramidLeftLin' : 'pyramidLeftLuo';
-                    var left = document.getElementById(leftId);
-                    if (left) {
-                        var layers = left.querySelectorAll('.pyramid-layer');
-                        var hasAnimated = false;
-                        layers.forEach(function(l) {
-                            if (l.classList.contains('animating')) hasAnimated = true;
-                        });
-                        if (!hasAnimated) {
-                            animatePyramid(profile);
-                        }
-                    }
-                }
+    // 可见性判定：卡片与视口相交且可见面积 ≥ 卡片面积20%（display:none 时宽高均为0，直接视为不可见）
+    function isCardVisible(card) {
+        if (!card) return false;
+        var rect = card.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return false;
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var vw = window.innerWidth || document.documentElement.clientWidth;
+        var vh_ = Math.min(rect.bottom, vh) - Math.max(rect.top, 0);
+        var vw_ = Math.min(rect.right, vw) - Math.max(rect.left, 0);
+        if (vh_ <= 0 || vw_ <= 0) return false;
+        return (vh_ * vw_) / (rect.width * rect.height) >= 0.2;
+    }
+
+    // 统一状态机：无论由哪个事件源驱动（IO/scroll/resize/轮询/角色切换），
+    // 只在可见状态发生变化时才执行播放或重置，幂等且可互相冗余
+    function updatePyramidVisibility() {
+        ['linxiwu', 'luojin'].forEach(function(profile) {
+            var visible = isCardVisible(pyramidCardEl(profile));
+            if (visible === pyramidVisible[profile]) return;
+            pyramidVisible[profile] = visible;
+            if (visible) {
+                if (!pyramidPlayed[profile]) animatePyramid(profile);
+            } else {
+                resetPyramid(profile);
+            }
+        });
+    }
+
+    function initPyramidObserver() {
+        var cards = [pyramidCardEl('linxiwu'), pyramidCardEl('luojin')].filter(Boolean);
+        if (!cards.length) return;
+        if (!('IntersectionObserver' in window)) {
+            // 老浏览器兜底：不播动画，直接显示最终宽度
+            ['linxiwu', 'luojin'].forEach(function(pf) {
+                var left = pyramidLeftEl(pf);
+                if (!left) return;
+                left.querySelectorAll('.pyramid-layer').forEach(function(el) {
+                    var bar = el.querySelector('.p-bar');
+                    if (bar) bar.style.width = (parseInt(el.dataset.width, 10) || 30) + '%';
+                });
             });
-        }, { threshold: 0.3 });
-        observer.observe(card);
-        window._pyramidObserver = observer;
+            return;
+        }
+        // 驱动源一：IntersectionObserver（同时监控林/罗两张卡片，
+        // 切换角色时 display:none↔block 的显隐也会触发）
+        var io = new IntersectionObserver(function() { updatePyramidVisibility(); }, { threshold: 0.2 });
+        cards.forEach(function(c) { io.observe(c); });
+        // 驱动源二：scroll/resize（rAF 节流），防止 IO 事件丢失或延迟
+        var ticking = false;
+        var onScroll = function() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function() { ticking = false; updatePyramidVisibility(); });
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        // 驱动源三：兜底轮询（350ms），保证任何情况下都能触发
+        setInterval(updatePyramidVisibility, 350);
+        // 初始判定一次（首屏就可见时立即播放）
+        updatePyramidVisibility();
     }
 
     // ===== 金字塔点击切换详情 =====
@@ -300,8 +349,11 @@
     document.querySelectorAll('.btn-sm').forEach(function(btn) {
         btn.addEventListener('click', function() {
             var profile = this.id.indexOf('lin') !== -1 ? 'linxiwu' : 'luojin';
-            var p = profile === 'linxiwu' ? '' : 'luo';
+            // 【同款bug修复】这里原来也写成 '' : 'luo'，导致林栖梧的设定按钮
+            // 找不到 lin-target 输入框而报错（Cannot read properties of null）
+            var p = profile === 'linxiwu' ? 'lin' : 'luo';
             var input = document.getElementById(p + '-target');
+            if (!input) return;
             var val = parseFloat(input.value);
             if (isNaN(val) || val < 0) { return; }
             TARGET_DATA[profile] = { value: val };
@@ -320,22 +372,10 @@
     });
 
     // ===== 初始化 =====
-    var initialProfile = document.body.getAttribute('data-profile') || 'linxiwu';
     updateAllUI('linxiwu');
     updateAllUI('luojin');
-    // 首次加载观察当前角色卡片
-    setTimeout(function() {
-        observePyramid(initialProfile);
-    }, 300);
+    // 持续观察两张金字塔卡片：滚到视口才播放，加载时不可见则不会播放
+    initPyramidObserver();
 
-    // 角色切换时重新观察
-    window.addEventListener('profilechange', function(e) {
-        var p = e.detail.profile;
-        // 等待DOM切换后重新观察
-        setTimeout(function() {
-            observePyramid(p);
-        }, 200);
-    });
-
-    console.log('✶ 归终殿 · 升席纪事 v3.0（滚动触发条形动画，字体放大加深，紫金调淡）');
+    console.log('✶ 归终殿 · 升席纪事 v3.2（修复金字塔滚动动画：ID前缀崩溃 + 三重触发保障 + 离屏重置可重播）');
 })();
