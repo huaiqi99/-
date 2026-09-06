@@ -21,12 +21,6 @@
     --font-mono: "Courier New", "Source Code Pro", monospace;
     --transition: 0.3s ease;
     --sidebar-width: 240px;
-    --pyramid-zayi: #b8a898;
-    --pyramid-tongxiu: #c9b8a0;
-    --pyramid-rumen: #d4c0a8;
-    --pyramid-neimen: #c4a888;
-    --pyramid-zhun: #b08868;
-    --pyramid-shixi: #8a5a4a;
 }
 [data-theme="dark"] {
     --bg-body: #1a1614;
@@ -38,12 +32,6 @@
     --text-secondary: #b8aea4;
     --text-muted: #8a8078;
     --accent: #c4b4a0;
-    --pyramid-zayi: #4a3d35;
-    --pyramid-tongxiu: #5a4d40;
-    --pyramid-rumen: #6a5d4a;
-    --pyramid-neimen: #5a4d3a;
-    --pyramid-zhun: #4a3d2a;
-    --pyramid-shixi: #3a2d1a;
 }
 body[data-profile="linxiwu"] {
     --profile-accent: var(--profile-lin);
@@ -138,31 +126,49 @@ body.no-scroll{overflow:hidden}
 .pyramid-right .p-body{font-size:.88rem;color:var(--text-secondary);line-height:1.9}
 .pyramid-right .p-body strong{color:var(--text-primary)}
 .pyramid-right .p-body .tag{display:inline-block;font-size:.65rem;font-family:var(--font-mono);padding:0 10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-muted);margin-right:4px}
-.pyramid-layer{display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .25s ease;padding:6px 8px;border-radius:4px;border:1px solid transparent;position:relative}
+.pyramid-layer{display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .25s ease;padding:6px 8px;border-radius:4px;border:1px solid transparent;position:relative;overflow:hidden}
 .pyramid-layer:hover{background:var(--bg-hover);border-color:var(--border-light)}
 .pyramid-layer.active{background:rgba(138,58,42,.06);border-color:var(--profile-accent);box-shadow:0 2px 12px rgba(0,0,0,.06);transform:translateX(4px)}
-.pyramid-layer .p-bar{height:28px;border-radius:3px;flex-shrink:0;transition:width .4s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.55rem;font-family:var(--font-mono);color:rgba(255,255,255,0.85);font-weight:600;letter-spacing:.3px;min-width:30px}
+.pyramid-layer .p-bar{height:28px;border-radius:3px;flex-shrink:0;transition:width .9s cubic-bezier(.22,.61,.36,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.55rem;font-family:var(--font-mono);color:rgba(255,255,255,0.85);font-weight:600;letter-spacing:.3px;min-width:30px;width:0%}
 .pyramid-layer .p-label{font-size:.75rem;font-weight:600;color:var(--text-primary);white-space:nowrap;min-width:56px}
 .pyramid-layer .p-pct{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);white-space:nowrap;min-width:40px;text-align:right}
 .pyramid-layer .p-arrow{font-size:.6rem;color:var(--text-muted);opacity:0;transition:opacity .3s}
 .pyramid-layer.active .p-arrow{opacity:1;color:var(--profile-accent)}
 .pyramid-layer .p-count{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);white-space:nowrap}
-/* 层级颜色 */
-.layer-zayi .p-bar{background:var(--pyramid-zayi)}
-.layer-tongxiu .p-bar{background:var(--pyramid-tongxiu)}
-.layer-rumen .p-bar{background:var(--pyramid-rumen)}
-.layer-neimen .p-bar{background:var(--pyramid-neimen)}
-.layer-zhun .p-bar{background:var(--pyramid-zhun)}
-.layer-shixi .p-bar{background:var(--pyramid-shixi)}
-.layer-zayi.active{border-color:var(--pyramid-zayi)}
-.layer-tongxiu.active{border-color:var(--pyramid-tongxiu)}
-.layer-rumen.active{border-color:var(--pyramid-rumen)}
-.layer-neimen.active{border-color:var(--pyramid-neimen)}
-.layer-zhun.active{border-color:var(--pyramid-zhun)}
-.layer-shixi.active{border-color:var(--pyramid-shixi)}
+.pyramid-layer .p-bar-inner{height:100%;width:100%;border-radius:3px;transition:opacity .3s}
+/* 林栖梧 粉蓝渐变（从下到上：杂役→十席） */
+body[data-profile="linxiwu"] .layer-zayi .p-bar{background:#A6D2EB}
+body[data-profile="linxiwu"] .layer-tongxiu .p-bar{background:#B8D9E8}
+body[data-profile="linxiwu"] .layer-rumen .p-bar{background:#CDE2EC}
+body[data-profile="linxiwu"] .layer-neimen .p-bar{background:#D9E6F0}
+body[data-profile="linxiwu"] .layer-zhun .p-bar{background:#E8EDF2}
+body[data-profile="linxiwu"] .layer-shixi .p-bar{background:#F3E9D2}
+/* 罗烬 紫金渐变（从下到上：杂役→十席） */
+body[data-profile="luojin"] .layer-zayi .p-bar{background:#9370DB}
+body[data-profile="luojin"] .layer-tongxiu .p-bar{background:#A885D6}
+body[data-profile="luojin"] .layer-rumen .p-bar{background:#BE9AD0}
+body[data-profile="luojin"] .layer-neimen .p-bar{background:#D4AFC8}
+body[data-profile="luojin"] .layer-zhun .p-bar{background:#E8C4B8}
+body[data-profile="luojin"] .layer-shixi .p-bar{background:#FFD700}
+/* 选中边框色 */
+body[data-profile="linxiwu"] .layer-zayi.active{border-color:#A6D2EB}
+body[data-profile="linxiwu"] .layer-tongxiu.active{border-color:#B8D9E8}
+body[data-profile="linxiwu"] .layer-rumen.active{border-color:#CDE2EC}
+body[data-profile="linxiwu"] .layer-neimen.active{border-color:#D9E6F0}
+body[data-profile="linxiwu"] .layer-zhun.active{border-color:#E8EDF2}
+body[data-profile="linxiwu"] .layer-shixi.active{border-color:#F3E9D2}
+body[data-profile="luojin"] .layer-zayi.active{border-color:#9370DB}
+body[data-profile="luojin"] .layer-tongxiu.active{border-color:#A885D6}
+body[data-profile="luojin"] .layer-rumen.active{border-color:#BE9AD0}
+body[data-profile="luojin"] .layer-neimen.active{border-color:#D4AFC8}
+body[data-profile="luojin"] .layer-zhun.active{border-color:#E8C4B8}
+body[data-profile="luojin"] .layer-shixi.active{border-color:#FFD700}
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
 .petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
 @keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh + 50px))rotate(360deg);opacity:0}}
+/* 入场动画：条形从0展开 */
+@keyframes barGrow{from{width:0%}to{width:var(--target-width)}}
+.pyramid-layer.animating .p-bar{animation:barGrow .9s cubic-bezier(.22,.61,.36,1) forwards}
 @media(max-width:820px){.pyramid-row{flex-direction:column}.pyramid-left{order:1}.pyramid-right{order:2;max-height:300px}.power-row{gap:12px}.power-item .value{font-size:1.1rem}.info-grid{grid-template-columns:1fr 1fr}.pyramid-layer .p-label{font-size:.7rem;min-width:44px}.pyramid-layer .p-bar{height:24px;font-size:.5rem}.pyramid-layer .p-pct{font-size:.55rem;min-width:32px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}body{padding:0 12px 30px 12px;font-size:15px}}
 @media(max-width:480px){.power-row{flex-direction:column;align-items:flex-start;gap:6px}.power-divider{display:none}.power-item .value{font-size:1rem}.info-grid{grid-template-columns:1fr}.target-row input{width:64px}.pyramid-layer{flex-wrap:wrap;gap:4px 8px}.pyramid-layer .p-label{font-size:.65rem;min-width:36px}.pyramid-layer .p-bar{height:20px;font-size:.45rem;min-width:24px}.pyramid-layer .p-pct{font-size:.5rem;min-width:28px}.pyramid-layer .p-count{font-size:.5rem}.pyramid-left{gap:2px}.pyramid-right{padding:12px 14px;max-height:240px}.pyramid-right .p-title{font-size:.9rem}.pyramid-right .p-body{font-size:.8rem}}
 </style>
@@ -186,9 +192,9 @@ body.no-scroll{overflow:hidden}
 <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
 <a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
 <a class="nav-item" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
-<a class="nav-item active" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
-<a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
-<a class="nav-item" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+<a class="nav-item active" href="#"><span class="sym">✶</span> 升席纪事</a>
+<a class="nav-item" href="#"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+<a class="nav-item" href="#"><span class="sym">⚙&#xFE0E;</span> 设置</a>
 <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
 <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
 </div>
@@ -280,44 +286,44 @@ body.no-scroll{overflow:hidden}
 <div class="card-title">六层金字塔 · 归终殿层级</div>
 <div class="pyramid-row">
 <div class="pyramid-left" id="pyramidLeftLin">
-<div class="pyramid-layer layer-shixi" data-layer="shixi">
+<div class="pyramid-layer layer-shixi" data-layer="shixi" data-width="26">
 <span class="p-label">十席</span>
-<span class="p-bar" style="width:26%;">0.5%</span>
+<span class="p-bar" style="width:0%;">0.5%</span>
 <span class="p-pct">0.5%</span>
 <span class="p-count">10人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-zhun" data-layer="zhun">
+<div class="pyramid-layer layer-zhun" data-layer="zhun" data-width="44">
 <span class="p-label">准十席</span>
-<span class="p-bar" style="width:44%;">4.5%</span>
+<span class="p-bar" style="width:0%;">4.5%</span>
 <span class="p-pct">4.5%</span>
 <span class="p-count">~90人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-neimen" data-layer="neimen">
+<div class="pyramid-layer layer-neimen" data-layer="neimen" data-width="62">
 <span class="p-label">内门期</span>
-<span class="p-bar" style="width:62%;">15%</span>
+<span class="p-bar" style="width:0%;">15%</span>
 <span class="p-pct">15%</span>
 <span class="p-count">~300人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-rumen" data-layer="rumen">
+<div class="pyramid-layer layer-rumen" data-layer="rumen" data-width="86">
 <span class="p-label">入门期</span>
-<span class="p-bar" style="width:86%;">60%</span>
+<span class="p-bar" style="width:0%;">60%</span>
 <span class="p-pct">60%</span>
 <span class="p-count">~1200人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu">
+<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu" data-width="50">
 <span class="p-label">统修期</span>
-<span class="p-bar" style="width:50%;">15%</span>
+<span class="p-bar" style="width:0%;">15%</span>
 <span class="p-pct">15%</span>
 <span class="p-count">~300人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-zayi" data-layer="zayi">
+<div class="pyramid-layer layer-zayi" data-layer="zayi" data-width="30">
 <span class="p-label">杂役</span>
-<span class="p-bar" style="width:30%;">5%</span>
+<span class="p-bar" style="width:0%;">5%</span>
 <span class="p-pct">5%</span>
 <span class="p-count">~100人</span>
 <span class="p-arrow">▶</span>
@@ -418,44 +424,44 @@ body.no-scroll{overflow:hidden}
 <div class="card-title">六层金字塔 · 归终殿层级</div>
 <div class="pyramid-row">
 <div class="pyramid-left" id="pyramidLeftLuo">
-<div class="pyramid-layer layer-shixi" data-layer="shixi">
+<div class="pyramid-layer layer-shixi" data-layer="shixi" data-width="26">
 <span class="p-label">十席</span>
-<span class="p-bar" style="width:26%;">0.5%</span>
+<span class="p-bar" style="width:0%;">0.5%</span>
 <span class="p-pct">0.5%</span>
 <span class="p-count">10人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-zhun" data-layer="zhun">
+<div class="pyramid-layer layer-zhun" data-layer="zhun" data-width="44">
 <span class="p-label">准十席</span>
-<span class="p-bar" style="width:44%;">4.5%</span>
+<span class="p-bar" style="width:0%;">4.5%</span>
 <span class="p-pct">4.5%</span>
 <span class="p-count">~90人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-neimen" data-layer="neimen">
+<div class="pyramid-layer layer-neimen" data-layer="neimen" data-width="62">
 <span class="p-label">内门期</span>
-<span class="p-bar" style="width:62%;">15%</span>
+<span class="p-bar" style="width:0%;">15%</span>
 <span class="p-pct">15%</span>
 <span class="p-count">~300人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-rumen" data-layer="rumen">
+<div class="pyramid-layer layer-rumen" data-layer="rumen" data-width="86">
 <span class="p-label">入门期</span>
-<span class="p-bar" style="width:86%;">60%</span>
+<span class="p-bar" style="width:0%;">60%</span>
 <span class="p-pct">60%</span>
 <span class="p-count">~1200人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu">
+<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu" data-width="50">
 <span class="p-label">统修期</span>
-<span class="p-bar" style="width:50%;">15%</span>
+<span class="p-bar" style="width:0%;">15%</span>
 <span class="p-pct">15%</span>
 <span class="p-count">~300人</span>
 <span class="p-arrow">▶</span>
 </div>
-<div class="pyramid-layer layer-zayi" data-layer="zayi">
+<div class="pyramid-layer layer-zayi" data-layer="zayi" data-width="30">
 <span class="p-label">杂役</span>
-<span class="p-bar" style="width:30%;">5%</span>
+<span class="p-bar" style="width:0%;">5%</span>
 <span class="p-pct">5%</span>
 <span class="p-count">~100人</span>
 <span class="p-arrow">▶</span>

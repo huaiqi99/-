@@ -52,7 +52,8 @@
     (function() { var saved = GZD.Storage.getProfile();
         updateProfileUI(saved); })();
     window.addEventListener('profilechange', function(e) { updateProfileUI(e.detail.profile); var p = e.detail.profile;
-        updateAllUI(p); });
+        updateAllUI(p);
+        animatePyramid(p); });
 
     var PETAL_CHARS = ['❀', '◈', '✽'],
         petalContainer = document.getElementById('petal-container');
@@ -207,6 +208,32 @@
         updatePyramid(profile);
     }
 
+    function animatePyramid(profile) {
+        var leftId = 'pyramidLeft' + (profile === 'linxiwu' ? 'Lin' : 'Luo');
+        var left = document.getElementById(leftId);
+        if (!left) return;
+        var layers = left.querySelectorAll('.pyramid-layer');
+        layers.forEach(function(el, index) {
+            var targetWidth = parseInt(el.dataset.width, 10) || 30;
+            var bar = el.querySelector('.p-bar');
+            if (!bar) return;
+            // 重置动画
+            el.classList.remove('animating');
+            // 强制重排
+            void el.offsetWidth;
+            // 设置目标宽度
+            bar.style.setProperty('--target-width', targetWidth + '%');
+            // 从0开始
+            bar.style.width = '0%';
+            // 延迟逐层触发（从底部开始，即从后往前）
+            var delay = (5 - index) * 120 + 200;
+            setTimeout(function() {
+                el.classList.add('animating');
+                bar.style.width = targetWidth + '%';
+            }, delay);
+        });
+    }
+
     document.querySelectorAll('.pyramid-left').forEach(function(left) {
         left.querySelectorAll('.pyramid-layer').forEach(function(el) {
             el.addEventListener('click', function() {
@@ -253,11 +280,19 @@
     var initialProfile = document.body.getAttribute('data-profile') || 'linxiwu';
     updateAllUI('linxiwu');
     updateAllUI('luojin');
+    // 延迟执行入场动画，确保DOM渲染完成
+    setTimeout(function() {
+        animatePyramid('linxiwu');
+        animatePyramid('luojin');
+    }, 300);
 
     window.addEventListener('profilechange', function(e) {
         var p = e.detail.profile;
         updateAllUI(p);
+        setTimeout(function() {
+            animatePyramid(p);
+        }, 200);
     });
 
-    console.log('✶ 归终殿 · 升席纪事 v1.0 已加载');
+    console.log('✶ 归终殿 · 升席纪事 v2.0 已加载（粉蓝/紫金渐变 + 条形成长动画）');
 })();
