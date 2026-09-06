@@ -53,7 +53,15 @@
         updateProfileUI(saved); })();
     window.addEventListener('profilechange', function(e) { updateProfileUI(e.detail.profile); var p = e.detail.profile;
         updateAllUI(p);
-        animatePyramid(p); });
+        // 切换角色后重新触发动画
+        var cardId = p === 'linxiwu' ? 'pyramidCardLin' : 'pyramidCardLuo';
+        var card = document.getElementById(cardId);
+        if (card) {
+            // 先清除可能存在的observer，重新观察
+            if (window._pyramidObserver) window._pyramidObserver.disconnect();
+            observePyramid(p);
+        }
+    });
 
     var PETAL_CHARS = ['❀', '◈', '✽'],
         petalContainer = document.getElementById('petal-container');
@@ -208,6 +216,7 @@
         updatePyramid(profile);
     }
 
+    // ===== 条形成长动画（滚动触发，照抄魂力逻辑） =====
     function animatePyramid(profile) {
         var leftId = 'pyramidLeft' + (profile === 'linxiwu' ? 'Lin' : 'Luo');
         var left = document.getElementById(leftId);
@@ -217,15 +226,14 @@
             var targetWidth = parseInt(el.dataset.width, 10) || 30;
             var bar = el.querySelector('.p-bar');
             if (!bar) return;
-            // 重置动画：移除类、重置宽度
+            // 重置动画
             el.classList.remove('animating');
             bar.style.width = '0%';
             // 强制重绘
             void bar.offsetWidth;
-            // 设置CSS变量用于动画
             bar.style.setProperty('--target-width', targetWidth + '%');
-            // 从底部开始延迟逐层触发（index 0=十席顶部，5=杂役底部，所以从后往前）
-            var delay = (5 - index) * 140 + 300;
+            // 从底部开始延迟逐层触发（index 0=十席顶部，5=杂役底部）
+            var delay = (5 - index) * 140 + 200;
             setTimeout(function() {
                 el.classList.add('animating');
                 bar.style.width = targetWidth + '%';
@@ -233,6 +241,40 @@
         });
     }
 
+    // 使用IntersectionObserver监控金字塔卡片，滚动到视口时触发动画
+    function observePyramid(profile) {
+        var cardId = profile === 'linxiwu' ? 'pyramidCardLin' : 'pyramidCardLuo';
+        var card = document.getElementById(cardId);
+        if (!card) return;
+        // 清除之前的observer
+        if (window._pyramidObserver) {
+            window._pyramidObserver.disconnect();
+            window._pyramidObserver = null;
+        }
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    // 检查是否已经播放过动画（可加标记防止重复触发，但允许切换角色后重新播放）
+                    var leftId = profile === 'linxiwu' ? 'pyramidLeftLin' : 'pyramidLeftLuo';
+                    var left = document.getElementById(leftId);
+                    if (left) {
+                        var layers = left.querySelectorAll('.pyramid-layer');
+                        var hasAnimated = false;
+                        layers.forEach(function(l) {
+                            if (l.classList.contains('animating')) hasAnimated = true;
+                        });
+                        if (!hasAnimated) {
+                            animatePyramid(profile);
+                        }
+                    }
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(card);
+        window._pyramidObserver = observer;
+    }
+
+    // ===== 金字塔点击切换详情 =====
     document.querySelectorAll('.pyramid-left').forEach(function(left) {
         left.querySelectorAll('.pyramid-layer').forEach(function(el) {
             el.addEventListener('click', function() {
@@ -254,6 +296,7 @@
         });
     });
 
+    // ===== 目标战力设定 =====
     document.querySelectorAll('.btn-sm').forEach(function(btn) {
         btn.addEventListener('click', function() {
             var profile = this.id.indexOf('lin') !== -1 ? 'linxiwu' : 'luojin';
@@ -276,22 +319,23 @@
         });
     });
 
+    // ===== 初始化 =====
     var initialProfile = document.body.getAttribute('data-profile') || 'linxiwu';
     updateAllUI('linxiwu');
     updateAllUI('luojin');
-    // 入场动画
+    // 首次加载观察当前角色卡片
     setTimeout(function() {
-        animatePyramid('linxiwu');
-        animatePyramid('luojin');
-    }, 400);
+        observePyramid(initialProfile);
+    }, 300);
 
+    // 角色切换时重新观察
     window.addEventListener('profilechange', function(e) {
         var p = e.detail.profile;
-        updateAllUI(p);
+        // 等待DOM切换后重新观察
         setTimeout(function() {
-            animatePyramid(p);
-        }, 300);
+            observePyramid(p);
+        }, 200);
     });
 
-    console.log('✶ 归终殿 · 升席纪事 v2.1（粉蓝/紫金渐变 + 条形成长动画）');
+    console.log('✶ 归终殿 · 升席纪事 v3.0（滚动触发条形动画，字体放大加深，紫金调淡）');
 })();
