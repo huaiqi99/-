@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>归终殿 · 升席纪事</title>
+<style>
+:root {
+    --bg-body: #f7f4ef;
+    --bg-card: #ffffff;
+    --bg-hover: #f2eee9;
+    --border-light: #ece6de;
+    --border-card: #d5c8b8;
+    --text-primary: #2c2c2c;
+    --text-secondary: #4a4a4a;
+    --text-muted: #8a8a8a;
+    --accent: #8a3a2a;
+    --profile-lin: #D49A9A;
+    --profile-luo: #4E5A64;
+    --font-serif: "Georgia", "Times New Roman", "Songti SC", serif;
+    --font-mono: "Courier New", "Source Code Pro", monospace;
+    --transition: 0.3s ease;
+    --sidebar-width: 240px;
+    --pyramid-zayi: #b8a898;
+    --pyramid-tongxiu: #c9b8a0;
+    --pyramid-rumen: #d4c0a8;
+    --pyramid-neimen: #c4a888;
+    --pyramid-zhun: #b08868;
+    --pyramid-shixi: #8a5a4a;
+}
+[data-theme="dark"] {
+    --bg-body: #1a1614;
+    --bg-card: #24201c;
+    --bg-hover: #2d2824;
+    --border-light: #3d3732;
+    --border-card: #4a443e;
+    --text-primary: #e8e0d5;
+    --text-secondary: #b8aea4;
+    --text-muted: #8a8078;
+    --accent: #c4b4a0;
+    --pyramid-zayi: #4a3d35;
+    --pyramid-tongxiu: #5a4d40;
+    --pyramid-rumen: #6a5d4a;
+    --pyramid-neimen: #5a4d3a;
+    --pyramid-zhun: #4a3d2a;
+    --pyramid-shixi: #3a2d1a;
+}
+body[data-profile="linxiwu"] {
+    --profile-accent: var(--profile-lin);
+}
+body[data-profile="luojin"] {
+    --profile-accent: var(--profile-luo);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+#app{max-width:1020px;margin:0 auto;width:100%;padding:20px 4px 0 4px}
+.top-header{max-width:1020px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid var(--border-light)}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition)}
+.top-header .profile-name{font-size:.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.5px;margin-left:2px}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600}
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,.25);transform:translateX(-100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-panel.open{transform:translateX(0)}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition)}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent)}
+.sidebar-panel .panel-title{font-size:.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono)}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.sidebar-panel .nav-item.active{background:rgba(138,58,42,.04);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s;width:100%;text-align:center}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,.04)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.sidebar-overlay.show{opacity:1;pointer-events:auto}
+body.no-scroll{overflow:hidden}
+.content-block{display:none}
+.content-block.active{display:block}
+.card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,.06);transition:border-color var(--transition),box-shadow var(--transition),transform .25s ease;animation:cardIn .45s ease forwards;line-height:1.6}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(ellipse at 30% 20%,rgba(255,248,240,.03)0%,transparent 70%),radial-gradient(ellipse at 70% 80%,rgba(255,248,240,.02)0%,transparent 60%);z-index:0}
+.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:.75;z-index:2;transition:all .3s}
+.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:.75;z-index:2;transition:all .3s;pointer-events:none}
+.card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 6px 20px rgba(0,0,0,.12)}
+.card:hover::after,.card:hover .corner-deco{opacity:1;transform:scale(1.1)}
+.card-title{font-size:.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1}
+.card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:.5;border-radius:1px}
+.card-grad{background:linear-gradient(135deg,var(--bg-card)0%,var(--bg-hover)100%)}
+.status-seal{display:inline-flex;align-items:center;gap:6px 12px;font-family:var(--font-mono);font-size:.7rem;color:var(--text-muted);padding:4px 14px 4px 12px;border:1.5px solid var(--profile-accent);border-radius:4px;background:var(--bg-card);letter-spacing:1px;opacity:.85;flex-wrap:wrap}
+.status-seal .seal-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--profile-accent);margin-right:2px}
+.status-seal .seal-grade{font-weight:700;color:var(--profile-accent);font-size:.75rem}
+.status-seal .seal-period{color:var(--text-muted);font-weight:400}
+.status-seal .seal-value{color:var(--text-secondary);font-weight:600;font-size:.7rem}
+.seal-divider{color:var(--border-light);font-weight:300;padding:0 2px}
+.power-row{display:flex;gap:24px;flex-wrap:wrap;align-items:center;position:relative;z-index:1}
+.power-item{text-align:center}
+.power-item .label{font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.5px;display:block}
+.power-item .value{font-size:1.4rem;font-weight:700;color:var(--text-primary)}
+.power-item .value .accent{color:var(--profile-accent)}
+.power-item .sub{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono)}
+.power-divider{width:1px;height:36px;background:var(--border-light);flex-shrink:0}
+.target-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;position:relative;z-index:1}
+.target-row label{font-size:.8rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.3px}
+.target-row input{width:80px;padding:4px 8px;border:1px solid var(--border-light);border-radius:4px;background:var(--bg-card);color:var(--text-primary);font-family:var(--font-mono);font-size:.85rem;outline:none;transition:border-color var(--transition)}
+.target-row input:focus{border-color:var(--profile-accent)}
+.target-row .btn-sm{padding:4px 16px;border-radius:16px;border:1px solid var(--profile-accent);background:var(--bg-card);color:var(--profile-accent);font-family:var(--font-serif);font-size:.75rem;cursor:pointer;transition:all .2s}
+.target-row .btn-sm:hover{background:var(--profile-accent);color:#fff}
+.target-row .btn-sm:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
+.progress-wrap{width:100%;margin-top:10px;position:relative;z-index:1}
+.progress-track{width:100%;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:var(--profile-accent);transition:width .8s ease;width:0%}
+.progress-label{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px}
+.six-stat{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;position:relative;z-index:1}
+.six-stat .stat-item{font-size:.7rem;color:var(--text-secondary);font-family:var(--font-mono);background:var(--bg-hover);padding:2px 10px;border-radius:10px;border:1px solid var(--border-light)}
+.six-stat .stat-item .s-label{color:var(--text-muted)}
+.six-stat .stat-item .s-val{font-weight:600;color:var(--profile-accent)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
+.info-cell{background:var(--bg-hover);padding:8px 12px;border-radius:4px;border:1px solid var(--border-light)}
+.info-cell .label{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.3px;display:block;margin-bottom:2px}
+.info-cell .val{font-size:.9rem;color:var(--text-primary);font-weight:500}
+.info-cell .val .highlight{color:var(--profile-accent);font-weight:600}
+.info-cell.span-full{grid-column:1/-1}
+.rule-list{list-style:none;padding:0;position:relative;z-index:1}
+.rule-list li{padding:4px 0 4px 18px;position:relative;font-size:.85rem;color:var(--text-secondary);line-height:1.7;border-bottom:1px solid var(--border-light)}
+.rule-list li:last-child{border-bottom:none}
+.rule-list li::before{content:'◆';position:absolute;left:0;top:4px;color:var(--profile-accent);font-size:.6rem;opacity:.5}
+.pyramid-row{display:flex;gap:16px;align-items:stretch;width:100%;min-height:460px}
+.pyramid-left{flex:1.2;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:4px 0}
+.pyramid-right{flex:1;min-width:0;background:var(--bg-hover);border-radius:6px;border:1px solid var(--border-light);padding:16px 18px;overflow-y:auto;max-height:520px;display:flex;flex-direction:column;justify-content:center}
+.pyramid-right .p-title{font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+.pyramid-right .p-sub{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:10px}
+.pyramid-right .p-body{font-size:.88rem;color:var(--text-secondary);line-height:1.9}
+.pyramid-right .p-body strong{color:var(--text-primary)}
+.pyramid-right .p-body .tag{display:inline-block;font-size:.65rem;font-family:var(--font-mono);padding:0 10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-muted);margin-right:4px}
+.pyramid-layer{display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .25s ease;padding:6px 8px;border-radius:4px;border:1px solid transparent;position:relative}
+.pyramid-layer:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.pyramid-layer.active{background:rgba(138,58,42,.06);border-color:var(--profile-accent);box-shadow:0 2px 12px rgba(0,0,0,.06);transform:translateX(4px)}
+.pyramid-layer .p-bar{height:28px;border-radius:3px;flex-shrink:0;transition:width .4s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.55rem;font-family:var(--font-mono);color:rgba(255,255,255,0.85);font-weight:600;letter-spacing:.3px;min-width:30px}
+.pyramid-layer .p-label{font-size:.75rem;font-weight:600;color:var(--text-primary);white-space:nowrap;min-width:56px}
+.pyramid-layer .p-pct{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);white-space:nowrap;min-width:40px;text-align:right}
+.pyramid-layer .p-arrow{font-size:.6rem;color:var(--text-muted);opacity:0;transition:opacity .3s}
+.pyramid-layer.active .p-arrow{opacity:1;color:var(--profile-accent)}
+.pyramid-layer .p-count{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono);white-space:nowrap}
+/* 层级颜色 */
+.layer-zayi .p-bar{background:var(--pyramid-zayi)}
+.layer-tongxiu .p-bar{background:var(--pyramid-tongxiu)}
+.layer-rumen .p-bar{background:var(--pyramid-rumen)}
+.layer-neimen .p-bar{background:var(--pyramid-neimen)}
+.layer-zhun .p-bar{background:var(--pyramid-zhun)}
+.layer-shixi .p-bar{background:var(--pyramid-shixi)}
+.layer-zayi.active{border-color:var(--pyramid-zayi)}
+.layer-tongxiu.active{border-color:var(--pyramid-tongxiu)}
+.layer-rumen.active{border-color:var(--pyramid-rumen)}
+.layer-neimen.active{border-color:var(--pyramid-neimen)}
+.layer-zhun.active{border-color:var(--pyramid-zhun)}
+.layer-shixi.active{border-color:var(--pyramid-shixi)}
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
+@keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh + 50px))rotate(360deg);opacity:0}}
+@media(max-width:820px){.pyramid-row{flex-direction:column}.pyramid-left{order:1}.pyramid-right{order:2;max-height:300px}.power-row{gap:12px}.power-item .value{font-size:1.1rem}.info-grid{grid-template-columns:1fr 1fr}.pyramid-layer .p-label{font-size:.7rem;min-width:44px}.pyramid-layer .p-bar{height:24px;font-size:.5rem}.pyramid-layer .p-pct{font-size:.55rem;min-width:32px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}body{padding:0 12px 30px 12px;font-size:15px}}
+@media(max-width:480px){.power-row{flex-direction:column;align-items:flex-start;gap:6px}.power-divider{display:none}.power-item .value{font-size:1rem}.info-grid{grid-template-columns:1fr}.target-row input{width:64px}.pyramid-layer{flex-wrap:wrap;gap:4px 8px}.pyramid-layer .p-label{font-size:.65rem;min-width:36px}.pyramid-layer .p-bar{height:20px;font-size:.45rem;min-width:24px}.pyramid-layer .p-pct{font-size:.5rem;min-width:28px}.pyramid-layer .p-count{font-size:.5rem}.pyramid-left{gap:2px}.pyramid-right{padding:12px 14px;max-height:240px}.pyramid-right .p-title{font-size:.9rem}.pyramid-right .p-body{font-size:.8rem}}
+</style>
+</head>
+<body data-profile="linxiwu">
+
+<div class="float-group">
+<a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+<button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+<button class="close-btn">✕</button>
+<div class="panel-title">◈ 归终殿 · 导航</div>
+<a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+<a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
+<a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
+<a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
+<a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
+<a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
+<a class="nav-item" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
+<a class="nav-item active" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
+<a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+<a class="nav-item" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+<button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+<div class="panel-footer">归终殿弟子手册 · 内部流通</div>
+</div>
+
+<div class="top-header">
+<div class="page-title"><span class="sym">✶</span> 升席纪事</div>
+<div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
+</div>
+
+<div id="app">
+
+<!-- ===== 林栖梧 ===== -->
+<div class="content-block active" id="content-linxiwu">
+
+<!-- 卡片一：当前实力总览 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">当前实力总览</div>
+<div class="power-row">
+<div class="power-item"><span class="label">当前层级</span><span class="value" id="lin-level">统修期</span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">评级</span><span class="value"><span class="accent" id="lin-grade">甲等下品</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">战力值</span><span class="value"><span class="accent" id="lin-power">60.8</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">下一阶</span><span class="value" style="font-size:1rem;" id="lin-next">入门期</span><span class="sub" id="lin-next-need">需 ≥500</span></div>
+</div>
+<div class="target-row">
+<label>目标战力</label>
+<input type="number" id="lin-target" placeholder="500" min="0" step="1" />
+<button class="btn-sm" id="lin-target-btn">设定</button>
+<span style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);" id="lin-target-status">未设定</span>
+</div>
+<div class="progress-wrap">
+<div class="progress-track"><div class="progress-fill" id="lin-progress-fill" style="width:12.16%;"></div></div>
+<div class="progress-label"><span id="lin-progress-text">12.16%</span><span id="lin-progress-target">目标 500</span></div>
+</div>
+<div class="six-stat" id="lin-six-stat">
+<span class="stat-item"><span class="s-label">魂力</span> <span class="s-val">55</span></span>
+<span class="stat-item"><span class="s-label">体术</span> <span class="s-val">35</span></span>
+<span class="stat-item"><span class="s-label">法术</span> <span class="s-val">80</span></span>
+<span class="stat-item"><span class="s-label">防御</span> <span class="s-val">45</span></span>
+<span class="stat-item"><span class="s-label">意志</span> <span class="s-val">70</span></span>
+<span class="stat-item"><span class="s-label">敏捷</span> <span class="s-val">80</span></span>
+</div>
+</div>
+
+<!-- 卡片二：归终殿 · 弟子现状 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">归终殿 · 弟子现状</div>
+<div style="position:relative;z-index:1;">
+<p style="font-size:.9rem;color:var(--text-secondary);margin-bottom:10px;">归终殿现有弟子约 <strong style="color:var(--text-primary);">2000余人</strong>，共分六个层级：</p>
+<div class="info-grid">
+<div class="info-cell"><span class="label">杂役</span><span class="val">5% · <span class="highlight">~100人</span></span></div>
+<div class="info-cell"><span class="label">统修期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">入门期</span><span class="val">60% · <span class="highlight">~1200人</span></span></div>
+<div class="info-cell"><span class="label">内门期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">准十席级</span><span class="val">4.5% · <span class="highlight">~90人</span></span></div>
+<div class="info-cell"><span class="label">十席</span><span class="val">0.5% · <span class="highlight">10人</span></span></div>
+</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">晋升规则</strong></p>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);line-height:1.8;">
+每月初一至初五，弟子可前往归终正殿「试炼司」预约战力测试。战力达标后，可向殿务司提出晋升申请。
+</p>
+<ul class="rule-list" style="margin-top:6px;">
+<li>统修期 → 入门期：六科统修考核均 ≥ 60分</li>
+<li>入门期 → 内门期：战力值 &gt; 500</li>
+<li>内门期 → 准十席级：战力值 &gt; 800</li>
+<li>准十席级 → 十席：战力值 &gt; 800，且挑战现十席成功</li>
+</ul>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">十席共十人，席位按战力排名。挑战者击败现任十席即可取而代之，原十席顺延一位，第十席被挤出前十。</p>
+</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:4px;"><strong style="color:var(--text-primary);">殿规</strong></p>
+<ul class="rule-list">
+<li><strong>不可轻视杂役：</strong>杂役虽身份低微，却是归终殿运转不可或缺的一部分。轻慢杂役者，罚抄殿规百遍；欺凌杂役者，逐出归终殿。</li>
+<li><strong>不可对十席不敬：</strong>十席引渡人皆为归终殿战力天花板。对十席不敬者，轻则罚俸三月，重则逐出归终殿。</li>
+<li><strong>晋升须经正规测试：</strong>私自挑战或冒充层级者，视同欺师灭祖，废除修为，逐出归终殿。</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 卡片三：金字塔 -->
+<div class="card" data-corner="❀">
+<span class="corner-deco">❀</span>
+<div class="card-title">六层金字塔 · 归终殿层级</div>
+<div class="pyramid-row">
+<div class="pyramid-left" id="pyramidLeftLin">
+<div class="pyramid-layer layer-shixi" data-layer="shixi">
+<span class="p-label">十席</span>
+<span class="p-bar" style="width:26%;">0.5%</span>
+<span class="p-pct">0.5%</span>
+<span class="p-count">10人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-zhun" data-layer="zhun">
+<span class="p-label">准十席</span>
+<span class="p-bar" style="width:44%;">4.5%</span>
+<span class="p-pct">4.5%</span>
+<span class="p-count">~90人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-neimen" data-layer="neimen">
+<span class="p-label">内门期</span>
+<span class="p-bar" style="width:62%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-rumen" data-layer="rumen">
+<span class="p-label">入门期</span>
+<span class="p-bar" style="width:86%;">60%</span>
+<span class="p-pct">60%</span>
+<span class="p-count">~1200人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu">
+<span class="p-label">统修期</span>
+<span class="p-bar" style="width:50%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-zayi" data-layer="zayi">
+<span class="p-label">杂役</span>
+<span class="p-bar" style="width:30%;">5%</span>
+<span class="p-pct">5%</span>
+<span class="p-count">~100人</span>
+<span class="p-arrow">▶</span>
+</div>
+</div>
+<div class="pyramid-right" id="pyramidRightLin">
+<div class="p-title">统修期</div>
+<div class="p-sub">15% · ~300人 · 战力上限 100</div>
+<div class="p-body">
+<p>统修期是新入殿弟子的第一阶段，为期三个月。符法、刀法、阵法、枪法、引渡实务、魂力控制、医药基础——什么都要学，什么都得练。</p>
+<p style="margin-top:6px;">三个月后，通过统修综合考核（六科均≥60分），即可升入入门期。未通过者可补考，三次考核未通过则转为杂役。</p>
+<p style="margin-top:6px;">每月可预约一次战力测试，了解自己的实力变化。统修期虽然短暂，却是每一位引渡人最难忘的时光——因为在这里，你第一次触摸到了“归终殿”三个字的重量。</p>
+<p style="margin-top:6px;color:var(--profile-accent);font-weight:500;">林栖梧与罗烬，目前正处于统修期。</p>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== 罗烬 ===== -->
+<div class="content-block" id="content-luojin">
+
+<!-- 卡片一：当前实力总览 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">当前实力总览</div>
+<div class="power-row">
+<div class="power-item"><span class="label">当前层级</span><span class="value" id="luo-level">统修期</span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">评级</span><span class="value"><span class="accent" id="luo-grade">甲等下品</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">战力值</span><span class="value"><span class="accent" id="luo-power">67.5</span></span></div>
+<div class="power-divider"></div>
+<div class="power-item"><span class="label">下一阶</span><span class="value" style="font-size:1rem;" id="luo-next">入门期</span><span class="sub" id="luo-next-need">需 ≥500</span></div>
+</div>
+<div class="target-row">
+<label>目标战力</label>
+<input type="number" id="luo-target" placeholder="500" min="0" step="1" />
+<button class="btn-sm" id="luo-target-btn">设定</button>
+<span style="font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);" id="luo-target-status">未设定</span>
+</div>
+<div class="progress-wrap">
+<div class="progress-track"><div class="progress-fill" id="luo-progress-fill" style="width:13.5%;"></div></div>
+<div class="progress-label"><span id="luo-progress-text">13.5%</span><span id="luo-progress-target">目标 500</span></div>
+</div>
+<div class="six-stat" id="luo-six-stat">
+<span class="stat-item"><span class="s-label">魂力</span> <span class="s-val">60</span></span>
+<span class="stat-item"><span class="s-label">体术</span> <span class="s-val">85</span></span>
+<span class="stat-item"><span class="s-label">法术</span> <span class="s-val">75</span></span>
+<span class="stat-item"><span class="s-label">防御</span> <span class="s-val">60</span></span>
+<span class="stat-item"><span class="s-label">意志</span> <span class="s-val">55</span></span>
+<span class="stat-item"><span class="s-label">敏捷</span> <span class="s-val">70</span></span>
+</div>
+</div>
+
+<!-- 卡片二：归终殿 · 弟子现状 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">归终殿 · 弟子现状</div>
+<div style="position:relative;z-index:1;">
+<p style="font-size:.9rem;color:var(--text-secondary);margin-bottom:10px;">归终殿现有弟子约 <strong style="color:var(--text-primary);">2000余人</strong>，共分六个层级：</p>
+<div class="info-grid">
+<div class="info-cell"><span class="label">杂役</span><span class="val">5% · <span class="highlight">~100人</span></span></div>
+<div class="info-cell"><span class="label">统修期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">入门期</span><span class="val">60% · <span class="highlight">~1200人</span></span></div>
+<div class="info-cell"><span class="label">内门期</span><span class="val">15% · <span class="highlight">~300人</span></span></div>
+<div class="info-cell"><span class="label">准十席级</span><span class="val">4.5% · <span class="highlight">~90人</span></span></div>
+<div class="info-cell"><span class="label">十席</span><span class="val">0.5% · <span class="highlight">10人</span></span></div>
+</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">晋升规则</strong></p>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);line-height:1.8;">
+每月初一至初五，弟子可前往归终正殿「试炼司」预约战力测试。战力达标后，可向殿务司提出晋升申请。
+</p>
+<ul class="rule-list" style="margin-top:6px;">
+<li>统修期 → 入门期：六科统修考核均 ≥ 60分</li>
+<li>入门期 → 内门期：战力值 &gt; 500</li>
+<li>内门期 → 准十席级：战力值 &gt; 800</li>
+<li>准十席级 → 十席：战力值 &gt; 800，且挑战现十席成功</li>
+</ul>
+<p style="font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">十席共十人，席位按战力排名。挑战者击败现任十席即可取而代之，原十席顺延一位，第十席被挤出前十。</p>
+</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light);">
+<p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:4px;"><strong style="color:var(--text-primary);">殿规</strong></p>
+<ul class="rule-list">
+<li><strong>不可轻视杂役：</strong>杂役虽身份低微，却是归终殿运转不可或缺的一部分。轻慢杂役者，罚抄殿规百遍；欺凌杂役者，逐出归终殿。</li>
+<li><strong>不可对十席不敬：</strong>十席引渡人皆为归终殿战力天花板。对十席不敬者，轻则罚俸三月，重则逐出归终殿。</li>
+<li><strong>晋升须经正规测试：</strong>私自挑战或冒充层级者，视同欺师灭祖，废除修为，逐出归终殿。</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 卡片三：金字塔 -->
+<div class="card" data-corner="◈">
+<span class="corner-deco">◈</span>
+<div class="card-title">六层金字塔 · 归终殿层级</div>
+<div class="pyramid-row">
+<div class="pyramid-left" id="pyramidLeftLuo">
+<div class="pyramid-layer layer-shixi" data-layer="shixi">
+<span class="p-label">十席</span>
+<span class="p-bar" style="width:26%;">0.5%</span>
+<span class="p-pct">0.5%</span>
+<span class="p-count">10人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-zhun" data-layer="zhun">
+<span class="p-label">准十席</span>
+<span class="p-bar" style="width:44%;">4.5%</span>
+<span class="p-pct">4.5%</span>
+<span class="p-count">~90人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-neimen" data-layer="neimen">
+<span class="p-label">内门期</span>
+<span class="p-bar" style="width:62%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-rumen" data-layer="rumen">
+<span class="p-label">入门期</span>
+<span class="p-bar" style="width:86%;">60%</span>
+<span class="p-pct">60%</span>
+<span class="p-count">~1200人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-tongxiu" data-layer="tongxiu">
+<span class="p-label">统修期</span>
+<span class="p-bar" style="width:50%;">15%</span>
+<span class="p-pct">15%</span>
+<span class="p-count">~300人</span>
+<span class="p-arrow">▶</span>
+</div>
+<div class="pyramid-layer layer-zayi" data-layer="zayi">
+<span class="p-label">杂役</span>
+<span class="p-bar" style="width:30%;">5%</span>
+<span class="p-pct">5%</span>
+<span class="p-count">~100人</span>
+<span class="p-arrow">▶</span>
+</div>
+</div>
+<div class="pyramid-right" id="pyramidRightLuo">
+<div class="p-title">统修期</div>
+<div class="p-sub">15% · ~300人 · 战力上限 100</div>
+<div class="p-body">
+<p>统修期是新入殿弟子的第一阶段，为期三个月。符法、刀法、阵法、枪法、引渡实务、魂力控制、医药基础——什么都要学，什么都得练。</p>
+<p style="margin-top:6px;">三个月后，通过统修综合考核（六科均≥60分），即可升入入门期。未通过者可补考，三次考核未通过则转为杂役。</p>
+<p style="margin-top:6px;">每月可预约一次战力测试，了解自己的实力变化。统修期虽然短暂，却是每一位引渡人最难忘的时光——因为在这里，你第一次触摸到了“归终殿”三个字的重量。</p>
+<p style="margin-top:6px;color:var(--profile-accent);font-weight:500;">林栖梧与罗烬，目前正处于统修期。</p>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div id="petal-container"></div>
+
+<script src="./核心.js"></script>
+<script src="./升席纪事.js"></script>
+</body>
+</html>
