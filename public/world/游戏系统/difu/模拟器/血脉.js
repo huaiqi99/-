@@ -102,14 +102,23 @@
         ]
     };
 
+    function isDarkTheme() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+
+    var DARK_COLOR_MAP = { '#2a6b8a': '#7fb3cf', '#b05a4a': '#d4887a', '#FFB90F': '#ffc63a', '#9370DB': '#b49ae8',
+        '#555555': '#9a9086', '#d4a0a8': '#e0b0b8', '#D49A9A': '#eec2c2', '#4E5A64': '#9fb9cf' };
+
+    function themeColor(hex) { if (!hex) return hex; return (isDarkTheme() && DARK_COLOR_MAP[hex]) ? DARK_COLOR_MAP[hex] : hex; }
+
     function spawnFloatText(profile, text) { var el = document.createElement('div');
         el.className = 'river-float-text';
         el.textContent = text;
-        el.style.left = (20 + Math.random() * 60) + '%';
-        el.style.top = (30 + Math.random() * 30) + '%';
-        el.style.fontSize = (0.9 + Math.random() * 0.6) + 'rem'; var accent = profile === 'linxiwu' ? '#D49A9A' : '#4E5A64';
-        el.style.color = accent;
-        document.body.appendChild(el);
+        el.style.left = (34 + Math.random() * 30) + '%';
+        el.style.top = (46 + Math.random() * 26) + '%';
+        el.style.fontSize = (0.85 + Math.random() * 0.2) + 'rem';
+        var accent = profile === 'linxiwu' ? '#D49A9A' : '#4E5A64';
+        el.style.color = themeColor(accent);
+        var wrap = document.getElementById('riverWrap' + (profile === 'linxiwu' ? 'Lin' : 'Luo'));
+        if (wrap) { wrap.appendChild(el); } else { document.body.appendChild(el); }
         requestAnimationFrame(function() { el.classList.add('show'); });
         setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 3000); }
 
@@ -227,7 +236,10 @@
         });
     });
 
+    var riverRafIds = {};
+
     function initRiverCanvas(profile) {
+        if (riverRafIds[profile]) { cancelAnimationFrame(riverRafIds[profile]); riverRafIds[profile] = null; }
         var canvasId = 'riverCanvas' + (profile === 'linxiwu' ? 'Lin' : 'Luo');
         var canvas = document.getElementById(canvasId);
         if (!canvas) return;
@@ -245,18 +257,33 @@
         var pct = (RIVER_DATA[profile] && RIVER_DATA[profile].pct) || 40;
         var density = 18 + Math.floor((pct / 100) * 40);
         var baseY = h - 12;
-        var accentColor = profile === 'linxiwu' ? '#D49A9A' : '#4E5A64';
+        var darkMode = isDarkTheme();
+        var accentColor = profile === 'linxiwu' ? (darkMode ? '#eec2c2' : '#D49A9A') : (darkMode ? '#9fb9cf' : '#4E5A64');
+        var deepColor = profile === 'linxiwu' ? (darkMode ? '#cf9a9a' : '#a05a5a') : (darkMode ? '#7890a6' : '#2f3a44');
         var accentR = parseInt(accentColor.slice(1, 3), 16);
         var accentG = parseInt(accentColor.slice(3, 5), 16);
         var accentB = parseInt(accentColor.slice(5, 7), 16);
-        var darkR = Math.max(0, accentR - 80);
-        var darkG = Math.max(0, accentG - 80);
-        var darkB = Math.max(0, accentB - 80);
+        var darkR = parseInt(deepColor.slice(1, 3), 16);
+        var darkG = parseInt(deepColor.slice(3, 5), 16);
+        var darkB = parseInt(deepColor.slice(5, 7), 16);
+        var brightR = Math.min(255, accentR + 50);
+        var brightG = Math.min(255, accentG + 50);
+        var brightB = Math.min(255, accentB + 50);
+        var midRGB = darkMode ? [accentR, accentG, accentB] : [darkR, darkG, darkB];
+        var farRGB = darkMode ? [brightR, brightG, brightB] : [accentR, accentG, accentB];
+        var rippleAlphaK = darkMode ? 1.0 : 0.95;
+        var rippleBaseOp = darkMode ? 0.15 : 0;
+        var rainOpDark = darkMode ? 0.75 : 0.7;
+        var rainOpLight = darkMode ? 0.45 : 0.25;
+        var rainWDark = darkMode ? 1.8 : 1.6;
+        var rainWLight = darkMode ? 1.0 : 0.8;
+        var surfAlpha = (darkMode ? 0.10 : 0.05) + (pct / 100) * (darkMode ? 0.08 : 0.07);
+        var glowAlpha = (darkMode ? 0.14 : 0.06) + (pct / 100) * (darkMode ? 0.14 : 0.12);
         var rainDrops = [];
         for (var i = 0; i < density; i++) { var isDark = Math.random() < 0.35;
             rainDrops.push({ x: Math.random() * w, y: Math.random() * h * 0.7 - h * 0.2, speed: 1.8 + Math.random() * 3.5,
-                length: 5 + Math.random() * 10, opacity: isDark ? 0.7 + Math.random() * 0.3 : 0.25 + Math.random() * 0.35,
-                isDark: isDark, width: isDark ? 1.6 + Math.random() * 0.6 : 0.8 + Math.random() * 0.6 }); }
+                length: 5 + Math.random() * 10, opacity: isDark ? rainOpDark + Math.random() * 0.3 : rainOpLight + Math.random() * 0.35,
+                isDark: isDark, width: isDark ? rainWDark + Math.random() * 0.6 : rainWLight + Math.random() * 0.6 }); }
         var ripples = [];
         var animationId = null;
 
@@ -264,7 +291,7 @@
             ctx.clearRect(0, 0, w, h);
             var grad = ctx.createLinearGradient(0, h - 24, 0, h);
             grad.addColorStop(0, 'rgba(' + accentR + ',' + accentG + ',' + accentB + ',0)');
-            grad.addColorStop(1, 'rgba(' + accentR + ',' + accentG + ',' + accentB + ',' + (0.05 + (pct / 100) * 0.07) +
+            grad.addColorStop(1, 'rgba(' + accentR + ',' + accentG + ',' + accentB + ',' + surfAlpha +
                 ')');
             ctx.fillStyle = grad;
             ctx.fillRect(0, h - 24, w, 24);
@@ -274,21 +301,21 @@
                 if (d.y > baseY) {
                     var baseRadius = 6 + Math.random() * 8;
                     ripples.push({ x: d.x, y: baseY - 2, radius: baseRadius * 0.4, maxRadius: baseRadius * 1.8,
-                        opacity: 0.35 + Math.random() * 0.25, speed: 0.5 + Math.random() * 0.6, layer: 0,
+                        opacity: 0.5 + Math.random() * 0.3 + rippleBaseOp, speed: 0.5 + Math.random() * 0.6, layer: 0,
                         life: 0.6 + Math.random() * 0.4 });
                     ripples.push({ x: d.x + (Math.random() - 0.5) * 6, y: baseY - 2 + (Math.random() - 0.5) * 3,
-                        radius: baseRadius * 0.7, maxRadius: baseRadius * 2.6, opacity: 0.2 + Math.random() * 0.2,
+                        radius: baseRadius * 0.7, maxRadius: baseRadius * 2.6, opacity: 0.35 + Math.random() * 0.25 + rippleBaseOp,
                         speed: 0.5 + Math.random() * 0.5, layer: 1, life: 0.6 + Math.random() * 0.4 });
                     ripples.push({ x: d.x + (Math.random() - 0.5) * 12, y: baseY - 2 + (Math.random() - 0.5) * 6,
-                        radius: baseRadius * 1.0, maxRadius: baseRadius * 3.6, opacity: 0.08 + Math.random() * 0.12,
+                        radius: baseRadius * 1.0, maxRadius: baseRadius * 3.6, opacity: 0.18 + Math.random() * 0.15 + rippleBaseOp,
                         speed: 0.4 + Math.random() * 0.4, layer: 2, life: 0.6 + Math.random() * 0.4 });
                     d.y = -Math.random() * 30;
                     d.x = Math.random() * w;
                     d.speed = 1.8 + Math.random() * 3.5;
                     d.length = 5 + Math.random() * 10;
                     d.isDark = Math.random() < 0.35;
-                    d.opacity = d.isDark ? 0.7 + Math.random() * 0.3 : 0.25 + Math.random() * 0.35;
-                    d.width = d.isDark ? 1.6 + Math.random() * 0.6 : 0.8 + Math.random() * 0.6;
+                    d.opacity = d.isDark ? rainOpDark + Math.random() * 0.3 : rainOpLight + Math.random() * 0.35;
+                    d.width = d.isDark ? rainWDark + Math.random() * 0.6 : rainWLight + Math.random() * 0.6;
                 }
                 var r = d.isDark ? darkR : accentR;
                 var g = d.isDark ? darkG : accentG;
@@ -312,20 +339,20 @@
                 var cr, cg, cb;
                 if (r.layer === 0) { cr = darkR;
                     cg = darkG;
-                    cb = darkB; } else if (r.layer === 1) { cr = accentR;
-                    cg = accentG;
-                    cb = accentB; } else { cr = accentR + 40;
-                    cg = accentG + 40;
-                    cb = accentB + 40; }
+                    cb = darkB; } else if (r.layer === 1) { cr = midRGB[0];
+                    cg = midRGB[1];
+                    cb = midRGB[2]; } else { cr = farRGB[0];
+                    cg = farRGB[1];
+                    cb = farRGB[2]; }
                 ctx.beginPath();
                 ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + (alpha * 0.7) + ')';
+                ctx.strokeStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + (alpha * rippleAlphaK) + ')';
                 ctx.lineWidth = lineW;
                 ctx.stroke();
                 if (r.radius > 4 && r.layer !== 2) {
                     ctx.beginPath();
                     ctx.arc(r.x + 1, r.y + 1, r.radius * 0.65, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + (alpha * 0.3) + ')';
+                    ctx.strokeStyle = 'rgba(' + cr + ',' + cg + ',' + cb + ',' + (alpha * 0.45) + ')';
                     ctx.lineWidth = lineW * 0.5;
                     ctx.stroke();
                 }
@@ -336,11 +363,12 @@
                 var sr = 1.5 + Math.sin(Date.now() / 1500 + i) * 0.8;
                 ctx.beginPath();
                 ctx.arc(sx, sy, Math.max(0.5, sr), 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(' + accentR + ',' + accentG + ',' + accentB + ',' + (0.06 + (pct / 100) * 0.12) +
+                ctx.fillStyle = 'rgba(' + accentR + ',' + accentG + ',' + accentB + ',' + glowAlpha +
                 ')';
                 ctx.fill();
             }
             animationId = requestAnimationFrame(drawRain);
+            riverRafIds[profile] = animationId;
         }
         if (animationId) cancelAnimationFrame(animationId);
         drawRain();
@@ -446,7 +474,10 @@
         }
     };
 
+    var waveRafIds = {};
+
     function buildWaveSVG(profile) {
+        if (waveRafIds[profile]) { cancelAnimationFrame(waveRafIds[profile]); waveRafIds[profile] = null; }
         var svgId = profile === 'linxiwu' ? 'waveSvgLin' : 'waveSvgLuo';
         var detailId = profile === 'linxiwu' ? 'detailListLin' : 'detailListLuo';
         var scrollId = profile === 'linxiwu' ? 'waveScrollLin' : 'waveScrollLuo';
@@ -506,9 +537,10 @@
         svg.appendChild(waveG);
         svg.appendChild(staticG);
         var isLin = profile === 'linxiwu';
-        var color1 = isLin ? '#2a6b8a' : '#9370DB';
-        var color2 = isLin ? '#b05a4a' : '#FFB90F';
-        var axisColor = isLin ? '#d4a0a8' : '#d4a0a8';
+        var darkMode = isDarkTheme();
+        var color1 = themeColor(isLin ? '#2a6b8a' : '#9370DB');
+        var color2 = themeColor(isLin ? '#b05a4a' : '#FFB90F');
+        var axisColor = themeColor('#d4a0a8');
         var axis = document.createElementNS(ns, 'line');
         axis.setAttribute('x1', L.cx);
         axis.setAttribute('y1', L.startY);
@@ -524,14 +556,14 @@
         pathA.setAttribute('stroke-width', 2);
         pathA.setAttribute('fill', 'none');
         pathA.setAttribute('stroke-linecap', 'round');
-        pathA.setAttribute('opacity', '0.27');
+        pathA.setAttribute('opacity', darkMode ? '0.4' : '0.27');
         waveG.appendChild(pathA);
         var pathB = document.createElementNS(ns, 'path');
         pathB.setAttribute('stroke', color2);
         pathB.setAttribute('stroke-width', 2);
         pathB.setAttribute('fill', 'none');
         pathB.setAttribute('stroke-linecap', 'round');
-        pathB.setAttribute('opacity', '0.27');
+        pathB.setAttribute('opacity', darkMode ? '0.4' : '0.27');
         waveG.appendChild(pathB);
         var phaseA = 0,
             phaseB = Math.PI;
@@ -575,7 +607,7 @@
                 sp.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
                 sp.setAttribute('font-size', L.speakerSize);
                 sp.setAttribute('font-weight', '600');
-                sp.setAttribute('fill', item.color);
+                sp.setAttribute('fill', themeColor(item.color));
                 sp.setAttribute('opacity', '0.65');
                 sp.setAttribute('letter-spacing', '0.5px');
                 sp.textContent = '— ' + item.speaker;
@@ -589,7 +621,7 @@
                     t.setAttribute('text-anchor', anchor);
                     t.setAttribute('font-family', '"Georgia","Times New Roman","Songti SC",serif');
                     t.setAttribute('font-size', L.textSize);
-                    t.setAttribute('fill', item.color);
+                    t.setAttribute('fill', themeColor(item.color));
                     t.setAttribute('font-style', 'italic');
                     t.setAttribute('font-weight', '400');
                     t.setAttribute('opacity', '0.92');
@@ -606,7 +638,7 @@
             refEl.setAttribute('text-anchor', anchor);
             refEl.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
             refEl.setAttribute('font-size', L.refSize);
-            refEl.setAttribute('fill', '#555555');
+            refEl.setAttribute('fill', themeColor('#555555'));
             refEl.setAttribute('opacity', '0.6');
             refEl.setAttribute('letter-spacing', '0.3px');
             refEl.textContent = ref;
@@ -688,7 +720,7 @@
             label.setAttribute('font-family', '"Courier New","Source Code Pro",monospace');
             label.setAttribute('font-size', L.labelSize);
             label.setAttribute('font-weight', '600');
-            label.setAttribute('fill', '#555555');
+            label.setAttribute('fill', themeColor('#555555'));
             label.setAttribute('opacity', '0.8');
             label.setAttribute('letter-spacing', '0.8px');
             label.textContent = d.label;
@@ -720,8 +752,8 @@
             phaseB -= dPhase; var twoPi = 2 * Math.PI; while (phaseA > twoPi) phaseA -= twoPi; while (phaseA < 0)
                 phaseA += twoPi; while (phaseB > twoPi) phaseB -= twoPi; while (phaseB < 0) phaseB += twoPi;
             renderWaves();
-            requestAnimationFrame(animateWave); }
-        requestAnimationFrame(animateWave);
+            waveRafIds[profile] = requestAnimationFrame(animateWave); }
+        waveRafIds[profile] = requestAnimationFrame(animateWave);
         detailList.innerHTML = '';
         var storyData = STORY_DB[profile] || [];
         data.forEach(function(d, idx) {
@@ -744,7 +776,7 @@
                     modalSub.textContent = d.ref || '——';
                     modalBody.innerHTML = '<div class="story-quote">';
                     d.lines.forEach(function(l) { modalBody.innerHTML += '<div><span style="font-weight:600;color:' +
-                            l.color + ';">' + l.speaker + '</span>：' + l.text.replace(/\n/g, '<br>') +
+                            themeColor(l.color) + ';">' + l.speaker + '</span>：' + l.text.replace(/\n/g, '<br>') +
                         '</div>'; });
                     modalBody.innerHTML += '</div>';
                     if (d.desc) modalBody.innerHTML += '<div class="story-desc">' + d.desc + '</div>';
@@ -831,6 +863,14 @@
     setTimeout(function() { buildWaveSVG('linxiwu');
         buildWaveSVG('luojin'); }, 150);
     setTimeout(function() { createStoryDot(initialProfile); }, 500);
+
+    var themeDebounce = null;
+    if (window.MutationObserver) { var themeObserver = new MutationObserver(function() { clearTimeout(themeDebounce);
+        themeDebounce = setTimeout(function() { initRiverCanvas('linxiwu');
+            initRiverCanvas('luojin');
+            buildWaveSVG('linxiwu');
+            buildWaveSVG('luojin'); }, 80); });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); }
 
     window.addEventListener('profilechange', function(e) { var p = e.detail.profile;
         updateRiverUI(p);
