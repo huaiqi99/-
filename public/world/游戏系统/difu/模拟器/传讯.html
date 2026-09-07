@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<title>归终殿 · 传讯符</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#fff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:.3s ease;--sidebar-width:240px;--msg-other:#e8e0d8;--msg-self:#D49A9A;--msg-self-text:#fff}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--msg-other:#2d2824;--msg-self:#4E5A64;--msg-self-text:#e8e0d5}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);--msg-self:var(--profile-lin)}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--msg-self:var(--profile-luo)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding:0 16px 0 16px}
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,.25);transform:translateX(-100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-panel.open{transform:translateX(0)}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition)}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent)}
+.sidebar-panel .panel-title{font-size:.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono)}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.sidebar-panel .nav-item.active{background:rgba(138,58,42,.04);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s;width:100%;text-align:center}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:rgba(138,58,42,.04)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.sidebar-overlay.show{opacity:1;pointer-events:auto}body.no-scroll{overflow:hidden}
+.top-header{max-width:1020px;margin:0 auto;padding:0 4px 8px 4px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition)}
+.top-header .profile-name{font-size:.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.5px}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600}
+#app{max-width:1020px;margin:0 auto;width:100%;height:100vh;height:100dvh;display:flex;flex-direction:column;padding:8px 0 0 0}
+.chat-app{display:flex;flex:1;min-height:0;gap:0;background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;overflow:hidden;margin-top:4px}
+.contact-list{width:30%;min-width:160px;max-width:280px;border-right:1px solid var(--border-light);overflow-y:auto;background:var(--bg-card);flex-shrink:0}
+.contact-list::-webkit-scrollbar{width:4px}
+.contact-list::-webkit-scrollbar-track{background:var(--bg-hover)}
+.contact-list::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
+.contact-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border-light);transition:background .2s}
+.contact-item:hover{background:var(--bg-hover)}
+.contact-item.active{background:var(--bg-hover);border-left:3px solid var(--profile-accent)}
+.contact-item .avatar{width:36px;height:36px;border-radius:50%;background:var(--bg-hover);border:1.5px solid var(--border-light);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;font-weight:600;color:var(--profile-accent)}
+.contact-item .info{flex:1;min-width:0}
+.contact-item .info .name{font-size:.82rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.contact-item .info .name .note{font-weight:400;color:var(--text-muted);font-size:.65rem;font-family:var(--font-mono)}
+.contact-item .info .preview{font-size:.7rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.contact-item .info .preview .unread{display:inline-block;width:7px;height:7px;border-radius:50%;background:#d06050;margin-left:4px;flex-shrink:0}
+.contact-item .info .name .online{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5aaa6a;margin-left:4px;flex-shrink:0}
+.contact-item .info .name .offline{display:inline-block;width:7px;height:7px;border-radius:50%;background:#8a8a8a;margin-left:4px;flex-shrink:0}
+.chat-area{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg-card)}
+.chat-header{padding:10px 18px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-header .c-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg-hover);border:1.5px solid var(--border-light);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:var(--profile-accent)}
+.chat-header .c-info{flex:1}
+.chat-header .c-info .c-name{font-size:.88rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:4px}
+.chat-header .c-info .c-name .c-note{font-weight:400;color:var(--text-muted);font-size:.65rem;font-family:var(--font-mono)}
+.chat-header .c-info .c-status{font-size:.6rem;color:var(--text-muted);font-family:var(--font-mono)}
+.chat-messages{flex:1;overflow-y:auto;padding:14px 20px 12px;display:flex;flex-direction:column;gap:2px;cursor:pointer;scroll-behavior:smooth}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-track{background:var(--bg-hover)}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:4px}
+.msg-unit{max-width:78%;display:flex;flex-direction:column;opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .35s ease;pointer-events:none}
+.msg-unit.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.msg-unit.left{align-self:flex-start}
+.msg-unit.right{align-self:flex-end}
+.msg-unit .msg-name{font-size:.7rem;color:var(--text-muted);margin-bottom:1px;line-height:1.4;padding:0 4px}
+.msg-unit.right .msg-name{align-self:flex-end;padding-right:4px}
+.msg-unit.left .msg-name{align-self:flex-start;padding-left:4px}
+.msg-bubble{padding:9px 16px;border-radius:18px;font-size:.95rem;line-height:1.7;word-break:break-word;background:var(--msg-other);color:var(--text-primary)}
+.msg-unit.right .msg-bubble{background:var(--msg-self);color:var(--msg-self-text)}
+.msg-unit.left .msg-bubble{border-bottom-left-radius:4px}
+.msg-unit.right .msg-bubble{border-bottom-right-radius:4px}
+/* 各角色气泡颜色（柔和版） */
+.msg-unit.sender-luan .msg-bubble{background:#f0d8d8;color:#7a4a4a}
+.msg-unit.sender-huai .msg-bubble{background:#d4e4f0;color:#3a5a7a}
+.msg-unit.sender-jing .msg-bubble{background:#f0e8d0;color:#7a6a3a}
+.msg-unit.sender-luo .msg-bubble{background:#e0d4e8;color:#5a4a7a}
+.msg-unit.sender-cheng .msg-bubble{background:#d0e8d8;color:#3a6a5a}
+.msg-unit.sender-ke .msg-bubble{background:#e8e0d8;color:#6a6a6a}
+.msg-unit.sender-zheng .msg-bubble{background:#f0ddd0;color:#8a5a3a}
+.msg-unit.sender-zhou .msg-bubble{background:#d4e0e8;color:#4a5a7a}
+.msg-unit.sender-chen .msg-bubble{background:#d0e8e0;color:#3a6a6a}
+.msg-unit.sender-li .msg-bubble{background:#e0d8e8;color:#5a4a7a}
+.msg-unit.sender-zhao .msg-bubble{background:#e8ddd0;color:#7a5a3a}
+.msg-unit.sender-su .msg-bubble{background:#f0d8d0;color:#7a4a3a}
+.msg-unit.sender-zhao4 .msg-bubble{background:#e8ddd0;color:#7a5a3a}
+.msg-unit.sender-zhouqing .msg-bubble{background:#d4e0e8;color:#4a5a7a}
+.chat-footer{padding:10px 18px 12px;border-top:1px solid var(--border-light);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--bg-card)}
+.chat-footer .input-wrap{flex:1;display:flex;align-items:center;background:var(--bg-hover);border-radius:22px;border:1px solid var(--border-light);padding:0 16px;transition:border-color .2s}
+.chat-footer .input-wrap:focus-within{border-color:var(--profile-accent)}
+.chat-footer .input-wrap input{flex:1;background:transparent;border:none;outline:none;padding:8px 0;font-size:.9rem;font-family:inherit;color:var(--text-primary);min-width:0}
+.chat-footer .input-wrap input::placeholder{color:var(--text-muted)}
+.chat-footer .send-btn{padding:8px 20px;border-radius:22px;border:none;background:var(--profile-accent);color:#fff;font-size:.85rem;cursor:pointer;transition:opacity .2s;font-family:inherit;flex-shrink:0}
+.chat-footer .send-btn:hover{opacity:.85}
+.chat-footer .send-btn:disabled{opacity:.3;cursor:not-allowed}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;color:var(--text-muted);font-size:.9rem;gap:8px;padding:20px}
+.empty-state .empty-icon{font-size:2.4rem;opacity:.3}
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
+@keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh+50px))rotate(360deg);opacity:0}}
+@media(max-width:820px){.chat-app{flex-direction:column;border-radius:8px}.contact-list{width:100%;max-width:none;border-right:none;border-bottom:1px solid var(--border-light);max-height:140px;min-height:100px;overflow-y:auto;display:flex;flex-wrap:nowrap;gap:0;padding:4px 8px;flex-shrink:0}.contact-item{flex:0 0 auto;min-width:80px;flex-direction:column;align-items:center;padding:6px 8px;border-bottom:none;border-right:1px solid var(--border-light);gap:4px;text-align:center}.contact-item .avatar{width:30px;height:30px;font-size:.75rem}.contact-item .info .name{font-size:.65rem;justify-content:center}.contact-item .info .preview{display:none}.contact-item .info .name .online,.contact-item .info .name .offline{width:5px;height:5px}.contact-item:last-child{border-right:none}.contact-item.active{border-left:none;border-bottom:2px solid var(--profile-accent)}.chat-header{padding:8px 14px}.chat-messages{padding:10px 14px 8px}.msg-unit{max-width:88%}.msg-bubble{font-size:.9rem;padding:8px 14px}.chat-footer{padding:8px 14px 10px}.chat-footer .input-wrap input{font-size:.85rem;padding:6px 0}.chat-footer .send-btn{font-size:.8rem;padding:6px 16px}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}.top-header{padding:0 0 6px 0}.top-header .page-title{font-size:1rem}#app{padding:4px 0 0 0}body{padding:0 12px 0 12px}}
+@media(max-width:480px){.contact-list{max-height:90px;min-height:70px;padding:2px 4px}.contact-item{min-width:60px;padding:4px 6px}.contact-item .avatar{width:24px;height:24px;font-size:.6rem}.contact-item .info .name{font-size:.55rem}.chat-messages{padding:6px 10px 4px}.msg-unit{max-width:92%}.msg-bubble{font-size:.85rem;padding:6px 12px;border-radius:14px}.chat-footer{padding:6px 10px 8px;gap:6px}.chat-footer .input-wrap{padding:0 12px}.chat-footer .input-wrap input{font-size:.8rem;padding:5px 0}.chat-footer .send-btn{font-size:.7rem;padding:5px 12px}.chat-header{padding:6px 10px}.chat-header .c-info .c-name{font-size:.75rem}.chat-header .c-avatar{width:26px;height:26px;font-size:.7rem}.float-group{top:8px;right:8px;gap:4px}.float-btn{padding:3px 8px 3px 6px;font-size:.55rem}.top-header .page-title{font-size:.9rem}.top-header .profile-name{font-size:.7rem}body{padding:0 8px 0 8px}#app{padding:2px 0 0 0}}
+</style>
+</head>
+<body data-profile="linxiwu">
+
+<div class="float-group">
+<a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+<button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+<button class="close-btn">✕</button>
+<div class="panel-title">◈ 归终殿 · 导航</div>
+<a class="nav-item" href="#"><span class="sym">◈</span> 命簿纪事</a>
+<a class="nav-item" href="#"><span class="sym">✦</span> 引渡人档案</a>
+<a class="nav-item" href="#"><span class="sym">❖</span> 魂力与状态</a>
+<a class="nav-item" href="#"><span class="sym">✿</span> 院阁修习表</a>
+<a class="nav-item" href="#"><span class="sym">✧</span> 同僚与十席</a>
+<a class="nav-item" href="#"><span class="sym">◆</span> 差事与外勤</a>
+<a class="nav-item" href="#"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
+<a class="nav-item" href="#"><span class="sym">✶</span> 升席纪事</a>
+<a class="nav-item active" href="#"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+<a class="nav-item" href="#"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+<button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+<div class="panel-footer">归终殿弟子手册 · 内部流通</div>
+</div>
+
+<div class="top-header">
+<div class="page-title"><span class="sym">✉&#xFE0E;</span> 传讯符</div>
+<div class="profile-name">当前：<span id="currentProfileName">林栖梧</span></div>
+</div>
+
+<div id="app">
+<div class="chat-app">
+<div class="contact-list" id="contactList"></div>
+<div class="chat-area" id="chatArea">
+<div class="chat-header" id="chatHeader">
+<div class="c-avatar" id="cAvatar">❀</div>
+<div class="c-info"><div class="c-name" id="cName">栾方棋<span class="c-note" id="cNote">（娘亲）</span></div><div class="c-status" id="cStatus">在修习中</div></div>
+</div>
+<div class="chat-messages" id="chatMessages"><div class="empty-state"><span class="empty-icon">✉&#xFE0E;</span>点击此处加载消息</div></div>
+<div class="chat-footer"><div class="input-wrap"><input type="text" id="msgInput" placeholder="输入消息…" /></div><button class="send-btn" id="sendBtn">发送</button></div>
+</div>
+</div>
+</div>
+
+<div id="petal-container"></div>
+
+<script src="./核心.js"></script>
+<script src="./传讯符.js"></script>
+</body>
+</html>
