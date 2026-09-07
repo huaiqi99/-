@@ -2,16 +2,29 @@
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-selectable=no,viewport-fit=cover,interactive-widget=resizes-content" />
 <title>归终殿 · 传讯符</title>
 <style>
 :root{--bg-body:#f7f4ef;--bg-card:#fff;--bg-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:.3s ease;--sidebar-width:240px;--msg-other:#e8e0d8;--msg-self:#D49A9A;--msg-self-text:#fff}
-[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--msg-other:#2d2824;--msg-self:#4E5A64;--msg-self-text:#e8e0d5}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--msg-other:#2d2824;--msg-self:#5a5a5a;--msg-self-text:#cfc8c0}
+/* 夜间模式 · 各角色气泡统一压暗 */
+[data-theme="dark"] .msg-unit.sender-luan .msg-bubble{background:#3a2a2a;color:#c8a0a0}
+[data-theme="dark"] .msg-unit.sender-huai .msg-bubble{background:#1a2a3a;color:#80b0d0}
+[data-theme="dark"] .msg-unit.sender-jing .msg-bubble{background:#3a3220;color:#c8b070}
+[data-theme="dark"] .msg-unit.sender-luo .msg-bubble{background:#2a203a;color:#b090c0}
+[data-theme="dark"] .msg-unit.sender-cheng .msg-bubble{background:#1a2a22;color:#70b090}
+[data-theme="dark"] .msg-unit.sender-ke .msg-bubble{background:#2a2622;color:#b0a8a0}
+[data-theme="dark"] .msg-unit.sender-zheng .msg-bubble{background:#3a2a1a;color:#d0a070}
+[data-theme="dark"] .msg-unit.sender-zhou .msg-bubble{background:#1a2a3a;color:#70a0c0}
+[data-theme="dark"] .msg-unit.sender-chen .msg-bubble{background:#1a2a2a;color:#70b0a0}
+[data-theme="dark"] .msg-unit.sender-li .msg-bubble{background:#2a203a;color:#a080c0}
+[data-theme="dark"] .msg-unit.sender-zhao .msg-bubble{background:#2a221a;color:#b09070}
+[data-theme="dark"] .msg-unit.sender-su .msg-bubble{background:#3a2a1a;color:#c0a080}
+[data-theme="dark"] .msg-unit.sender-zhao4 .msg-bubble{background:#2a221a;color:#b09070}
+[data-theme="dark"] .msg-unit.sender-zhouqing .msg-bubble{background:#1a2a3a;color:#70a0c0}
 body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin);--msg-self:var(--profile-lin)}
 body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--msg-self:var(--profile-luo)}
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding:0 16px 0 16px}
-/* 【自适应修复】#app 不再锁死 100vh/100dvh，改为 flex:1 填满剩余空间，
-   彻底避免老内核下底部输入框被工具栏/软键盘顶出屏幕看不到的问题 */
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 .float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
 .float-btn:hover{border-color:var(--accent);color:var(--accent)}
