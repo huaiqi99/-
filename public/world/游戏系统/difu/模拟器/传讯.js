@@ -20,9 +20,37 @@ window.addEventListener('profilechange',function(e){updateProfileUI(e.detail.pro
 var PETAL_CHARS=['❀','◈','✽'],petalContainer=document.getElementById('petal-container');
 if(petalContainer){for(var i=0;i<14;i++){var el=document.createElement('div');el.className='petal-char';el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*12)+'px';el.style.animationDuration=(10+Math.random()*10)+'s';el.style.animationDelay=(Math.random()*12)+'s';petalContainer.appendChild(el);}}
 
-// ===== 音效 =====
+// ===== 音效（优先播放 音效.WAV 文件，加载失败自动尝试其他文件名，最后退回合成提示音） =====
 var audioCtx=null;
-function playMsgSound(){try{if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();}var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.connect(gain);gain.connect(audioCtx.destination);osc.frequency.value=880;osc.type='sine';gain.gain.setValueAtTime(0.05,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.07);osc.start(audioCtx.currentTime);osc.stop(audioCtx.currentTime+0.07);}catch(e){}}
+var sndCandidates=['./音效.WAV','./音效.wav','./音效.mp3'];
+var sndEl=null;
+(function(){
+var i=0;
+function tryNext(){
+ if(i>=sndCandidates.length){sndEl=null;return;}
+ try{
+  var a=new Audio();a.preload='auto';
+  a.addEventListener('canplaythrough',function(){sndEl=a;},{once:true});
+  a.addEventListener('error',function(){i++;tryNext();},{once:true});
+  a.src=sndCandidates[i];
+ }catch(e){sndEl=null;}
+}
+tryNext();
+})();
+function beep(){try{if(!audioCtx){audioCtx=new(window.AudioContext||window.webkitAudioContext)();}var osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.connect(gain);gain.connect(audioCtx.destination);osc.frequency.value=880;osc.type='sine';gain.gain.setValueAtTime(0.05,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.07);osc.start(audioCtx.currentTime);osc.stop(audioCtx.currentTime+0.07);}catch(e){}}
+function playMsgSound(){
+try{
+ if(sndEl){sndEl.currentTime=0;var p=sndEl.play();if(p&&p.catch)p.catch(function(){beep();});return;}
+ beep();
+}catch(e){beep();}
+}
+// 首次用户点击时预解锁音频（移动端自动播放策略要求在用户手势内首次播放）
+document.addEventListener('click',function(){
+ try{
+  if(sndEl){sndEl.muted=true;var p=sndEl.play();if(p&&p.then)p.then(function(){sndEl.pause();sndEl.currentTime=0;sndEl.muted=false;}).catch(function(){sndEl.muted=false;});}
+  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+ }catch(e){}
+},{once:true});
 
 // ===== 数据 =====
 var contactsData={
@@ -182,6 +210,8 @@ var msgStates={};
 function getContacts(p){return contactsData[p]||[];}
 function getMessages(p,c){return (messagesData[p]||{})[c]||[];}
 
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
 function renderContacts(p){
 var list=document.getElementById('contactList');if(!list)return;
 var contacts=getContacts(p);if(!contacts.length){list.innerHTML='<div style="padding:12px;color:var(--text-muted);font-size:.8rem;">暂无联系人</div>';return;}
@@ -190,13 +220,13 @@ contacts.forEach(function(c){
 var activeClass=c.id===currentContact?' active':'';
 var unreadDot=c.unread?'<span class="unread"></span>':'';
 var onlineDot=c.online?'<span class="online"></span>':'<span class="offline"></span>';
-var noteHtml=c.note?'<span class="note">（'+c.note+'）</span>':'';
+var noteHtml=c.note?'<span class="note">（'+esc(c.note)+'）</span>':'';
 var preview=c.lastMsg||'暂无消息';
 html+='<div class="contact-item'+activeClass+'" data-id="'+c.id+'" data-profile="'+p+'">';
 html+='<div class="avatar">'+c.avatar+'</div>';
 html+='<div class="info">';
-html+='<div class="name">'+c.name+noteHtml+onlineDot+'</div>';
-html+='<div class="preview">'+preview+unreadDot+'</div>';
+html+='<div class="name">'+esc(c.name)+noteHtml+onlineDot+'</div>';
+html+='<div class="preview">'+esc(preview)+unreadDot+'</div>';
 html+='</div></div>';
 });
 list.innerHTML=html;
@@ -218,10 +248,15 @@ function renderChat(p,cid){
 var container=document.getElementById('chatMessages');if(!container)return;
 var contacts=getContacts(p);var contact=contacts.find(function(c){return c.id===cid;});
 if(!contact){container.innerHTML='<div class="empty-state"><span class="empty-icon">✉&#xFE0E;</span>联系人不存在</div>';return;}
-document.getElementById('cName').textContent=contact.name;
-document.getElementById('cNote').textContent=contact.note?'（'+contact.note+'）':'';
-document.getElementById('cStatus').textContent=contact.status||'离线';
-document.getElementById('cAvatar').textContent=contact.avatar||'◈';
+// 【关键修复】原代码 cName.textContent=... 会把嵌在 cName 内部的 #cNote span 一并销毁，
+// 随后 getElementById('cNote') 返回 null 直接 TypeError，导致整个聊天渲染链瘫痪
+// （消息永远不渲染、点联系人/切视角/点空白全部无响应）。现在整体重建 cName 内容，不再依赖静态子节点。
+var cNameEl=document.getElementById('cName');
+if(cNameEl)cNameEl.innerHTML=esc(contact.name)+(contact.note?'<span class="c-note">（'+esc(contact.note)+'）</span>':'');
+var cStatusEl=document.getElementById('cStatus');
+if(cStatusEl)cStatusEl.textContent=contact.status||'离线';
+var cAvatarEl=document.getElementById('cAvatar');
+if(cAvatarEl)cAvatarEl.textContent=contact.avatar||'◈';
 var msgs=getMessages(p,cid);
 if(!msgs.length){container.innerHTML='<div class="empty-state"><span class="empty-icon">✉&#xFE0E;</span>暂无消息</div>';return;}
 container.innerHTML='';
@@ -238,7 +273,7 @@ container.appendChild(unit);
 var key=p+'_'+cid;
 msgStates[key]={idx:0,done:false};
 var units=container.querySelectorAll('.msg-unit');
-if(units.length>0){units[0].classList.add('show');msgStates[key].idx=1;}
+if(units.length>0){units[0].classList.add('show');playMsgSound();msgStates[key].idx=1;}
 container.scrollTop=0;
 }
 
@@ -251,11 +286,13 @@ var newUnit=units[state.idx];newUnit.classList.add('show');playMsgSound();state.
 var cr=container.getBoundingClientRect(),ur=newUnit.getBoundingClientRect();
 if(ur.bottom>cr.bottom-10)container.scrollTo({top:container.scrollHeight,behavior:'smooth'});
 }
-document.getElementById('chatMessages').addEventListener('click',loadNext);
+var _chatBox=document.getElementById('chatMessages');
+if(_chatBox)_chatBox.addEventListener('click',loadNext);
 
 function sendMessage(){
-var input=document.getElementById('msgInput');var text=input.value.trim();if(!text)return;
-var container=document.getElementById('chatMessages');
+var input=document.getElementById('msgInput');if(!input)return;
+var text=input.value.trim();if(!text)return;
+var container=document.getElementById('chatMessages');if(!container)return;
 var empty=container.querySelector('.empty-state');if(empty)empty.remove();
 var unit=document.createElement('div');unit.className='msg-unit right sender-self';
 var bubble=document.createElement('div');bubble.className='msg-bubble';bubble.textContent=text;unit.appendChild(bubble);container.appendChild(unit);
@@ -267,8 +304,10 @@ contacts.forEach(function(c){if(c.id===currentContact)c.lastMsg=text.length>20?t
 renderContacts(currentProfile);input.value='';
 var key=currentProfile+'_'+currentContact;if(msgStates[key]){var units=container.querySelectorAll('.msg-unit');msgStates[key].idx=units.length;msgStates[key].done=true;}
 }
-document.getElementById('sendBtn').addEventListener('click',sendMessage);
-document.getElementById('msgInput').addEventListener('keydown',function(e){if(e.key==='Enter')sendMessage();});
+var _sendBtn=document.getElementById('sendBtn');
+if(_sendBtn)_sendBtn.addEventListener('click',sendMessage);
+var _msgInput=document.getElementById('msgInput');
+if(_msgInput)_msgInput.addEventListener('keydown',function(e){if(e.key==='Enter')sendMessage();});
 
 function switchProfile(p){
 if(p===currentProfile)return;
@@ -291,4 +330,14 @@ console.log('✉ 传讯符已加载');
 }
 document.addEventListener('DOMContentLoaded',init);
 window.switchProfile=switchProfile;
+
+// ===== 手机端视口自适应补丁：visualViewport 实时同步可见高度 =====
+// 解决老内核回退 100vh（按最大视口计算）导致底部输入框被浏览器工具栏/软键盘顶出屏幕的问题
+(function(){
+if(!window.visualViewport)return;
+var vv=window.visualViewport;
+var apply=function(){if(document.body){document.body.style.height=vv.height+'px';document.body.style.minHeight=vv.height+'px';}};
+apply();
+vv.addEventListener('resize',apply);
+})();
 })();
