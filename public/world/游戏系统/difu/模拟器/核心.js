@@ -88,7 +88,7 @@ GZD.init();
 	  if(st.on)play();
 	  setInterval(save,5000);window.addEventListener('pagehide',save);
 	  var btn=document.getElementById('bgmBtn');
-	  if(btn){btn.textContent=st.on?('🎵 '+LIST[st.index].name):'🔇 音乐';
+	  if(btn){btn.textContent=st.on?('♫ '+LIST[st.index].name):' ✖&#xFE0E; 音乐';
 	    btn.addEventListener('click',function(){st.on=!st.on;if(st.on)play();else au.pause();save();
-	      btn.textContent=st.on?('🎵 '+LIST[st.index].name):'🔇 音乐';});}
+	      btn.textContent=st.on?('♫ '+LIST[st.index].name):' ✖&#xFE0E;音乐';});}
 	})();
