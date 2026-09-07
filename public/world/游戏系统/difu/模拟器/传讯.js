@@ -22,7 +22,7 @@ if(petalContainer){for(var i=0;i<14;i++){var el=document.createElement('div');el
 
 // ===== 音效（优先播放 音效.WAV 文件，加载失败自动尝试其他文件名，最后退回合成提示音） =====
 var audioCtx=null;
-var sndCandidates=['./音效.WAV','./音效.wav','./音效.mp3'];
+var sndCandidates=['./音效.mp3'];
 var sndEl=null;
 (function(){
 var i=0;
@@ -113,7 +113,7 @@ luo:[
 {side:'left',sender:'luo',name:'罗修',text:'期末成绩。符法85，阵法78，魂力82，实战65。'},
 {side:'left',sender:'luo',name:'罗修',text:'实战太弱。下次来演武场，我让元璟陪你练几轮。'},
 {side:'right',sender:'self',text:'谢谢首席。'},
-{side:'left',sender:'luo',name:'罗修',text:'嗯。比上次有进步。'}
+{side:'left',sender:'luo',name:'罗修',text:'嗯。比上次有进步。'},
 {side:'right',sender:'self',text:'考核大事，弟子定当竭尽全力。'}
 ],
 su:[
@@ -125,8 +125,8 @@ su:[
 {side:'right',sender:'self',text:'……收到了。'},
 {side:'right',sender:'self',text:'……'},
 {side:'right',sender:'self',text:'糊了。'},
-{side:'left',sender:'su',name:'苏晚',text:'哈哈哈哈哈哈那是炭火味，精髓懂不懂！'}
-{side:'right',sender:'self',text:'下次别弄了。'},
+{side:'left',sender:'su',name:'苏晚',text:'哈哈哈哈哈哈那是炭火味，精髓懂不懂！'},
+{side:'right',sender:'self',text:'下次别弄了。'}
 ],
 zhouqing:[
 {side:'left',sender:'zhouqing',name:'周青',text:'你最近出外勤吗？京城周边那个任务，我也想去。'},
