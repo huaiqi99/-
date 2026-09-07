@@ -22,7 +22,7 @@ if(petalContainer){for(var i=0;i<14;i++){var el=document.createElement('div');el
 
 // ===== 音效（优先播放 音效.WAV 文件，加载失败自动尝试其他文件名，最后退回合成提示音） =====
 var audioCtx=null;
-var sndCandidates=['./音效.WAV','./音效.wav','./音效.mp3'];
+var sndCandidates=['./音效.mp3'];
 var sndEl=null;
 (function(){
 var i=0;
