@@ -429,6 +429,68 @@
             margin-right: 6px;
         }
 
+        /* ===== 侧边栏按钮 ===== */
+        .sidebar-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-card);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none;
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .sidebar-btn .icon {
+            font-size: 0.9rem;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-btn#bgmBtn.playing .icon {
+            animation: bgmPulse 2.4s ease-in-out infinite;
+        }
+
+        @keyframes bgmPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        /* 移动端适配：侧边栏按钮字体略小 */
+        @media (max-width: 700px) {
+            .sidebar-btn {
+                font-size: 0.72rem;
+                padding: 6px 10px;
+            }
+            .sidebar-btn .icon {
+               font-size: 0.8rem;
+               width: 18px;
+            }
+        }
+
         	/* ===== BGM 控制按钮 ===== */
         .float-btn.compact { padding: 4px 10px 4px 8px; font-size: 0.65rem; }
 	    #bgmBtn #bgmLabel {
@@ -951,7 +1013,8 @@
         	// ================= BGM 背景音乐 =================
 	const BGM_LIST = [
 	    { name: '曲目一', src: '口哨.mp3' },
-	    { name: '曲目二', src: '单独个体.mp3' }
+	    { name: '曲目二', src: '韩语.mp3' },
+        { name: '曲目二', src: '单独个体.mp3' }
 	    // 想几首加几首；name 显示在按钮上，src 是同目录文件名
 	];
 	const BGM_KEY = 'bgmState';      // 记忆：开关 + 曲目 + 进度（跨页面共享）
@@ -1096,12 +1159,6 @@
 	    <button class="float-btn" id="themeBtn" onclick="toggleTheme()">
 	        <span class="icon">🌙</span> 夜间
 	    </button>
-	    <button class="float-btn" id="bgmBtn" onclick="toggleBGM()">
-	        <span class="icon" id="bgmIcon">🎵</span> <span id="bgmLabel">音乐</span>
-	    </button>
-	    <button class="float-btn compact" onclick="nextTrack(1)">
-	        <span class="icon">⏭</span> 切歌
-	    </button>
 	</div>
 
     <div class="sidebar-tab" onclick="toggleSidebar()">
@@ -1113,12 +1170,29 @@
     <div class="sidebar-panel" id="sidebarPanel">
         <button class="close-btn" onclick="closeSidebar()">✕</button>
         <div class="panel-title">✦ 归终殿 · 临床病例</div>
+
+    <!-- ===== 按钮区（原右上角搬到这里） ===== -->
+        <div class="sidebar-controls">
+            <a class="sidebar-btn" href="../index">
+                <span class="icon">←</span> 返回
+            </a>
+            <button class="sidebar-btn" id="themeBtn" onclick="toggleTheme()">
+                <span class="icon" id="themeIcon">🌙</span> <span id="themeLabel">夜间</span>
+            </button>
+            <button class="sidebar-btn" id="bgmBtn" onclick="toggleBGM()">
+                <span class="icon" id="bgmIcon">🎵</span> <span id="bgmLabel">音乐</span>
+            </button>
+            <button class="sidebar-btn" onclick="nextTrack(1)">
+                <span class="icon">⏭</span> 切歌
+            </button>
+        </div>
+
         <div id="sidebarRoleList"></div>
         <div class="panel-footer">临床心理科 · 内部归档</div>
         <a href="./1.html" class="sidebar-link">
             <span class="sidebar-link-icon">📖</span> 阅读原文
         </a>
-    </div>
+     </div>
 
     <div id="app">
         <div class="medical-card" id="medicalCard"></div>
