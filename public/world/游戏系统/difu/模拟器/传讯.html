@@ -103,6 +103,17 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo);--msg-self:var(-
 .msg-unit.sender-su .msg-bubble{background:#f0d8d0;color:#7a4a3a}
 .msg-unit.sender-zhao4 .msg-bubble{background:#e8ddd0;color:#7a5a3a}
 .msg-unit.sender-zhouqing .msg-bubble{background:#d4e0e8;color:#4a5a7a}
+/* 夜间模式：林栖梧自己的消息（右侧）使用浅粉色气泡 + 亮色字 */
+[data-theme="dark"] body[data-profile="linxiwu"] .msg-unit.right .msg-bubble {
+    background: #d9a0a0;   /* 浅粉色，柔和 */
+    color: #f8f0f0;        /* 近白色，清晰可见 */
+}
+
+/* 夜间模式：罗烬的消息（左侧）改成灰色系（替换原来的紫色） */
+[data-theme="dark"] .msg-unit.sender-luo .msg-bubble {
+    background: #4a4a4a;   /* 中灰色 */
+    color: #d0c8c0;        /* 浅灰色，与背景区分 */
+}
 .chat-footer{padding:10px 18px 12px;border-top:1px solid var(--border-light);display:flex;align-items:center;gap:10px;flex-shrink:0;background:var(--bg-card)}
 .chat-footer .input-wrap{flex:1;display:flex;align-items:center;background:var(--bg-hover);border-radius:22px;border:1px solid var(--border-light);padding:0 16px;transition:border-color .2s}
 .chat-footer .input-wrap:focus-within{border-color:var(--profile-accent)}
