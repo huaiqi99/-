@@ -1012,9 +1012,9 @@
 
         	// ================= BGM 背景音乐 =================
 	const BGM_LIST = [
-	    { name: '曲目一', src: '口哨.mp3' },
-	    { name: '曲目二', src: '韩语.mp3' },
-        { name: '曲目二', src: '单独个体.mp3' }
+	    { name: '点击关闭', src: '口哨.mp3' },
+	    { name: 'lnst', src: '韩语.mp3' },
+        { name: '单独个体', src: '单独个体.mp3' }
 	    // 想几首加几首；name 显示在按钮上，src 是同目录文件名
 	];
 	const BGM_KEY = 'bgmState';      // 记忆：开关 + 曲目 + 进度（跨页面共享）
@@ -1162,7 +1162,7 @@
 	</div>
 
     <div class="sidebar-tab" onclick="toggleSidebar()">
-        <span class="icon">📋</span> 档案
+        <span class="icon">■</span> 档案
     </div>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -1174,10 +1174,10 @@
     <!-- ===== 按钮区（原右上角搬到这里） ===== -->
         <div class="sidebar-controls">
             <button class="sidebar-btn" id="bgmBtn" onclick="toggleBGM()">
-                <span class="icon" id="bgmIcon">🎵</span> <span id="bgmLabel">音乐</span>
+                <span class="icon" id="bgmIcon">♫&#xFE0E;</span> <span id="bgmLabel">音乐</span>
             </button>
             <button class="sidebar-btn" onclick="nextTrack(1)">
-                <span class="icon">⏭</span> 切歌
+                <span class="icon">⏭&#xFE0E;</span> 切歌
             </button>
         </div>
 
