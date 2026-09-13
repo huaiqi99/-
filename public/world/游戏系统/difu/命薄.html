@@ -208,7 +208,7 @@
                 </div>
             </div>
 
-            <!-- 命簿主线 · 林栖梧（AI 剧情流版） -->
+            <!-- 命簿主线 · 林栖梧（折叠卡片） -->
             <div class="card" data-corner="❀">
                 <span class="corner-deco">❀</span>
                 <div class="card-title">命簿主线</div>
@@ -217,17 +217,11 @@
                     <div class="story-pct" id="storyPct-lin">40%</div>
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="storyBar-lin" style="width:40%;"></div></div>
-
-                <!-- AI 剧情流容器 -->
-                <div class="ai-story-container" id="aiStoryList-linxiwu"></div>
-
-                <!-- 输入区 -->
-                <div class="ai-story-input-row">
-                    <input type="text" class="ai-story-input" id="aiStoryInput-linxiwu" placeholder="例:去符修院预习 / 找栾方棋问问题 / 在浮生树下冥想">
-                    <button class="ai-story-submit" id="aiStorySubmit-linxiwu">发送行动</button>
+                <div class="story-desc" id="storyDesc-lin">
+                    你踏入归终殿的那天，浮生树正落着花。酒红色的花瓣擦过你的肩头，像某种无声的招呼。你听见身后有人低声说：“那就是林淮和栾方棋的女儿？”你没回头，因为站在殿前石阶上的罗修已经开了口。他抱着刀，目光在你脸上停了一息，然后说：“归终殿统修期三个月，什么都学，三个月后选专精。别指望有人偏心你。”你点了点头，心想：我本来也没打算靠谁偏心。
                 </div>
-
-                <div class="story-update" style="margin-top:10px;">最近更新：苍珩四百三十五年 · 霜月廿二 · 预习中</div>
+                <div class="story-expand" data-expand-target="linxiwu">⋯ 展开全文</div>
+                <div class="story-update">最近更新：苍珩四百三十五年 · 霜月廿二 · 预习中</div>
             </div>
 
             <!-- 待办事项 · 林栖梧 -->
@@ -292,7 +286,7 @@
                 </div>
             </div>
 
-            <!-- 命簿主线 · 罗烬（AI 剧情流版） -->
+            <!-- 命簿主线 · 罗烬（折叠卡片） -->
             <div class="card" data-corner="◈">
                 <span class="corner-deco">◈</span>
                 <div class="card-title">命簿主线</div>
@@ -301,18 +295,12 @@
                     <div class="story-pct" id="storyPct-luo">20%</div>
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="storyBar-luo" style="width:20%;"></div></div>
-
-                <!-- AI 剧情流容器 -->
-                <div class="ai-story-container" id="aiStoryList-luojin"></div>
-
-                <!-- 输入区 -->
-                <div class="ai-story-input-row">
-                    <input type="text" class="ai-story-input" id="aiStoryInput-luojin" placeholder="例:去讲武堂练刀 / 找魏元璟借笛 / 在演武广场加练">
-                    <button class="ai-story-submit" id="aiStorySubmit-luojin">发送行动</button>
+                <div class="story-desc" id="storyDesc-luo">
+                    你踏入归终殿的第一天就闯了个小祸——太兴奋，跑得太快，一头撞翻了符修院门口晾晒的符纸。栾方棋蹲下来帮你一起捡，笑着说："不急，慢慢来。"你不好意思地挠了挠头，心想归终殿好像没传说中那么可怕。然后罗修的声音从身后冷冷地传过来："统修期三个月，符法刀法阵法枪法都要学。你撞翻的是符纸，下回再撞翻什么，我可不管捡。"
                 </div>
-
-                <div class="story-update" style="margin-top:10px;">最近更新：苍珩四百三十五年 · 霜月廿二 · 预习中</div>
-           </div>
+                <div class="story-expand" data-expand-target="luojin">⋯ 展开全文</div>
+                <div class="story-update">最近更新：苍珩四百三十五年 · 霜月廿二 · 预习中</div>
+            </div>
 
             <!-- 待办事项 · 罗烬 -->
             <div class="card" data-corner="◈">
@@ -376,6 +364,5 @@
 
     <script src="./核心.js"></script>
     <script src="./命薄.js"></script>
-    <script src="./命薄AI.js"></script>
 </body>
 </html>
