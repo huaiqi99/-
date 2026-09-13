@@ -284,9 +284,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
   // ===== 主题切换(沿用 GZD 系统) =====
   function applyTheme(t){
-    const h = document.documentElement;
-    if(t === 'light') h.setAttribute('data-theme','light');
-    else h.removeAttribute('data-theme');
+    h.setAttribute('data-theme', t);  // ✅ light 设 light,dark 设 dark
     const icon = document.getElementById('themeIcon');
     const label = document.getElementById('themeLabel');
     if(icon && label){
