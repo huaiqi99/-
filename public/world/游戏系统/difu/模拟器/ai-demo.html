@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>引渡人模拟器 · AI 试验页</title>
+<style>
+:root {
+  --bg-body: #1a1614;
+  --bg-card: #24201c;
+  --bg-card-hover: #2d2824;
+  --border-card: #4a443e;
+  --text-primary: #e8e0d5;
+  --text-secondary: #b8aea4;
+  --text-muted: #8a8078;
+  --accent: #c4b4a0;
+  --accent-strong: #8a3a2a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 20px;
+  line-height: 1.6;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.badge {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  font-family: "Courier New", monospace;
+}
+h1 {
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+.input-box {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  transition: border-color 0.3s;
+}
+.input-box:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1.5px solid var(--accent);
+  border-radius: 10px;
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.3s;
+}
+.btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--bg-body);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.result-box {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  min-height: 100px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+}
+.result-box.loading {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.result-box.error {
+  border-color: var(--accent-strong);
+  color: #d49a9a;
+}
+.result-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  font-family: "Courier New", monospace;
+}
+.tips {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-card);
+  border-radius: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.tips-title {
+  color: var(--accent);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.tips p { margin: 2px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="badge">◈ 归终殿 · AI 试炼</div>
+  <h1>引渡人模拟器</h1>
+  <p class="subtitle">"浮生树低语,黄泉路上何人至此"</p>
+
+  <input type="text" id="msg" class="input-box" placeholder="例如:林栖梧卯时前往符修院预习">
+  <button class="btn" id="askBtn" onclick="askAI()">生成剧情</button>
+
+  <div class="result-label">◈ 剧情回响</div>
+  <div class="result-box" id="result">在上方输入情境,点击「生成剧情」即可。</div>
+
+  <div class="tips">
+    <div class="tips-title">试着输入这些:</div>
+    <p>· 林栖梧在符修院预习,栾方棋递来一张符纸</p>
+    <p>· 罗烬被罗修点名,要演示基础刀法</p>
+    <p>· 林栖梧偶遇魏元璟在音律坊吹笛</p>
+    <p>· 卯时的归终殿,薄雾未散,发生了什么</p>
+  </div>
+</div>
+
+<script>
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ★ 重要!把下面这行的地址换成你自己的 Cloudflare Worker 地址!
+// ★ 现在是占位符,不换的话试验页用不了
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+const WORKER_URL = 'https://difu-ai.2629885225.workers.dev';
+
+async function askAI() {
+  const msg = document.getElementById('msg').value.trim();
+  const result = document.getElementById('result');
+  const btn = document.getElementById('askBtn');
+
+  if (!msg) {
+    result.className = 'result-box error';
+    result.innerText = '请先在上方输入情境描述';
+    return;
+  }
+
+  // 显示加载中
+  result.className = 'result-box loading';
+  result.innerText = '浮生树正在低语...';
+  btn.disabled = true;
+  btn.innerText = '生成中...';
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      result.className = 'result-box error';
+      result.innerText = '出错:\n' + data.error;
+    } else {
+      result.className = 'result-box';
+      result.innerText = data.reply;
+    }
+  } catch (e) {
+    result.className = 'result-box error';
+    result.innerText = '请求失败:' + e.message + '\n\n请检查:\n1. WORKER_URL 是否已替换为你自己的 Worker 地址\n2. Worker 是否部署成功\n3. DeepSeek API Key 是否配置正确';
+  } finally {
+    btn.disabled = false;
+    btn.innerText = '生成剧情';
+  }
+}
+
+// 支持回车键提交
+document.getElementById('msg').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') askAI();
+});
+</script>
+</body>
+</html>
