@@ -244,9 +244,17 @@ function callDirect(message, npcId, profile, history, cfg){
   var systemPrompt=buildSystemPrompt(npcId, profile);
   if(!systemPrompt) return Promise.reject(new Error('未知的 NPC: '+npcId));
 
+  // history 存档格式是 {side, sender, text},需转成 API 要求的 {role, content}
+  // side='right' 是玩家发的 → user;side='left' 是 NPC 回的 → assistant
+  var historyMessages = history.slice(-10).map(function(m){
+    return {
+      role: m.side === 'right' ? 'user' : 'assistant',
+      content: m.text || ''
+    };
+  });
   var messages=[
     {role:'system',content:systemPrompt},
-    ...history.slice(-10),
+    ...historyMessages,
     {role:'user',content:message}
   ];
   var url, headers, body;
