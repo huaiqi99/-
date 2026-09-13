@@ -283,8 +283,10 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   }
 
   // ===== 主题切换(沿用 GZD 系统) =====
+  // 注意:CSS 用 [data-theme="dark"] 表示夜间,所以 dark 时必须 setAttribute('data-theme','dark')
   function applyTheme(t){
-    h.setAttribute('data-theme', t);  // ✅ light 设 light,dark 设 dark
+    const h = document.documentElement;
+    h.setAttribute('data-theme', t);  // light 或 dark 都设置属性
     const icon = document.getElementById('themeIcon');
     const label = document.getElementById('themeLabel');
     if(icon && label){
@@ -296,10 +298,15 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     try{
       const r = localStorage.getItem('theme');
       if(r){
+        // 兼容两种存储格式:直接字符串 或 {value: 'xxx'} 对象
         const p = JSON.parse(r);
+        if(p === 'light' || p === 'dark') return p;
         if(p && p.value) return p.value;
       }
-    }catch(e){}
+    }catch(e){
+      // 如果 JSON 解析失败,可能是裸字符串
+      if(r === 'light' || r === 'dark') return r;
+    }
     return 'light';
   }
   function toggleTheme(){
