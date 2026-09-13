@@ -10,7 +10,8 @@ GZD.init();
 	GZD.BGM_LIST=[
 	  {name:'单独个体',src:'歌曲/单独个体.mp3'},
 	  {name:'口哨',src:'歌曲/口哨.mp3'},
-	  {name:'lnst',src:'歌曲/韩语.mp3'}
+	  {name:'lnst',src:'歌曲/韩语.mp3'},
+	  {name:'故事的尽头',src:'歌曲/故事的尽头.mp3'}
 	];
     GZD.BGM_VOLUME=(function(){
 	  var v=(GZD.Storage&&GZD.Storage.getSettings().bgmVolume)||0.35;   /* 电脑端基准音量 */
