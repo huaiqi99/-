@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归终殿 · 设置</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--bg-accent-soft:rgba(138,58,42,0.04);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--card-border-color:var(--border-card)}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--bg-accent-soft:rgba(196,180,160,0.06);--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 60px 16px;max-width:760px;margin:0 auto}
+
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-card);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.top-header{text-align:center;padding:40px 0 32px 0;border-bottom:1px solid var(--border-light);margin-bottom:32px}
+.top-header .badge{font-size:.7rem;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono)}
+.top-header h1{font-size:1.8rem;font-weight:700;letter-spacing:3px;margin-bottom:6px}
+.top-header .subtitle{font-size:.9rem;color:var(--text-secondary);font-style:italic}
+
+.card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;padding:24px 22px;margin-bottom:20px;position:relative;transition:border-color var(--transition)}
+.card-title{font-size:.85rem;color:var(--text-muted);letter-spacing:2px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono);display:flex;align-items:center;gap:8px}
+.card-title .sym{color:var(--profile-accent,var(--accent));font-size:1rem}
+
+/* 服务商选择 */
+.provider-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
+.provider-card{padding:14px 12px;border:1.5px solid var(--border-card);border-radius:10px;cursor:pointer;transition:all var(--transition);text-align:center;background:var(--bg-card)}
+.provider-card:hover{border-color:var(--profile-accent,var(--accent));background:var(--bg-hover)}
+.provider-card.active{border-color:var(--profile-accent,var(--accent));background:var(--bg-accent-soft);box-shadow:0 0 0 3px rgba(138,58,42,0.06)}
+.provider-card .provider-name{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.provider-card .provider-desc{font-size:.7rem;color:var(--text-muted);line-height:1.4}
+.provider-card .provider-status{display:inline-block;margin-top:6px;font-size:.6rem;padding:1px 8px;border-radius:8px;background:var(--bg-accent-soft);color:var(--text-muted);letter-spacing:1px}
+.provider-card .provider-status.recommended{background:rgba(138,58,42,0.1);color:var(--accent)}
+
+/* 输入框 */
+.field-group{margin-bottom:16px}
+.field-label{display:block;font-size:.8rem;color:var(--text-secondary);margin-bottom:6px;letter-spacing:.5px}
+.field-label .hint{color:var(--text-muted);font-size:.7rem;margin-left:6px}
+.field-input{width:100%;padding:10px 14px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:8px;font-family:var(--font-mono);font-size:.85rem;transition:border-color var(--transition)}
+.field-input:focus{outline:none;border-color:var(--profile-accent,var(--accent))}
+.field-input::placeholder{color:var(--text-muted);opacity:.6}
+
+/* 按钮 */
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{padding:10px 20px;border-radius:8px;cursor:pointer;font-family:var(--font-serif);font-size:.85rem;letter-spacing:1px;transition:all var(--transition);border:1.5px solid var(--border-card);background:transparent;color:var(--text-secondary)}
+.btn:hover:not(:disabled){border-color:var(--profile-accent,var(--accent));color:var(--profile-accent,var(--accent));background:var(--bg-accent-soft)}
+.btn-primary{border-color:var(--accent);color:var(--accent);background:transparent}
+.btn-primary:hover:not(:disabled){background:var(--accent);color:var(--bg-card)}
+.btn-danger{border-color:#a04040;color:#a04040}
+.btn-danger:hover:not(:disabled){background:#a04040;color:var(--bg-card)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* 状态提示 */
+.status-box{padding:12px 14px;border-radius:8px;background:var(--bg-accent-soft);border:1px solid var(--border-light);font-size:.85rem;margin-top:14px;display:flex;align-items:flex-start;gap:8px}
+.status-box.success{background:rgba(80,140,80,0.08);border-color:rgba(80,140,80,0.3)}
+.status-box.error{background:rgba(160,64,64,0.08);border-color:rgba(160,64,64,0.3)}
+.status-box.info{background:var(--bg-accent-soft)}
+.status-icon{font-size:1rem;line-height:1.4}
+.status-text{flex:1;line-height:1.6}
+.status-text strong{color:var(--text-primary)}
+
+/* 测试结果 */
+.test-result{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg-card);border:1px dashed var(--border-card);font-size:.8rem;line-height:1.7;color:var(--text-secondary);max-height:200px;overflow-y:auto;white-space:pre-wrap;font-family:var(--font-mono)}
+.test-result:empty{display:none}
+
+/* 预留功能(灰显) */
+.reserved-section{opacity:.5;pointer-events:none}
+.reserved-section .card-title::after{content:" · 待开放";font-size:.65rem;color:var(--text-muted);letter-spacing:1px;margin-left:6px}
+
+/* 信息说明 */
+.info-list{font-size:.82rem;color:var(--text-secondary);line-height:1.9;padding-left:18px}
+.info-list li{margin-bottom:4px}
+.info-list code{background:var(--bg-accent-soft);padding:1px 6px;border-radius:3px;font-size:.78rem;color:var(--accent);font-family:var(--font-mono)}
+
+/* 底部说明 */
+.footer-note{text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:30px;padding-top:20px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px;line-height:1.8}
+
+/* Toast 提示 */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--profile-accent,var(--accent));color:var(--text-primary);padding:10px 20px;border-radius:24px;font-size:.85rem;box-shadow:0 4px 20px rgba(0,0,0,.15);opacity:0;pointer-events:none;transition:all .3s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  body{padding:0 12px 40px 12px;font-size:15px}
+  .top-header{padding:30px 0 24px 0}
+  .top-header h1{font-size:1.4rem}
+  .card{padding:18px 16px}
+  .provider-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="float-group">
+  <a class="float-btn" href="./命薄.html"><span style="margin-right:2px;">←</span> 返回命簿</a>
+  <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<div class="top-header">
+  <div class="badge">◈ 归终殿弟子手册</div>
+  <h1>设置</h1>
+  <div class="subtitle">"工欲善其事,必先利其器"</div>
+</div>
+
+<!-- ===== AI 调用配置 ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> AI 调用配置</div>
+
+  <div class="field-group">
+    <label class="field-label">AI 服务商 <span class="hint">(选择你拥有 API Key 的服务商)</span></label>
+    <div class="provider-grid" id="providerGrid">
+      <div class="provider-card active" data-provider="deepseek">
+        <div class="provider-name">DeepSeek</div>
+        <div class="provider-desc">国内访问快<br>价格便宜</div>
+        <span class="provider-status recommended">推荐</span>
+      </div>
+      <div class="provider-card" data-provider="openai">
+        <div class="provider-name">OpenAI</div>
+        <div class="provider-desc">GPT 系列<br>需海外网络</div>
+        <span class="provider-status">兼容</span>
+      </div>
+      <div class="provider-card" data-provider="claude">
+        <div class="provider-name">Anthropic</div>
+        <div class="provider-desc">Claude 系列<br>需海外网络</div>
+        <span class="provider-status">兼容</span>
+      </div>
+      <div class="provider-card" data-provider="custom">
+        <div class="provider-name">自定义</div>
+        <div class="provider-desc">OpenAI 兼容<br>任意接口</div>
+        <span class="provider-status">高级</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group" id="customUrlGroup" style="display:none;">
+    <label class="field-label">接口地址 (Base URL) <span class="hint">(以 https:// 开头,不要加 /v1/chat/completions)</span></label>
+    <input type="text" class="field-input" id="customUrl" placeholder="例如:https://api.example.com/v1">
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">API Key <span class="hint">(以 sk- 开头,仅保存在你本地浏览器)</span></label>
+    <input type="password" class="field-input" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxx">
+  </div>
+
+  <div class="field-group">
+    <label class="field-label">模型名 <span class="hint">(留空则用服务商默认模型)</span></label>
+    <input type="text" class="field-input" id="modelName" placeholder="例如:deepseek-chat">
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="saveBtn">💾 保存配置</button>
+    <button class="btn" id="testBtn">🔍 测试连接</button>
+    <button class="btn btn-danger" id="clearKeyBtn">🗑 清除 Key</button>
+  </div>
+
+  <div class="status-box info" id="statusBox">
+    <span class="status-icon">⏳</span>
+    <span class="status-text" id="statusText">正在读取本地配置...</span>
+  </div>
+
+  <div class="test-result" id="testResult"></div>
+</div>
+
+<!-- ===== 剧情存档管理 ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> 剧情存档管理</div>
+
+  <div class="status-box info">
+    <span class="status-icon">📖</span>
+    <span class="status-text">
+      <strong>当前存档状态:</strong><br>
+      <span id="archiveStatus">读取中...</span>
+    </span>
+  </div>
+
+  <div class="btn-row" style="margin-top:14px;">
+    <button class="btn" id="refreshArchiveBtn">🔄 刷新状态</button>
+    <button class="btn btn-danger" id="clearStoryBtn">⚠️ 清除所有剧情历史</button>
+  </div>
+
+  <ul class="info-list" style="margin-top:14px;">
+    <li>剧情历史保存在浏览器的 <code>localStorage</code> 里,不会上传到任何服务器</li>
+    <li>清除后,两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都会被清空</li>
+    <li>清除后无法恢复,请谨慎操作</li>
+    <li>开场剧情会在下次进入命簿页时自动重新生成</li>
+  </ul>
+</div>
+
+<!-- ===== 主题与外观(预留) ===== -->
+<div class="card reserved-section">
+  <div class="card-title"><span class="sym">◈</span> 主题与外观</div>
+  <div class="field-group">
+    <label class="field-label">主题模式</label>
+    <div class="provider-grid">
+      <div class="provider-card"><div class="provider-name">日间</div><div class="provider-desc">明亮纸卷</div></div>
+      <div class="provider-card"><div class="provider-name">夜间</div><div class="provider-desc">暗夜殿阁</div></div>
+      <div class="provider-card"><div class="provider-name">跟随系统</div><div class="provider-desc">自动切换</div></div>
+    </div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">字体大小</label>
+    <div class="provider-grid">
+      <div class="provider-card"><div class="provider-name">小</div></div>
+      <div class="provider-card"><div class="provider-name">中</div></div>
+      <div class="provider-card"><div class="provider-name">大</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 背景音乐(预留) ===== -->
+<div class="card reserved-section">
+  <div class="card-title"><span class="sym">◈</span> 背景音乐</div>
+  <div class="field-group">
+    <label class="field-label">BGM 列表 <span class="hint">(未来版本将支持选曲与音量调节)</span></label>
+    <div class="provider-grid">
+      <div class="provider-card"><div class="provider-name">单独个体</div></div>
+      <div class="provider-card"><div class="provider-name">口哨</div></div>
+      <div class="provider-card"><div class="provider-name">lnst</div></div>
+    </div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">音量</label>
+    <input type="range" min="0" max="100" value="35" disabled style="width:100%;">
+  </div>
+</div>
+
+<!-- ===== 关于与帮助 ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> 关于与帮助</div>
+  <ul class="info-list">
+    <li>本模拟器的 AI 剧情由大语言模型生成,内容可能存在不合理之处</li>
+    <li>API Key 仅保存在你浏览器的 <code>localStorage</code> 中,不会上传到任何服务器</li>
+    <li>不配置 API Key 也能玩,但会使用站长提供的公共后端(速度较慢)</li>
+    <li>每个浏览器、每个设备的存档相互独立,换设备需重新配置</li>
+    <li>如遇异常,可尝试「清除 Key」后重新配置,或「清除剧情历史」后重玩</li>
+  </ul>
+</div>
+
+<div class="footer-note">
+  引渡人模拟器 · 归终殿 v2.0<br>
+  苍珩四百三十五年 · 霜月
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ===== 配置存储键 =====
+  const CONFIG_KEY = 'gzd_ai_config';
+  const STORY_KEY = 'gzd_ai_story';
+
+  // 各服务商默认配置
+  const PROVIDER_DEFAULTS = {
+    deepseek: { baseUrl: 'https://api.deepseek.com', defaultModel: 'deepseek-chat' },
+    openai:   { baseUrl: 'https://api.openai.com',    defaultModel: 'gpt-4o-mini' },
+    claude:   { baseUrl: 'https://api.anthropic.com', defaultModel: 'claude-3-5-sonnet-20241022' },
+    custom:   { baseUrl: '',                          defaultModel: '' }
+  };
+
+  // ===== 读取/保存配置 =====
+  function loadConfig(){
+    try{
+      return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
+    }catch(e){ return {}; }
+  }
+  function saveConfig(cfg){
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+  }
+
+  // ===== Toast 提示 =====
+  let toastTimer;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ===== 主题切换(沿用 GZD 系统) =====
+  function applyTheme(t){
+    const h = document.documentElement;
+    if(t === 'light') h.setAttribute('data-theme','light');
+    else h.removeAttribute('data-theme');
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if(icon && label){
+      icon.textContent = t === 'light' ? '🌙' : '☀️';
+      label.textContent = t === 'light' ? '夜间' : '日间';
+    }
+  }
+  function getStoredTheme(){
+    try{
+      const r = localStorage.getItem('theme');
+      if(r){
+        const p = JSON.parse(r);
+        if(p && p.value) return p.value;
+      }
+    }catch(e){}
+    return 'light';
+  }
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    const next = cur === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    localStorage.setItem('theme', JSON.stringify({ value: next }));
+  }
+
+  // ===== 服务商选择 =====
+  let currentProvider = 'deepseek';
+  function selectProvider(p){
+    currentProvider = p;
+    document.querySelectorAll('.provider-card[data-provider]').forEach(c => {
+      c.classList.toggle('active', c.dataset.provider === p);
+    });
+    // 自定义才显示 Base URL 输入
+    document.getElementById('customUrlGroup').style.display = (p === 'custom') ? 'block' : 'none';
+    // 自动填充默认模型名
+    const modelInput = document.getElementById('modelName');
+    if(!modelInput.value && PROVIDER_DEFAULTS[p].defaultModel){
+      modelInput.value = PROVIDER_DEFAULTS[p].defaultModel;
+    }
+  }
+
+  // ===== 状态提示更新 =====
+  function setStatus(type, icon, text){
+    const box = document.getElementById('statusBox');
+    const txt = document.getElementById('statusText');
+    box.className = 'status-box ' + type;
+    box.querySelector('.status-icon').textContent = icon;
+    txt.innerHTML = text;
+  }
+
+  // ===== 初始化页面(读取本地配置) =====
+  function initPage(){
+    // 主题
+    applyTheme(getStoredTheme());
+
+    // 读配置
+    const cfg = loadConfig();
+    if(cfg.provider){
+      selectProvider(cfg.provider);
+    } else {
+      selectProvider('deepseek');
+    }
+    if(cfg.customUrl){
+      document.getElementById('customUrl').value = cfg.customUrl;
+    }
+    if(cfg.apiKey){
+      document.getElementById('apiKey').value = cfg.apiKey;
+    }
+    if(cfg.model){
+      document.getElementById('modelName').value = cfg.model;
+    }
+
+    // 更新状态
+    updateStatus();
+    updateArchiveStatus();
+  }
+
+  function updateStatus(){
+    const cfg = loadConfig();
+    const key = document.getElementById('apiKey').value.trim();
+    if(key){
+      const provider = currentProvider;
+      const providerName = {deepseek:'DeepSeek',openai:'OpenAI',claude:'Anthropic',custom:'自定义接口'}[provider];
+      setStatus('success', '✅', `<strong>已配置 ${providerName}</strong><br>下次调用 AI 时将直接连接该服务商(速度更快)。Key 仅保存在本地浏览器。`);
+    } else {
+      setStatus('info', 'ℹ️', `<strong>未配置 API Key</strong><br>当前将使用站长提供的公共后端(Cloudflare Worker),国内访问可能较慢。填写自己的 Key 可大幅提速。`);
+    }
+  }
+
+  // ===== 存档状态 =====
+  function updateArchiveStatus(){
+    try{
+      const all = JSON.parse(localStorage.getItem(STORY_KEY) || '{}');
+      const lin = all.linxiwu || [];
+      const luo = all.luojin || [];
+      const linCount = lin.filter(x => x.type === 'ai' || x.type === 'user').length;
+      const luoCount = luo.filter(x => x.type === 'ai' || x.type === 'user').length;
+      document.getElementById('archiveStatus').innerHTML =
+        `林栖梧:${linCount} 条剧情记录<br>罗烬:${luoCount} 条剧情记录`;
+    }catch(e){
+      document.getElementById('archiveStatus').textContent = '读取失败';
+    }
+  }
+
+  // ===== 保存配置 =====
+  function saveSettings(){
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const modelName = document.getElementById('modelName').value.trim();
+    const customUrl = document.getElementById('customUrl').value.trim();
+
+    if(currentProvider === 'custom' && !customUrl){
+      toast('⚠️ 请填写自定义接口地址');
+      return;
+    }
+
+    const cfg = {
+      provider: currentProvider,
+      apiKey: apiKey,
+      model: modelName || PROVIDER_DEFAULTS[currentProvider].defaultModel,
+      baseUrl: currentProvider === 'custom' ? customUrl : PROVIDER_DEFAULTS[currentProvider].baseUrl,
+      customUrl: customUrl,
+      savedAt: Date.now()
+    };
+    saveConfig(cfg);
+    updateStatus();
+    toast('✅ 配置已保存');
+  }
+
+  // ===== 清除 Key =====
+  function clearKey(){
+    if(!confirm('确定清除 API Key 吗?清除后将回退到公共后端(速度较慢)。')){
+      return;
+    }
+    const cfg = loadConfig();
+    delete cfg.apiKey;
+    saveConfig(cfg);
+    document.getElementById('apiKey').value = '';
+    updateStatus();
+    toast('🗑 API Key 已清除');
+  }
+
+  // ===== 清除剧情历史 =====
+  function clearStory(){
+    if(!confirm('⚠️ 确定清除所有剧情历史吗?\n\n两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都将被清空,且无法恢复。')){
+      return;
+    }
+    if(!confirm('再次确认:真的要清除全部剧情历史吗?\n\n这个操作不可撤销。')){
+      return;
+    }
+    localStorage.removeItem(STORY_KEY);
+    updateArchiveStatus();
+    toast('📖 剧情历史已清空');
+  }
+
+  // ===== 测试连接 =====
+  async function testConnection(){
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const modelName = document.getElementById('modelName').value.trim() || PROVIDER_DEFAULTS[currentProvider].defaultModel;
+    const baseUrl = currentProvider === 'custom'
+      ? document.getElementById('customUrl').value.trim()
+      : PROVIDER_DEFAULTS[currentProvider].baseUrl;
+
+    if(!apiKey){
+      toast('⚠️ 请先填写 API Key');
+      return;
+    }
+    if(currentProvider === 'custom' && !baseUrl){
+      toast('⚠️ 请填写接口地址');
+      return;
+    }
+
+    const resultEl = document.getElementById('testResult');
+    const btn = document.getElementById('testBtn');
+    btn.disabled = true;
+    btn.textContent = '🔍 测试中...';
+    resultEl.textContent = '正在连接 ' + baseUrl + ' ...\n';
+
+    // 构造请求(根据服务商类型)
+    let url, headers, body;
+    if(currentProvider === 'claude'){
+      // Anthropic API 格式不同
+      url = baseUrl + '/v1/messages';
+      headers = {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      };
+      body = JSON.stringify({
+        model: modelName,
+        max_tokens: 50,
+        messages: [{ role: 'user', content: '请回复"连接成功"四个字。' }]
+      });
+    } else {
+      // OpenAI / DeepSeek / 自定义(都是 OpenAI 兼容格式)
+      url = baseUrl + '/v1/chat/completions';
+      headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey
+      };
+      body = JSON.stringify({
+        model: modelName,
+        messages: [{ role: 'user', content: '请回复"连接成功"四个字。' }],
+        max_tokens: 50
+      });
+    }
+
+    try{
+      const resp = await fetch(url, { method: 'POST', headers, body });
+      const data = await resp.json();
+
+      if(!resp.ok){
+        resultEl.textContent += `❌ HTTP ${resp.status}\n` + JSON.stringify(data, null, 2);
+        return;
+      }
+
+      let reply = '';
+      if(currentProvider === 'claude'){
+        reply = data.content?.[0]?.text || JSON.stringify(data);
+      } else {
+        reply = data.choices?.[0]?.message?.content || JSON.stringify(data);
+      }
+
+      resultEl.textContent += `✅ 连接成功!\n模型:${modelName}\n回复:${reply}\n\n完整响应:\n` + JSON.stringify(data, null, 2);
+      toast('✅ 连接成功');
+    }catch(e){
+      resultEl.textContent += `❌ 网络错误:${e.message}\n\n可能原因:\n- 网络不通(国内访问 OpenAI/Anthropic 需梯子)\n- Base URL 错误\n- CORS 跨域限制\n\n提示:DeepSeek 在国内可直连,推荐使用。`;
+    }finally{
+      btn.disabled = false;
+      btn.textContent = '🔍 测试连接';
+    }
+  }
+
+  // ===== 事件绑定 =====
+  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+
+  document.querySelectorAll('.provider-card[data-provider]').forEach(c => {
+    c.addEventListener('click', () => selectProvider(c.dataset.provider));
+  });
+
+  document.getElementById('apiKey').addEventListener('input', updateStatus);
+
+  document.getElementById('saveBtn').addEventListener('click', saveSettings);
+  document.getElementById('testBtn').addEventListener('click', testConnection);
+  document.getElementById('clearKeyBtn').addEventListener('click', clearKey);
+  document.getElementById('clearStoryBtn').addEventListener('click', clearStory);
+  document.getElementById('refreshArchiveBtn').addEventListener('click', updateArchiveStatus);
+
+  // 启动
+  initPage();
+  console.log('⚙️ 归终殿 · 设置页 v1.0 已加载');
+})();
+</script>
+</body>
+</html>
