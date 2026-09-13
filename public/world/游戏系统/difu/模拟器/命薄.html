@@ -208,7 +208,7 @@
                 </div>
             </div>
 
-            <!-- 命簿主线 · 林栖梧（AI 剧情流版） -->
+            <!-- 命簿主线 · 林栖梧（精简版 + 跳转模拟页） -->
             <div class="card" data-corner="❀">
                 <span class="corner-deco">❀</span>
                 <div class="card-title">命簿主线</div>
@@ -218,19 +218,15 @@
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="storyBar-lin" style="width:40%;"></div></div>
 
-                <!-- 配置提示条 -->
-                <div class="ai-config-banner" id="aiConfigBanner-linxiwu"></div>
-
-                <!-- AI 剧情流容器 -->
-                <div class="ai-story-container" id="aiStoryList-linxiwu"></div>
-
-                <!-- 输入区 -->
-                <div class="ai-story-input-row">
-                    <input type="text" class="ai-story-input" id="aiStoryInput-linxiwu" placeholder="例:去符修院预习 / 找栾方棋问问题 / 在浮生树下冥想">
-                    <button class="ai-story-submit" id="aiStorySubmit-linxiwu">发送行动</button>
+                <div class="story-desc" id="storySummary-lin" style="margin-top:10px; font-size:0.88rem; color:var(--text-secondary); line-height:1.7; min-height:2em;">
+                    读取最近剧情中...
                 </div>
 
-                <div class="story-update" style="margin-top:10px;">最近更新：苍珩四百三十五年 · 霜月廿二 · 预习中</div>
+                <div style="margin-top:12px; text-align:center;">
+                    <a href="./模拟.html" style="display:inline-block; padding:8px 24px; border:1.5px solid var(--accent); border-radius:20px; color:var(--accent); text-decoration:none; font-family:var(--font-mono); font-size:0.85rem; letter-spacing:1px; transition:all 0.3s;">◈ 进入模拟 →</a>
+                </div>
+
+                <div class="story-update" style="margin-top:10px;">最近更新:苍珩四百三十五年 · 霜月廿二 · 预习中</div>
             </div>
 
             <!-- 待办事项 · 林栖梧 -->
@@ -295,7 +291,7 @@
                 </div>
             </div>
 
-            <!-- 命簿主线 · 罗烬（AI 剧情流版） -->
+            <!-- 命簿主线 · 罗烬（精简版 + 跳转模拟页） -->
             <div class="card" data-corner="◈">
                 <span class="corner-deco">◈</span>
                 <div class="card-title">命簿主线</div>
@@ -305,20 +301,16 @@
                 </div>
                 <div class="progress-track"><div class="progress-fill" id="storyBar-luo" style="width:20%;"></div></div>
 
-                <!-- 配置提示条 -->
-                <div class="ai-config-banner" id="aiConfigBanner-luojin"></div>
-
-                <!-- AI 剧情流容器 -->
-                <div class="ai-story-container" id="aiStoryList-luojin"></div>
-
-                <!-- 输入区 -->
-                <div class="ai-story-input-row">
-                    <input type="text" class="ai-story-input" id="aiStoryInput-luojin" placeholder="例:去讲武堂练刀 / 找魏元璟借笛 / 在演武广场加练">
-                    <button class="ai-story-submit" id="aiStorySubmit-luojin">发送行动</button>
+                <div class="story-desc" id="storySummary-luo" style="margin-top:10px; font-size:0.88rem; color:var(--text-secondary); line-height:1.7; min-height:2em;">
+                   读取最近剧情中...
                 </div>
 
-                <div class="story-update" style="margin-top:10px;">最近更新：苍珩四百三十五年 · 霜月廿二 · 预习中</div>
-           </div>
+                <div style="margin-top:12px; text-align:center;">
+                    <a href="./模拟.html" style="display:inline-block; padding:8px 24px; border:1.5px solid var(--accent); border-radius:20px; color:var(--accent); text-decoration:none; font-family:var(--font-mono); font-size:0.85rem; letter-spacing:1px; transition:all 0.3s;">◈ 进入模拟 →</a>
+                </div>
+
+                <div class="story-update" style="margin-top:10px;">最近更新:苍珩四百三十五年 · 霜月廿二 · 预习中</div>
+            </div>
 
             <!-- 待办事项 · 罗烬 -->
             <div class="card" data-corner="◈">
@@ -382,6 +374,46 @@
 
     <script src="./核心.js"></script>
     <script src="./命薄.js"></script>
-    <script src="./命薄AI.js"></script>
+    <script>
+// 命薄页只读取剧情摘要显示,不交互
+(function(){
+  function showSummary(){
+    ['linxiwu','luojin'].forEach(function(profile){
+      var suffix = profile === 'linxiwu' ? 'lin' : 'luo';
+      var el = document.getElementById('storySummary-' + suffix);
+      if(!el) return;
+      try{
+        var all = JSON.parse(localStorage.getItem('gzd_ai_story') || '{}');
+        var arr = all[profile] || [];
+        // 找最后一条 AI 回应
+        var lastAi = null;
+        for(var i = arr.length - 1; i >= 0; i--){
+          if(arr[i].type === 'ai' || arr[i].type === 'opening'){
+            lastAi = arr[i];
+            break;
+          }
+        }
+        if(lastAi){
+          // 取前 60 字 + 省略号
+          var text = lastAi.text.replace(/\n/g,' ').slice(0, 60);
+          if(lastAi.text.length > 60) text += '...';
+          el.textContent = '「' + text + '」';
+        } else {
+          el.textContent = '尚未开始模拟,点击下方按钮进入。';
+        }
+      }catch(e){
+        el.textContent = '读取失败';
+      }
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', showSummary);
+  } else {
+    showSummary();
+  }
+  // 从模拟页返回时刷新
+  window.addEventListener('pageshow', showSummary);
+})();
+</script>
 </body>
 </html>
