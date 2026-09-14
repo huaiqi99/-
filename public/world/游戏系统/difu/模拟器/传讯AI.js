@@ -8,7 +8,7 @@ GZD.ProfileManager={init:function(){var id=GZD.Storage.getProfile();document.bod
 GZD.Sidebar={open:false,toggle:function(){this.open=!this.open;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close:function(){if(this.open){this.open=false;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}}};
 GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();}
 
-document.addEventListener('click',function(e){var t=e.target;if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}var sb=t.closest('#profileSwitchBtn');if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';switchProfile(c==='linxiwu'?'luojin':'linxiwu');return;}});
+document.addEventListener('click',function(e){var t=e.target;if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}var sb=t.closest('#profileSwitchBtn');if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';switchProfile(c==='linxiwu'?'luojin':'linxiwu');return;}if(t.closest('#backToList')){e.preventDefault();backToList();return;}});
 document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
 function updateThemeBtn(){var b=document.getElementById('themeBtn'),isLight=document.documentElement.getAttribute('data-theme')==='light';if(b)b.innerHTML='<span id="themeIcon">'+(isLight?'🌙':'☀️')+'</span> <span id="themeLabel">'+(isLight?'夜间':'日间')+'</span>';}updateThemeBtn();
 
@@ -70,10 +70,11 @@ var NPC_ID_MAP={
   jing:'weiyuanjing', jing2:'weiyuanjing',
   luo:'luoxiu',       luo2:'luoxiu',
   cheng:'chengmuqi',
+  caike:'caike',      caike2:'caike',
   luojin:'luojin',    linxiwu:'linxiwu'
 };
 
-// ===== NPC 完整性格档案(与后端一致) =====
+// ===== NPC 完整性格档案 =====
 var WORLD_LORE='【世界观】\n苍珩四百三十五年,地府归终殿执掌亡魂引渡与功过裁定。殿辖符修院、讲武堂、音律坊与忘川东段。三脉同源,共维归终殿秩序。\n\n【主要地点】\n归终殿中枢(正殿/试炼司/殿务司)、符修院(栾方棋坐镇)、讲武堂(罗修执教)、音律坊(程木栖主理,魏元璟代课)、忘川东段(引渡实习)、栖梧馆(程木栖医馆)、浮生巨树(栾方棋与林淮血脉滋养的神树)。\n\n【晋升体系】弟子六项属性:魂力、体术、法术、防御、意志、敏捷。分六层:杂役→统修期→入门期→内门期→准十席级→十席。';
 
 var PLAYER_PROFILES={
@@ -157,6 +158,21 @@ var NPC_PROFILES={
       luojin:'咋咋呼呼但天赋很高的孩子,容易受伤,和罗修一个样。罗烬受伤来医馆是常态,程木栖已习惯。每次看他一瘸一拐进来先叹气再熟练拿药箱。无奈温和偶尔打趣,偶尔塞糖果"别告诉你爹"。',
     }
   },
+  caike:{
+    name:'蔡可',
+    role:'归终殿入门期弟子,在栖梧馆帮程木栖配药。罗烬他们的师姐,虽然看着小但入门比他们早。',
+    appearance:'可爱的小姑娘模样,圆脸大眼睛,看起来比实际年龄小。常扎双髻,穿栖梧馆的药童服,袖口总沾着药渍。笑起来有酒窝,兜里常揣着蜜饯。',
+    weapon:'无固定武器,擅长基础医术和简单符法,正在跟程木栖学辨药。',
+    personalitySurface:'活泼开朗,嘴巴甜,爱撒娇。看起来软萌无害,见到谁都笑嘻嘻打招呼。爱用叠词和语气词"哦""呢""嘛"。',
+    personalityMid:'实际很能干,在栖梧馆是程木栖的小助手。程木栖偷懒时帮忙打掩护,但也会管着程木栖喝药。虽然看着小但很会照顾人。',
+    personalityDeep:'很在乎身边的人,看到师弟师妹受伤会偷偷担心。把栖梧馆当自己家,把程木栖当半个姐姐半个师父。嘴上爱撒娇,关键时刻从不掉链子。',
+    speechStyle:'活泼,带"哦""呢""嘛"等语气词。爱用叠词。说话语速快,偶尔蹦出几个药名显得很专业。对师弟师妹会摆师姐架子但没什么威慑力。',
+    catchphrase:'师兄/师妹,这个药要趁热喝哦 / 程师姐又偷懒了,你别告诉她 / 哎呀,又受伤了 / 乖,喝药药',
+    relations:{
+      linxiwu:'像对妹妹一样宠着,会塞零食给她。觉得林栖梧省心又乖巧,跟程木栖念叨"你看人家栖梧"。偶尔会跟林栖梧吐槽程木栖又翘班了。',
+      luojin:'摆师姐架子但没什么威慑力。罗烬受伤来医馆会念叨"怎么又来了",手上麻利地帮忙上药。会教训他"别又来蹭药",但每次都偷偷多给他塞一颗糖。',
+    }
+  },
   luojin:{
     name:'罗烬',
     role:'讲武堂弟子,承刀法一脉,罗修与魏元璟之子。林栖梧的青梅竹马。当前层级:统修期。',
@@ -193,32 +209,35 @@ function buildSystemPrompt(npcId, profile){
   return '你是「引渡人模拟器·归终殿」的角色扮演 AI。\n\n你在这个模拟器中的核心任务是:扮演归终殿中与玩家互动的各类角色,以对话、神态、动作、心理活动的形式回应玩家的提问与行动。你不是在输出一段剧情故事,而是在扮演一个活生生的人物,在归终殿的日常中与玩家交流。玩家以第二人称"你"代入角色,你需要以 NPC 的第一人称或第三人称视角做出反应,但始终记住——你扮演的是与玩家对话的那个人,不是旁白,不是剧情推进器,不是全知视角的叙事者。\n\n【当前玩家角色】\n'+player.desc+'\n\n玩家可能以罗烬或林栖梧的身份与你对话。请根据当前玩家角色调整互动内容,不要混淆两个主角。\n\n'+WORLD_LORE+'\n\n【你现在扮演的 NPC】\n姓名:'+npc.name+'\n身份:'+npc.role+'\n外貌:'+npc.appearance+'\n本命武器:'+npc.weapon+'\n\n【性格三层】\n表层(对外第一印象):'+npc.personalitySurface+'\n中层(熟悉之人接触到的真实一面):'+npc.personalityMid+'\n深层(触及灵魂的本质):'+npc.personalityDeep+'\n\n【说话风格】\n'+npc.speechStyle+'\n口头禅:'+npc.catchphrase+'\n\n【你面对当前玩家('+player.name+')时的态度】\n'+relation+'\n\n【回应风格要求】\n古风地府基调,对话自然流畅,有生活气息。善用神态描写、动作细节、心理活动来传递情绪,而非直白抒情。每个角色有自己独特的语气和说话方式,严格参照角色档案。单次回应控制在100字以内,可长可短,视情境而定。允许留白,允许沉默,允许角色不回答问题。\n\n【重要约束】\n1. 你是在扮演一个角色与玩家对话,而非输出一段剧情故事。玩家说话,角色回应。玩家行动,角色反应。\n2. 不要替玩家做决定,不要写玩家的内心活动,不要推进剧情节点。你只负责扮演 NPC,让角色活过来。\n3. 如果玩家输入的内容超出了世界观或不符合角色设定,以角色自身的方式委婉拒绝或困惑回应,而非强行解释。\n4. 永远用 NPC 的视角说话,可以描写 NPC 的神态动作(用括号或自然叙述),但不要替玩家做任何行动或决定。\n5. 严格保持角色性格的一致性,不要 OOC(Out Of Character)。\n\n请以 '+npc.name+' 的身份回应玩家。';
 }
 
-// ===== NPC 资料卡片(头像点击用) =====
+// ===== NPC 资料卡(头像图片用) =====
 var NPC_PROFILE_CARDS={
-  luanfangqi:{name:'栾方棋',avatar:'❀',sym:'符修院助教 · 第五席',color:'#D49A9A',
+  luanfangqi:{name:'栾方棋',avatar:'❀',sym:'符修院助教 · 第五席',color:'#D49A9A',imgExt:'.jpg',
     sign:'"凑合过吧,还能离咋的"',
     desc:'归终殿第一符修,身负浮生树血脉。面容清俊温和,笑起来眼角微弯。被罗修调侃了几十年,嘴上嫌弃实际默契十足。林栖梧的生父之一,对女儿极其满意。'},
-  linhuai:{name:'林淮',avatar:'✦',sym:'归终殿枪修 · 第二席',color:'#4E5A64',
+  linhuai:{name:'林淮',avatar:'✦',sym:'归终殿枪修 · 第二席',color:'#4E5A64',imgExt:'.png',
     sign:'"嗯。"',
     desc:'面容冷峻,常年面无表情,被罗修形容为"棺材脸配死鱼眼"。话少得可怜,但偶尔语出惊人。深度路痴,住了几百年的归终殿都能迷路。林栖梧的生父之一,极护短但从不说出口。'},
-  luoxiu:{name:'罗修',avatar:'◈',sym:'首席引渡人 · 第一席',color:'#7a4a4a',
+  luoxiu:{name:'罗修',avatar:'◈',sym:'首席引渡人 · 第一席',color:'#7a4a4a',imgExt:'.png',
     sign:'"关我什么事。"',
     desc:'归终殿首席,刀修兼讲武堂执教。玩世不恭、大大咧咧、毒舌刻薄,跟谁都能勾肩搭背。嘴上不饶人,但归终殿第一护短。罗烬的生父之一,对魏元璟是最大的软肋。'},
-  weiyuanjing:{name:'魏元璟',avatar:'❖',sym:'引渡人 · 第七席',color:'#7a6a3a',
+  weiyuanjing:{name:'魏元璟',avatar:'❖',sym:'引渡人 · 第七席',color:'#7a6a3a',imgExt:'.png',
     sign:'"关我什么事。"',
     desc:'生前为苍珩王朝太子后登基为帝。面容极其俊美,生气瞪圆像炸毛的猫,委屈时眼眶泛红强忍不掉泪。傲娇刀子嘴豆腐心,被叫"娘"会炸毛"谁是你娘!叫爹!"。罗烬的生父之一。'},
-  chengmuqi:{name:'程木栖',avatar:'◉',sym:'栖梧馆主事 · 原第二席',color:'#3a6a5a',
+  chengmuqi:{name:'程木栖',avatar:'◉',sym:'栖梧馆主事 · 原第二席',color:'#3a6a5a',imgExt:'.png',
     sign:'"乖,喝药。"',
     desc:'归终殿第二席,京城决战中十指尽废后退出排名,开设栖梧馆医馆。面容温婉素净,十指指节微微变形。表面温和端方,实则偷懒翘班躲起来看话本。归终殿的定海神针。'},
-  luojin:{name:'罗烬',avatar:'◈',sym:'讲武堂弟子 · 统修期',color:'#4a4642',
+  caike:{name:'蔡可',avatar:'✿',sym:'栖梧馆药童 · 入门期',color:'#c8a8c8',imgExt:'.png',
+    sign:'"乖,喝药药~"',
+    desc:'归终殿入门期弟子,在栖梧馆帮程木栖配药。圆脸大眼睛的可爱小姑娘,看着比实际年龄小,但入门比罗烬他们早。活泼开朗爱撒娇,嘴上摆师姐架子但没什么威慑力。兜里常揣着蜜饯。'},
+  luojin:{name:'罗烬',avatar:'◈',sym:'讲武堂弟子 · 统修期',color:'#4a4642',imgExt:'.png',
     sign:'"我、我不是故意的……"',
     desc:'罗修与魏元璟之子,承刀法一脉。咋咋呼呼精力旺盛,但面对林栖梧会结巴磕巴。小时候抓虫子吓她,长大了偷偷喜欢她却不敢说。练功刻苦到自虐,出任务时默默护着林栖梧。'},
-  linxiwu:{name:'林栖梧',avatar:'❀',sym:'符修院助教 · 统修期',color:'#D49A9A',
+  linxiwu:{name:'林栖梧',avatar:'❀',sym:'符修院助教 · 统修期',color:'#D49A9A',imgExt:'.png',
     sign:'"哦。"',
     desc:'林淮与栾方棋之女,身负浮生树血脉。温润端方,学东西快,符箓剑法魂术样样精通。对罗烬从"讨厌"变成"头疼",可能隐约察觉到他的心思但选择装作不知。'}
 };
 
-// ===== AI 调用(双模式) =====
+// ===== AI 调用 =====
 function callChatAI(message, npcId, profile, history){
   var cfg=loadAIConfig();
   if(cfg.apiKey && cfg.provider){
@@ -237,9 +256,7 @@ function callDirect(message, npcId, profile, history, cfg){
   var systemPrompt=buildSystemPrompt(npcId, profile);
   if(!systemPrompt) return Promise.reject(new Error('未知的 NPC: '+npcId));
 
-  // ★ 关键修复:把 history 从 {side, sender, text} 转换成 {role, content}
-  // 因为存档时用的是 {side:'right'/'left', sender, text} 格式
-  // 但 DeepSeek/OpenAI API 要求 {role:'user'/'assistant', content} 格式
+  // ★ 把 history 从 {side, sender, text} 转换成 {role, content}
   var aiHistoryFormatted = history.map(function(m){
     return {
       role: m.side === 'right' ? 'user' : 'assistant',
@@ -297,7 +314,7 @@ function callWorker(message, npcId, profile, history){
 }
 
 // ====================================================================
-// ===== 联系人数据(补全了林栖梧视角的程木栖) =====
+// ===== 联系人数据(加蔡可) =====
 // ====================================================================
 var contactsData={
 linxiwu:[
@@ -306,6 +323,7 @@ linxiwu:[
 {id:'jing',name:'魏元璟',note:'璟先生',avatar:'❖',status:'在线中',online:true,color:'jing',lastMsg:'改天来砺峰阁,我教你一套凝神手诀。'},
 {id:'luo',name:'罗修',note:'首席',avatar:'◈',status:'离线',online:false,color:'luo',lastMsg:'嗯。比上次有进步。'},
 {id:'cheng',name:'程木栖',note:'栖师姐',avatar:'◉',status:'在线中',online:true,color:'cheng',lastMsg:'今天歇诊,你来医馆帮我研磨药材。'},
+{id:'caike',name:'蔡可',note:'可师姐',avatar:'✿',status:'在线中',online:true,color:'caike',lastMsg:'栖梧妹妹!今天来医馆嘛?我新炒了山楂蜜饯!'},
 {id:'su',name:'苏晚',note:'',avatar:'✿',status:'在线中',online:true,color:'su',lastMsg:'糊了!那是炭火味!'},
 {id:'zhouqing',name:'慕晚棠',note:'',avatar:'✧',status:'离线',online:false,color:'zhouqing',lastMsg:'没什么,就是闻到了一些酸臭的气息。'},
 {id:'luojin',name:'罗烬',note:'',avatar:'◈',status:'在线中',online:true,color:'luo',lastMsg:'那……下次出外勤一起吗?'}
@@ -315,13 +333,14 @@ luojin:[
 {id:'jing2',name:'魏元璟',note:'娘亲',avatar:'❖',status:'在线中',online:true,color:'jing',lastMsg:'刀法练得不错,继续保持。'},
 {id:'luan2',name:'栾方棋',note:'棋大人',avatar:'❀',status:'在线中',online:true,color:'luan',lastMsg:'符法补考在下月初,我已经帮你报名了。'},
 {id:'cheng',name:'程木栖',note:'栖大人',avatar:'◉',status:'离线',online:false,color:'cheng',lastMsg:'下次出外勤注意就行。'},
+{id:'caike2',name:'蔡可',note:'可师姐',avatar:'✿',status:'在线中',online:true,color:'caike',lastMsg:'又受伤了?快来快来,我给你上药。'},
 {id:'zhao4',name:'何照野',note:'',avatar:'✿',status:'在线中',online:true,color:'zhao4',lastMsg:'重色轻友!跟人家出外勤!'},
 {id:'linxiwu',name:'林栖梧',note:'',avatar:'❀',status:'离线',online:false,color:'luan',lastMsg:'嗯。'}
 ]
 };
 
 // ====================================================================
-// ===== 写死对话数据(补全了林栖梧视角程木栖的开场对话) =====
+// ===== 写死对话数据(加蔡可) =====
 // ====================================================================
 var messagesData={
 linxiwu:{
@@ -377,6 +396,20 @@ cheng:[
 {side:'right',sender:'self',text:'明白!'},
 {side:'left',sender:'cheng',name:'程木栖',text:'(笑)你比你爹省心多了。'},
 {side:'right',sender:'self',text:'(不好意思地笑)师姐又在说我爹。'}
+],
+caike:[
+{side:'left',sender:'caike',name:'蔡可',text:'栖梧妹妹!今天来医馆嘛?我新炒了山楂蜜饯!'},
+{side:'right',sender:'self',text:'好呀可师姐,辰时就过去。'},
+{side:'left',sender:'caike',name:'蔡可',text:'好哦好哦!程师姐今天又翘班了,我一个人磨药好无聊的嘛。'},
+{side:'right',sender:'self',text:'程师姐又翘班了?她不是昨天才说过今天要坐诊?'},
+{side:'left',sender:'caike',name:'蔡可',text:'嘿嘿,她说身体不适,其实我看见她抱着一摞话本往浮生树后面跑了。'},
+{side:'right',sender:'self',text:'……这话可别让魏元璟大人听到。'},
+{side:'left',sender:'caike',name:'蔡可',text:'我知道我知道~要是被问到就说程师姐去采药了,这是老借口啦。'},
+{side:'right',sender:'self',text:'可师姐,你这套打掩护的本事越来越熟练了。'},
+{side:'left',sender:'caike',name:'蔡可',text:'嘿嘿,跟程师姐待久了嘛。对了,你最近是不是又熬夜画符了?脸色不太好哦。'},
+{side:'right',sender:'self',text:'被你看出来了……'},
+{side:'left',sender:'caike',name:'蔡可',text:'哎呀,程师姐要是知道又要念叨了。我给你留了补气血的药膳,来的时候记得喝掉哦。'},
+{side:'right',sender:'self',text:'谢谢可师姐!'}
 ],
 su:[
 {side:'left',sender:'su',name:'苏晚',text:'睡了吗睡了吗睡了吗!!!'},
@@ -452,6 +485,18 @@ cheng:[
 {side:'right',sender:'self',text:'知道了栖大人。这几天麻烦你了。'},
 {side:'left',sender:'cheng',name:'程木栖',text:'下次出外勤注意就行,不用每次都把自己搞成那样。'}
 ],
+caike2:[
+{side:'left',sender:'caike',name:'蔡可',text:'又受伤了?快来快来,我给你上药。'},
+{side:'right',sender:'self',text:'可师姐,我就擦破点皮,不用这么大惊小怪吧……'},
+{side:'left',sender:'caike',name:'蔡可',text:'什么大惊小怪!万一感染了怎么办?坐好别动!'},
+{side:'right',sender:'self',text:'哦……'},
+{side:'left',sender:'caike',name:'蔡可',text:'(一边上药一边念叨)你说你也是,练功练得这么拼干嘛,程师姐每次看到你一身伤都叹气。'},
+{side:'right',sender:'self',text:'嘿嘿,我这不是想变强嘛。'},
+{side:'left',sender:'caike',name:'蔡可',text:'变强也不是这么个变法呀。好了,这个药一天涂三次,别偷懒哦。'},
+{side:'right',sender:'self',text:'知道了可师姐。'},
+{side:'left',sender:'caike',name:'蔡可',text:'(偷偷塞了一颗糖)别告诉你爹,这是我私藏的。'},
+{side:'right',sender:'self',text:'谢可师姐!'}
+],
 zhao4:[
 {side:'left',sender:'zhao4',name:'何照野',text:'你那个刀法练得怎么样了?什么时候切磋一下?'},
 {side:'right',sender:'self',text:'随时来,演武场见。'},
@@ -478,7 +523,6 @@ linxiwu:[
 
 // ===== AI 聊天存档 =====
 var AI_STORAGE_KEY='gzd_chat_history';
-// 写死对话的删除标记
 var PRESET_DELETED_KEY='gzd_preset_deleted';
 
 function loadAIChat(profile, npcId){
@@ -496,8 +540,6 @@ function saveAIChat(profile, npcId, arr){
   }catch(e){console.warn('AI 存档失败:',e);}
 }
 
-// 读取写死对话的删除标记
-// 结构:{chat:{linxiwu_luan:[0,2,5], linxiwu_cheng:[1]}}
 function loadPresetDeleted(){
   try{return JSON.parse(localStorage.getItem(PRESET_DELETED_KEY)||'{}');}catch(e){return{};}
 }
@@ -562,6 +604,8 @@ var contacts=getContacts(currentProfile);
 contacts.forEach(function(c){if(c.id===cid)c.unread=false;});
 renderContacts(currentProfile);
 renderChat(currentProfile,cid);
+// 手机端:显示聊天页,隐藏列表
+showChatOnMobile();
 }
 
 function renderChat(p,cid){
@@ -587,12 +631,10 @@ if(cAvatarEl){
   }
 }
 
-// 获取写死对话 + 删除标记
 var msgs=getMessages(p,cid);
 var deletedIdx=getPresetDeletedKeys(p,cid);
 var visibleMsgs=msgs.filter(function(m,idx){return deletedIdx.indexOf(idx)===-1;});
 
-// 获取 AI 历史
 var npcId=NPC_ID_MAP[cid];
 var aiHistory=npcId?loadAIChat(p,npcId):[];
 
@@ -603,7 +645,14 @@ if(!visibleMsgs.length && !aiHistory.length){
 
 container.innerHTML='';
 
-// 提示条(只在有写死对话时显示)
+// 渲染写死对话
+visibleMsgs.forEach(function(m){
+  var unit=createPresetMsgUnit(m);
+  unit.dataset.presetIdx=msgs.indexOf(m);
+  container.appendChild(unit);
+});
+
+// 提示条放在写死对话下方(如果有写死对话)
 if(visibleMsgs.length>0){
   var tip=document.createElement('div');
   tip.className='chat-tip-bar';
@@ -611,24 +660,12 @@ if(visibleMsgs.length>0){
   container.appendChild(tip);
 }
 
-// 渲染写死对话(全部直接显示)
-visibleMsgs.forEach(function(m){
-  var unit=createMsgUnit(m);
-  unit.classList.add('show');
-  // 标记为预设对话,可长按删除
-  unit.dataset.presetIdx=msgs.indexOf(m);
-  unit.classList.add('preset-msg');
+// 渲染 AI 历史(带操作按钮)
+aiHistory.forEach(function(m, idx){
+  var unit=createAIMsgUnit(m, idx);
   container.appendChild(unit);
 });
 
-// 渲染 AI 历史对话
-aiHistory.forEach(function(m){
-  var unit=createMsgUnit(m);
-  unit.classList.add('show');
-  container.appendChild(unit);
-});
-
-// 滚到底部(如果有 AI 历史)或顶部
 if(aiHistory.length>0){
   container.scrollTop=container.scrollHeight;
 } else {
@@ -636,9 +673,9 @@ if(aiHistory.length>0){
 }
 }
 
-function createMsgUnit(m){
+function createPresetMsgUnit(m){
   var unit=document.createElement('div');
-  unit.className='msg-unit '+m.side+' sender-'+m.sender;
+  unit.className='msg-unit '+m.side+' sender-'+m.sender+' preset-msg show';
   if(m.sender!=='self'&&m.name){
     var nameDiv=document.createElement('div');nameDiv.className='msg-name';nameDiv.textContent=m.name;unit.appendChild(nameDiv);
   }
@@ -646,22 +683,40 @@ function createMsgUnit(m){
   return unit;
 }
 
-// ===== 长按删除(只对写死对话) =====
+// ★ AI 历史消息带操作按钮
+function createAIMsgUnit(m, idx){
+  var unit=document.createElement('div');
+  unit.className='msg-unit '+m.side+' sender-'+m.sender+' ai-msg show';
+  unit.dataset.aiIdx=idx;
+  if(m.sender!=='self'&&m.name){
+    var nameDiv=document.createElement('div');nameDiv.className='msg-name';nameDiv.textContent=m.name;unit.appendChild(nameDiv);
+  }
+  var bubble=document.createElement('div');bubble.className='msg-bubble';bubble.textContent=m.text;unit.appendChild(bubble);
+  // 操作按钮
+  var actions=document.createElement('div');actions.className='msg-actions';
+  if(m.side==='right'){
+    // 玩家输入:只加修改按钮(改完重新生成后续)
+    actions.innerHTML='<button class="ai-action-btn" data-action="edit-user" data-idx="'+idx+'">✎ 修改</button>';
+  } else {
+    // AI 回应:修改 + 重新生成
+    actions.innerHTML='<button class="ai-action-btn" data-action="edit-ai" data-idx="'+idx+'">✎ 修改</button><button class="ai-action-btn" data-action="regenerate-ai" data-idx="'+idx+'">⟲ 重新生成</button>';
+  }
+  unit.appendChild(actions);
+  return unit;
+}
+
+// ===== 长按删除(写死对话) =====
 var longPressTimer=null;
-var longPressTarget=null;
-var LONG_PRESS_DURATION=600;  // 长按 600ms 触发
+var LONG_PRESS_DURATION=600;
 
 function attachLongPress(){
   var container=document.getElementById('chatMessages');
   if(!container) return;
-  // 用事件委托
   container.addEventListener('touchstart',function(e){
     var unit=e.target.closest('.msg-unit.preset-msg');
     if(!unit) return;
-    longPressTarget=unit;
     longPressTimer=setTimeout(function(){
       showDeleteConfirm(unit);
-      longPressTarget=null;
     },LONG_PRESS_DURATION);
   },{passive:true});
   container.addEventListener('touchend',function(){
@@ -670,14 +725,11 @@ function attachLongPress(){
   container.addEventListener('touchmove',function(){
     if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}
   },{passive:true});
-  // 鼠标长按(电脑端)
   container.addEventListener('mousedown',function(e){
     var unit=e.target.closest('.msg-unit.preset-msg');
     if(!unit) return;
-    longPressTarget=unit;
     longPressTimer=setTimeout(function(){
       showDeleteConfirm(unit);
-      longPressTarget=null;
     },LONG_PRESS_DURATION);
   });
   container.addEventListener('mouseup',function(){
@@ -694,38 +746,30 @@ function showDeleteConfirm(unit){
   if(presetIdx===undefined) return;
   if(!confirm('确定删除这条消息吗?\n\n删除后玩家气泡会自动顺延,不会留空。可在设置页恢复。')) return;
   addPresetDeleted(currentProfile, currentContact, parseInt(presetIdx,10));
-  // 重新渲染
   renderChat(currentProfile, currentContact);
 }
 
-// ===== 编辑/重新生成(AI 回应) =====
-function startEditAI(cardEl){
-  // cardEl 是 AI 气泡的 msg-bubble 元素
-  var unit=cardEl.closest('.msg-unit');
+// ===== 修改 AI 回应(纯本地编辑) =====
+function startEditAI(btn){
+  var unit=btn.closest('.msg-unit');
   if(!unit) return;
-  var bubble=unit.querySelector('.msg-bubble');
-  var actions=unit.querySelector('.msg-actions');
-  if(!bubble) return;
-
-  // 找到这条 AI 回应在 aiHistory 里的位置
+  var idx=parseInt(unit.dataset.aiIdx,10);
   var npcId=NPC_ID_MAP[currentContact];
   if(!npcId) return;
   var aiHistory=loadAIChat(currentProfile, npcId);
-  // 找到对应的 AI 回应(通过文本匹配)
-  var oldText=bubble.textContent;
-  var idx=-1;
-  for(var i=aiHistory.length-1;i>=0;i--){
-    if(aiHistory[i].side==='left' && aiHistory[i].text===oldText){
-      idx=i;break;
-    }
-  }
-  if(idx===-1){alert('找不到这条消息的存档');return;}
+  if(idx<0||idx>=aiHistory.length) return;
+  var item=aiHistory[idx];
+  if(item.side!=='left') return;
+
+  var bubble=unit.querySelector('.msg-bubble');
+  var actions=unit.querySelector('.msg-actions');
+  if(!bubble) return;
 
   var editArea=document.createElement('div');
   editArea.className='msg-edit-area';
   editArea.innerHTML='<textarea></textarea><div class="msg-edit-btns"><button class="cancel">取消</button><button class="save">保存</button></div>';
   var textarea=editArea.querySelector('textarea');
-  textarea.value=oldText;
+  textarea.value=item.text;
   bubble.style.display='none';
   if(actions) actions.style.display='none';
   bubble.parentNode.insertBefore(editArea, bubble.nextSibling);
@@ -746,24 +790,99 @@ function startEditAI(cardEl){
   });
 }
 
-// ===== 重新生成 AI 回应 =====
-function regenerateAI(cardEl){
-  var unit=cardEl.closest('.msg-unit');
+// ===== 修改玩家输入(改完重新生成后续所有 AI 回应) =====
+function startEditUser(btn){
+  var unit=btn.closest('.msg-unit');
   if(!unit) return;
+  var idx=parseInt(unit.dataset.aiIdx,10);
   var npcId=NPC_ID_MAP[currentContact];
   if(!npcId) return;
   var aiHistory=loadAIChat(currentProfile, npcId);
+  if(idx<0||idx>=aiHistory.length) return;
+  var item=aiHistory[idx];
+  if(item.side!=='right') return;
 
-  // 找到这条 AI 回应在 aiHistory 里的位置
   var bubble=unit.querySelector('.msg-bubble');
-  var oldText=bubble.textContent;
-  var idx=-1;
-  for(var i=aiHistory.length-1;i>=0;i--){
-    if(aiHistory[i].side==='left' && aiHistory[i].text===oldText){
-      idx=i;break;
-    }
+  var actions=unit.querySelector('.msg-actions');
+  if(!bubble) return;
+
+  var editArea=document.createElement('div');
+  editArea.className='msg-edit-area';
+  editArea.innerHTML='<textarea></textarea><div class="msg-edit-btns"><button class="cancel">取消</button><button class="save">保存并重新生成</button></div>';
+  var textarea=editArea.querySelector('textarea');
+  textarea.value=item.text;
+  bubble.style.display='none';
+  if(actions) actions.style.display='none';
+  bubble.parentNode.insertBefore(editArea, bubble.nextSibling);
+  textarea.focus();
+  textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+  editArea.querySelector('.cancel').addEventListener('click',function(){
+    editArea.remove();
+    bubble.style.display='';
+    if(actions) actions.style.display='';
+  });
+  editArea.querySelector('.save').addEventListener('click',async function(){
+    var newText=textarea.value.trim();
+    if(!newText){textarea.style.borderColor='#a04040';return;}
+    // 修改玩家输入
+    aiHistory[idx].text=newText;
+    // 删除该条之后的所有内容
+    var newArr=aiHistory.slice(0, idx+1);
+    saveAIChat(currentProfile, npcId, newArr);
+    renderChat(currentProfile, currentContact);
+    // 自动重新生成后续 AI 回应
+    await regenerateAfterEdit(currentProfile, currentContact, npcId, newText, newArr);
+  });
+}
+
+// 改完玩家输入后,自动重新生成 AI 回应
+async function regenerateAfterEdit(profile, contactId, npcId, userText, aiHistory){
+  var container=document.getElementById('chatMessages');
+  if(!container) return;
+  var contact=getContacts(profile).find(function(c){return c.id===contactId;})||{};
+
+  // 显示 loading
+  var loadingUnit=document.createElement('div');
+  loadingUnit.className='msg-unit left sender-'+(contact.color||'ke')+' show';
+  var loadingName=document.createElement('div');loadingName.className='msg-name';loadingName.textContent=contact.name||'';
+  var loadingBubble=document.createElement('div');loadingBubble.className='msg-bubble';
+  loadingBubble.innerHTML='<span class="chat-loading-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+  loadingUnit.appendChild(loadingName);loadingUnit.appendChild(loadingBubble);
+  container.appendChild(loadingUnit);
+  container.scrollTop=container.scrollHeight;
+
+  // 构造历史(只取玩家输入之前的)
+  var aiHistoryBefore=aiHistory.slice(0, -1);
+
+  try{
+    var reply=await callChatAI(userText, npcId, profile, aiHistoryBefore);
+    if(loadingUnit.parentNode)loadingUnit.parentNode.removeChild(loadingUnit);
+    // 保存 AI 回应
+    var updatedHistory=loadAIChat(profile, npcId);
+    updatedHistory.push({side:'left',sender:contact.color||'ke',name:contact.name||'',text:reply});
+    saveAIChat(profile, npcId, updatedHistory);
+    renderChat(profile, contactId);
+  }catch(err){
+    if(loadingUnit.parentNode)loadingUnit.parentNode.removeChild(loadingUnit);
+    var errUnit=document.createElement('div');errUnit.className='msg-unit left sender-self show';
+    var errBubble=document.createElement('div');errBubble.className='msg-bubble';
+    errBubble.style.background='rgba(160,64,64,0.1)';errBubble.style.color='#a04040';
+    errBubble.textContent='【出错】'+err.message;
+    errUnit.appendChild(errBubble);container.appendChild(errUnit);
   }
-  if(idx===-1){alert('找不到这条消息的存档');return;}
+}
+
+// ===== 重新生成 AI 回应 =====
+async function regenerateAI(btn){
+  var unit=btn.closest('.msg-unit');
+  if(!unit) return;
+  var idx=parseInt(unit.dataset.aiIdx,10);
+  var npcId=NPC_ID_MAP[currentContact];
+  if(!npcId) return;
+  var aiHistory=loadAIChat(currentProfile, npcId);
+  if(idx<0||idx>=aiHistory.length) return;
+  if(aiHistory[idx].side!=='left') return;
 
   // 找到对应的玩家输入(前一条)
   if(idx===0 || aiHistory[idx-1].side!=='right'){
@@ -772,23 +891,25 @@ function regenerateAI(cardEl){
   }
   var userText=aiHistory[idx-1].text;
 
-  // 替换为 loading 占位
-  var contact=getContacts(currentProfile).find(function(c){return c.id===currentContact;})||{};
-  var loadingHTML='<span class="chat-loading-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
-  bubble.innerHTML=loadingHTML;
-  if(unit.querySelector('.msg-actions')) unit.querySelector('.msg-actions').style.display='none';
+  // 替换为 loading
+  var bubble=unit.querySelector('.msg-bubble');
+  if(bubble){
+    bubble.innerHTML='<span class="chat-loading-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+  }
+  var actions=unit.querySelector('.msg-actions');
+  if(actions) actions.style.display='none';
 
-  // 构造历史(只取这条之前的)
   var aiHistoryBefore=aiHistory.slice(0, idx-1);
 
-  callChatAI(userText, npcId, currentProfile, aiHistoryBefore).then(function(reply){
+  try{
+    var reply=await callChatAI(userText, npcId, currentProfile, aiHistoryBefore);
     aiHistory[idx].text=reply;
     saveAIChat(currentProfile, npcId, aiHistory);
     renderChat(currentProfile, currentContact);
-  }).catch(function(err){
+  }catch(err){
     alert('重新生成失败:'+err.message);
     renderChat(currentProfile, currentContact);
-  });
+  }
 }
 
 // ===== 全局事件委托(操作按钮) =====
@@ -798,12 +919,14 @@ document.addEventListener('click',function(e){
   var action=btn.dataset.action;
   if(action==='edit-ai'){
     startEditAI(btn);
+  } else if(action==='edit-user'){
+    startEditUser(btn);
   } else if(action==='regenerate-ai'){
     regenerateAI(btn);
   }
 });
 
-// ===== 发送消息(改造:加 AI 操作按钮) =====
+// ===== 发送消息 =====
 function sendMessage(){
   if(aiSending)return;
   var input=document.getElementById('msgInput');if(!input)return;
@@ -811,7 +934,6 @@ function sendMessage(){
   var container=document.getElementById('chatMessages');if(!container)return;
   var empty=container.querySelector('.empty-state');if(empty)empty.remove();
 
-  // 1. 立即显示玩家消息
   var unit=document.createElement('div');unit.className='msg-unit right sender-self';
   var bubble=document.createElement('div');bubble.className='msg-bubble';bubble.textContent=text;unit.appendChild(bubble);container.appendChild(unit);
   requestAnimationFrame(function(){unit.classList.add('show');playMsgSound();container.scrollTop=container.scrollHeight;});
@@ -835,7 +957,6 @@ function sendMessage(){
 
   var aiHistory=loadAIChat(currentProfile,npcId);
 
-  // 显示 NPC "正在输入..." 占位
   var contact=contacts.find(function(c){return c.id===currentContact;})||{};
   var loadingUnit=document.createElement('div');loadingUnit.className='msg-unit left sender-'+(contact.color||'ke');
   var loadingName=document.createElement('div');loadingName.className='msg-name';
@@ -855,21 +976,13 @@ function sendMessage(){
 
     var npcName=contact.name||'';
     var npcColor=contact.color||'ke';
-    var replyUnit=document.createElement('div');
-    replyUnit.className='msg-unit left sender-'+npcColor;
-    var replyName=document.createElement('div');replyName.className='msg-name';replyName.textContent=npcName;
-    var replyBubble=document.createElement('div');replyBubble.className='msg-bubble';replyBubble.textContent=reply;
-    // 加操作按钮(修改 + 重新生成)
-    var actions=document.createElement('div');actions.className='msg-actions';
-    actions.innerHTML='<button class="ai-action-btn" data-action="edit-ai">✎ 修改</button><button class="ai-action-btn" data-action="regenerate-ai">⟲ 重新生成</button>';
-    replyUnit.appendChild(replyName);replyUnit.appendChild(replyBubble);replyUnit.appendChild(actions);
-    container.appendChild(replyUnit);
-    requestAnimationFrame(function(){replyUnit.classList.add('show');playMsgSound();container.scrollTop=container.scrollHeight;});
-
     // 存档
     aiHistory.push({side:'right',sender:'self',text:text});
     aiHistory.push({side:'left',sender:npcColor,name:npcName,text:reply});
     saveAIChat(currentProfile,npcId,aiHistory);
+    // 重新渲染(这样会有操作按钮)
+    renderChat(currentProfile, currentContact);
+    playMsgSound();
 
     contacts.forEach(function(c){if(c.id===currentContact)c.lastMsg=reply.length>20?reply.slice(0,20)+'…':reply;});
     renderContacts(currentProfile);
@@ -898,10 +1011,23 @@ document.body.setAttribute('data-profile',p);
 document.getElementById('currentProfileName').textContent=p==='linxiwu'?'林栖梧':'罗烬';
 document.getElementById('profileSwitchBtn').textContent='切换到 '+(p==='linxiwu'?'罗烬':'林栖梧');
 renderContacts(p);if(currentContact)renderChat(p,currentContact);
-try{localStorage.setItem('activeProfile',p);}catch(e){}
 }
 
-// ===== NPC 资料卡片 =====
+// ===== 手机端布局切换 =====
+function showChatOnMobile(){
+  var chatArea=document.getElementById('chatArea');
+  var contactList=document.getElementById('contactList');
+  if(chatArea) chatArea.classList.add('mobile-active');
+  if(contactList) contactList.classList.add('mobile-hidden');
+}
+function backToList(){
+  var chatArea=document.getElementById('chatArea');
+  var contactList=document.getElementById('contactList');
+  if(chatArea) chatArea.classList.remove('mobile-active');
+  if(contactList) contactList.classList.remove('mobile-hidden');
+}
+
+// ===== NPC 资料卡片(加头像图片) =====
 function showNPCCard(npcId){
   var data=NPC_PROFILE_CARDS[npcId];
   if(!data)return;
@@ -915,9 +1041,18 @@ function showNPCCard(npcId){
   var card=document.createElement('div');
   card.style.cssText='background:var(--bg-card);border:1px solid var(--border-card);border-radius:14px;padding:24px 22px;max-width:340px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.3);transform:translateY(10px);transition:transform 0.25s;font-family:var(--font-serif);position:relative;';
 
+  // 头像:优先加载图片,失败回退到文字头像
+  var imgSrc='./'+data.name+data.imgExt;
+  var avatarHtml='<div style="width:80px;height:80px;border-radius:50%;background:'+data.color+'22;border:2px solid '+data.color+';display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+data.color+';margin:0 auto 10px auto;font-weight:600;overflow:hidden;">'+data.avatar+'</div>';
+  // 用 img 替换,失败时回退
+  var avatarBlock='<div style="width:80px;height:80px;border-radius:50%;background:'+data.color+'22;border:2px solid '+data.color+';display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+data.color+';margin:0 auto 10px auto;font-weight:600;overflow:hidden;position:relative;">'+
+    '<img src="'+imgSrc+'" alt="'+esc(data.name)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;" onerror="this.style.display=\'none\';this.parentNode.querySelector(\'.npc-card-fallback\').style.display=\'flex\';">'+
+    '<div class="npc-card-fallback" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">'+data.avatar+'</div>'+
+  '</div>';
+
   card.innerHTML=
     '<div style="text-align:center;margin-bottom:14px;">'+
-      '<div style="width:64px;height:64px;border-radius:50%;background:'+data.color+'22;border:2px solid '+data.color+';display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:'+data.color+';margin:0 auto 10px auto;font-weight:600;">'+data.avatar+'</div>'+
+      avatarBlock+
       '<div style="font-size:1.15rem;font-weight:600;color:var(--text-primary);letter-spacing:1px;">'+esc(data.name)+'</div>'+
       '<div style="font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.5px;margin-top:4px;">'+esc(data.sym)+'</div>'+
     '</div>'+
@@ -927,6 +1062,9 @@ function showNPCCard(npcId){
     '<div style="font-size:0.85rem;line-height:1.7;color:var(--text-secondary);">'+
       esc(data.desc)+
     '</div>'+
+    '<div style="font-size:0.65rem;color:var(--text-muted);text-align:center;margin-top:10px;font-family:var(--font-mono);">'+
+      '点击头像或名字可查看资料'+
+    '</div>'+
     '<button id="npcCardClose" style="position:absolute;top:8px;right:10px;background:none;border:none;font-size:1.1rem;color:var(--text-muted);cursor:pointer;padding:4px 8px;">✕</button>';
 
   overlay.appendChild(card);
@@ -934,6 +1072,11 @@ function showNPCCard(npcId){
   requestAnimationFrame(function(){
     overlay.style.opacity='1';
     card.style.transform='translateY(0)';
+    // 尝试显示图片
+    var img=card.querySelector('img');
+    if(img){
+      img.onload=function(){img.style.display='block';var fb=card.querySelector('.npc-card-fallback');if(fb)fb.style.display='none';};
+    }
   });
   card.querySelector('#npcCardClose').addEventListener('click',function(e){
     e.stopPropagation();
@@ -959,7 +1102,7 @@ function closeNPCCard(){
   document.removeEventListener('keydown',npcCardEscHandler);
 }
 
-// 注入样式:loading dots + 编辑区 + 提示条 + 操作按钮
+// 注入样式
 if(!document.getElementById('chatExtraStyle')){
   var s=document.createElement('style');
   s.id='chatExtraStyle';
@@ -969,7 +1112,6 @@ if(!document.getElementById('chatExtraStyle')){
     '.chat-loading-dots .dot:nth-child(2){animation-delay:0.2s}'+
     '.chat-loading-dots .dot:nth-child(3){animation-delay:0.4s}'+
     '@keyframes chatDotPulse{0%,80%,100%{opacity:0.3;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}'+
-    // 编辑区
     '.msg-edit-area{display:flex;flex-direction:column;gap:6px;width:100%}'+
     '.msg-edit-area textarea{width:100%;min-height:80px;padding:8px 12px;background:var(--bg-card);color:var(--text-primary);border:2px solid var(--profile-accent,var(--accent));border-radius:8px;font-family:inherit;font-size:.95rem;line-height:1.6;resize:vertical;outline:none}'+
     '.msg-edit-btns{display:flex;gap:6px;justify-content:flex-end}'+
@@ -977,12 +1119,9 @@ if(!document.getElementById('chatExtraStyle')){
     '.msg-edit-btns button.save{border-color:var(--accent);color:var(--accent)}'+
     '.msg-edit-btns button.save:hover{background:var(--accent);color:var(--bg-card)}'+
     '.msg-edit-btns button:hover{background:var(--bg-hover)}'+
-    // 提示条
-    '.chat-tip-bar{font-size:.7rem;color:var(--text-muted);text-align:center;padding:6px 12px;background:var(--bg-accent-soft);border-radius:6px;margin-bottom:10px;font-style:italic;letter-spacing:.3px}'+
-    // AI 操作按钮
+    '.chat-tip-bar{font-size:.7rem;color:var(--text-muted);text-align:center;padding:6px 12px;background:var(--bg-accent-soft);border-radius:6px;margin:8px 0;font-style:italic;letter-spacing:.3px}'+
     '.ai-action-btn{background:transparent;border:1px solid var(--border-card);color:var(--text-muted);padding:2px 8px;border-radius:10px;font-size:.7rem;cursor:pointer;font-family:var(--font-mono);transition:all .2s;margin-right:4px}'+
     '.ai-action-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--bg-accent-soft)}'+
-    // 长按删除视觉反馈
     '.msg-unit.preset-msg{-webkit-user-select:none;user-select:none}'+
     '.msg-unit.preset-msg:active{opacity:.6}';
   document.head.appendChild(s);
@@ -995,8 +1134,8 @@ document.body.setAttribute('data-profile',currentProfile);
 document.getElementById('currentProfileName').textContent=currentProfile==='linxiwu'?'林栖梧':'罗烬';
 document.getElementById('profileSwitchBtn').textContent='切换到 '+(currentProfile==='linxiwu'?'罗烬':'林栖梧');
 renderContacts(currentProfile);if(currentContact)renderChat(currentProfile,currentContact);
-attachLongPress();  // 绑定长按删除
-console.log('✉ 传讯符 AI v3 已加载');
+attachLongPress();
+console.log('✉ 传讯符 AI v4 已加载');
 }
 document.addEventListener('DOMContentLoaded',init);
 window.switchProfile=switchProfile;
