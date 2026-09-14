@@ -397,25 +397,32 @@ function renderAIQuestSection(){
   // 找当前显示的 content-block
   var activeBlock=document.querySelector('.content-block.active');
   if(!activeBlock){
-    // 备用:通过 id 找
-    var blockId='content-'+profile;
-    activeBlock=document.getElementById(blockId);
+    activeBlock=document.getElementById('content-'+profile);
   }
   if(!activeBlock) return;
 
-  // 在 activeBlock 里找或创建 AI 区块容器(放在第一个 card 之前)
-  var container=activeBlock.querySelector('.aiQuestSection');
+  // 在 active block 里找 AI 内部容器(用 class,不用 id,避免冲突)
+  var container=activeBlock.querySelector('.aiQuestInner');
+
+  // 如果没有,创建完整的 card 结构
   if(!container){
-    container=document.createElement('div');
-    container.className='aiQuestSection';
-    var firstCard=activeBlock.querySelector('.card');
+    var sym=profile==='luojin'?'◈':'❀';
+    var card=document.createElement('div');
+    card.className='card aiQuestCard';
+    card.setAttribute('data-corner', sym);
+    card.innerHTML='<span class="corner-deco">'+sym+'</span><div class="card-title">AI 外勤布告</div><div class="aiQuestInner"></div>';
+
+    // 插到第一个非 AI 的 card 之前
+    var firstCard=activeBlock.querySelector('.card:not(.aiQuestCard)');
     if(firstCard){
-      activeBlock.insertBefore(container, firstCard);
+      activeBlock.insertBefore(card, firstCard);
     } else {
-      activeBlock.appendChild(container);
+      activeBlock.appendChild(card);
     }
+    container=card.querySelector('.aiQuestInner');
   }
-  // 清空旧内容(避免重复)
+
+  // 清空旧内容
   container.innerHTML='';
 
   var quests=loadAIQuests(profile);
@@ -483,8 +490,8 @@ function renderAIQuestSection(){
 
   container.innerHTML=html;
 
-  // 绑定事件
-  bindEvents(profile);
+  // 绑定事件(在容器范围内查找,避免跨 block 冲突)
+  bindEvents(profile, container);
 }
 
 function renderQuestDetail(q, profile){
@@ -551,16 +558,18 @@ function renderQuestDetail(q, profile){
   return html;
 }
 
-// ===== 绑定事件 =====
-function bindEvents(profile){
+// ===== 绑定事件(在容器范围内查找,避免跨 block 冲突) =====
+function bindEvents(profile, container){
+  container=container||document;
+
   // 刷新任务
-  var refreshBtn=document.getElementById('aiQuestRefreshBtn');
+  var refreshBtn=container.querySelector('#aiQuestRefreshBtn');
   if(refreshBtn){
     refreshBtn.addEventListener('click', function(){refreshQuests(profile);});
   }
 
   // 点击任务卡片
-  document.querySelectorAll('.ai-quest-card').forEach(function(card){
+  container.querySelectorAll('.ai-quest-card').forEach(function(card){
     card.addEventListener('click', function(){
       var idx=parseInt(this.dataset.idx, 10);
       var quests=loadAIQuests(profile);
@@ -583,8 +592,8 @@ function bindEvents(profile){
     });
   });
 
-  // 选项按钮(事件委托)
-  document.querySelectorAll('.ai-option-btn').forEach(function(btn){
+  // 选项按钮
+  container.querySelectorAll('.ai-option-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       var choice=this.dataset.choice;
       if(choice) continueQuest(profile, choice);
@@ -592,19 +601,19 @@ function bindEvents(profile){
   });
 
   // 执行任务
-  var execBtn=document.getElementById('aiExecuteBtn');
+  var execBtn=container.querySelector('#aiExecuteBtn');
   if(execBtn){
     execBtn.addEventListener('click', function(){executeQuest(profile);});
   }
 
   // 完成任务
-  var completeBtn=document.getElementById('aiCompleteBtn');
+  var completeBtn=container.querySelector('#aiCompleteBtn');
   if(completeBtn){
     completeBtn.addEventListener('click', function(){completeQuest(profile);});
   }
 
   // 放弃任务
-  var abandonBtn=document.getElementById('aiAbandonBtn');
+  var abandonBtn=container.querySelector('#aiAbandonBtn');
   if(abandonBtn){
     abandonBtn.addEventListener('click', function(){
       if(!confirm('确定放弃这个任务吗?\n放弃后该任务将消失,无法再次接取。')) return;
@@ -619,7 +628,7 @@ function bindEvents(profile){
   }
 
   // 收起详情
-  var closeBtn=document.getElementById('aiCloseDetailBtn');
+  var closeBtn=container.querySelector('#aiCloseDetailBtn');
   if(closeBtn){
     closeBtn.addEventListener('click', function(){
       var quests=loadAIQuests(profile);
@@ -629,10 +638,10 @@ function bindEvents(profile){
   }
 
   // 复制回执
-  var copyBtn=document.getElementById('aiCopyReceiptBtn');
+  var copyBtn=container.querySelector('#aiCopyReceiptBtn');
   if(copyBtn){
     copyBtn.addEventListener('click', function(){
-      var textEl=document.getElementById('aiReceiptText');
+      var textEl=container.querySelector('#aiReceiptText');
       if(textEl){
         var text=textEl.textContent;
         if(navigator.clipboard){
@@ -650,7 +659,7 @@ function bindEvents(profile){
   }
 
   // 同步到模拟页
-  var simBtn=document.getElementById('aiSendToSimBtn');
+  var simBtn=container.querySelector('#aiSendToSimBtn');
   if(simBtn){
     simBtn.addEventListener('click', function(){
       var quests=loadAIQuests(profile);
@@ -664,7 +673,7 @@ function bindEvents(profile){
           date:new Date().toLocaleDateString('zh-CN')
         });
         simBtn.textContent='✅ 已同步';
-        setTimeout(function(){simBtn.textContent='📤 已同步到模拟页';},2000);
+        setTimeout(function(){simBtn.textContent='📤 同步到模拟页';},2000);
       }
     });
   }
