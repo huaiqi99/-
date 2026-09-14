@@ -21,6 +21,7 @@ var AI_QUEST_RECEIPT_KEY='gzd_ai_quest_receipt';  // 给模拟页的回执摘要
 var AI_QUEST_REFRESH_KEY='gzd_ai_quest_refresh';  // 每日刷新次数
 
 var MAX_DAILY_REFRESH=3;
+var MAX_LOG_ENTRIES=6;  // 外勤日志最多保留 6 条
 
 // 各服务商配置(直连模式用)
 var PROVIDER_CONFIG={
@@ -54,6 +55,10 @@ function loadQuestLog(profile){
 }
 function saveQuestLog(profile, log){
   try{
+    // 超过上限的,删掉最旧的(数组开头)
+    if(log.length>MAX_LOG_ENTRIES){
+      log=log.slice(log.length-MAX_LOG_ENTRIES);
+    }
     var all=JSON.parse(localStorage.getItem(AI_QUEST_LOG_KEY)||'{}');
     all[profile]=log;
     localStorage.setItem(AI_QUEST_LOG_KEY,JSON.stringify(all));
@@ -118,10 +123,6 @@ function callWorker(action, params){
     return data.data;
   });
 }
-
-// 模式 2:直连(玩家填了 Key)
-// 因为外勤的 prompt 比较复杂(要求 JSON 输出),直连模式也调用 Worker 的逻辑
-// 但玩家用自己的 Key,所以前端构造请求发给 DeepSeek
 function callDirect(action, params, cfg){
   var pConfig=PROVIDER_CONFIG[cfg.provider]||PROVIDER_CONFIG.deepseek;
   var baseUrl=cfg.provider==='custom'?(cfg.customUrl||''):pConfig.baseUrl;
@@ -132,7 +133,12 @@ function callDirect(action, params, cfg){
   var systemPrompt='', userMessage='';
   if(action==='generate'){
     systemPrompt=buildGeneratePrompt(getProfile());
-    userMessage='请生成 3 个适合当前玩家角色的外勤任务,严格按照 JSON 格式输出。';
+    // 如果有排除列表,告诉 AI 避开
+    var excludeStr='';
+    if(params.excludeTitles && params.excludeTitles.length>0){
+      excludeStr='\n\n【已生成过的任务,请避开以下主题,不要重复】\n'+params.excludeTitles.join('、');
+    }
+    userMessage='请生成 3 个适合当前玩家角色的外勤任务,严格按照 JSON 格式输出。'+excludeStr;
   } else if(action==='execute'){
     systemPrompt=buildExecutePrompt(getProfile());
     userMessage='任务信息:\n任务名:'+(params.questName||'')+'\n委托人:'+(params.client||'')+'\n地点:'+(params.location||'')+'\n难度:'+(params.difficulty||'')+'\n描述:'+(params.description||'')+'\n\n请生成玩家执行这个任务的剧情,200-400字,以第二人称"你"叙述。只输出剧情文字,不要输出 JSON。';
@@ -194,7 +200,7 @@ function buildGeneratePrompt(profile){
   var playerDesc=profile==='luojin'
     ?'罗烬:讲武堂弟子,承刀法一脉,罗修与魏元璟之子。性情刚直果决咋咋呼呼。当前层级:统修期。'
     :'林栖梧:符修院助教,身负浮生树血脉,林淮与栾方棋之女。性情内敛重情,擅符箓与感知。当前层级:统修期,评级甲等下品。';
-  return '你是「引渡人模拟器·归终殿」的外勤任务生成 AI。\n\n【当前玩家角色】\n'+playerDesc+'\n\n【世界观】\n苍珩四百三十五年,地府归终殿执掌亡魂引渡与功过裁定。殿辖符修院、讲武堂、音律坊与忘川东段。归终殿由阎罗十殿正式册立,为地府第十殿。殿内引渡人行走阴阳,引渡亡魂。如今已有弟子两千余人。\n\n【主要地点】\n归终殿中枢(正殿/试炼司/殿务司)、符修院(栾方棋坐镇)、讲武堂(罗修执教)、音律坊(程木栖主理,魏元璟代课)、忘川东段(引渡实习)、栖梧馆(程木栖医馆)、浮生巨树、演武广场、砺峰阁、点苍阁、工造司。\n\n【主要NPC】\n栾方棋——符修院执教,第一符修,林栖梧生父之一。温和好说话但内心吐槽役。\n林淮——第二席,第一枪修,林栖梧生父之一。冷面寡言但极护短,深度路痴。\n罗修——首席引渡人,讲武堂执教,罗烬之父。玩世不恭但最护短,刀修。\n魏元璟——第十席,罗烬之母。傲娇刀子嘴豆腐心,擅魂术与体术。\n程木栖——栖梧馆主事,前第二席。温和端方但偷懒看话本,十指尽废转修医道。\n\n【战力与晋升体系】\n弟子分六层:杂役→统修期→入门期→内门期→准十席级→十席。\n统修期弟子六科:符法、刀法、阵法、枪法、引渡实务、魂力控制/医药基础。\n统修期→入门期:六科考核均≥60分。\n\n【殿规】\n不可轻视杂役;不可对十席不敬;晋升须经正规测试。\n\n【你的任务】\n为当前玩家('+playerName+')生成 3 个适合其等级(统修期)的外勤任务。\n\n任务类型可以包括:\n- 日常差事(如:清理、整理、值守、教学辅助)\n- 外勤任务(如:巡逻、引渡、押运、勘查)\n- 特殊委托(如:NPC 个人委托、紧急任务)\n\n任务难度分:简单、中等、偏难(统修期弟子不宜超过"偏难")。\n\n【输出格式】\n必须严格输出以下 JSON 格式,不要输出任何其他文字(不要输出 markdown 代码块标记):\n\n{\n  "quests": [\n    {\n      "id": "quest_1",\n      "title": "任务名称",\n      "dept": "所属部门",\n      "issuer": "委托人姓名",\n      "location": "任务地点",\n      "difficulty": "简单/中等/偏难",\n      "reward": "奖励内容",\n      "description": "任务描述(30-60字)"\n    },\n    ... 共3个\n  ]\n}\n\n【重要约束】\n1. 必须输出纯 JSON,不要用代码块包裹\n2. 3 个任务的类型要有差异\n3. 奖励要合理,符合统修期弟子的水平\n4. 委托人如果是 NPC,要符合该 NPC 的身份和性格\n5. 任务描述要简洁有力,有地府古风氛围';
+  return '你是「引渡人模拟器·归终殿」的外勤任务生成 AI。\n\n【当前玩家角色】\n'+playerDesc+'\n\n【世界观】\n苍珩四百三十五年,地府归终殿执掌亡魂引渡与功过裁定。殿辖符修院、讲武堂、音律坊与忘川东段。归终殿由阎罗十殿正式册立,为地府第十殿。殿内引渡人行走阴阳,引渡亡魂。如今已有弟子两千余人。\n\n【主要地点】\n\n首席：罗修\n第二席：林淮\n第三、第四席：未公开（暂未设定，不代表没有）\n第五席：栾方棋\n第六席：暂未公开\n第七席：魏元璟\n第八、第九、第十：未公开（暂未设定，不代表没有）\n退役：程木栖（前二席）、蔡可（前十席）\n主要地点】归终殿中枢——正殿、试炼司、殿务司所在。\n符修院——栾方棋坐镇,以符箓之术传授弟子,院内女弟子居多。\n讲武堂——罗修执教,主修刀法，魂术，其余武功杂学皆在此修习,弟子对罗修又敬又怕。\n点苍阁——林淮执掌,主修枪法，体术指导。弟子多是想成为林淮那样的人的。\n音律坊——程木栖主理,主修琴音破阵之术，魏元璟副理，主修笛渡魂之术,由于程木栖忙于栖梧馆，如今音律课多由魏元璟代上。\n砺峰阁——魏元璟主掌，是归终殿魂力与冥想的核心院阁，同时也负责每个新入门的统修期弟子的体能训练。\n忘川东段——魂流汇聚之地,弟子常在此处实习引渡。\n人间——引渡人的实战场地，常面临穷凶极恶的恶鬼、妖邪等。\n栖梧馆——程木栖开设的医馆,弟子受伤后首选之地。\n浮生巨树（正式命：灵枢轮回木）——栾方棋与林淮血脉滋养的神树,本为天庭神器，后认主栾方棋与林淮，现在是归终殿的镇殿之宝,树下是弟子休憩聊天独处的常去之地。\n浑天鉴——位于人间皇室、重要中枢、各大地区皆有设定。是人间用于联系地府的地方，遇到涉及阴阳的棘手事会直接联系到归终殿。\n阵法堂——由第三席执掌，专攻阵法与符阵的实战应用。\n工造司——由第四席执掌，负责归终殿兵器锻造与维修。\n澄心堂——第六席执掌，专攻剑修与剑法传承。\n百草堂——第八席执掌，专攻用毒与药理，与栖梧馆深度合作\n\n【主要NPC】\n栾方棋——符修院执教,第一符修,林栖梧生父之一。温和好说话但内心吐槽役。\n林淮——第二席,第一枪修,林栖梧生父之一。冷面寡言但极护短,深度路痴。\n罗修——首席引渡人,讲武堂执教,罗烬之父。玩世不恭但最护短,刀修。\n魏元璟——第七席,罗烬之母。砺峰阁主理,擅魂术与体术。\n程木栖——栖梧馆主事,前第二席。温和端方但偷懒看话本,十指尽废转修医道。\n\n【战力与晋升体系】\n弟子分六层:杂役→统修期→入门期→内门期→准十席级→十席。\n统修期弟子六科:符法、刀法、阵法、枪法、引渡实务、魂力控制/医药基础。\n统修期→入门期:六科考核均≥60分。\n\n【殿规】\n不可轻视杂役;不可对十席不敬;晋升须经正规测试。\n\n【你的任务】\n为当前玩家('+playerName+')生成 3 个适合其等级(统修期)的外勤任务。\n\n任务类型可以包括:\n- 日常差事(如:清理、整理、值守、教学辅助)\n- 外勤任务(如:巡逻、引渡、押运、勘查)\n- 特殊委托(如:NPC 个人委托、紧急任务)\n\n任务难度分:简单、中等、偏难(统修期弟子不宜超过"偏难")。\n\n【输出格式】\n必须严格输出以下 JSON 格式,不要输出任何其他文字(不要输出 markdown 代码块标记):\n\n{\n  "quests": [\n    {\n      "id": "quest_1",\n      "title": "任务名称",\n      "dept": "所属部门",\n      "issuer": "委托人姓名",\n      "location": "任务地点",\n      "difficulty": "简单/中等/偏难",\n      "reward": "奖励内容",\n      "description": "任务描述(30-60字)"\n    },\n    ... 共3个\n  ]\n}\n\n【重要约束】\n1. 必须输出纯 JSON,不要用代码块包裹\n2. 3 个任务的类型要有差异\n3. 奖励要合理,符合统修期弟子的水平\n4. 委托人如果是 NPC,要符合该 NPC 的身份和性格\n5. 任务描述要简洁有力,有地府古风氛围';
 }
 
 function buildExecutePrompt(profile){
@@ -350,24 +356,11 @@ function renderAIQuestSection(){
   var container=document.getElementById('aiQuestSection');
   if(!container) return;
 
-  // 检查是否有 Key
-  var cfg=loadAIConfig();
-  var hasKey=cfg.apiKey && cfg.provider;
-
   var quests=loadAIQuests(profile);
   var log=loadQuestLog(profile);
   var refreshLeft=MAX_DAILY_REFRESH-getRefreshCount();
 
   var html='';
-
-  // 配置提示
-  if(hasKey){
-    html+='<div class="ai-quest-banner configured">✅ 已配置 '+
-      (cfg.provider==='deepseek'?'DeepSeek':cfg.provider==='openai'?'OpenAI':cfg.provider==='claude'?'Anthropic':'自定义')+
-      ' 直连模式,速度更快</div>';
-  } else {
-    html+='<div class="ai-quest-banner">⚡ 当前使用公共后端(较慢)。填写自己的 API Key 可大幅提速 → <a href="./设置.html" style="color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)">前往设置</a></div>';
-  }
 
   // 标题栏 + 刷新按钮
   html+='<div class="ai-quest-header">';
@@ -529,15 +522,11 @@ function bindEvents(profile){
   var abandonBtn=document.getElementById('aiAbandonBtn');
   if(abandonBtn){
     abandonBtn.addEventListener('click', function(){
-      if(!confirm('确定放弃这个任务吗?')) return;
+      if(!confirm('确定放弃这个任务吗?\n放弃后该任务将消失,无法再次接取。')) return;
       var quests=loadAIQuests(profile);
-      var q=quests.find(function(x){return x.status==='accepted';});
-      if(q){
-        q.status='available';
-        delete q.narrative;
-        delete q.result;
-        delete q.resultNarrative;
-        delete q.receipt;
+      var idx=quests.findIndex(function(x){return x.status==='accepted';});
+      if(idx!==-1){
+        quests.splice(idx,1);  // 直接从列表删除
         saveAIQuests(profile, quests);
         renderAIQuestSection();
       }
@@ -619,7 +608,14 @@ async function refreshQuests(profile){
   if(btn){btn.disabled=true;btn.textContent='生成中...';}
 
   try{
-    var result=await callQuestAI('generate', {});
+    // 收集之前生成过的任务标题,让 AI 避开重复
+    var oldQuests=loadAIQuests(profile);
+    var log=loadQuestLog(profile);
+    var excludeTitles=[];
+    oldQuests.forEach(function(q){if(q.title) excludeTitles.push(q.title);});
+    log.forEach(function(l){if(l.title) excludeTitles.push(l.title);});
+
+    var result=await callQuestAI('generate', {excludeTitles:excludeTitles});
     if(result.quests && result.quests.length>0){
       // 给每个任务加 status
       result.quests.forEach(function(q){
