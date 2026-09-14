@@ -228,7 +228,20 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 1. 永远用第二人称"你"来叙述玩家角色的行动
 2. 不要替玩家做重大决定(比如不要写"你答应了他"),只描述环境和他人反应
 3. 如果玩家输入的行动不合理(比如"瞬间成神"),要用地府规则委婉拒绝或转化
-4. 自然延续之前的剧情,引用前文出现过的细节、NPC、地点`;
+4. 自然延续之前的剧情,引用前文出现过的细节、NPC、地点
+ ${getQuestReceiptSection(profile)}`;
+  }
+
+  // ===== 读取外勤回执(供模拟页 AI 了解玩家近期的外勤经历) =====
+  function getQuestReceiptSection(profile){
+    try{
+      var all = JSON.parse(localStorage.getItem('gzd_ai_quest_receipt') || '{}');
+      var receipt = all[profile];
+      if(receipt && receipt.receiptForSim){
+        return '\n\n【近期外勤】\n' + receipt.receiptForSim + '\n请在剧情中自然提及这次外勤经历,但不要每次都提。';
+      }
+    }catch(e){}
+    return '';
   }
 
   // ===== HTML 转义 =====

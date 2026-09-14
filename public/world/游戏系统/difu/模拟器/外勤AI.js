@@ -20,7 +20,7 @@ var AI_QUEST_LOG_KEY='gzd_ai_quest_log';  // 外勤日志
 var AI_QUEST_RECEIPT_KEY='gzd_ai_quest_receipt';  // 给模拟页的回执摘要
 var AI_QUEST_REFRESH_KEY='gzd_ai_quest_refresh';  // 每日刷新次数
 
-var MAX_DAILY_REFRESH=3;
+var MAX_DAILY_REFRESH=10;  // 每日刷新次数上限
 var MAX_LOG_ENTRIES=6;  // 外勤日志最多保留 6 条
 
 // 各服务商配置(直连模式用)
