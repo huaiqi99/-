@@ -20,7 +20,7 @@ var AI_QUEST_LOG_KEY='gzd_ai_quest_log';  // 外勤日志
 var AI_QUEST_RECEIPT_KEY='gzd_ai_quest_receipt';  // 给模拟页的回执摘要
 var AI_QUEST_REFRESH_KEY='gzd_ai_quest_refresh';  // 每日刷新次数
 
-var MAX_DAILY_REFRESH=10;  // 每日刷新次数上限
+var MAX_DAILY_REFRESH=10;
 var MAX_LOG_ENTRIES=6;  // 外勤日志最多保留 6 条
 
 // 各服务商配置(直连模式用)
@@ -141,7 +141,20 @@ function callDirect(action, params, cfg){
     userMessage='请生成 3 个适合当前玩家角色的外勤任务,严格按照 JSON 格式输出。'+excludeStr;
   } else if(action==='execute'){
     systemPrompt=buildExecutePrompt(getProfile());
-    userMessage='任务信息:\n任务名:'+(params.questName||'')+'\n委托人:'+(params.client||'')+'\n地点:'+(params.location||'')+'\n难度:'+(params.difficulty||'')+'\n描述:'+(params.description||'')+'\n\n请生成玩家执行这个任务的剧情,200-400字,以第二人称"你"叙述。只输出剧情文字,不要输出 JSON。';
+    userMessage='任务信息:\n任务名:'+(params.questName||'')+'\n委托人:'+(params.client||'')+'\n地点:'+(params.location||'')+'\n难度:'+(params.difficulty||'')+'\n描述:'+(params.description||'')+'\n\n这是任务执行的第一轮。请生成第一段剧情(100-200字,第二人称"你"叙述),然后给出2-3个选项让玩家选择下一步行动。\n\n严格按以下 JSON 格式输出,不要输出任何其他文字:\n{\n  "narrative": "第一段剧情文字",\n  "options": [\n    {"id": "A", "text": "选项A的简短描述"},\n    {"id": "B", "text": "选项B的简短描述"}\n  ],\n  "isLast": false\n}';
+  } else if(action==='continue'){
+    systemPrompt=buildExecutePrompt(getProfile());
+    var historyStr='';
+    if(params.execHistory && params.execHistory.length>0){
+      historyStr='\n\n【之前发生的剧情】\n';
+      params.execHistory.forEach(function(h){
+        historyStr+='剧情:'+h.narrative+'\n';
+        if(h.choice) historyStr+='玩家选择了:'+h.choice+'\n\n';
+      });
+    }
+    var round=params.round||2;
+    var isLastRound=(round>=3);
+    userMessage='任务信息:\n任务名:'+(params.questName||'')+'\n委托人:'+(params.client||'')+'\n地点:'+(params.location||'')+'\n难度:'+(params.difficulty||'')+'\n描述:'+(params.description||'')+historyStr+'\n玩家刚才选择了:'+(params.choice||'')+'\n\n这是第'+round+'轮(共3轮)。'+(isLastRound?'这是最后一轮,请生成最终剧情(100-200字),不要给选项,isLast设为true。':'请生成下一段剧情(100-200字),然后给出2-3个新选项。')+'\n\n严格按以下 JSON 格式输出:\n{\n  "narrative": "剧情文字",\n  "options": '+(isLastRound?'[]':'[{"id":"A","text":"..."},{"id":"B","text":"..."}]')+',\n  "isLast": '+(isLastRound?'true':'false')+'\n}';
   } else if(action==='complete'){
     systemPrompt=buildCompletePrompt(getProfile());
     userMessage='任务信息:\n任务名:'+(params.questName||'')+'\n委托人:'+(params.client||'')+'\n地点:'+(params.location||'')+'\n难度:'+(params.difficulty||'')+'\n描述:'+(params.description||'')+'\n执行剧情:'+(params.narrative||'')+'\n\n请生成任务结果和回执单,严格按照 JSON 格式输出。';
@@ -186,8 +199,8 @@ function callDirect(action, params, cfg){
     // 解析返回
     if(action==='generate'){
       return parseQuestList(reply);
-    } else if(action==='execute'){
-      return {narrative:reply.trim()};
+    } else if(action==='execute' || action==='continue'){
+      return parseExecuteResult(reply);
     } else if(action==='complete'){
       return parseCompleteResult(reply);
     }
@@ -200,7 +213,7 @@ function buildGeneratePrompt(profile){
   var playerDesc=profile==='luojin'
     ?'罗烬:讲武堂弟子,承刀法一脉,罗修与魏元璟之子。性情刚直果决咋咋呼呼。当前层级:统修期。'
     :'林栖梧:符修院助教,身负浮生树血脉,林淮与栾方棋之女。性情内敛重情,擅符箓与感知。当前层级:统修期,评级甲等下品。';
-  return '你是「引渡人模拟器·归终殿」的外勤任务生成 AI。\n\n【当前玩家角色】\n'+playerDesc+'\n\n【世界观】\n苍珩四百三十五年,地府归终殿执掌亡魂引渡与功过裁定。殿辖符修院、讲武堂、音律坊与忘川东段。归终殿由阎罗十殿正式册立,为地府第十殿。殿内引渡人行走阴阳,引渡亡魂。如今已有弟子两千余人。\n\n【主要地点】\n\n首席：罗修\n第二席：林淮\n第三、第四席：未公开（暂未设定，不代表没有）\n第五席：栾方棋\n第六席：暂未公开\n第七席：魏元璟\n第八、第九、第十：未公开（暂未设定，不代表没有）\n退役：程木栖（前二席）、蔡可（前十席）\n主要地点】归终殿中枢——正殿、试炼司、殿务司所在。\n符修院——栾方棋坐镇,以符箓之术传授弟子,院内女弟子居多。\n讲武堂——罗修执教,主修刀法，魂术，其余武功杂学皆在此修习,弟子对罗修又敬又怕。\n点苍阁——林淮执掌,主修枪法，体术指导。弟子多是想成为林淮那样的人的。\n音律坊——程木栖主理,主修琴音破阵之术，魏元璟副理，主修笛渡魂之术,由于程木栖忙于栖梧馆，如今音律课多由魏元璟代上。\n砺峰阁——魏元璟主掌，是归终殿魂力与冥想的核心院阁，同时也负责每个新入门的统修期弟子的体能训练。\n忘川东段——魂流汇聚之地,弟子常在此处实习引渡。\n人间——引渡人的实战场地，常面临穷凶极恶的恶鬼、妖邪等。\n栖梧馆——程木栖开设的医馆,弟子受伤后首选之地。\n浮生巨树（正式命：灵枢轮回木）——栾方棋与林淮血脉滋养的神树,本为天庭神器，后认主栾方棋与林淮，现在是归终殿的镇殿之宝,树下是弟子休憩聊天独处的常去之地。\n浑天鉴——位于人间皇室、重要中枢、各大地区皆有设定。是人间用于联系地府的地方，遇到涉及阴阳的棘手事会直接联系到归终殿。\n阵法堂——由第三席执掌，专攻阵法与符阵的实战应用。\n工造司——由第四席执掌，负责归终殿兵器锻造与维修。\n澄心堂——第六席执掌，专攻剑修与剑法传承。\n百草堂——第八席执掌，专攻用毒与药理，与栖梧馆深度合作\n\n【主要NPC】\n栾方棋——符修院执教,第一符修,林栖梧生父之一。温和好说话但内心吐槽役。\n林淮——第二席,第一枪修,林栖梧生父之一。冷面寡言但极护短,深度路痴。\n罗修——首席引渡人,讲武堂执教,罗烬之父。玩世不恭但最护短,刀修。\n魏元璟——第七席,罗烬之母。砺峰阁主理,擅魂术与体术。\n程木栖——栖梧馆主事,前第二席。温和端方但偷懒看话本,十指尽废转修医道。\n\n【战力与晋升体系】\n弟子分六层:杂役→统修期→入门期→内门期→准十席级→十席。\n统修期弟子六科:符法、刀法、阵法、枪法、引渡实务、魂力控制/医药基础。\n统修期→入门期:六科考核均≥60分。\n\n【殿规】\n不可轻视杂役;不可对十席不敬;晋升须经正规测试。\n\n【你的任务】\n为当前玩家('+playerName+')生成 3 个适合其等级(统修期)的外勤任务。\n\n任务类型可以包括:\n- 日常差事(如:清理、整理、值守、教学辅助)\n- 外勤任务(如:巡逻、引渡、押运、勘查)\n- 特殊委托(如:NPC 个人委托、紧急任务)\n\n任务难度分:简单、中等、偏难(统修期弟子不宜超过"偏难")。\n\n【输出格式】\n必须严格输出以下 JSON 格式,不要输出任何其他文字(不要输出 markdown 代码块标记):\n\n{\n  "quests": [\n    {\n      "id": "quest_1",\n      "title": "任务名称",\n      "dept": "所属部门",\n      "issuer": "委托人姓名",\n      "location": "任务地点",\n      "difficulty": "简单/中等/偏难",\n      "reward": "奖励内容",\n      "description": "任务描述(30-60字)"\n    },\n    ... 共3个\n  ]\n}\n\n【重要约束】\n1. 必须输出纯 JSON,不要用代码块包裹\n2. 3 个任务的类型要有差异\n3. 奖励要合理,符合统修期弟子的水平\n4. 委托人如果是 NPC,要符合该 NPC 的身份和性格\n5. 任务描述要简洁有力,有地府古风氛围';
+  return '你是「引渡人模拟器·归终殿」的外勤任务生成 AI。\n\n【当前玩家角色】\n'+playerDesc+'\n\n【世界观】\n苍珩四百三十五年,地府归终殿执掌亡魂引渡与功过裁定。殿辖符修院、讲武堂、音律坊与忘川东段。归终殿由阎罗十殿正式册立,为地府第十殿。殿内引渡人行走阴阳,引渡亡魂。如今已有弟子两千余人。\n\n【主要角色】\n首席：罗修\n第二席：林淮\n第三、第四席：未公开（暂未设定，不代表没有）\n第五席：栾方棋\n第六席：暂未公开\n第七席：魏元璟\n第八、第九、第十：未公开（暂未设定，不代表没有）\n退役：程木栖（前二席）、蔡可（前十席）\n【主要地点】\n归终殿中枢——正殿、试炼司、殿务司所在。\n符修院——栾方棋坐镇,以符箓之术传授弟子,院内女弟子居多。\n讲武堂——罗修执教,主修刀法，魂术，其余武功杂学皆在此修习,弟子对罗修又敬又怕。\n点苍阁——林淮执掌,主修枪法，体术指导。弟子多是想成为林淮那样的人的。\n音律坊——程木栖主理,主修琴音破阵之术，魏元璟副理，主修笛渡魂之术,由于程木栖忙于栖梧馆，如今音律课多由魏元璟代上。\n砺峰阁——魏元璟主掌，是归终殿魂力与冥想的核心院阁，同时也负责每个新入门的统修期弟子的体能训练。\n忘川东段——魂流汇聚之地,弟子常在此处实习引渡。\n人间——引渡人的实战场地，常面临穷凶极恶的恶鬼、妖邪等。\n栖梧馆——程木栖开设的医馆,弟子受伤后首选之地。\n浮生巨树（正式命：灵枢轮回木）——栾方棋与林淮血脉滋养的神树,本为天庭神器，后认主栾方棋与林淮，现在是归终殿的镇殿之宝,树下是弟子休憩聊天独处的常去之地。\n浑天鉴——位于人间皇室、重要中枢、各大地区皆有设定。是人间用于联系地府的地方，遇到涉及阴阳的棘手事会直接联系到归终殿。\n阵法堂——由第三席执掌，专攻阵法与符阵的实战应用。\n工造司——由第四席执掌，负责归终殿兵器锻造与维修。\n澄心堂——第六席执掌，专攻剑修与剑法传承。\n百草堂——第八席执掌，专攻用毒与药理，与栖梧馆深度合作\n\n【主要NPC】\n栾方棋——符修院执教,第一符修,林栖梧生父之一。温和好说话但内心吐槽役。\n林淮——第二席,第一枪修,林栖梧生父之一。冷面寡言但极护短,深度路痴。\n罗修——首席引渡人,讲武堂执教,罗烬之父。玩世不恭但最护短,刀修。\n魏元璟——第七席,罗烬之母。砺峰阁主理,擅魂术与体术。\n程木栖——栖梧馆主事,前第二席。温和端方但偷懒看话本,十指尽废转修医道。\n\n【战力与晋升体系】\n弟子分六层:杂役→统修期→入门期→内门期→准十席级→十席。\n统修期弟子六科:符法、刀法、阵法、枪法、引渡实务、魂力控制/医药基础。\n统修期→入门期:六科考核均≥60分。\n\n【殿规】\n不可轻视杂役;不可对十席不敬;晋升须经正规测试。\n\n【你的任务】\n为当前玩家('+playerName+')生成 3 个适合其等级(统修期)的外勤任务。\n\n任务类型可以包括:\n- 日常差事(如:清理、整理、值守、教学辅助)\n- 外勤任务(如:巡逻、引渡、押运、勘查)\n- 特殊委托(如:NPC 个人委托、紧急任务)\n\n任务难度分:简单、中等、偏难(统修期弟子不宜超过"偏难")。\n\n【输出格式】\n必须严格输出以下 JSON 格式,不要输出任何其他文字(不要输出 markdown 代码块标记):\n\n{\n  "quests": [\n    {\n      "id": "quest_1",\n      "title": "任务名称",\n      "dept": "所属部门",\n      "issuer": "委托人姓名",\n      "location": "任务地点",\n      "difficulty": "简单/中等/偏难",\n      "reward": "奖励内容",\n      "description": "任务描述(30-60字)"\n    },\n    ... 共3个\n  ]\n}\n\n【重要约束】\n1. 必须输出纯 JSON,不要用代码块包裹\n2. 3 个任务的类型要有差异\n3. 奖励要合理,符合统修期弟子的水平\n4. 委托人如果是 NPC,要符合该 NPC 的身份和性格\n5. 任务描述要简洁有力,有地府古风氛围';
 }
 
 function buildExecutePrompt(profile){
@@ -253,6 +266,29 @@ function parseCompleteResult(text){
       receipt:'',
       receiptForSim:'',
       error:'JSON解析失败: '+e.message
+    };
+  }
+}
+
+// ===== 解析执行剧情(带选项) =====
+function parseExecuteResult(text){
+  var jsonStr=text.replace(/```json\s*/g,'').replace(/```\s*/g,'');
+  var first=jsonStr.indexOf('{'), last=jsonStr.lastIndexOf('}');
+  if(first!==-1&&last!==-1) jsonStr=jsonStr.substring(first,last+1);
+  try{
+    var data=JSON.parse(jsonStr);
+    return {
+      narrative:data.narrative||'',
+      options:Array.isArray(data.options)?data.options:[],
+      isLast:data.isLast===true
+    };
+  }catch(e){
+    // JSON 解析失败,按纯文本处理
+    return {
+      narrative:text.trim(),
+      options:[],
+      isLast:true,
+      error:'JSON解析失败,已按纯文本处理'
     };
   }
 }
@@ -311,6 +347,10 @@ function injectStyles(){
     '.ai-quest-btn.primary:hover:not(:disabled){background:var(--accent);color:var(--bg-card)}'+
     '.ai-quest-btn:disabled{opacity:.5;cursor:wait}'+
 
+    // 选项按钮
+    '.ai-option-btn{width:100%;text-align:left;padding:10px 14px;margin-bottom:6px;border:1.5px solid var(--border-card);border-radius:10px;background:var(--bg-card);color:var(--text-primary);font-family:var(--font-serif);font-size:.88rem;cursor:pointer;transition:all .2s}'+
+    '.ai-option-btn:hover{border-color:var(--profile-accent,var(--accent));background:var(--bg-hover);transform:translateX(2px)}'+
+
     // 回执单
     '.ai-receipt-box{padding:12px 14px;border:1px dashed var(--border-card);border-radius:8px;background:var(--bg-hover);margin-top:10px}'+
     '.ai-receipt-box .r-title{font-size:.7rem;color:var(--text-muted);letter-spacing:1px;font-family:var(--font-mono);margin-bottom:6px}'+
@@ -353,8 +393,30 @@ function injectStyles(){
 function renderAIQuestSection(){
   injectStyles();
   var profile=getProfile();
-  var container=document.getElementById('aiQuestSection');
-  if(!container) return;
+
+  // 找当前显示的 content-block
+  var activeBlock=document.querySelector('.content-block.active');
+  if(!activeBlock){
+    // 备用:通过 id 找
+    var blockId='content-'+profile;
+    activeBlock=document.getElementById(blockId);
+  }
+  if(!activeBlock) return;
+
+  // 在 activeBlock 里找或创建 AI 区块容器(放在第一个 card 之前)
+  var container=activeBlock.querySelector('.aiQuestSection');
+  if(!container){
+    container=document.createElement('div');
+    container.className='aiQuestSection';
+    var firstCard=activeBlock.querySelector('.card');
+    if(firstCard){
+      activeBlock.insertBefore(container, firstCard);
+    } else {
+      activeBlock.appendChild(container);
+    }
+  }
+  // 清空旧内容(避免重复)
+  container.innerHTML='';
 
   var quests=loadAIQuests(profile);
   var log=loadQuestLog(profile);
@@ -431,9 +493,24 @@ function renderQuestDetail(q, profile){
   html+='<div class="d-meta">委托人:'+esc(q.issuer||'')+' · 地点:'+esc(q.location||'')+' · 部门:'+esc(q.dept||'')+' · 奖励:'+esc(q.reward||'')+'</div>';
   html+='<div class="d-meta">'+esc(q.description||'')+'</div>';
 
-  // 执行剧情
-  if(q.narrative){
-    html+='<div class="d-narrative" id="aiQuestNarrative">'+esc(q.narrative)+'</div>';
+  // 多段剧情(每轮的 narrative 都存在 execHistory 里)
+  if(q.execHistory && q.execHistory.length>0){
+    q.execHistory.forEach(function(h, idx){
+      html+='<div class="d-narrative">'+esc(h.narrative)+'</div>';
+      if(h.choice){
+        html+='<div class="d-result" style="margin-bottom:8px"><span class="result-tag" style="background:var(--bg-hover);color:var(--text-secondary)">你选择了:'+esc(h.choice)+'</span></div>';
+      }
+    });
+  }
+
+  // 当前轮的选项(如果还没选完)
+  if(q.currentOptions && q.currentOptions.length>0 && !q.execDone){
+    html+='<div class="d-result" style="margin:10px 0"><strong>你的选择:</strong></div>';
+    html+='<div class="ai-quest-btn-row" style="flex-direction:column;align-items:stretch">';
+    q.currentOptions.forEach(function(opt){
+      html+='<button class="ai-quest-btn ai-option-btn" data-choice="'+esc(opt.text)+'">'+esc(opt.id||'')+'. '+esc(opt.text)+'</button>';
+    });
+    html+='</div>';
   }
 
   // 结果
@@ -449,25 +526,25 @@ function renderQuestDetail(q, profile){
     html+='<div class="r-text" id="aiReceiptText">'+esc(q.receipt)+'</div>';
     html+='<div class="ai-quest-btn-row">';
     html+='<button class="ai-quest-btn" id="aiCopyReceiptBtn">📋 复制回执</button>';
-    html+='<button class="ai-quest-btn" id="aiSendToSimBtn">📤 已同步到模拟页</button>';
+    html+='<button class="ai-quest-btn" id="aiSendToSimBtn">📤 同步到模拟页</button>';
     html+='</div>';
     html+='</div>';
   }
 
   // 操作按钮
   html+='<div class="ai-quest-btn-row">';
-  if(!q.narrative){
-    // 还没执行,显示"执行任务"
+  if(!q.execHistory || q.execHistory.length===0){
+    // 还没执行
     html+='<button class="ai-quest-btn primary" id="aiExecuteBtn">执行任务</button>';
     html+='<button class="ai-quest-btn" id="aiAbandonBtn">放弃任务</button>';
-  } else if(!q.result){
-    // 已执行,没结果,显示"完成任务"
+  } else if(q.execDone && !q.result){
+    // 已执行完所有轮,等待提交结果
     html+='<button class="ai-quest-btn primary" id="aiCompleteBtn">提交任务结果</button>';
     html+='<button class="ai-quest-btn" id="aiAbandonBtn">放弃任务</button>';
-  } else {
-    // 已完成,显示"返回"
+  } else if(q.result){
     html+='<button class="ai-quest-btn" id="aiCloseDetailBtn">收起</button>';
   }
+  // 如果正在执行(有选项),不显示额外按钮(选项本身就是操作)
   html+='</div>';
 
   html+='</div>';
@@ -503,6 +580,14 @@ function bindEvents(profile){
       q.status='accepted';
       saveAIQuests(profile, quests);
       renderAIQuestSection();
+    });
+  });
+
+  // 选项按钮(事件委托)
+  document.querySelectorAll('.ai-option-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var choice=this.dataset.choice;
+      if(choice) continueQuest(profile, choice);
     });
   });
 
@@ -635,7 +720,7 @@ async function refreshQuests(profile){
   }
 }
 
-// ===== 执行任务 =====
+// ===== 执行任务(第一轮) =====
 async function executeQuest(profile){
   var quests=loadAIQuests(profile);
   var q=quests.find(function(x){return x.status==='accepted';});
@@ -644,20 +729,17 @@ async function executeQuest(profile){
   var btn=document.getElementById('aiExecuteBtn');
   if(btn){btn.disabled=true;btn.textContent='执行中...';}
 
+  // 初始化 execHistory
+  if(!q.execHistory) q.execHistory=[];
+
   // 显示 loading
   var detail=document.getElementById('aiQuestDetail');
   if(detail){
-    var narrEl=document.getElementById('aiQuestNarrative');
-    if(!narrEl){
-      narrEl=document.createElement('div');
-      narrEl.className='d-narrative ai-quest-loading';
-      narrEl.id='aiQuestNarrative';
-      narrEl.innerHTML='浮生树低语中<span class="dots"><span></span><span></span><span></span></span>';
-      detail.insertBefore(narrEl, detail.querySelector('.ai-quest-btn-row'));
-    } else {
-      narrEl.innerHTML='浮生树低语中<span class="dots"><span></span><span></span><span></span></span>';
-      narrEl.className='d-narrative ai-quest-loading';
-    }
+    var loadingDiv=document.createElement('div');
+    loadingDiv.className='d-narrative ai-quest-loading';
+    loadingDiv.id='aiQuestLoading';
+    loadingDiv.innerHTML='浮生树低语中<span class="dots"><span></span><span></span><span></span></span>';
+    detail.insertBefore(loadingDiv, detail.querySelector('.ai-quest-btn-row'));
   }
 
   try{
@@ -668,7 +750,10 @@ async function executeQuest(profile){
       difficulty:q.difficulty,
       description:q.description
     });
-    q.narrative=result.narrative;
+    // 存第一轮剧情
+    q.execHistory.push({narrative:result.narrative});
+    q.currentOptions=result.options||[];
+    q.execDone=result.isLast===true;
     saveAIQuests(profile, quests);
     renderAIQuestSection();
   }catch(e){
@@ -677,14 +762,72 @@ async function executeQuest(profile){
   }
 }
 
+// ===== 续写剧情(玩家选了选项后) =====
+async function continueQuest(profile, choice){
+  var quests=loadAIQuests(profile);
+  var q=quests.find(function(x){return x.status==='accepted';});
+  if(!q) return;
+
+  // 记录玩家选择到上一轮
+  if(q.execHistory.length>0){
+    q.execHistory[q.execHistory.length-1].choice=choice;
+  }
+  // 清空当前选项(防止重复点)
+  q.currentOptions=[];
+  saveAIQuests(profile, quests);
+  renderAIQuestSection();
+
+  // 显示 loading
+  var detail=document.getElementById('aiQuestDetail');
+  if(detail){
+    var loadingDiv=document.createElement('div');
+    loadingDiv.className='d-narrative ai-quest-loading';
+    loadingDiv.innerHTML='浮生树低语中<span class="dots"><span></span><span></span><span></span></span>';
+    detail.appendChild(loadingDiv);
+    detail.scrollTop=detail.scrollHeight;
+  }
+
+  var round=q.execHistory.length+1;
+
+  try{
+    var result=await callQuestAI('continue', {
+      questName:q.title,
+      client:q.issuer,
+      location:q.location,
+      difficulty:q.difficulty,
+      description:q.description,
+      choice:choice,
+      round:round,
+      execHistory:q.execHistory
+    });
+    q.execHistory.push({narrative:result.narrative});
+    q.currentOptions=result.options||[];
+    q.execDone=result.isLast===true;
+    saveAIQuests(profile, quests);
+    renderAIQuestSection();
+  }catch(e){
+    alert('续写剧情出错:'+e.message);
+    renderAIQuestSection();
+  }
+}
+
 // ===== 完成任务 =====
 async function completeQuest(profile){
   var quests=loadAIQuests(profile);
   var q=quests.find(function(x){return x.status==='accepted';});
-  if(!q || !q.narrative) return;
+  if(!q || !q.execDone) return;
 
   var btn=document.getElementById('aiCompleteBtn');
   if(btn){btn.disabled=true;btn.textContent='提交中...';}
+
+  // 把 execHistory 的所有剧情拼成完整 narrative
+  var fullNarrative='';
+  if(q.execHistory && q.execHistory.length>0){
+    q.execHistory.forEach(function(h, idx){
+      fullNarrative+=h.narrative;
+      if(h.choice) fullNarrative+='\n(玩家选择了:'+h.choice+')\n';
+    });
+  }
 
   try{
     var result=await callQuestAI('complete', {
@@ -693,7 +836,7 @@ async function completeQuest(profile){
       location:q.location,
       difficulty:q.difficulty,
       description:q.description,
-      narrative:q.narrative
+      narrative:fullNarrative
     });
     q.result=result.result;
     q.resultNarrative=result.resultNarrative;
