@@ -1047,18 +1047,13 @@ function showNPCCard(npcId){
   var card=document.createElement('div');
   card.style.cssText='background:var(--bg-card);border:1px solid var(--border-card);border-radius:14px;padding:24px 22px;max-width:340px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.3);transform:translateY(10px);transition:transform 0.25s;font-family:var(--font-serif);position:relative;';
 
-  // 头像:优先加载图片,失败回退到文字头像
+  // 头像:先显示文字头像,后台预加载图片,成功后替换
   var imgSrc='./'+data.name+data.imgExt;
-  var avatarHtml='<div style="width:80px;height:80px;border-radius:50%;background:'+data.color+'22;border:2px solid '+data.color+';display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+data.color+';margin:0 auto 10px auto;font-weight:600;overflow:hidden;">'+data.avatar+'</div>';
-  // 用 img 替换,失败时回退
-  var avatarBlock='<div style="width:80px;height:80px;border-radius:50%;background:'+data.color+'22;border:2px solid '+data.color+';display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+data.color+';margin:0 auto 10px auto;font-weight:600;overflow:hidden;position:relative;">'+
-    '<img src="'+imgSrc+'" alt="'+esc(data.name)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;" onerror="this.style.display=\'none\';this.parentNode.querySelector(\'.npc-card-fallback\').style.display=\'flex\';">'+
-    '<div class="npc-card-fallback" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">'+data.avatar+'</div>'+
-  '</div>';
+  var avatarHtml='<div id="npcAvatarBox" style="width:80px;height:80px;border-radius:50%;background:'+data.color+'22;border:2px solid '+data.color+';display:flex;align-items:center;justify-content:center;font-size:2rem;color:'+data.color+';margin:0 auto 10px auto;font-weight:600;overflow:hidden;">'+data.avatar+'</div>';
 
   card.innerHTML=
     '<div style="text-align:center;margin-bottom:14px;">'+
-      avatarBlock+
+      avatarHtml+
       '<div style="font-size:1.15rem;font-weight:600;color:var(--text-primary);letter-spacing:1px;">'+esc(data.name)+'</div>'+
       '<div style="font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.5px;margin-top:4px;">'+esc(data.sym)+'</div>'+
     '</div>'+
@@ -1075,11 +1070,23 @@ function showNPCCard(npcId){
   requestAnimationFrame(function(){
     overlay.style.opacity='1';
     card.style.transform='translateY(0)';
-    // 尝试显示图片
-    var img=card.querySelector('img');
-    if(img){
-      img.onload=function(){img.style.display='block';var fb=card.querySelector('.npc-card-fallback');if(fb)fb.style.display='none';};
-    }
+    // 后台预加载图片,成功后替换文字头像
+    var preloader=new Image();
+    preloader.onload=function(){
+      var box=card.querySelector('#npcAvatarBox');
+      if(box){
+        box.innerHTML='';
+        var imgEl=document.createElement('img');
+        imgEl.src=imgSrc;
+        imgEl.alt=data.name;
+        imgEl.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;';
+        box.appendChild(imgEl);
+      }
+    };
+    preloader.onerror=function(){
+      // 图片加载失败,保持文字头像,什么都不做
+    };
+    preloader.src=imgSrc;
   });
   card.querySelector('#npcCardClose').addEventListener('click',function(e){
     e.stopPropagation();
