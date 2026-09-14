@@ -2,20 +2,39 @@
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover">
 <title>归终殿 · 设置</title>
 <style>
-:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--bg-accent-soft:rgba(138,58,42,0.04);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--card-border-color:var(--border-card)}
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--bg-accent-soft:rgba(138,58,42,0.04);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px}
 [data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--bg-accent-soft:rgba(196,180,160,0.06);--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
 body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
 body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 60px 16px;max-width:760px;margin:0 auto}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 60px 16px;max-width:900px;margin:0 auto}
 
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 .float-btn{background:var(--bg-card);border:1px solid var(--border-card);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
 .float-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* 侧边栏 */
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
+.sidebar-tab .sym{writing-mode:horizontal-tb;display:inline-block;margin-bottom:4px}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,.25);transform:translateX(-100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-panel.open{transform:translateX(0)}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition)}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent)}
+.sidebar-panel .panel-title{font-size:.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono)}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.sidebar-panel .nav-item.active{background:var(--bg-accent-soft);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s;width:100%;text-align:center}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-accent-soft)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.sidebar-overlay.show{opacity:1;pointer-events:auto}
 
 .top-header{text-align:center;padding:40px 0 32px 0;border-bottom:1px solid var(--border-light);margin-bottom:32px}
 .top-header .badge{font-size:.7rem;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono)}
@@ -79,7 +98,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 /* 底部说明 */
 .footer-note{text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:30px;padding-top:20px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px;line-height:1.8}
 
-/* Toast 提示 */
+/* Toast */
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--profile-accent,var(--accent));color:var(--text-primary);padding:10px 20px;border-radius:24px;font-size:.85rem;box-shadow:0 4px 20px rgba(0,0,0,.15);opacity:0;pointer-events:none;transition:all .3s;z-index:200}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -89,14 +108,40 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   .top-header h1{font-size:1.4rem}
   .card{padding:18px 16px}
   .provider-grid{grid-template-columns:1fr 1fr}
+  .float-group{top:12px;right:12px;gap:6px}
+  .float-btn{padding:4px 10px 4px 8px;font-size:.65rem}
+  .sidebar-panel{width:210px;padding:20px 14px 16px 14px}
+  .sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}
+  .sidebar-panel .nav-item{padding:4px 10px;font-size:.8rem}
+  .sidebar-panel .profile-switch-btn{padding:6px 10px;font-size:.8rem}
 }
 </style>
 </head>
-<body>
+<body data-profile="linxiwu">
 
 <div class="float-group">
-  <a class="float-btn" href="./命薄.html"><span style="margin-right:2px;">←</span> 返回命簿</a>
+  <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
   <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<!-- 侧边栏 -->
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+  <button class="close-btn">✕</button>
+  <div class="panel-title">◈ 归终殿 · 导航</div>
+  <a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+  <a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
+  <a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
+  <a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
+  <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
+  <a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
+  <a class="nav-item" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
+  <a class="nav-item" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
+  <a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+  <a class="nav-item active" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+  <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+  <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
 </div>
 
 <div class="top-header">
@@ -178,7 +223,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
   <div class="btn-row" style="margin-top:14px;">
     <button class="btn" id="refreshArchiveBtn">🔄 刷新状态</button>
-    <button class="btn btn-danger" id="clearStoryBtn">⚠️ 清除所有剧情历史</button>
+    <button class="btn btn-danger" id="clearStoryBtn">⚠️ 清除剧情历史</button>
+    <button class="btn" id="restorePresetStoryBtn">↩ 恢复写死对话</button>
   </div>
 
   <ul class="info-list" style="margin-top:14px;">
@@ -186,6 +232,32 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     <li>清除后,两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都会被清空</li>
     <li>清除后无法恢复,请谨慎操作</li>
     <li>开场剧情会在下次进入命簿页时自动重新生成</li>
+    <li>「恢复写死对话」会清除你删除过的标记,让命薄页所有预设剧情重新显示</li>
+  </ul>
+</div>
+
+<!-- ===== 传讯符记录管理 ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> 传讯符记录管理</div>
+
+  <div class="status-box info">
+    <span class="status-icon">✉</span>
+    <span class="status-text">
+      <strong>当前通讯记录:</strong><br>
+      <span id="chatArchiveStatus">读取中...</span>
+    </span>
+  </div>
+
+  <div class="btn-row" style="margin-top:14px;">
+    <button class="btn" id="refreshChatArchiveBtn">🔄 刷新状态</button>
+    <button class="btn btn-danger" id="clearChatBtn">⚠️ 清除所有通讯记录</button>
+    <button class="btn" id="restorePresetChatBtn">↩ 恢复写死对话</button>
+  </div>
+
+  <ul class="info-list" style="margin-top:14px;">
+    <li>通讯记录保存在 <code>localStorage.gzd_chat_history</code>,不上传任何服务器</li>
+    <li>清除后,两个角色与所有 NPC 的 AI 对话记录都会被清空,写死对话保留</li>
+    <li>「恢复写死对话」会清除你删除过的标记,让传讯符页所有预设对话重新显示</li>
   </ul>
 </div>
 
@@ -236,6 +308,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     <li>不配置 API Key 也能玩,但会使用站长提供的公共后端(速度较慢)</li>
     <li>每个浏览器、每个设备的存档相互独立,换设备需重新配置</li>
     <li>如遇异常,可尝试「清除 Key」后重新配置,或「清除剧情历史」后重玩</li>
+    <li>命薄页和传讯符页的写死对话可以长按删除,删除后可在本页恢复</li>
   </ul>
 </div>
 
@@ -250,11 +323,36 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 (function(){
   'use strict';
 
+  // ===== GZD 核心(自包含,不依赖外部 核心.js) =====
+  if(!window.GZD){
+    window.GZD={};
+    GZD.Storage={get:function(k,d){try{var r=localStorage.getItem(k);return r?JSON.parse(r):d;}catch(e){return d;}},set:function(k,v){localStorage.setItem(k,JSON.stringify(v));},getTheme:function(){var r=this.get('theme',null);return r&&r.value?r.value:'light';},getProfile:function(){try{return localStorage.getItem('activeProfile')||'linxiwu';}catch(e){return'linxiwu';}}};
+    GZD.ThemeManager={init:function(){var t=GZD.Storage.getTheme();var h=document.documentElement;h.setAttribute('data-theme',t);var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=t==='light'?'🌙':'☀️';label.textContent=t==='light'?'夜间':'日间';}},toggle:function(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';var next=cur==='light'?'dark':'light';var h=document.documentElement;h.setAttribute('data-theme',next);localStorage.setItem('theme',JSON.stringify({value:next}));var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=next==='light'?'🌙':'☀️';label.textContent=next==='light'?'夜间':'日间';}}};
+    GZD.ProfileManager={init:function(){var id=GZD.Storage.getProfile();document.body.setAttribute('data-profile',id);},switch:function(id){document.body.setAttribute('data-profile',id);localStorage.setItem('activeProfile',id);window.dispatchEvent(new CustomEvent('profilechange',{detail:{profile:id}}));}};
+    GZD.Sidebar={open:false,toggle:function(){this.open=!this.open;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close:function(){if(this.open){this.open=false;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}}};
+    GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();
+  }
+
+  // ===== 侧边栏事件 =====
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}
+    if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}
+    if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}
+    var sb=t.closest('#profileSwitchBtn');
+    if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';GZD.ProfileManager.switch(c==='linxiwu'?'luojin':'linxiwu');var btn=document.getElementById('profileSwitchBtn');if(btn)btn.textContent='切换到 '+(c==='linxiwu'?'罗烬':'林栖梧');return;}
+  });
+  // 主题按钮
+  document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
+  // 角色切换 UI
+  (function(){var saved=GZD.Storage.getProfile();var btn=document.getElementById('profileSwitchBtn');if(btn)btn.textContent='切换到 '+(saved==='linxiwu'?'罗烬':'林栖梧');})();
+
   // ===== 配置存储键 =====
   const CONFIG_KEY = 'gzd_ai_config';
   const STORY_KEY = 'gzd_ai_story';
+  const CHAT_KEY = 'gzd_chat_history';
+  const PRESET_DELETED_KEY = 'gzd_preset_deleted'; // 写死对话的删除标记
 
-  // 各服务商默认配置
   const PROVIDER_DEFAULTS = {
     deepseek: { baseUrl: 'https://api.deepseek.com', defaultModel: 'deepseek-chat' },
     openai:   { baseUrl: 'https://api.openai.com',    defaultModel: 'gpt-4o-mini' },
@@ -262,17 +360,15 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     custom:   { baseUrl: '',                          defaultModel: '' }
   };
 
-  // ===== 读取/保存配置 =====
   function loadConfig(){
-    try{
-      return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
-    }catch(e){ return {}; }
+    try{ return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}'); }
+    catch(e){ return {}; }
   }
   function saveConfig(cfg){
     localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
   }
 
-  // ===== Toast 提示 =====
+  // ===== Toast =====
   let toastTimer;
   function toast(msg){
     const t = document.getElementById('toast');
@@ -282,40 +378,6 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
   }
 
-  // ===== 主题切换(沿用 GZD 系统) =====
-  // 注意:CSS 用 [data-theme="dark"] 表示夜间,所以 dark 时必须 setAttribute('data-theme','dark')
-  function applyTheme(t){
-    const h = document.documentElement;
-    h.setAttribute('data-theme', t);  // light 或 dark 都设置属性
-    const icon = document.getElementById('themeIcon');
-    const label = document.getElementById('themeLabel');
-    if(icon && label){
-      icon.textContent = t === 'light' ? '🌙' : '☀️';
-      label.textContent = t === 'light' ? '夜间' : '日间';
-    }
-  }
-  function getStoredTheme(){
-    try{
-      const r = localStorage.getItem('theme');
-      if(r){
-        // 兼容两种存储格式:直接字符串 或 {value: 'xxx'} 对象
-        const p = JSON.parse(r);
-        if(p === 'light' || p === 'dark') return p;
-        if(p && p.value) return p.value;
-      }
-    }catch(e){
-      // 如果 JSON 解析失败,可能是裸字符串
-      if(r === 'light' || r === 'dark') return r;
-    }
-    return 'light';
-  }
-  function toggleTheme(){
-    const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-    const next = cur === 'light' ? 'dark' : 'light';
-    applyTheme(next);
-    localStorage.setItem('theme', JSON.stringify({ value: next }));
-  }
-
   // ===== 服务商选择 =====
   let currentProvider = 'deepseek';
   function selectProvider(p){
@@ -323,16 +385,14 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     document.querySelectorAll('.provider-card[data-provider]').forEach(c => {
       c.classList.toggle('active', c.dataset.provider === p);
     });
-    // 自定义才显示 Base URL 输入
     document.getElementById('customUrlGroup').style.display = (p === 'custom') ? 'block' : 'none';
-    // 自动填充默认模型名
     const modelInput = document.getElementById('modelName');
     if(!modelInput.value && PROVIDER_DEFAULTS[p].defaultModel){
       modelInput.value = PROVIDER_DEFAULTS[p].defaultModel;
     }
   }
 
-  // ===== 状态提示更新 =====
+  // ===== 状态提示 =====
   function setStatus(type, icon, text){
     const box = document.getElementById('statusBox');
     const txt = document.getElementById('statusText');
@@ -341,46 +401,28 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     txt.innerHTML = text;
   }
 
-  // ===== 初始化页面(读取本地配置) =====
   function initPage(){
-    // 主题
-    applyTheme(getStoredTheme());
-
-    // 读配置
     const cfg = loadConfig();
-    if(cfg.provider){
-      selectProvider(cfg.provider);
-    } else {
-      selectProvider('deepseek');
-    }
-    if(cfg.customUrl){
-      document.getElementById('customUrl').value = cfg.customUrl;
-    }
-    if(cfg.apiKey){
-      document.getElementById('apiKey').value = cfg.apiKey;
-    }
-    if(cfg.model){
-      document.getElementById('modelName').value = cfg.model;
-    }
-
-    // 更新状态
+    if(cfg.provider){ selectProvider(cfg.provider); } else { selectProvider('deepseek'); }
+    if(cfg.customUrl){ document.getElementById('customUrl').value = cfg.customUrl; }
+    if(cfg.apiKey){ document.getElementById('apiKey').value = cfg.apiKey; }
+    if(cfg.model){ document.getElementById('modelName').value = cfg.model; }
     updateStatus();
     updateArchiveStatus();
+    updateChatArchiveStatus();
   }
 
   function updateStatus(){
-    const cfg = loadConfig();
     const key = document.getElementById('apiKey').value.trim();
     if(key){
-      const provider = currentProvider;
-      const providerName = {deepseek:'DeepSeek',openai:'OpenAI',claude:'Anthropic',custom:'自定义接口'}[provider];
+      const providerName = {deepseek:'DeepSeek',openai:'OpenAI',claude:'Anthropic',custom:'自定义接口'}[currentProvider];
       setStatus('success', '✅', `<strong>已配置 ${providerName}</strong><br>下次调用 AI 时将直接连接该服务商(速度更快)。Key 仅保存在本地浏览器。`);
     } else {
       setStatus('info', 'ℹ️', `<strong>未配置 API Key</strong><br>当前将使用站长提供的公共后端(Cloudflare Worker),国内访问可能较慢。填写自己的 Key 可大幅提速。`);
     }
   }
 
-  // ===== 存档状态 =====
+  // ===== 剧情存档状态 =====
   function updateArchiveStatus(){
     try{
       const all = JSON.parse(localStorage.getItem(STORY_KEY) || '{}');
@@ -395,17 +437,40 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     }
   }
 
+  // ===== 传讯符记录状态 =====
+  function updateChatArchiveStatus(){
+    try{
+      const all = JSON.parse(localStorage.getItem(CHAT_KEY) || '{}');
+      var linAll = all.linxiwu || {};
+      var luoAll = all.luojin || {};
+      var linCount = 0, luoCount = 0;
+      var linNpcs = 0, luoNpcs = 0;
+      Object.keys(linAll).forEach(function(npc){
+        var arr = linAll[npc] || [];
+        linCount += arr.filter(x => x.side === 'right' || x.side === 'left').length;
+        if(arr.length > 0) linNpcs++;
+      });
+      Object.keys(luoAll).forEach(function(npc){
+        var arr = luoAll[npc] || [];
+        luoCount += arr.filter(x => x.side === 'right' || x.side === 'left').length;
+        if(arr.length > 0) luoNpcs++;
+      });
+      document.getElementById('chatArchiveStatus').innerHTML =
+        `林栖梧:与 ${linNpcs} 位 NPC 有 ${linCount} 条对话<br>罗烬:与 ${luoNpcs} 位 NPC 有 ${luoCount} 条对话`;
+    }catch(e){
+      document.getElementById('chatArchiveStatus').textContent = '读取失败';
+    }
+  }
+
   // ===== 保存配置 =====
   function saveSettings(){
     const apiKey = document.getElementById('apiKey').value.trim();
     const modelName = document.getElementById('modelName').value.trim();
     const customUrl = document.getElementById('customUrl').value.trim();
-
     if(currentProvider === 'custom' && !customUrl){
       toast('⚠️ 请填写自定义接口地址');
       return;
     }
-
     const cfg = {
       provider: currentProvider,
       apiKey: apiKey,
@@ -421,9 +486,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
   // ===== 清除 Key =====
   function clearKey(){
-    if(!confirm('确定清除 API Key 吗?清除后将回退到公共后端(速度较慢)。')){
-      return;
-    }
+    if(!confirm('确定清除 API Key 吗?清除后将回退到公共后端(速度较慢)。')) return;
     const cfg = loadConfig();
     delete cfg.apiKey;
     saveConfig(cfg);
@@ -434,15 +497,42 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
   // ===== 清除剧情历史 =====
   function clearStory(){
-    if(!confirm('⚠️ 确定清除所有剧情历史吗?\n\n两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都将被清空,且无法恢复。')){
-      return;
-    }
-    if(!confirm('再次确认:真的要清除全部剧情历史吗?\n\n这个操作不可撤销。')){
-      return;
-    }
+    if(!confirm('⚠️ 确定清除所有剧情历史吗?\n\n两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都将被清空,且无法恢复。')) return;
+    if(!confirm('再次确认:真的要清除全部剧情历史吗?\n\n这个操作不可撤销。')) return;
     localStorage.removeItem(STORY_KEY);
     updateArchiveStatus();
     toast('📖 剧情历史已清空');
+  }
+
+  // ===== 清除通讯记录 =====
+  function clearChat(){
+    if(!confirm('⚠️ 确定清除所有通讯记录吗?\n\n两个角色与所有 NPC 的 AI 对话记录都将被清空(写死对话保留)。')) return;
+    if(!confirm('再次确认:真的要清除全部通讯记录吗?\n\n这个操作不可撤销。')) return;
+    localStorage.removeItem(CHAT_KEY);
+    updateChatArchiveStatus();
+    toast('✉ 通讯记录已清空');
+  }
+
+  // ===== 恢复写死对话(剧情) =====
+  function restorePresetStory(){
+    if(!confirm('确定恢复命薄页所有写死对话吗?\n\n你删除过的预设剧情将重新显示。')) return;
+    try{
+      var all = JSON.parse(localStorage.getItem(PRESET_DELETED_KEY) || '{}');
+      if(all.story){ delete all.story; }
+      localStorage.setItem(PRESET_DELETED_KEY, JSON.stringify(all));
+    }catch(e){}
+    toast('↩ 命薄页写死对话已恢复');
+  }
+
+  // ===== 恢复写死对话(传讯符) =====
+  function restorePresetChat(){
+    if(!confirm('确定恢复传讯符页所有写死对话吗?\n\n你删除过的预设对话将重新显示。')) return;
+    try{
+      var all = JSON.parse(localStorage.getItem(PRESET_DELETED_KEY) || '{}');
+      if(all.chat){ delete all.chat; }
+      localStorage.setItem(PRESET_DELETED_KEY, JSON.stringify(all));
+    }catch(e){}
+    toast('↩ 传讯符写死对话已恢复');
   }
 
   // ===== 测试连接 =====
@@ -453,14 +543,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       ? document.getElementById('customUrl').value.trim()
       : PROVIDER_DEFAULTS[currentProvider].baseUrl;
 
-    if(!apiKey){
-      toast('⚠️ 请先填写 API Key');
-      return;
-    }
-    if(currentProvider === 'custom' && !baseUrl){
-      toast('⚠️ 请填写接口地址');
-      return;
-    }
+    if(!apiKey){ toast('⚠️ 请先填写 API Key'); return; }
+    if(currentProvider === 'custom' && !baseUrl){ toast('⚠️ 请填写接口地址'); return; }
 
     const resultEl = document.getElementById('testResult');
     const btn = document.getElementById('testBtn');
@@ -468,51 +552,30 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     btn.textContent = '🔍 测试中...';
     resultEl.textContent = '正在连接 ' + baseUrl + ' ...\n';
 
-    // 构造请求(根据服务商类型)
     let url, headers, body;
     if(currentProvider === 'claude'){
-      // Anthropic API 格式不同
       url = baseUrl + '/v1/messages';
-      headers = {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      };
-      body = JSON.stringify({
-        model: modelName,
-        max_tokens: 50,
-        messages: [{ role: 'user', content: '请回复"连接成功"四个字。' }]
-      });
+      headers = {'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'};
+      body = JSON.stringify({model:modelName,max_tokens:50,messages:[{role:'user',content:'请回复"连接成功"四个字。'}]});
     } else {
-      // OpenAI / DeepSeek / 自定义(都是 OpenAI 兼容格式)
       url = baseUrl + '/v1/chat/completions';
-      headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey
-      };
-      body = JSON.stringify({
-        model: modelName,
-        messages: [{ role: 'user', content: '请回复"连接成功"四个字。' }],
-        max_tokens: 50
-      });
+      headers = {'Content-Type':'application/json','Authorization':'Bearer '+apiKey};
+      body = JSON.stringify({model:modelName,messages:[{role:'user',content:'请回复"连接成功"四个字。'}],max_tokens:50});
     }
 
     try{
-      const resp = await fetch(url, { method: 'POST', headers, body });
+      const resp = await fetch(url, {method:'POST',headers,body});
       const data = await resp.json();
-
       if(!resp.ok){
         resultEl.textContent += `❌ HTTP ${resp.status}\n` + JSON.stringify(data, null, 2);
         return;
       }
-
       let reply = '';
       if(currentProvider === 'claude'){
         reply = data.content?.[0]?.text || JSON.stringify(data);
       } else {
         reply = data.choices?.[0]?.message?.content || JSON.stringify(data);
       }
-
       resultEl.textContent += `✅ 连接成功!\n模型:${modelName}\n回复:${reply}\n\n完整响应:\n` + JSON.stringify(data, null, 2);
       toast('✅ 连接成功');
     }catch(e){
@@ -524,23 +587,22 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   }
 
   // ===== 事件绑定 =====
-  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-
   document.querySelectorAll('.provider-card[data-provider]').forEach(c => {
     c.addEventListener('click', () => selectProvider(c.dataset.provider));
   });
-
   document.getElementById('apiKey').addEventListener('input', updateStatus);
-
   document.getElementById('saveBtn').addEventListener('click', saveSettings);
   document.getElementById('testBtn').addEventListener('click', testConnection);
   document.getElementById('clearKeyBtn').addEventListener('click', clearKey);
   document.getElementById('clearStoryBtn').addEventListener('click', clearStory);
+  document.getElementById('restorePresetStoryBtn').addEventListener('click', restorePresetStory);
+  document.getElementById('clearChatBtn').addEventListener('click', clearChat);
+  document.getElementById('restorePresetChatBtn').addEventListener('click', restorePresetChat);
   document.getElementById('refreshArchiveBtn').addEventListener('click', updateArchiveStatus);
+  document.getElementById('refreshChatArchiveBtn').addEventListener('click', updateChatArchiveStatus);
 
-  // 启动
   initPage();
-  console.log('⚙️ 归终殿 · 设置页 v1.0 已加载');
+  console.log('⚙️ 归终殿 · 设置页 v2.0 已加载');
 })();
 </script>
 </body>
