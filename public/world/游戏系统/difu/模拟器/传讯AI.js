@@ -237,9 +237,19 @@ function callDirect(message, npcId, profile, history, cfg){
   var systemPrompt=buildSystemPrompt(npcId, profile);
   if(!systemPrompt) return Promise.reject(new Error('未知的 NPC: '+npcId));
 
+  // ★ 关键修复:把 history 从 {side, sender, text} 转换成 {role, content}
+  // 因为存档时用的是 {side:'right'/'left', sender, text} 格式
+  // 但 DeepSeek/OpenAI API 要求 {role:'user'/'assistant', content} 格式
+  var aiHistoryFormatted = history.map(function(m){
+    return {
+      role: m.side === 'right' ? 'user' : 'assistant',
+      content: m.text
+    };
+  });
+
   var messages=[
     {role:'system',content:systemPrompt},
-    ...history.slice(-10),
+    ...aiHistoryFormatted.slice(-10),
     {role:'user',content:message}
   ];
   var url, headers, body;
