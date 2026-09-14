@@ -8,7 +8,7 @@ GZD.ProfileManager={init:function(){var id=GZD.Storage.getProfile();document.bod
 GZD.Sidebar={open:false,toggle:function(){this.open=!this.open;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close:function(){if(this.open){this.open=false;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}}};
 GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();}
 
-document.addEventListener('click',function(e){var t=e.target;if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}var sb=t.closest('#profileSwitchBtn');if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';switchProfile(c==='linxiwu'?'luojin':'linxiwu');return;}if(t.closest('#backToList')){e.preventDefault();backToList();return;}});
+document.addEventListener('click',function(e){var t=e.target;if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}if(t.closest('#backToList')){e.preventDefault();backToList();return;}});
 document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
 function updateThemeBtn(){var b=document.getElementById('themeBtn'),isLight=document.documentElement.getAttribute('data-theme')==='light';if(b)b.innerHTML='<span id="themeIcon">'+(isLight?'🌙':'☀️')+'</span> <span id="themeLabel">'+(isLight?'夜间':'日间')+'</span>';}updateThemeBtn();
 
@@ -598,13 +598,11 @@ el.addEventListener('click',function(){switchContact(this.dataset.id);});
 }
 
 function switchContact(cid){
-if(cid===currentContact)return;
 currentContact=cid;
 var contacts=getContacts(currentProfile);
 contacts.forEach(function(c){if(c.id===cid)c.unread=false;});
 renderContacts(currentProfile);
 renderChat(currentProfile,cid);
-// 手机端:显示聊天页,隐藏列表
 showChatOnMobile();
 }
 
@@ -656,7 +654,7 @@ visibleMsgs.forEach(function(m){
 if(visibleMsgs.length>0){
   var tip=document.createElement('div');
   tip.className='chat-tip-bar';
-  tip.innerHTML='上述对话为测试内容,AI 不会记忆,长按可删除气泡';
+  tip.innerHTML='上述对话为测试内容,AI 不会记忆,长按可删除气泡<br><span style="opacity:.8">点击顶部头像或名字可查看角色详情</span>';
   container.appendChild(tip);
 }
 
@@ -667,7 +665,7 @@ aiHistory.forEach(function(m, idx){
 });
 
 if(aiHistory.length>0){
-  container.scrollTop=container.scrollHeight;
+  requestAnimationFrame(function(){container.scrollTop=container.scrollHeight;});
 } else {
   container.scrollTop=0;
 }
@@ -1061,9 +1059,6 @@ function showNPCCard(npcId){
     '</div>'+
     '<div style="font-size:0.85rem;line-height:1.7;color:var(--text-secondary);">'+
       esc(data.desc)+
-    '</div>'+
-    '<div style="font-size:0.65rem;color:var(--text-muted);text-align:center;margin-top:10px;font-family:var(--font-mono);">'+
-      '点击头像或名字可查看资料'+
     '</div>'+
     '<button id="npcCardClose" style="position:absolute;top:8px;right:10px;background:none;border:none;font-size:1.1rem;color:var(--text-muted);cursor:pointer;padding:4px 8px;">✕</button>';
 
