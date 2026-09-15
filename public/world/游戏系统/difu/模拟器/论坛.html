@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>归终殿 · 讨论区</title>
+<style>body{background:#f7f4ef;margin:0;padding:0;display:flex;align-items:center;justify-content:center;height:100vh;font-family:Georgia,serif;color:#8a8a8a;font-size:0.85rem}</style>
+</head>
+<body>
+<div>正在进入讨论区…</div>
+<script>
+var profile = localStorage.getItem('activeProfile') || 'linxiwu';
+location.replace(profile === 'luojin' ? './论坛-罗烬.html' : './论坛-林栖梧.html');
+</script>
+</body>
+</html>

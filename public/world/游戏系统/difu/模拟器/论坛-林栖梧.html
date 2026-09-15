@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>归终殿 · 讨论区</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--bg-accent-soft:rgba(138,58,42,0.04);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--bg-accent-soft:rgba(196,180,160,0.06);--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.7;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px;display:flex;flex-direction:column;max-width:900px;margin:0 auto}
+
+/* 强制2D符号 */
+.sym-reply{font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;font-weight:400;font-style:normal;text-shadow:none}
+
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-card);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* 侧边栏 */
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
+.sidebar-tab .sym{writing-mode:horizontal-tb;display:inline-block;margin-bottom:4px}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,.25);transform:translateX(-100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-panel.open{transform:translateX(0)}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition)}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent)}
+.sidebar-panel .panel-title{font-size:.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono)}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.sidebar-panel .nav-item.active{background:var(--bg-accent-soft);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s;width:100%;text-align:center}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-accent-soft)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.sidebar-overlay.show{opacity:1;pointer-events:auto}body.no-scroll{overflow:hidden}
+
+/* 顶部 */
+.top-header{max-width:900px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition)}
+.top-header .profile-name{font-size:.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.5px}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600}
+
+#app{max-width:900px;margin:0 auto;width:100%;padding:20px 4px 40px 4px;flex:1}
+
+.page-header{margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border-light)}
+.page-header .title{font-size:1.4rem;font-weight:600;font-family:var(--font-serif);letter-spacing:.5px}
+.page-header .title .deco{color:var(--profile-accent);margin-right:6px}
+.page-header .sub{font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px}
+
+/* 发帖按钮(预留) */
+.post-action-bar{display:flex;justify-content:flex-end;margin-bottom:20px}
+.post-create-btn{padding:8px 20px;border:1.5px solid var(--accent);border-radius:20px;background:transparent;color:var(--accent);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all var(--transition);letter-spacing:1px}
+.post-create-btn:hover{background:var(--accent);color:var(--bg-card)}
+.post-create-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* 发帖表单(预留,默认隐藏) */
+.post-form{display:none;padding:16px;border:1px solid var(--border-card);border-radius:12px;background:var(--bg-card);margin-bottom:20px}
+.post-form.show{display:block}
+.post-form input{width:100%;padding:10px 14px;border:1px solid var(--border-card);border-radius:8px;font-family:var(--font-serif);font-size:.95rem;background:var(--bg-body);color:var(--text-primary);margin-bottom:10px;outline:none}
+.post-form input:focus{border-color:var(--profile-accent)}
+.post-form textarea{width:100%;min-height:100px;padding:10px 14px;border:1px solid var(--border-card);border-radius:8px;font-family:var(--font-serif);font-size:.9rem;background:var(--bg-body);color:var(--text-primary);margin-bottom:10px;resize:vertical;outline:none}
+.post-form textarea:focus{border-color:var(--profile-accent)}
+.post-form-btns{display:flex;gap:8px;justify-content:flex-end}
+.post-form-btns button{padding:8px 18px;border-radius:18px;border:1.5px solid var(--border-card);background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.82rem;cursor:pointer;transition:all .2s}
+.post-form-btns button.submit{border-color:var(--accent);color:var(--accent)}
+.post-form-btns button.submit:hover{background:var(--accent);color:var(--bg-card)}
+.post-form-btns button:hover{background:var(--bg-hover)}
+
+/* 筛选 */
+.filter-bar{display:flex;flex-wrap:nowrap;gap:6px;margin-bottom:20px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-tag{flex-shrink:0;font-size:.72rem;padding:4px 16px;border-radius:16px;border:1px solid var(--border-card);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);letter-spacing:.3px;white-space:nowrap}
+.filter-tag:hover{border-color:var(--text-muted)}
+.filter-tag.active{background:var(--bg-accent-soft);border-color:var(--profile-accent);color:var(--profile-accent)}
+.filter-tag .sym{margin-right:4px;font-family:var(--font-serif)}
+
+/* 帖子卡片(统一模拟器风格:直角 + corner-deco) */
+.post-list{display:flex;flex-direction:column;gap:12px}
+.post-card{display:block;background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;text-decoration:none;color:var(--text-primary);transition:all var(--transition);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,.06);animation:fadeIn 0.3s ease forwards;opacity:0;transform:translateY(6px);cursor:pointer;overflow:hidden;position:relative}
+.post-card:nth-child(1){animation-delay:.04s}
+.post-card:nth-child(2){animation-delay:.08s}
+.post-card:nth-child(3){animation-delay:.12s}
+.post-card:nth-child(4){animation-delay:.16s}
+.post-card:nth-child(5){animation-delay:.20s}
+.post-card:nth-child(6){animation-delay:.24s}
+.post-card:nth-child(7){animation-delay:.28s}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+.post-card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 4px 16px rgba(0,0,0,.08)}
+.post-card .corner-deco{position:absolute;top:0;left:0;font-size:1rem;color:var(--profile-accent);opacity:.3;pointer-events:none;z-index:1;padding:2px 4px}
+.post-card .body{display:block;padding:16px 20px;text-decoration:none;color:inherit;position:relative;z-index:2}
+.post-card .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}
+.post-card .head .title{font-size:1rem;font-weight:500;font-family:var(--font-serif)}
+.post-card .head .tag{font-size:.6rem;padding:1px 10px;border-radius:10px;border:1px solid var(--border-card);color:var(--text-muted);flex-shrink:0;font-family:var(--font-mono)}
+.post-card .head .tag.hot{border-color:var(--accent);color:var(--accent);background:var(--bg-accent-soft)}
+.post-card .meta{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.post-card .meta .author{color:var(--text-secondary);font-weight:500;font-family:var(--font-serif)}
+.post-card .excerpt{font-size:.85rem;color:var(--text-secondary);margin-top:4px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post-card .foot{margin-top:8px;display:flex;gap:14px;font-size:.72rem;color:var(--text-muted);font-family:var(--font-mono)}
+.post-card .foot span{display:flex;align-items:center;gap:4px}
+.post-card .foot .num{font-weight:500;color:var(--text-secondary)}
+.post-card .action-bar{padding:0 20px 14px;display:flex;justify-content:flex-end;border-top:1px solid var(--border-light);margin-top:0}
+.post-card .action-btn{font-size:.75rem;padding:6px 16px;border-radius:16px;border:1px solid var(--border-card);background:var(--bg-hover);color:var(--text-secondary);text-decoration:none;transition:all var(--transition);font-family:var(--font-mono);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:10px;letter-spacing:.3px}
+.post-card .action-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--bg-accent-soft)}
+.post-card.hidden{display:none}
+.empty-state{text-align:center;padding:32px 0;color:var(--text-muted);font-size:.9rem}
+.empty-state .sym{font-size:2rem;display:block;margin-bottom:8px;color:var(--text-muted)}
+
+/* 落花 */
+#petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
+@keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh+50px))rotate(360deg);opacity:0}}
+
+@media(max-width:600px){body{padding:0 10px 30px 10px;font-size:15px}#app{padding:16px 0 30px 0}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}.post-card .body{padding:14px 16px}.post-card .action-bar{padding:0 16px 12px}.post-card .head .title{font-size:.92rem}.page-header .title{font-size:1.2rem}.filter-bar{gap:4px}.filter-tag{font-size:.65rem;padding:3px 12px}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.sidebar-panel .nav-item{padding:4px 10px;font-size:.8rem}.sidebar-panel .profile-switch-btn{padding:6px 10px;font-size:.8rem}}
+</style>
+</head>
+<body data-profile="linxiwu">
+
+<div class="float-group">
+  <a class="float-btn" href="./index.html"><span>←</span> 返回首页</a>
+  <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<!-- 侧边栏 -->
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+  <button class="close-btn">✕</button>
+  <div class="panel-title">◈ 归终殿 · 导航</div>
+  <a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+  <a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
+  <a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
+  <a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
+  <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
+  <a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
+  <a class="nav-item" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
+  <a class="nav-item" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
+  <a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+  <a class="nav-item active" href="./论坛-林栖梧.html"><span class="sym">▣</span> 讨论区</a>
+  <a class="nav-item" href="./模拟.html"><span class="sym">◈</span> 命簿模拟</a>
+  <a class="nav-item" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+  <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+  <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
+</div>
+
+<!-- 顶部 -->
+<div class="top-header">
+  <div class="page-title"><span class="sym">❀</span> 讨论区</div>
+  <div class="profile-name">当前:<span id="currentProfileName">林栖梧</span></div>
+</div>
+
+<div id="app">
+
+<!-- 页面标题 -->
+<div class="page-header">
+  <div class="title"><span class="deco">❀</span>归终殿 · 讨论区</div>
+  <div class="sub" id="postCountSub">◈ 炉火正旺 · 共 1 个话题</div>
+</div>
+
+<!-- 发帖按钮(预留,JS 控制显示) -->
+<div class="post-action-bar">
+  <button class="post-create-btn" id="postCreateBtn">✎ 发帖</button>
+</div>
+
+<!-- 发帖表单(预留,默认隐藏) -->
+<div class="post-form" id="postForm">
+  <input type="text" id="postTitle" placeholder="帖子标题..." />
+  <textarea id="postContent" placeholder="帖子内容..."></textarea>
+  <div class="post-form-btns">
+    <button id="postCancel">取消</button>
+    <button class="submit" id="postSubmit">发布</button>
+  </div>
+</div>
+
+<!-- 筛选 -->
+<div class="filter-bar" id="filterBar">
+  <button class="filter-tag active" data-filter="all"><span class="sym">❖</span>全部</button>
+  <button class="filter-tag" data-filter="战力"><span class="sym">✦</span>战力</button>
+  <button class="filter-tag" data-filter="八卦"><span class="sym">◈</span>八卦</button>
+  <button class="filter-tag" data-filter="剧情"><span class="sym">✿</span>剧情</button>
+  <button class="filter-tag" data-filter="同人"><span class="sym">❀</span>同人</button>
+  <button class="filter-tag" data-filter="闲聊"><span class="sym">◉</span>闲聊</button>
+</div>
+
+<!-- 帖子列表 -->
+<div class="post-list" id="postList">
+
+  <!-- 惊鸿榜(写死,共用) -->
+  <div class="post-card" data-category="八卦" data-preset="true" onclick="location.href='./惊鸿榜.html'">
+    <span class="corner-deco">❀</span>
+    <div class="body">
+      <div class="head">
+        <span class="title">【归终帖】惊鸿榜七日投票纪事</span>
+        <span class="tag hot">▸ 热</span>
+      </div>
+      <div class="meta">
+        <span class="author">符修院小师妹</span>
+        <span>·</span>
+        <span>甲辰年·秋·初五日</span>
+      </div>
+      <div class="excerpt">归终殿弟子借玉牒发起惊鸿榜投票,七日为期,每日三笺,列十一人于榜。林淮断层第一,魏元璟、程木栖、栾方棋、罗修诸位大人名次胶着。至第六日,首席大人亲至公示栏,榜单遂止……</div>
+      <div class="foot">
+        <span><span class="sym-reply">↩&#xFE0E;</span> <span class="num">156</span></span>
+        <span>♡ <span class="num">2.3w</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 玩家发的帖子会动态插入这里 -->
+
+</div>
+
+<div class="empty-state" id="emptyState" style="display:none;">
+  <span class="sym">❀</span>
+  没有匹配的帖子<br>
+  <span style="font-size:0.8rem;">换个分类试试吧</span>
+</div>
+
+</div>
+
+<!-- 落花 -->
+<div id="petal-container"></div>
+
+<script>
+// ===== 主题切换(用 GZD 系统) =====
+(function(){
+  // 兼容:如果核心.js 没加载,自建 GZD
+  if(!window.GZD){
+    window.GZD={};
+    GZD.Storage={get:function(k,d){try{var r=localStorage.getItem(k);return r?JSON.parse(r):d;}catch(e){return d;}},set:function(k,v){localStorage.setItem(k,JSON.stringify(v));},getTheme:function(){var r=this.get('theme',null);return r&&r.value?r.value:'light';},getProfile:function(){try{return localStorage.getItem('activeProfile')||'linxiwu';}catch(e){return'linxiwu';}}};
+    GZD.ThemeManager={init:function(){var t=GZD.Storage.getTheme();var h=document.documentElement;h.setAttribute('data-theme',t);var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=t==='light'?'🌙':'☀️';label.textContent=t==='light'?'夜间':'日间';}},toggle:function(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';var next=cur==='light'?'dark':'light';var h=document.documentElement;h.setAttribute('data-theme',next);GZD.Storage.set('theme',{value:next});var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=next==='light'?'🌙':'☀️';label.textContent=next==='light'?'夜间':'日间';}}};
+    GZD.ProfileManager={init:function(){var id=GZD.Storage.getProfile();document.body.setAttribute('data-profile',id);},switch:function(id){document.body.setAttribute('data-profile',id);localStorage.setItem('activeProfile',id);window.dispatchEvent(new CustomEvent('profilechange',{detail:{profile:id}}));}};
+    GZD.Sidebar={open:false,toggle:function(){this.open=!this.open;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close:function(){if(this.open){this.open=false;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}}};
+    GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();
+  }
+
+  // 侧边栏事件
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}
+    if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}
+    if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}
+    var sb=t.closest('#profileSwitchBtn');
+    if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';var next=c==='linxiwu'?'luojin':'linxiwu';GZD.ProfileManager.switch(next);location.href=next==='luojin'?'./论坛-罗烬.html':'./论坛-林栖梧.html';return;}
+  });
+  document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
+
+  // 角色名
+  var profile=GZD.Storage.getProfile();
+  var nameEl=document.getElementById('currentProfileName');
+  if(nameEl) nameEl.textContent=profile==='luojin'?'罗烬':'林栖梧';
+  var switchBtn=document.getElementById('profileSwitchBtn');
+  if(switchBtn) switchBtn.textContent='切换到 '+(profile==='linxiwu'?'罗烬':'林栖梧');
+})();
+
+// ===== 落花特效 =====
+(function(){
+  var PETAL_CHARS=['❀','◈','✽'];
+  var container=document.getElementById('petal-container');
+  if(container){
+    for(var i=0;i<12;i++){
+      var el=document.createElement('div');
+      el.className='petal-char';
+      el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];
+      el.style.left=Math.random()*100+'%';
+      el.style.fontSize=(14+Math.random()*12)+'px';
+      el.style.animationDuration=(10+Math.random()*10)+'s';
+      el.style.animationDelay=(Math.random()*12)+'s';
+      container.appendChild(el);
+    }
+  }
+})();
+
+// ===== 筛选 =====
+var filterTags=document.querySelectorAll('.filter-tag');
+var postCards=document.querySelectorAll('.post-card');
+var emptyState=document.getElementById('emptyState');
+var currentFilter='all';
+
+filterTags.forEach(function(btn){
+  btn.addEventListener('click',function(){
+    filterTags.forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    currentFilter=this.dataset.filter;
+    applyFilter();
+  });
+});
+
+function applyFilter(){
+  var visible=0;
+  postCards.forEach(function(card){
+    var cat=card.dataset.category||'';
+    var show=currentFilter==='all'||cat===currentFilter;
+    card.classList.toggle('hidden',!show);
+    if(show)visible++;
+  });
+  emptyState.style.display=visible===0?'block':'none';
+  var sub=document.getElementById('postCountSub');
+  if(sub){sub.textContent='◈ 炉火正旺 · 共 '+visible+' 个话题';}
+}
+
+applyFilter();
+
+// ===== 发帖按钮(预留,目前只切换显示/隐藏) =====
+var createBtn=document.getElementById('postCreateBtn');
+var postForm=document.getElementById('postForm');
+if(createBtn){
+  createBtn.addEventListener('click',function(){
+    if(postForm){
+      postForm.classList.toggle('show');
+    }
+  });
+}
+var postCancel=document.getElementById('postCancel');
+if(postCancel){
+  postCancel.addEventListener('click',function(){
+    if(postForm) postForm.classList.remove('show');
+  });
+}
+var postSubmit=document.getElementById('postSubmit');
+if(postSubmit){
+  postSubmit.addEventListener('click',function(){
+    // 预留:以后用 JS 动态添加帖子
+    alert('发帖功能即将上线!');
+    if(postForm) postForm.classList.remove('show');
+  });
+}
+</script>
+
+</body>
+</html>
