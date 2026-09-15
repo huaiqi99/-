@@ -15,7 +15,7 @@
   // ===== 配置区 =====
   const WORKER_URL = 'https://difu-ai.2629885225.workers.dev';
   const MAX_HISTORY = 10;
-  const MAX_ROUNDS = 15;  // ★ 每章15轮(15条玩家行动+15条AI回应=30条),测试用,后面改30
+  const MAX_ROUNDS = 30;  // ★ 每章30轮(30条玩家行动+30条AI回应=60条),测试用,后面改30
   const STORAGE_KEY = 'gzd_ai_story';
   const CONFIG_KEY = 'gzd_ai_config';
 
