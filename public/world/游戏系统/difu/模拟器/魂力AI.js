@@ -14,6 +14,8 @@
 var STATS_WORKER_URL='https://difu-stats.2629885225.workers.dev';
 var CONFIG_KEY='gzd_ai_config';
 var STATS_STORAGE_KEY='gzd_ai_stats';  // 存战力数据
+var CHAT_STORAGE_KEY='gzd_ai_stats_chat';  // 存殿务司聊天记录
+var MAX_CHAT_HISTORY=15;  // 聊天上限
 
 var PROVIDER_CONFIG={
   deepseek:{baseUrl:'https://api.deepseek.com',defaultModel:'deepseek-chat',format:'openai'},
@@ -37,6 +39,25 @@ function saveStats(profile, data){
     var all=JSON.parse(localStorage.getItem(STATS_STORAGE_KEY)||'{}');
     all[profile]=data;
     localStorage.setItem(STATS_STORAGE_KEY,JSON.stringify(all));
+  }catch(e){}
+}
+
+// ===== 聊天历史存档 =====
+function loadChatHistory(profile){
+  try{
+    var all=JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY)||'{}');
+    return all[profile]||[];
+  }catch(e){return[];}
+}
+function saveChatHistory(profile, history){
+  try{
+    // 超过上限,删最旧的
+    if(history.length>MAX_CHAT_HISTORY){
+      history=history.slice(history.length-MAX_CHAT_HISTORY);
+    }
+    var all=JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY)||'{}');
+    all[profile]=history;
+    localStorage.setItem(CHAT_STORAGE_KEY,JSON.stringify(all));
   }catch(e){}
 }
 
@@ -305,10 +326,11 @@ function injectStyles(){
   document.head.appendChild(s);
 }
 
-// ===== 渲染殿务司区块 =====
-var chatHistory=[];  // 聊天记录(内存,不存档)
+// ===== 全局变量 =====
+var chatHistory=[];
 var isSending=false;
 
+// ===== 渲染殿务司区块 =====
 function renderDianwusiSection(){
   injectStyles();
   var profile=getProfile();
@@ -316,15 +338,13 @@ function renderDianwusiSection(){
   if(!activeBlock) activeBlock=document.getElementById('content-'+profile);
   if(!activeBlock) return;
 
-  // 找或创建殿务司区块(放在战力评估卡片之后)
+  // 找或创建殿务司区块
   var section=activeBlock.querySelector('.dianwusi-section');
   if(!section){
     section=document.createElement('div');
     section.className='dianwusi-section card';
     section.setAttribute('data-corner', profile==='luojin'?'◈':'❀');
-
-    // 找战力评估卡片(第二个 card)
-    var cards=activeBlock.querySelectorAll('.card');
+    var cards=activeBlock.querySelectorAll('.card:not(.dianwusi-section)');
     var insertAfter=cards.length>=2?cards[1]:(cards[0]||null);
     if(insertAfter && insertAfter.nextSibling){
       activeBlock.insertBefore(section, insertAfter.nextSibling);
@@ -357,15 +377,17 @@ function renderDianwusiSection(){
       '</div>'+
     '</div>';
 
-  // 添加初始消息
+  // 加载聊天历史(从 localStorage)
+  chatHistory=loadChatHistory(profile);
   if(chatHistory.length===0){
     chatHistory.push({side:'left', text:'欢迎来到殿务司。我是接待弟子,负责战力档案录入。如需更新战力数据,请粘贴试炼司出具的测试结果。'});
+    saveChatHistory(profile, chatHistory);
   }
   renderChatMessages();
 
-  // 绑定事件
-  var input=document.getElementById('dianwusiInput');
-  var btn=document.getElementById('dianwusiSendBtn');
+  // 绑定事件(在 section 范围内查找)
+  var input=section.querySelector('#dianwusiInput');
+  var btn=section.querySelector('#dianwusiSendBtn');
   if(input && !input.dataset.bound){
     input.dataset.bound='1';
     input.addEventListener('keydown', function(e){
@@ -380,10 +402,19 @@ function renderDianwusiSection(){
     btn.dataset.bound='1';
     btn.addEventListener('click', function(){sendDianwusiMessage(profile);});
   }
+
+  // 加载存档数据,重画雷达图
+  var saved=loadStats(profile);
+  if(saved){
+    // 延迟执行,等魂力.js 初始化完成
+    setTimeout(function(){updateDisplay(profile, saved);}, 100);
+  }
 }
 
 function renderChatMessages(){
-  var container=document.getElementById('dianwusiMessages');
+  var activeBlock=document.querySelector('.content-block.active');
+  if(!activeBlock) return;
+  var container=activeBlock.querySelector('#dianwusiMessages');
   if(!container) return;
   container.innerHTML='';
   chatHistory.forEach(function(msg){
@@ -398,14 +429,17 @@ function renderChatMessages(){
 // ===== 发送消息 =====
 async function sendDianwusiMessage(profile){
   if(isSending) return;
-  var input=document.getElementById('dianwusiInput');
-  var btn=document.getElementById('dianwusiSendBtn');
+  var activeBlock=document.querySelector('.content-block.active');
+  if(!activeBlock) return;
+  var input=activeBlock.querySelector('#dianwusiInput');
+  var btn=activeBlock.querySelector('#dianwusiSendBtn');
   if(!input) return;
   var text=input.value.trim();
   if(!text) return;
 
   // 显示玩家消息
   chatHistory.push({side:'right', text:text});
+  saveChatHistory(profile, chatHistory);
   input.value='';
   input.style.height='auto';
   renderChatMessages();
@@ -420,7 +454,6 @@ async function sendDianwusiMessage(profile){
     // 更新显示(雷达图+状态条)
     setTimeout(function(){
       updateDisplay(profile, parsed);
-      // 存档
       saveStats(profile, parsed);
       // 移除"正在录入"
       chatHistory.pop();
@@ -432,18 +465,19 @@ async function sendDianwusiMessage(profile){
       if(parsed.评级) summary+='评级:'+parsed.评级;
       if(parsed.时期) summary+='\n时期:'+parsed.时期;
       chatHistory.push({side:'left', text:summary});
+      saveChatHistory(profile, chatHistory);
       renderChatMessages();
     }, 800);
 
-    // 同时发给殿务司 AI 让它回复(可选,增强体验)
+    // 同时发给殿务司 AI
     try{
       isSending=true;
       if(btn){btn.disabled=true;btn.textContent='...';}
       var aiReply=await callDianwusiAI('我提交了战力测试数据:'+text, profile);
       chatHistory.push({side:'left', text:aiReply});
+      saveChatHistory(profile, chatHistory);
       renderChatMessages();
     }catch(e){
-      // AI 失败不影响数据录入
       console.warn('殿务司 AI 回复失败:',e.message);
     }finally{
       isSending=false;
@@ -454,7 +488,6 @@ async function sendDianwusiMessage(profile){
     isSending=true;
     if(btn){btn.disabled=true;btn.textContent='...';}
 
-    // 显示 loading
     chatHistory.push({side:'left', text:'⏳'});
     var loadingIdx=chatHistory.length-1;
     var loadingTimer=setInterval(function(){
@@ -467,10 +500,12 @@ async function sendDianwusiMessage(profile){
       var reply=await callDianwusiAI(text, profile);
       clearInterval(loadingTimer);
       chatHistory[loadingIdx]={side:'left', text:reply};
+      saveChatHistory(profile, chatHistory);
       renderChatMessages();
     }catch(e){
       clearInterval(loadingTimer);
       chatHistory[loadingIdx]={side:'left', text:'【出错】'+e.message};
+      saveChatHistory(profile, chatHistory);
       renderChatMessages();
     }finally{
       isSending=false;
@@ -481,16 +516,8 @@ async function sendDianwusiMessage(profile){
 
 // ===== 启动 =====
 function boot(){
-  var profile=getProfile();
   renderDianwusiSection();
-
-  // 如果有存档,加载
-  var saved=loadStats(profile);
-  if(saved){
-    updateDisplay(profile, saved);
-  }
-
-  console.log('◈ 魂力AI.js 已加载,角色:',profile);
+  console.log('◈ 魂力AI.js 已加载');
 }
 
 if(document.readyState==='loading'){
@@ -501,13 +528,9 @@ if(document.readyState==='loading'){
 
 // 角色切换时刷新
 window.addEventListener('profilechange', function(){
-  chatHistory=[];  // 清空聊天记录
   renderDianwusiSection();
-  var profile=getProfile();
-  var saved=loadStats(profile);
-  if(saved) updateDisplay(profile, saved);
 });
-// 从设置页返回时刷新
+// 从其他页面回来时刷新(pageshow)
 window.addEventListener('pageshow', function(){
   renderDianwusiSection();
 });
