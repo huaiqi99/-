@@ -531,6 +531,7 @@ linxiwu:[
 
 // ===== AI 聊天存档 =====
 var AI_STORAGE_KEY='gzd_chat_history';
+var MAX_AI_CHAT=150;  // AI 聊天历史上限,超过自动删最旧的
 var PRESET_DELETED_KEY='gzd_preset_deleted';
 
 function loadAIChat(profile, npcId){
@@ -543,6 +544,10 @@ function saveAIChat(profile, npcId, arr){
   try{
     var all=JSON.parse(localStorage.getItem(AI_STORAGE_KEY)||'{}');
     if(!all[profile])all[profile]={};
+    // 超过上限,删最旧的
+    if(arr.length>MAX_AI_CHAT){
+      arr=arr.slice(arr.length-MAX_AI_CHAT);
+    }
     all[profile][npcId]=arr;
     localStorage.setItem(AI_STORAGE_KEY,JSON.stringify(all));
   }catch(e){console.warn('AI 存档失败:',e);}
@@ -750,9 +755,50 @@ function showDeleteConfirm(unit){
   if(!unit) return;
   var presetIdx=unit.dataset.presetIdx;
   if(presetIdx===undefined) return;
-  if(!confirm('确定删除这条消息吗?\n\n删除后玩家气泡会自动顺延,不会留空。可在设置页恢复。')) return;
-  addPresetDeleted(currentProfile, currentContact, parseInt(presetIdx,10));
-  renderChat(currentProfile, currentContact);
+
+  // 弹出选择菜单(底部弹出)
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:20px;opacity:0;transition:opacity .2s;';
+
+  var menu=document.createElement('div');
+  menu.style.cssText='background:var(--bg-card);border:1px solid var(--border-card);border-radius:14px;padding:16px;max-width:300px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.3);transform:translateY(10px);transition:transform .2s;';
+
+  menu.innerHTML=
+    '<div style="font-size:.8rem;color:var(--text-muted);margin-bottom:12px;text-align:center;letter-spacing:1px;font-family:var(--font-mono)">选择操作</div>'+
+    '<button id="delOne" style="display:block;width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--border-card);border-radius:8px;background:transparent;color:var(--text-secondary);cursor:pointer;font-family:var(--font-serif);font-size:.85rem">删除此条消息</button>'+
+    '<button id="delAll" style="display:block;width:100%;padding:10px;margin-bottom:8px;border:1px solid #a04040;border-radius:8px;background:transparent;color:#a04040;cursor:pointer;font-family:var(--font-serif);font-size:.85rem">删除全部写死对话</button>'+
+    '<button id="delCancel" style="display:block;width:100%;padding:10px;border:1px solid var(--border-card);border-radius:8px;background:transparent;color:var(--text-muted);cursor:pointer;font-family:var(--font-serif);font-size:.85rem">取消</button>';
+
+  overlay.appendChild(menu);
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function(){overlay.style.opacity='1';menu.style.transform='translateY(0)';});
+
+  menu.querySelector('#delOne').addEventListener('click',function(){
+    overlay.remove();
+    addPresetDeleted(currentProfile, currentContact, parseInt(presetIdx,10));
+    renderChat(currentProfile, currentContact);
+  });
+
+  menu.querySelector('#delAll').addEventListener('click',function(){
+    overlay.remove();
+    deleteAllPreset(currentProfile, currentContact);
+  });
+
+  menu.querySelector('#delCancel').addEventListener('click',function(){overlay.remove();});
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove();});
+}
+
+// 删除全部写死对话
+function deleteAllPreset(profile, contactId){
+  var all=loadPresetDeleted();
+  if(!all.chat) all.chat={};
+  var msgs=getMessages(profile, contactId);
+  var allIdx=[];
+  msgs.forEach(function(m, idx){ allIdx.push(idx); });
+  if(allIdx.length===0) return;
+  all.chat[profile+'_'+contactId]=allIdx;
+  savePresetDeleted(all);
+  renderChat(profile, contactId);
 }
 
 // ===== 修改 AI 回应(纯本地编辑) =====
