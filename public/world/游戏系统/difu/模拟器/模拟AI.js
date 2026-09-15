@@ -323,6 +323,8 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 林栖梧:符修院弟子,身负浮生树血脉,双亲为林淮与栾方棋。性情内敛重情,擅符箓与感知。当前层级:统修期,评级甲等下品。
 罗烬:讲武堂弟子,承刀法一脉,性情刚直果决,与林栖梧有同门之谊。当前层级:统修期。
 
+【主要地点】
+归终殿(中枢)、符修院、讲武堂、忘川东段、音律坊、归终正殿(试炼司/殿务司所在)。
 
 【主要NPC角色档案】
 
@@ -934,6 +936,9 @@ ${getQuestReceiptSection(profile)}`;
     bindInput();
     console.log('◈ 模拟AI.js v4 已加载,角色:', profile, '当前章节:', getCurrentChapter(profile), hasUserKey()?'[直连]':'[兜底]');
   }
+
+  // 暴露到全局(让章节目录面板能调用)
+  window.switchChapter = switchChapter;
 
   window.addEventListener('pageshow', renderConfigBanner);
   window.addEventListener('storage', function(e){
