@@ -190,6 +190,7 @@
   async function callChapterTransition(profile, chapterNum, chapterTitle){
     const cfg = loadAIConfig();
     const prevSummaries = getPrevSummaries(profile);
+    const chapterContent = loadStory(profile);  // ★ 当前章节的剧情内容
 
     if(cfg.apiKey && cfg.provider){
       // 直连模式
@@ -198,7 +199,7 @@
       const model = cfg.model || pConfig.defaultModel;
       if(!baseUrl) throw new Error('接口地址为空');
 
-      const prompt = buildTransitionPrompt(profile, chapterNum, chapterTitle, prevSummaries);
+      const prompt = buildTransitionPrompt(profile, chapterNum, chapterTitle, prevSummaries, chapterContent);
       const messages = [
         { role:'system', content: prompt },
         { role:'user', content:'请生成章节转换内容。' }
@@ -226,7 +227,7 @@
       const resp = await fetch(WORKER_URL, {
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ action:'chapterTransition', profile, chapterNum, chapterTitle, prevSummaries })
+        body: JSON.stringify({ action:'chapterTransition', profile, chapterNum, chapterTitle, prevSummaries, chapterContent })
       });
       const data = await resp.json();
       if(data.error) throw new Error(data.error);
@@ -235,7 +236,23 @@
     }
   }
 
-  function buildTransitionPrompt(profile, chapterNum, chapterTitle, prevSummaries){
+  function buildTransitionPrompt(profile, chapterNum, chapterTitle, prevSummaries, chapterContent){
+    // 提取当前章节剧情文本(最多5000字)
+    let contentSummary = '';
+    if(chapterContent && chapterContent.length > 0){
+      let totalText = '';
+      chapterContent.forEach(function(msg){
+        if(msg.text){
+          totalText += (msg.type==='user'?'玩家:':'AI:') + msg.text + '\n';
+        }
+      });
+      if(totalText.length > 5000){
+        contentSummary = totalText.substring(totalText.length - 5000);
+      } else {
+        contentSummary = totalText;
+      }
+    }
+
     return `你是「引渡人模拟器·归终殿」的剧情生成 AI。
 
 【当前玩家角色】
@@ -247,17 +264,24 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,统修期。' : '林栖梧:符�
 【你的任务】
 第${chapterNum}章「${chapterTitle}」的剧情已经完结。请:
 
-1. 用80-100字总结第${chapterNum}章的关键剧情(重要事件、人物互动、成长变化)
-2. 生成第${chapterNum + 1}章的标题(4-6字,古风)
-3. 生成第${chapterNum + 1}章的开场剧情(100-200字,第二人称"你"叙述,自然衔接上一章结尾)
+1. 用80-100字总结第${chapterNum}章的关键剧情。必须基于下面的【本章实际剧情内容】来总结,不要编造没有发生过的事。
+2. 生成第${chapterNum + 1}章的标题(4-6字,古风)。标题要跟上一章的实际内容有衔接关系。
+3. 生成第${chapterNum + 1}章的开场剧情(100-200字,第二人称"你"叙述)。必须自然衔接上一章的最后一幕,不要引入上一章没有出现过的人物和地点。
 
 ${prevSummaries ? '【之前章节摘要】\n' + prevSummaries + '\n' : ''}
+
+${contentSummary ? '【本章实际剧情内容(请严格基于此总结,不要编造)】\n' + contentSummary : ''}
+
+【重要约束】
+1. 总结必须基于实际剧情内容,不要添加没有发生的事
+2. 新章节开场必须衔接上一章结尾,不要引入新角色
+3. 如果上一章玩家在跟某个NPC聊天,开场应该是那之后的事,不要突然跳到别的场景
 
 【输出格式】
 严格输出以下JSON,不要输出任何其他文字:
 
 {
-  "summary": "第${chapterNum}章总结(80-100字)",
+  "summary": "第${chapterNum}章总结(80-100字,基于实际剧情)",
   "nextTitle": "第${chapterNum + 1}章标题",
   "nextOpening": "第${chapterNum + 1}章开场剧情(100-200字)"
 }`;
@@ -299,8 +323,6 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 林栖梧:符修院弟子,身负浮生树血脉,双亲为林淮与栾方棋。性情内敛重情,擅符箓与感知。当前层级:统修期,评级甲等下品。
 罗烬:讲武堂弟子,承刀法一脉,性情刚直果决,与林栖梧有同门之谊。当前层级:统修期。
 
-【主要地点】
-归终殿(中枢)、符修院、讲武堂、忘川东段、音律坊、归终正殿(试炼司/殿务司所在)。
 
 【主要NPC角色档案】
 
@@ -381,7 +403,7 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 如果玩家输入的内容超出了世界观或不符合角色设定,以角色自身的方式委婉拒绝或困惑回应,而非强行解释。
 
 【重要约束】
-1. 永远用第二人称"你"来叙述玩家角色的行动。
+1. 永远用第二人称"你"来叙述玩家角色的行动
 2. 不要替玩家做重大决定(比如不要写"你答应了他"),只描述环境和他人反应
 3. 如果玩家输入的行动不合理(比如"瞬间成神"),要用地府规则委婉拒绝或转化
 4. 自然延续之前的剧情,引用前文出现过的细节、NPC、地点
