@@ -268,6 +268,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 // ===== 落花 =====
 (function(){
   var PETAL_CHARS=['❀','◈','✽'];
+  var PETAL_COLORS=['#D49A9A','#c4b4a0','#8a8078','#4E5A64','#b8aea4'];
   var container=document.getElementById('petal-container');
   if(container){
     for(var i=0;i<12;i++){
@@ -276,6 +277,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];
       el.style.left=Math.random()*100+'%';
       el.style.fontSize=(14+Math.random()*12)+'px';
+      el.style.color=PETAL_COLORS[Math.floor(Math.random()*PETAL_COLORS.length)];
       el.style.animationDuration=(10+Math.random()*10)+'s';
       el.style.animationDelay=(Math.random()*12)+'s';
       container.appendChild(el);
