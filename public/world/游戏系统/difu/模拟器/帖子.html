@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>归终殿 · 帖子</title>
+<style>
+:root{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-hover:#f2eee9;--bg-accent-soft:rgba(138,58,42,0.04);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;--sidebar-width:240px}
+[data-theme="dark"]{--bg-body:#1a1614;--bg-card:#24201c;--bg-hover:#2d2824;--bg-accent-soft:rgba(196,180,160,0.06);--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0}
+body[data-profile="linxiwu"]{--profile-accent:var(--profile-lin)}
+body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 40px 16px;max-width:900px;margin:0 auto}
+
+.float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;gap:8px;align-items:flex-end}
+.float-btn{background:var(--bg-card);border:1px solid var(--border-card);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
+.float-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* 侧边栏 */
+.sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none;transform-style:flat;-webkit-transform-style:flat}
+.sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
+.sidebar-tab .sym{writing-mode:horizontal-tb;display:inline-block;margin-bottom:4px;transform-style:flat;-webkit-transform-style:flat}
+.sidebar-panel{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-width);background:var(--bg-card);border-right:1px solid var(--border-card);box-shadow:4px 0 24px rgba(0,0,0,.25);transform:translateX(-100%);transition:transform .35s cubic-bezier(.22,.61,.36,1);z-index:95;padding:24px 16px 20px 16px;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-panel.open{transform:translateX(0)}
+.sidebar-panel .close-btn{align-self:flex-end;background:none;border:none;font-size:1.2rem;color:var(--text-muted);cursor:pointer;padding:0 4px;margin-bottom:12px;transition:color var(--transition)}
+.sidebar-panel .close-btn:hover{color:var(--profile-accent)}
+.sidebar-panel .panel-title{font-size:.7rem;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono)}
+.sidebar-panel .nav-item{display:block;padding:6px 12px;border-radius:6px;border:1px solid transparent;font-size:.85rem;font-family:var(--font-serif);color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-align:left;background:none;width:100%;margin-bottom:2px;text-decoration:none;transform-style:flat;-webkit-transform-style:flat}
+.sidebar-panel .nav-item:hover{background:var(--bg-hover);border-color:var(--border-light)}
+.sidebar-panel .nav-item.active{background:var(--bg-accent-soft);border-color:var(--profile-accent);color:var(--profile-accent);font-weight:600}
+.sidebar-panel .nav-item .sym{display:inline-block;width:22px}
+.sidebar-panel .panel-footer{margin-top:auto;font-size:.6rem;color:var(--text-muted);text-align:center;padding-top:12px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px}
+.sidebar-panel .profile-switch-btn{margin-top:8px;padding:8px 12px;border:1px solid var(--border-light);border-radius:20px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s;width:100%;text-align:center}
+.sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-accent-soft)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.sidebar-overlay.show{opacity:1;pointer-events:auto}body.no-scroll{overflow:hidden}
+
+.top-header{max-width:900px;margin:0 auto;padding:20px 4px 12px 4px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.top-header .page-title{font-size:1.2rem;font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.top-header .page-title .sym{color:var(--profile-accent);transition:color var(--transition)}
+.top-header .profile-name{font-size:.85rem;color:var(--text-secondary);font-family:var(--font-mono);letter-spacing:.5px}
+.top-header .profile-name span{color:var(--profile-accent);font-weight:600}
+
+#app{max-width:900px;margin:0 auto;width:100%;padding:20px 4px 40px 4px;flex:1}
+
+/* 直角卡片 */
+.card{position:relative;background:var(--bg-card);padding:18px 18px 16px 18px;margin-bottom:16px;border:1px solid var(--border-card);box-shadow:inset 0 0 0 1px var(--profile-accent),0 2px 10px rgba(0,0,0,.06);transition:border-color var(--transition),box-shadow var(--transition);line-height:1.6}
+.card::after{content:attr(data-corner);position:absolute;top:-7px;left:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:.75;z-index:2;transition:all .3s;transform-style:flat;-webkit-transform-style:flat}
+.card .corner-deco{position:absolute;bottom:-7px;right:14px;font-size:1.2rem;color:var(--profile-accent);background:var(--bg-body);padding:0 3px;opacity:.75;z-index:2;transition:all .3s;pointer-events:none;transform-style:flat;-webkit-transform-style:flat}
+.card:hover{border-color:var(--profile-accent);box-shadow:inset 0 0 0 1px var(--profile-accent),0 6px 20px rgba(0,0,0,.12)}
+.card-title{font-size:.9rem;font-weight:600;font-family:var(--font-serif);letter-spacing:.5px;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;position:relative;padding-bottom:6px;z-index:1}
+.card-title::after{content:'';position:absolute;bottom:0;left:0;width:3.2rem;height:2px;background:var(--profile-accent);opacity:.5;border-radius:1px}
+
+/* 帖子标题 */
+.post-title{font-size:1.15rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;position:relative;z-index:1;line-height:1.5}
+.post-meta{font-size:.78rem;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:14px;position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.post-meta .author{color:var(--text-secondary);font-weight:500}
+.post-meta .tag{font-size:.6rem;padding:1px 8px;border-radius:8px;border:1px solid var(--border-card);color:var(--text-muted)}
+.post-content{font-size:.92rem;color:var(--text-primary);line-height:1.9;white-space:pre-wrap;position:relative;z-index:1;padding:12px 0;border-top:1px solid var(--border-light);margin-top:4px}
+
+/* 回复楼层 */
+.reply-list{display:flex;flex-direction:column;gap:0;position:relative;z-index:1}
+.reply-item{padding:12px 0;border-bottom:1px solid var(--border-light)}
+.reply-item:last-child{border-bottom:none}
+.reply-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.reply-floor{font-size:.65rem;color:var(--text-muted);font-family:var(--font-mono);background:var(--bg-accent-soft);padding:1px 6px;border-radius:6px;flex-shrink:0}
+.reply-author{font-size:.82rem;font-weight:600;color:var(--profile-accent);font-family:var(--font-serif)}
+.reply-author.ai{color:var(--text-secondary)}
+.reply-text{font-size:.88rem;color:var(--text-primary);line-height:1.8;white-space:pre-wrap;padding-left:2px}
+.reply-text.loading{color:var(--text-muted);font-style:italic}
+
+/* 按钮区 */
+.reply-actions{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light);position:relative;z-index:1;flex-wrap:wrap}
+.reply-btn{padding:7px 16px;border:1.5px solid var(--border-card);border-radius:18px;background:transparent;color:var(--text-secondary);font-family:var(--font-serif);font-size:.8rem;cursor:pointer;transition:all .2s}
+.reply-btn:hover:not(:disabled){border-color:var(--profile-accent);color:var(--profile-accent)}
+.reply-btn:disabled{opacity:.5;cursor:wait}
+.reply-btn.npc{border-color:var(--accent);color:var(--accent)}
+.reply-btn.npc:hover:not(:disabled){background:var(--accent);color:var(--bg-card)}
+
+/* 自行回复输入框 */
+.reply-input-area{display:none;margin-top:10px;position:relative;z-index:1}
+.reply-input-area.show{display:block}
+.reply-input-area textarea{width:100%;min-height:80px;padding:10px 12px;border:1px solid var(--border-card);border-radius:8px;font-family:var(--font-serif);font-size:.88rem;background:var(--bg-body);color:var(--text-primary);resize:vertical;outline:none;line-height:1.7}
+.reply-input-area textarea:focus{border-color:var(--profile-accent)}
+.reply-input-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.reply-input-btns button{padding:6px 14px;border:1.5px solid var(--border-card);border-radius:14px;background:transparent;color:var(--text-secondary);font-family:var(--font-mono);font-size:.72rem;cursor:pointer}
+.reply-input-btns button.submit{border-color:var(--accent);color:var(--accent)}
+.reply-input-btns button.submit:hover{background:var(--accent);color:var(--bg-card)}
+
+/* loading dots */
+.loading-dots{display:inline-flex;gap:3px;margin-left:4px}
+.loading-dots span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:ldot 1.2s infinite ease-in-out}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes ldot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+.empty-state{text-align:center;padding:40px 0;color:var(--text-muted);font-size:.9rem;position:relative;z-index:1}
+.empty-state .sym{font-size:2rem;display:block;margin-bottom:8px}
+
+@media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.card{padding:14px 14px 12px 14px}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.sidebar-panel .nav-item{padding:4px 10px;font-size:.8rem}.sidebar-panel .profile-switch-btn{padding:6px 10px;font-size:.8rem}.post-title{font-size:1.05rem}.reply-text{font-size:.85rem}}
+</style>
+</head>
+<body data-profile="linxiwu">
+
+<div class="float-group">
+  <a class="float-btn" href="./论坛.html"><span>←</span> 返回</a>
+  <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
+</div>
+
+<div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar-panel" id="sidebarPanel">
+  <button class="close-btn">✕</button>
+  <div class="panel-title">◈ 归终殿 · 导航</div>
+  <a class="nav-item" href="./命薄.html"><span class="sym">◈</span> 命簿纪事</a>
+  <a class="nav-item" href="./档案.html"><span class="sym">✦</span> 引渡人档案</a>
+  <a class="nav-item" href="./魂力.html"><span class="sym">❖</span> 魂力与状态</a>
+  <a class="nav-item" href="./修习.html"><span class="sym">✿</span> 院阁修习表</a>
+  <a class="nav-item" href="./同僚.html"><span class="sym">✧</span> 同僚与十席</a>
+  <a class="nav-item" href="./外勤.html"><span class="sym">◆</span> 差事与外勤</a>
+  <a class="nav-item" href="./血脉.html"><span class="sym">❤&#xFE0E;</span> 血脉羁绊</a>
+  <a class="nav-item" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
+  <a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
+  <a class="nav-item active" href="./论坛.html"><span class="sym">▣</span> 讨论区</a>
+  <a class="nav-item" href="./模拟.html"><span class="sym">◈</span> 命簿模拟</a>
+  <a class="nav-item" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+  <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
+  <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
+</div>
+
+<div class="top-header">
+  <div class="page-title"><span class="sym">▣</span> 帖子</div>
+  <div class="profile-name">当前:<span id="currentProfileName">林栖梧</span></div>
+</div>
+
+<div id="app">
+  <div id="postContainer">
+    <div class="empty-state">
+      <span class="sym">▣</span>
+      帖子加载中...
+    </div>
+  </div>
+</div>
+
+<script src="./论坛AI.js"></script>
+<script>
+// ===== GZD 系统 =====
+(function(){
+  if(!window.GZD){
+    window.GZD={};
+    GZD.Storage={get:function(k,d){try{var r=localStorage.getItem(k);return r?JSON.parse(r):d;}catch(e){return d;}},set:function(k,v){localStorage.setItem(k,JSON.stringify(v));},getTheme:function(){var r=this.get('theme',null);return r&&r.value?r.value:'light';},getProfile:function(){try{return localStorage.getItem('activeProfile')||'linxiwu';}catch(e){return'linxiwu';}}};
+    GZD.ThemeManager={init:function(){var t=GZD.Storage.getTheme();var h=document.documentElement;h.setAttribute('data-theme',t);var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=t==='light'?'🌙':'☀️';label.textContent=t==='light'?'夜间':'日间';}},toggle:function(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';var next=cur==='light'?'dark':'light';var h=document.documentElement;h.setAttribute('data-theme',next);GZD.Storage.set('theme',{value:next});var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(icon&&label){icon.textContent=next==='light'?'🌙':'☀️';label.textContent=next==='light'?'夜间':'日间';}}};
+    GZD.ProfileManager={init:function(){var id=GZD.Storage.getProfile();document.body.setAttribute('data-profile',id);},switch:function(id){document.body.setAttribute('data-profile',id);localStorage.setItem('activeProfile',id);}};
+    GZD.Sidebar={open:false,toggle:function(){this.open=!this.open;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close:function(){if(this.open){this.open=false;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}}};
+    GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();
+  }
+})();
+
+// ===== 侧边栏/主题/角色 =====
+(function(){
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.closest('.sidebar-tab')){e.preventDefault();GZD.Sidebar.toggle();return;}
+    if(t.id==='sidebarOverlay'){GZD.Sidebar.close();return;}
+    if(t.closest('.sidebar-panel .close-btn')){GZD.Sidebar.close();return;}
+    var sb=t.closest('#profileSwitchBtn');
+    if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';GZD.ProfileManager.switch(c==='linxiwu'?'luojin':'linxiwu');location.href=c==='linxiwu'?'./论坛-罗烬.html':'./论坛-林栖梧.html';return;}
+  });
+  var tb=document.getElementById('themeBtn');
+  if(tb)tb.addEventListener('click',function(){GZD.ThemeManager.toggle();});
+  var profile=GZD.Storage.getProfile();
+  var nameEl=document.getElementById('currentProfileName');
+  if(nameEl)nameEl.textContent=profile==='luojin'?'罗烬':'林栖梧';
+  var switchBtn=document.getElementById('profileSwitchBtn');
+  if(switchBtn)switchBtn.textContent='切换到 '+(profile==='linxiwu'?'罗烬':'林栖梧');
+})();
+
+// ===== 帖子详情页 =====
+(function(){
+  var profile=GZD.Storage.getProfile();
+  var params=new URLSearchParams(location.search);
+  var postId=params.get('id');
+
+  // 惊鸿榜特殊处理
+  if(postId==='jinghongbang'){
+    location.href='./惊鸿榜.html';
+    return;
+  }
+
+  var post=ForumAI.getPost(profile, postId);
+  var container=document.getElementById('postContainer');
+  var esc=ForumAI.esc;
+
+  function render(){
+    if(!post){
+      container.innerHTML='<div class="empty-state"><span class="sym">▣</span>帖子不存在或已删除<br><a href="./论坛.html" style="color:var(--accent)">返回讨论区</a></div>';
+      return;
+    }
+
+    var sym=profile==='luojin'?'◈':'❀';
+    var html='';
+
+    // 帖子主体卡片
+    html+='<div class="card" data-corner="'+sym+'">';
+    html+='<span class="corner-deco">'+sym+'</span>';
+    html+='<div class="post-title">'+esc(post.title)+'</div>';
+    html+='<div class="post-meta">';
+    html+='<span class="author">'+esc(post.author)+'</span>';
+    html+='<span>·</span>';
+    html+='<span>'+esc(post.date)+'</span>';
+    html+='<span class="tag">'+esc(post.category)+'</span>';
+    html+='</div>';
+    html+='<div class="post-content">'+esc(post.content)+'</div>';
+    html+='</div>';
+
+    // 回复区卡片
+    html+='<div class="card" data-corner="'+sym+'">';
+    html+='<span class="corner-deco">'+sym+'</span>';
+    html+='<div class="card-title">回复 (共 '+post.replies.length+' 楼'+(post.replies.length>=ForumAI.MAX_REPLIES?' · 已满':'')+')</div>';
+    html+='<div class="reply-list" id="replyList">';
+
+    if(post.replies.length===0){
+      html+='<div style="padding:12px 0;color:var(--text-muted);font-size:.85rem;text-align:center">暂无回复,点击下方按钮开始互动</div>';
+    }
+
+    post.replies.forEach(function(r, idx){
+      html+='<div class="reply-item">';
+      html+='<div class="reply-head">';
+      html+='<span class="reply-floor">'+(idx+2)+'楼</span>';
+      html+='<span class="reply-author'+(r.isAI?' ai':'')+'">'+esc(r.author)+(r.isAI?'':'(你)')+'</span>';
+      html+='</div>';
+      html+='<div class="reply-text">'+esc(r.text)+'</div>';
+      html+='</div>';
+    });
+
+    html+='</div>'; // reply-list end
+
+    // 按钮区
+    if(post.replies.length<ForumAI.MAX_REPLIES){
+      html+='<div class="reply-actions">';
+      html+='<button class="reply-btn npc" id="npcReplyBtn">🤖 NPC回复</button>';
+      html+='<button class="reply-btn" id="selfReplyBtn">✎ 自行回复</button>';
+      html+='</div>';
+
+      // 自行回复输入框(默认隐藏)
+      html+='<div class="reply-input-area" id="replyInputArea">';
+      html+='<textarea id="replyTextInput" placeholder="输入你的回复..."></textarea>';
+      html+='<div class="reply-input-btns">';
+      html+='<button id="replyCancel">取消</button>';
+      html+='<button class="submit" id="replySubmit">发送</button>';
+      html+='</div>';
+      html+='</div>';
+    } else {
+      html+='<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:.82rem">该帖子已达回复上限('+ForumAI.MAX_REPLIES+'楼)</div>';
+    }
+
+    html+='</div>'; // card end
+
+    container.innerHTML=html;
+
+    // 滚到底部
+    var replyList=document.getElementById('replyList');
+    if(replyList) replyList.scrollTop=replyList.scrollHeight;
+
+    // 绑定按钮
+    bindButtons();
+  }
+
+  function bindButtons(){
+    // NPC回复
+    var npcBtn=document.getElementById('npcReplyBtn');
+    if(npcBtn){
+      npcBtn.addEventListener('click', async function(){
+        npcBtn.disabled=true;
+        npcBtn.innerHTML='NPC思考中<span class="loading-dots"><span></span><span></span><span></span></span>';
+        var selfBtn2=document.getElementById('selfReplyBtn');
+        if(selfBtn2) selfBtn2.disabled=true;
+
+        // 随机选NPC
+        var npc=ForumAI.getRandomNpc(profile);
+
+        try{
+          var reply=await ForumAI.callForumAI(post.title, post.content, post.replies, npc, profile);
+          // 存回复
+          ForumAI.addReply(profile, post.id, npc.name, reply, true);
+          // 重新加载
+          post=ForumAI.getPost(profile, post.id);
+          render();
+        }catch(e){
+          alert('NPC回复失败:'+e.message);
+          if(npcBtn){
+            npcBtn.disabled=false;
+            npcBtn.innerHTML='🤖 NPC回复';
+          }
+          if(selfBtn2) selfBtn2.disabled=false;
+        }
+      });
+    }
+
+    // 自行回复
+    var selfBtn=document.getElementById('selfReplyBtn');
+    var inputArea=document.getElementById('replyInputArea');
+    var textInput=document.getElementById('replyTextInput');
+    var cancelBtn=document.getElementById('replyCancel');
+    var submitBtn=document.getElementById('replySubmit');
+
+    if(selfBtn){
+      selfBtn.addEventListener('click', function(){
+        if(inputArea) inputArea.classList.add('show');
+        if(textInput) textInput.focus();
+      });
+    }
+    if(cancelBtn){
+      cancelBtn.addEventListener('click', function(){
+        if(inputArea) inputArea.classList.remove('show');
+        if(textInput) textInput.value='';
+      });
+    }
+    if(submitBtn){
+      submitBtn.addEventListener('click', function(){
+        var text=textInput?textInput.value.trim():'';
+        if(!text){
+          if(textInput)textInput.style.borderColor='#a04040';
+          return;
+        }
+        var playerName=profile==='luojin'?'罗烬':'林栖梧';
+        ForumAI.addReply(profile, post.id, playerName, text, false);
+        post=ForumAI.getPost(profile, post.id);
+        render();
+      });
+    }
+  }
+
+  // 初始渲染
+  if(post){
+    render();
+    // 更新页面标题
+    document.title='归终殿 · '+post.title;
+  }else{
+    render();
+  }
+})();
+</script>
+</body>
+</html>

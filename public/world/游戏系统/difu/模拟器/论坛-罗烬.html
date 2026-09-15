@@ -234,6 +234,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 <!-- 落花 -->
 <div id="petal-container"></div>
 
+<script src="./论坛AI.js"></script>
 <script>
 // ===== GZD 系统(自包含,不依赖核心.js) =====
 (function(){
@@ -313,14 +314,101 @@ function applyFilter(){
 }
 applyFilter();
 
-// ===== 发帖(预留) =====
+// ===== 发帖 =====
 var createBtn=document.getElementById('postCreateBtn');
 var postForm=document.getElementById('postForm');
+var postTitleInput=document.getElementById('postTitle');
+var postContentInput=document.getElementById('postContent');
+var postCancelBtn=document.getElementById('postCancel');
+var postSubmitBtn=document.getElementById('postSubmit');
+
 if(createBtn)createBtn.addEventListener('click',function(){if(postForm)postForm.classList.toggle('show');});
-var postCancel=document.getElementById('postCancel');
-if(postCancel)postCancel.addEventListener('click',function(){if(postForm)postForm.classList.remove('show');});
-var postSubmit=document.getElementById('postSubmit');
-if(postSubmit)postSubmit.addEventListener('click',function(){alert('发帖功能即将上线!');if(postForm)postForm.classList.remove('show');});
+if(postCancelBtn)postCancelBtn.addEventListener('click',function(){
+  if(postForm)postForm.classList.remove('show');
+  if(postTitleInput)postTitleInput.value='';
+  if(postContentInput)postContentInput.value='';
+});
+if(postSubmitBtn)postSubmitBtn.addEventListener('click',function(){
+  var title=postTitleInput?postTitleInput.value.trim():'';
+  var content=postContentInput?postContentInput.value.trim():'';
+  if(!title){alert('请输入标题');return;}
+  if(!content){alert('请输入内容');return;}
+  // 获取当前分类
+  var activeTag=document.querySelector('.filter-tag.active');
+  var category=activeTag?activeTag.dataset.filter:'闲聊';
+  if(category==='all')category='闲聊';
+
+  // 创建帖子
+  var profile=GZD.Storage.getProfile();
+  var post=ForumAI.createPost(profile, title, content, category);
+
+  // 清空表单
+  if(postForm)postForm.classList.remove('show');
+  if(postTitleInput)postTitleInput.value='';
+  if(postContentInput)postContentInput.value='';
+
+  // 重新渲染帖子列表
+  renderUserPosts();
+});
+
+// ===== 渲染玩家发的帖子 =====
+function renderUserPosts(){
+  var profile=GZD.Storage.getProfile();
+  var posts=ForumAI.loadPosts(profile);
+  var postList=document.getElementById('postList');
+  if(!postList) return;
+
+  // 移除之前的玩家帖子(保留惊鸿榜)
+  var oldUserPosts=postList.querySelectorAll('.post-card:not([data-preset="true"])');
+  oldUserPosts.forEach(function(el){el.remove();});
+
+  // 添加玩家帖子
+  posts.forEach(function(post){
+    var card=document.createElement('div');
+    card.className='post-card';
+    card.dataset.category=post.category||'闲聊';
+    card.style.cursor='pointer';
+    card.addEventListener('click',function(){
+      location.href='./帖子.html?id='+encodeURIComponent(post.id);
+    });
+
+    var replyCount=post.replies?post.replies.length:0;
+    card.innerHTML=
+      '<div class="body">'+
+        '<div class="head">'+
+          '<span class="ptitle">'+ForumAI.esc(post.title)+'</span>'+
+        '</div>'+
+        '<div class="meta">'+
+          '<span class="author">'+ForumAI.esc(post.author)+'</span>'+
+          '<span>·</span>'+
+          '<span>'+ForumAI.esc(post.date)+'</span>'+
+          '<span class="tag" style="margin-left:4px">'+ForumAI.esc(post.category||'闲聊')+'</span>'+
+        '</div>'+
+        '<div class="excerpt">'+ForumAI.esc(post.content.slice(0,100))+(post.content.length>100?'...':'')+'</div>'+
+        '<div class="foot">'+
+          '<span>↩ <span class="num">'+replyCount+'</span></span>'+
+        '</div>'+
+      '</div>';
+
+    // 插到惊鸿榜后面
+    var preset=postList.querySelector('[data-preset="true"]');
+    if(preset && preset.nextSibling){
+      postList.insertBefore(card, preset.nextSibling);
+    } else if(preset){
+      postList.appendChild(card);
+    } else {
+      postList.insertBefore(card, postList.firstChild);
+    }
+  });
+
+  // 更新计数
+  var totalCount=postList.querySelectorAll('.post-card:not(.hidden)').length;
+  var sub=document.getElementById('postCountSub');
+  if(sub)sub.textContent='◈ 共 '+totalCount+' 个话题';
+}
+
+// 初始渲染
+renderUserPosts();
 </script>
 </body>
 </html>
