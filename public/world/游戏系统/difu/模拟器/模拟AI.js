@@ -1,25 +1,22 @@
-// ===== 模拟AI.js · 引渡人模拟器 AI 剧情流引擎 v3 =====
-// v3 改造重点:
-// 1. 适配 模拟.html 的左/右气泡布局(借鉴美高模拟器)
-// 2. 新增「修改文本」功能(玩家行动 + AI 回应都能改)
-// 3. 玩家行动改了之后,从该条开始重新生成所有后续 AI 回应
-// 4. AI 回应的「修改文本」是纯本地编辑(不调 AI),「重新生成」才调 AI
-// 5. 复用 命薄AI.js 的双模式(直连 + Worker 兜底)和动态加载文案
+// ===== 模拟AI.js · 引渡人模拟器 AI 剧情流引擎 v4 =====
+// v4 新增:章节管理系统
+// 1. 每章 MAX_ROUNDS 轮(15轮=30条消息),自动触发章节转换
+// 2. AI 自动生成上一章总结 + 下一章标题和开场
+// 3. 侧边栏显示章节列表,可切换查看(归档章节可编辑)
+// 4. 前情提要:AI 调用时注入之前章节的摘要
+// 5. 向后兼容:旧存档自动转换为章节结构
 //
 // 部署步骤:
-// 直接上传这个文件到 模拟器/ 目录(和 命薄AI.js 同级)
+// 直接用这个文件覆盖原来的 模拟AI.js
 
 (function(){
   'use strict';
 
   // ===== 配置区 =====
-  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-  // ★ Worker 兜底地址(玩家没填 Key 时用这个)
-  // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
   const WORKER_URL = 'https://difu-ai.2629885225.workers.dev';
-
   const MAX_HISTORY = 10;
-  const STORAGE_KEY = 'gzd_ai_story';   // 和命薄页共享同一份存档
+  const MAX_ROUNDS = 15;  // ★ 每章15轮(15条玩家行动+15条AI回应=30条),测试用,后面改30
+  const STORAGE_KEY = 'gzd_ai_story';
   const CONFIG_KEY = 'gzd_ai_config';
 
   const PROVIDER_CONFIG = {
@@ -30,28 +27,87 @@
   };
 
   const LOADING_PHRASES = [
-    '浮生树正在低语',
-    '花瓣正在飘落',
-    '归终殿的钟声敲响',
-    '忘川水缓缓流过',
-    '阴气正在汇聚',
-    '魂力正在流转'
+    '浮生树正在低语', '花瓣正在飘落', '归终殿的钟声敲响',
+    '忘川水缓缓流过', '阴气正在汇聚', '魂力正在流转'
   ];
 
-  // ===== 存档读写(和命薄页共享) =====
-  function loadStory(profile){
+  // ===== 存档读写(章节结构) =====
+  // 新结构: gzd_ai_story[profile] = { currentChapter: 1, chapters: { 1: { title, summary, stories: [...] } } }
+  // 旧结构: gzd_ai_story[profile] = [...]  (扁平数组,自动转换)
+
+  function loadProfileData(profile){
     try{
       const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      return all[profile] || [];
-    }catch(e){ return []; }
+      let data = all[profile];
+      if(!data) return null;
+      // 向后兼容:如果是旧格式(数组),自动转换
+      if(Array.isArray(data)){
+        data = { currentChapter: 1, chapters: { 1: { title: profile==='luojin'?'第一章 · 刀与火':'第一章 · 归终殿的新叶', summary: '', stories: data } } };
+      }
+      return data;
+    }catch(e){ return null; }
   }
-  function saveStory(profile, arr){
+
+  function saveProfileData(profile, data){
     try{
       const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-      all[profile] = arr;
+      all[profile] = data;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
     }catch(e){ console.warn('存档失败:', e); }
   }
+
+  function loadStory(profile){
+    const data = loadProfileData(profile);
+    if(!data || !data.chapters) return [];
+    const ch = data.chapters[data.currentChapter];
+    return ch ? (ch.stories || []) : [];
+  }
+
+  function saveStory(profile, arr){
+    const data = loadProfileData(profile) || { currentChapter: 1, chapters: {} };
+    if(!data.chapters) data.chapters = {};
+    if(!data.chapters[data.currentChapter]) data.chapters[data.currentChapter] = { title: '', summary: '', stories: [] };
+    data.chapters[data.currentChapter].stories = arr;
+    saveProfileData(profile, data);
+  }
+
+  function getCurrentChapter(profile){
+    const data = loadProfileData(profile);
+    return data ? data.currentChapter : 1;
+  }
+
+  function getChapterData(profile, chapterNum){
+    const data = loadProfileData(profile);
+    if(!data || !data.chapters) return null;
+    return data.chapters[chapterNum] || null;
+  }
+
+  function getChapterTitle(profile, chapterNum){
+    const ch = getChapterData(profile, chapterNum);
+    return ch ? ch.title : '';
+  }
+
+  function getPrevSummaries(profile){
+    const data = loadProfileData(profile);
+    if(!data || !data.chapters) return '';
+    let summaries = '';
+    for(let i = 1; i < data.currentChapter; i++){
+      const ch = data.chapters[i];
+      if(ch && ch.summary){
+        summaries += `第${i}章「${ch.title}」:${ch.summary}\n`;
+      }
+    }
+    return summaries;
+  }
+
+  // 计算当前章节的轮数(1轮 = 1条user + 1条ai)
+  function getCurrentRounds(profile){
+    const arr = loadStory(profile);
+    let userCount = arr.filter(x => x.type === 'user').length;
+    let aiCount = arr.filter(x => x.type === 'ai').length;
+    return Math.min(userCount, aiCount);
+  }
+
   function loadAIConfig(){
     try{ return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}'); }
     catch(e){ return {}; }
@@ -60,8 +116,6 @@
     const cfg = loadAIConfig();
     return !!(cfg.apiKey && cfg.provider);
   }
-
-  // ===== 当前角色 =====
   function getProfile(){
     let p = 'linxiwu';
     try{ p = localStorage.getItem('activeProfile') || 'linxiwu'; }catch(e){}
@@ -94,34 +148,21 @@
     let url, headers, body;
     if(pConfig.format === 'claude'){
       url = baseUrl + '/v1/messages';
-      headers = {
-        'Content-Type':'application/json',
-        'x-api-key':cfg.apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      };
+      headers = { 'Content-Type':'application/json', 'x-api-key':cfg.apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' };
       const claudeMsgs = messages.filter(m => m.role !== 'system');
-      body = JSON.stringify({
-        model, max_tokens: 1200, system: systemPrompt, messages: claudeMsgs
-      });
+      body = JSON.stringify({ model, max_tokens: 1200, system: systemPrompt, messages: claudeMsgs });
     } else {
       url = baseUrl + '/v1/chat/completions';
-      headers = {
-        'Content-Type':'application/json',
-        'Authorization':'Bearer ' + cfg.apiKey
-      };
-      body = JSON.stringify({
-        model, messages, max_tokens: 1200, temperature: 0.8
-      });
+      headers = { 'Content-Type':'application/json', 'Authorization':'Bearer ' + cfg.apiKey };
+      body = JSON.stringify({ model, messages, max_tokens: 1200, temperature: 0.8 });
     }
-
     const resp = await fetch(url, { method:'POST', headers, body });
     const data = await resp.json();
     if(!resp.ok){
       const errMsg = data.error?.message || data.error || JSON.stringify(data);
-      if(resp.status === 401) throw new Error('API Key 无效或已失效,请前往设置页检查');
-      if(resp.status === 402) throw new Error('AI 服务商余额不足,请前往充值');
-      if(resp.status === 429) throw new Error('请求过于频繁,请稍后再试');
+      if(resp.status === 401) throw new Error('API Key 无效或已失效');
+      if(resp.status === 402) throw new Error('余额不足');
+      if(resp.status === 429) throw new Error('请求过频');
       throw new Error(`AI 返回错误(${resp.status}):${errMsg}`);
     }
     let reply = '';
@@ -130,7 +171,7 @@
     } else {
       reply = data.choices?.[0]?.message?.content || '';
     }
-    if(!reply) throw new Error('AI 返回了空内容,请重试');
+    if(!reply) throw new Error('AI 返回了空内容');
     return reply;
   }
 
@@ -145,7 +186,104 @@
     return data.reply;
   }
 
+  // ===== 章节转换 AI 调用 =====
+  async function callChapterTransition(profile, chapterNum, chapterTitle){
+    const cfg = loadAIConfig();
+    const prevSummaries = getPrevSummaries(profile);
+
+    if(cfg.apiKey && cfg.provider){
+      // 直连模式
+      const pConfig = PROVIDER_CONFIG[cfg.provider] || PROVIDER_CONFIG.deepseek;
+      const baseUrl = cfg.provider === 'custom' ? (cfg.customUrl || '') : pConfig.baseUrl;
+      const model = cfg.model || pConfig.defaultModel;
+      if(!baseUrl) throw new Error('接口地址为空');
+
+      const prompt = buildTransitionPrompt(profile, chapterNum, chapterTitle, prevSummaries);
+      const messages = [
+        { role:'system', content: prompt },
+        { role:'user', content:'请生成章节转换内容。' }
+      ];
+
+      let url, headers, body;
+      if(pConfig.format === 'claude'){
+        url = baseUrl + '/v1/messages';
+        headers = { 'Content-Type':'application/json', 'x-api-key':cfg.apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' };
+        body = JSON.stringify({ model, max_tokens:800, system:prompt, messages: messages.filter(m=>m.role!=='system') });
+      } else {
+        url = baseUrl + '/v1/chat/completions';
+        headers = { 'Content-Type':'application/json', 'Authorization':'Bearer '+cfg.apiKey };
+        body = JSON.stringify({ model, messages, max_tokens:800, temperature:0.8 });
+      }
+      const resp = await fetch(url, { method:'POST', headers, body });
+      const data = await resp.json();
+      if(!resp.ok) throw new Error('章节转换失败:'+resp.status);
+      let reply = '';
+      if(pConfig.format === 'claude') reply = data.content?.[0]?.text || '';
+      else reply = data.choices?.[0]?.message?.content || '';
+      return parseTransitionResult(reply);
+    } else {
+      // Worker 兜底
+      const resp = await fetch(WORKER_URL, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'chapterTransition', profile, chapterNum, chapterTitle, prevSummaries })
+      });
+      const data = await resp.json();
+      if(data.error) throw new Error(data.error);
+      if(data.transition) return data.transition;
+      return { summary:'', nextTitle:'', nextOpening: data.reply || '' };
+    }
+  }
+
+  function buildTransitionPrompt(profile, chapterNum, chapterTitle, prevSummaries){
+    return `你是「引渡人模拟器·归终殿」的剧情生成 AI。
+
+【当前玩家角色】
+${profile === 'luojin' ? '罗烬:讲武堂弟子,统修期。' : '林栖梧:符修院助教,统修期,甲等下品。'}
+
+【世界观】
+苍珩四百三十五年,地府归终殿执掌亡魂引渡与功过裁定。殿辖符修院、讲武堂、音律坊与忘川东段。
+
+【你的任务】
+第${chapterNum}章「${chapterTitle}」的剧情已经完结。请:
+
+1. 用80-100字总结第${chapterNum}章的关键剧情(重要事件、人物互动、成长变化)
+2. 生成第${chapterNum + 1}章的标题(4-6字,古风)
+3. 生成第${chapterNum + 1}章的开场剧情(100-200字,第二人称"你"叙述,自然衔接上一章结尾)
+
+${prevSummaries ? '【之前章节摘要】\n' + prevSummaries + '\n' : ''}
+
+【输出格式】
+严格输出以下JSON,不要输出任何其他文字:
+
+{
+  "summary": "第${chapterNum}章总结(80-100字)",
+  "nextTitle": "第${chapterNum + 1}章标题",
+  "nextOpening": "第${chapterNum + 1}章开场剧情(100-200字)"
+}`;
+  }
+
+  function parseTransitionResult(text){
+    let jsonStr = text.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+    const first = jsonStr.indexOf('{'), last = jsonStr.lastIndexOf('}');
+    if(first !== -1 && last !== -1) jsonStr = jsonStr.substring(first, last+1);
+    try{
+      const data = JSON.parse(jsonStr);
+      return {
+        summary: data.summary || '',
+        nextTitle: data.nextTitle || '',
+        nextOpening: data.nextOpening || ''
+      };
+    }catch(e){
+      return { summary:'', nextTitle:'', nextOpening:text, error:e.message };
+    }
+  }
+
   function buildSystemPrompt(profile){
+    const prevSummaries = getPrevSummaries(profile);
+    const currentChapter = getCurrentChapter(profile);
+    const chapterTitle = getChapterTitle(profile, currentChapter) || (profile==='luojin'?'第一章 · 刀与火':'第一章 · 归终殿的新叶');
+
     return `你是「引渡人模拟器·归终殿」的剧情生成 AI。
 
 【当前玩家角色】
@@ -247,10 +385,11 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 2. 不要替玩家做重大决定(比如不要写"你答应了他"),只描述环境和他人反应
 3. 如果玩家输入的行动不合理(比如"瞬间成神"),要用地府规则委婉拒绝或转化
 4. 自然延续之前的剧情,引用前文出现过的细节、NPC、地点
- ${getQuestReceiptSection(profile)}`;
+${prevSummaries ? '\n\n【前情提要】\n' + prevSummaries + '\n请在剧情中自然引用前几章的事件,但不要每次都提。' : ''}
+${getQuestReceiptSection(profile)}`;
   }
 
-  // ===== 读取外勤回执(供模拟页 AI 了解玩家近期的外勤经历) =====
+  // ===== 读取外勤回执 =====
   function getQuestReceiptSection(profile){
     try{
       var all = JSON.parse(localStorage.getItem('gzd_ai_quest_receipt') || '{}');
@@ -269,7 +408,7 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     return d.innerHTML.replace(/\n/g,'<br>');
   }
 
-  // ===== 渲染单条消息 =====
+  // ===== 渲染单条消息(原版不变) =====
   function renderMessage(item){
     const row = document.createElement('div');
     row.className = 'msg-row';
@@ -277,59 +416,25 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 
     if(item.type === 'opening'){
       row.className += ' left opening';
-      row.innerHTML = `
-        <div class="msg-avatar">❀</div>
-        <div class="msg-bubble-wrap">
-          <div class="msg-label">开场 · 归终殿的新叶</div>
-          <div class="msg-bubble">${escapeHtml(item.text)}</div>
-        </div>
-      `;
+      row.innerHTML = `<div class="msg-avatar">❀</div><div class="msg-bubble-wrap"><div class="msg-label">开场</div><div class="msg-bubble">${escapeHtml(item.text)}</div></div>`;
     } else if(item.type === 'user'){
       row.className += ' right';
-      row.innerHTML = `
-        <div class="msg-bubble-wrap">
-          <div class="msg-label">你的行动</div>
-          <div class="msg-bubble" data-text="${encodeURIComponent(item.text)}">${escapeHtml(item.text)}</div>
-          <div class="msg-actions">
-            <button class="msg-action-btn" data-action="edit" data-id="${item.id}">✎ 修改</button>
-          </div>
-        </div>
-        <div class="msg-avatar">✦</div>
-      `;
+      row.innerHTML = `<div class="msg-bubble-wrap"><div class="msg-label">你的行动</div><div class="msg-bubble" data-text="${encodeURIComponent(item.text)}">${escapeHtml(item.text)}</div><div class="msg-actions"><button class="msg-action-btn" data-action="edit" data-id="${item.id}">✎ 修改</button></div></div><div class="msg-avatar">✦</div>`;
     } else if(item.type === 'ai'){
       row.className += ' left';
-      row.innerHTML = `
-        <div class="msg-avatar">◈</div>
-        <div class="msg-bubble-wrap">
-          <div class="msg-label">浮生树回应</div>
-          <div class="msg-bubble" data-text="${encodeURIComponent(item.text)}">${escapeHtml(item.text)}</div>
-          <div class="msg-actions">
-            <button class="msg-action-btn" data-action="edit" data-id="${item.id}">✎ 修改</button>
-            <button class="msg-action-btn" data-action="regenerate" data-id="${item.id}">⟲ 重新生成</button>
-          </div>
-        </div>
-      `;
+      row.innerHTML = `<div class="msg-avatar">◈</div><div class="msg-bubble-wrap"><div class="msg-label">浮生树回应</div><div class="msg-bubble" data-text="${encodeURIComponent(item.text)}">${escapeHtml(item.text)}</div><div class="msg-actions"><button class="msg-action-btn" data-action="edit" data-id="${item.id}">✎ 修改</button><button class="msg-action-btn" data-action="regenerate" data-id="${item.id}">⟲ 重新生成</button></div></div>`;
     } else if(item.type === 'error'){
       row.className += ' left error';
-      row.innerHTML = `
-        <div class="msg-avatar">⚠</div>
-        <div class="msg-bubble-wrap">
-          <div class="msg-label">出错</div>
-          <div class="msg-bubble">${escapeHtml(item.text)}</div>
-        </div>
-      `;
+      row.innerHTML = `<div class="msg-avatar">⚠</div><div class="msg-bubble-wrap"><div class="msg-label">出错</div><div class="msg-bubble">${escapeHtml(item.text)}</div></div>`;
     } else if(item.type === 'loading'){
       row.className += ' left';
-      row.innerHTML = `
-        <div class="msg-avatar">◈</div>
-        <div class="msg-bubble-wrap">
-          <div class="msg-label" id="loadingLabel">浮生树回应</div>
-          <div class="msg-loading">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-            <span style="margin-left:6px" id="loadingText">${LOADING_PHRASES[0]}</span>
-          </div>
-        </div>
-      `;
+      row.innerHTML = `<div class="msg-avatar">◈</div><div class="msg-bubble-wrap"><div class="msg-label" id="loadingLabel">浮生树回应</div><div class="msg-loading"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span style="margin-left:6px" id="loadingText">${LOADING_PHRASES[0]}</span></div></div>`;
+    } else if(item.type === 'chapter-end'){
+      row.className += ' center';
+      row.innerHTML = `<div class="chapter-end-banner"><div class="chapter-end-sym">✦</div><div class="chapter-end-title">${escapeHtml(item.title||'章节完结')}</div><div class="chapter-end-text">${escapeHtml(item.text||'')}</div></div>`;
+    } else if(item.type === 'chapter-start'){
+      row.className += ' center';
+      row.innerHTML = `<div class="chapter-start-banner"><div class="chapter-start-sym">◈</div><div class="chapter-start-title">${escapeHtml(item.title||'新章节')}</div><div class="chapter-start-text">${escapeHtml(item.text||'')}</div></div>`;
     }
     return row;
   }
@@ -339,23 +444,117 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     const area = document.getElementById('storyArea');
     if(!area) return;
     const arr = loadStory(profile);
-    // 保留章节 banner,清空其他
     const banner = area.querySelector('.chapter-banner');
     area.innerHTML = '';
     if(banner) area.appendChild(banner);
     arr.forEach(item => area.appendChild(renderMessage(item)));
-    // 滚到底部
     area.scrollTop = area.scrollHeight;
+    // 更新侧边栏
+    renderChapterSidebar(profile);
+    // 更新顶部章节标题
+    updateChapterTitle(profile);
+  }
+
+  function updateChapterTitle(profile){
+    const ch = getCurrentChapter(profile);
+    const title = getChapterTitle(profile, ch) || '第一章';
+    const titleEl = document.getElementById('chapterTitle');
+    if(titleEl) titleEl.textContent = title;
+    const bannerTitle = document.querySelector('.chapter-banner .chapter-title');
+    if(bannerTitle) bannerTitle.textContent = title;
+  }
+
+  // ===== 章节侧边栏 =====
+  function renderChapterSidebar(profile){
+    let sidebar = document.getElementById('chapterSidebar');
+    if(!sidebar) return;
+
+    const data = loadProfileData(profile);
+    if(!data || !data.chapters){
+      sidebar.innerHTML = '<div class="ch-empty">暂无章节</div>';
+      return;
+    }
+
+    let html = '';
+    const currentCh = data.currentChapter;
+    // 从最新到最旧
+    for(let i = currentCh; i >= 1; i--){
+      const ch = data.chapters[i];
+      if(!ch) continue;
+      const isActive = (i === currentCh);
+      const status = isActive ? '进行中' : '已归档';
+      html += `<div class="ch-item ${isActive?'active':''}" data-chapter="${i}">
+        <div class="ch-num">第${i}章</div>
+        <div class="ch-title">${escapeHtml(ch.title || '未命名')}</div>
+        <div class="ch-status">${status}</div>
+      </div>`;
+    }
+    sidebar.innerHTML = html;
+
+    // 绑定点击
+    sidebar.querySelectorAll('.ch-item').forEach(function(item){
+      item.addEventListener('click', function(){
+        const ch = parseInt(this.dataset.chapter, 10);
+        switchChapter(profile, ch);
+      });
+    });
+  }
+
+  function switchChapter(profile, chapterNum){
+    const data = loadProfileData(profile);
+    if(!data) return;
+    const ch = data.chapters[chapterNum];
+    if(!ch) return;
+
+    // 临时显示该章节(不修改 currentChapter)
+    const area = document.getElementById('storyArea');
+    if(!area) return;
+    const banner = area.querySelector('.chapter-banner');
+    area.innerHTML = '';
+    if(banner){
+      // 更新 banner 标题
+      const titleEl = banner.querySelector('.chapter-title');
+      if(titleEl) titleEl.textContent = ch.title || '第'+chapterNum+'章';
+      area.appendChild(banner);
+    }
+    (ch.stories || []).forEach(item => area.appendChild(renderMessage(item)));
+    area.scrollTop = 0;
+
+    // 更新侧边栏高亮(不修改实际 currentChapter)
+    document.querySelectorAll('.ch-item').forEach(function(item){
+      item.classList.toggle('active', parseInt(item.dataset.chapter,10) === chapterNum);
+    });
+
+    // 更新顶部标题
+    const titleEl = document.getElementById('chapterTitle');
+    if(titleEl) titleEl.textContent = ch.title || '第'+chapterNum+'章';
+
+    // 如果切回当前章节,恢复输入;否则禁用输入
+    const isCurrent = (chapterNum === data.currentChapter);
+    const inputBar = document.querySelector('.input-bar');
+    if(inputBar){
+      inputBar.style.display = isCurrent ? '' : 'none';
+    }
+    // 如果不是当前章节,显示"返回当前章节"提示
+    if(!isCurrent){
+      const area2 = document.getElementById('storyArea');
+      const backBtn = document.createElement('div');
+      backBtn.className = 'back-to-current';
+      backBtn.innerHTML = '<button class="back-to-current-btn">← 返回第'+data.currentChapter+'章(进行中)</button>';
+      backBtn.style.cssText = 'text-align:center;padding:12px;';
+      area2.appendChild(backBtn);
+      backBtn.querySelector('button').addEventListener('click', function(){
+        renderStory(profile);
+      });
+    }
   }
 
   // ===== 动态加载文案 =====
   let loadingTimer = null;
-  let loadingEl = null;
   function startLoadingAnimation(){
     let i = 0;
     const textEl = document.getElementById('loadingText');
     if(textEl){
-      loadingEl = textEl;
       textEl.textContent = LOADING_PHRASES[0];
       loadingTimer = setInterval(() => {
         i = (i+1) % LOADING_PHRASES.length;
@@ -382,39 +581,39 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
       return;
     }
 
-    // 锁定 UI
     btnEl.disabled = true;
     btnEl.textContent = '...';
     inputEl.value = '';
     autoResizeInput(inputEl);
 
-    // 插入玩家输入
     const arr = loadStory(profile);
     const userItem = { id:'u_'+Date.now(), type:'user', text:text };
     arr.push(userItem);
-    if(arr.length > MAX_HISTORY*2+1) arr.shift();
     saveStory(profile, arr);
 
-    // 插入加载占位
     const loadingItem = { id:'loading_'+Date.now(), type:'loading' };
     arr.push(loadingItem);
     renderStory(profile);
     startLoadingAnimation();
 
-    // 构造历史
     const aiHistory = arr
       .filter(x => x.type === 'user' || x.type === 'ai')
       .map(x => ({ role: x.type==='user'?'user':'assistant', content: x.text }));
 
     try{
       const reply = await callAI(text, profile, aiHistory);
-      // 替换 loading 为真实回应
       const idx = arr.findIndex(x => x.id === loadingItem.id);
       if(idx !== -1){
         arr[idx] = { id:'a_'+Date.now(), type:'ai', text:reply };
       }
       saveStory(profile, arr);
       renderStory(profile);
+
+      // ★ 章节转换检测
+      const rounds = getCurrentRounds(profile);
+      if(rounds >= MAX_ROUNDS){
+        await doChapterTransition(profile);
+      }
     }catch(e){
       const idx = arr.findIndex(x => x.id === loadingItem.id);
       if(idx !== -1){
@@ -429,20 +628,67 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     }
   }
 
-  // ===== 重新生成某条 AI 回应 =====
+  // ===== 章节转换 =====
+  async function doChapterTransition(profile){
+    const data = loadProfileData(profile);
+    if(!data) return;
+    const currentCh = data.currentChapter;
+    const chTitle = getChapterTitle(profile, currentCh) || '第一章';
+
+    // 显示"章节完结"过渡
+    const arr = loadStory(profile);
+    arr.push({ id:'chapter_end_'+Date.now(), type:'chapter-end', title: chTitle, text:'本章节已完结,正在衔接下一章...' });
+    saveStory(profile, arr);
+    renderStory(profile);
+
+    try{
+      const result = await callChapterTransition(profile, currentCh, chTitle);
+
+      // 保存总结到当前章节
+      if(data.chapters[currentCh]){
+        data.chapters[currentCh].summary = result.summary;
+      }
+
+      // 创建新章节
+      const nextCh = currentCh + 1;
+      const nextChapterTitle = result.nextTitle || ('第'+nextCh+'章');
+      data.chapters[nextCh] = {
+        title: nextChapterTitle,
+        summary: '',
+        stories: [
+          { id:'chapter_start_'+Date.now(), type:'chapter-start', title: nextChapterTitle, text: result.nextOpening }
+        ]
+      };
+      data.currentChapter = nextCh;
+      saveProfileData(profile, data);
+
+      // 更新顶部标题
+      const titleEl = document.getElementById('chapterTitle');
+      if(titleEl) titleEl.textContent = nextChapterTitle;
+
+      renderStory(profile);
+    }catch(e){
+      // 转换失败,移除过渡提示
+      const idx = arr.findIndex(x => x.type === 'chapter-end');
+      if(idx !== -1){
+        arr[idx] = { id:'e_'+Date.now(), type:'error', text:'章节转换失败:'+e.message };
+        saveStory(profile, arr);
+      }
+      renderStory(profile);
+    }
+  }
+
+  // ===== 重新生成 =====
   async function regenerate(cardId){
     const profile = getProfile();
     const arr = loadStory(profile);
     const idx = arr.findIndex(x => x.id === cardId && x.type === 'ai');
     if(idx === -1) return;
-
     if(idx === 0 || arr[idx-1].type !== 'user'){
       alert('找不到对应的玩家输入,无法重新生成');
       return;
     }
     const userText = arr[idx-1].text;
-
-    // 替换为 loading
     const loadingItem = { id:'loading_'+Date.now(), type:'loading' };
     arr[idx] = loadingItem;
     saveStory(profile, arr);
@@ -456,26 +702,18 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     try{
       const reply = await callAI(userText, profile, aiHistory);
       const i2 = arr.findIndex(x => x.id === loadingItem.id);
-      if(i2 !== -1){
-        arr[i2] = { id:'a_'+Date.now(), type:'ai', text:reply };
-      }
+      if(i2 !== -1){ arr[i2] = { id:'a_'+Date.now(), type:'ai', text:reply }; }
       saveStory(profile, arr);
       renderStory(profile);
     }catch(e){
       const i2 = arr.findIndex(x => x.id === loadingItem.id);
-      if(i2 !== -1){
-        arr[i2] = { id:'e_'+Date.now(), type:'error', text:'【出错】'+e.message };
-      }
+      if(i2 !== -1){ arr[i2] = { id:'e_'+Date.now(), type:'error', text:'【出错】'+e.message }; }
       saveStory(profile, arr);
       renderStory(profile);
-    }finally{
-      stopLoadingAnimation();
-    }
+    }finally{ stopLoadingAnimation(); }
   }
 
-  // ===== 修改文本(内联编辑) =====
-  // type === 'user': 改完后,从这条开始重新生成所有后续 AI 回应(像美高那样)
-  // type === 'ai': 纯本地编辑,不调 AI
+  // ===== 修改文本 =====
   function startEdit(cardId){
     const profile = getProfile();
     const arr = loadStory(profile);
@@ -484,7 +722,6 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     const item = arr[idx];
     if(item.type !== 'user' && item.type !== 'ai') return;
 
-    // 找到对应 DOM
     const row = document.querySelector(`.msg-row[data-id="${cardId}"]`);
     if(!row) return;
     const bubble = row.querySelector('.msg-bubble');
@@ -492,20 +729,12 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     if(!bubble || !actions) return;
 
     const oldText = item.text;
-    // 替换 bubble 为 textarea
     const editArea = document.createElement('div');
     editArea.className = 'msg-edit-area';
-    editArea.innerHTML = `
-      <textarea>${escapeHtml(oldText)}</textarea>
-      <div class="msg-edit-btns">
-        <button class="cancel">取消</button>
-        <button class="save">保存</button>
-      </div>
-    `;
+    editArea.innerHTML = `<textarea>${escapeHtml(oldText)}</textarea><div class="msg-edit-btns"><button class="cancel">取消</button><button class="save">保存</button></div>`;
     bubble.style.display = 'none';
     actions.style.display = 'none';
     bubble.parentNode.insertBefore(editArea, bubble.nextSibling);
-
     const textarea = editArea.querySelector('textarea');
     textarea.focus();
     textarea.setSelectionRange(textarea.value.length, textarea.value.length);
@@ -518,50 +747,34 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 
     editArea.querySelector('.save').addEventListener('click', async () => {
       const newText = textarea.value.trim();
-      if(!newText){
-        textarea.style.borderColor = '#a04040';
-        return;
-      }
-      if(newText === oldText){
-        editArea.remove();
-        bubble.style.display = '';
-        actions.style.display = '';
-        return;
-      }
+      if(!newText){ textarea.style.borderColor = '#a04040'; return; }
+      if(newText === oldText){ editArea.remove(); bubble.style.display = ''; actions.style.display = ''; return; }
 
-      // 保存新文本
       arr[idx].text = newText;
       saveStory(profile, arr);
 
       if(item.type === 'ai'){
-        // AI 回应:纯本地编辑,只更新文本
         renderStory(profile);
       } else {
-        // 玩家行动:从这条开始重新生成所有后续 AI 回应
-        // 删除当前条之后的所有内容(保留开场 + 当前修改后的玩家行动)
         const newArr = arr.slice(0, idx+1);
         saveStory(profile, newArr);
         renderStory(profile);
-        // 自动触发后续 AI 生成
         await regenerateAfterEdit(profile, cardId, newText);
       }
     });
   }
 
-  // ===== 玩家行动修改后,自动重新生成后续 AI 回应 =====
   async function regenerateAfterEdit(profile, userId, userText){
     const arr = loadStory(profile);
     const userIdx = arr.findIndex(x => x.id === userId);
     if(userIdx === -1) return;
 
-    // 插入 loading
     const loadingItem = { id:'loading_'+Date.now(), type:'loading' };
     arr.push(loadingItem);
     saveStory(profile, arr);
     renderStory(profile);
     startLoadingAnimation();
 
-    // 历史只取 userIdx 之前
     const aiHistory = arr.slice(0, userIdx)
       .filter(x => x.type==='user' || x.type==='ai')
       .map(x => ({ role:x.type==='user'?'user':'assistant', content:x.text }));
@@ -572,16 +785,12 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     try{
       const reply = await callAI(userText, profile, aiHistory);
       const i2 = arr.findIndex(x => x.id === loadingItem.id);
-      if(i2 !== -1){
-        arr[i2] = { id:'a_'+Date.now(), type:'ai', text:reply };
-      }
+      if(i2 !== -1){ arr[i2] = { id:'a_'+Date.now(), type:'ai', text:reply }; }
       saveStory(profile, arr);
       renderStory(profile);
     }catch(e){
       const i2 = arr.findIndex(x => x.id === loadingItem.id);
-      if(i2 !== -1){
-        arr[i2] = { id:'e_'+Date.now(), type:'error', text:'【出错】'+e.message };
-      }
+      if(i2 !== -1){ arr[i2] = { id:'e_'+Date.now(), type:'error', text:'【出错】'+e.message }; }
       saveStory(profile, arr);
       renderStory(profile);
     }finally{
@@ -608,33 +817,44 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
 
   // ===== 开场剧情初始化 =====
   function ensureOpening(profile){
-    let arr = loadStory(profile);
-    if(arr.length === 0 || arr[0].type !== 'opening'){
+    let data = loadProfileData(profile);
+    if(!data){
+      // 首次:创建章节结构
+      data = { currentChapter: 1, chapters: {} };
+    }
+    if(!data.chapters) data.chapters = {};
+    if(!data.chapters[1]){
       const openingText = profile === 'luojin'
         ? '你踏入归终殿的第一天就闯了个小祸——太兴奋,跑得太快,一头撞翻了符修院门口晾晒的符纸。\n\n见满地狼藉,栾方棋一愣,只好蹲下来和你一起捡:"你这孩子怎么咋咋呼呼的,走路也不看着点。"\n\n这位温和的符修大人没有责罚你,你不好意思地挠了挠头,心想归终殿好像没传说中那么可怕。\n\n"统修期三个月,符法刀法阵法枪法都要学。"一道冷冷的声音从身后传来,罗修不知何时站在了你身后,面无表情道,"你撞翻的是符纸,下回再撞翻什么,我可不管捡。"\n\n你吓了一跳,赶紧站直了身子,嘴快道:"知道了爹,我会注意的。"\n\n"出门在外,称职务。"\n\n你点点头:"哦……哦,首席大人。"\n\n你话音刚落,廊柱后便传来一声轻叹。魏元璟抱臂缓步走出来,眉头微蹙,目光在你和满地符纸之间转了转,显然已经看了一会儿了。\n\n"刚来第一天就砸场子?"魏元璟偏头看向罗修,"罗修,你这儿子,到底是随了谁?"\n\n罗修挑了挑眉:"当然是随你。"\n\n"我小时候可没这么莽。"魏元璟白了他一眼,又看向你,在你脑门上不轻不重地敲了一记,"下次再这样,罚你抄《殿规》一百遍。去吧。"\n\n你捂着脑门点点头,心想,这归终殿,果然还是有点可怕的。'
         : '踏入符修院的第一天,你心里揣着几分忐忑。见案上摆着栾方棋常用的紫竹符笔,你想帮忙整理,却不慎手一抖,碰翻了旁边的墨碟。\n\n浓墨泼洒,不仅弄脏了桌上的符纸,还溅了刚进门的栾方棋一身。\n\n你僵在原地,手足无措。栾方棋却未恼你,只弯腰用袖角替你擦去脸颊的墨点:"没事,符笔没断就好。"\n\n你暗暗松了口气,此时,门外传来极轻的脚步声。你抬头,见林淮悄无声息地站在廊下,什么都没说,只将一块素帕递了过来。他目光淡淡扫过你,你下意识站直了身子,把脱口而出的"爹"咽了回去,小声道:"……淮大人。"\n\n林淮微微颔首,替栾方棋拂去肩头的墨渍,转身走了。\n\n栾方棋拍了拍你的肩膀,笑着说:"既然来了,就按规矩从头学起,不可骄躁。"\n\n你郑重地点点头。\n\n这时,空中传来一声闷响——是罗修拎着罗烬的衣领,把人扔到了讲武堂的训练场里。你偷偷瞥了一眼,心想,在这归终殿的三年,想必不会太无聊。';
-      arr = [{ id:'opening', type:'opening', text:openingText }];
-      saveStory(profile, arr);
+      data.chapters[1] = {
+        title: profile==='luojin' ? '第一章 · 刀与火' : '第一章 · 归终殿的新叶',
+        summary: '',
+        stories: [{ id:'opening', type:'opening', text:openingText }]
+      };
+      saveProfileData(profile, data);
+    } else if(!data.chapters[1].stories || data.chapters[1].stories.length === 0){
+      // 有章节但没剧情
+      const openingText = profile === 'luojin' ? '你踏入归终殿的第一天就闯了个小祸...' : '踏入符修院的第一天,你心里揣着几分忐忑...';
+      data.chapters[1].stories = [{ id:'opening', type:'opening', text:openingText }];
+      saveProfileData(profile, data);
     }
   }
 
-  // ===== 输入框自适应高度 =====
+  // ===== 输入框自适应 =====
   function autoResizeInput(el){
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   }
 
-  // ===== 全局事件委托(操作按钮) =====
+  // ===== 全局事件委托 =====
   document.addEventListener('click', function(e){
     const btn = e.target.closest('.msg-action-btn');
     if(!btn) return;
     const action = btn.dataset.action;
     const cardId = btn.dataset.id;
-    if(action === 'regenerate'){
-      regenerate(cardId);
-    } else if(action === 'edit'){
-      startEdit(cardId);
-    }
+    if(action === 'regenerate'){ regenerate(cardId); }
+    else if(action === 'edit'){ startEdit(cardId); }
   });
 
   // ===== 输入框事件 =====
@@ -646,25 +866,52 @@ ${profile === 'luojin' ? '罗烬:讲武堂弟子,承刀法一脉,性情刚直果
     inputEl.dataset.bound = '1';
     inputEl.addEventListener('input', () => autoResizeInput(inputEl));
     inputEl.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' && !e.shiftKey){
-        e.preventDefault();
-        submitAction();
-      }
+      if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); submitAction(); }
     });
     btnEl.addEventListener('click', submitAction);
   }
 
+  // ===== 注入章节相关样式 =====
+  function injectChapterStyles(){
+    if(document.getElementById('chapterStyles')) return;
+    const s = document.createElement('style');
+    s.id = 'chapterStyles';
+    s.textContent = `
+      .chapter-end-banner{text-align:center;padding:20px;margin:16px 0;border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)}
+      .chapter-end-sym{font-size:1.5rem;color:var(--profile-accent,var(--accent));margin-bottom:6px}
+      .chapter-end-title{font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+      .chapter-end-text{font-size:.8rem;color:var(--text-muted);font-style:italic}
+      .chapter-start-banner{text-align:center;padding:20px;margin:16px 0}
+      .chapter-start-sym{font-size:1.5rem;color:var(--profile-accent,var(--accent));margin-bottom:6px}
+      .chapter-start-title{font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:8px;letter-spacing:2px}
+      .chapter-start-text{font-size:.95rem;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap}
+      .msg-row.center{justify-content:center}
+      /* 侧边栏 */
+      #chapterSidebar{display:flex;flex-direction:column;gap:4px;overflow-y:auto;max-height:100%}
+      .ch-item{padding:8px 10px;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;transition:all .2s;background:var(--bg-card)}
+      .ch-item:hover{border-color:var(--profile-accent,var(--accent));background:var(--bg-hover)}
+      .ch-item.active{border-color:var(--profile-accent,var(--accent));background:var(--bg-accent-soft,rgba(138,58,42,.04))}
+      .ch-num{font-size:.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:1px}
+      .ch-title{font-size:.8rem;color:var(--text-primary);font-weight:500;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .ch-status{font-size:.65rem;color:var(--text-muted);margin-top:2px}
+      .ch-empty{font-size:.75rem;color:var(--text-muted);text-align:center;padding:20px}
+      .back-to-current-btn{padding:8px 20px;border:1.5px solid var(--accent);border-radius:18px;background:transparent;color:var(--accent);font-family:var(--font-serif);font-size:.85rem;cursor:pointer;transition:all .2s}
+      .back-to-current-btn:hover{background:var(--accent);color:var(--bg-card)}
+    `;
+    document.head.appendChild(s);
+  }
+
   // ===== 启动 =====
   function boot(){
+    injectChapterStyles();
     const profile = getProfile();
     ensureOpening(profile);
     renderStory(profile);
     renderConfigBanner();
     bindInput();
-    console.log('◈ 模拟AI.js v3 已加载,角色:', profile, hasUserKey()?'[直连]':'[兜底]');
+    console.log('◈ 模拟AI.js v4 已加载,角色:', profile, '当前章节:', getCurrentChapter(profile), hasUserKey()?'[直连]':'[兜底]');
   }
 
-  // 从设置页返回时刷新提示条
   window.addEventListener('pageshow', renderConfigBanner);
   window.addEventListener('storage', function(e){
     if(e.key === CONFIG_KEY) renderConfigBanner();
