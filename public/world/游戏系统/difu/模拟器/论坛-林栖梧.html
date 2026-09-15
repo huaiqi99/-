@@ -106,8 +106,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 
 /* 落花 */
 #petal-container{position:fixed;inset:0;pointer-events:none;z-index:8;overflow:hidden}
-.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite}
-@keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.4}100%{transform:translateY(calc(100vh+50px))rotate(360deg);opacity:0}}
+.petal-char{position:absolute;top:-30px;font-size:18px;will-change:transform,opacity;opacity:0;user-select:none;animation:petalFall linear infinite;color:#8a8078}
+@keyframes petalFall{0%{transform:translateY(0)rotate(0deg);opacity:0}10%{opacity:.7}90%{opacity:.5}100%{transform:translateY(calc(100vh+50px))rotate(360deg);opacity:0}}
 
 @media(max-width:768px){body{padding:0 12px 30px 12px;font-size:15px}.top-header{padding:14px 0 10px 0}.top-header .page-title{font-size:1.1rem}.card{padding:14px 14px 12px 14px}.post-card .body{padding:10px 12px}.post-card .head .ptitle{font-size:.88rem}.float-group{top:12px;right:12px;gap:6px}.float-btn{padding:4px 10px 4px 8px;font-size:.65rem}.sidebar-panel{width:210px;padding:20px 14px 16px 14px}.sidebar-tab{padding:8px 8px 8px 4px;font-size:.65rem}.sidebar-panel .nav-item{padding:4px 10px;font-size:.8rem}.sidebar-panel .profile-switch-btn{padding:6px 10px;font-size:.8rem}}
 </style>
@@ -257,7 +257,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     var sb=t.closest('#profileSwitchBtn');
     if(sb){e.preventDefault();e.stopPropagation();var c=document.body.getAttribute('data-profile')||'linxiwu';GZD.ProfileManager.switch(c==='linxiwu'?'luojin':'linxiwu');location.href=c==='linxiwu'?'./论坛-罗烬.html':'./论坛-林栖梧.html';return;}
   });
-  document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
+  var tb=document.getElementById('themeBtn');
+  if(tb)tb.addEventListener('click',function(){GZD.ThemeManager.toggle();});
   var profile=GZD.Storage.getProfile();
   var nameEl=document.getElementById('currentProfileName');
   if(nameEl)nameEl.textContent=profile==='luojin'?'罗烬':'林栖梧';
@@ -268,21 +269,21 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 // ===== 落花 =====
 (function(){
   var PETAL_CHARS=['❀','◈','✽'];
-  var PETAL_COLORS=['#D49A9A','#c4b4a0','#8a8078','#4E5A64','#b8aea4'];
+  var PETAL_COLORS=['#8a8078','#b8aea4','#c4b4a0','#8a8a8a','#a8a098'];
   var container=document.getElementById('petal-container');
-  if(container){
-    for(var i=0;i<12;i++){
-      var el=document.createElement('div');
-      el.className='petal-char';
-      el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];
-      el.style.left=Math.random()*100+'%';
-      el.style.fontSize=(14+Math.random()*12)+'px';
-      el.style.color=PETAL_COLORS[Math.floor(Math.random()*PETAL_COLORS.length)];
-      el.style.animationDuration=(10+Math.random()*10)+'s';
-      el.style.animationDelay=(Math.random()*12)+'s';
-      container.appendChild(el);
-    }
+  if(!container){console.warn('petal-container not found');return;}
+  for(var i=0;i<14;i++){
+    var el=document.createElement('div');
+    el.className='petal-char';
+    el.textContent=PETAL_CHARS[Math.floor(Math.random()*PETAL_CHARS.length)];
+    el.style.left=Math.random()*100+'%';
+    el.style.fontSize=(14+Math.random()*12)+'px';
+    el.style.color=PETAL_COLORS[Math.floor(Math.random()*PETAL_COLORS.length)];
+    el.style.animationDuration=(10+Math.random()*10)+'s';
+    el.style.animationDelay=(Math.random()*8)+'s';
+    container.appendChild(el);
   }
+  console.log('✿ 落花已加载,花瓣数:',container.children.length);
 })();
 
 // ===== 筛选 =====
