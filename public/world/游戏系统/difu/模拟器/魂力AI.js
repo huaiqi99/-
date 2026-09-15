@@ -403,11 +403,15 @@ function renderDianwusiSection(){
     btn.addEventListener('click', function(){sendDianwusiMessage(profile);});
   }
 
-  // 加载存档数据,重画雷达图
+  // 加载存档数据,重画雷达图(定时重画3次,确保覆盖魂力.js的写死数据)
   var saved=loadStats(profile);
   if(saved){
-    // 延迟执行,等魂力.js 初始化完成
-    setTimeout(function(){updateDisplay(profile, saved);}, 100);
+    var redrawCount=0;
+    var redrawTimer=setInterval(function(){
+      updateDisplay(profile, saved);
+      redrawCount++;
+      if(redrawCount>=3){clearInterval(redrawTimer);}
+    }, 250);
   }
 }
 
