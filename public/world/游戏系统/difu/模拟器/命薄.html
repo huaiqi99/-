@@ -384,20 +384,41 @@
       if(!el) return;
       try{
         var all = JSON.parse(localStorage.getItem('gzd_ai_story') || '{}');
-        var arr = all[profile] || [];
-        // 找最后一条 AI 回应
+        var data = all[profile];
+        
+        // 兼容新旧格式
+        var arr = [];
+        var chapterInfo = '';
+        if(Array.isArray(data)){
+          // 旧格式:扁平数组
+          arr = data;
+        } else if(data && data.chapters){
+          // 新格式:章节结构
+          var currentCh = data.currentChapter || 1;
+          var ch = data.chapters[currentCh];
+          if(ch){
+            arr = ch.stories || [];
+            chapterInfo = '第' + currentCh + '章 · ' + (ch.title || '');
+          }
+        }
+        
+        // 找最后一条 AI 回应或开场或章节开头
         var lastAi = null;
         for(var i = arr.length - 1; i >= 0; i--){
-          if(arr[i].type === 'ai' || arr[i].type === 'opening'){
+          if(arr[i].type === 'ai' || arr[i].type === 'opening' || arr[i].type === 'chapter-start'){
             lastAi = arr[i];
             break;
           }
         }
+        
         if(lastAi){
-          // 取前 60 字 + 省略号
           var text = lastAi.text.replace(/\n/g,' ').slice(0, 60);
           if(lastAi.text.length > 60) text += '...';
-          el.textContent = '「' + text + '」';
+          if(chapterInfo){
+            el.innerHTML = '<span style="color:var(--profile-accent,var(--accent));font-size:.72rem;font-family:var(--font-mono);letter-spacing:.5px">'+chapterInfo+'</span><br>「' + text + '」';
+          } else {
+            el.textContent = '「' + text + '」';
+          }
         } else {
           el.textContent = '尚未开始模拟,点击下方按钮进入。';
         }
