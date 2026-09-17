@@ -231,7 +231,7 @@ var NPC_PROFILE_CARDS={
   weiyuanjing:{name:'魏元璟',avatar:'❖',sym:'引渡人 · 第七席',color:'#7a6a3a',imgExt:'.png',
     sign:'"关我什么事。"',
     desc:'生前为苍珩王朝太子后登基为帝。面容极其俊美,生气瞪圆像炸毛的猫,委屈时眼眶泛红强忍不掉泪。傲娇刀子嘴豆腐心,被叫"娘"会炸毛"谁是你娘!叫爹!"。罗烬的生父之一。'},
-  chengmuqi:{name:'程木栖',avatar:'◉',sym:'栖梧馆主事 · 原第二席',color:'#3a6a5a',imgExt:'.png',
+  chengmuqi:{name:'程木栖',avatar:'◉',sym:'栖梧馆主事 · 原第二席',color:'#3a6a5a',imgExt:'.jpg',
     sign:'"乖,喝药。"',
     desc:'归终殿第二席,京城决战中十指尽废后退出排名,开设栖梧馆医馆。面容温婉素净,十指指节微微变形。表面温和端方,实则偷懒翘班躲起来看话本。归终殿的定海神针。'},
   caike:{name:'蔡可',avatar:'✿',sym:'栖梧馆药童 · 入门期',color:'#c8a8c8',imgExt:'.png',
