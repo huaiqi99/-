@@ -94,3 +94,7 @@ GZD.init();
 	    btn.addEventListener('click',function(){st.on=!st.on;if(st.on)play();else au.pause();save();
 	      btn.textContent=st.on?('♫ '+LIST[st.index].name):' ✖&#xFE0E;音乐';});}
 	})();
+// ===== 加载背景图开关 =====
+var _bgScript=document.createElement('script');
+_bgScript.src='./背景.js';
+document.body.appendChild(_bgScript);
