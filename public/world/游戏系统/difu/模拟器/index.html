@@ -5,13 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>引渡人模拟器 · 归终殿</title>
 <style>
-:root{--bg-body:#1a1614;--bg-card:#24201c;--bg-card-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;}
-[data-theme="light"]{--bg-body:#f7f4ef;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(255,255,255,0.95);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
+:root{
+  /* ★ 夜间模式卡片半透明,让底图透出来 */
+  --bg-body:#1a1614;--bg-card:rgba(36,32,28,0.72);--bg-card-hover:rgba(45,40,36,0.82);--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;
+}
+[data-theme="light"]{--bg-body:#f7f4ef;--bg-card:rgba(255,255,255,0.78);--bg-card-hover:rgba(255,255,255,0.9);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:var(--font-serif);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;transition:color var(--transition);overflow:hidden;position:relative;
 
-  /* ★ 底图:把 url 换成你的背景图路径 */
+  /* ★ 底图:横屏(电脑/平板横屏)用电脑端图片 */
   background:url('首页图.jpg') center/cover no-repeat fixed var(--bg-body);
+}
+/* ★ 竖屏(手机/平板竖屏)用手机端图片 */
+@media (orientation:portrait){
+  body{background:url('手机图.jpg') center/cover no-repeat fixed var(--bg-body);}
+  /* 把上面的 url 换成你的手机端图片路径即可 */
 }
 
 /* 底图遮罩(让文字更清晰) */
@@ -30,10 +38,31 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 .container{width:100%;max-width:520px;text-align:center;position:relative;z-index:3;}
 .badge{font-size:.65rem;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono);}
 [data-theme="light"] .badge{color:rgba(44,44,44,0.5);}
-h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:rgba(255,255,255,0.95);text-shadow:0 2px 12px rgba(0,0,0,0.4);}
-[data-theme="light"] h1{color:var(--text-primary);text-shadow:0 2px 8px rgba(255,255,255,0.5);}
-.subtitle{font-size:.9rem;color:rgba(255,255,255,0.65);font-style:italic;margin-bottom:32px;line-height:1.6;}
-[data-theme="light"] .subtitle{color:var(--text-secondary);}
+/* ★ 文字描边:夜间白字包黑边,日间黑字包白边 */
+h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#fff;
+  text-shadow:-1px -1px 0 rgba(0,0,0,0.7),1px -1px 0 rgba(0,0,0,0.7),-1px 1px 0 rgba(0,0,0,0.7),1px 1px 0 rgba(0,0,0,0.7),0 0 8px rgba(0,0,0,0.5),0 2px 12px rgba(0,0,0,0.5);
+}
+[data-theme="light"] h1{color:var(--text-primary);
+  text-shadow:-1px -1px 0 rgba(255,255,255,0.8),1px -1px 0 rgba(255,255,255,0.8),-1px 1px 0 rgba(255,255,255,0.8),1px 1px 0 rgba(255,255,255,0.8),0 0 8px rgba(255,255,255,0.6),0 2px 8px rgba(0,0,0,0.15);
+}
+.badge{
+  text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);
+}
+[data-theme="light"] .badge{
+  text-shadow:-1px -1px 0 rgba(255,255,255,0.7),1px -1px 0 rgba(255,255,255,0.7),-1px 1px 0 rgba(255,255,255,0.7),1px 1px 0 rgba(255,255,255,0.7);
+}
+.subtitle{font-size:.9rem;color:rgba(255,255,255,0.85);font-style:italic;margin-bottom:32px;line-height:1.6;
+  text-shadow:-1px -1px 0 rgba(0,0,0,0.6),1px -1px 0 rgba(0,0,0,0.6),-1px 1px 0 rgba(0,0,0,0.6),1px 1px 0 rgba(0,0,0,0.6),0 1px 4px rgba(0,0,0,0.4);
+}
+[data-theme="light"] .subtitle{color:var(--text-secondary);
+  text-shadow:-1px -1px 0 rgba(255,255,255,0.7),1px -1px 0 rgba(255,255,255,0.7),-1px 1px 0 rgba(255,255,255,0.7),1px 1px 0 rgba(255,255,255,0.7);
+}
+.footer-note{
+  text-shadow:-1px -1px 0 rgba(0,0,0,0.5),1px -1px 0 rgba(0,0,0,0.5),-1px 1px 0 rgba(0,0,0,0.5),1px 1px 0 rgba(0,0,0,0.5);
+}
+[data-theme="light"] .footer-note{
+  text-shadow:-1px -1px 0 rgba(255,255,255,0.6),1px -1px 0 rgba(255,255,255,0.6),-1px 1px 0 rgba(255,255,255,0.6),1px 1px 0 rgba(255,255,255,0.6);
+}
 
 /* 卡片缩小,半透明,让背景透出来 */
 .profile-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
