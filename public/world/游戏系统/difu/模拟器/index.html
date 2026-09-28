@@ -6,27 +6,50 @@
 <title>引渡人模拟器 · 归终殿</title>
 <style>
 :root{--bg-body:#1a1614;--bg-card:#24201c;--bg-card-hover:#2d2824;--border-light:#3d3732;--border-card:#4a443e;--text-primary:#e8e0d5;--text-secondary:#b8aea4;--text-muted:#8a8078;--accent:#c4b4a0;--profile-lin:#D49A9A;--profile-luo:#4E5A64;--font-serif:"Georgia","Times New Roman","Songti SC",serif;--font-mono:"Courier New","Source Code Pro",monospace;--transition:0.3s ease;}
-[data-theme="light"]{--bg-body:#f7f4ef;--bg-card:#ffffff;--bg-card-hover:#f2eee9;--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
+[data-theme="light"]{--bg-body:#f7f4ef;--bg-card:rgba(255,255,255,0.85);--bg-card-hover:rgba(255,255,255,0.95);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;transition:background var(--transition),color var(--transition);overflow:hidden;position:relative;}
+body{font-family:var(--font-serif);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;transition:color var(--transition);overflow:hidden;position:relative;
+
+  /* ★ 底图:把 url 换成你的背景图路径 */
+  background:url('./american_high_campus_1787393983734-5AR9y9KE.jpg') center/cover no-repeat fixed var(--bg-body);
+}
+
+/* 底图遮罩(让文字更清晰) */
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.25) 70%,rgba(0,0,0,0.5) 100%);
+}
+[data-theme="light"] body::before{
+  background:linear-gradient(180deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.1) 40%,rgba(255,255,255,0.2) 70%,rgba(255,255,255,0.4) 100%);
+}
+
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
-.float-btn{background:var(--bg-card);border:1px solid var(--border-light);border-radius:24px;padding:6px 14px 6px 12px;font-size:0.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:0.3px;text-decoration:none;}
-.float-btn:hover{border-color:var(--accent);color:var(--accent);}
-.container{width:100%;max-width:560px;text-align:center;position:relative;z-index:2;}
-.badge{font-size:0.7rem;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;font-family:var(--font-mono);}
-h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
-.subtitle{font-size:1rem;color:var(--text-secondary);font-style:italic;margin-bottom:40px;line-height:1.6;}
-.profile-select{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
-.profile-card{background:var(--bg-card);border:2px solid var(--border-card);border-radius:14px;padding:28px 16px;cursor:pointer;transition:all var(--transition);position:relative;}
+.float-btn{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:.65rem;color:rgba(255,255,255,0.8);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none;}
+.float-btn:hover{background:rgba(255,255,255,0.25);border-color:var(--accent);color:var(--accent);}
+[data-theme="light"] .float-btn{background:rgba(255,255,255,0.6);border-color:rgba(138,58,42,0.2);color:var(--text-secondary);}
+
+.container{width:100%;max-width:520px;text-align:center;position:relative;z-index:3;}
+.badge{font-size:.65rem;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono);}
+[data-theme="light"] .badge{color:rgba(44,44,44,0.5);}
+h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:rgba(255,255,255,0.95);text-shadow:0 2px 12px rgba(0,0,0,0.4);}
+[data-theme="light"] h1{color:var(--text-primary);text-shadow:0 2px 8px rgba(255,255,255,0.5);}
+.subtitle{font-size:.9rem;color:rgba(255,255,255,0.65);font-style:italic;margin-bottom:32px;line-height:1.6;}
+[data-theme="light"] .subtitle{color:var(--text-secondary);}
+
+/* 卡片缩小,半透明,让背景透出来 */
+.profile-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.profile-card{background:var(--bg-card);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid var(--border-card);border-radius:12px;padding:18px 12px;cursor:pointer;transition:all var(--transition);position:relative;}
 .profile-card:hover{transform:translateY(-2px);background:var(--bg-card-hover);}
-.profile-card.active[data-profile="linxiwu"]{border-color:var(--profile-lin);box-shadow:0 0 0 4px rgba(212,154,154,0.12);}
-.profile-card.active[data-profile="luojin"]{border-color:var(--profile-luo);box-shadow:0 0 0 4px rgba(78,90,100,0.12);}
-.profile-card .sym{font-size:1.8rem;margin-bottom:10px;display:block;}
-.profile-card .name{font-size:1.15rem;font-weight:600;margin-bottom:6px;}
-.profile-card .desc{font-size:0.8rem;color:var(--text-muted);line-height:1.5;}
-.start-btn{display:inline-block;width:100%;padding:14px;background:transparent;border:1.5px solid var(--accent);border-radius:24px;color:var(--accent);font-family:var(--font-serif);font-size:1rem;letter-spacing:2px;cursor:pointer;transition:all var(--transition);text-decoration:none;text-align:center;}
-.start-btn:hover{background:var(--accent);color:var(--bg-body);}
-.footer-note{margin-top:24px;font-size:0.7rem;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:0.5px;}
+.profile-card.active[data-profile="linxiwu"]{border-color:var(--profile-lin);box-shadow:0 0 0 3px rgba(212,154,154,0.15);}
+.profile-card.active[data-profile="luojin"]{border-color:var(--profile-luo);box-shadow:0 0 0 3px rgba(78,90,100,0.15);}
+.profile-card .sym{font-size:1.4rem;margin-bottom:6px;display:block;}
+.profile-card .name{font-size:1rem;font-weight:600;margin-bottom:4px;}
+.profile-card .desc{font-size:.72rem;color:var(--text-muted);line-height:1.4;}
+
+/* 开始按钮缩小 */
+.start-btn{display:inline-block;width:100%;padding:10px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid var(--accent);border-radius:20px;color:var(--accent);font-family:var(--font-serif);font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all var(--transition);text-decoration:none;text-align:center;}
+.start-btn:hover{background:var(--accent);color:#fff;}
+.footer-note{margin-top:18px;font-size:.65rem;color:rgba(255,255,255,0.4);font-family:var(--font-mono);letter-spacing:.5px;}
+[data-theme="light"] .footer-note{color:var(--text-muted);}
 
 /* ===== 粒子层 ===== */
 #particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
@@ -39,7 +62,25 @@ h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
 .glow-2{width:250px;height:250px;background:var(--profile-luo);bottom:15%;right:10%;animation-delay:3s;}
 @keyframes glowPulse{0%{opacity:0.05;transform:scale(1);}100%{opacity:0.12;transform:scale(1.15);}}
 
-@media(max-width:480px){h1{font-size:1.6rem;}.profile-select{gap:12px;}.profile-card{padding:22px 12px;}.subtitle{font-size:0.9rem;margin-bottom:28px;}}
+/* ===== 波浪效果 ===== */
+.waves-container{position:fixed;bottom:0;left:0;right:0;z-index:2;pointer-events:none;line-height:0;}
+.waves-container svg{width:100%;height:80px;display:block;}
+.wave-layer{animation:waveMove 12s linear infinite;}
+.wave-layer-2{animation:waveMove 18s linear infinite reverse;opacity:0.5;}
+.wave-layer-3{animation:waveMove 24s linear infinite;opacity:0.3;}
+@keyframes waveMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+@media(max-width:480px){
+  h1{font-size:1.5rem;}
+  .profile-select{gap:8px;}
+  .profile-card{padding:14px 8px;}
+  .profile-card .sym{font-size:1.2rem;}
+  .profile-card .name{font-size:.9rem;}
+  .profile-card .desc{font-size:.65rem;}
+  .subtitle{font-size:.82rem;margin-bottom:20px;}
+  .start-btn{padding:8px;font-size:.82rem;}
+  .waves-container svg{height:50px;}
+}
 </style>
 </head>
 <body>
@@ -72,25 +113,43 @@ h1{font-size:2.2rem;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
     </div>
   </div>
   <a href="./壳.html" class="start-btn" id="startBtn">开始人生</a>
-	<script>
-	(function(){
-	  /* index 不加载核心.js，出殿规则与防套娃自带一份 */
-	  var inShell=false;
-	  try{inShell=window.self!==window.top&&window.parent&&window.parent.GZD&&window.parent.GZD.Shell;}catch(e){}
-	  document.addEventListener('click',function(e){
-	    var a=e.target.closest?e.target.closest('a'):null;
-	    if(!a)return;
-	    var href=a.getAttribute('href')||'';
-	    if(!href||href.charAt(0)==='#')return;
-	    /* 已在壳里点"开始人生" → 不开新壳，让现有壳换回命薄 */
-	    if(a.id==='startBtn'&&inShell){e.preventDefault();try{window.parent.GZD.Shell.load('./命薄.html');}catch(err){}return;}
-	    /* 出殿：../、/、http 开头的链接 → 整个标签页跳出壳，音乐与按钮彻底退场 */
-	    if(/^(\.\.[\/\\]|\/|https?:|mailto:|tel:)/i.test(href)){a.target='_top';}
-	  },false);
-	})();
-	</script>
+  <script>
+  (function(){
+    var inShell=false;
+    try{inShell=window.self!==window.top&&window.parent&&window.parent.GZD&&window.parent.GZD.Shell;}catch(e){}
+    document.addEventListener('click',function(e){
+      var a=e.target.closest?e.target.closest('a'):null;
+      if(!a)return;
+      var href=a.getAttribute('href')||'';
+      if(!href||href.charAt(0)==='#')return;
+      if(a.id==='startBtn'&&inShell){e.preventDefault();try{window.parent.GZD.Shell.load('./命薄.html');}catch(err){}return;}
+      if(/^(\.\.[\/\\]|\/|https?:|mailto:|tel:)/i.test(href)){a.target='_top';}
+    },false);
+  })();
+  </script>
 
   <div class="footer-note" id="footerNote">当前档案：林栖梧</div>
+</div>
+
+<!-- ===== 波浪效果 ===== -->
+<div class="waves-container">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 第一层波浪(最深色) -->
+    <g class="wave-layer">
+      <path d="M0,40 C180,60 360,20 540,40 C720,60 900,20 1080,40 C1260,60 1440,20 1440,40 L1440,80 L0,80 Z" fill="var(--bg-body)" opacity="0.3"></path>
+      <path d="M0,40 C180,60 360,20 540,40 C720,60 900,20 1080,40 C1260,60 1440,20 1440,40 L1440,80 L0,80 Z" fill="var(--bg-body)" opacity="0.3" transform="translate(1440,0)"></path>
+    </g>
+    <!-- 第二层波浪(中色) -->
+    <g class="wave-layer-2">
+      <path d="M0,45 C200,25 400,65 600,45 C800,25 1000,65 1200,45 C1320,35 1380,50 1440,45 L1440,80 L0,80 Z" fill="var(--bg-body)" opacity="0.4" transform="translate(1440,0)"></path>
+      <path d="M0,45 C200,25 400,65 600,45 C800,25 1000,65 1200,45 C1320,35 1380,50 1440,45 L1440,80 L0,80 Z" fill="var(--bg-body)" opacity="0.4"></path>
+    </g>
+    <!-- 第三层波浪(最浅色) -->
+    <g class="wave-layer-3">
+      <path d="M0,50 C160,35 320,65 480,50 C640,35 800,65 960,50 C1120,35 1280,65 1440,50 L1440,80 L0,80 Z" fill="var(--bg-body)" opacity="0.5"></path>
+      <path d="M0,50 C160,35 320,65 480,50 C640,35 800,65 960,50 C1120,35 1280,65 1440,50 L1440,80 L0,80 Z" fill="var(--bg-body)" opacity="0.5" transform="translate(1440,0)"></path>
+    </g>
+  </svg>
 </div>
 
 <script>
