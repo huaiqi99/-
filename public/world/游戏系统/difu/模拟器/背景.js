@@ -9,8 +9,8 @@ var CUSTOM_BG_KEY='gzd_custom_bg';       // 自定义背景(电脑端,base64)
 var CUSTOM_BG_MOBILE_KEY='gzd_custom_bg_mobile'; // 自定义背景(手机端,base64)
 
 // 默认背景图路径(没有自定义时用这个)
-var BG_URL_DESKTOP='./american_high_campus_1787393983734-5AR9y9KE.jpg';
-var BG_URL_MOBILE='./american_high_campus_1787393983734-5AR9y9KE.jpg'; // ★ 改成手机端图片
+var BG_URL_DESKTOP='首页图.jpg';
+var BG_URL_MOBILE='手机图.jpg'; // ★ 改成手机端图片
 
 function isBgOn(){
   try{return localStorage.getItem(BG_KEY)==='true';}catch(e){return false;}

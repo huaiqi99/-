@@ -172,7 +172,7 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 <div class="card card-grad" data-corner="❀">
 <span class="corner-deco">❀</span>
 <div class="cover-wrap">
-<div class="cover-avatar">
+<div class="cover-avatar" id="coverAvatarLin">
 <img src="林栖梧.png" alt="林栖梧" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
 <span class="fallback" style="display:none;">❀</span>
 </div>
@@ -317,7 +317,7 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 <div class="card card-grad" data-corner="◈">
 <span class="corner-deco">◈</span>
 <div class="cover-wrap">
-<div class="cover-avatar">
+<div class="cover-avatar" id="coverAvatarLuo">
 <img src="罗烬.png" alt="罗烬" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
 <span class="fallback" style="display:none;">◈</span>
 </div>
@@ -331,7 +331,7 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 </div>
 <span class="badge">血脉：罗修与魏元璟之子</span>
 <br>
-<button id="avatarUploadLin" style="margin-top:6px;padding:4px 12px;border:1px solid var(--border-card);border-radius:14px;background:transparent;color:var(--text-muted);cursor:pointer;font-size:.7rem;font-family:var(--font-mono);">添加头像</button>
+<button id="avatarUploadLuo" style="margin-top:6px;padding:4px 12px;border:1px solid var(--border-card);border-radius:14px;background:transparent;color:var(--text-muted);cursor:pointer;font-size:.7rem;font-family:var(--font-mono);">添加头像</button>
 </div>
 </div>
 </div>
@@ -461,9 +461,10 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 <div id="petal-container"></div>
 
 <script src="./核心.js"></script>
-<script src="./档案.js">
+<script src="./档案.js"></script>
+<script>
     // ===== 头像上传 =====
-function setupAvatarUpload(btnId, profile, imgSelector){
+function setupAvatarUpload(btnId, profile, avatarId){
   var btn=document.getElementById(btnId);
   if(!btn) return;
   var input=document.createElement('input');
@@ -476,7 +477,7 @@ function setupAvatarUpload(btnId, profile, imgSelector){
   try{
     var custom=localStorage.getItem('gzd_avatar_'+profile);
     if(custom){
-      var img=document.querySelector(imgSelector+' img');
+      var img=document.getElementById(avatarId)?document.getElementById(avatarId).querySelector('img'):null;
       if(img){img.src=custom;img.style.display='block';
         var fb=img.nextElementSibling;
         if(fb) fb.style.display='none';
@@ -493,7 +494,7 @@ function setupAvatarUpload(btnId, profile, imgSelector){
     reader.onload=function(){
       try{
         localStorage.setItem('gzd_avatar_'+profile, reader.result);
-        var img=document.querySelector(imgSelector+' img');
+        var img=document.getElementById(avatarId)?document.getElementById(avatarId).querySelector('img'):null;
         if(img){
           img.src=reader.result;
           img.style.display='block';
@@ -508,8 +509,8 @@ function setupAvatarUpload(btnId, profile, imgSelector){
   });
 }
 
-setupAvatarUpload('avatarUploadLin','linxiwu','.cover-avatar');
-setupAvatarUpload('avatarUploadLuo','luojin','.cover-avatar');
+setupAvatarUpload('avatarUploadLin','linxiwu','coverAvatarLin');
+setupAvatarUpload('avatarUploadLuo','luojin','coverAvatarLuo');
 </script>
 </body>
 </html>
