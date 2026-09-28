@@ -185,6 +185,8 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 <span class="item"><span class="label">建档</span> <span class="value">苍珩四百三十五年 · 霜月</span></span>
 </div>
 <span class="badge">血脉：栾方棋与林淮之女</span>
+<br>
+<button id="avatarUploadLin" style="margin-top:6px;padding:4px 12px;border:1px solid var(--border-card);border-radius:14px;background:transparent;color:var(--text-muted);cursor:pointer;font-size:.7rem;font-family:var(--font-mono);">添加头像</button>
 </div>
 </div>
 </div>
@@ -328,6 +330,8 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 <span class="item"><span class="label">建档</span> <span class="value">苍珩四百三十五年 · 霜月</span></span>
 </div>
 <span class="badge">血脉：罗修与魏元璟之子</span>
+<br>
+<button id="avatarUploadLin" style="margin-top:6px;padding:4px 12px;border:1px solid var(--border-card);border-radius:14px;background:transparent;color:var(--text-muted);cursor:pointer;font-size:.7rem;font-family:var(--font-mono);">添加头像</button>
 </div>
 </div>
 </div>
@@ -457,6 +461,55 @@ body{padding:0 12px 30px 12px;font-size:15px;}
 <div id="petal-container"></div>
 
 <script src="./核心.js"></script>
-<script src="./档案.js"></script>
+<script src="./档案.js">
+    // ===== 头像上传 =====
+function setupAvatarUpload(btnId, profile, imgSelector){
+  var btn=document.getElementById(btnId);
+  if(!btn) return;
+  var input=document.createElement('input');
+  input.type='file';
+  input.accept='image/*';
+  input.style.display='none';
+  document.body.appendChild(input);
+
+  // 页面加载时检查自定义头像
+  try{
+    var custom=localStorage.getItem('gzd_avatar_'+profile);
+    if(custom){
+      var img=document.querySelector(imgSelector+' img');
+      if(img){img.src=custom;img.style.display='block';
+        var fb=img.nextElementSibling;
+        if(fb) fb.style.display='none';
+      }
+    }
+  }catch(e){}
+
+  btn.addEventListener('click',function(){input.click();});
+  input.addEventListener('change',function(){
+    var file=this.files[0];
+    if(!file) return;
+    if(file.size>2000000){alert('图片太大(超过2MB)');return;}
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        localStorage.setItem('gzd_avatar_'+profile, reader.result);
+        var img=document.querySelector(imgSelector+' img');
+        if(img){
+          img.src=reader.result;
+          img.style.display='block';
+          var fb=img.nextElementSibling;
+          if(fb) fb.style.display='none';
+        }
+        btn.textContent='✅ 已更新';
+        setTimeout(function(){btn.textContent='📷 添加头像';},2000);
+      }catch(e){alert('存储失败');}
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+setupAvatarUpload('avatarUploadLin','linxiwu','.cover-avatar');
+setupAvatarUpload('avatarUploadLuo','luojin','.cover-avatar');
+</script>
 </body>
 </html>

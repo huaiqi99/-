@@ -237,6 +237,38 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   </ul>
 </div>
 
+<!-- ===== 背景图设置 ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> 背景图设置</div>
+  
+  <div class="status-box info">
+    <span class="status-icon">🖼</span>
+    <span class="status-text">
+      <strong>背景图状态:</strong><br>
+      <span id="bgStatus">读取中...</span>
+    </span>
+  </div>
+
+  <div style="margin-top:14px;">
+    <div class="field-label" style="margin-bottom:6px;">电脑端背景图(横屏)</div>
+    <input type="file" id="bgUploadDesktop" accept="image/*" style="font-size:.8rem;">
+    <button class="btn btn-danger" id="bgClearDesktop" style="margin-top:6px;font-size:.75rem;padding:6px 12px;">清除自定义(用默认)</button>
+  </div>
+
+  <div style="margin-top:14px;">
+    <div class="field-label" style="margin-bottom:6px;">手机端背景图(竖屏)</div>
+    <input type="file" id="bgUploadMobile" accept="image/*" style="font-size:.8rem;">
+    <button class="btn btn-danger" id="bgClearMobile" style="margin-top:6px;font-size:.75rem;padding:6px 12px;">清除自定义(用默认)</button>
+  </div>
+
+  <ul class="info-list" style="margin-top:14px;">
+    <li>上传的图片仅保存在你本地浏览器</li>
+    <li>图片过大会影响加载速度,建议小于 500KB</li>
+    <li>清除后恢复默认背景图</li>
+    <li>背景图开关在侧边栏导航里</li>
+  </ul>
+</div>
+
 <!-- ===== 传讯符记录管理 ===== -->
 <div class="card">
   <div class="card-title"><span class="sym">◈</span> 传讯符记录管理</div>
@@ -401,6 +433,53 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     box.querySelector('.status-icon').textContent = icon;
     txt.innerHTML = text;
   }
+
+  // ===== 背景图上传 =====
+function updateBgStatus(){
+  var on=localStorage.getItem('gzd_bg_on')==='true';
+  var customD=localStorage.getItem('gzd_custom_bg')?'有自定义':'默认';
+  var customM=localStorage.getItem('gzd_custom_bg_mobile')?'有自定义':'默认';
+  var el=document.getElementById('bgStatus');
+  if(el) el.innerHTML='开关:'+(on?'开':'关')+'<br>电脑端:'+customD+'<br>手机端:'+customM;
+}
+
+function handleBgUpload(inputId, storageKey){
+  var input=document.getElementById(inputId);
+  if(!input) return;
+  input.addEventListener('change', function(){
+    var file=this.files[0];
+    if(!file) return;
+    if(file.size>2000000){
+      alert('图片太大了(超过2MB),请压缩后再上传');
+      return;
+    }
+    var reader=new FileReader();
+    reader.onload=function(){
+      try{
+        localStorage.setItem(storageKey, reader.result);
+        updateBgStatus();
+        alert('上传成功!请刷新页面查看效果');
+      }catch(e){
+        alert('存储失败,图片可能太大');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+handleBgUpload('bgUploadDesktop','gzd_custom_bg');
+handleBgUpload('bgUploadMobile','gzd_custom_bg_mobile');
+
+document.getElementById('bgClearDesktop')?.addEventListener('click',function(){
+  localStorage.removeItem('gzd_custom_bg');
+  updateBgStatus();
+});
+document.getElementById('bgClearMobile')?.addEventListener('click',function(){
+  localStorage.removeItem('gzd_custom_bg_mobile');
+  updateBgStatus();
+});
+
+updateBgStatus();
 
   function initPage(){
     const cfg = loadConfig();
@@ -606,5 +685,6 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   console.log('⚙️ 归终殿 · 设置页 v2.0 已加载');
 })();
 </script>
+<script src="./背景.js"></script>
 </body>
 </html>
