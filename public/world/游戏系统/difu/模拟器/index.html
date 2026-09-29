@@ -208,13 +208,6 @@ spawnParticles();
   var m=get('gzd_custom_bg_mobile');
   if(d) root.setProperty('--gzd-idx-bg','url("'+d+'") center/cover no-repeat fixed');
   if(m) root.setProperty('--gzd-idx-bg-m','url("'+m+'") center/cover no-repeat fixed');
-  var a=parseFloat(get('gzd_bg_card_alpha'));
-  if(!isNaN(a)&&a>=0.3&&a<1){
-    var s=document.createElement('style');
-    s.textContent=':root{--bg-card:rgba(36,32,28,'+a+')!important}'+
-      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}';
-    document.head.appendChild(s);
-  }
 })();
 </script>
  
