@@ -12,11 +12,11 @@ body[data-profile="luojin"]{--profile-accent:var(--profile-luo)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-primary);font-size:16px;line-height:1.6;transition:background var(--transition),color var(--transition);-webkit-font-smoothing:antialiased;min-height:100vh;padding:0 16px 60px 16px;max-width:900px;margin:0 auto}
-
+ 
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 .float-btn{background:var(--bg-card);border:1px solid var(--border-card);border-radius:24px;padding:6px 14px 6px 12px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none}
 .float-btn:hover{border-color:var(--accent);color:var(--accent)}
-
+ 
 /* 侧边栏 */
 .sidebar-tab{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:90;background:var(--bg-card);border:1px solid var(--border-card);border-left:none;border-radius:0 8px 8px 0;padding:10px 10px 10px 6px;cursor:pointer;box-shadow:2px 0 12px rgba(0,0,0,.2);transition:all var(--transition);writing-mode:vertical-rl;font-size:.7rem;letter-spacing:3px;color:var(--text-muted);font-family:var(--font-mono);user-select:none}
 .sidebar-tab:hover{border-color:var(--profile-accent);color:var(--profile-accent)}
@@ -35,16 +35,16 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .sidebar-panel .profile-switch-btn:hover{border-color:var(--profile-accent);color:var(--profile-accent);background:var(--bg-accent-soft)}
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:92;opacity:0;pointer-events:none;transition:opacity .35s ease}
 .sidebar-overlay.show{opacity:1;pointer-events:auto}
-
+ 
 .top-header{text-align:center;padding:40px 0 32px 0;border-bottom:1px solid var(--border-light);margin-bottom:32px}
 .top-header .badge{font-size:.7rem;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono)}
 .top-header h1{font-size:1.8rem;font-weight:700;letter-spacing:3px;margin-bottom:6px}
 .top-header .subtitle{font-size:.9rem;color:var(--text-secondary);font-style:italic}
-
+ 
 .card{background:var(--bg-card);border:1px solid var(--border-card);border-radius:12px;padding:24px 22px;margin-bottom:20px;position:relative;transition:border-color var(--transition)}
 .card-title{font-size:.85rem;color:var(--text-muted);letter-spacing:2px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-light);font-family:var(--font-mono);display:flex;align-items:center;gap:8px}
 .card-title .sym{color:var(--profile-accent,var(--accent));font-size:1rem}
-
+ 
 /* 服务商选择 */
 .provider-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
 .provider-card{padding:14px 12px;border:1.5px solid var(--border-card);border-radius:10px;cursor:pointer;transition:all var(--transition);text-align:center;background:var(--bg-card)}
@@ -54,7 +54,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .provider-card .provider-desc{font-size:.7rem;color:var(--text-muted);line-height:1.4}
 .provider-card .provider-status{display:inline-block;margin-top:6px;font-size:.6rem;padding:1px 8px;border-radius:8px;background:var(--bg-accent-soft);color:var(--text-muted);letter-spacing:1px}
 .provider-card .provider-status.recommended{background:rgba(138,58,42,0.1);color:var(--accent)}
-
+ 
 /* 输入框 */
 .field-group{margin-bottom:16px}
 .field-label{display:block;font-size:.8rem;color:var(--text-secondary);margin-bottom:6px;letter-spacing:.5px}
@@ -62,7 +62,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .field-input{width:100%;padding:10px 14px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-card);border-radius:8px;font-family:var(--font-mono);font-size:.85rem;transition:border-color var(--transition)}
 .field-input:focus{outline:none;border-color:var(--profile-accent,var(--accent))}
 .field-input::placeholder{color:var(--text-muted);opacity:.6}
-
+ 
 /* 按钮 */
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .btn{padding:10px 20px;border-radius:8px;cursor:pointer;font-family:var(--font-serif);font-size:.85rem;letter-spacing:1px;transition:all var(--transition);border:1.5px solid var(--border-card);background:transparent;color:var(--text-secondary)}
@@ -72,7 +72,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .btn-danger{border-color:#a04040;color:#a04040}
 .btn-danger:hover:not(:disabled){background:#a04040;color:var(--bg-card)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-
+ 
 /* 状态提示 */
 .status-box{padding:12px 14px;border-radius:8px;background:var(--bg-accent-soft);border:1px solid var(--border-light);font-size:.85rem;margin-top:14px;display:flex;align-items:flex-start;gap:8px}
 .status-box.success{background:rgba(80,140,80,0.08);border-color:rgba(80,140,80,0.3)}
@@ -81,27 +81,27 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 .status-icon{font-size:1rem;line-height:1.4}
 .status-text{flex:1;line-height:1.6}
 .status-text strong{color:var(--text-primary)}
-
+ 
 /* 测试结果 */
 .test-result{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg-card);border:1px dashed var(--border-card);font-size:.8rem;line-height:1.7;color:var(--text-secondary);max-height:200px;overflow-y:auto;white-space:pre-wrap;font-family:var(--font-mono)}
 .test-result:empty{display:none}
-
+ 
 /* 预留功能(灰显) */
 .reserved-section{opacity:.5;pointer-events:none}
 .reserved-section .card-title::after{content:" · 待开放";font-size:.65rem;color:var(--text-muted);letter-spacing:1px;margin-left:6px}
-
+ 
 /* 信息说明 */
 .info-list{font-size:.82rem;color:var(--text-secondary);line-height:1.9;padding-left:18px}
 .info-list li{margin-bottom:4px}
 .info-list code{background:var(--bg-accent-soft);padding:1px 6px;border-radius:3px;font-size:.78rem;color:var(--accent);font-family:var(--font-mono)}
-
+ 
 /* 底部说明 */
 .footer-note{text-align:center;font-size:.7rem;color:var(--text-muted);margin-top:30px;padding-top:20px;border-top:1px solid var(--border-light);font-family:var(--font-mono);letter-spacing:.5px;line-height:1.8}
-
+ 
 /* Toast */
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-card);border:1px solid var(--profile-accent,var(--accent));color:var(--text-primary);padding:10px 20px;border-radius:24px;font-size:.85rem;box-shadow:0 4px 20px rgba(0,0,0,.15);opacity:0;pointer-events:none;transition:all .3s;z-index:200}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
+ 
 @media(max-width:600px){
   body{padding:0 12px 40px 12px;font-size:15px}
   .top-header{padding:30px 0 24px 0}
@@ -118,12 +118,12 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 </style>
 </head>
 <body data-profile="linxiwu">
-
+ 
 <div class="float-group">
-  <a class="float-btn" href="./index.html"><span style="margin-right:2px;">←</span> 返回</a>
+  <a class="float-btn" href="./https://sfile.chatglm.cn/workspace/file/2a/2a6cc96752.html"><span style="margin-right:2px;">←</span> 返回</a>
   <button class="float-btn" id="themeBtn"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
 </div>
-
+ 
 <!-- 侧边栏 -->
 <div class="sidebar-tab"><span class="sym">◈</span> 导航</div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -140,21 +140,21 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   <a class="nav-item" href="./纪事.html"><span class="sym">✶</span> 升席纪事</a>
   <a class="nav-item" href="./论坛.html"><span class="sym">◉</span> 玉碟</a>
   <a class="nav-item" href="./传讯.html"><span class="sym">✉&#xFE0E;</span> 传讯符</a>
-  <a class="nav-item active" href="./设置.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
+  <a class="nav-item active" href="./https://sfile.chatglm.cn/workspace/file/38/3875606f35.html"><span class="sym">⚙&#xFE0E;</span> 设置</a>
   <button class="profile-switch-btn" id="profileSwitchBtn">切换到 罗烬</button>
   <div class="panel-footer">归终殿弟子手册 · 内部流通</div>
 </div>
-
+ 
 <div class="top-header">
   <div class="badge">◈ 归终殿弟子手册</div>
   <h1>设置</h1>
   <div class="subtitle">"工欲善其事,必先利其器"</div>
 </div>
-
+ 
 <!-- ===== AI 调用配置 ===== -->
 <div class="card">
   <div class="card-title"><span class="sym">◈</span> AI 调用配置</div>
-
+ 
   <div class="field-group">
     <label class="field-label">AI 服务商 <span class="hint">(选择你拥有 API Key 的服务商)</span></label>
     <div class="provider-grid" id="providerGrid">
@@ -180,40 +180,40 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       </div>
     </div>
   </div>
-
+ 
   <div class="field-group" id="customUrlGroup" style="display:none;">
     <label class="field-label">接口地址 (Base URL) <span class="hint">(以 https:// 开头,不要加 /v1/chat/completions)</span></label>
     <input type="text" class="field-input" id="customUrl" placeholder="例如:https://api.example.com/v1">
   </div>
-
+ 
   <div class="field-group">
     <label class="field-label">API Key <span class="hint">(以 sk- 开头,仅保存在你本地浏览器)</span></label>
     <input type="password" class="field-input" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxx">
   </div>
-
+ 
   <div class="field-group">
     <label class="field-label">模型名 <span class="hint">(留空则用服务商默认模型)</span></label>
     <input type="text" class="field-input" id="modelName" placeholder="例如:deepseek-chat">
   </div>
-
+ 
   <div class="btn-row">
     <button class="btn btn-primary" id="saveBtn">💾 保存配置</button>
     <button class="btn" id="testBtn">🔍 测试连接</button>
     <button class="btn btn-danger" id="clearKeyBtn">🗑 清除 Key</button>
   </div>
-
+ 
   <div class="status-box info" id="statusBox">
     <span class="status-icon">⏳</span>
     <span class="status-text" id="statusText">正在读取本地配置...</span>
   </div>
-
+ 
   <div class="test-result" id="testResult"></div>
 </div>
-
+ 
 <!-- ===== 剧情存档管理 ===== -->
 <div class="card">
   <div class="card-title"><span class="sym">◈</span> 剧情存档管理</div>
-
+ 
   <div class="status-box info">
     <span class="status-icon">📖</span>
     <span class="status-text">
@@ -221,13 +221,13 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       <span id="archiveStatus">读取中...</span>
     </span>
   </div>
-
+ 
   <div class="btn-row" style="margin-top:14px;">
     <button class="btn" id="refreshArchiveBtn">🔄 刷新状态</button>
     <button class="btn btn-danger" id="clearStoryBtn">⚠️ 清除剧情历史</button>
     <button class="btn" id="restorePresetStoryBtn">↩ 恢复写死对话</button>
   </div>
-
+ 
   <ul class="info-list" style="margin-top:14px;">
     <li>剧情历史保存在浏览器的 <code>localStorage</code> 里,不会上传到任何服务器</li>
     <li>清除后,两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都会被清空</li>
@@ -236,7 +236,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     <li>「恢复写死对话」会清除你删除过的标记,让命薄页所有预设剧情重新显示</li>
   </ul>
 </div>
-
+ 
 <!-- ===== 背景图设置 ===== -->
 <div class="card">
   <div class="card-title"><span class="sym">◈</span> 背景图设置</div>
@@ -248,31 +248,38 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       <span id="bgStatus">读取中...</span>
     </span>
   </div>
-
+ 
   <div style="margin-top:14px;">
     <div class="field-label" style="margin-bottom:6px;">电脑端背景图(横屏)</div>
     <input type="file" id="bgUploadDesktop" accept="image/*" style="font-size:.8rem;">
     <button class="btn btn-danger" id="bgClearDesktop" style="margin-top:6px;font-size:.75rem;padding:6px 12px;">清除自定义(用默认)</button>
   </div>
-
+ 
   <div style="margin-top:14px;">
     <div class="field-label" style="margin-bottom:6px;">手机端背景图(竖屏)</div>
     <input type="file" id="bgUploadMobile" accept="image/*" style="font-size:.8rem;">
     <button class="btn btn-danger" id="bgClearMobile" style="margin-top:6px;font-size:.75rem;padding:6px 12px;">清除自定义(用默认)</button>
   </div>
-
+ 
+  <div style="margin-top:14px;">
+    <div class="field-label" style="margin-bottom:6px;">卡片透明度 <span class="hint" id="cardAlphaVal">默认(不透明)</span></div>
+    <input type="range" id="cardAlphaSlider" min="30" max="100" step="5" value="100" style="width:100%;">
+    <div style="font-size:.7rem;color:var(--text-muted);margin-top:4px;">往左拖卡片越透,越能透出背景图;对所有内页及首页生效,拉到最右恢复默认</div>
+  </div>
+ 
   <ul class="info-list" style="margin-top:14px;">
     <li>上传的图片仅保存在你本地浏览器</li>
     <li>图片过大会影响加载速度,建议小于 500KB</li>
     <li>清除后恢复默认背景图</li>
     <li>背景图开关在侧边栏导航里</li>
+    <li>自定义背景图对首页同样生效</li>
   </ul>
 </div>
-
+ 
 <!-- ===== 传讯符记录管理 ===== -->
 <div class="card">
   <div class="card-title"><span class="sym">◈</span> 传讯符记录管理</div>
-
+ 
   <div class="status-box info">
     <span class="status-icon">✉</span>
     <span class="status-text">
@@ -280,20 +287,20 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       <span id="chatArchiveStatus">读取中...</span>
     </span>
   </div>
-
+ 
   <div class="btn-row" style="margin-top:14px;">
     <button class="btn" id="refreshChatArchiveBtn">🔄 刷新状态</button>
     <button class="btn btn-danger" id="clearChatBtn">⚠️ 清除所有通讯记录</button>
     <button class="btn" id="restorePresetChatBtn">↩ 恢复写死对话</button>
   </div>
-
+ 
   <ul class="info-list" style="margin-top:14px;">
     <li>通讯记录保存在 <code>localStorage.gzd_chat_history</code>,不上传任何服务器</li>
     <li>清除后,两个角色与所有 NPC 的 AI 对话记录都会被清空,写死对话保留</li>
     <li>「恢复写死对话」会清除你删除过的标记,让传讯符页所有预设对话重新显示</li>
   </ul>
 </div>
-
+ 
 <!-- ===== 主题与外观(预留) ===== -->
 <div class="card reserved-section">
   <div class="card-title"><span class="sym">◈</span> 主题与外观</div>
@@ -314,7 +321,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     </div>
   </div>
 </div>
-
+ 
 <!-- ===== 背景音乐(预留) ===== -->
 <div class="card reserved-section">
   <div class="card-title"><span class="sym">◈</span> 背景音乐</div>
@@ -331,7 +338,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     <input type="range" min="0" max="100" value="35" disabled style="width:100%;">
   </div>
 </div>
-
+ 
 <!-- ===== 关于与帮助 ===== -->
 <div class="card">
   <div class="card-title"><span class="sym">◈</span> 关于与帮助</div>
@@ -344,18 +351,18 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     <li>命薄页和传讯符页的写死对话可以长按删除,删除后可在本页恢复</li>
   </ul>
 </div>
-
+ 
 <div class="footer-note">
   引渡人模拟器 · 归终殿 v2.0<br>
   苍珩四百三十五年 · 霜月
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 (function(){
   'use strict';
-
+ 
   // ===== GZD 核心(自包含,不依赖外部 核心.js) =====
   if(!window.GZD){
     window.GZD={};
@@ -365,7 +372,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     GZD.Sidebar={open:false,toggle:function(){this.open=!this.open;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.toggle('open',this.open);if(o)o.classList.toggle('show',this.open);document.body.classList.toggle('no-scroll',this.open);},close:function(){if(this.open){this.open=false;var p=document.getElementById('sidebarPanel'),o=document.getElementById('sidebarOverlay');if(p)p.classList.remove('open');if(o)o.classList.remove('show');document.body.classList.remove('no-scroll');}}};
     GZD.init=function(){this.ThemeManager.init();this.ProfileManager.init();};GZD.init();
   }
-
+ 
   // ===== 侧边栏事件 =====
   document.addEventListener('click',function(e){
     var t=e.target;
@@ -379,20 +386,20 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   document.getElementById('themeBtn').addEventListener('click',function(){GZD.ThemeManager.toggle();});
   // 角色切换 UI
   (function(){var saved=GZD.Storage.getProfile();var btn=document.getElementById('profileSwitchBtn');if(btn)btn.textContent='切换到 '+(saved==='linxiwu'?'罗烬':'林栖梧');})();
-
+ 
   // ===== 配置存储键 =====
   const CONFIG_KEY = 'gzd_ai_config';
   const STORY_KEY = 'gzd_ai_story';
   const CHAT_KEY = 'gzd_chat_history';
   const PRESET_DELETED_KEY = 'gzd_preset_deleted'; // 写死对话的删除标记
-
+ 
   const PROVIDER_DEFAULTS = {
     deepseek: { baseUrl: 'https://api.deepseek.com', defaultModel: 'deepseek-chat' },
     openai:   { baseUrl: 'https://api.openai.com',    defaultModel: 'gpt-4o-mini' },
     claude:   { baseUrl: 'https://api.anthropic.com', defaultModel: 'claude-3-5-sonnet-20241022' },
     custom:   { baseUrl: '',                          defaultModel: '' }
   };
-
+ 
   function loadConfig(){
     try{ return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}'); }
     catch(e){ return {}; }
@@ -400,7 +407,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   function saveConfig(cfg){
     localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
   }
-
+ 
   // ===== Toast =====
   let toastTimer;
   function toast(msg){
@@ -410,7 +417,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
   }
-
+ 
   // ===== 服务商选择 =====
   let currentProvider = 'deepseek';
   function selectProvider(p){
@@ -424,7 +431,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
       modelInput.value = PROVIDER_DEFAULTS[p].defaultModel;
     }
   }
-
+ 
   // ===== 状态提示 =====
   function setStatus(type, icon, text){
     const box = document.getElementById('statusBox');
@@ -433,7 +440,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     box.querySelector('.status-icon').textContent = icon;
     txt.innerHTML = text;
   }
-
+ 
   // ===== 背景图上传 =====
 function updateBgStatus(){
   var on=localStorage.getItem('gzd_bg_on')==='true';
@@ -442,7 +449,7 @@ function updateBgStatus(){
   var el=document.getElementById('bgStatus');
   if(el) el.innerHTML='开关:'+(on?'开':'关')+'<br>电脑端:'+customD+'<br>手机端:'+customM;
 }
-
+ 
 function handleBgUpload(inputId, storageKey){
   var input=document.getElementById(inputId);
   if(!input) return;
@@ -466,10 +473,10 @@ function handleBgUpload(inputId, storageKey){
     reader.readAsDataURL(file);
   });
 }
-
+ 
 handleBgUpload('bgUploadDesktop','gzd_custom_bg');
 handleBgUpload('bgUploadMobile','gzd_custom_bg_mobile');
-
+ 
 document.getElementById('bgClearDesktop')?.addEventListener('click',function(){
   localStorage.removeItem('gzd_custom_bg');
   updateBgStatus();
@@ -478,9 +485,36 @@ document.getElementById('bgClearMobile')?.addEventListener('click',function(){
   localStorage.removeItem('gzd_custom_bg_mobile');
   updateBgStatus();
 });
-
+ 
+// ===== 卡片透明度滑块 =====
+(function(){
+  var ALPHA_KEY='gzd_bg_card_alpha';
+  var slider=document.getElementById('cardAlphaSlider');
+  var label=document.getElementById('cardAlphaVal');
+  if(!slider||!label) return;
+  function refreshLabel(v){
+    label.textContent=(v>=100?'默认(不透明)':('不透明度 '+v+'%'));
+  }
+  var saved=parseFloat(localStorage.getItem(ALPHA_KEY));
+  if(!isNaN(saved)&&saved>=0.3&&saved<1){
+    slider.value=Math.round(saved*100);
+  }
+  refreshLabel(parseInt(slider.value,10));
+  slider.addEventListener('input',function(){
+    var v=parseInt(this.value,10);
+    refreshLabel(v);
+    if(v>=100){
+      localStorage.removeItem(ALPHA_KEY);
+    }else{
+      localStorage.setItem(ALPHA_KEY,(v/100).toFixed(2));
+    }
+    // 本页即时生效(其他页面通过 storage 事件自动刷新)
+    if(window.gzdRefreshCardAlpha) window.gzdRefreshCardAlpha();
+  });
+})();
+ 
 updateBgStatus();
-
+ 
   function initPage(){
     const cfg = loadConfig();
     if(cfg.provider){ selectProvider(cfg.provider); } else { selectProvider('deepseek'); }
@@ -491,7 +525,7 @@ updateBgStatus();
     updateArchiveStatus();
     updateChatArchiveStatus();
   }
-
+ 
   function updateStatus(){
     const key = document.getElementById('apiKey').value.trim();
     if(key){
@@ -501,7 +535,7 @@ updateBgStatus();
       setStatus('info', 'ℹ️', `<strong>未配置 API Key</strong><br>当前将使用站长提供的公共后端(Cloudflare Worker),国内访问可能较慢。填写自己的 Key 可大幅提速。`);
     }
   }
-
+ 
   // ===== 剧情存档状态 =====
   function updateArchiveStatus(){
     try{
@@ -516,7 +550,7 @@ updateBgStatus();
       document.getElementById('archiveStatus').textContent = '读取失败';
     }
   }
-
+ 
   // ===== 传讯符记录状态 =====
   function updateChatArchiveStatus(){
     try{
@@ -541,7 +575,7 @@ updateBgStatus();
       document.getElementById('chatArchiveStatus').textContent = '读取失败';
     }
   }
-
+ 
   // ===== 保存配置 =====
   function saveSettings(){
     const apiKey = document.getElementById('apiKey').value.trim();
@@ -563,7 +597,7 @@ updateBgStatus();
     updateStatus();
     toast('✅ 配置已保存');
   }
-
+ 
   // ===== 清除 Key =====
   function clearKey(){
     if(!confirm('确定清除 API Key 吗?清除后将回退到公共后端(速度较慢)。')) return;
@@ -574,7 +608,7 @@ updateBgStatus();
     updateStatus();
     toast('🗑 API Key 已清除');
   }
-
+ 
   // ===== 清除剧情历史 =====
   function clearStory(){
     if(!confirm('⚠️ 确定清除所有剧情历史吗?\n\n两个角色(林栖梧 / 罗烬)的所有 AI 剧情记录都将被清空,且无法恢复。')) return;
@@ -583,7 +617,7 @@ updateBgStatus();
     updateArchiveStatus();
     toast('📖 剧情历史已清空');
   }
-
+ 
   // ===== 清除通讯记录 =====
   function clearChat(){
     if(!confirm('⚠️ 确定清除所有通讯记录吗?\n\n两个角色与所有 NPC 的 AI 对话记录都将被清空(写死对话保留)。')) return;
@@ -592,7 +626,7 @@ updateBgStatus();
     updateChatArchiveStatus();
     toast('✉ 通讯记录已清空');
   }
-
+ 
   // ===== 恢复写死对话(剧情) =====
   function restorePresetStory(){
     if(!confirm('确定恢复命薄页所有写死对话吗?\n\n你删除过的预设剧情将重新显示。')) return;
@@ -603,7 +637,7 @@ updateBgStatus();
     }catch(e){}
     toast('↩ 命薄页写死对话已恢复');
   }
-
+ 
   // ===== 恢复写死对话(传讯符) =====
   function restorePresetChat(){
     if(!confirm('确定恢复传讯符页所有写死对话吗?\n\n你删除过的预设对话将重新显示。')) return;
@@ -614,7 +648,7 @@ updateBgStatus();
     }catch(e){}
     toast('↩ 传讯符写死对话已恢复');
   }
-
+ 
   // ===== 测试连接 =====
   async function testConnection(){
     const apiKey = document.getElementById('apiKey').value.trim();
@@ -622,16 +656,16 @@ updateBgStatus();
     const baseUrl = currentProvider === 'custom'
       ? document.getElementById('customUrl').value.trim()
       : PROVIDER_DEFAULTS[currentProvider].baseUrl;
-
+ 
     if(!apiKey){ toast('⚠️ 请先填写 API Key'); return; }
     if(currentProvider === 'custom' && !baseUrl){ toast('⚠️ 请填写接口地址'); return; }
-
+ 
     const resultEl = document.getElementById('testResult');
     const btn = document.getElementById('testBtn');
     btn.disabled = true;
     btn.textContent = '🔍 测试中...';
     resultEl.textContent = '正在连接 ' + baseUrl + ' ...\n';
-
+ 
     let url, headers, body;
     if(currentProvider === 'claude'){
       url = baseUrl + '/v1/messages';
@@ -642,7 +676,7 @@ updateBgStatus();
       headers = {'Content-Type':'application/json','Authorization':'Bearer '+apiKey};
       body = JSON.stringify({model:modelName,messages:[{role:'user',content:'请回复"连接成功"四个字。'}],max_tokens:50});
     }
-
+ 
     try{
       const resp = await fetch(url, {method:'POST',headers,body});
       const data = await resp.json();
@@ -665,7 +699,7 @@ updateBgStatus();
       btn.textContent = '🔍 测试连接';
     }
   }
-
+ 
   // ===== 事件绑定 =====
   document.querySelectorAll('.provider-card[data-provider]').forEach(c => {
     c.addEventListener('click', () => selectProvider(c.dataset.provider));
@@ -680,11 +714,11 @@ updateBgStatus();
   document.getElementById('restorePresetChatBtn').addEventListener('click', restorePresetChat);
   document.getElementById('refreshArchiveBtn').addEventListener('click', updateArchiveStatus);
   document.getElementById('refreshChatArchiveBtn').addEventListener('click', updateChatArchiveStatus);
-
+ 
   initPage();
   console.log('⚙️ 归终殿 · 设置页 v2.0 已加载');
 })();
 </script>
-<script src="./背景.js"></script>
+<script src="./https://sfile.chatglm.cn/workspace/file/b3/b337a5278d.js"></script>
 </body>
 </html>

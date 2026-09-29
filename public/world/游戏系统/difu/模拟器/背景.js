@@ -1,4 +1,4 @@
-// ===== 背景.js · 全局背景图开关 v4 =====
+// ===== 背景.js · 全局背景图开关 v5 =====
 // v3: 支持手机端/电脑端不同图片 + 自定义上传 + 字体清晰度
 // v4: 修复移动端/平板背景图被放大且跟随滚动的问题
 //     原因: 之前把背景直接铺在 body 上并用了 background-attachment:fixed,
@@ -6,6 +6,9 @@
 //           撑大并跟随内容滚动。
 //     方案: 改为注入一个 position:fixed 的独立背景层 #gzd-bg-layer,
 //           背景始终铺满视口且固定不动,电脑端视觉效果与 v3 一致。
+// v5: 新增卡片透明度(gzd_bg_card_alpha,设置页滑块控制)。
+//     通过覆盖 --bg-card 变量让所有内页卡片变半透明,透出背景图;
+//     值未设置时保持各页默认外观,滑块拉满(100)即恢复默认。
 
 (function(){
   'use strict';
@@ -13,6 +16,7 @@
   var BG_KEY='gzd_bg_on';
   var CUSTOM_BG_KEY='gzd_custom_bg';       // 自定义背景(电脑端,base64)
   var CUSTOM_BG_MOBILE_KEY='gzd_custom_bg_mobile'; // 自定义背景(手机端,base64)
+  var ALPHA_KEY='gzd_bg_card_alpha';       // 卡片透明度(0.3~1,空=默认不透明)
   
   // 默认背景图路径(没有自定义时用这个)
   var BG_URL_DESKTOP='首页图.jpg';
@@ -47,6 +51,32 @@
     }
     return el;
   }
+  
+  // ===== v5 卡片透明度 =====
+  // 卡片底色:暗色 rgb(36,32,28) / 亮色 rgb(255,255,255),与各页 --bg-card 原值一致,
+  // 仅把不透明度替换为滑块值,保证颜色观感不变
+  function getAlpha(){
+    try{
+      var v=parseFloat(localStorage.getItem(ALPHA_KEY));
+      if(!isNaN(v)&&v>=0.3&&v<1) return v;
+    }catch(e){}
+    return null; // 未设置或拉满=用各页默认
+  }
+  
+  function applyAlpha(){
+    var old=document.getElementById('gzd-bg-alpha-style');
+    if(old) old.remove();
+    var a=getAlpha();
+    if(a===null) return;
+    var s=document.createElement('style');
+    s.id='gzd-bg-alpha-style';
+    s.textContent=
+      ':root{--bg-card:rgba(36,32,28,'+a+')!important}'+
+      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}';
+    document.head.appendChild(s);
+  }
+  // 供设置页滑块拖动时本页即时刷新(同页不触发 storage 事件)
+  window.gzdRefreshCardAlpha=applyAlpha;
   
   function applyBg(on){
     // 背景.js 由核心.js 加载在 body 末尾,body 必然存在;保险起见兜底一次
@@ -117,7 +147,7 @@
   function updateBtn(){
     var btn=document.getElementById('bgToggleBtn');
     if(!btn) return;
-    btn.textContent=(isBgOn()?'🖼 背景图: 开':'🖼 背景图: 关');
+    btn.textContent=(isBgOn()?'背景图: 开':'背景图: 关');
   }
   
   function toggleBg(){
@@ -149,6 +179,7 @@
   
   function init(){
     applyBg(isBgOn());
+    applyAlpha();
     if(document.readyState==='loading'){
       document.addEventListener('DOMContentLoaded',insertBtn);
     }else{
@@ -156,6 +187,7 @@
     }
     window.addEventListener('pageshow',function(){
       applyBg(isBgOn());
+      applyAlpha();
       updateBtn();
     });
     window.addEventListener('storage',function(e){
@@ -163,9 +195,13 @@
         applyBg(isBgOn());
         updateBtn();
       }
+      if(e.key===ALPHA_KEY||e.key===null){
+        applyAlpha();
+      }
     });
   }
   
   init();
   })();
+  
   

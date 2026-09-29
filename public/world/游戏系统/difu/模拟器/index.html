@@ -12,16 +12,16 @@
 [data-theme="light"]{--bg-body:#f7f4ef;--bg-card:rgba(255,255,255,0.78);--bg-card-hover:rgba(255,255,255,0.9);--border-light:#ece6de;--border-card:#d5c8b8;--text-primary:#2c2c2c;--text-secondary:#4a4a4a;--text-muted:#8a8a8a;--accent:#8a3a2a;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:var(--font-serif);color:var(--text-primary);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;transition:color var(--transition);overflow:hidden;position:relative;
-
-  /* ★ 底图:横屏(电脑/平板横屏)用电脑端图片 */
-  background:url('首页图.jpg') center/cover no-repeat fixed var(--bg-body);
+ 
+  /* ★ 底图:横屏(电脑/平板横屏)用电脑端图片;--gzd-idx-bg 有值时用自定义背景(与内页设置联动) */
+  background:var(--gzd-idx-bg, url('首页图.jpg') center/cover no-repeat fixed) var(--bg-body);
 }
 /* ★ 竖屏(手机/平板竖屏)用手机端图片 */
 @media (orientation:portrait){
-  body{background:url('手机图.jpg') center/cover no-repeat fixed var(--bg-body);}
+  body{background:var(--gzd-idx-bg-m, url('手机图.jpg') center/cover no-repeat fixed) var(--bg-body);}
   /* 把上面的 url 换成你的手机端图片路径即可 */
 }
-
+ 
 /* 底图遮罩(让文字更清晰) */
 body::before{content:'';position:fixed;inset:0;z-index:0;
   background:linear-gradient(180deg,rgba(0,0,0,0.35) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.25) 70%,rgba(0,0,0,0.5) 100%);
@@ -29,12 +29,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;
 [data-theme="light"] body::before{
   background:linear-gradient(180deg,rgba(255,255,255,0.25) 0%,rgba(255,255,255,0.1) 40%,rgba(255,255,255,0.2) 70%,rgba(255,255,255,0.4) 100%);
 }
-
+ 
 .float-group{position:fixed;top:20px;right:24px;z-index:100;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
 .float-btn{background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;font-size:.65rem;color:rgba(255,255,255,0.8);cursor:pointer;transition:all var(--transition);font-family:var(--font-mono);display:flex;align-items:center;gap:6px;letter-spacing:.3px;text-decoration:none;}
 .float-btn:hover{background:rgba(255,255,255,0.25);border-color:var(--accent);color:var(--accent);}
 [data-theme="light"] .float-btn{background:rgba(255,255,255,0.6);border-color:rgba(138,58,42,0.2);color:var(--text-secondary);}
-
+ 
 .container{width:100%;max-width:520px;text-align:center;position:relative;z-index:3;}
 .badge{font-size:.65rem;color:rgba(255,255,255,0.6);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono);}
 [data-theme="light"] .badge{color:rgba(44,44,44,0.5);}
@@ -63,7 +63,7 @@ h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#ff
 [data-theme="light"] .footer-note{
   text-shadow:-1px -1px 0 rgba(255,255,255,0.6),1px -1px 0 rgba(255,255,255,0.6),-1px 1px 0 rgba(255,255,255,0.6),1px 1px 0 rgba(255,255,255,0.6);
 }
-
+ 
 /* 卡片缩小,半透明,让背景透出来 */
 .profile-select{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
 .profile-card{background:var(--bg-card);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid var(--border-card);border-radius:12px;padding:18px 12px;cursor:pointer;transition:all var(--transition);position:relative;}
@@ -73,24 +73,24 @@ h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#ff
 .profile-card .sym{font-size:1.4rem;margin-bottom:6px;display:block;}
 .profile-card .name{font-size:1rem;font-weight:600;margin-bottom:4px;}
 .profile-card .desc{font-size:.72rem;color:var(--text-muted);line-height:1.4;}
-
+ 
 /* 开始按钮缩小 */
 .start-btn{display:inline-block;width:100%;padding:10px;background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid var(--accent);border-radius:20px;color:var(--accent);font-family:var(--font-serif);font-size:.9rem;letter-spacing:2px;cursor:pointer;transition:all var(--transition);text-decoration:none;text-align:center;}
 .start-btn:hover{background:var(--accent);color:#fff;}
 .footer-note{margin-top:18px;font-size:.65rem;color:rgba(255,255,255,0.4);font-family:var(--font-mono);letter-spacing:.5px;}
 [data-theme="light"] .footer-note{color:var(--text-muted);}
-
+ 
 /* ===== 粒子层 ===== */
 #particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
 .particle{position:absolute;bottom:-20px;font-size:12px;color:var(--accent);opacity:0;animation:floatUp linear infinite;will-change:transform,opacity;}
 @keyframes floatUp{0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.4;}100%{transform:translateY(-110vh) translateX(var(--drift)) rotate(360deg);opacity:0;}}
-
+ 
 /* 光晕装饰 */
 .glow{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.08;pointer-events:none;z-index:0;animation:glowPulse 6s ease-in-out infinite alternate;}
 .glow-1{width:300px;height:300px;background:var(--profile-lin);top:10%;left:10%;animation-delay:0s;}
 .glow-2{width:250px;height:250px;background:var(--profile-luo);bottom:15%;right:10%;animation-delay:3s;}
 @keyframes glowPulse{0%{opacity:0.05;transform:scale(1);}100%{opacity:0.12;transform:scale(1.15);}}
-
+ 
 /* ===== 波浪效果 ===== */
 .waves-container{position:fixed;bottom:0;left:0;right:0;z-index:2;pointer-events:none;line-height:0;}
 .waves-container svg{width:100%;height:80px;display:block;}
@@ -98,7 +98,7 @@ h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#ff
 .wave-layer-2{animation:waveMove 18s linear infinite reverse;opacity:0.5;}
 .wave-layer-3{animation:waveMove 24s linear infinite;opacity:0.3;}
 @keyframes waveMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
+ 
 @media(max-width:480px){
   h1{font-size:1.5rem;}
   .profile-select{gap:8px;}
@@ -113,18 +113,18 @@ h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#ff
 </style>
 </head>
 <body>
-
+ 
 <div class="float-group">
   <a class="float-btn" href="../index"><span style="margin-right:2px;">←</span> 返回</a>
   <button class="float-btn" id="themeBtn" onclick="toggleTheme()"><span id="themeIcon">🌙</span> <span id="themeLabel">夜间</span></button>
 </div>
-
+ 
 <div class="glow glow-1"></div>
 <div class="glow glow-2"></div>
-
+ 
 <!-- 粒子层 -->
 <div id="particles"></div>
-
+ 
 <div class="container">
   <div class="badge">◈ 归终殿弟子手册</div>
   <h1>引渡人模拟器</h1>
@@ -156,10 +156,10 @@ h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#ff
     },false);
   })();
   </script>
-
+ 
   <div class="footer-note" id="footerNote">当前档案：林栖梧</div>
 </div>
-
+ 
 <!-- ===== 波浪效果 ===== -->
 <div class="waves-container">
   <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -180,20 +180,43 @@ h1{font-size:2rem;font-weight:700;letter-spacing:2px;margin-bottom:6px;color:#ff
     </g>
   </svg>
 </div>
-
+ 
 <script>
 (function(){try{var raw=localStorage.getItem('theme');if(raw){var parsed=JSON.parse(raw);if(parsed&&parsed.value==='light'){document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.removeAttribute('data-theme');} }else{document.documentElement.setAttribute('data-theme','light');} }catch(e){document.documentElement.setAttribute('data-theme','light');} })();
 function toggleTheme(){var html=document.documentElement;var isLight=html.getAttribute('data-theme')==='light';var newTheme=isLight?'dark':'light';if(newTheme==='light'){html.setAttribute('data-theme','light');}else{html.removeAttribute('data-theme');}localStorage.setItem('theme',JSON.stringify({value:newTheme}));updateThemeBtn();}
 function updateThemeBtn(){var icon=document.getElementById('themeIcon');var label=document.getElementById('themeLabel');if(!icon||!label)return;var isLight=document.documentElement.getAttribute('data-theme')==='light';icon.textContent=isLight?'🌙':'☀️';label.textContent=isLight?'夜间':'日间';}
 function selectProfile(id){localStorage.setItem('activeProfile',id);document.querySelectorAll('.profile-card').forEach(function(c){c.classList.toggle('active',c.dataset.profile===id);});var names={linxiwu:'林栖梧',luojin:'罗烬'};var note=document.getElementById('footerNote');if(note)note.textContent='当前档案：'+names[id];}
 (function(){var saved=localStorage.getItem('activeProfile')||'linxiwu';selectProfile(saved);updateThemeBtn();})();
-
+ 
 /* ===== 粒子生成 ===== */
 var particleSymbols=['✦','✿','◈','·','嘻嘻','❖'];
 var particleColors=['#D49A9A','#c4b4a0','#8a8078','#4E5A64','#b8aea4'];
 function spawnParticles(){var container=document.getElementById('particles');if(!container)return;for(var i=0;i<28;i++){var p=document.createElement('span');p.className='particle';p.textContent=particleSymbols[Math.floor(Math.random()*particleSymbols.length)];p.style.left=Math.random()*100+'%';p.style.fontSize=(Math.random()*10+8)+'px';p.style.color=particleColors[Math.floor(Math.random()*particleColors.length)];p.style.setProperty('--drift',((Math.random()-0.5)*120)+'px');var duration=Math.random()*8+6;p.style.animationDuration=duration+'s';p.style.animationDelay=(Math.random()*duration)+'s';container.appendChild(p);}}
 spawnParticles();
+ 
+/* ===== 首页与全局背景设置联动(不依赖核心.js) =====
+   读取设置页保存的自定义背景图与卡片透明度,让首页和内页视觉统一:
+   - 电脑端自定义背景 → gzd_custom_bg(横屏生效)
+   - 手机端自定义背景 → gzd_custom_bg_mobile(竖屏生效)
+   - 卡片透明度       → gzd_bg_card_alpha
+   注:首页始终显示背景图(默认图或自定义图),不跟随侧栏"背景图开关",
+      如需跟随开关,在下方加一个 gzd_bg_on 判断即可 */
+(function(){
+  function get(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  var root=document.documentElement.style;
+  var d=get('gzd_custom_bg');
+  var m=get('gzd_custom_bg_mobile');
+  if(d) root.setProperty('--gzd-idx-bg','url("'+d+'") center/cover no-repeat fixed');
+  if(m) root.setProperty('--gzd-idx-bg-m','url("'+m+'") center/cover no-repeat fixed');
+  var a=parseFloat(get('gzd_bg_card_alpha'));
+  if(!isNaN(a)&&a>=0.3&&a<1){
+    var s=document.createElement('style');
+    s.textContent=':root{--bg-card:rgba(36,32,28,'+a+')!important}'+
+      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}';
+    document.head.appendChild(s);
+  }
+})();
 </script>
-
+ 
 </body>
 </html>

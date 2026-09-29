@@ -501,8 +501,8 @@ function setupAvatarUpload(btnId, profile, avatarId){
           var fb=img.nextElementSibling;
           if(fb) fb.style.display='none';
         }
-        btn.textContent='✅ 已更新';
-        setTimeout(function(){btn.textContent='📷 添加头像';},2000);
+        btn.textContent='已更新';
+        setTimeout(function(){btn.textContent='添加头像';},2000);
       }catch(e){alert('存储失败');}
     };
     reader.readAsDataURL(file);
