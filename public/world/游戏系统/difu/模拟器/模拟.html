@@ -27,13 +27,16 @@
   --fs-meta:0.75rem;
   --fs-input:1rem;
   --fs-title:1.1rem;
-  /* 气泡专用色(日间) */
+  /* 气泡专用色(日间,不透明——铺在背景图上时保证正文可读,不随卡片透明度变化) */
   --bubble-ai-bg:#f5f3f0;
   --bubble-ai-border:#e0d8cc;
-  --bubble-user-bg:rgba(212,154,154,0.15);
-  --bubble-user-border:rgba(212,154,154,0.5);
-  --bubble-opening-bg:rgba(212,154,154,0.06);
+  --bubble-user-bg:#f8ecec;
+  --bubble-user-border:#e3c3c3;
+  --bubble-opening-bg:#fbf3f3;
   --bubble-opening-border:var(--profile-lin);
+  --bubble-error-bg:#f6e4e4;
+  --bubble-error-border:#c98686;
+  --bubble-error-text:#a04040;
 }
 [data-theme="dark"]{
   --bg-body:#1a1614;
@@ -46,25 +49,37 @@
   --text-secondary:#b8aea4;
   --text-muted:#8a8078;
   --accent:#c4b4a0;
-  /* 气泡专用色(夜间) */
+  /* 气泡专用色(夜间,不透明) */
   --bubble-ai-bg:#2d2824;
   --bubble-ai-border:#4a443e;
-  --bubble-user-bg:rgba(212,154,154,0.18);
-  --bubble-user-border:rgba(212,154,154,0.5);
-  --bubble-opening-bg:rgba(212,154,154,0.08);
+  --bubble-user-bg:#443633;
+  --bubble-user-border:#6b4e4b;
+  --bubble-opening-bg:#332a29;
   --bubble-opening-border:var(--profile-lin);
+  --bubble-error-bg:#3a2626;
+  --bubble-error-border:#7a4444;
+  --bubble-error-text:#d08888;
 }
 body[data-profile="linxiwu"]{
   --profile-accent:var(--profile-lin);
-  --bubble-user-bg:rgba(212,154,154,0.15);
-  --bubble-user-border:rgba(212,154,154,0.5);
+  --bubble-user-bg:#f8ecec;
+  --bubble-user-border:#e3c3c3;
 }
 body[data-profile="luojin"]{
   --profile-accent:var(--profile-luo);
-  --bubble-user-bg:rgba(78,90,100,0.15);
-  --bubble-user-border:rgba(78,90,100,0.5);
+  --bubble-user-bg:#e9edf0;
+  --bubble-user-border:#c3cdd6;
 }
-
+/* 夜间模式下的角色气泡(覆盖上面的日间色,保持不透明) */
+[data-theme="dark"] body[data-profile="linxiwu"]{
+  --bubble-user-bg:#443633;
+  --bubble-user-border:#6b4e4b;
+}
+[data-theme="dark"] body[data-profile="luojin"]{
+  --bubble-user-bg:#363d45;
+  --bubble-user-border:#566070;
+}
+ 
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{
@@ -83,7 +98,7 @@ body{
   display:flex;
   flex-direction:column;
 }
-
+ 
 /* ===== 顶部导航栏 ===== */
 .top-bar{
   flex-shrink:0;
@@ -143,7 +158,7 @@ body{
   letter-spacing:1px;
   margin-top:2px;
 }
-
+ 
 /* 字体调节按钮组 */
 .font-controls{
   display:flex;
@@ -172,7 +187,7 @@ body{
   background:var(--bg-accent-soft);
   color:var(--profile-accent,var(--accent));
 }
-
+ 
 /* ===== 配置提示条 ===== */
 .config-banner{
   flex-shrink:0;
@@ -189,10 +204,28 @@ body{
   gap:6px;
 }
 .config-banner.configured{
-  background:rgba(80,140,80,0.06);
-  color:var(--text-muted);
+  background:var(--bg-card);
+  color:var(--text-secondary);
+  border-bottom:1px solid var(--border-card);
 }
 .config-banner .banner-text{flex:1;min-width:0;line-height:1.5}
+.config-banner .banner-close{
+  flex-shrink:0;
+  background:transparent;
+  border:none;
+  color:var(--text-muted);
+  font-size:0.85rem;
+  line-height:1;
+  cursor:pointer;
+  padding:3px 7px;
+  border-radius:10px;
+  font-family:var(--font-mono);
+  transition:all 0.2s;
+}
+.config-banner .banner-close:hover{
+  color:var(--accent);
+  background:var(--bg-accent-soft);
+}
 .config-banner .banner-link{
   color:var(--accent);
   text-decoration:none;
@@ -203,7 +236,7 @@ body{
 .config-banner .provider-tag{
   display:inline-block;
   padding:1px 6px;
-  background:rgba(80,140,80,0.15);
+  background:#dfeee0;
   color:#5a8a5a;
   border-radius:6px;
   font-size:0.7rem;
@@ -211,10 +244,10 @@ body{
   margin:0 2px;
 }
 [data-theme="dark"] .config-banner .provider-tag{
-  background:rgba(120,180,120,0.12);
+  background:#2e3b2e;
   color:#8ab88a;
 }
-
+ 
 /* ===== 剧情流主区 ===== */
 .story-area{
   flex:1;
@@ -230,7 +263,7 @@ body{
 .story-area::-webkit-scrollbar{width:5px}
 .story-area::-webkit-scrollbar-thumb{background:var(--border-card);border-radius:3px}
 .story-area::-webkit-scrollbar-track{background:transparent}
-
+ 
 .chapter-banner{
   text-align:center;
   margin-bottom:20px;
@@ -255,7 +288,7 @@ body{
   letter-spacing:1px;
   margin-top:4px;
 }
-
+ 
 /* ===== 消息气泡 ===== */
 .msg-row{
   display:flex;
@@ -268,10 +301,10 @@ body{
   from{opacity:0;transform:translateY(8px)}
   to{opacity:1;transform:translateY(0)}
 }
-
+ 
 .msg-row.left{justify-content:flex-start}
 .msg-row.right{justify-content:flex-end}
-
+ 
 .msg-avatar{
   flex-shrink:0;
   width:36px;
@@ -291,14 +324,14 @@ body{
   color:var(--bg-card);
   border-color:var(--profile-accent,var(--accent));
 }
-
+ 
 .msg-bubble-wrap{
   max-width:calc(100% - 70px);
   display:flex;
   flex-direction:column;
   min-width:0;
 }
-
+ 
 .msg-label{
   font-size:var(--fs-meta);
   color:var(--text-muted);
@@ -308,7 +341,7 @@ body{
   padding:0 4px;
 }
 .msg-row.right .msg-label{text-align:right}
-
+ 
 .msg-bubble{
   padding:12px 16px;
   border-radius:14px;
@@ -320,21 +353,21 @@ body{
   position:relative;
   border:1.5px solid var(--border-card);
 }
-
+ 
 /* AI 回应(左):浅灰色 */
 .msg-row.left .msg-bubble{
   background:var(--bubble-ai-bg);
   border-color:var(--bubble-ai-border);
   border-top-left-radius:4px;
 }
-
+ 
 /* 玩家行动(右):淡粉色(林栖梧)/淡蓝灰色(罗烬) */
 .msg-row.right .msg-bubble{
   background:var(--bubble-user-bg);
   border-color:var(--bubble-user-border);
   border-top-right-radius:4px;
 }
-
+ 
 /* 开场剧情(左,特殊样式) */
 .msg-row.opening .msg-bubble{
   background:var(--bubble-opening-bg);
@@ -342,14 +375,14 @@ body{
   border-left:4px solid var(--bubble-opening-border);
   border-top-left-radius:4px;
 }
-
+ 
 /* 错误消息 */
 .msg-row.error .msg-bubble{
-  background:rgba(160,64,64,0.08);
-  border-color:rgba(160,64,64,0.4);
-  color:#a04040;
+  background:var(--bubble-error-bg);
+  border-color:var(--bubble-error-border);
+  color:var(--bubble-error-text);
 }
-
+ 
 /* 气泡底部操作按钮 */
 .msg-actions{
   margin-top:5px;
@@ -376,7 +409,7 @@ body{
   background:var(--bg-accent-soft);
 }
 .msg-action-btn:disabled{opacity:0.5;cursor:wait}
-
+ 
 /* ===== 加载中气泡 ===== */
 .msg-loading{
   display:inline-flex;
@@ -405,7 +438,7 @@ body{
   0%,80%,100%{opacity:0.3;transform:scale(0.8)}
   40%{opacity:1;transform:scale(1)}
 }
-
+ 
 /* ===== 编辑模式 ===== */
 .msg-edit-area{
   display:flex;
@@ -450,7 +483,7 @@ body{
 }
 .msg-edit-btns button:hover{background:var(--bg-hover)}
 .msg-edit-btns button.save:hover{background:var(--accent);color:var(--bg-card)}
-
+ 
 /* ===== 底部输入栏 ===== */
 .input-bar{
   flex-shrink:0;
@@ -482,7 +515,7 @@ body{
 }
 .input-bar textarea:focus{border-color:var(--profile-accent,var(--accent))}
 .input-bar textarea::placeholder{color:var(--text-muted);opacity:0.7}
-
+ 
 .send-btn{
   padding:10px 20px;
   background:transparent;
@@ -502,7 +535,7 @@ body{
   color:var(--bg-card);
 }
 .send-btn:disabled{opacity:0.5;cursor:wait}
-
+ 
 /* ===== 响应式 ===== */
 @media(max-width:600px){
   :root{
@@ -520,8 +553,9 @@ body{
   .config-banner{padding:5px 12px;font-size:0.65rem}
   .story-area{padding:14px 12px 8px 12px}
   .msg-avatar{width:30px;height:30px;font-size:0.95rem}
-  .msg-bubble-wrap{max-width:calc(100% - 80px)}
-  .msg-bubble{padding:10px 14px;font-size:0.95rem;line-height:1.8}
+  /* 30px头像+10px间距+10px缓冲,尽量把宽度让给气泡文字 */
+  .msg-bubble-wrap{max-width:calc(100% - 50px)}
+  .msg-bubble{padding:10px 12px;font-size:0.95rem;line-height:1.8}
   .input-bar{padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px)) 12px;gap:8px}
   .input-bar textarea{padding:9px 14px;font-size:0.95rem;min-height:40px}
   .send-btn{padding:9px 16px;font-size:0.9rem}
@@ -530,7 +564,13 @@ body{
   .top-bar .title-block .role{display:none}
   .font-controls button{padding:3px 6px}
 }
-
+ 
+/* 各区块背景用卡片色,手机端同样铺满整个屏幕;
+   透明度统一走 --bg-card,由设置页"卡片透明度"滑块控制 */
+.top-bar,.config-banner,.story-area,.input-bar{
+  background:var(--bg-card);
+}
+ 
 /* 大屏幕:卡片边框,跟其他内页统一 */
 @media(min-width:601px){
   body{
@@ -538,12 +578,8 @@ body{
     border-right:1px solid var(--border-card);
     box-shadow:0 0 15px rgba(0,0,0,.04);
   }
-  /* 各区块背景用白色,跟米色body区分 */
-  .top-bar,.config-banner,.story-area,.input-bar{
-    background:var(--bg-card);
-  }
 }
-
+ 
 /* 章节目录按钮 */
 .chapter-dir-btn{
   background:transparent;border:1px solid var(--border-card);
@@ -558,7 +594,7 @@ body{
 .chapter-dir-btn.active{
   background:var(--bg-accent-soft);color:var(--profile-accent,var(--accent));
 }
-
+ 
 /* 章节目录面板(从右侧滑出) */
 .chapter-dir-panel{
   position:fixed;right:0;top:0;bottom:0;width:220px;
@@ -574,7 +610,7 @@ body{
   opacity:0;pointer-events:none;transition:opacity .35s;
 }
 .chapter-dir-overlay.show{opacity:1;pointer-events:auto}
-
+ 
 /* 落花开关按钮 */
 .petal-toggle-btn{
   background:transparent;border:1px solid var(--border-card);
@@ -589,7 +625,7 @@ body{
 </style>
 </head>
 <body data-profile="linxiwu">
-
+ 
 <!-- 顶部导航 -->
 <div class="top-bar">
   <a class="back-btn" href="./命薄.html"><span>←</span> 命簿</a>
@@ -601,17 +637,18 @@ body{
     <button data-size="small" title="小字体">A-</button>
     <button data-size="normal" class="active" title="正常字体">A</button>
     <button data-size="large" title="大字体">A+</button>
-    <button class="chapter-dir-btn" id="chapterDirBtn" title="章节目录">📖</button>
+    <button class="chapter-dir-btn" id="chapterDirBtn" title="章节目录">目录</button>
     <button class="petal-toggle-btn" id="petalToggleBtn" title="落花开关">❀</button>
   </div>
 </div>
-
+ 
 <!-- 配置提示条 -->
 <div class="config-banner" id="configBanner">
   <span class="banner-text" id="bannerText">读取配置中...</span>
   <a class="banner-link" href="./设置.html" id="bannerLink">前往设置 →</a>
+  <button class="banner-close" id="bannerClose" title="关闭提示">×</button>
 </div>
-
+ 
 <!-- 剧情流主区 -->
 <div class="story-area" id="storyArea">
   <div class="chapter-banner">
@@ -621,10 +658,10 @@ body{
   </div>
   <!-- 消息会动态插入这里 -->
 </div>
-
+ 
 <!-- 章节侧边栏(先放这里,JS 会渲染内容) -->
 <div id="chapterSidebar" style="display:none"></div>
-
+ 
 <!-- 章节目录面板 -->
 <div class="chapter-dir-overlay" id="chapterDirOverlay"></div>
 <div class="chapter-dir-panel" id="chapterDirPanel">
@@ -632,15 +669,15 @@ body{
   <div id="chapterDirList" style="flex:1;overflow-y:auto"></div>
   <button id="chapterDirClose" style="margin-top:12px;padding:8px;border:1px solid var(--border-card);border-radius:18px;background:transparent;color:var(--text-secondary);cursor:pointer;font-family:var(--font-mono);font-size:.75rem">✕ 关闭</button>
 </div>
-
+ 
 <!-- 底部输入栏 -->
 <div class="input-bar">
   <textarea id="inputBox" placeholder="今日欲行何事?" rows="1"></textarea>
   <button class="send-btn" id="sendBtn">发送</button>
 </div>
-
+ 
 <script>
-// ===== 字体调节(独立逻辑,放在 模拟AI.js 之前) =====
+// ===== 字体调节(独立逻辑,放在 https://sfile.chatglm.cn/workspace/file/8d/8d8caab66f.js 之前) =====
 (function(){
   const FONT_KEY = 'gzd_sim_fontsize';
   const SIZES = {
@@ -664,7 +701,7 @@ body{
   document.querySelectorAll('.font-controls button').forEach(b => {
     b.addEventListener('click', () => applyFont(b.dataset.size));
   });
-
+ 
   // ===== 主题沿用 GZD =====
   // 注意:CSS 用 [data-theme="dark"] 表示夜间,所以 dark 时必须 setAttribute('data-theme','dark')
   function applyTheme(t){
@@ -686,7 +723,7 @@ body{
     return 'light';
   }
   applyTheme(getStoredTheme());
-
+ 
   // ===== 角色沿用 GZD =====
   function applyProfile(){
     let p = 'linxiwu';
@@ -703,7 +740,7 @@ body{
   }
   applyProfile();
 })();
-
+ 
 // ===== 章节目录面板 + 落花开关(独立逻辑) =====
 (function(){
   // 章节目录按钮
@@ -712,7 +749,7 @@ body{
   var dirOverlay=document.getElementById('chapterDirOverlay');
   var dirClose=document.getElementById('chapterDirClose');
   var dirList=document.getElementById('chapterDirList');
-
+ 
   function toggleDirPanel(open){
     if(open===undefined) open=!dirPanel.classList.contains('open');
     dirPanel.classList.toggle('open',open);
@@ -720,7 +757,7 @@ body{
     dirBtn.classList.toggle('active',open);
     if(open) renderDirList();
   }
-
+ 
   function renderDirList(){
     if(!dirList) return;
     var profile=localStorage.getItem('activeProfile')||'linxiwu';
@@ -747,7 +784,7 @@ body{
       dirList.querySelectorAll('.ch-item').forEach(function(item){
         item.addEventListener('click',function(){
           var ch=parseInt(this.dataset.chapter,10);
-          // 调用模拟AI.js的switchChapter(如果存在)
+          // 调用https://sfile.chatglm.cn/workspace/file/8d/8d8caab66f.js的switchChapter(如果存在)
           if(window.switchChapter){
             window.switchChapter(profile,ch);
           }
@@ -758,11 +795,11 @@ body{
       dirList.innerHTML='<div style="color:var(--text-muted);font-size:.8rem;text-align:center">读取失败</div>';
     }
   }
-
+ 
   if(dirBtn) dirBtn.addEventListener('click',function(){toggleDirPanel();});
   if(dirClose) dirClose.addEventListener('click',function(){toggleDirPanel(false);});
   if(dirOverlay) dirOverlay.addEventListener('click',function(){toggleDirPanel(false);});
-
+ 
   // 落花开关
   var petalBtn=document.getElementById('petalToggleBtn');
   var PETAL_KEY='gzd_petal_on';
@@ -787,8 +824,26 @@ body{
   }
 })();
 </script>
-
-<script src="./模拟AI.js"></script>
-<script src="./背景.js"></script>
+ 
+<script src="./https://sfile.chatglm.cn/workspace/file/8d/8d8caab66f.js"></script>
+<script src="./https://sfile.chatglm.cn/workspace/file/b3/b337a5278d.js"></script>
+<script>
+// ===== 配置提示条关闭(本次会话内不再显示) =====
+(function(){
+  var banner=document.getElementById('configBanner');
+  var btn=document.getElementById('bannerClose');
+  if(!banner||!btn) return;
+  try{
+    if(sessionStorage.getItem('gzd_sim_banner_closed')==='1'){
+      banner.style.display='none';
+      return;
+    }
+  }catch(e){}
+  btn.addEventListener('click',function(){
+    banner.style.display='none';
+    try{ sessionStorage.setItem('gzd_sim_banner_closed','1'); }catch(e){}
+  });
+})();
+</script>
 </body>
 </html>
