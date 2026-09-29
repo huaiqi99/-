@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        worker: [difu-ai, difu-stats, difu-quest, difu-chat]
+                worker: [difu-ai, difu-stats, difu-quest, difu-chat, difu-test]
     steps:
       - uses: actions/checkout@v4
 
