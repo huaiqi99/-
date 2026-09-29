@@ -9,7 +9,7 @@
 // v5: 新增卡片透明度(gzd_bg_card_alpha,设置页滑块控制)。
 //     通过覆盖 --bg-card 变量让所有内页卡片变半透明,透出背景图;
 //     值未设置时保持各页默认外观,滑块拉满(100)即恢复默认。
-
+ 
 (function(){
   'use strict';
   
@@ -72,7 +72,11 @@
     s.id='gzd-bg-alpha-style';
     s.textContent=
       ':root{--bg-card:rgba(36,32,28,'+a+')!important}'+
-      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}';
+      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}'+
+      // 白名单:侧栏导航面板/拉手保持严格不透明(面板滑出后叠在正文上,
+      // 半透明会让面板文字和底下内容混在一起)
+      '.sidebar-panel,.sidebar-tab{--bg-card:#24201c!important}'+
+      'html[data-theme="light"] .sidebar-panel,html[data-theme="light"] .sidebar-tab{--bg-card:#ffffff!important}';
     document.head.appendChild(s);
   }
   // 供设置页滑块拖动时本页即时刷新(同页不触发 storage 事件)
@@ -203,5 +207,4 @@
   
   init();
   })();
-  
   
