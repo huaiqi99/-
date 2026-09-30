@@ -221,8 +221,13 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   </div>
  
   <div class="field-group" style="margin-top:14px;">
-    <label class="field-label">语音密钥 <span class="hint">(一行,火山引擎豆包语音控制台生成,仅保存在你本地浏览器)</span></label>
-    <input type="password" class="field-input" id="ttsToken" placeholder="粘贴你的一行语音密钥">
+    <label class="field-label">应用ID(AppID) <span class="hint">(火山控制台应用详情里的一串数字/短码,必填)</span></label>
+    <input type="text" class="field-input" id="ttsAppid" placeholder="你的应用ID">
+  </div>
+ 
+  <div class="field-group" style="margin-top:14px;">
+    <label class="field-label">访问密钥 <span class="hint">(火山控制台复制的密钥,仅保存在你本地浏览器)</span></label>
+    <input type="password" class="field-input" id="ttsToken" placeholder="粘贴你的语音密钥">
   </div>
  
   <div class="btn-row">
@@ -749,6 +754,7 @@ updateBgStatus();
   // ===== 语音功能(TTS) =====
   (function(){
     var tokenEl = document.getElementById('ttsToken');
+    var appidEl = document.getElementById('ttsAppid');
     var statusBox = document.getElementById('ttsStatus');
     var statusText = document.getElementById('ttsStatusText');
     var resultEl = document.getElementById('ttsTestResult');
@@ -766,18 +772,22 @@ updateBgStatus();
       }else{
         statusBox.className = 'status-box info';
         statusBox.querySelector('.status-icon').textContent = 'ℹ️';
-        statusText.innerHTML = '<strong>语音功能未配置</strong><br>填入火山引擎语音密钥后,可为剧情气泡配音(走豆包 TTS 2.0,费用由你自己的火山账号承担)。';
+        statusText.innerHTML = '<strong>语音功能未配置</strong><br>填入应用ID与访问密钥后,可为剧情气泡配音(走豆包 TTS 2.0,费用由你自己的火山账号承担)。';
       }
     }
  
     document.getElementById('ttsSaveBtn').addEventListener('click', function(){
       var token = tokenEl.value.trim();
-      if(!token){ resultEl.textContent = '⚠️ 请先粘贴语音密钥'; resultEl.style.color = '#b58a00'; return; }
+      var appid = appidEl.value.trim();
+      if(!token){ resultEl.textContent = '⚠️ 请先粘贴访问密钥'; resultEl.style.color = '#b58a00'; return; }
+      if(!appid){ resultEl.textContent = '⚠️ 请填写应用ID(AppID),在火山控制台应用详情里'; resultEl.style.color = '#b58a00'; return; }
       var c = GZDVoice.getCfg();
       c.token = token;
+      c.appid = appid;
       c.on = (c.on !== false);   // 默认开启
       GZDVoice.setCfg(c);
       tokenEl.value = '';
+      appidEl.value = '';
       updateTtsStatus();
       resultEl.textContent = '✅ 语音配置已保存并开启';
       resultEl.style.color = '#2e7d32';
@@ -786,8 +796,11 @@ updateBgStatus();
     document.getElementById('ttsTestBtn').addEventListener('click', function(){
       var c = GZDVoice.getCfg();
       var token = tokenEl.value.trim() || c.token;
-      if(!token){ resultEl.textContent = '⚠️ 还没有语音密钥,先粘贴并保存'; resultEl.style.color = '#b58a00'; return; }
-      if(tokenEl.value.trim()){ c.token = token; GZDVoice.setCfg(c); }
+      var appid = appidEl.value.trim() || c.appid;
+      if(!token){ resultEl.textContent = '⚠️ 还没有访问密钥,先粘贴并保存'; resultEl.style.color = '#b58a00'; return; }
+      if(!appid){ resultEl.textContent = '⚠️ 还没有应用ID(AppID),填一下并保存'; resultEl.style.color = '#b58a00'; return; }
+      c.token = token; c.appid = appid;
+      GZDVoice.setCfg(c);
       resultEl.textContent = '⏳ 正在合成试听...';
       resultEl.style.color = '';
       GZDVoice.speak('夜风穿过殿前的灯笼,李怀渊抬眼望过来,声音很轻。', '李怀渊')
@@ -806,8 +819,10 @@ updateBgStatus();
       if(!confirm('确定清除语音密钥?清除后语音功能不可用。')) return;
       var c = GZDVoice.getCfg();
       delete c.token;
+      delete c.appid;
       GZDVoice.setCfg(c);
       tokenEl.value = '';
+      appidEl.value = '';
       updateTtsStatus();
       resultEl.textContent = '已清除语音密钥';
       resultEl.style.color = '';
@@ -820,7 +835,7 @@ updateBgStatus();
   console.log('⚙️ 归终殿 · 设置页 v2.0 已加载');
 })();
 </script>
-<script src="./背景.js"></script>
 <script src="./语音.js"></script>
+<script src="./背景.js"></script>
 </body>
 </html>

@@ -12,178 +12,185 @@
 //   3. 气泡播放按钮调用 speak() 即可; roleName 对不上映射表时自动回退旁白/默认音色
  
 (function(){
-    'use strict';
-   
-    var TTS_URL = 'https://openspeech.bytedance.com/api/v3/tts/unidirectional';
-    // 豆包 TTS 2.0 单向流式的资源标识
-    var RESOURCE_ID = 'volc.service_type.10029';
-   
-    var CFG_KEY = 'gzd_tts_config';   // { token:'一行密钥', on:true }
-   
-    // ===== 角色音色映射表 =====
-    // 值为火山音色代码; 换音色只改这里, 不动其他代码
-    var VOICE_MAP = {
-      '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
-      '桑回燕': 'S_lGL1r7Jg2',
-      '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入
+  'use strict';
+ 
+  var TTS_URL = 'https://openspeech.bytedance.com/api/v3/tts/unidirectional';
+  // 豆包 TTS 2.0 单向流式的资源标识
+  var RESOURCE_ID = 'volc.service_type.10029';
+ 
+  var CFG_KEY = 'gzd_tts_config';   // { appid:'应用ID', token:'访问密钥', on:true }
+ 
+  // ===== 角色音色映射表 =====
+  // 值为火山音色代码; 换音色只改这里, 不动其他代码
+  var VOICE_MAP = {
+    '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
+    '桑回燕': 'S_lGL1r7Jg2',
+    '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
+  };
+  var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
+ 
+  // ===== 配置读写 =====
+  function getCfg(){
+    try{ return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
+    catch(e){ return {}; }
+  }
+  function setCfg(cfg){
+    localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  }
+ 
+  function isReady(){
+    var c = getCfg();
+    return !!(c.on && c.token);
+  }
+ 
+  // v3 接口鉴权: 请求头 X-Api-App-Key(应用ID) + X-Api-Access-Key(访问密钥)
+  // 兼容三种填法:
+  //  a) 设置页 appid 与 token 分开填
+  //  b) 密钥栏一行填 "appid:token" / "appid|token" / "appid&token" -> 自动拆开
+  //  c) 只有 token -> 需在设置页补填 AppID, 否则接口报 app key not found
+  function parseAuth(cfg){
+    var appKey = cfg.appid || '';
+    var accessKey = cfg.token || '';
+    var m = accessKey.match(/^([\w-]+)[:|&](\S+)$/);
+    if(m && !appKey){ appKey = m[1]; accessKey = m[2]; }
+    return { appKey: appKey, accessKey: accessKey };
+  }
+ 
+  // ===== 音色解析 =====
+  function resolveVoice(roleName){
+    if(roleName && VOICE_MAP[roleName]) return VOICE_MAP[roleName];
+    var narration = VOICE_MAP['旁白'];
+    return narration || DEFAULT_VOICE;
+  }
+ 
+  // ===== 核心: 调火山流式接口, 返回 mp3 Blob =====
+  // 响应为按行分隔的 JSON(部分行可能带 "data:" 前缀), data 字段是 base64 音频分片
+  function synthesize(text, roleName){
+    var cfg = getCfg();
+    if(!cfg.token){
+      return Promise.reject(new Error('未配置语音密钥,请到设置页填写'));
+    }
+    text = (text || '').trim();
+    if(!text) return Promise.reject(new Error('没有可朗读的文本'));
+    // 防超额: 单次朗读截断到 500 字(单条气泡远小于此)
+    if(text.length > 500) text = text.slice(0, 500);
+ 
+    var auth = parseAuth(cfg);
+    if(!auth.appKey){
+      return Promise.reject(new Error('缺少应用ID(AppID):请在设置页补填,或把密钥写成 "AppID:密钥" 一行'));
+    }
+    var reqid = 'gzd-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+ 
+    var headers = {
+      'Content-Type': 'application/json',
+      'X-Api-Resource-Id': RESOURCE_ID,
+      'X-Api-App-Key': auth.appKey,
+      'X-Api-Access-Key': auth.accessKey,
+      'Authorization': 'Bearer ' + auth.accessKey
     };
-    var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
-   
-    // ===== 配置读写 =====
-    function getCfg(){
-      try{ return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
-      catch(e){ return {}; }
-    }
-    function setCfg(cfg){
-      localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
-    }
-   
-    function isReady(){
-      var c = getCfg();
-      return !!(c.on && c.token);
-    }
-   
-    // 新版控制台只发一行密钥; 兼容两种填法:
-    //  a) 一行密钥 -> 直接作为 X-Api-Access-Key / Bearer token
-    //  b) 含分隔符(appid:token / appid|token / appid&token) -> 拆开, 前段作 App-Key
-    function parseAuth(raw){
-      var m = raw.match(/^([\w-]+)[:|&](\S+)$/);
-      if(m) return { appKey: m[1], accessKey: m[2] };
-      return { appKey: '', accessKey: raw };
-    }
-   
-    // ===== 音色解析 =====
-    function resolveVoice(roleName){
-      if(roleName && VOICE_MAP[roleName]) return VOICE_MAP[roleName];
-      var narration = VOICE_MAP['旁白'];
-      return narration || DEFAULT_VOICE;
-    }
-   
-    // ===== 核心: 调火山流式接口, 返回 mp3 Blob =====
-    // 响应为按行分隔的 JSON(部分行可能带 "data:" 前缀), data 字段是 base64 音频分片
-    function synthesize(text, roleName){
-      var cfg = getCfg();
-      if(!cfg.token){
-        return Promise.reject(new Error('未配置语音密钥,请到设置页填写'));
-      }
-      text = (text || '').trim();
-      if(!text) return Promise.reject(new Error('没有可朗读的文本'));
-      // 防超额: 单次朗读截断到 500 字(单条气泡远小于此)
-      if(text.length > 500) text = text.slice(0, 500);
-   
-      var auth = parseAuth(cfg.token);
-      var reqid = 'gzd-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-   
-      var headers = {
-        'Content-Type': 'application/json',
-        'X-Api-Resource-Id': RESOURCE_ID,
-        'X-Api-Access-Key': auth.accessKey,
-        'Authorization': 'Bearer ' + auth.accessKey
-      };
-      if(auth.appKey) headers['X-Api-App-Key'] = auth.appKey;
-   
-      var body = {
-        user: { uid: reqid },
-        req_params: {
-          text: text,
-          speaker: resolveVoice(roleName),
-          audio_params: {
-            format: 'mp3',
-            sample_rate: 24000,
-            speech_rate: 0,     // 语速, -50~100
-            loudness_rate: 0    // 音量, -50~100
-          }
+ 
+    var body = {
+      user: { uid: reqid },
+      req_params: {
+        text: text,
+        speaker: resolveVoice(roleName),
+        audio_params: {
+          format: 'mp3',
+          sample_rate: 24000,
+          speech_rate: 0,     // 语速, -50~100
+          loudness_rate: 0    // 音量, -50~100
         }
-      };
-   
-      return fetch(TTS_URL, { method: 'POST', headers: headers, body: JSON.stringify(body) })
-        .then(function(resp){
-          if(!resp.ok){
-            return resp.text().then(function(t){
-              throw new Error('HTTP ' + resp.status + (t ? ' · ' + t.slice(0, 200) : ''));
-            });
-          }
-          if(!resp.body) throw new Error('浏览器不支持流式响应');
-   
-          var reader = resp.body.getReader();
-          var decoder = new TextDecoder();
-          var buf = '';
-          var chunks = [];   // base64 音频分片
-          var errMsg = '';
-   
-          function handleLine(line){
-            line = line.trim();
-            if(!line) return;
-            if(line.indexOf('data:') === 0) line = line.slice(5).trim();
-            if(!line || line === '[DONE]') return;
-            var obj;
-            try{ obj = JSON.parse(line); }catch(e){ return; }
-            if(obj.code !== undefined && obj.code !== 0){
-              errMsg = obj.message || ('错误码 ' + obj.code);
-              return;
-            }
-            if(obj.data) chunks.push(obj.data);
-          }
-   
-          function pump(){
-            return reader.read().then(function(r){
-              if(r.done){
-                if(buf) handleLine(buf);
-                if(errMsg) throw new Error(errMsg);
-                if(!chunks.length) throw new Error('接口未返回音频(检查密钥与音色代码)');
-                var bin = '';
-                for(var i = 0; i < chunks.length; i++){
-                  bin += atob(chunks[i]);
-                }
-                var bytes = new Uint8Array(bin.length);
-                for(var j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
-                return new Blob([bytes], { type: 'audio/mpeg' });
-              }
-              buf += decoder.decode(r.value, { stream: true });
-              var idx;
-              while((idx = buf.indexOf('\n')) >= 0){
-                handleLine(buf.slice(0, idx));
-                buf = buf.slice(idx + 1);
-              }
-              return pump();
-            });
-          }
-          return pump();
-        });
-    }
-   
-    // ===== 播放控制(同一时间只播一个, 新播放自动打断旧的) =====
-    var currentAudio = null;
-   
-    function stop(){
-      if(currentAudio){
-        currentAudio.pause();
-        currentAudio = null;
       }
-    }
-   
-    function speak(text, roleName){
-      stop();
-      return synthesize(text, roleName).then(function(blob){
-        return new Promise(function(resolve, reject){
-          var audio = new Audio(URL.createObjectURL(blob));
-          currentAudio = audio;
-          audio.onended = function(){ if(currentAudio === audio) currentAudio = null; resolve(blob); };
-          audio.onerror = function(){ reject(new Error('音频播放失败')); };
-          audio.play().catch(function(){ reject(new Error('浏览器拦截了播放,请再点一次')); });
-        });
-      });
-    }
-   
-    // ===== 暴露 API =====
-    window.GZDVoice = {
-      synthesize: synthesize,
-      speak: speak,
-      stop: stop,
-      isReady: isReady,
-      getCfg: getCfg,
-      setCfg: setCfg,
-      VOICE_MAP: VOICE_MAP,
-      TTS_URL: TTS_URL
     };
-  })();
+ 
+    return fetch(TTS_URL, { method: 'POST', headers: headers, body: JSON.stringify(body) })
+      .then(function(resp){
+        if(!resp.ok){
+          return resp.text().then(function(t){
+            throw new Error('HTTP ' + resp.status + (t ? ' · ' + t.slice(0, 200) : ''));
+          });
+        }
+        if(!resp.body) throw new Error('浏览器不支持流式响应');
+ 
+        var reader = resp.body.getReader();
+        var decoder = new TextDecoder();
+        var buf = '';
+        var chunks = [];   // base64 音频分片
+        var errMsg = '';
+ 
+        function handleLine(line){
+          line = line.trim();
+          if(!line) return;
+          if(line.indexOf('data:') === 0) line = line.slice(5).trim();
+          if(!line || line === '[DONE]') return;
+          var obj;
+          try{ obj = JSON.parse(line); }catch(e){ return; }
+          if(obj.code !== undefined && obj.code !== 0){
+            errMsg = obj.message || ('错误码 ' + obj.code);
+            return;
+          }
+          if(obj.data) chunks.push(obj.data);
+        }
+ 
+        function pump(){
+          return reader.read().then(function(r){
+            if(r.done){
+              if(buf) handleLine(buf);
+              if(errMsg) throw new Error(errMsg);
+              if(!chunks.length) throw new Error('接口未返回音频(检查密钥与音色代码)');
+              var bin = '';
+              for(var i = 0; i < chunks.length; i++){
+                bin += atob(chunks[i]);
+              }
+              var bytes = new Uint8Array(bin.length);
+              for(var j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+              return new Blob([bytes], { type: 'audio/mpeg' });
+            }
+            buf += decoder.decode(r.value, { stream: true });
+            var idx;
+            while((idx = buf.indexOf('\n')) >= 0){
+              handleLine(buf.slice(0, idx));
+              buf = buf.slice(idx + 1);
+            }
+            return pump();
+          });
+        }
+        return pump();
+      });
+  }
+ 
+  // ===== 播放控制(同一时间只播一个, 新播放自动打断旧的) =====
+  var currentAudio = null;
+ 
+  function stop(){
+    if(currentAudio){
+      currentAudio.pause();
+      currentAudio = null;
+    }
+  }
+ 
+  function speak(text, roleName){
+    stop();
+    return synthesize(text, roleName).then(function(blob){
+      return new Promise(function(resolve, reject){
+        var audio = new Audio(URL.createObjectURL(blob));
+        currentAudio = audio;
+        audio.onended = function(){ if(currentAudio === audio) currentAudio = null; resolve(blob); };
+        audio.onerror = function(){ reject(new Error('音频播放失败')); };
+        audio.play().catch(function(){ reject(new Error('浏览器拦截了播放,请再点一次')); });
+      });
+    });
+  }
+ 
+  // ===== 暴露 API =====
+  window.GZDVoice = {
+    synthesize: synthesize,
+    speak: speak,
+    stop: stop,
+    isReady: isReady,
+    getCfg: getCfg,
+    setCfg: setCfg,
+    VOICE_MAP: VOICE_MAP,
+    TTS_URL: TTS_URL
+  };
+})();
