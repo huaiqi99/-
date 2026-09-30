@@ -1,9 +1,9 @@
-// ===== 语音.js · 归终殿 TTS 语音模块 v1 =====
+// ===== https://sfile.chatglm.cn/workspace/file/02/02869edf9e.js · 归终殿 TTS 语音模块 v1 =====
 // 引擎: 火山引擎 豆包 TTS 2.0(单向流式 HTTP 接口, 国内直连, 无需梯子)
 // 接口: POST https://openspeech.bytedance.com/api/v3/tts/unidirectional
 // 模式: BYOK —— 玩家在设置页填自己的语音密钥, 仅存 localStorage, 按字计费记玩家头上
 // 用法:
-//   1. 页面引入: <script src="./语音.js"></script>  (本文件与页面同目录)
+//   1. 页面引入: <script src="./https://sfile.chatglm.cn/workspace/file/02/02869edf9e.js"></script>  (本文件与页面同目录)
 //   2. 暴露 window.GZDVoice:
 //      GZDVoice.isReady()                 -> 是否已配置密钥且开启
 //      GZDVoice.speak(text, roleName)     -> 合成并播放, Promise<Blob>
@@ -25,7 +25,7 @@
   var VOICE_MAP = {
     '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
     '桑回燕': 'S_lGL1r7Jg2',
-    '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
+    '旁白':   ''   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
   };
   var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
  
@@ -43,17 +43,13 @@
     return !!(c.on && c.token);
   }
  
-  // v3 接口鉴权: 请求头 X-Api-App-Key(应用ID) + X-Api-Access-Key(访问密钥)
-  // 兼容三种填法:
-  //  a) 设置页 appid 与 token 分开填
-  //  b) 密钥栏一行填 "appid:token" / "appid|token" / "appid&token" -> 自动拆开
-  //  c) 只有 token -> 需在设置页补填 AppID, 否则接口报 app key not found
-  function parseAuth(cfg){
-    var appKey = cfg.appid || '';
-    var accessKey = cfg.token || '';
-    var m = accessKey.match(/^([\w-]+)[:|&](\S+)$/);
-    if(m && !appKey){ appKey = m[1]; accessKey = m[2]; }
-    return { appKey: appKey, accessKey: accessKey };
+  // 鉴权(实测验证过): 新版只用三个头, 严禁混带旧版 X-Api-App-Key/X-Api-Access-Key/Authorization
+  //   X-Api-Key: <API Key>          控制台生成的密钥
+  //   X-Api-Resource-Id: 按音色类型 -> 复刻音色(ICL_) = seed-icl-2.0, 官方音色 = seed-tts-2.0
+  //   X-Api-Request-Id: 随机 UUID
+  // 注意: 复刻音色必须在生成 API Key 时勾选「声音复刻」场景, 否则 403 requested resource not granted
+  function resolveResourceId(speaker){
+    return (speaker && speaker.indexOf('ICL') === 0) ? 'seed-icl-2.0' : 'seed-tts-2.0';
   }
  
   // ===== 音色解析 =====
@@ -75,25 +71,26 @@
     // 防超额: 单次朗读截断到 500 字(单条气泡远小于此)
     if(text.length > 500) text = text.slice(0, 500);
  
-    var auth = parseAuth(cfg);
-    if(!auth.appKey){
-      return Promise.reject(new Error('缺少应用ID(AppID):请在设置页补填,或把密钥写成 "AppID:密钥" 一行'));
-    }
-    var reqid = 'gzd-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    var speaker = resolveVoice(roleName);
+    var resourceId = resolveResourceId(speaker);
+    // 请求ID: 随机 UUID(接口要求)
+    var reqid = ([1e7]+''+1e3+''+4e3+''+8e3+''+1e11).replace(/1[0-9]/g, function(c){
+      var r = Math.random()*16|0; return (c==='8'||c==='9') ? r.toString(16) : (r^(c&3)|8).toString(16);
+    });
  
     var headers = {
       'Content-Type': 'application/json',
-      'X-Api-Resource-Id': RESOURCE_ID,
-      'X-Api-App-Key': auth.appKey,
-      'X-Api-Access-Key': auth.accessKey,
-      'Authorization': 'Bearer ' + auth.accessKey
+      'X-Api-Key': cfg.token,
+      'X-Api-Resource-Id': resourceId,
+      'X-Api-Request-Id': reqid
     };
  
     var body = {
       user: { uid: reqid },
       req_params: {
         text: text,
-        speaker: resolveVoice(roleName),
+        speaker: speaker,
+        model: 'seed-tts-2.0-standard',   // 复刻/官方音色均必填
         audio_params: {
           format: 'mp3',
           sample_rate: 24000,
@@ -103,7 +100,12 @@
       }
     };
  
-    return fetch(TTS_URL, { method: 'POST', headers: headers, body: JSON.stringify(body) })
+    // 兜底: ICL 资源未授权(403 requested resource not granted)时改走官方音色资源再试一次,
+    // 让没勾「声音复刻」的用户至少能听到官方音色兜底
+    function attempt(idx){
+      var rid = idx === 0 ? resourceId : 'seed-tts-2.0';
+      if(idx > 0) body.req_params.speaker = DEFAULT_VOICE;
+      return fetch(TTS_URL, { method: 'POST', headers: idx === 0 ? headers : Object.assign({}, headers, {'X-Api-Resource-Id': rid}), body: JSON.stringify(body) })
       .then(function(resp){
         if(!resp.ok){
           return resp.text().then(function(t){
@@ -156,7 +158,19 @@
           });
         }
         return pump();
+      })
+      .catch(function(err){
+        // ICL 资源未授权 -> 用官方音色资源兜底重试一次
+        var msg = (err && err.message) || '';
+        if(idx === 0 &&
+           (msg.indexOf('45000030') >= 0 || msg.indexOf('not granted') >= 0)){
+          return attempt(1);
+        }
+        throw err;
       });
+    }
+ 
+    return attempt(0);
   }
  
   // ===== 播放控制(同一时间只播一个, 新播放自动打断旧的) =====
