@@ -25,7 +25,7 @@
     var VOICE_MAP = {
       '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
       '桑回燕': 'S_lGL1r7Jg2',
-      '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
+      '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入
     };
     var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
    
