@@ -221,8 +221,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   </div>
  
   <div class="field-group" style="margin-top:14px;">
-    <label class="field-label">应用ID(AppID) <span class="hint">(火山控制台应用详情里的一串数字/短码,必填)</span></label>
-    <input type="text" class="field-input" id="ttsAppid" placeholder="你的应用ID">
+    <label class="field-label">应用ID(AppID) <span class="hint">(选填——新版API Key不用填;仅旧版控制台的访问密钥才需要)</span></label>
+    <input type="text" class="field-input" id="ttsAppid" placeholder="旧版用户才需要填">
   </div>
  
   <div class="field-group" style="margin-top:14px;">
@@ -780,10 +780,9 @@ updateBgStatus();
       var token = tokenEl.value.trim();
       var appid = appidEl.value.trim();
       if(!token){ resultEl.textContent = '⚠️ 请先粘贴访问密钥'; resultEl.style.color = '#b58a00'; return; }
-      if(!appid){ resultEl.textContent = '⚠️ 请填写应用ID(AppID),在火山控制台应用详情里'; resultEl.style.color = '#b58a00'; return; }
       var c = GZDVoice.getCfg();
       c.token = token;
-      c.appid = appid;
+      c.appid = appid;   // 新版API Key可留空
       c.on = (c.on !== false);   // 默认开启
       GZDVoice.setCfg(c);
       tokenEl.value = '';
@@ -798,7 +797,6 @@ updateBgStatus();
       var token = tokenEl.value.trim() || c.token;
       var appid = appidEl.value.trim() || c.appid;
       if(!token){ resultEl.textContent = '⚠️ 还没有访问密钥,先粘贴并保存'; resultEl.style.color = '#b58a00'; return; }
-      if(!appid){ resultEl.textContent = '⚠️ 还没有应用ID(AppID),填一下并保存'; resultEl.style.color = '#b58a00'; return; }
       c.token = token; c.appid = appid;
       GZDVoice.setCfg(c);
       resultEl.textContent = '⏳ 正在合成试听...';
@@ -835,7 +833,7 @@ updateBgStatus();
   console.log('⚙️ 归终殿 · 设置页 v2.0 已加载');
 })();
 </script>
-<script src="./语音.js"></script>
 <script src="./背景.js"></script>
+<script src="./语音.js"></script>
 </body>
 </html>

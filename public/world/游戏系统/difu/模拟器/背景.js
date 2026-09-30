@@ -1,210 +1,217 @@
-// ===== 背景.js · 全局背景图开关 v5 =====
-// v3: 支持手机端/电脑端不同图片 + 自定义上传 + 字体清晰度
-// v4: 修复移动端/平板背景图被放大且跟随滚动的问题
-//     原因: 之前把背景直接铺在 body 上并用了 background-attachment:fixed,
-//           移动端浏览器(尤其 iframe 内)不支持该属性,背景会按整个文档高度
-//           撑大并跟随内容滚动。
-//     方案: 改为注入一个 position:fixed 的独立背景层 #gzd-bg-layer,
-//           背景始终铺满视口且固定不动,电脑端视觉效果与 v3 一致。
-// v5: 新增卡片透明度(gzd_bg_card_alpha,设置页滑块控制)。
-//     通过覆盖 --bg-card 变量让所有内页卡片变半透明,透出背景图;
-//     值未设置时保持各页默认外观,滑块拉满(100)即恢复默认。
+// ===== 语音.js · 归终殿 TTS 语音模块 v1 =====
+// 引擎: 火山引擎 豆包 TTS 2.0(单向流式 HTTP 接口, 国内直连, 无需梯子)
+// 接口: POST https://openspeech.bytedance.com/api/v3/tts/unidirectional
+// 模式: BYOK —— 玩家在设置页填自己的语音密钥, 仅存 localStorage, 按字计费记玩家头上
+// 用法:
+//   1. 页面引入: <script src="./语音.js"></script>  (本文件与页面同目录)
+//   2. 暴露 window.GZDVoice:
+//      GZDVoice.isReady()                 -> 是否已配置密钥且开启
+//      GZDVoice.speak(text, roleName)     -> 合成并播放, Promise<Blob>
+//      GZDVoice.stop()                    -> 停止当前播放
+//      GZDVoice.synthesize(text, roleName)-> 只合成不播放, Promise<Blob>
+//   3. 气泡播放按钮调用 speak() 即可; roleName 对不上映射表时自动回退旁白/默认音色
  
 (function(){
   'use strict';
-  
-  var BG_KEY='gzd_bg_on';
-  var CUSTOM_BG_KEY='gzd_custom_bg';       // 自定义背景(电脑端,base64)
-  var CUSTOM_BG_MOBILE_KEY='gzd_custom_bg_mobile'; // 自定义背景(手机端,base64)
-  var ALPHA_KEY='gzd_bg_card_alpha';       // 卡片透明度(0.3~1,空=默认不透明)
-  
-  // 默认背景图路径(没有自定义时用这个)
-  var BG_URL_DESKTOP='首页图.jpg';
-  var BG_URL_MOBILE='手机图.jpg'; // ★ 改成手机端图片
-  
-  function isBgOn(){
-    try{return localStorage.getItem(BG_KEY)==='true';}catch(e){return false;}
+ 
+  var TTS_URL = 'https://openspeech.bytedance.com/api/v3/tts/unidirectional';
+  // 豆包 TTS 2.0 单向流式的资源标识
+  var RESOURCE_ID = 'volc.service_type.10029';
+ 
+  var CFG_KEY = 'gzd_tts_config';   // { appid:'应用ID', token:'访问密钥', on:true }
+ 
+  // ===== 角色音色映射表 =====
+  // 值为火山音色代码; 换音色只改这里, 不动其他代码
+  var VOICE_MAP = {
+    '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
+    '桑回燕': 'S_lGL1r7Jg2',
+    '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
+  };
+  var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
+ 
+  // ===== 配置读写 =====
+  function getCfg(){
+    try{ return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }
+    catch(e){ return {}; }
   }
-  
-  function getDesktopBg(){
-    try{
-      var custom=localStorage.getItem(CUSTOM_BG_KEY);
-      if(custom) return custom;
-    }catch(e){}
-    return BG_URL_DESKTOP;
+  function setCfg(cfg){
+    localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   }
-  
-  function getMobileBg(){
-    try{
-      var custom=localStorage.getItem(CUSTOM_BG_MOBILE_KEY);
-      if(custom) return custom;
-    }catch(e){}
-    return BG_URL_MOBILE;
+ 
+  function isReady(){
+    var c = getCfg();
+    return !!(c.on && c.token);
   }
-  
-  function getLayer(){
-    var el=document.getElementById('gzd-bg-layer');
-    if(!el){
-      el=document.createElement('div');
-      el.id='gzd-bg-layer';
-      document.body.appendChild(el);
+ 
+  // 鉴权: 新版控制台 = API Key 模式, 只需 X-Api-Access-Key(+Bearer), 不带 AppID
+  // 旧版控制台 = AppID + 访问密钥 双头。按填写内容自动适配:
+  //  a) 密钥是 UUID 形态(新版 API Key) -> 只发 X-Api-Access-Key / Bearer
+  //  b) 填了 AppID 且密钥非 UUID(旧版) -> 同时发 X-Api-App-Key
+  //  c) 密钥栏一行 "appid:token" -> 自动拆开按旧版发
+  function parseAuth(cfg){
+    var appKey = cfg.appid || '';
+    var accessKey = cfg.token || '';
+    var m = accessKey.match(/^([\w-]+)[:|&](\S+)$/);
+    if(m && !appKey){ appKey = m[1]; accessKey = m[2]; }
+    var isNewApiKey = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(accessKey);
+    if(isNewApiKey) appKey = '';   // 新版 API Key 模式, 绝不带 AppID
+    return { appKey: appKey, accessKey: accessKey };
+  }
+ 
+  // ===== 音色解析 =====
+  function resolveVoice(roleName){
+    if(roleName && VOICE_MAP[roleName]) return VOICE_MAP[roleName];
+    var narration = VOICE_MAP['旁白'];
+    return narration || DEFAULT_VOICE;
+  }
+ 
+  // ===== 核心: 调火山流式接口, 返回 mp3 Blob =====
+  // 响应为按行分隔的 JSON(部分行可能带 "data:" 前缀), data 字段是 base64 音频分片
+  function synthesize(text, roleName){
+    var cfg = getCfg();
+    if(!cfg.token){
+      return Promise.reject(new Error('未配置语音密钥,请到设置页填写'));
     }
-    return el;
-  }
-  
-  // ===== v5 卡片透明度 =====
-  // 卡片底色:暗色 rgb(36,32,28) / 亮色 rgb(255,255,255),与各页 --bg-card 原值一致,
-  // 仅把不透明度替换为滑块值,保证颜色观感不变
-  function getAlpha(){
-    try{
-      var v=parseFloat(localStorage.getItem(ALPHA_KEY));
-      if(!isNaN(v)&&v>=0.3&&v<1) return v;
-    }catch(e){}
-    return null; // 未设置或拉满=用各页默认
-  }
-  
-  function applyAlpha(){
-    var old=document.getElementById('gzd-bg-alpha-style');
-    if(old) old.remove();
-    var a=getAlpha();
-    if(a===null) return;
-    var s=document.createElement('style');
-    s.id='gzd-bg-alpha-style';
-    s.textContent=
-      ':root{--bg-card:rgba(36,32,28,'+a+')!important}'+
-      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}'+
-      // 白名单:侧栏导航面板/拉手保持严格不透明(面板滑出后叠在正文上,
-      // 半透明会让面板文字和底下内容混在一起)
-      '.sidebar-panel,.sidebar-tab{--bg-card:#24201c!important}'+
-      'html[data-theme="light"] .sidebar-panel,html[data-theme="light"] .sidebar-tab{--bg-card:#ffffff!important}';
-    document.head.appendChild(s);
-  }
-  // 供设置页滑块拖动时本页即时刷新(同页不触发 storage 事件)
-  window.gzdRefreshCardAlpha=applyAlpha;
-  
-  function applyBg(on){
-    // 背景.js 由核心.js 加载在 body 末尾,body 必然存在;保险起见兜底一次
-    if(!document.body){
-      document.addEventListener('DOMContentLoaded',function(){applyBg(on);},{once:true});
-      return;
+    text = (text || '').trim();
+    if(!text) return Promise.reject(new Error('没有可朗读的文本'));
+    // 防超额: 单次朗读截断到 500 字(单条气泡远小于此)
+    if(text.length > 500) text = text.slice(0, 500);
+ 
+    var auth = parseAuth(cfg);
+    if(!auth.accessKey){
+      return Promise.reject(new Error('未配置语音密钥'));
     }
-    var existing=document.getElementById('gzd-bg-style');
-    if(existing) existing.remove();
-    var oldLayer=document.getElementById('gzd-bg-layer');
-    if(oldLayer) oldLayer.remove();
-    if(!on) return;
-  
-    var desktopBg=getDesktopBg();
-    var mobileBg=getMobileBg();
-  
-    getLayer();
-  
-    var s=document.createElement('style');
-    s.id='gzd-bg-style';
-    s.textContent=
-      // 独立固定背景层:铺满视口、不随内容滚动、不拦截点击
-      '#gzd-bg-layer{position:fixed;inset:0;z-index:-1;pointer-events:none}'+
-      // 横屏(电脑/平板横屏):暗色遮罩 0.6 + 电脑端图
-      '@media (orientation:landscape){'+
-        '#gzd-bg-layer{'+
-          'background:' +
-            'linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),' +
-            'url("'+desktopBg+'") center/cover no-repeat'+
-          ';'+
-        '}'+
-        '[data-theme="light"] #gzd-bg-layer{'+
-          'background:' +
-            'linear-gradient(rgba(255,255,255,0.25),rgba(255,255,255,0.25)),' +
-            'url("'+desktopBg+'") center/cover no-repeat'+
-          ';'+
-        '}'+
-      '}'+
-      // 竖屏(手机/平板竖屏):暗色遮罩 0.6 + 手机端图
-      '@media (orientation:portrait){'+
-        '#gzd-bg-layer{'+
-          'background:' +
-            'linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),' +
-            'url("'+mobileBg+'") center/cover no-repeat'+
-          ';'+
-        '}'+
-        '[data-theme="light"] #gzd-bg-layer{'+
-          'background:' +
-            'linear-gradient(rgba(255,255,255,0.25),rgba(255,255,255,0.25)),' +
-            'url("'+mobileBg+'") center/cover no-repeat'+
-          ';'+
-        '}'+
-      '}'+
-      // ★ 字体清晰度:给非卡片的文字加阴影
-      '.top-header,.page-title,.profile-name,.panel-title,.panel-footer,'+
-      '.float-group,.float-btn,.sidebar-tab{'+
-        'text-shadow:0 1px 4px rgba(0,0,0,0.5)!important;'+
-      '}'+
-      '[data-theme="light"] .top-header,[data-theme="light"] .page-title,'+
-      '[data-theme="light"] .profile-name,[data-theme="light"] .panel-footer,'+
-      '[data-theme="light"] .float-group,[data-theme="light"] .float-btn,'+
-      '[data-theme="light"] .sidebar-tab{'+
-        'text-shadow:0 1px 4px rgba(255,255,255,0.5)!important;'+
-      '}';
-    document.head.appendChild(s);
-  }
-  
-  function updateBtn(){
-    var btn=document.getElementById('bgToggleBtn');
-    if(!btn) return;
-    btn.textContent=(isBgOn()?'背景图: 开':'背景图: 关');
-  }
-  
-  function toggleBg(){
-    var newOn=!isBgOn();
-    try{localStorage.setItem(BG_KEY,newOn?'true':'false');}catch(e){}
-    applyBg(newOn);
-    updateBtn();
-  }
-  
-  function insertBtn(){
-    var sidebar=document.getElementById('sidebarPanel');
-    if(!sidebar) return;
-    if(document.getElementById('bgToggleBtn')) return;
-    var btn=document.createElement('button');
-    btn.id='bgToggleBtn';
-    btn.className='profile-switch-btn';
-    btn.style.marginTop='6px';
-    btn.addEventListener('click',toggleBg);
-    var switchBtn=document.getElementById('profileSwitchBtn');
-    if(switchBtn){
-      sidebar.insertBefore(btn,switchBtn);
-    }else{
-      var footer=sidebar.querySelector('.panel-footer');
-      if(footer) sidebar.insertBefore(btn,footer);
-      else sidebar.appendChild(btn);
+    var reqid = 'gzd-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+ 
+    function buildHeaders(resourceId){
+      var h = {
+        'Content-Type': 'application/json',
+        'X-Api-Resource-Id': resourceId,
+        'X-Api-Access-Key': auth.accessKey,
+        'Authorization': 'Bearer ' + auth.accessKey
+      };
+      if(auth.appKey) h['X-Api-App-Key'] = auth.appKey;
+      return h;
     }
-    updateBtn();
-  }
-  
-  function init(){
-    applyBg(isBgOn());
-    applyAlpha();
-    if(document.readyState==='loading'){
-      document.addEventListener('DOMContentLoaded',insertBtn);
-    }else{
-      insertBtn();
-    }
-    window.addEventListener('pageshow',function(){
-      applyBg(isBgOn());
-      applyAlpha();
-      updateBtn();
-    });
-    window.addEventListener('storage',function(e){
-      if(e.key===BG_KEY||e.key===CUSTOM_BG_KEY||e.key===CUSTOM_BG_MOBILE_KEY){
-        applyBg(isBgOn());
-        updateBtn();
+ 
+    var body = {
+      user: { uid: reqid },
+      req_params: {
+        text: text,
+        speaker: resolveVoice(roleName),
+        audio_params: {
+          format: 'mp3',
+          sample_rate: 24000,
+          speech_rate: 0,     // 语速, -50~100
+          loudness_rate: 0    // 音量, -50~100
+        }
       }
-      if(e.key===ALPHA_KEY||e.key===null){
-        applyAlpha();
-      }
+    };
+ 
+    // 资源标识兜底: 2.0(10029) 优先, 401/授权类错误时回退大模型 1.0(10028)
+    var RESOURCE_FALLBACK = [RESOURCE_ID, 'volc.service_type.10028'];
+ 
+    function attempt(idx){
+      return fetch(TTS_URL, { method: 'POST', headers: buildHeaders(RESOURCE_FALLBACK[idx]), body: JSON.stringify(body) })
+      .then(function(resp){
+        if(!resp.ok){
+          return resp.text().then(function(t){
+            throw new Error('HTTP ' + resp.status + (t ? ' · ' + t.slice(0, 200) : ''));
+          });
+        }
+        if(!resp.body) throw new Error('浏览器不支持流式响应');
+ 
+        var reader = resp.body.getReader();
+        var decoder = new TextDecoder();
+        var buf = '';
+        var chunks = [];   // base64 音频分片
+        var errMsg = '';
+ 
+        function handleLine(line){
+          line = line.trim();
+          if(!line) return;
+          if(line.indexOf('data:') === 0) line = line.slice(5).trim();
+          if(!line || line === '[DONE]') return;
+          var obj;
+          try{ obj = JSON.parse(line); }catch(e){ return; }
+          if(obj.code !== undefined && obj.code !== 0){
+            errMsg = obj.message || ('错误码 ' + obj.code);
+            return;
+          }
+          if(obj.data) chunks.push(obj.data);
+        }
+ 
+        function pump(){
+          return reader.read().then(function(r){
+            if(r.done){
+              if(buf) handleLine(buf);
+              if(errMsg) throw new Error(errMsg);
+              if(!chunks.length) throw new Error('接口未返回音频(检查密钥与音色代码)');
+              var bin = '';
+              for(var i = 0; i < chunks.length; i++){
+                bin += atob(chunks[i]);
+              }
+              var bytes = new Uint8Array(bin.length);
+              for(var j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+              return new Blob([bytes], { type: 'audio/mpeg' });
+            }
+            buf += decoder.decode(r.value, { stream: true });
+            var idx;
+            while((idx = buf.indexOf('\n')) >= 0){
+              handleLine(buf.slice(0, idx));
+              buf = buf.slice(idx + 1);
+            }
+            return pump();
+          });
+        }
+        return pump();
+      })
+      .catch(function(err){
+        // 授权/资源类错误 && 还有兜底资源标识 -> 换下一个重试
+        var msg = (err && err.message) || '';
+        if(idx + 1 < RESOURCE_FALLBACK.length &&
+           (msg.indexOf('45000010') >= 0 || msg.indexOf('grant') >= 0 || msg.indexOf('HTTP 401') >= 0)){
+          return attempt(idx + 1);
+        }
+        throw err;
+      });
+    }
+ 
+    return attempt(0);
+  }
+ 
+  // ===== 播放控制(同一时间只播一个, 新播放自动打断旧的) =====
+  var currentAudio = null;
+ 
+  function stop(){
+    if(currentAudio){
+      currentAudio.pause();
+      currentAudio = null;
+    }
+  }
+ 
+  function speak(text, roleName){
+    stop();
+    return synthesize(text, roleName).then(function(blob){
+      return new Promise(function(resolve, reject){
+        var audio = new Audio(URL.createObjectURL(blob));
+        currentAudio = audio;
+        audio.onended = function(){ if(currentAudio === audio) currentAudio = null; resolve(blob); };
+        audio.onerror = function(){ reject(new Error('音频播放失败')); };
+        audio.play().catch(function(){ reject(new Error('浏览器拦截了播放,请再点一次')); });
+      });
     });
   }
-  
-  init();
-  })();
-  
+ 
+  // ===== 暴露 API =====
+  window.GZDVoice = {
+    synthesize: synthesize,
+    speak: speak,
+    stop: stop,
+    isReady: isReady,
+    getCfg: getCfg,
+    setCfg: setCfg,
+    VOICE_MAP: VOICE_MAP,
+    TTS_URL: TTS_URL
+  };
+})();
