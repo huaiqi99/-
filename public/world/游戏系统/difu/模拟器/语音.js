@@ -1,9 +1,9 @@
-// ===== https://sfile.chatglm.cn/workspace/file/02/02869edf9e.js · 归终殿 TTS 语音模块 v1 =====
+// ===== 语音.js · 归终殿 TTS 语音模块 v1 =====
 // 引擎: 火山引擎 豆包 TTS 2.0(单向流式 HTTP 接口, 国内直连, 无需梯子)
 // 接口: POST https://openspeech.bytedance.com/api/v3/tts/unidirectional
 // 模式: BYOK —— 玩家在设置页填自己的语音密钥, 仅存 localStorage, 按字计费记玩家头上
 // 用法:
-//   1. 页面引入: <script src="./https://sfile.chatglm.cn/workspace/file/02/02869edf9e.js"></script>  (本文件与页面同目录)
+//   1. 页面引入: <script src="./语音.js"></script>  (本文件与页面同目录)
 //   2. 暴露 window.GZDVoice:
 //      GZDVoice.isReady()                 -> 是否已配置密钥且开启
 //      GZDVoice.speak(text, roleName)     -> 合成并播放, Promise<Blob>
@@ -25,7 +25,7 @@
   var VOICE_MAP = {
     '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
     '桑回燕': 'S_lGL1r7Jg2',
-    '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
+    '旁白':   ''   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
   };
   var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
  
@@ -43,13 +43,14 @@
     return !!(c.on && c.token);
   }
  
-  // 鉴权(实测验证过): 新版只用三个头, 严禁混带旧版 X-Api-App-Key/X-Api-Access-Key/Authorization
-  //   X-Api-Key: <API Key>          控制台生成的密钥
-  //   X-Api-Resource-Id: 按音色类型 -> 复刻音色(ICL_) = seed-icl-2.0, 官方音色 = seed-tts-2.0
-  //   X-Api-Request-Id: 随机 UUID
-  // 注意: 复刻音色必须在生成 API Key 时勾选「声音复刻」场景, 否则 403 requested resource not granted
+  // 资源配对(实测验证, 2026-10-01):
+  //   ICL_uranus_zh_male_fuheigongzi_tob(李怀渊, 体验中心2.0官方/ICL音色) -> seed-tts-2.0
+  //   S_xxx(玩家在复刻控制台的音色, 如桑回燕/旁白)                        -> seed-icl-2.0
+  //   zh_xxx(官方音色)                                                   -> seed-tts-2.0
+  // 之前把 ICL_ 前缀当复刻音色路由到 seed-icl-2.0 是错的, 会报 55000000
   function resolveResourceId(speaker){
-    return (speaker && speaker.indexOf('ICL') === 0) ? 'seed-icl-2.0' : 'seed-tts-2.0';
+    if(speaker && speaker.indexOf('S_') === 0) return 'seed-icl-2.0';
+    return 'seed-tts-2.0';
   }
  
   // ===== 音色解析 =====
@@ -100,11 +101,9 @@
       }
     };
  
-    // 兜底: ICL 资源未授权(403 requested resource not granted)时改走官方音色资源再试一次,
-    // 让没勾「声音复刻」的用户至少能听到官方音色兜底
+    // 兜底: 资源配错(55000000 mismatch)时翻转资源ID、音色不变再试一次
     function attempt(idx){
-      var rid = idx === 0 ? resourceId : 'seed-tts-2.0';
-      if(idx > 0) body.req_params.speaker = DEFAULT_VOICE;
+      var rid = idx === 0 ? resourceId : (resourceId === 'seed-icl-2.0' ? 'seed-tts-2.0' : 'seed-icl-2.0');
       return fetch(TTS_URL, { method: 'POST', headers: idx === 0 ? headers : Object.assign({}, headers, {'X-Api-Resource-Id': rid}), body: JSON.stringify(body) })
       .then(function(resp){
         if(!resp.ok){
@@ -160,10 +159,9 @@
         return pump();
       })
       .catch(function(err){
-        // ICL 资源未授权 -> 用官方音色资源兜底重试一次
+        // 资源/音色配错(55000000) -> 翻转资源ID重试一次
         var msg = (err && err.message) || '';
-        if(idx === 0 &&
-           (msg.indexOf('45000030') >= 0 || msg.indexOf('not granted') >= 0)){
+        if(idx === 0 && msg.indexOf('55000000') >= 0){
           return attempt(1);
         }
         throw err;
