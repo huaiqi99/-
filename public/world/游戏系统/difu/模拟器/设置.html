@@ -76,6 +76,7 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
 /* 状态提示 */
 .status-box{padding:12px 14px;border-radius:8px;background:var(--bg-accent-soft);border:1px solid var(--border-light);font-size:.85rem;margin-top:14px;display:flex;align-items:flex-start;gap:8px}
 .status-box.success{background:rgba(80,140,80,0.08);border-color:rgba(80,140,80,0.3)}
+.status-box.warning{background:rgba(181,138,0,0.08);border-color:rgba(181,138,0,0.3)}
 .status-box.error{background:rgba(160,64,64,0.08);border-color:rgba(160,64,64,0.3)}
 .status-box.info{background:var(--bg-accent-soft)}
 .status-icon{font-size:1rem;line-height:1.4}
@@ -208,6 +209,36 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   </div>
  
   <div class="test-result" id="testResult"></div>
+</div>
+ 
+<!-- ===== 语音功能(TTS) ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> 语音功能</div>
+ 
+  <div class="status-box info" id="ttsStatus">
+    <span class="status-icon">⏳</span>
+    <span class="status-text" id="ttsStatusText">正在读取语音配置...</span>
+  </div>
+ 
+  <div class="field-group" style="margin-top:14px;">
+    <label class="field-label">语音密钥 <span class="hint">(一行,火山引擎豆包语音控制台生成,仅保存在你本地浏览器)</span></label>
+    <input type="password" class="field-input" id="ttsToken" placeholder="粘贴你的一行语音密钥">
+  </div>
+ 
+  <div class="btn-row">
+    <button class="btn btn-primary" id="ttsSaveBtn">💾 保存语音配置</button>
+    <button class="btn" id="ttsTestBtn">🔊 试听(李怀渊)</button>
+    <button class="btn btn-danger" id="ttsClearBtn">🗑 清除语音密钥</button>
+  </div>
+ 
+  <div class="test-result" id="ttsTestResult"></div>
+ 
+  <ul class="info-list" style="margin-top:14px;">
+    <li>语音由火山引擎「豆包 TTS 2.0」合成,国内直连,不需要梯子</li>
+    <li>按字计费,走你自己的火山账号额度;点击剧情气泡的播放按钮才会合成,不会自动朗读</li>
+    <li>密钥仅保存在浏览器 <code>localStorage</code>,不会上传到任何服务器</li>
+    <li>试听是 20 字以内的短句,消耗额度可忽略不计</li>
+  </ul>
 </div>
  
 <!-- ===== 剧情存档管理 ===== -->
@@ -715,10 +746,81 @@ updateBgStatus();
   document.getElementById('refreshArchiveBtn').addEventListener('click', updateArchiveStatus);
   document.getElementById('refreshChatArchiveBtn').addEventListener('click', updateChatArchiveStatus);
  
+  // ===== 语音功能(TTS) =====
+  (function(){
+    var tokenEl = document.getElementById('ttsToken');
+    var statusBox = document.getElementById('ttsStatus');
+    var statusText = document.getElementById('ttsStatusText');
+    var resultEl = document.getElementById('ttsTestResult');
+ 
+    function updateTtsStatus(){
+      var c = GZDVoice.getCfg();
+      if(c.token && c.on){
+        statusBox.className = 'status-box success';
+        statusBox.querySelector('.status-icon').textContent = '✅';
+        statusText.innerHTML = '<strong>语音功能已开启</strong><br>密钥已配置。在剧情页点击气泡旁的播放按钮即可朗读。';
+      }else if(c.token){
+        statusBox.className = 'status-box warning';
+        statusBox.querySelector('.status-icon').textContent = '⏸';
+        statusText.innerHTML = '<strong>语音功能已关闭</strong><br>密钥已保存但未开启。';
+      }else{
+        statusBox.className = 'status-box info';
+        statusBox.querySelector('.status-icon').textContent = 'ℹ️';
+        statusText.innerHTML = '<strong>语音功能未配置</strong><br>填入火山引擎语音密钥后,可为剧情气泡配音(走豆包 TTS 2.0,费用由你自己的火山账号承担)。';
+      }
+    }
+ 
+    document.getElementById('ttsSaveBtn').addEventListener('click', function(){
+      var token = tokenEl.value.trim();
+      if(!token){ resultEl.textContent = '⚠️ 请先粘贴语音密钥'; resultEl.style.color = '#b58a00'; return; }
+      var c = GZDVoice.getCfg();
+      c.token = token;
+      c.on = (c.on !== false);   // 默认开启
+      GZDVoice.setCfg(c);
+      tokenEl.value = '';
+      updateTtsStatus();
+      resultEl.textContent = '✅ 语音配置已保存并开启';
+      resultEl.style.color = '#2e7d32';
+    });
+ 
+    document.getElementById('ttsTestBtn').addEventListener('click', function(){
+      var c = GZDVoice.getCfg();
+      var token = tokenEl.value.trim() || c.token;
+      if(!token){ resultEl.textContent = '⚠️ 还没有语音密钥,先粘贴并保存'; resultEl.style.color = '#b58a00'; return; }
+      if(tokenEl.value.trim()){ c.token = token; GZDVoice.setCfg(c); }
+      resultEl.textContent = '⏳ 正在合成试听...';
+      resultEl.style.color = '';
+      GZDVoice.speak('夜风穿过殿前的灯笼,李怀渊抬眼望过来,声音很轻。', '李怀渊')
+        .then(function(){
+          resultEl.textContent = '✅ 试听完成(李怀渊音色)';
+          resultEl.style.color = '#2e7d32';
+          updateTtsStatus();
+        })
+        .catch(function(err){
+          resultEl.textContent = '❌ 试听失败:' + err.message;
+          resultEl.style.color = '#c0392b';
+        });
+    });
+ 
+    document.getElementById('ttsClearBtn').addEventListener('click', function(){
+      if(!confirm('确定清除语音密钥?清除后语音功能不可用。')) return;
+      var c = GZDVoice.getCfg();
+      delete c.token;
+      GZDVoice.setCfg(c);
+      tokenEl.value = '';
+      updateTtsStatus();
+      resultEl.textContent = '已清除语音密钥';
+      resultEl.style.color = '';
+    });
+ 
+    updateTtsStatus();
+  })();
+ 
   initPage();
   console.log('⚙️ 归终殿 · 设置页 v2.0 已加载');
 })();
 </script>
 <script src="./背景.js"></script>
+<script src="./语音.js"></script>
 </body>
 </html>
