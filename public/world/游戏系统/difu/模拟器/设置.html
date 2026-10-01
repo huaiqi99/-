@@ -221,13 +221,27 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   </div>
  
   <div class="field-group" style="margin-top:14px;">
-    <label class="field-label">应用ID(AppID) <span class="hint">(选填——新版API Key不用填;仅旧版控制台的访问密钥才需要)</span></label>
-    <input type="text" class="field-input" id="ttsAppid" placeholder="旧版用户才需要填，可忽略">
+    <label class="field-label">API Key <span class="hint">(MiniMax 控制台「接口密钥」复制,sk- 开头,仅保存在你本地浏览器)</span></label>
+    <input type="password" class="field-input" id="ttsKey" placeholder="sk-xxxxxxxx">
   </div>
  
   <div class="field-group" style="margin-top:14px;">
-    <label class="field-label">访问密钥 <span class="hint">(火山控制台复制的密钥,仅保存在你本地浏览器)</span></label>
-    <input type="password" class="field-input" id="ttsToken" placeholder="粘贴你的语音密钥">
+    <label class="field-label">GroupID <span class="hint">(控制台「账户管理/个人信息」页那串数字)</span></label>
+    <input type="text" class="field-input" id="ttsGid" placeholder="例如 2105172743069635375">
+  </div>
+ 
+  <div class="field-group" style="margin-top:14px;">
+    <label class="field-label">模型 <span class="hint">(留空默认 speech-02-hd;报模型错误可换 speech-01-turbo)</span></label>
+    <input type="text" class="field-input" id="ttsModel" placeholder="speech-02-hd">
+  </div>
+ 
+  <div class="field-group" style="margin-top:14px;">
+    <label class="field-label">接口域名 <span class="hint">(一般保持默认,报网络错再换)</span></label>
+    <select class="field-input" id="ttsHost">
+      <option value="api.minimax.cn">api.minimax.cn(国内新版,推荐)</option>
+      <option value="api.minimaxi.com">api.minimaxi.com(国内)</option>
+      <option value="api.minimax.chat">api.minimax.chat</option>
+    </select>
   </div>
  
   <div class="btn-row">
@@ -239,8 +253,8 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
   <div class="test-result" id="ttsTestResult"></div>
  
   <ul class="info-list" style="margin-top:14px;">
-    <li>语音由火山引擎「豆包 TTS 2.0」合成,国内直连,不需要梯子</li>
-    <li>按字计费,走你自己的火山账号额度;点击剧情气泡的播放按钮才会合成,不会自动朗读</li>
+    <li>语音由 MiniMax「语音合成 T2A」合成,国内直连,不需要梯子</li>
+    <li>按字计费,走你自己的 MiniMax 账号额度;点击剧情气泡的播放按钮才会合成,不会自动朗读</li>
     <li>密钥仅保存在浏览器 <code>localStorage</code>,不会上传到任何服务器</li>
     <li>试听是 20 字以内的短句,消耗额度可忽略不计</li>
   </ul>
@@ -751,42 +765,51 @@ updateBgStatus();
   document.getElementById('refreshArchiveBtn').addEventListener('click', updateArchiveStatus);
   document.getElementById('refreshChatArchiveBtn').addEventListener('click', updateChatArchiveStatus);
  
-  // ===== 语音功能(TTS) =====
+  // ===== 语音功能(TTS · MiniMax) =====
   (function(){
-    var tokenEl = document.getElementById('ttsToken');
-    var appidEl = document.getElementById('ttsAppid');
+    var keyEl = document.getElementById('ttsKey');
+    var gidEl = document.getElementById('ttsGid');
+    var modelEl = document.getElementById('ttsModel');
+    var hostEl = document.getElementById('ttsHost');
     var statusBox = document.getElementById('ttsStatus');
     var statusText = document.getElementById('ttsStatusText');
     var resultEl = document.getElementById('ttsTestResult');
  
+    function fillForm(c){
+      if(c.key) keyEl.value = c.key;        // 回显方便修改; 不想回显可删这两行
+      if(c.gid) gidEl.value = c.gid;
+      if(c.model) modelEl.value = c.model;
+      if(c.host) hostEl.value = c.host;
+    }
+ 
     function updateTtsStatus(){
       var c = GZDVoice.getCfg();
-      if(c.token && c.on){
+      if(c.key && c.gid && c.on){
         statusBox.className = 'status-box success';
         statusBox.querySelector('.status-icon').textContent = '✅';
         statusText.innerHTML = '<strong>语音功能已开启</strong><br>密钥已配置。在剧情页点击气泡旁的播放按钮即可朗读。';
-      }else if(c.token){
+      }else if(c.key && c.gid){
         statusBox.className = 'status-box warning';
         statusBox.querySelector('.status-icon').textContent = '⏸';
         statusText.innerHTML = '<strong>语音功能已关闭</strong><br>密钥已保存但未开启。';
       }else{
         statusBox.className = 'status-box info';
         statusBox.querySelector('.status-icon').textContent = 'ℹ️';
-        statusText.innerHTML = '<strong>语音功能未配置</strong><br>填入应用ID与访问密钥后,可为剧情气泡配音(走豆包 TTS 2.0,费用由你自己的火山账号承担)。';
+        statusText.innerHTML = '<strong>语音功能未配置</strong><br>填入 API Key 与 GroupID 后,可为剧情气泡配音(走 MiniMax T2A,费用由你自己的 MiniMax 账号承担)。';
       }
     }
  
     document.getElementById('ttsSaveBtn').addEventListener('click', function(){
-      var token = tokenEl.value.trim();
-      var appid = appidEl.value.trim();
-      if(!token){ resultEl.textContent = '⚠️ 请先粘贴访问密钥'; resultEl.style.color = '#b58a00'; return; }
+      var key = keyEl.value.trim();
+      var gid = gidEl.value.trim();
+      if(!key || !gid){ resultEl.textContent = '⚠️ API Key 和 GroupID 都要填'; resultEl.style.color = '#b58a00'; return; }
       var c = GZDVoice.getCfg();
-      c.token = token;
-      c.appid = appid;   // 新版API Key可留空
+      c.key = key;
+      c.gid = gid;
+      c.model = modelEl.value.trim();   // 留空则引擎层用默认 speech-02-hd
+      c.host = hostEl.value;
       c.on = (c.on !== false);   // 默认开启
       GZDVoice.setCfg(c);
-      tokenEl.value = '';
-      appidEl.value = '';
       updateTtsStatus();
       resultEl.textContent = '✅ 语音配置已保存并开启';
       resultEl.style.color = '#2e7d32';
@@ -794,10 +817,11 @@ updateBgStatus();
  
     document.getElementById('ttsTestBtn').addEventListener('click', function(){
       var c = GZDVoice.getCfg();
-      var token = tokenEl.value.trim() || c.token;
-      var appid = appidEl.value.trim() || c.appid;
-      if(!token){ resultEl.textContent = '⚠️ 还没有访问密钥,先粘贴并保存'; resultEl.style.color = '#b58a00'; return; }
-      c.token = token; c.appid = appid;
+      var key = keyEl.value.trim() || c.key;
+      var gid = gidEl.value.trim() || c.gid;
+      if(!key || !gid){ resultEl.textContent = '⚠️ 还没配置,先填 API Key 和 GroupID 并保存'; resultEl.style.color = '#b58a00'; return; }
+      c.key = key; c.gid = gid;
+      c.model = modelEl.value.trim(); c.host = hostEl.value;
       GZDVoice.setCfg(c);
       resultEl.textContent = '⏳ 正在合成试听...';
       resultEl.style.color = '';
@@ -816,16 +840,19 @@ updateBgStatus();
     document.getElementById('ttsClearBtn').addEventListener('click', function(){
       if(!confirm('确定清除语音密钥?清除后语音功能不可用。')) return;
       var c = GZDVoice.getCfg();
-      delete c.token;
-      delete c.appid;
+      delete c.key;
+      delete c.gid;
+      delete c.model;
       GZDVoice.setCfg(c);
-      tokenEl.value = '';
-      appidEl.value = '';
+      keyEl.value = '';
+      gidEl.value = '';
+      modelEl.value = '';
       updateTtsStatus();
       resultEl.textContent = '已清除语音密钥';
       resultEl.style.color = '';
     });
  
+    fillForm(GZDVoice.getCfg());
     updateTtsStatus();
   })();
  

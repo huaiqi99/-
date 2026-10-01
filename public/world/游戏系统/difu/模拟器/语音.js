@@ -1,7 +1,9 @@
-// ===== 语音.js · 归终殿 TTS 语音模块 v1 =====
-// 引擎: 火山引擎 豆包 TTS 2.0(单向流式 HTTP 接口, 国内直连, 无需梯子)
-// 接口: POST https://openspeech.bytedance.com/api/v3/tts/unidirectional
-// 模式: BYOK —— 玩家在设置页填自己的语音密钥, 仅存 localStorage, 按字计费记玩家头上
+// ===== 语音.js · 归终殿 TTS 语音模块 v2 =====
+// 引擎: MiniMax 语音合成 T2A v2(同步 HTTP 接口, 国内直连, 无需梯子)
+// 接口: POST https://{host}/v1/t2a_v2?GroupId={gid}
+// 模式: BYOK —— 玩家在设置页填自己的密钥, 仅存 localStorage, 按字计费记玩家头上
+// 变更记录: v1 为火山引擎(其 CORS 不放行自定义头, 浏览器无法直连, 已弃用)
+//           v2 切换 MiniMax, CORS 实测放行 Authorization(2026-10-02)
 // 用法:
 //   1. 页面引入: <script src="./语音.js"></script>  (本文件与页面同目录)
 //   2. 暴露 window.GZDVoice:
@@ -14,20 +16,20 @@
 (function(){
   'use strict';
  
-  var TTS_URL = 'https://openspeech.bytedance.com/api/v3/tts/unidirectional';
-  // 豆包 TTS 2.0 单向流式的资源标识
-  var RESOURCE_ID = 'volc.service_type.10029';
+  // 三个域名 CORS 均实测放行; 默认国内新版控制台对应域名, 报网络错可在设置页切换
+  var HOSTS = ['api.minimax.cn', 'api.minimaxi.com', 'api.minimax.chat'];
  
-  var CFG_KEY = 'gzd_tts_config';   // { appid:'应用ID', token:'访问密钥', on:true }
+  var CFG_KEY = 'gzd_tts_config';   // { key:'API密钥', gid:'GroupID', host:'域名', model:'模型', on:true }
  
   // ===== 角色音色映射表 =====
-  // 值为火山音色代码; 换音色只改这里, 不动其他代码
+  // 值为 MiniMax voice_id; 换音色只改这里, 不动其他代码
+  // ★ 待站长在 www.minimaxi.com 语音体验中心选定后替换(当前为临时占位音色)
   var VOICE_MAP = {
-    '李怀渊': 'ICL_uranus_zh_male_fuheigongzi_tob',
-    '桑回燕': 'S_lGL1r7Jg2',
-    '旁白':   'S_FYj1r7Jg2'   // ★ 待站长在体验中心选定后填入; 留空则用 DEFAULT_VOICE
+    '李怀渊': 'male-qn-qingse',   // 临时: 青涩青年, 待替换
+    '桑回燕': 'ttv-voice-2026100201490426-EM7j6MD5',    // 临时: 少女, 待替换
+    '旁白':   'ttv-voice-2026100201590526-IZuGcELZ'                  // 留空则用 DEFAULT_VOICE
   };
-  var DEFAULT_VOICE = 'zh_male_M392_congwengfuren'; // 兜底音色, 可自行替换
+  var DEFAULT_VOICE = 'presenter_male'; // 兜底音色(演讲男), 可自行替换
  
   // ===== 配置读写 =====
   function getCfg(){
@@ -40,17 +42,7 @@
  
   function isReady(){
     var c = getCfg();
-    return !!(c.on && c.token);
-  }
- 
-  // 资源配对(实测验证, 2026-10-01):
-  //   ICL_uranus_zh_male_fuheigongzi_tob(李怀渊, 体验中心2.0官方/ICL音色) -> seed-tts-2.0
-  //   S_xxx(玩家在复刻控制台的音色, 如桑回燕/旁白)                        -> seed-icl-2.0
-  //   zh_xxx(官方音色)                                                   -> seed-tts-2.0
-  // 之前把 ICL_ 前缀当复刻音色路由到 seed-icl-2.0 是错的, 会报 55000000
-  function resolveResourceId(speaker){
-    if(speaker && speaker.indexOf('S_') === 0) return 'seed-icl-2.0';
-    return 'seed-tts-2.0';
+    return !!(c.on && c.key && c.gid);
   }
  
   // ===== 音色解析 =====
@@ -60,11 +52,11 @@
     return narration || DEFAULT_VOICE;
   }
  
-  // ===== 核心: 调火山流式接口, 返回 mp3 Blob =====
-  // 响应为按行分隔的 JSON(部分行可能带 "data:" 前缀), data 字段是 base64 音频分片
+  // ===== 核心: 调 MiniMax 同步接口, 返回 mp3 Blob =====
+  // 响应为 JSON, data.audio 是十六进制编码的 mp3
   function synthesize(text, roleName){
     var cfg = getCfg();
-    if(!cfg.token){
+    if(!cfg.key || !cfg.gid){
       return Promise.reject(new Error('未配置语音密钥,请到设置页填写'));
     }
     text = (text || '').trim();
@@ -72,103 +64,56 @@
     // 防超额: 单次朗读截断到 500 字(单条气泡远小于此)
     if(text.length > 500) text = text.slice(0, 500);
  
+    var host = cfg.host || HOSTS[0];
+    var model = cfg.model || 'speech-02-hd';
     var speaker = resolveVoice(roleName);
-    var resourceId = resolveResourceId(speaker);
-    // 请求ID: 随机 UUID(接口要求)
-    var reqid = ([1e7]+''+1e3+''+4e3+''+8e3+''+1e11).replace(/1[0-9]/g, function(c){
-      var r = Math.random()*16|0; return (c==='8'||c==='9') ? r.toString(16) : (r^(c&3)|8).toString(16);
-    });
- 
-    var headers = {
-      'Content-Type': 'application/json',
-      'X-Api-Key': cfg.token,
-      'X-Api-Resource-Id': resourceId,
-      'X-Api-Request-Id': reqid
-    };
  
     var body = {
-      user: { uid: reqid },
-      req_params: {
-        text: text,
-        speaker: speaker,
-        model: 'seed-tts-2.0-standard',   // 复刻/官方音色均必填
-        audio_params: {
-          format: 'mp3',
-          sample_rate: 24000,
-          speech_rate: 0,     // 语速, -50~100
-          loudness_rate: 0    // 音量, -50~100
-        }
+      model: model,
+      stream: false,
+      text: text,
+      voice_setting: {
+        voice_id: speaker,
+        speed: 1.0,
+        vol: 1.0,
+        pitch: 0
+      },
+      audio_setting: {
+        sample_rate: 32000,
+        bitrate: 128000,
+        format: 'mp3',
+        channel: 1
       }
     };
  
-    // 兜底: 资源配错(55000000 mismatch)时翻转资源ID、音色不变再试一次
-    function attempt(idx){
-      var rid = idx === 0 ? resourceId : (resourceId === 'seed-icl-2.0' ? 'seed-tts-2.0' : 'seed-icl-2.0');
-      return fetch(TTS_URL, { method: 'POST', headers: idx === 0 ? headers : Object.assign({}, headers, {'X-Api-Resource-Id': rid}), body: JSON.stringify(body) })
-      .then(function(resp){
-        if(!resp.ok){
-          return resp.text().then(function(t){
-            throw new Error('HTTP ' + resp.status + (t ? ' · ' + t.slice(0, 200) : ''));
-          });
+    return fetch('https://' + host + '/v1/t2a_v2?GroupId=' + encodeURIComponent(cfg.gid), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + cfg.key
+      },
+      body: JSON.stringify(body)
+    })
+    .then(function(resp){
+      return resp.json().then(function(j){
+        var br = j.base_resp || {};
+        if(br.status_code && br.status_code !== 0){
+          var msg = 'HTTP ' + resp.status + ' · 错误码 ' + br.status_code + ' · ' + (br.status_msg || '');
+          if(br.status_code === 1004) msg += '(密钥无效或与GroupID不配)';
+          else if(br.status_code === 1039) msg += '(额度不足/未开通)';
+          else if(br.status_code === 2049 || br.status_code === 1008) msg += '(模型或参数问题)';
+          throw new Error(msg);
         }
-        if(!resp.body) throw new Error('浏览器不支持流式响应');
- 
-        var reader = resp.body.getReader();
-        var decoder = new TextDecoder();
-        var buf = '';
-        var chunks = [];   // base64 音频分片
-        var errMsg = '';
- 
-        function handleLine(line){
-          line = line.trim();
-          if(!line) return;
-          if(line.indexOf('data:') === 0) line = line.slice(5).trim();
-          if(!line || line === '[DONE]') return;
-          var obj;
-          try{ obj = JSON.parse(line); }catch(e){ return; }
-          if(obj.code !== undefined && obj.code !== 0){
-            errMsg = obj.message || ('错误码 ' + obj.code);
-            return;
-          }
-          if(obj.data) chunks.push(obj.data);
+        var audio = j.data && j.data.audio;
+        if(!audio) throw new Error('接口未返回音频(检查音色代码)');
+        // 十六进制 -> 字节 -> mp3 Blob
+        var bytes = new Uint8Array(audio.length / 2);
+        for(var i = 0; i < bytes.length; i++){
+          bytes[i] = parseInt(audio.substr(i * 2, 2), 16);
         }
- 
-        function pump(){
-          return reader.read().then(function(r){
-            if(r.done){
-              if(buf) handleLine(buf);
-              if(errMsg) throw new Error(errMsg);
-              if(!chunks.length) throw new Error('接口未返回音频(检查密钥与音色代码)');
-              var bin = '';
-              for(var i = 0; i < chunks.length; i++){
-                bin += atob(chunks[i]);
-              }
-              var bytes = new Uint8Array(bin.length);
-              for(var j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
-              return new Blob([bytes], { type: 'audio/mpeg' });
-            }
-            buf += decoder.decode(r.value, { stream: true });
-            var idx;
-            while((idx = buf.indexOf('\n')) >= 0){
-              handleLine(buf.slice(0, idx));
-              buf = buf.slice(idx + 1);
-            }
-            return pump();
-          });
-        }
-        return pump();
-      })
-      .catch(function(err){
-        // 资源/音色配错(55000000) -> 翻转资源ID重试一次
-        var msg = (err && err.message) || '';
-        if(idx === 0 && msg.indexOf('55000000') >= 0){
-          return attempt(1);
-        }
-        throw err;
+        return new Blob([bytes], { type: 'audio/mpeg' });
       });
-    }
- 
-    return attempt(0);
+    });
   }
  
   // ===== 播放控制(同一时间只播一个, 新播放自动打断旧的) =====
@@ -203,6 +148,6 @@
     getCfg: getCfg,
     setCfg: setCfg,
     VOICE_MAP: VOICE_MAP,
-    TTS_URL: TTS_URL
+    HOSTS: HOSTS
   };
 })();
