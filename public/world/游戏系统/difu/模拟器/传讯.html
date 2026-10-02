@@ -184,6 +184,22 @@ html:not([data-theme="light"]) .msg-unit.sender-luo .msg-bubble {
   #app{padding:2px 0 0 0}
 }
 </style>
+<style id="gzd-chat-opaque">
+/* 传讯符阅读面锁定不透明:气泡/联系人条目/列表/头尾栏,只有 .chat-app 容器透出背景 */
+.contact-list{background:var(--bg-card-solid,var(--bg-card))!important}
+.contact-item{background:var(--bg-card-solid,var(--bg-card))!important}
+.contact-item.active{background:var(--bg-hover)!important}
+.chat-header{background:var(--bg-card-solid,var(--bg-card))!important}
+.chat-footer{background:var(--bg-card-solid,var(--bg-card))!important}
+.chat-area{background:transparent!important}
+.msg-bubble{background:var(--msg-other)!important}
+.msg-unit.right .msg-bubble{background:var(--msg-self)!important}
+/* 移动端折叠列表覆盖全屏时同样严格不透明,防止透出写死对话 */
+@media(max-width:820px){
+  .contact-list{background:var(--bg-card-solid,var(--bg-card))!important}
+  .contact-item{background:var(--bg-card-solid,var(--bg-card))!important}
+}
+</style>
 </head>
 <body data-profile="linxiwu">
  
@@ -235,6 +251,7 @@ html:not([data-theme="light"]) .msg-unit.sender-luo .msg-bubble {
 <div id="petal-container"></div>
  
 <script src="./核心.js"></script>
+<script src="./背景.js"></script>
 <script src="./传讯AI.js"></script>
 </body>
 </html>
