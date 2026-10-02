@@ -127,9 +127,9 @@
     const cfg = loadAIConfig();
     // 状态包:每逢第6的倍数轮,要求AI在回复末尾输出主线状态JSON(供传讯符联动)
     const rounds = history.filter(m => m.role === 'user').length;
-    let msg = message;
+    let msg = message + '\n\n[系统内部指令,勿在正文提及]回复正文结束后,另起一行在末尾输出<建议>["行动1","行动2","行动3"]</建议>:给出3条玩家以当前角色身份可采取的下一步行动,每条不超过15字,贴合当前剧情与玩家角色性格,使用第二人称祈使句(如"去忘川东段巡逻")。除该块外,正文之后不得有任何额外说明。';
     if(rounds > 0 && rounds % 6 === 0){
-      msg = message + '\n\n[系统内部指令,勿在正文提及]本轮回复正文结束后,请另起一行在末尾输出一段用<状态>和</状态>包裹的单行JSON,格式:{"阶段":"当前主线阶段一句话","李怀渊":"玩家与李怀渊的关系近况一两句,尚未相识则写:尚未相识","桑回燕":"玩家与桑回燕的关系近况一两句,尚未相识则写:尚未相识","已相识":["李怀渊","桑回燕"中已与玩家正式相识的]}。该JSON只允许出现一次,除此之外正文不得包含任何额外说明。';
+      msg += '\n另外,本轮还需在<建议>块之后再输出一段用<状态>和</状态>包裹的单行JSON,格式:{"阶段":"当前主线阶段一句话","李怀渊":"玩家与李怀渊的关系近况一两句,尚未相识则写:尚未相识","桑回燕":"玩家与桑回燕的关系近况一两句,尚未相识则写:尚未相识","已相识":["李怀渊","桑回燕"中已与玩家正式相识的]}。该JSON只允许出现一次。';
     }
     const reply = cfg.apiKey && cfg.provider
       ? await callDirect(msg, profile, history, cfg)
@@ -137,7 +137,8 @@
     return extractWorldState(reply);
   }
 
-  // 从AI回复中剥离并保存主线状态包(传讯符读取 localStorage 的 gzd_world_state)
+  // 从AI回复中剥离并保存主线状态包(传讯符读取 gzd_world_state)与建议行动
+  let lastSuggestions = [];
   function extractWorldState(reply){
     try{
       const m = reply.match(/<状态>([\s\S]*?)<\/状态>/);
@@ -149,7 +150,51 @@
         }catch(e){}
       }
     }catch(e){}
+    lastSuggestions = [];
+    try{
+      const s2 = reply.match(/<建议>([\s\S]*?)<\/建议>/);
+      if(s2){
+        reply = reply.replace(s2[0], '').trim();
+        try{
+          const arr = JSON.parse(s2[1].trim());
+          if(Array.isArray(arr)) lastSuggestions = arr.filter(x => typeof x === 'string' && x.trim()).slice(0, 3);
+        }catch(e){}
+      }
+    }catch(e){}
     return reply;
+  }
+
+  // ===== 建议行动按钮条(点一下即作为行动发送) =====
+  function renderSuggestions(list){
+    let bar = document.getElementById('gzd-suggest-bar');
+    if(!list || !list.length){
+      if(bar) bar.remove();
+      return;
+    }
+    if(!bar){
+      bar = document.createElement('div');
+      bar.id = 'gzd-suggest-bar';
+      bar.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;padding:8px 14px;max-width:900px;margin:0 auto;';
+      const inputBar = document.querySelector('.input-bar');
+      if(inputBar && inputBar.parentNode) inputBar.parentNode.insertBefore(bar, inputBar);
+      else document.body.appendChild(bar);
+    }
+    bar.innerHTML = '';
+    list.forEach(function(t){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = t;
+      b.style.cssText = 'padding:6px 12px;border:1px solid var(--border-card,#4a443e);border-radius:16px;background:var(--bg-card,#24201c);color:var(--text-secondary,#b8aea4);font-size:.78rem;cursor:pointer;font-family:inherit;transition:opacity .2s;';
+      b.onmouseenter = function(){ b.style.opacity = '.75'; };
+      b.onmouseleave = function(){ b.style.opacity = '1'; };
+      b.addEventListener('click', function(){
+        const inputEl = document.getElementById('inputBox');
+        if(inputEl){ inputEl.value = t; }
+        renderSuggestions([]);
+        submitAction();
+      });
+      bar.appendChild(b);
+    });
   }
 
   async function callDirect(message, profile, history, cfg){
@@ -1013,12 +1058,14 @@ ${getQuestReceiptSection(profile)}`;
       .filter(x => x.type==='user' || x.type==='ai')
       .map(x => ({ role:x.type==='user'?'user':'assistant', content:x.text }));
 
+    renderSuggestions([]);
     try{
       const reply = await callAI(userText, profile, aiHistory);
       const i2 = arr.findIndex(x => x.id === loadingItem.id);
       if(i2 !== -1){ arr[i2] = { id:'a_'+Date.now(), type:'ai', text:reply }; }
       saveStory(profile, arr);
       renderStory(profile);
+      renderSuggestions(lastSuggestions);
     }catch(e){
       const i2 = arr.findIndex(x => x.id === loadingItem.id);
       if(i2 !== -1){ arr[i2] = { id:'e_'+Date.now(), type:'error', text:'【出错】'+e.message }; }

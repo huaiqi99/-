@@ -214,7 +214,7 @@
       personalitySurface:'毒舌,薄情,偶尔笑但看不出想法。见人先刺,说话带刺但语气平静。嘴上说着"缘分""巧合",实际全是算计。',
       personalityMid:'欲望极大,多疑到骨子里。先发制人是因为觉得所有人都会害他。表面对人笑嘻嘻,心里在盘算怎么利用。',
       personalityDeep:'极度缺爱,从未被人真心对待过。不相信有人会无条件对他好。内心深处渴望被坚定选择,但从不承认。一旦发现自己真在意了某个人,会先愤怒,后恐惧,然后用更狠的话把人推开。',
-      speechStyle:'毒舌带刺但语气平静,笑着说狠话,常用反问和挖苦。常称玩家为xx（根据主角姓名来）大人（如罗大人或林大人），或者引渡人大人，好感极高时会突然正经叫全名,不带任何前缀。',
+      speechStyle:'毒舌带刺但语气平静,笑着说狠话,常用反问和挖苦。通常调侃玩家为引渡人大人，或者神仙大人;好感极高时会突然正经叫全名,不带任何前缀。',
       catchphrase:'呵 / 别,我这种人受不起 / 你管得挺宽 / 手滑',
       relations:{linxiwu:'与玩家角色不区别对待,关系发展仅按好感度推进。',luojin:'与玩家角色不区别对待,关系发展仅按好感度推进。'},
       initialFavor:15,
@@ -224,7 +224,7 @@
       personalitySurface:'不修边幅,沉默,透明,存在感极低。别人搭话会惊讶,结巴应答,说完低头。',
       personalityMid:'有一点幽默感,但极少有机会展现。偶尔冒出一句冷笑话,说完自己先愣住。脑子不笨,偶尔匿名回帖,用词谨慎。',
       personalityDeep:'极度自卑,容易嫉妒,缺爱。觉得自己不配和任何人站在一起。看到别人有朋友会难受,难受变成嫉妒,嫉妒变成对自己的厌恶。渴望被在意,但从不奢望。极度怕死,但这点不写在表面,藏在回避行为里。',
-      speechStyle:'话极少,回复的字数也不多。语气很轻,像怕打扰。偶尔冒冷笑话然后补一句"当我没说"。',
+      speechStyle:'话极少,语气很轻,像怕打扰。偶尔冒冷笑话然后补一句"当我没说"。叫玩家全名。',
       catchphrase:'嗯。 / 有事？ / 不用。 / 不用管我 / 当我没说',
       relations:{linxiwu:'与玩家角色不区别对待,关系发展仅按好感度推进。',luojin:'与玩家角色不区别对待,关系发展仅按好感度推进。'},
       initialFavor:10,
@@ -402,6 +402,7 @@
   ],
   huai:[
   {side:'left',sender:'huai',name:'林淮',text:'统修考核。符法85,阵法78,魂力82,实战65。综合甲等。'},
+  {side:'left',sender:'huai',name:'林淮',text:'实战低了,下次注意。'},
   {side:'right',sender:'self',text:'知道了爹。'},
   {side:'left',sender:'huai',name:'林淮',text:'记得加强体术训练。'},
   {side:'right',sender:'self',text:'嗯,每日都有做。'},
@@ -488,12 +489,15 @@
   },
   luojin:{
   huai2:[
-  {side:'right',sender:'self',text:'那个，淮大人？'},
+  {side:'right',sender:'self',text:'那个，淮大人。'},
   {side:'left',sender:'huai',name:'林淮',text:'嗯。'},
-  {side:'right',sender:'self',text:'下堂课能不能请假？我肚子疼。'},
+  {side:'right',sender:'self',text:'……我今天能不去上枪法课吗？我肚子有点疼'},
   {side:'left',sender:'huai',name:'林淮',text:'不能。'},
-  {side:'right',sender:'self',text:'……哦。'}
-
+  {side:'right',sender:'self',text:'淮大人你相信我，我说的真的！'},
+  {side:'left',sender:'huai',name:'林淮',text:'肚子疼找程木栖。请假不归我管。'},
+  {side:'right',sender:'self',text:'淮大人别这么无情啊——'},
+  {side:'left',sender:'huai',name:'林淮',text:'嗯真肚子疼就去栖梧馆，别在这儿磨蹭。'},
+  {side:'right',sender:'self',text:'……哦。'},
   ],
   luo2:[
   {side:'left',sender:'luo',name:'罗修',text:'统修。刀法90。'},

@@ -649,6 +649,21 @@ body{
   <button class="banner-close" id="bannerClose" title="关闭提示">×</button>
 </div>
  
+<!-- 入殿须知(可关闭,关闭状态记忆在localStorage) -->
+<div id="simNotice" style="max-width:900px;margin:12px auto 0;padding:14px 18px;border:1px solid var(--border-card,#4a443e);border-radius:12px;background:var(--bg-card,#24201c);font-size:.82rem;line-height:1.8;color:var(--text-secondary,#b8aea4);">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+    <span style="font-family:var(--font-mono);letter-spacing:2px;color:var(--accent,#c4b4a0);font-size:.85rem;">◈ 入殿须知</span>
+    <button title="关闭" style="background:transparent;border:none;color:var(--text-muted,#8a8078);cursor:pointer;font-size:1rem;padding:0 4px;" onclick="try{localStorage.setItem('gzd_sim_notice_closed','1');}catch(e){} this.parentNode.parentNode.remove();">×</button>
+  </div>
+  · 你将以<b>林栖梧</b>或<b>罗烬</b>的视角进行扮演(视角与传讯符页共用),直接用第一人称输入你想做的事、想说的话即可,无需任何格式<br>
+  · 界面上如有<b>写死的对话,均为测试示例</b>,AI 不会记忆<br>
+  · 输入「<b>开始游戏</b>」可选择攻略人物(李怀渊 / 桑回燕);不选则按普通模拟器运行<br>
+  · 本页内容由 AI 生成,可能出现<b>剧情崩坏、遗忘、角色 OOC</b> 等情况;对回复不满意可换一种措辞重试<br>
+  · 每 <b>6 轮</b>自动记录一次主线近况(与传讯符联动);每 <b>30 轮</b>为一章,章节切换时自动生成总结,右上角「目录」可查看<br>
+  · 本作由你自己的 API 密钥驱动(BYOK),费用记在你自己的账号上,前往 <a href="./设置.html" style="color:var(--accent,#c4b4a0);">设置页</a> 配置
+</div>
+<script>try{if(localStorage.getItem('gzd_sim_notice_closed')==='1')document.getElementById('simNotice').style.display='none';}catch(e){}</script>
+ 
 <!-- 剧情流主区 -->
 <div class="story-area" id="storyArea">
   <div class="chapter-banner">
@@ -825,8 +840,8 @@ body{
 })();
 </script>
  
-<script src="./模拟AI.js"></script>
 <script src="./背景.js"></script>
+<script src="./模拟AI.js"></script>
 <script>
 // ===== 配置提示条关闭(本次会话内不再显示) =====
 (function(){

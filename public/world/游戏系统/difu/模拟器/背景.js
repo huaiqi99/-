@@ -7,9 +7,11 @@
 //     方案: 改为注入一个 position:fixed 的独立背景层 #gzd-bg-layer,
 //           背景始终铺满视口且固定不动,电脑端视觉效果与 v3 一致。
 // v5: 新增卡片透明度(gzd_bg_card_alpha,设置页滑块控制)。
+// v6: 同时暴露 --bg-card-solid(严格不透明色),供传讯符等页面的阅读面
+//     (气泡/联系人列表/输入栏)锁定不透明,只让外层容器透出背景。
 //     通过覆盖 --bg-card 变量让所有内页卡片变半透明,透出背景图;
 //     值未设置时保持各页默认外观,滑块拉满(100)即恢复默认。
- 
+
 (function(){
   'use strict';
   
@@ -71,8 +73,8 @@
     var s=document.createElement('style');
     s.id='gzd-bg-alpha-style';
     s.textContent=
-      ':root{--bg-card:rgba(36,32,28,'+a+')!important}'+
-      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important}'+
+      ':root{--bg-card:rgba(36,32,28,'+a+')!important;--bg-card-solid:#24201c!important}'+
+      'html[data-theme="light"]{--bg-card:rgba(255,255,255,'+a+')!important;--bg-card-solid:#ffffff!important}'+
       // 白名单:侧栏导航面板/拉手保持严格不透明(面板滑出后叠在正文上,
       // 半透明会让面板文字和底下内容混在一起)
       '.sidebar-panel,.sidebar-tab{--bg-card:#24201c!important}'+
