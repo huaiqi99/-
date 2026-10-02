@@ -125,11 +125,31 @@
   // ===== AI 调用(双模式) =====
   async function callAI(message, profile, history){
     const cfg = loadAIConfig();
-    if(cfg.apiKey && cfg.provider){
-      return await callDirect(message, profile, history, cfg);
-    } else {
-      return await callWorker(message, profile, history);
+    // 状态包:每逢第6的倍数轮,要求AI在回复末尾输出主线状态JSON(供传讯符联动)
+    const rounds = history.filter(m => m.role === 'user').length;
+    let msg = message;
+    if(rounds > 0 && rounds % 6 === 0){
+      msg = message + '\n\n[系统内部指令,勿在正文提及]本轮回复正文结束后,请另起一行在末尾输出一段用<状态>和</状态>包裹的单行JSON,格式:{"阶段":"当前主线阶段一句话","李怀渊":"玩家与李怀渊的关系近况一两句,尚未相识则写:尚未相识","桑回燕":"玩家与桑回燕的关系近况一两句,尚未相识则写:尚未相识","已相识":["李怀渊","桑回燕"中已与玩家正式相识的]}。该JSON只允许出现一次,除此之外正文不得包含任何额外说明。';
     }
+    const reply = cfg.apiKey && cfg.provider
+      ? await callDirect(msg, profile, history, cfg)
+      : await callWorker(msg, profile, history);
+    return extractWorldState(reply);
+  }
+
+  // 从AI回复中剥离并保存主线状态包(传讯符读取 localStorage 的 gzd_world_state)
+  function extractWorldState(reply){
+    try{
+      const m = reply.match(/<状态>([\s\S]*?)<\/状态>/);
+      if(m){
+        reply = reply.replace(m[0], '').trim();
+        try{
+          const st = JSON.parse(m[1].trim());
+          if(st && typeof st === 'object') localStorage.setItem('gzd_world_state', JSON.stringify(st));
+        }catch(e){}
+      }
+    }catch(e){}
+    return reply;
   }
 
   async function callDirect(message, profile, history, cfg){
