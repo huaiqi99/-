@@ -74,15 +74,15 @@ body{
 .fade.right{top:0;bottom:0;right:0;width:9%;background:linear-gradient(270deg,var(--paper),transparent);}
 /* 画布内引言（纯白+柔影，无描边） */
 .center-stack .quote{position:static;transform:none;
-  font-size:.8rem;letter-spacing:3px;color:#fff;white-space:nowrap;
-  font-family:var(--serif);margin:4px 0 16px;
+  font-size:.95rem;letter-spacing:3px;color:#fff;white-space:nowrap;
+  font-family:var(--serif);margin:6px 0 24px;
   text-shadow:0 1px 3px rgba(20,10,5,0.6),0 2px 14px rgba(20,10,5,0.5);}
  
 /* ===== 下留白区：标题 / 档案 / 入口 ===== */
 .footzone{
-  width:100%;max-width:560px;
-  display:flex;flex-direction:column;align-items:center;
-  text-align:center;padding:4px 16px 20px;
+  flex:1;width:100%;max-width:560px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  text-align:center;padding:10px 16px 16px;
 }
 .footzone a{color:#b3a68f;}
 h1{
@@ -118,12 +118,12 @@ h1 .dot{color:var(--gold);}
 .start-wrap{margin-top:12px;width:100%;}
 .octo.start{display:block;margin-top:10px;text-decoration:none;}
 .center-stack{
-  position:relative;width:min(300px,72%);z-index:10;
-  margin:-120px auto 0;animation:fadeIn .8s ease .25s both;text-align:center;
+  position:relative;width:min(560px,94%);z-index:10;
+  margin:-85px auto 0;animation:fadeIn .8s ease .25s both;text-align:center;
 }
-.center-stack h1{font-size:1.9rem;font-weight:700;letter-spacing:6px;color:#fff;
+.center-stack h1{font-size:2.3rem;font-weight:700;letter-spacing:6px;color:#fff;
   text-shadow:0 1px 3px rgba(20,10,5,0.55),0 2px 16px rgba(20,10,5,0.45);margin-bottom:2px;}
-.center-stack .en-line{font-family:var(--mono);font-size:.55rem;letter-spacing:3px;white-space:nowrap;color:rgba(255,255,255,0.85);text-shadow:0 1px 5px rgba(20,10,5,0.55);margin:2px 0 0;}
+.center-stack .en-line{font-family:var(--mono);font-size:.68rem;letter-spacing:3px;white-space:nowrap;color:rgba(255,255,255,0.85);text-shadow:0 1px 5px rgba(20,10,5,0.55);margin:2px 0 0;}
 .center-stack h1 .dot{color:#fff;}   /* 大字统一纯白 */
 .center-stack .desc{min-height:2.6em;font-size:.72rem;line-height:1.7;
   color:var(--card-sub);margin:8px 0 0;text-align:center;}
@@ -175,8 +175,10 @@ h1 .dot{color:var(--gold);}
  
 @media (max-width:480px){
   h1{font-size:1.5rem;letter-spacing:4px;}
-  .viewport{height:100vh;}
-  .quote{font-size:.68rem;letter-spacing:2px;bottom:10%;}
+  .center-stack .en-line{font-size:.55rem;letter-spacing:2px;}
+  .center-stack .quote{font-size:.68rem;letter-spacing:2px;margin:4px 0 14px;}
+  .viewport{height:42vh;margin-top:44px;}
+  .center-stack{margin:-60px auto 0;}
   .card .desc{font-size:.7rem;}
   .footzone{padding:0 12px 8px;}
 }
@@ -216,7 +218,7 @@ h1 .dot{color:var(--gold);}
  
 <div class="footzone">
   <div class="foot">
-    <span>千律州模拟器 · v1.5 · 原著《业焰之国》</span>
+    <span>千律州模拟器 · v1.6 · 原著《业焰之国》</span>
     <span>背景着色器改编自 <a href="https://www.shadertoy.com/view/Ndc3zl" target="_top" rel="noopener">Shadertoy Ndc3zl</a> · CC BY-NC-SA 3.0</span>
   </div>
 </div>
