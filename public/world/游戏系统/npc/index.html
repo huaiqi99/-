@@ -30,6 +30,14 @@
   --serif:"Georgia","Times New Roman","Songti SC",serif;
   --mono:"Courier New","Source Code Pro",monospace;
 }
+body.dark{
+  --paper:#2b241b;            /* 夜间:暖灰褐,不压黑 */
+  --card-bg:rgba(54,45,34,0.94);
+  --ink:#e8ded0;
+  --ink-2:#a89880;
+  --accent:#b99a6b;
+  --gold:#c9a34e;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
 body{
@@ -108,7 +116,7 @@ h1 .dot{color:var(--gold);}
 .card .name{font-size:1rem;font-weight:600;letter-spacing:2px;color:var(--ink);}
 .card .name .en{font-family:var(--mono);font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-left:8px;vertical-align:1px;}
 .card .desc{
-  margin-top:10px;font-size:.74rem;line-height:1.9;color:var(--ink-2);
+  margin-top:10px;font-size:.88rem;line-height:1.8;color:var(--ink);
 }
 .card .desc em{font-style:normal;color:var(--ink);}
 .card .tail{
@@ -125,16 +133,15 @@ h1 .dot{color:var(--gold);}
   text-shadow:0 1px 3px rgba(20,10,5,0.55),0 2px 16px rgba(20,10,5,0.45);margin-bottom:2px;}
 .center-stack .en-line{font-family:var(--mono);font-size:.68rem;letter-spacing:3px;white-space:nowrap;color:rgba(255,255,255,0.85);text-shadow:0 1px 5px rgba(20,10,5,0.55);margin:2px 0 0;}
 .center-stack h1 .dot{color:#fff;}   /* 大字统一纯白 */
-.center-stack .desc{min-height:2.6em;font-size:.72rem;line-height:1.7;
-  color:var(--card-sub);margin:8px 0 0;text-align:center;}
-.center-stack .octo-in{background:rgba(250,246,238,0.92);}
+.center-stack .desc{font-size:.88rem;line-height:1.8;color:var(--ink);margin:8px 0 0;text-align:center;}
+.center-stack .octo-in{background:var(--card-bg);}
 .center-stack .start-btn{
   display:block;text-align:center;padding:10px 0;text-decoration:none;
-  font-size:.88rem;letter-spacing:8px;color:#fff;
-  background:#dc8d80;text-shadow:0 1px 3px rgba(60,20,10,0.45);
+  font-size:.88rem;letter-spacing:8px;color:var(--ink);
+  background:var(--paper);text-shadow:none;
 }
 .center-stack .start-btn .en{display:block;font-size:.55rem;letter-spacing:5px;margin-top:3px;opacity:.75;}
-.center-stack .start:hover .start-btn{background:#c47163;}
+.center-stack .start:hover .start-btn{color:var(--gold);}
 .center-start{
   text-decoration:none;
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
@@ -152,15 +159,20 @@ h1 .dot{color:var(--gold);}
   display:block;text-align:center;padding:9px 0;text-decoration:none;
   font-family:var(--serif);font-size:.88rem;letter-spacing:6px;
   color:var(--accent);text-decoration:none;
-  transition:all .25s ease;
+  transition:none;
 }
 .start-btn .en{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:4px;opacity:.65;margin-top:2px;}
-.octo.start:hover{background:var(--ink);}
-.octo.start:hover .start-btn{color:var(--paper);}
+.octo.start{background:#c9b27a;}
+.octo.start:hover{background:#e0cd9a;}
+.octo.start .start-btn{
+  --cut:12px;
+  clip-path:polygon(var(--cut) 0,calc(100% - var(--cut)) 0,100% var(--cut),100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,var(--cut) 100%,0 calc(100% - var(--cut)),0 var(--cut));
+  background:var(--paper);
+}
+.octo.start:hover .start-btn{color:var(--gold);}
 .foot{
   margin-top:10px;display:flex;flex-direction:column;gap:3px;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:1px;color:#b3a globalsign;
-  color:#b3a68f;text-align:center;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:1px;color:var(--ink-2);text-align:center;
 }
 .foot a{color:inherit;}
  
@@ -177,10 +189,10 @@ h1 .dot{color:var(--gold);}
   .txt-group{transform:translateY(-113px);}
   h1{font-size:1.5rem;letter-spacing:4px;}
   .center-stack .en-line{font-size:.55rem;letter-spacing:2px;}
-  .center-stack .quote{font-size:.68rem;letter-spacing:2px;margin:4px 0 14px;color:#3f3021;font-weight:600;text-shadow:0 0 3px rgba(247,240,228,0.95),0 0 6px rgba(247,240,228,0.95),0 0 10px rgba(247,240,228,0.9),0 0 16px rgba(247,240,228,0.85);}
-  .viewport{height:42vh;margin-top:0;}
+  .center-stack .quote{font-size:.68rem;letter-spacing:2px;margin:4px 0 14px;color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(20,10,5,0.6),0 2px 14px rgba(20,10,5,0.5);}
+  .viewport{height:50vh;margin-top:0;}
   .center-stack{margin:-60px auto 0;}
-  .card .desc{font-size:.7rem;}
+  .card .desc{font-size:.88rem;}
   .footzone{padding:0 12px 8px;}
 }
 </style>
@@ -213,7 +225,7 @@ h1 .dot{color:var(--gold);}
 <div class="octo card"><div class="octo-in">
     <span class="sym">✦</span>
     <span class="name">怀榆<span class="en">PLAYER FILE</span></span>
-    <p class="desc"><!-- 文案位 · 此处留给TA亲笔 --></p>
+    <p class="desc">画布撕裂又缝合，墨迹从背面渗出，执笔的手早已松开五百年。<br>守护以抹除为价，铭记以空白为碑。<br>最深的黑暗藏在最耀眼的光里……最宏大的仁慈以最残忍的方式降临。</p>
     <p class="tail">WELCOME BACK, PLAYER.</p>
   </div></div>
     <a class="octo start" href="./壳.html"><span class="start-btn">开始游戏<span class="en">START</span></span></a>
@@ -221,7 +233,7 @@ h1 .dot{color:var(--gold);}
  
 <div class="footzone">
   <div class="foot">
-    <span>千律州模拟器 · v1.7 · 原著《业焰之国》</span>
+    <span>千律州模拟器 · v1.8 · 原著《业焰之国》</span>
     <span>背景着色器改编自 <a href="https://www.shadertoy.com/view/Ndc3zl" target="_top" rel="noopener">Shadertoy Ndc3zl</a> · CC BY-NC-SA 3.0</span>
   </div>
 </div>
@@ -238,14 +250,21 @@ h1 .dot{color:var(--gold);}
   function isLight(){
     try{
       var raw=localStorage.getItem('theme');
-      if(!raw)return false;             /* 默认夜间 */
+      if(!raw)return true;              /* 默认日间 */
       var p=JSON.parse(raw);
       return !!(p&&p.value==='light');
     }catch(e){return false;}
   }
+  function apply(){
+    var light=isLight();
+    document.body.classList.toggle('light',light);
+    document.body.classList.toggle('dark',!light);
+    if(typeof window.__setExposure==='function')window.__setExposure(light?1.0:0.72);
+  }
   function render(){
     if(isLight()){icon.innerHTML=SUN;label.textContent='日间';}
     else{icon.innerHTML=MOON;label.textContent='夜间';}
+    apply();
   }
   btn.addEventListener('click',function(){
     var toLight=!isLight();
@@ -530,7 +549,9 @@ var uTime=gl.getUniformLocation(prog,'iTime');
 var uTrain=gl.getUniformLocation(prog,'uTrain');
 var trainOn=location.search.indexOf('train=0')===-1?1.0:0.0;
 gl.uniform1f(uTrain,trainOn);
-gl.uniform1f(gl.getUniformLocation(prog,'uExposure'),1.0);
+var uExp=gl.getUniformLocation(prog,'uExposure');
+gl.uniform1f(uExp,1.0);
+window.__setExposure=function(v){gl.uniform1f(uExp,v);};
  
 function resize(){
   var rect=canvas.getBoundingClientRect();
