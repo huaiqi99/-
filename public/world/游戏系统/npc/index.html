@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <!-- ============================================================
-     千律州模拟器 · index.html v0.3（着色器背景 · 画质修正版）
+     千律州模拟器 · index.html v0.4（相框式构图 · 常驻夜间）
      背景：改编自 Shadertoy Ndc3zl（云海列车 · CC BY-NC-SA 3.0）
-     v0.3 修正（针对 v0.2 反馈）：
-       1. 画质回原版：JS 现场生成 1024² 随机噪声贴图等价复刻
-          iChannel0，noise() 恢复贴图采样，倍频恒为 8
-       2. 蓝天回归：远处天空回退原版淡蓝 fallback
-       3. 速度减半：iTime*4.0 → *2.0
-       4. 版面：卡片米黄底深字；文字白字黑边（背景花也能读清）；
-          删除中央暗化层；字号参考引渡人缩小
-       5. 近现代英文点缀：QIANLVZHOU · PLAYER FILE · START
-       6. 右上角：返回(/-/world/) + 昼/夜切换(uExposure)
-       7. ?train=0 仍可切纯云海
+     v0.4 变更：
+       1. 构图：放弃全屏 → 上下米白留白(76vh画面)，四周淡出遮罩
+       2. 视角拉远：uv×1.45，云层与列车缩小，层次感提升
+       3. 细节：fbm 倍频桌面 8→10 / 移动 5→8
+       4. 前景云：disp 1.7→1.2 + 高度钳制，不再糊火车一脸
+       5. 常驻夜间渲染；右上角主题按钮只改全局 theme 存储
+          （key/格式与引渡人一致：'theme' → {value:'light'|'dark'}），
+          内页自行监听联动；图标用内联SVG，杜绝emoji渲染
+       6. 卡片改小字氛围向文案；标题字号对齐引渡人(2rem/1.5rem)
+       7. 撤销白字黑边 → 纯白+柔和投影
      ============================================================ -->
 <html lang="zh-CN">
 <head>
@@ -20,169 +20,240 @@
 <title>千律州模拟器</title>
 <style>
 :root{
-  --card-bg:rgba(247,241,228,0.90);   /* 米黄卡片 */
-  --card-line:rgba(138,106,79,0.85);  /* 棕描边 */
-  --card-text:#2c241c;
-  --card-sub:#6b5a48;
+  --paper:#f7f4ef;            /* 米白留白 */
+  --card-bg:rgba(255,255,255,0.86);
+  --card-line:#d5c8b8;
+  --ink:#2c241c;
+  --ink-2:#6b5a48;
   --accent:#8a6a4f;
   --gold:#a8842f;
   --serif:"Georgia","Times New Roman","Songti SC",serif;
-  --cut:14px;
+  --mono:"Courier New","Source Code Pro",monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
 body{
-  font-family:var(--serif);color:#fff;min-height:100vh;overflow:hidden;
-  background:#151110;position:relative;
-}
-/* WebGL 不可用时的静态退底 */
-body.nogl{background:linear-gradient(180deg,#2a1a14 0%,#7a3a22 45%,#c96a3a 78%,#e8a06a 100%);}
- 
-#gl{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;}
- 
-/* ===== 舞台层 ===== */
-.stage{
-  position:relative;z-index:2;height:100vh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:20px;gap:14px;
+  background:var(--paper);color:var(--ink);
+  font-family:var(--serif);
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;overflow-x:hidden;
 }
  
-/* --- 白字黑边工具类（花背景专用） --- */
-.ink{color:#fff;
-  text-shadow:-1.5px -1.5px 0 #000,1.5px -1.5px 0 #000,
-              -1.5px  1.5px 0 #000,1.5px  1.5px 0 #000,
-               -2px   0   0 #000, 2px   0   0 #000,
-                0  -2px  0 #000, 0  2px  0 #000,
-               0 4px 14px rgba(0,0,0,0.45);
+/* ===== 顶栏（悬浮于米白留白区）===== */
+.topbar{
+  position:fixed;top:14px;left:0;right:0;z-index:30;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 18px;pointer-events:none;
 }
- 
-/* --- 顶部右上按钮组 --- */
-.topbar{position:fixed;top:18px;right:20px;z-index:5;display:flex;gap:10px;}
-.octo-btn{
+.topbar>*{pointer-events:auto;}
+.tbtn{
+  text-decoration:none;
   display:inline-flex;align-items:center;gap:6px;
-  font-family:var(--serif);font-size:.8rem;letter-spacing:.12em;
-  color:var(--card-text);text-decoration:none;cursor:pointer;
-  background:var(--card-bg);border:1px solid var(--card-line);
-  padding:7px 16px;
-  clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px);
-  transition:transform .2s,box-shadow .2s;
+  padding:6px 14px;font-family:var(--serif);font-size:.8rem;
+  color:var(--ink-2);text-decoration:none;cursor:pointer;
+  background:rgba(255,255,255,0.7);
+  border:1px solid var(--card-line);
+  clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,8px 100%,0 50%);
+  transition:all .25s ease;user-select:none;
 }
-.octo-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.3);}
+.tbtn:hover{background:var(--ink);color:var(--paper);}
+.tbtn svg{width:14px;height:14px;display:block;}
  
-/* --- 序章引言 --- */
-.quote{font-size:.92rem;letter-spacing:.42em;text-indent:.42em;color:#fff;
-  animation:rise 1.2s .1s both;}
-.quote em{font-style:normal;color:#ffd9a0;}
- 
-/* --- 标题（参考引渡人尺寸，克制） --- */
-.tt{
-  font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:600;
-  letter-spacing:.5em;text-indent:.5em;color:#fff;
-  animation:rise 1.2s .3s both;
+/* ===== 画布区（相框式）===== */
+.viewport{
+  position:relative;width:100%;
+  height:50vh;min-height:340px;
+  margin-top:46px;flex:none;
 }
-/* 英文点缀 · 小字母间距排印 */
-.tt-en{
-  font-size:.68rem;letter-spacing:.55em;text-indent:.55em;
-  color:rgba(255,255,255,0.92);font-family:"Georgia",serif;
-  animation:rise 1.2s .45s both;
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;}
+/* 四周淡出遮罩（米白渐隐） */
+.viewport .fade{position:absolute;pointer-events:none;z-index:5;}
+.fade.top{top:0;left:0;right:0;height:11%;background:linear-gradient(180deg,var(--paper),transparent);}
+.fade.bot{bottom:0;left:0;right:0;height:11%;background:linear-gradient(0deg,var(--paper),transparent);}
+.fade.left{top:0;bottom:0;left:0;width:9%;background:linear-gradient(90deg,var(--paper),transparent);}
+.fade.right{top:0;bottom:0;right:0;width:9%;background:linear-gradient(270deg,var(--paper),transparent);}
+/* 画布内引言（纯白+柔影，无描边） */
+.center-stack .quote{position:static;transform:none;
+  font-size:.8rem;letter-spacing:3px;color:#fff;white-space:nowrap;
+  font-family:var(--serif);margin:4px 0 16px;
+  text-shadow:0 1px 3px rgba(20,10,5,0.6),0 2px 14px rgba(20,10,5,0.5);}
+ 
+/* ===== 下留白区：标题 / 档案 / 入口 ===== */
+.footzone{
+  width:100%;max-width:560px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:4px 16px 20px;
 }
- 
-/* --- 分割线 · 菱形徽记 --- */
-.divider{display:flex;align-items:center;gap:12px;margin:4px 0 6px;
-  animation:rise 1.2s .6s both;}
-.divider .line{width:88px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.85));}
-.divider .line.r{background:linear-gradient(270deg,transparent,rgba(255,255,255,0.85));}
-.divider .gem{width:8px;height:8px;background:#fff;transform:rotate(45deg);box-shadow:0 0 10px rgba(255,255,255,0.8);}
- 
-/* --- 八边形组件（带描边双层实现） --- */
+.footzone a{color:#b3a68f;}
+h1{
+  font-size:2rem;font-weight:700;letter-spacing:6px;color:var(--ink);
+}
+h1 .dot{color:var(--gold);}
+.en-line{
+  margin-top:6px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:4px;color:var(--accent);
+}
 .octo{
-  --b:1.5px;
-  background:var(--card-line);
-  padding:var(--b);
+  --cut:12px;
   clip-path:polygon(var(--cut) 0,calc(100% - var(--cut)) 0,100% var(--cut),100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,var(--cut) 100%,0 calc(100% - var(--cut)),0 var(--cut));
+  background:var(--card-line);padding:1.5px;width:100%;
 }
 .octo>.octo-in{
-  background:var(--card-bg);
   clip-path:polygon(var(--cut) 0,calc(100% - var(--cut)) 0,100% var(--cut),100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,var(--cut) 100%,0 calc(100% - var(--cut)),0 var(--cut));
-  height:100%;
+  background:var(--card-bg);
+  padding:14px 18px 12px;text-align:left;
 }
- 
-/* --- 玩家档案卡（米黄底 · 深字） --- */
-.card{animation:rise 1.2s .75s both;}
-.card .octo-in{padding:20px 34px;text-align:center;}
-.card .file-en{font-size:.62rem;letter-spacing:.5em;text-indent:.5em;color:var(--gold);margin-bottom:8px;}
-.card .name{font-size:1.35rem;font-weight:600;letter-spacing:.35em;text-indent:.35em;color:var(--card-text);}
-.card .name b{color:#8a5a2e;font-weight:600;}
-.card .desc{font-size:.78rem;color:var(--card-sub);margin-top:8px;letter-spacing:.1em;line-height:1.8;}
-.card .bound{
-  margin-top:12px;padding-top:10px;
-  border-top:1px solid rgba(138,106,79,0.35);
-  font-size:.72rem;letter-spacing:.25em;color:var(--gold);
+.card{margin-top:12px;width:100%;}
+.card .sym{font-size:1.15rem;color:var(--gold);display:block;margin-bottom:4px;}
+.card .name{font-size:1rem;font-weight:600;letter-spacing:2px;color:var(--ink);}
+.card .name .en{font-family:var(--mono);font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-left:8px;vertical-align:1px;}
+.card .desc{
+  margin-top:10px;font-size:.74rem;line-height:1.9;color:var(--ink-2);
 }
- 
-/* --- 开始按钮 --- */
-.start-wrap{animation:rise 1.2s .9s both;}
+.card .desc em{font-style:normal;color:var(--ink);}
+.card .tail{
+  margin-top:10px;font-family:var(--mono);font-size:.58rem;
+  letter-spacing:3px;color:var(--gold);
+}
+.start-wrap{margin-top:12px;width:100%;}
+.octo.start{display:block;margin-top:10px;text-decoration:none;}
+.center-stack{
+  position:relative;width:min(300px,72%);z-index:10;
+  margin:-120px auto 0;animation:fadeIn .8s ease .25s both;text-align:center;
+}
+.center-stack h1{font-size:1.9rem;font-weight:700;letter-spacing:6px;color:#fff;
+  text-shadow:0 1px 3px rgba(20,10,5,0.55),0 2px 16px rgba(20,10,5,0.45);margin-bottom:2px;}
+.center-stack .en-line{font-family:var(--mono);font-size:.55rem;letter-spacing:3px;white-space:nowrap;color:rgba(255,255,255,0.85);text-shadow:0 1px 5px rgba(20,10,5,0.55);margin:2px 0 0;}
+.center-stack h1 .dot{color:#fff;}   /* 大字统一纯白 */
+.center-stack .desc{min-height:2.6em;font-size:.72rem;line-height:1.7;
+  color:var(--card-sub);margin:8px 0 0;text-align:center;}
+.center-stack .octo-in{background:rgba(250,246,238,0.92);}
+.center-stack .start-btn{
+  display:block;text-align:center;padding:10px 0;text-decoration:none;
+  font-size:.88rem;letter-spacing:8px;color:#fff;
+  background:var(--gold);text-shadow:0 1px 3px rgba(60,40,10,0.45);
+}
+.center-stack .start-btn .en{display:block;font-size:.55rem;letter-spacing:5px;margin-top:3px;opacity:.75;}
+.center-stack .start:hover .start-btn{background:#93701f;}
+.center-start{
+  text-decoration:none;
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(240px,60%);z-index:10;animation:rise .7s ease .3s both;
+}
+.center-start .start-btn{
+  display:block;text-align:center;padding:12px 0;text-decoration:none;
+  font-size:.92rem;letter-spacing:8px;color:#fff;
+  background:rgba(28,20,14,0.45);
+  text-shadow:0 1px 4px rgba(0,0,0,0.5);
+}
+.center-start .start-btn .en{display:block;font-size:.55rem;letter-spacing:5px;margin-top:3px;opacity:.75;}
+.center-start:hover .start-btn{background:rgba(28,20,14,0.62);}
 .start-btn{
-  display:inline-block;text-decoration:none;cursor:pointer;
-  background:linear-gradient(135deg,#8a6a4f,#6e523c);
-  color:#fff;font-family:var(--serif);
-  font-size:.95rem;letter-spacing:.4em;text-indent:.4em;
-  padding:13px 52px;
-  clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px);
-  transition:transform .2s,box-shadow .2s,filter .2s;
+  display:block;text-align:center;padding:9px 0;text-decoration:none;
+  font-family:var(--serif);font-size:.88rem;letter-spacing:6px;
+  color:var(--accent);text-decoration:none;
+  transition:all .25s ease;
 }
-.start-btn span.en{display:block;font-size:.55rem;letter-spacing:.5em;text-indent:.5em;opacity:.75;margin-top:3px;}
-.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.35);filter:brightness(1.08);}
- 
-/* --- 页脚 --- */
+.start-btn .en{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:4px;opacity:.65;margin-top:2px;}
+.octo.start:hover{background:var(--ink);}
+.octo.start:hover .start-btn{color:var(--paper);}
 .foot{
-  position:fixed;bottom:12px;left:0;right:0;z-index:3;
-  display:flex;justify-content:space-between;padding:0 20px;
-  font-size:.62rem;letter-spacing:.08em;color:rgba(255,255,255,0.85);
+  margin-top:10px;display:flex;flex-direction:column;gap:3px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:1px;color:#b3a globalsign;
+  color:#b3a68f;text-align:center;
 }
 .foot a{color:inherit;}
  
-@keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
-@media (orientation:portrait){
-  .stage{padding-bottom:8vh;gap:12px;}
-  .card .octo-in{padding:16px 24px;}
-  .foot{justify-content:center;}
-  .foot span:first-child{display:none;}
+/* ===== 开场入场动画 ===== */
+@keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.footzone{animation:fadeIn 1s ease .5s both;}
+.topbar{animation:fadeIn .8s ease both;}
+.footzone>.card{animation-delay:.12s;}
+.footzone>.start-wrap{animation-delay:.24s;}
+.footzone>.foot{animation-delay:.36s;}
+ 
+@media (max-width:480px){
+  h1{font-size:1.5rem;letter-spacing:4px;}
+  .viewport{height:100vh;}
+  .quote{font-size:.68rem;letter-spacing:2px;bottom:10%;}
+  .card .desc{font-size:.7rem;}
+  .footzone{padding:0 12px 8px;}
 }
 </style>
 </head>
 <body>
-<canvas id="gl"></canvas>
  
-<!-- 右上角：返回 + 昼夜切换 -->
 <div class="topbar">
-  <a class="octo-btn" href="/-/world/">◂ 返回</a>
-  <button class="octo-btn" id="dayNightBtn" title="日间/夜间">☾ 夜</button>
+  <a class="tbtn" href="/-/world/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    返回
+  </a>
+  <button class="tbtn" id="themeBtn">
+    <span id="themeIcon"></span>
+    <span id="themeLabel">夜间</span>
+  </button>
 </div>
  
-<div class="stage">
-  <p class="quote ink">大寂灭已过五百年 <em>·</em> 旧日的名字，不可言说</p>
-  <h1 class="tt ink">千律州模拟器</h1>
-  <p class="tt-en ink">QIANLVZHOU · AN INTERACTIVE SIMULATOR</p>
+<div class="viewport">
+  <canvas id="gl"></canvas>
+  <div class="fade top"></div><div class="fade bot"></div>
+  <div class="fade left"></div><div class="fade right"></div>
+  </div>
  
-  <div class="divider"><span class="line"></span><span class="gem"></span><span class="line r"></span></div>
- 
-  <div class="card octo"><div class="octo-in">
-    <div class="file-en">PLAYER FILE</div>
-    <div class="name"><b>怀</b>榆</div>
-    <div class="desc">玩家 · 唯一的玩家<br>四年前降临千律州，至今未归</div>
-    <div class="bound">命定之人 · 段深泉</div>
+<div class="center-stack">
+    <h1>千律州<span class="dot">模拟器</span></h1>
+    <p class="en-line">QIANLVZHOU · AN INTERACTIVE SIMULATOR</p>
+    <p class="quote">大寂灭已过五百年 · 旧日的名字，不可言说</p>
+<div class="octo card"><div class="octo-in">
+    <span class="sym">✦</span>
+    <span class="name">怀榆<span class="en">PLAYER FILE</span></span>
+    <p class="desc"><!-- 文案位 · 此处留给TA亲笔 --></p>
+    <p class="tail">WELCOME BACK, PLAYER.</p>
   </div></div>
+    <a class="octo start" href="./壳.html"><span class="start-btn">开始游戏<span class="en">START</span></span></a>
+  </div>
  
-  <div class="start-wrap">
-    <a class="start-btn" href="./壳.html">开 始 游 戏<span class="en">START</span></a>
+<div class="footzone">
+  <div class="foot">
+    <span>千律州模拟器 · v1.5 · 原著《业焰之国》</span>
+    <span>背景着色器改编自 <a href="https://www.shadertoy.com/view/Ndc3zl" target="_top" rel="noopener">Shadertoy Ndc3zl</a> · CC BY-NC-SA 3.0</span>
   </div>
 </div>
  
-<div class="foot ink" style="text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;">
-  <span>千律州模拟器 · v0.3 · 原著《业焰之国》</span>
-  <span>背景着色器改编自 <a href="https://www.shadertoy.com/view/Ndc3zl" target="_top">Shadertoy Ndc3zl</a> · CC BY-NC-SA 3.0</span>
-</div>
+<script>
+/* ===== 全局日夜间主题（与引渡人同 key 联动：'theme' → {value:'light'|'dark'}）
+   本页常驻夜间渲染，按钮只负责读写全局主题，供内页监听。 ===== */
+(function(){
+  var btn=document.getElementById('themeBtn');
+  var icon=document.getElementById('themeIcon');
+  var label=document.getElementById('themeLabel');
+  var SUN='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>';
+  var MOON='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>';
+  function isLight(){
+    try{
+      var raw=localStorage.getItem('theme');
+      if(!raw)return false;             /* 默认夜间 */
+      var p=JSON.parse(raw);
+      return !!(p&&p.value==='light');
+    }catch(e){return false;}
+  }
+  function render(){
+    if(isLight()){icon.innerHTML=SUN;label.textContent='日间';}
+    else{icon.innerHTML=MOON;label.textContent='夜间';}
+  }
+  btn.addEventListener('click',function(){
+    var toLight=!isLight();
+    try{localStorage.setItem('theme',JSON.stringify({value:toLight?'light':'dark'}));}catch(e){}
+    render();
+  });
+  /* 其他页面切了主题时本页按钮状态跟随（本页视觉不变） */
+  window.addEventListener('storage',function(e){
+    if(e.key==='theme')render();
+  });
+  render();
+})();
+</script>
  
 <script>
 (function(){
@@ -191,11 +262,13 @@ var canvas=document.getElementById('gl');
 var gl=canvas.getContext('webgl',{antialias:false,alpha:false,depth:false,stencil:false,powerPreference:'high-performance'});
 if(!gl){document.body.classList.add('nogl');return;}
  
-/* ===== 设备分级：倍频恒8保画质；移动端仅降DPR ===== */
+/* ===== 设备分级：桌面倍频10/DPR≤2，移动倍频8/DPR≤1 ===== */
 var isMobile=Math.min(screen.width,screen.height)<768;
+var DETAIL=8;
 var DPR=Math.min(window.devicePixelRatio||1,isMobile?1:2);
  
 var FRAG=`
+ 
 precision highp float;
 uniform vec2 iResolution;
 uniform float iTime;
@@ -235,16 +308,16 @@ float box(vec2 uv,float x1,float x2,float y1,float y2){
 vec4 foreground(vec2 uv,float t){
     float midlevel;float h;float disp;float dist;vec2 uv2;
     uv.y-=0.2;
-    midlevel=-0.1;disp=1.7;dist=1.0;
+    midlevel=-0.1;disp=1.45;dist=1.0;
     uv2=uv+vec2(t/dist+40.0,0.0);
-    h=(fbm(uv2)-0.5)*disp;
+    h=min((fbm(uv2)-0.5)*disp,0.5);
     layer(0.12,vec3(0.43,0.32,0.31));
     layer(0.08,vec3(0.55,0.42,0.41));
     layer(0.04,vec3(0.66,0.42,0.40));
     layer(0.0,vec3(0.77,0.48,0.46));
-    midlevel=0.05;disp=1.7;dist=2.0;
+    midlevel=0.05;disp=1.45;dist=2.0;
     uv2=uv+vec2(t/dist+38.0,0.0);
-    h=(fbm(uv2)-0.5)*disp;
+    h=min((fbm(uv2)-0.5)*disp,0.5);
     layer(0.10,vec3(0.95,0.66,0.48));
     layer(0.04,vec3(0.98,0.76,0.64));
     layer(0.0,vec3(0.95,0.80,0.77));
@@ -329,7 +402,7 @@ vec4 background(vec2 uv,float t){
  
 void main(){
     vec2 fragCoord=gl_FragCoord.xy;
-    vec2 uv=fragCoord/iResolution.y;
+    vec2 uv=fragCoord/iResolution.y*1.3;
     float t=iTime*2.0;              /* 原版*4.0，按要求降速 */
     vec4 bg=background(uv,t);
  
@@ -405,24 +478,25 @@ void main(){
     col*=uExposure;                 /* 昼夜曝光 */
     gl_FragColor=vec4(col,1.0);
 }
+ 
 `;
  
-/* ===== 顶点着色器：全屏三角 ===== */
 var VERT='attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
  
 function sh(type,src){
-  var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);
-  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.error(gl.getShaderInfoLog(s));return null;}
+  var s=gl.createShader(type);
+  gl.shaderSource(s,src);gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){
+    console.error(gl.getShaderInfoLog(s));return null;
+  }
   return s;
 }
 var vs=sh(gl.VERTEX_SHADER,VERT),fs=sh(gl.FRAGMENT_SHADER,FRAG);
 if(!vs||!fs){document.body.classList.add('nogl');return;}
 var prog=gl.createProgram();
 gl.attachShader(prog,vs);gl.attachShader(prog,fs);gl.linkProgram(prog);
-if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){document.body.classList.add('nogl');return;}
 gl.useProgram(prog);
  
-/* ===== 全屏大三角 ===== */
 var buf=gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER,buf);
 gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
@@ -430,17 +504,15 @@ var loc=gl.getAttribLocation(prog,'p');
 gl.enableVertexAttribArray(loc);
 gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
  
-/* ===== 复刻 iChannel0：现场生成 1024² 随机噪声贴图 ===== */
+/* ===== 复刻 iChannel0：1024²纯随机贴图（Shadertoy原生等价，逐像素白噪声） ===== */
 var tex=gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D,tex);
-/* 复刻 iChannel0：纯随机 256² 小噪声贴图（着色器内仍除以1024，
-   胞体等效放大4倍 + 线性插值 = 原版的奶油质感） */
-var data=new Uint8Array(256*256*4);
+var TN=1024,data=new Uint8Array(TN*TN*4);
 for(var i=0;i<data.length;i+=4){
   var v=(Math.random()*256)|0;
   data[i]=v;data[i+1]=v;data[i+2]=v;data[i+3]=255;
 }
-gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,256,256,0,gl.RGBA,gl.UNSIGNED_BYTE,data);
+gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,TN,TN,0,gl.RGBA,gl.UNSIGNED_BYTE,data);
 gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
 gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
 gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT);
@@ -449,23 +521,14 @@ gl.uniform1i(gl.getUniformLocation(prog,'uNoise'),0);
  
 var uRes=gl.getUniformLocation(prog,'iResolution');
 var uTime=gl.getUniformLocation(prog,'iTime');
-var uTrainU=gl.getUniformLocation(prog,'uTrain');
-var uExp=gl.getUniformLocation(prog,'uExposure');
+var uTrain=gl.getUniformLocation(prog,'uTrain');
 var trainOn=location.search.indexOf('train=0')===-1?1.0:0.0;
-var exposure=1.0;   /* 夜间默认 */
-gl.uniform1f(uTrainU,trainOn);
-gl.uniform1f(uExp,exposure);
- 
-/* ===== 昼夜切换 ===== */
-var dnBtn=document.getElementById('dayNightBtn');
-dnBtn.addEventListener('click',function(){
-  exposure=(exposure===1.0)?1.18:1.0;
-  gl.uniform1f(uExp,exposure);
-  dnBtn.textContent=(exposure===1.0)?'☾ 夜':'☀ 昼';
-});
+gl.uniform1f(uTrain,trainOn);
+gl.uniform1f(gl.getUniformLocation(prog,'uExposure'),1.0);
  
 function resize(){
-  var w=Math.floor(innerWidth*DPR),h=Math.floor(innerHeight*DPR);
+  var rect=canvas.getBoundingClientRect();
+  var w=Math.floor(rect.width*DPR),h=Math.floor(rect.height*DPR);
   if(canvas.width!==w||canvas.height!==h){
     canvas.width=w;canvas.height=h;
     gl.viewport(0,0,w,h);
