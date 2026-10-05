@@ -31,13 +31,18 @@
   --mono:"Courier New","Source Code Pro",monospace;
 }
 body.dark{
-  --paper:#2b241b;            /* 夜间:暖灰褐,不压黑 */
-  --card-bg:rgba(54,45,34,0.94);
-  --ink:#e8ded0;
-  --ink-2:#a89880;
-  --accent:#b99a6b;
-  --gold:#c9a34e;
+  /* 夜间:月夜冷调(与阴暗版shader同源);描边白色,卡片框更明显 */
+  --paper:#10151c;
+  --card-bg:rgba(20,27,36,0.94);
+  --card-line:#f7f9fb;
+  --ink:#dae1e9;
+  --ink-2:#93a1b0;
+  --accent:#8fa6bd;
+  --gold:#a9c0d6;
 }
+body.dark .octo.start{background:#f7f9fb;}
+body.dark .octo.start:hover{background:#ffffff;}
+body.dark .octo.start .start-btn{color:#ffffff;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
 body{
@@ -233,7 +238,7 @@ h1 .dot{color:var(--gold);}
  
 <div class="footzone">
   <div class="foot">
-    <span>千律州模拟器 · v1.8 · 原著《业焰之国》</span>
+    <span>千律州模拟器 · v1.9 · 原著《业焰之国》</span>
     <span>背景着色器改编自 <a href="https://www.shadertoy.com/view/Ndc3zl" target="_top" rel="noopener">Shadertoy Ndc3zl</a> · CC BY-NC-SA 3.0</span>
   </div>
 </div>
@@ -279,6 +284,269 @@ h1 .dot{color:var(--gold);}
 })();
 </script>
  
+<script type="x-shader/x-fragment" id="nightFrag">
+ 
+precision highp float;
+#define u_noiseSize vec2(1024.0)
+#define u_noiseStrength 1.0
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform sampler2D u_noiseTexture;
+ 
+float noise(vec2 x) {
+    vec2 f = fract(x);
+    vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+    vec2 p = floor(x);
+    float a = texture2D(u_noiseTexture, (p + vec2(0.5, 0.5)) / 1024.0).x;
+    float b = texture2D(u_noiseTexture, (p + vec2(1.5, 0.5)) / 1024.0).x;
+    float c = texture2D(u_noiseTexture, (p + vec2(0.5, 1.5)) / 1024.0).x;
+    float d = texture2D(u_noiseTexture, (p + vec2(1.5, 1.5)) / 1024.0).x;
+    float value = a + (b - a) * u.x + (c - a) * u.y + (a - b - c + d) * u.x * u.y;
+    return value;
+}
+ 
+float fbm(vec2 x){
+    float a=0.0;float b=1.0;float t=0.0;
+    for(int i=0;i<8;i++){float n=noise(x);a+=b*n;t+=b;b*=0.7;x*=2.0;}
+    return a/t;
+}
+float fbm2(vec2 x){
+    float a=0.0;float b=1.0;float t=0.0;
+    for(int i=0;i<8;i++){float n=noise(x);a+=b*n;t+=b;b*=0.9;x*=2.0;}
+    return a/t;
+}
+float box(vec2 uv,float x1,float x2,float y1,float y2){
+    return (uv.x>x1&&uv.x<x2&&uv.y>y1&&uv.y<y2)?1.0:0.0;
+}
+#define dot2(v) dot(v,v)
+ 
+float moon_hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float moon_noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = moon_hash(i);
+    float b = moon_hash(i + vec2(1.0, 0.0));
+    float c = moon_hash(i + vec2(0.0, 1.0));
+    float d = moon_hash(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+float moon_fbm(vec2 p) {
+    float v = 0.0;
+    float a = 0.5;
+    vec2 shift = vec2(100.0);
+    mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
+    for (int i = 0; i < 5; i++) {
+        v += a * moon_noise(p);
+        p = rot * p * 2.0 + shift;
+        a *= 0.5;
+    }
+    return v;
+}
+ 
+vec4 foreground(vec2 uv, float t){
+    float midlevel; float h; float disp; float dist; vec2 uv2;
+    uv.y -= 0.2;
+    midlevel = -0.1; disp = 1.45; dist = 1.0;
+    uv2 = uv + vec2(t/dist + 40.0, 0.0);
+    h = min((fbm(uv2) - 0.5)*disp, 0.5);          /* 与日间一致的高度钳制 */
+    if (uv.y < h + midlevel - 0.12) return vec4(vec3(0.02, 0.03, 0.05), 1.0);
+    if (uv.y < h + midlevel - 0.08) return vec4(vec3(0.05, 0.06, 0.08), 1.0);
+    if (uv.y < h + midlevel - 0.04) return vec4(vec3(0.08, 0.10, 0.12), 1.0);
+    if (uv.y < h + midlevel)       return vec4(vec3(0.12, 0.14, 0.18), 1.0);
+    midlevel = 0.05; disp = 1.45; dist = 2.0;
+    uv2 = uv + vec2(t/dist + 38.0, 0.0);
+    h = min((fbm(uv2) - 0.5)*disp, 0.5);
+    if (uv.y < h + midlevel - 0.10) return vec4(vec3(0.10, 0.12, 0.16), 1.0);
+    if (uv.y < h + midlevel - 0.04) return vec4(vec3(0.15, 0.18, 0.22), 1.0);
+    if (uv.y < h + midlevel)       return vec4(vec3(0.20, 0.24, 0.28), 1.0);
+    return vec4(0.0);
+}
+ 
+/* 原版层次:近→远逐层检查,命中即返回;白云最远垫底;月亮插第6/7层之间 */
+vec4 background(vec2 uv, float t){
+    float h; vec2 uv2;
+ 
+    uv2 = uv + vec2(t/10.0 + 32.5, 0.0); h=(fbm(uv2)-0.5)*0.9;
+    if(uv.y<h+0.3-0.14)return vec4(vec3(0.03,0.05,0.08),1.0);
+    if(uv.y<h+0.3-0.10)return vec4(vec3(0.06,0.09,0.14),1.0);
+    if(uv.y<h+0.3-0.07)return vec4(vec3(0.10,0.14,0.20),1.0);
+    if(uv.y<h+0.3)     return vec4(vec3(0.15,0.20,0.28),1.0);
+    uv2 = uv + vec2(t/15.0 + 30.0, 0.0); h=(fbm(uv2)-0.5)*1.0;
+    if(uv.y<h+0.35-0.04)return vec4(vec3(0.12,0.16,0.22),1.0);
+    if(uv.y<h+0.35)     return vec4(vec3(0.18,0.24,0.32),1.0);
+    uv2 = uv + vec2(t/20.0 + 27.5, 0.0); h=(fbm(uv2)-0.5)*3.5;
+    if(uv.y<h+0.35-0.12)return vec4(vec3(0.05,0.08,0.12),1.0);
+    if(uv.y<h+0.35-0.08)return vec4(vec3(0.10,0.14,0.20),1.0);
+    if(uv.y<h+0.35-0.04)return vec4(vec3(0.16,0.22,0.30),1.0);
+    if(uv.y<h+0.35)     return vec4(vec3(0.22,0.28,0.38),1.0);
+    uv2 = uv + vec2(t/25.0 + 23.0, 0.0); h=(fbm(uv2)-0.5)*2.0;
+    if(uv.y<h+0.45-0.04)return vec4(vec3(0.18,0.24,0.32),1.0);
+    if(uv.y<h+0.45)     return vec4(vec3(0.26,0.32,0.42),1.0);
+    uv2 = uv + vec2(t/30.0 + 20.5, 0.0); h=(fbm(uv2)-0.5)*2.3;
+    if(uv.y<h+0.5-0.12)return vec4(vec3(0.08,0.12,0.18),1.0);
+    if(uv.y<h+0.5-0.08)return vec4(vec3(0.14,0.18,0.26),1.0);
+    if(uv.y<h+0.5-0.04)return vec4(vec3(0.20,0.26,0.35),1.0);
+    if(uv.y<h+0.5)     return vec4(vec3(0.28,0.35,0.45),1.0);
+    uv2 = uv + vec2(t/35.0 + 18.0, 0.0); h=(fbm(uv2)-0.5)*2.5;
+    if(uv.y<h+0.5-0.10)return vec4(vec3(0.15,0.20,0.28),1.0);
+    if(uv.y<h+0.5-0.05)return vec4(vec3(0.22,0.28,0.38),1.0);
+    if(uv.y<h+0.5)     return vec4(vec3(0.30,0.38,0.48),1.0);
+ 
+    uv2 = uv + vec2(t/40.0 + 18.0, 0.0); h=(fbm(uv2)-0.5)*2.0;
+    if(uv.y<h+0.6-0.10)return vec4(vec3(0.22,0.28,0.36),1.0);
+    if(uv.y<h+0.6)     return vec4(vec3(0.32,0.40,0.50),1.0);
+    uv2 = uv + vec2(t/45.0 + 15.5, 0.0); h=(fbm(uv2)-0.5)*3.5;
+    if(uv.y<h+0.75-0.20)return vec4(vec3(0.15,0.20,0.28),1.0);
+    if(uv.y<h+0.75-0.15)return vec4(vec3(0.22,0.28,0.38),1.0);
+    if(uv.y<h+0.75-0.10)return vec4(vec3(0.32,0.40,0.50),1.0);
+    if(uv.y<h+0.75)     return vec4(vec3(0.42,0.52,0.62),1.0);
+    /* ===== 月亮(原版参数r0.14/光晕0.6),右上角,第8层之后、第9层之前 ===== */
+    float mcx = clamp(u_resolution.x/u_resolution.y*1.3 - 0.85, 1.4, 3.6);  /* 贴右上:宽屏更靠右,窄屏夹取 */
+    vec2 moonPos = uv - vec2(mcx, 0.98);
+    float d = length(moonPos);
+    float r = 0.14;
+    vec3 moonCol = vec3(0.97, 0.95, 0.85);
+    float outerGlow = exp(-28.0 * (d - r));
+    vec3 glowColor = moonCol * vec3(1.0, 0.96, 0.85) * clamp(outerGlow, 0.0, 1.0) * 0.6;
+    if (d < r) {
+        float moonMask = smoothstep(r, r - 0.003, d);
+        float z = sqrt(r * r - d * d);
+        vec3 sphereN = normalize(vec3(moonPos, z));
+        vec2 textUV = vec2(atan(sphereN.x, sphereN.z) / 3.14159265, acos(sphereN.y) / 3.14159265);
+        float tex = moon_fbm(textUV * 7.0);
+        float craterWeight = smoothstep(0.15, 0.75, tex);
+        vec3 craterCol = vec3(0.72, 0.66, 0.53);
+        vec3 surfaceColor = mix(craterCol, moonCol, craterWeight);
+        float innerGlow = smoothstep(0.0, r, d);
+        innerGlow = pow(innerGlow, 4.0) * 0.35;
+        surfaceColor = mix(surfaceColor, moonCol * 1.15, innerGlow);
+        return vec4(mix(glowColor, surfaceColor, moonMask), 1.0);
+    }
+ 
+    uv2 = uv + vec2(t/50.0 + 12.0, 0.0); h=(fbm(uv2)-0.5)*2.7;
+    if(uv.y<h+0.7-0.04)return vec4(vec3(0.12,0.16,0.24),1.0);
+    if(uv.y<h+0.7)     return vec4(vec3(0.20,0.26,0.36),1.0);
+    uv2 = uv + vec2(t/60.0 + 9.5, 0.0); h=(fbm(uv2)-0.5)*2.7;
+    if(uv.y<h+0.8-0.10)return vec4(vec3(0.25,0.32,0.42),1.0);
+    if(uv.y<h+0.8)     return vec4(vec3(0.40,0.48,0.58),1.0);
+    uv2 = uv + vec2(t/70.0 + 7.0, 0.0); h=(fbm(uv2)-0.5)*3.0;
+    if(uv.y<h+0.9-0.10)return vec4(vec3(0.32,0.36,0.42),1.0);
+    if(uv.y<h+0.9-0.05)return vec4(vec3(0.50,0.52,0.52),1.0);
+    if(uv.y<h+0.9)     return vec4(vec3(0.68,0.66,0.58),1.0);
+    uv2 = uv + vec2(t/100.0 + 3.5, 0.0); h=(fbm(uv2)-0.5)*5.0;
+    if(uv.y<h+1.0-0.10)return vec4(vec3(0.55,0.58,0.58),1.0);
+    if(uv.y<h+1.0)     return vec4(vec3(0.82,0.80,0.72),1.0);
+    return vec4(vec3(0.05, 0.08, 0.13) + glowColor, 1.0);   /* 光晕叠加而非替换,消除月周黑圈 */
+}
+ 
+void main(){
+    vec2 screenUV = gl_FragCoord.xy / u_resolution.xy;
+    vec2 uv = gl_FragCoord.xy / u_resolution.y * 1.3;   /* 与日间一致:×1.3,云压低 */
+    float t = u_time * 2.0;                              /* 与日间一致降速 */
+ 
+    vec3 currentFrameColor = background(uv, t).rgb;
+ 
+    float k; float h; float dist; vec2 uv2;
+    vec2 trainUV = uv;
+    trainUV.y -= 0.2;
+    trainUV.x -= 0.65*1.3*(u_resolution.x/u_resolution.y) - 0.47;  /* 与日间一致:贴右缘定位 */
+    float wagon = 1.0;
+    wagon *= 1.0 - step(0.45, trainUV.x);
+    wagon *= 1.0 - step(0.115, trainUV.y);
+    wagon *= step(0.103, trainUV.y);
+    wagon *= step(0.05, 1.0 - abs(uv2.x * 2.0 - 1.0));
+    float join = 1.0;
+    join *= 1.0 - step(0.45, trainUV.x);
+    join *= 1.0 - step(0.11, trainUV.y);
+    join *= step(0.107, trainUV.y);
+    float roof = 1.0;
+    roof *= 1.0 - step(0.45, trainUV.x);
+    roof *= 1.0 - step(0.117, trainUV.y);
+    roof *= step(0.11, trainUV.y);
+    roof *= step(0.15, 1.0 - abs(uv2.x * 2.0 - 1.0));
+    float loco = box(trainUV, 0.45, 0.5, 0.103, 0.112);
+    float chem1 = box(trainUV, 0.49, 0.495, 0.103, 0.12);
+    float chem2 = box(trainUV, 0.488, 0.496, 0.12, 0.123);
+    float locoRoof = box(trainUV, 0.443, 0.47, 0.11, 0.117);
+    float wheel = 1.0 - step(0.00004, dot2(trainUV - vec2(0.457, 0.106)));
+    wheel += 1.0 - step(0.00002, dot2(trainUV - vec2(0.487, 0.105)));
+    wheel += 1.0 - step(0.00002, dot2(trainUV - vec2(0.497, 0.105)));
+    if (trainUV.x < 0.45 && trainUV.y > 0.025 && trainUV.y < 0.2){
+        wheel += 1.0 - step(0.002, dot2(uv2 - vec2(0.2, 0.95)));
+        wheel += 1.0 - step(0.002, dot2(uv2 - vec2(0.8, 0.95)));
+    }
+    /* 月光顶描边:上移副本-主体 = 顶缘亮线,主体保持纯黑 */
+    vec2 trainUVr = trainUV + vec2(0.0, 0.0015);
+    vec2 uv2r = fract(trainUVr * 9.0);
+    float rimT = 0.0;
+    rimT += (1.0-step(0.45,trainUVr.x))*(1.0-step(0.115,trainUVr.y))*(step(0.103,trainUVr.y))*(step(0.05,1.0-abs(uv2r.x*2.0-1.0)));
+    rimT += (1.0-step(0.45,trainUVr.x))*(1.0-step(0.11,trainUVr.y))*(step(0.107,trainUVr.y));
+    rimT += (1.0-step(0.45,trainUVr.x))*(1.0-step(0.117,trainUVr.y))*(step(0.11,trainUVr.y))*(step(0.15,1.0-abs(uv2r.x*2.0-1.0)));
+    rimT += box(trainUVr,0.45,0.5,0.103,0.112)+box(trainUVr,0.49,0.495,0.103,0.12)+box(trainUVr,0.443,0.47,0.11,0.117);
+    rimT -= wagon+join+roof+loco+chem1+locoRoof;
+    currentFrameColor = mix(currentFrameColor, vec3(0.60,0.64,0.72), clamp(rimT,0.0,1.0));
+    currentFrameColor = mix(currentFrameColor, vec3(0.05, 0.04, 0.06), join);
+    currentFrameColor = mix(currentFrameColor, vec3(0.12, 0.10, 0.14), wagon);
+    currentFrameColor = mix(currentFrameColor, vec3(0.05, 0.04, 0.06), roof);
+    currentFrameColor = mix(currentFrameColor, vec3(0.10, 0.08, 0.12), loco);
+    currentFrameColor = mix(currentFrameColor, vec3(0.10, 0.08, 0.12), chem1);
+    currentFrameColor = mix(currentFrameColor, vec3(0.05, 0.04, 0.06), locoRoof);
+    currentFrameColor = mix(currentFrameColor, vec3(0.03, 0.02, 0.04), chem2 + wheel);
+ 
+    dist = 5.0;
+    uv2 = trainUV + vec2(t / dist + 3.5, 0.0);
+    uv2.x -= t / dist * 0.2;
+    h = fbm2(uv2) - 0.55;
+    if(trainUV.x < 0.49){
+        float x = -trainUV.x + 0.49;
+        float y = abs(trainUV.y + h * 0.4 - 0.16 * sqrt(x) - 0.12) - 0.8 * x * exp(-x * 10.0);
+        if(y < 0.0)  currentFrameColor = vec3(0.72, 0.75, 0.83);
+        if(y < -0.02) currentFrameColor = vec3(0.42, 0.46, 0.55);
+    }
+ 
+    dist = 5.0;
+    uv2 = trainUV + vec2(t / dist + 32.5, 0.0);
+    uv2.x = fract(uv2.x * 3.0);
+    k = 1.0;
+    k *= smoothstep(0.001, 0.003, abs(uv2.y - pow(uv2.x - 0.5, 2.0) * 0.15 - 0.12));
+    k *= min(step(0.05, 1.0 - abs(uv2.x * 2.0 - 1.0)) + step(0.17, uv2.y), 1.0);
+    k *= min(smoothstep(0.02, 0.05, 1.0 - abs(uv2.x * 2.0 - 1.0)) + step(0.177, uv2.y), 1.0);
+    k *= min(step(0.1, uv2.y) + smoothstep(-0.09, -0.085, -uv2.y - 0.001 / (1.0 - abs(uv2.x * 2.0 - 1.0))), 1.0);
+    k *= min(smoothstep(0.05, 0.2, 1.0 - abs(fract(uv2.x * 16.0) * 2.0 - 1.0)) + step(0.12, uv2.y - pow(uv2.x - 0.5, 2.0) * 0.15) + step(-0.1, -uv2.y), 1.0);
+    currentFrameColor = mix(vec3(0.05, 0.08, 0.12), currentFrameColor, k);
+    /* 桥体月光描边:k上移副本-原k = 结构顶缘亮线 */
+    vec2 uv2R = uv2 + vec2(0.0, 0.0015);
+    float kR = 1.0;
+    kR *= smoothstep(0.001, 0.003, abs(uv2R.y - pow(uv2R.x - 0.5, 2.0) * 0.15 - 0.12));
+    kR *= min(step(0.05, 1.0 - abs(uv2R.x * 2.0 - 1.0)) + step(0.17, uv2R.y), 1.0);
+    kR *= min(smoothstep(0.02, 0.05, 1.0 - abs(uv2R.x * 2.0 - 1.0)) + step(0.177, uv2R.y), 1.0);
+    kR *= min(step(0.1, uv2R.y) + smoothstep(-0.09, -0.085, -uv2R.y - 0.001 / (1.0 - abs(uv2R.x * 2.0 - 1.0))), 1.0);
+    kR *= min(smoothstep(0.05, 0.2, 1.0 - abs(fract(uv2R.x * 16.0) * 2.0 - 1.0)) + step(0.12, uv2R.y - pow(uv2R.x - 0.5, 2.0) * 0.15) + step(-0.1, -uv2R.y), 1.0);
+    currentFrameColor = mix(currentFrameColor, vec3(0.60,0.64,0.72), clamp(kR - k, 0.0, 1.0));
+ 
+    vec4 fgAccum = vec4(0.0);
+    const int samples = 5;
+    if (uv.y < 0.5) {
+        for (int i = 0; i < samples; i++){
+            vec4 fgSample = foreground(uv, t + 4.0 * float(i) / float(samples) / 60.0);
+            if(fgSample.a > 0.0) { fgAccum.rgb += fgSample.rgb; fgAccum.a += 1.0; }
+        }
+        if(fgAccum.a > 0.0) {
+            fgAccum.rgb /= fgAccum.a;
+            fgAccum.a = clamp(fgAccum.a / float(samples), 0.0, 1.0);
+            currentFrameColor = mix(currentFrameColor, fgAccum.rgb, fgAccum.a);
+        }
+    }
+ 
+    float vignette = 16.0 * screenUV.x * screenUV.y * (1.0 - screenUV.x) * (1.0 - screenUV.y);
+    float vignetteFactor = 0.5 + 0.5 * pow(vignette, 0.25);
+    vec3 finalColor = currentFrameColor * vignetteFactor * 1.15 + vec3(0.025);
+    gl_FragColor = vec4(finalColor, 1.0);
+}
+ 
+ 
+</script>
 <script>
 (function(){
 'use strict';
@@ -553,6 +821,43 @@ var uExp=gl.getUniformLocation(prog,'uExposure');
 gl.uniform1f(uExp,1.0);
 window.__setExposure=function(v){gl.uniform1f(uExp,v);};
  
+/* ===== v1.9 夜间模式(纯增量):月夜冷色版shader,同canvas切换;日间代码零改动 ===== */
+var NIGHT_FRAG=document.getElementById('nightFrag').textContent;
+var fsN=sh(gl.FRAGMENT_SHADER,NIGHT_FRAG),progN=null;
+if(fsN){
+  progN=gl.createProgram();
+  gl.attachShader(progN,vs);gl.attachShader(progN,fsN);gl.linkProgram(progN);
+  if(!gl.getProgramParameter(progN,gl.LINK_STATUS)){console.error(gl.getProgramInfoLog(progN));progN=null;}
+  else{
+    gl.useProgram(progN);
+    var locN=gl.getAttribLocation(progN,'p');
+    gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.enableVertexAttribArray(locN);
+    gl.vertexAttribPointer(locN,2,gl.FLOAT,false,0,0);
+    gl.uniform1i(gl.getUniformLocation(progN,'u_noiseTexture'),0);
+  }
+}
+var curProg=prog;
+/* 曝光状态自持:主题脚本切夜间时对日间程序的uniform写会丢,这里记录并在日间每帧重推 */
+var userExp=1.0;
+var _setExp=window.__setExposure;
+window.__setExposure=function(v){userExp=v;if(curProg===prog)gl.uniform1f(uExp,v);};
+function useNight(n){
+  if(!(n&&progN)&&n)return;
+  curProg=n?progN:prog;
+  if(n){gl.useProgram(prog);}
+  var e=gl.getAttribLocation(prog,'p');
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.enableVertexAttribArray(e);
+  gl.vertexAttribPointer(e,2,gl.FLOAT,false,0,0);
+  if(n)gl.useProgram(progN);
+}
+useNight(document.body.classList.contains('dark'));
+/* 主题脚本切body class → 这里联动;初始状态也由此同步,修点进去黑屏 */
+new MutationObserver(function(){
+  useNight(document.body.classList.contains('dark'));
+}).observe(document.body,{attributes:true,attributeFilter:['class']});
+ 
 function resize(){
   var rect=canvas.getBoundingClientRect();
   var w=Math.floor(rect.width*DPR),h=Math.floor(rect.height*DPR);
@@ -571,8 +876,14 @@ document.addEventListener('visibilitychange',function(){
 function loop(now){
   if(!running)return;
   t=(now-t0)/1000;
+  gl.useProgram(curProg);
   gl.uniform2f(uRes,canvas.width,canvas.height);
   gl.uniform1f(uTime,t);
+  if(curProg===prog){gl.uniform1f(uExp,userExp);}
+  if(curProg===progN){
+    gl.uniform2f(gl.getUniformLocation(progN,'u_resolution'),canvas.width,canvas.height);
+    gl.uniform1f(gl.getUniformLocation(progN,'u_time'),t);
+  }
   gl.drawArrays(gl.TRIANGLES,0,3);
   requestAnimationFrame(loop);
 }
