@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     千律州模拟器 · 系统主页小样 v0.7
+     配色（TA定稿）：
+       日间 亮白#F0EFEB × 勃艮第红#550F10 × 克莱因蓝#222C6E
+       夜间 月白#D6D4C2 × 花青#7C9CB3 × 景泰蓝#104F97 × 石青#0C365A
+     结构（对齐上轮需求清单）：
+       ① 顶部播报带保留 ② 反向圆角边框（全站） ③ 背景流动+左彩带
+       ④ hover各方向位移 ⑤ 模块安家+文字解释 ⑥ 通讯+人物同组
+       ⑦ 删模仿声明 ⑧ 像素图标/按钮横线装饰/英文注解保留
+     ============================================================ -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>千律州系统 · 主页小样 v0.7</title>
+<style>
+@import url('https://cdn.jsdelivr.net/npm/fusion-pixel-12px-monospaced-zh_hans@latest/font.css');
+:root{
+  /* ===== 日间：亮白 × 勃艮第红 × 克莱因蓝 ===== */
+  --bg:#F0EFEB;
+  --card:#FAF9F5;   --card-2:#F3F2EA;
+  --canvas:#F4F2EA;
+  --line:#222C6E;         /* 克莱因蓝：全站结构线 */
+  --line-soft:rgba(34,44,110,.32);
+  --banner:#550F10;       /* 勃艮第红：banner主色 */
+  --banner-ink:#F0EFEB;
+  --btn:#222C6E;          /* 克莱因蓝：按钮 */
+  --btn-ink:#F0EFEB;
+  --ink:#23243B;  --ink-2:#777A93;
+  --led:#7C9CB3;          /* 花青做LED，日夜通用桥色 */
+  --ribbon-a:#222C6E; --ribbon-b:#550F10; --ribbon-c:#F0EFEB;
+  --ic1:#550F10; --ic2:#F0EFEB;
+}
+body.night{
+  /* ===== 夜间：石青底 × 月白卡 × 朱砂banner（高对比撞色） ===== */
+  --bg:#0C365A;
+  --card:#D6D4C2;   --card-2:#CBC9B6;
+  --canvas:#0F3F6B;
+  --line:#7C9CB3;
+  --line-soft:rgba(124,156,179,.45);
+  --banner:#A8443E;       /* 夜间banner：朱砂降饱和 */
+  --banner-ink:#F2EDE0;
+  --btn:#0C365A;  --btn-ink:#D6D4C2;
+  --ink:#24344D;  --ink-2:#5D6B80;
+  --ribbon-a:#D6D4C2; --ribbon-b:#C3272B; --ribbon-c:#104F97;
+  --ic1:#A8443E; --ic2:#D6D4C2;
+  --grid:rgba(124,156,179,.30);
+}
+body.night .tips{background:#D6D4C2;color:#0C365A;}
+body.night .grid-paper{--grid:rgba(214,212,194,.22);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:"Georgia","Songti SC",serif;min-height:100vh;overflow-x:hidden;transition:background .4s;}
+.px{font-family:'Fusion Pixel 12px monospaced zh_hans',"Courier New",monospace;}
+ 
+/* ===== 反向圆角卡片：双层同mask，border随凹角走 ===== */
+.rbox{position:relative;background:var(--line);padding:2.5px;
+  -webkit-mask:radial-gradient(circle at 0 0,transparent 11px,#000 11.5px) 0 0/51% 51% no-repeat,
+    radial-gradient(circle at 100% 0,transparent 11px,#000 11.5px) 100% 0/51% 51% no-repeat,
+    radial-gradient(circle at 0 100%,transparent 11px,#000 11.5px) 0 100%/51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%,transparent 11px,#000 11.5px) 100% 100%/51% 51% no-repeat;
+  mask:radial-gradient(circle at 0 0,transparent 11px,#000 11.5px) 0 0/51% 51% no-repeat,
+    radial-gradient(circle at 100% 0,transparent 11px,#000 11.5px) 100% 0/51% 51% no-repeat,
+    radial-gradient(circle at 0 100%,transparent 11px,#000 11.5px) 0 100%/51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%,transparent 11px,#000 11.5px) 100% 100%/51% 51% no-repeat;}
+.rbox-in{background:var(--card);height:100%;
+  -webkit-mask:radial-gradient(circle at 0 0,transparent 10px,#000 10.5px) 0 0/51% 51% no-repeat,
+    radial-gradient(circle at 100% 0,transparent 10px,#000 10.5px) 100% 0/51% 51% no-repeat,
+    radial-gradient(circle at 0 100%,transparent 10px,#000 10.5px) 0 100%/51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%,transparent 10px,#000 10.5px) 100% 100%/51% 51% no-repeat;
+  mask:radial-gradient(circle at 0 0,transparent 10px,#000 10.5px) 0 0/51% 51% no-repeat,
+    radial-gradient(circle at 100% 0,transparent 10px,#000 10.5px) 100% 0/51% 51% no-repeat,
+    radial-gradient(circle at 0 100%,transparent 10px,#000 10.5px) 0 100%/51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%,transparent 10px,#000 10.5px) 100% 100%/51% 51% no-repeat;}
+ 
+/* ===== 顶部播报带（回收自旧版） ===== */
+.topbar{position:relative;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:2;max-width:1200px;margin:14px auto 10px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;}
+.tb-left{display:flex;flex-direction:column;gap:4px;}
+.tb-left .sub{font-family:var(--pixel);font-size:.58rem;letter-spacing:3px;color:var(--ink-2);}
+.tb-left{display:flex;flex-direction:column;gap:5px;}
+.tsub{font-size:.6rem;letter-spacing:3px;color:var(--ink-2);}
+.brand{font-size:.82rem;letter-spacing:3px;}
+.brand b{color:var(--banner);}
+#themeBtn,.tback{font-size:.75rem;letter-spacing:2px;background:var(--card);color:var(--ink);border:2px solid var(--line);padding:6px 14px;cursor:pointer;font-family:inherit;}
+#themeBtn:hover{background:var(--banner);color:var(--banner-ink);border-color:var(--banner);}
+.ticker{position:relative;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:2;max-width:1200px;margin:0 auto;border:2px solid var(--line);background:var(--card);overflow:hidden;white-space:nowrap;}
+.ticker-in{display:inline-block;font-size:.72rem;letter-spacing:1px;color:var(--ink-2);padding:7px 0;animation:tk 38s linear infinite;}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+ 
+/* ===== 背景：克莱因/勃艮第光斑缓慢游走（夜间对应花青/月白微光） ===== */
+.bgwrap{position:fixed;inset:0;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:0;pointer-events:none;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.14;}
+.blob.a{width:560px;height:560px;background:var(--banner);top:-140px;left:-120px;animation:fl1 30s ease-in-out infinite alternate;}
+.blob.b{width:640px;height:640px;background:var(--line);bottom:-180px;right:-160px;animation:fl2 36s ease-in-out infinite alternate;}
+@keyframes fl1{to{transform:translate(180px,120px) scale(1.15)}}
+@keyframes fl2{to{transform:translate(-200px,-100px) scale(1.1)}}
+ 
+@keyframes gridpan{to{background-position:52px 52px,52px 52px}}
+/* ===== 主框架 ===== */
+.frame{position:relative;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:2;max-width:1200px;margin:14px auto;display:grid;grid-template-columns:370px 1fr;min-height:640px;
+  border:2px solid var(--line);background:var(--canvas);}
+.frame::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:0;animation:gridpan 16s linear infinite;
+  background:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:26px 26px;}
+.frame>*{position:relative;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:1;}
+ 
+/* ---- 左侧身份栏 ---- */
+.left{background:var(--card);border-right:2px solid var(--line);padding:26px 22px;display:flex;flex-direction:column;gap:16px;}
+.ltitle{font-size:2rem;font-weight:700;letter-spacing:6px;line-height:1.3;}
+.ltitle small{display:block;font-size:.66rem;letter-spacing:4px;color:var(--ink-2);font-weight:400;margin-top:6px;}
+.drule{border-top:3px solid var(--line);border-bottom:1px solid var(--line);height:5px;}
+.lbox{border:2px solid var(--line);padding:12px 14px;}
+.lbox .k{font-size:.62rem;letter-spacing:3px;color:var(--ink-2);}
+.lbox .v{font-size:1.5rem;font-weight:700;color:var(--banner);letter-spacing:2px;}
+body.night .lbox .v{color:var(--ink);}
+.lrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ltag{font-size:.7rem;letter-spacing:2px;color:var(--ink-2);border-top:2px dotted var(--line-soft);padding-top:10px;line-height:1.9;}
+/* 彩带：像素横流 */
+.lsub{font-family:var(--pixel);font-size:.56rem;letter-spacing:2px;color:var(--ink-2);border-top:2px dotted var(--line-soft);border-bottom:2px dotted var(--line-soft);padding:8px 2px;margin:2px 0 10px;}
+.ribbon{height:14px;margin-top:auto;
+  background:repeating-linear-gradient(90deg,var(--ribbon-a) 0 14px,transparent 14px 22px,var(--ribbon-b) 22px 36px,transparent 36px 44px,var(--ribbon-c) 44px 52px,transparent 52px 60px);
+  animation:rib 7s linear infinite;}
+@keyframes rib{to{background-position:60px 0}}
+.wxrow{display:flex;align-items:center;gap:10px;font-size:.7rem;letter-spacing:2px;color:var(--ink-2);}
+.wxrow .led{width:9px;height:9px;background:var(--led);animation:breath 2.4s ease-in-out infinite;}
+@keyframes breath{0%,100%{opacity:1}50%{opacity:.2}}
+ 
+/* ---- 右侧内容区 ---- */
+main{padding:24px 26px;background:transparent;display:flex;flex-direction:column;gap:20px;}
+.rhead{display:flex;align-items:center;gap:12px;}
+.rhead::before,.rhead::after{content:"";flex:1;border-top:3px solid var(--line);border-bottom:1px solid var(--line);height:5px;}
+.rhead .t{font-size:.92rem;letter-spacing:5px;font-weight:700;}
+.rhead .t i{font-style:normal;color:var(--banner);font-size:.7rem;letter-spacing:2px;display:block;text-align:center;}
+/* 黑TIPS条 */
+.tips{background:var(--ink);color:var(--bg);font-size:.68rem;letter-spacing:2px;padding:7px 14px;display:flex;justify-content:space-between;}
+body.night .tips{background:var(--banner);color:var(--banner-ink);}
+ 
+/* ---- 大卡：banner+圆章 ---- */
+.bigcard{position:relative;}
+.banner{padding-right:128px;position:relative;background:var(--banner);color:var(--banner-ink);padding:16px 150px 16px 20px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+.banner::after{content:"";position:absolute;left:20px;right:20px;bottom:12px;border-top:2px dotted color-mix(in srgb,var(--banner-ink) 55%,transparent);}
+.banner .bt{font-size:1.25rem;font-weight:700;letter-spacing:4px;}
+.banner .ben{display:block;font-size:.6rem;letter-spacing:3px;opacity:.75;margin-bottom:12px;}
+.banner .bnum{position:absolute;right:136px;top:14px;position:absolute;right:120px;bottom:8px;font-size:.66rem;letter-spacing:2px;text-align:right;opacity:.9;}
+.stamp{color:var(--banner-ink);position:absolute;right:26px;top:46px;transform:translateY(-50%);width:84px;height:84px;border:3px dashed var(--banner-ink);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;letter-spacing:2px;background:color-mix(in srgb,var(--banner) 82%,black);}
+body.night .stamp{background:#7C9CB3;color:#0C365A;border-color:#0C365A;}
+.stamp b{font-size:1.15rem;}
+.bc-body{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;padding:16px 18px;}
+.btncol{display:flex;flex-direction:column;gap:10px;min-width:110px;}
+.tback{text-align:center;text-decoration:none;display:block;font-size:.75rem;letter-spacing:2px;background:var(--card);color:var(--ink);border:2px solid var(--line);padding:6px 14px;cursor:pointer;font-family:inherit;}
+.tback:hover{background:var(--banner);color:var(--banner-ink);border-color:var(--banner);}
+.btn{display:block;position:relative;background:var(--btn);color:var(--btn-ink);text-decoration:none;padding:11px 16px;font-size:.8rem;letter-spacing:4px;transition:transform .18s,box-shadow .18s;box-shadow:3px 4px 0 var(--line-soft);}
+.btn::after{content:attr(data-en);position:absolute;right:12px;bottom:5px;font-size:.52rem;letter-spacing:2px;opacity:.6;}
+.btn::before{content:"";position:absolute;left:16px;right:16px;top:50%;border-top:1px solid color-mix(in srgb,var(--btn-ink) 35%,transparent);}
+.btn:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 var(--line-soft);}
+.btn:active{transform:translate(1px,1px);box-shadow:1px 2px 0 var(--line-soft);}
+/* 系统状态轨道（点线+LED） */
+.sys-track{border:2px dotted var(--line-soft);padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+.track{position:relative;height:10px;margin:6px 0 2px;}
+.track i{position:absolute;top:2px;width:6px;height:6px;background:var(--line-soft);}
+.track i:nth-child(1){left:0}.track i:nth-child(2){left:25%}.track i:nth-child(3){left:50%}.track i:nth-child(4){left:75%}.track i:nth-child(5){right:0}
+.track i.on{background:var(--banner);outline:2px solid var(--bg);outline-offset:1px;}
+body.night .track i.on{background:var(--banner);outline-color:var(--card);}
+.sysline{display:flex;justify-content:space-between;font-size:.66rem;letter-spacing:2px;color:var(--ink-2);}
+.sysline b{color:var(--ink);}
+ 
+/* ---- 模块安家格：图标+名+英文+解释 ---- */
+.modgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.mod{cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.mod .rbox-in{padding:13px 14px;display:flex;flex-direction:column;gap:6px;min-height:104px;}
+.mod .mt{font-size:.86rem;font-weight:700;letter-spacing:3px;display:flex;align-items:center;gap:8px;}
+.mod .mt svg{flex:none;}
+.mod .me{font-size:.56rem;letter-spacing:3px;color:var(--ink-2);}
+.mod .md{font-size:.68rem;color:var(--ink-2);line-height:1.7;border-top:1px dashed var(--line-soft);padding-top:6px;}
+.mod .no{position:absolute;top:10px;right:12px;font-size:.56rem;letter-spacing:1px;color:var(--ink-2);}
+.badge{display:inline-block;background:var(--banner);color:var(--banner-ink);font-size:.56rem;padding:1px 6px;letter-spacing:1px;}
+.mod.hv1:hover{transform:translate(-3px,-4px);}
+.mod.hv2:hover{transform:translate(3px,-4px);}
+.mod.hv3:hover{transform:translate(-4px,3px);}
+.mod.hv4:hover{transform:translate(4px,3px);}
+.mod.hv5:hover{transform:translate(0,-5px);}
+.mod:hover{box-shadow:6px 8px 0 var(--line-soft);}
+.modrow .mod .rbox-in{min-height:84px;}
+ 
+.foot{position:relative;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:2;max-width:1200px;margin:12px auto 24px;display:flex;justify-content:space-between;font-size:.62rem;letter-spacing:2px;color:var(--ink-2);padding:0 16px;}
+ 
+@media (max-width:960px){
+  .frame{grid-template-columns:1fr;}
+  .left{border-right:none;border-bottom:2px solid var(--line);}
+  .banner{padding:14px 16px;}
+  .banner .bnum{position:absolute;right:136px;top:14px;position:static;text-align:left;}
+  .stamp{width:64px;height:64px;right:12px;}
+  .bc-body{grid-template-columns:1fr;}
+  .modgrid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:560px){.modgrid{grid-template-columns:1fr;}}
+body.night .brand,body.night .tb-left .sub{color:#D6D4C2;}
+body.night .foot{color:#9FB2C6;}
+body.night .lsub{color:#5D6B80;}
+body.night .rhead .t{color:#D6D4C2;}
+body.night .rhead .t i{color:#7C9CB3;}
+/* ===== 夜间终局覆盖（钉死，勿在上方加同类规则） ===== */
+body.night .frame{background:#0F3F6B;}
+body.night .tips{background:#D6D4C2 !important;color:#0C365A !important;}
+body.night .blob{opacity:.16;}
+body.night .left{background:#D6D4C2;}
+</style>
+</head>
+<body>
+<div class="bgwrap"><div class="blob a"></div><div class="blob b"></div></div>
+ 
+<div class="topbar">
+  <div class="tb-left">
+    <div class="brand"><b>◆</b> QIANLVZHOU // 千律州系统终端</div>
+    <div class="tsub px">DREAMLINK TERMINAL v0.7 · ALL MODULES STANDING BY</div>
+  </div>
+  <div class="btncol">
+    <button id="themeBtn" class="px">☾ 夜间</button>
+    <a class="tback px" href="./index.html">◂ 返回</a>
+  </div>
+</div>
+<div class="ticker"><span class="ticker-in px" id="tk"></span></div>
+ 
+<div class="frame">
+  <!-- 左：身份栏 -->
+  <aside class="left">
+    <div class="ltitle">千律州<small>QIANLVZHOU · SYSTEM TERMINAL</small></div>
+    <div class="drule"></div>
+    <div class="lbox"><div class="k px">CURRENT CHAPTER</div><div class="v">※ 第※章</div></div>
+    <div class="lrow">
+      <div class="lbox"><div class="k px">NOTICE · 公告</div><div class="v px" style="font-size:1.1rem;">※ 未读 2</div></div>
+      <div class="lbox"><div class="k px">MEMOIR · 残章</div><div class="v px" style="font-size:1.1rem;">※ 已录 5</div></div>
+    </div>
+    <div class="ribbon"></div>
+    <div class="ltag px">※ 标语占位：留给你亲笔。<br>旧日的名字，不可言说。</div>
+    <div class="lsub px">SYS://LINK ESTABLISHED — ALL MODULES STANDING BY.</div>
+    <div class="wxrow px"><span class="led"></span><span>系统 · 在线期</span><span style="margin-left:auto;">※ 天气占位</span></div>
+    <div class="ribbon"></div>
+  </aside>
+ 
+  <!-- 右：内容区 -->
+  <main>
+    <div class="rhead"><span class="t px">系统终端<i>SYSTEM CONSOLE</i></span></div>
+    <div class="tips px"><span>TIPS ※ 此处放系统播报或操作提示，文案留白</span><span>SYS://ONLINE</span></div>
+ 
+    <!-- 大卡1：剧情主线 -->
+    <div class="bigcard rbox"><div class="rbox-in" style="padding:0;">
+      <div class="banner">
+        <span class="bt">剧情主线</span>
+        <span class="ben px">STORY SIMULATION · MAIN LINE</span>
+        <span class="bnum px">※ 当前 CHAPTER · 占位</span>
+      </div>
+      <div class="stamp px"><span>存档</span><b>3</b></div>
+      <div class="bc-body">
+        <div class="btncol">
+          <a class="btn px" href="#" data-en="START">▶ 进入模拟</a>
+          <a class="btn px" href="#" data-en="SAVE / LOAD">▤ 存档管理</a>
+        </div>
+        <div class="sys-track px">
+          <span style="font-size:.62rem;letter-spacing:2px;color:var(--ink-2);">SYSTEM CYCLE</span>
+          <div class="track"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+          <div class="sysline"><span>在线期 <b>●</b></span><span>休眠期 ○</span></div>
+          <div class="sysline"><span>※ 进度占位</span><span>30 / 80</span></div>
+        </div>
+      </div>
+    </div></div>
+ 
+    <!-- 大卡2：人物 · 通讯 -->
+    <div class="bigcard rbox"><div class="rbox-in" style="padding:0;">
+      <div class="banner">
+        <span class="bt">人物 · 通讯</span>
+        <span class="ben px">PEOPLE &amp; COMMS</span>
+        <span class="bnum px">※ 未读 1</span>
+      </div>
+      <div class="stamp px"><span>连线</span><b>1</b></div>
+      <div class="bc-body" style="grid-template-columns:1fr;">
+        <div class="modgrid" style="padding:0;">
+          <div class="mod rbox hv1" style="grid-column:1/-1;"><div class="rbox-in"><span class="no px">01</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="6" height="5" fill="var(--ic1)"/><rect x="2" y="6" width="1" height="1" fill="var(--ic1)"/><rect x="3" y="5" width="2" height="2" fill="var(--ic1)"/><rect x="2" y="2" width="4" height="2" fill="var(--ic2)"/></svg>通讯终端<span class="badge">1</span></div>
+            <div class="me px">TERMINAL · 重要功能</div>
+            <div class="md px">与重要之人连线，与系统对话。※ 名单后置，此入口未来升为独立页面。</div>
+          </div></div>
+          <div class="mod rbox hv2"><div class="rbox-in"><span class="no px">02</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><circle cx="4" cy="3" r="2" fill="var(--ic1)"/><rect x="2" y="5" width="4" height="2" fill="var(--ic1)"/></svg>人物资料</div>
+            <div class="me px">CHARACTER</div>
+            <div class="md px">同行者与相关者档案。</div>
+          </div></div>
+          <div class="mod rbox hv3"><div class="rbox-in"><span class="no px">03</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="6" height="6" fill="var(--ic1)"/><rect x="2" y="2" width="4" height="1" fill="var(--ic2)"/><rect x="2" y="4" width="3" height="1" fill="var(--ic2)"/></svg>系统频道</div>
+            <div class="me px">SYS.CHAT</div>
+            <div class="md px">和系统说话的地方。</div>
+          </div></div>
+        </div>
+      </div>
+    </div></div>
+ 
+    <!-- 大卡3：任务 · 资源 -->
+    <div class="bigcard rbox"><div class="rbox-in" style="padding:0;">
+      <div class="banner">
+        <span class="bt">任务 · 资源</span>
+        <span class="ben px">QUESTS &amp; RESOURCES</span>
+        <span class="bnum px">※ 在途任务 2</span>
+      </div>
+      <div class="stamp px"><span>背包</span><b>12</b></div>
+      <div class="bc-body" style="grid-template-columns:1fr;">
+        <div class="modgrid" style="padding:0;">
+          <div class="mod rbox hv4"><div class="rbox-in"><span class="no px">04</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="6" height="6" fill="var(--ic1)"/><rect x="2" y="2" width="1" height="1" fill="var(--ic2)"/><rect x="4" y="2" width="1" height="1" fill="var(--ic2)"/><rect x="2" y="4" width="4" height="1" fill="var(--ic2)"/></svg>任务栏<span class="badge">2</span></div>
+            <div class="me px">QUEST LOG</div>
+            <div class="md px">系统在途与已完成的委托。<span style="opacity:.6">※文案可改</span></div>
+          </div></div>
+          <div class="mod rbox hv1"><div class="rbox-in"><span class="no px">05</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="2" width="6" height="5" fill="var(--ic1)"/><rect x="3" y="1" width="2" height="1" fill="var(--ic1)"/><rect x="1" y="3" width="6" height="1" fill="var(--ic2)"/></svg>背包</div>
+            <div class="me px">INVENTORY</div>
+            <div class="md px">随身行囊 · 道具与信物。<span style="opacity:.6">※文案可改</span></div>
+          </div></div>
+          <div class="mod rbox hv2"><div class="rbox-in"><span class="no px">06</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="2" width="6" height="4" fill="var(--ic1)"/><rect x="2" y="3" width="4" height="1" fill="var(--ic2)"/><rect x="3" y="1" width="2" height="1" fill="var(--ic1)"/></svg>系统商城</div>
+            <div class="me px">SHOP</div>
+            <div class="md px">※ 货币单位未配置。</div>
+          </div></div>
+        </div>
+      </div>
+    </div></div>
+ 
+    <!-- 大卡4：世界 · 记录 -->
+    <div class="bigcard rbox"><div class="rbox-in" style="padding:0;">
+      <div class="banner">
+        <span class="bt">世界 · 记录</span>
+        <span class="ben px">WORLD &amp; RECORDS</span>
+        <span class="bnum px">※ 区域解锁 1/4</span>
+      </div>
+      <div class="stamp px"><span>残章</span><b>5</b></div>
+      <div class="bc-body" style="grid-template-columns:1fr;">
+        <div class="modgrid" style="padding:0;">
+          <div class="mod rbox hv3"><div class="rbox-in"><span class="no px">07</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="3" height="6" fill="var(--ic1)"/><rect x="4" y="1" width="3" height="6" fill="var(--ic1)"/><rect x="1" y="3" width="6" height="1" fill="var(--ic2)"/></svg>设定图鉴</div>
+            <div class="me px">ARCHIVE</div>
+            <div class="md px">名词·地点·事物的辞典。</div>
+          </div></div>
+          <div class="mod rbox hv4"><div class="rbox-in"><span class="no px">08</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="6" height="1" fill="var(--ic1)"/><rect x="2" y="2" width="4" height="1" fill="var(--ic1)"/><rect x="3" y="3" width="2" height="2" fill="var(--ic1)"/><rect x="2" y="5" width="4" height="1" fill="var(--ic1)"/><rect x="1" y="6" width="6" height="1" fill="var(--ic1)"/></svg>记忆残章</div>
+            <div class="me px">MEMOIR</div>
+            <div class="md px">章节摘要与前情提要。</div>
+          </div></div>
+          <div class="mod rbox hv1"><div class="rbox-in"><span class="no px">09</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="2" height="2" fill="var(--ic1)"/><rect x="5" y="1" width="2" height="2" fill="var(--ic1)"/><rect x="3" y="3" width="2" height="2" fill="var(--ic1)"/><rect x="1" y="5" width="2" height="2" fill="var(--ic1)"/><rect x="5" y="5" width="2" height="2" fill="var(--ic1)"/></svg>国家地图</div>
+            <div class="me px">WORLD MAP</div>
+            <div class="md px">区域解锁进度。</div>
+          </div></div>
+          <div class="mod rbox hv2"><div class="rbox-in"><span class="no px">10</span>
+            <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="2" width="5" height="4" fill="var(--ic1)"/><rect x="6" y="4" width="1" height="2" fill="var(--ic1)"/><rect x="2" y="3" width="3" height="1" fill="var(--ic2)"/></svg>系统日志</div>
+            <div class="me px">SYS.LOG</div>
+            <div class="md px">系统播报留档可回看。</div>
+          </div></div>
+        </div>
+      </div>
+    </div></div>
+    </main>
+</div>
+ 
+<div class="foot px">
+  <span>千律州系统 · 主页小样 v0.7</span>
+  <span>※ 文案位以 ※ 标注 · 世界观名词留白待TA</span>
+</div>
+ 
+<script>
+var msg='【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　';
+document.getElementById('tk').textContent=msg+msg;
+var btn=document.getElementById('themeBtn');
+btn.onclick=function(){
+  document.body.classList.toggle('night');
+  var n=document.body.classList.contains('night');
+  btn.textContent=n?'☀ 日间':'☾ 夜间';
+  try{localStorage.setItem('theme',JSON.stringify({value:n?'dark':'light'}));}catch(e){}
+};
+try{var t=JSON.parse(localStorage.getItem('theme')||'null');
+  if(t&&t.value==='dark'){document.body.classList.add('night');btn.textContent='☀ 日间';}}catch(e){}
+/* 载入扫描线 */
+var sc=document.createElement('div');sc.style.cssText='position:fixed;left:0;right:0;height:80px;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:99;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(124,156,179,.25),transparent);top:-10%;transition:none;';
+document.body.appendChild(sc);
+sc.animate([{top:'-10%'},{top:'110%'}],{duration:1300,easing:'ease-out'});
+setTimeout(function(){sc.remove();},1400);
+</script>
+</body>
+</html>
