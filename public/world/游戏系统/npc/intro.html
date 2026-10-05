@@ -255,6 +255,14 @@ function runShow(){
   })();
 }
  
+/* ===== 主题：读取+实时监听 ===== */
+function applyTheme(){try{
+  var t=JSON.parse(localStorage.getItem('theme')||'null');
+  document.body.classList.toggle('night',!!(t&&t.value==='dark'));
+}catch(e){}}
+applyTheme();
+window.addEventListener('storage',function(e){if(e.key==='theme')applyTheme();});
+ 
 /* ===== 入口 ===== */
 touch.onclick=function(){touch.classList.add('hidden');sBlip();runShow();};
 stage.onclick=function(){finish();};
