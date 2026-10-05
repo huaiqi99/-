@@ -215,7 +215,7 @@ body.intro-active .topbar,body.intro-active .ticker,body.intro-active .foot{opac
   background-size:26px 26px;animation:gridpan 18s linear infinite;}
 #introov .ovgrid.g-red{--gc:var(--gred);-webkit-mask-image:linear-gradient(315deg,#000 0%,transparent 62%);mask-image:linear-gradient(315deg,#000 0%,transparent 62%);}
 #introov .ovgrid.g-blue{--gc:var(--gblue);-webkit-mask-image:linear-gradient(135deg,#000 0%,transparent 62%);mask-image:linear-gradient(135deg,#000 0%,transparent 62%);}
-:root{--gred:rgba(85,15,16,.30);--gblue:rgba(34,44,110,.30);}
+:root{--gred:rgba(85,15,16,.30);--gblue:rgba(34,44,110,.30);--red:var(--banner);--red-ink:var(--banner-ink);--checker-a:var(--line);--checker-b:var(--card);}
 body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
  
  
@@ -482,10 +482,13 @@ window.addEventListener('storage',function(e){if(e.key!=='theme')return;
     var b=document.getElementById('themeBtn');if(b)b.textContent=n?'☀ 日间':'☾ 夜间';
   }catch(err){}});
 /* 载入扫描线 */
-var sc=document.createElement('div');sc.style.cssText='position:fixed;left:0;right:0;height:80px;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:99;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(124,156,179,.25),transparent);top:-10%;transition:none;';
-document.body.appendChild(sc);
-sc.animate([{top:'-10%'},{top:'110%'}],{duration:1300,easing:'ease-out'});
-setTimeout(function(){sc.remove();},1400);
+function hubScan(){
+  var sc=document.createElement('div');
+  sc.style.cssText='position:fixed;left:0;right:0;height:80px;z-https://sfile.chatglm.cn/workspace/file/27/27065093d2.html:99;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(124,156,179,.25),transparent);top:-10%';
+  document.body.appendChild(sc);
+  sc.animate([{top:'-10%'},{top:'110%'}],{duration:1300,easing:'ease-out'});
+  setTimeout(function(){sc.remove();},1400);
+}
 </script>
 <script>
 /* ===== 环境 ===== */
@@ -524,9 +527,9 @@ function sWhoosh(){
  
 /* ===== 剧本 ===== */
 var SCRIPT=[
- {t:'c',x:'LOADING MODULE: TASK_BAR ............ [ OK ]',ok:true},
+ {t:'c',x:'LOADING MODULE: TASK_BAR ............ ',ok:true},
  {t:'s',x:'【检测到未登记个体】'},
- {t:'c',x:'LOADING MODULE: MEMORY ............. [ OK ]',ok:true},
+ {t:'c',x:'LOADING MODULE: MEMORY ............. ',ok:true},
  {t:'s',x:'【身份核验……通过】'},
  {t:'p'},
  {t:'s',x:'【绑定完成】'},
@@ -585,6 +588,7 @@ function finish(){
   try{localStorage.setItem('intro_seen','1');}catch(e){}
   try{if(window.parent!==window)parent.postMessage({type:'intro:done'},'*');}catch(e){}
   try{document.body.classList.remove('intro-active');}catch(e){}
+  try{hubScan();}catch(e){}
   try{var ov=document.getElementById('introov');ov.classList.add('ovfade');
     setTimeout(function(){ov.remove();},650);}catch(e){}
   try{if(window.parent!==window)parent.postMessage({type:'intro:done'},'*');}catch(e){}
