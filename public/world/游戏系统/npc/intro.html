@@ -9,6 +9,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="prefetch" href="./系统.html">
 <title>千律州系统 · 绑定演出</title>
 <style>
 @import url('https://cdn.jsdelivr.net/npm/fusion-pixel-12px-monospaced-zh_hans@latest/font.css');
@@ -203,7 +204,7 @@ function finish(){
   try{pageShatter();sWhoosh();}catch(e){}
   try{localStorage.setItem('intro_seen','1');}catch(e){}
   try{if(window.parent!==window)parent.postMessage({type:'intro:done'},'*');}catch(e){}
-  setTimeout(function(){location.href='./系统.html';},FAST?650:850);
+  setTimeout(function(){location.replace('./系统.html');},FAST?380:460);
 }
  
 /* ===== 演出引擎 ===== */
