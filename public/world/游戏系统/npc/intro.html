@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <!-- ============================================================
-     千律州模拟器 · intro.html 开场动画 v0.2（绑定演出）
-     v0.2：渐变格线背景(右下红→左上蓝) / 整页碎裂进hub / 去屏闪 / FAST+1s
-     流程：触碰唤醒 → 系统弹窗 → 打字机绑定 → 数据消散 → 直接进hub
-     声音：WebAudio 合成机械音效（零素材零版权），BGM 不参与
-     复玩：localStorage intro_seen → 二次进入快速版(静默~3.5s)
-     集成：完成后 postMessage{type:'intro:done'} 给父页（壳）；
-           独立预览时直接跳转 ./hub_v6.html
+     千律州模拟器 · intro.html v0.4（绑定演出 · 完整重写版）
+     流程：触碰唤醒 → 系统弹窗 → 打字机 → 散字+整页消散 → 跳hub
+     v0.2渐变格线背景 / v0.2温和碎裂 / 无屏闪 / FAST≈3.5s
+     声音：WebAudio合成音效；完成后 postMessage intro:done
      ============================================================ -->
 <html lang="zh-CN">
 <head>
@@ -23,15 +20,17 @@
 }
 body.night{
   --bg:#D6D4C2; --card:#F0EFEB; --line:#0C365A; --line-soft:rgba(12,54,90,.45);
-  --red:#A8443E; --red-ink:#F2EDE0; --ink:#1c2b40; --ink-2:#5d6b80;
-  --gold:#8a6a2f; --checker-a:#0C365A; --checker-b:#D6D4C2;
+  --red:#A8443E; --red-ink:#F2EDE0; --ink:#24344D; --ink-2:#5D6B80;
+  --gold:#A8443E; --checker-a:#0C365A; --checker-b:#D6D4C2;
   --gred:rgba(168,68,62,.34); --gblue:rgba(12,54,90,.30);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--ink);font-family:"Georgia","Songti SC",serif;min-height:100vh;overflow:hidden;}
 .px{font-family:'Fusion Pixel 12px monospaced zh_hans',"Courier New",monospace;}
+.hidden{display:none !important;}
+.gone{opacity:0 !important;transition:opacity .15s ease;}
  
-/* 渐变格线：右下红 → 左上蓝，两层格线+对角mask交叉 */
+/* ===== 渐变格线背景：左上蓝 → 右下红 ===== */
 .bgwrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .bggrid{position:absolute;inset:0;display:block;
   background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px);
@@ -40,204 +39,230 @@ body{background:var(--bg);color:var(--ink);font-family:"Georgia","Songti SC",ser
 .g-blue{--gc:var(--gblue);-webkit-mask-image:linear-gradient(135deg,#000 0%,transparent 62%);mask-image:linear-gradient(135deg,#000 0%,transparent 62%);}
 @keyframes gridpan{to{background-position:52px 52px,52px 52px}}
  
-.phase{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;flex-direction:column;}
-.hidden{display:none !important;}
+/* ===== 阶段0：触碰唤醒 ===== */
+#touch{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;cursor:pointer;}
+.t-ring{width:120px;height:120px;border:2px solid var(--line);position:relative;animation:ringpulse 2.4s ease-in-out infinite;}
+.t-ring::before,.t-ring::after{content:"";position:absolute;inset:-14px;border:2px dashed var(--line-soft);animation:ringspin 12s linear infinite;}
+.t-ring::after{inset:-28px;border-color:var(--line-soft);animation-direction:reverse;opacity:.6;}
+@keyframes ringpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes ringspin{to{transform:rotate(360deg)}}
+.t-ring i{position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px;background:var(--red);}
+.t-text{font-size:1.15rem;letter-spacing:6px;animation:tpulse 1.4s ease-in-out infinite;}
+@keyframes tpulse{0%,100%{opacity:1}50%{opacity:.45}}
+.t-sub{font-size:.6rem;letter-spacing:4px;color:var(--ink-2);}
  
-/* ===== 触碰唤醒 ===== */
-#touch{cursor:pointer;}
-.t-ring{width:120px;height:120px;border:2px dashed var(--line);border-radius:50%;animation:spin 22s linear infinite;margin-bottom:34px;position:relative;}
-.t-ring::after{content:"";position:absolute;inset:14px;border:2px solid var(--line-soft);border-radius:50%;animation:spin 14s linear infinite reverse;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.t-text{font-size:1.15rem;letter-spacing:6px;animation:blink 1.4s steps(2) infinite;}
-@keyframes blink{50%{opacity:.35}}
-.t-sub{margin-top:14px;font-size:.62rem;letter-spacing:4px;color:var(--ink-2);}
- 
-/* ===== 反向圆角窗口 ===== */
-.rbox{position:relative;background:var(--line);padding:2.5px;
-  -webkit-mask:radial-gradient(circle at 0 0,transparent 12px,#000 12.5px) top left,
-    radial-gradient(circle at 100% 0,transparent 12px,#000 12.5px) top right,
-    radial-gradient(circle at 0 100%,transparent 12px,#000 12.5px) bottom left,
-    radial-gradient(circle at 100% 100%,transparent 12px,#000 12.5px) bottom right;
-  -webkit-mask-size:51% 51%;-webkit-mask-repeat:no-repeat;
-  mask:radial-gradient(circle at 0 0,transparent 12px,#000 12.5px) top left,
-    radial-gradient(circle at 100% 0,transparent 12px,#000 12.5px) top right,
-    radial-gradient(circle at 0 100%,transparent 12px,#000 12.5px) bottom left,
-    radial-gradient(circle at 100% 100%,transparent 12px,#000 12.5px) bottom right;
-  mask-size:51% 51%;mask-repeat:no-repeat;}
-.rbox-in{background:var(--card);height:100%;}
-.win{width:min(560px,92vw);}
-.win .rbox-in{display:flex;flex-direction:column;}
+/* ===== 阶段1-2：系统弹窗 ===== */
+#stage{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;}
+#win{width:min(560px,92%);transition:opacity .15s ease;}
 .winbar{display:flex;align-items:center;gap:10px;background:var(--red);color:var(--red-ink);
-  padding:8px 14px;font-size:.72rem;letter-spacing:2px;}
-.winbar .dots{display:flex;gap:5px;}
-.winbar .dots i{width:8px;height:8px;background:var(--red-ink);opacity:.85;}
-.winbar .wno{margin-left:auto;opacity:.7;font-size:.6rem;}
-.wbody{min-height:240px;padding:18px 20px;font-size:.78rem;line-height:2.1;letter-spacing:1px;white-space:pre-wrap;}
-.cline{color:var(--ink-2);}
-.sline{color:var(--ink);font-weight:700;letter-spacing:3px;}
-.sline.final{color:var(--red);font-size:1rem;}
-.okc{color:var(--gold);}
-.caret{display:inline-block;width:8px;height:1em;background:var(--line);vertical-align:-2px;animation:blink .9s steps(2) infinite;}
+  padding:9px 14px;font-size:.72rem;letter-spacing:3px;}
+.winbar .dots{display:flex;gap:6px;}
+.winbar .dots i{width:9px;height:9px;background:var(--red-ink);opacity:.85;}
+.winbar .wno{margin-left:auto;font-size:.58rem;opacity:.75;}
+#winbox{background:var(--card);border:2px solid var(--line);border-top:none;padding:20px 22px 0;}
+#lines{min-height:210px;}
+.cline{font-size:.66rem;letter-spacing:1px;color:var(--ink-2);line-height:2.1;white-space:pre;}
+.sline{font-size:.86rem;letter-spacing:3px;line-height:2.4;}
+.sline.final{color:var(--red);font-size:1rem;letter-spacing:4px;padding:6px 0 10px;}
+.sline.final i.fly{display:inline-block;font-style:normal;animation:charfly .6s ease-in forwards;}
+@keyframes charfly{to{transform:translate(var(--fx),var(--fy)) rotate(var(--fr));opacity:0;}}
+.caret{display:inline-block;width:8px;height:14px;background:var(--gold);vertical-align:-2px;animation:cblink .9s steps(2) infinite;}
+@keyframes cblink{50%{opacity:0}}
+.ok{color:var(--gold);font-weight:700;}
 /* 菱形进度 */
-.wprog{display:flex;gap:6px;padding:0 20px 16px;}
-.wprog i{width:14px;height:14px;transform:rotate(45deg);border:2px solid var(--line);transition:background .2s;}
-.wprog i.on{background:var(--red);border-color:var(--red);}
-/* 彩带 */
-.wribbon{height:12px;background:repeating-linear-gradient(90deg,var(--checker-a) 0 14px,var(--checker-b) 14px 28px,var(--red) 28px 42px,var(--checker-b) 42px 56px);animation:rib .9s linear infinite;}
-@keyframes rib{to{background-position:56px 0}}
-/* 唤起：单次柔和淡入（无硬闪） */
+#prog{display:flex;gap:7px;padding:14px 0 16px;}
+#prog i{width:13px;height:13px;background:transparent;border:2px solid var(--line-soft);transform:rotate(45deg) scale(.82);transition:all .25s;}
+#prog i.on{background:var(--red);border-color:var(--red);transform:rotate(45deg) scale(1);}
+/* 弹窗底部彩带 */
+.wribbon{height:12px;margin:0 -22px;background:repeating-linear-gradient(90deg,var(--checker-a) 0 14px,transparent 14px 26px,var(--checker-b) 26px 32px,transparent 32px 44px);background-size:44px 100%;animation:rib 6s linear infinite;opacity:.8;}
+@keyframes rib{to{background-position:44px 0}}
 .flicker{animation:wake .5s ease-out 1;}
 @keyframes wake{from{opacity:.25}to{opacity:1}}
+.fasttip{position:fixed;top:14px;right:16px;z-index:20;font-size:.6rem;letter-spacing:3px;color:var(--ink-2);}
  
-/* ===== 就绪（仅壳集成前可见的兜底） ===== */
-.fasttip{position:fixed;top:18px;right:20px;z-index:50;font-size:.6rem;letter-spacing:2px;color:var(--ink-2);border:2px solid var(--line-soft);padding:4px 10px;}
- 
-/* ===== 整页碎裂 ===== */
+/* ===== 整页消散 ===== */
 .shardwrap{position:fixed;inset:0;z-index:90;pointer-events:none;}
-.shardwrap i{position:absolute;background:var(--bg);transform:translate(0,0) rotate(0);opacity:1;}
-@keyframes shfly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0;}}
+.shardwrap i{position:absolute;background:var(--bg);animation-fill-mode:forwards;}
+@keyframes shfly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.6);opacity:0;}}
 </style>
 </head>
 <body>
 <div class="bgwrap"><i class="bggrid g-red"></i><i class="bggrid g-blue"></i></div>
  
-<div id="touch" class="phase">
-  <div class="t-ring"></div>
+<div id="touch">
+  <div class="t-ring"><i></i></div>
   <div class="t-text px">【 触碰以建立连接 】</div>
-  <div class="t-sub px">TOUCH TO ESTABLISH LINK · 点击任意处</div>
+  <div class="t-sub px">TOUCH TO ESTABLISH LINK</div>
 </div>
  
-<div id="stage" class="phase hidden" style="cursor:pointer;">
-  <div class="win rbox flicker"><div class="rbox-in">
+<div id="stage" class="hidden">
+  <div id="win">
     <div class="winbar px"><span class="dots"><i></i><i></i><i></i></span>SYS://BINDING<span class="wno">№ 0x0721</span></div>
-    <div class="wbody px" id="lines"></div>
-    <div class="wprog" id="prog"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    <div class="wribbon"></div>
-  </div></div>
+    <div id="winbox">
+      <div id="lines"></div>
+      <div id="prog"></div>
+      <div class="wribbon"></div>
+    </div>
+  </div>
 </div>
  
 <script>
+/* ===== 环境 ===== */
 var FAST=false;
 try{FAST=localStorage.getItem('intro_seen')==='1';}catch(e){}
-try{var t=JSON.parse(localStorage.getItem('theme')||'null');
-  if(t&&t.value==='dark')document.body.classList.add('night');}catch(e){}
-var touch=document.getElementById('touch'),stage=document.getElementById('stage'),
-    lines=document.getElementById('lines'),prog=document.getElementById('prog'),
-    win=stage.querySelector('.win'),skipped=false,progDone=0;
+var skipped=false;
+var touch=document.getElementById('touch');
+var stage=document.getElementById('stage');
+var win=document.getElementById('win');
+var lines=document.getElementById('lines');
+var prog=document.getElementById('prog');
+(function(){for(var i=0;i<8;i++){prog.appendChild(document.createElement('i'));}})();
  
-/* ===== WebAudio 合成音效 ===== */
+/* ===== 合成音效 ===== */
 var AC=null;
 function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
-function tone(f1,f2,dur,type,vol,delay){
-  var a=ac();if(!a)return;var o=a.createOscillator(),g=a.createGain(),t0=a.currentTime+(delay||0);
-  o.type=type||'square';o.frequency.setValueAtTime(f1,t0);
-  if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);
-  g.gain.setValueAtTime(vol||.06,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  o.connect(g);g.connect(a.destination);o.start(t0);o.stop(t0+dur+.02);
+function tone(f,dur,type,vol,delay){
+  var a=ac();if(!a)return;
+  var o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(delay||0);
+  o.type=type||'square';o.frequency.value=f;
+  g.gain.setValueAtTime(vol||.08,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.02);
 }
-function noise(dur){var a=ac();if(!a)return;
-  var n=a.sampleRate*dur,buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);
-  for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
-  var src=a.createBufferSource(),g=a.createGain(),f=a.createBiquadFilter();
-  src.buffer=buf;f.type='highpass';f.frequency.setValueAtTime(400,a.currentTime);
-  f.frequency.exponentialRampToValueAtTime(4000,a.currentTime+dur);
-  g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+dur);
-  src.connect(f);f.connect(g);g.connect(a.destination);src.start();}
-function sBlip(){tone(880,1320,.09,'square',.07);}
-function sTick(){tone(1900+Math.random()*500,0,.03,'square',.025);}
-function sOk(){tone(660,0,.07,'square',.05);tone(990,0,.09,'square',.05,.08);}
-function sJingle(){tone(523,0,.12,'square',.06);tone(659,0,.12,'square',.06,.13);tone(880,0,.2,'square',.06,.26);}
-function sWhoosh(){noise(.5);}
+function sBlip(){tone(880,.08,'square',.09);tone(1320,.06,'square',.05,.09);}
+function sTick(){tone(2400+Math.random()*600,.025,'square',.03);}
+function sOk(){tone(660,.07,'square',.05);tone(990,.09,'square',.05,.08);}
+function sJingle(){tone(523,.12,'square',.06);tone(659,.12,'square',.06,.13);tone(880,.2,'square',.06,.26);}
+function sWhoosh(){
+  var a=ac();if(!a)return;
+  var len=a.sampleRate*.5,buf=a.createBuffer(1,len,a.sampleRate),d=buf.getChannelData(0);
+  for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*(1-i/len);
+  var src=a.createBufferSource(),g=a.createGain(),fl=a.createBiquadFilter();
+  fl.type='bandpass';fl.frequency.setValueAtTime(3200,a.currentTime);fl.frequency.exponentialRampToValueAtTime(300,a.currentTime+.5);
+  src.buffer=buf;g.gain.value=.10;src.connect(fl);fl.connect(g);g.connect(a.destination);src.start();
+}
  
-/* ===== 打字机内容 ===== */
+/* ===== 剧本 ===== */
 var SCRIPT=[
- {t:'c',x:'LOADING MODULE: TASK_BAR ............ [ OK ]'},
+ {t:'c',x:'LOADING MODULE: TASK_BAR ............ [ OK ]',ok:true},
  {t:'s',x:'【检测到未登记个体】'},
- {t:'c',x:'LOADING MODULE: MEMORY ............. [ OK ]'},
+ {t:'c',x:'LOADING MODULE: MEMORY ............. [ OK ]',ok:true},
  {t:'s',x:'【身份核验……通过】'},
- {t:'prog'},
+ {t:'p'},
  {t:'s',x:'【绑定完成】'},
  {t:'s',x:'【欢迎回来，怀榆】',final:true}
 ];
 function progStep(n){var b=prog.children;for(var i=0;i<n&&i<b.length;i++)b[i].classList.add('on');}
 function addCaret(el){var c=document.createElement('i');c.className='caret px';el.appendChild(c);return c;}
+ 
+/* 终场散字：字符化作飞散像素 */
 function scatterFinal(el){
   var txt=el.textContent;el.textContent='';
-  var chars=txt.split('');
-  chars.forEach(function(ch,i){
-    var sp=document.createElement('span');
-    sp.textContent=ch;sp.style.cssText='display:inline-block;position:relative;';
-    var dx=(Math.random()*2-1)*160,dy=(Math.random()*2-1)*120,rot=Math.random()*90-45;
-    sp.animate([{transform:'translate(0,0) rotate(0)',opacity:1},
-                {transform:'translate('+dx+'px,'+dy+'px) rotate('+rot+'deg)',opacity:0}],
-      {duration:600+Math.random()*300,delay:i*22,easing:'ease-in',fill:'forwards'});
-    el.appendChild(sp);
+  var frag=document.createDocumentFragment();
+  txt.split('').forEach(function(ch){
+    var sp=document.createElement('i');sp.className='fly px';
+    sp.textContent=ch===' '?'\u00A0':ch;
+    sp.style.setProperty('--fx',(Math.random()*160-80)+'px');
+    sp.style.setProperty('--fy',(Math.random()*-120-30)+'px');
+    sp.style.setProperty('--fr',(Math.random()*40-20)+'deg');
+    sp.style.animationDelay=(Math.random()*180)+'ms';
+    frag.appendChild(sp);
   });
+  el.appendChild(frag);
+  setTimeout(function(){try{sWhoosh();}catch(e){}},150);
 }
+ 
+/* 整页消散：米白碎块+零星红蓝点缀 */
 function pageShatter(){
   var wrap=document.createElement('div');wrap.className='shardwrap';
   var cols=12,rows=8,cw=100/cols,ch=100/rows;
   for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
     var d=document.createElement('i');
-    d.style.left=(c*cw)+'%';d.style.top=(r*ch)+'%';
-    d.style.width=(cw+0.2)+'%';d.style.height=(ch+0.2)+'%';
-    var dx=(c-(cols-1)/2)*(40+Math.random()*70);
-    var dy=(r-(rows-1)/2)*(40+Math.random()*70);
-    var dur=450+Math.random()*450,dl=Math.random()*160;
-    d.style.animation='shfly '+dur+'ms ease-in '+dl+'ms forwards';
-    d.style.setProperty('--dx',dx+'px');d.style.setProperty('--dy',dy+'px');
-    d.style.setProperty('--rot',(Math.random()*60-30)+'deg');
     var pick=(r*7+c*3)%11;
     if(pick===0)d.style.background='var(--red)';
     else if(pick===5)d.style.background='var(--line)';
     else{d.style.background='var(--bg)';d.style.border='1px solid var(--line-soft)';}
-    d.style.width=(cw*0.62)+'%';d.style.height=(ch*0.62)+'%';
-    d.style.left='calc('+(c*cw)+'% + '+(cw*0.19)+'%)';
-    d.style.top='calc('+(r*ch)+'% + '+(ch*0.19)+'%)';
+    d.style.width=(cw*.62)+'%';d.style.height=(ch*.62)+'%';
+    d.style.left='calc('+(c*cw)+'% + '+(cw*.19)+'%)';
+    d.style.top='calc('+(r*ch)+'% + '+(ch*.19)+'%)';
+    var dx=(c-(cols-1)/2)*(14+Math.random()*22);
+    var dy=(r-(rows-1)/2)*(14+Math.random()*22);
+    d.style.setProperty('--dx',dx+'px');d.style.setProperty('--dy',dy+'px');
+    d.style.setProperty('--rot',(Math.random()*16-8)+'deg');
+    d.style.animation='shfly '+(260+Math.random()*220)+'ms ease-in '+(Math.random()*110)+'ms forwards';
     wrap.appendChild(d);
   }
   document.body.appendChild(wrap);
-  setTimeout(function(){wrap.remove();},1400);
+  setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},1400);
 }
+ 
+/* 就绪：通知壳 / 独立预览则跳转 */
 function finish(){
   if(skipped)return;skipped=true;
+  try{stage.classList.add('gone');}catch(e){}
+  try{document.querySelector('.fasttip').classList.add('gone');}catch(e){}
   try{pageShatter();sWhoosh();}catch(e){}
+  try{localStorage.setItem('intro_seen','1');}catch(e){}
   try{if(window.parent!==window)parent.postMessage({type:'intro:done'},'*');}catch(e){}
-  setTimeout(function(){location.href='./系统.html';},FAST?900:1200);
+  setTimeout(function(){location.href='./系统.html';},FAST?650:850);
 }
+ 
+/* ===== 演出引擎 ===== */
 function runShow(){
-  stage.classList.remove('hidden');win.classList.add('flicker');
-  var idx=0,el=null;
+  stage.classList.remove('hidden');
+  win.classList.add('flicker');
+  var idx=0;
   (function next(){
     if(skipped)return;
-    if(idx>=SCRIPT.length){return;}
+    if(idx>=SCRIPT.length)return;
     var L=SCRIPT[idx++];
-    if(L.t==='c'){el=document.createElement('div');el.className='cline px';lines.appendChild(el);
+    if(L.t==='c'){
+      var el=document.createElement('div');el.className='cline px';lines.appendChild(el);
       var caret=addCaret(el),i=0;
-      (function typeStep(){if(skipped)return;
-        if(i>=L.x.length){el.removeChild(caret);
-          sOk();progStep(Math.min(progDone+=2,8));setTimeout(next,FAST?120:330);return;}
+      (function tc(){
+        if(skipped)return;
+        if(i>=L.x.length){
+          el.removeChild(caret);
+          var ok=document.createElement('span');ok.className='ok px';ok.textContent='[ OK ]';
+          el.appendChild(ok);
+          if(L.ok)sOk();progStep(idx*2);setTimeout(next,FAST?120:330);
+          return;
+        }
         el.insertBefore(document.createTextNode(L.x[i]),caret);
-        if(!FAST&&i%2===0)sTick();i++;setTimeout(typeStep,FAST?26:55);})();}
-    else if(L.t==='prog'){progStep(8);setTimeout(next,FAST?120:280);}
-    else{el=document.createElement('div');el.className='sline'+(L.final?' final':'');lines.appendChild(el);
-      var caret=addCaret(el),i=0;
-      (function typeStep(){if(skipped)return;
-        if(i>=L.x.length){el.removeChild(caret);
-          if(L.final){setTimeout(function(){if(skipped)return;sJingle();
-            scatterFinal(el);setTimeout(finish,750);},FAST?400:1000);}
-          else setTimeout(next,FAST?120:350);return;}
-        el.insertBefore(document.createTextNode(L.x[i]),caret);
-        if(!FAST&&i%2===0)sTick();i++;setTimeout(typeStep,FAST?26:55);})();}
+        if(!FAST&&i%2===0)sTick();i++;setTimeout(tc,FAST?26:55);
+      })();
+    }else if(L.t==='p'){
+      progStep(8);setTimeout(next,FAST?120:280);
+    }else{
+      var el2=document.createElement('div');el2.className='sline'+(L.final?' final':'');lines.appendChild(el2);
+      var caret2=addCaret(el2),j=0;
+      (function ts(){
+        if(skipped)return;
+        if(j>=L.x.length){
+          el2.removeChild(caret2);
+          if(L.final){
+            setTimeout(function(){
+              if(skipped)return;sJingle();
+              scatterFinal(el2);setTimeout(finish,750);
+            },FAST?400:1000);
+          }else setTimeout(next,FAST?120:350);
+          return;
+        }
+        el2.insertBefore(document.createTextNode(L.x[j]),caret2);
+        if(!FAST&&j%2===0)sTick();j++;setTimeout(ts,FAST?26:55);
+      })();
+    }
   })();
 }
-/* 触碰唤醒 / 点击跳过 */
+ 
+/* ===== 入口 ===== */
 touch.onclick=function(){touch.classList.add('hidden');sBlip();runShow();};
 stage.onclick=function(){finish();};
-if(FAST){touch.classList.add('hidden');
- var ft=document.createElement('div');ft.className='fasttip px';ft.textContent='FAST BOOT · 快速载入';
- document.body.appendChild(ft);
- setTimeout(function(){stage.classList.remove('hidden');runShow();},300);}
+if(FAST){
+  touch.classList.add('hidden');
+  var ft=document.createElement('div');ft.className='fasttip px';ft.textContent='FAST BOOT · 快速载入';
+  document.body.appendChild(ft);
+  setTimeout(function(){stage.classList.remove('hidden');runShow();},300);
+}
 </script>
 </body>
 </html>
