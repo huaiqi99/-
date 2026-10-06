@@ -406,7 +406,6 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
           </div>
           <div class="mp-row">
             <button class="mp-btn" id="mpToggle">▶ 播放</button>
-            <button class="mp-btn" id="mpStop">■ 关闭</button>
             <button class="mp-btn" id="mpUpload">⬆ 上传</button>
           </div>
           <input type="file" id="mpFile" accept="audio/*" multiple style="display:none;">
@@ -703,7 +702,8 @@ try{(function(){
   var IN_SHELL=(function(){try{return window.QLZ_Music&&window.QLZ_Music.inShell&&window.QLZ_Music.inShell();}catch(e){return false;}})();
   function playUrl(btn,name,url,file){
     if(IN_SHELL){try{window.parent.postMessage({type:'qlz:track',url:url,name:name,blob:file||null},'*');}catch(e){}
-      markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';playing=true;mpToggle.textContent='⏸ 暂停';return;}
+      lastUrl=url;lastName=name;playing=true;
+      markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';mpToggle.textContent='■ 关闭音乐';return;}
     if(curBtn===btn&&playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';return;}
     curBtn=btn;markOn(btn);
     status.textContent='正在播放：'+name;
@@ -722,16 +722,21 @@ try{(function(){
     b.onclick=function(){playUrl(b,b.textContent.replace('♪ ','').replace('⬆ ',''),b.getAttribute('data-url'),null);};
   });
   var mpToggle=document.getElementById('mpToggle');
+  var lastUrl='',lastName='';
   mpToggle.onclick=function(){
-    if(IN_SHELL){QLZ_Music.toggle();return;}
-    if(!curBtn){status.textContent='※ 先在列表里点一首曲子。';return;}
-    if(playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';}
-    else{var p=audio.play();playing=true;mpToggle.textContent='⏸ 暂停';if(p&&p.catch)p.catch(function(){});}
-  };
-  document.getElementById('mpStop').onclick=function(){
-    if(IN_SHELL){QLZ_Music.stop();markOn(null);status.textContent='音乐已关闭。';playing=false;mpToggle.textContent='▶ 播放';return;}
-    audio.pause();audio.currentTime=0;playing=false;curBtn=null;mpToggle.textContent='▶ 播放';
-    markOn(null);status.textContent='音乐已关闭。';
+    if(IN_SHELL){
+      if(!playing){if(!lastUrl){status.textContent='※ 先在列表里点一首曲子。';return;}
+        QLZ_Music.play(lastUrl,lastName);playing=true;mpToggle.textContent='■ 关闭音乐';
+        status.textContent='正在播放：'+lastName+'（由壳播放）';}
+      else{QLZ_Music.pause();playing=false;mpToggle.textContent='▶ 播放';status.textContent='音乐已暂停。';}
+      return;
+    }
+    if(!playing){
+      if(curBtn){var p=audio.play();playing=true;mpToggle.textContent='■ 关闭音乐';status.textContent='正在播放…';if(p&&p.catch)p.catch(function(){});}
+      else{status.textContent='※ 先在列表里点一首曲子。';}
+    }else{
+      audio.pause();playing=false;mpToggle.textContent='▶ 播放';status.textContent='音乐已暂停。';
+    }
   };
   document.getElementById('mpUpload').onclick=function(){fileIn.click();};
   fileIn.onchange=function(){
