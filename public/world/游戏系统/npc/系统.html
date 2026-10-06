@@ -117,20 +117,27 @@ body.night .lbox .v{color:var(--ink);}
 .ltag{font-size:.7rem;letter-spacing:2px;color:var(--ink-2);border-top:2px dotted var(--line-soft);padding-top:10px;line-height:1.9;}
 /* 彩带：像素横流 */
 .lsub{font-family:var(--pixel);font-size:.56rem;letter-spacing:2px;color:var(--ink-2);border-top:2px dotted var(--line-soft);border-bottom:2px dotted var(--line-soft);padding:8px 2px;margin:2px 0 10px;}
-.ribbon{height:14px;margin-top:auto;
+.ribbon{height:14px;margin-top:10px;
   background:repeating-linear-gradient(90deg,var(--ribbon-a) 0 14px,transparent 14px 22px,var(--ribbon-b) 22px 36px,transparent 36px 44px,var(--ribbon-c) 44px 52px,transparent 52px 60px);
   animation:rib 7s linear infinite;}
 @keyframes rib{to{background-position:60px 0}}
+.ribbon-end{margin-top:auto;}
 .wxrow{display:flex;align-items:center;gap:10px;font-size:.7rem;letter-spacing:2px;color:var(--ink-2);}
 .wxrow .led{width:9px;height:9px;background:var(--led);animation:breath 2.4s ease-in-out infinite;}
 @keyframes breath{0%,100%{opacity:1}50%{opacity:.2}}
+/* 天气版块：虚线分割 */
+.wxblock{border-top:2px dashed var(--line-soft);border-bottom:2px dashed var(--line-soft);padding:12px 2px;margin:2px 0 10px;}
+.wxblock .k{font-size:.6rem;letter-spacing:3px;color:var(--ink-2);margin-bottom:6px;}
+.wxblock .wxv{font-size:1.05rem;font-weight:700;letter-spacing:2px;color:var(--banner);}
+body.night .wxblock .wxv{color:var(--ink);}
+.wxblock .wxtip{font-size:.62rem;letter-spacing:1px;line-height:1.9;color:var(--ink-2);margin-top:4px;}
  
 /* ---- 右侧内容区 ---- */
 main{padding:24px 26px;background:transparent;display:flex;flex-direction:column;gap:20px;}
 .rhead{display:flex;align-items:center;gap:12px;}
 .rhead::before,.rhead::after{content:"";flex:1;border-top:3px solid var(--line);border-bottom:1px solid var(--line);height:5px;}
-.rhead .t{font-size:.92rem;letter-spacing:5px;font-weight:700;}
-.rhead .t i{font-style:normal;color:var(--banner);font-size:.7rem;letter-spacing:2px;display:block;text-align:center;}
+.rhead .t{font-size:.92rem;letter-spacing:5px;font-weight:700;margin-right:-5px;}
+.rhead .t i{font-style:normal;color:var(--banner);font-size:.7rem;letter-spacing:2px;display:block;text-align:center;margin-right:-2px;}
 /* 黑TIPS条 */
 .tips{background:var(--ink);color:var(--bg);font-size:.68rem;letter-spacing:2px;padding:7px 14px;display:flex;justify-content:space-between;}
 body.night .tips{background:var(--banner);color:var(--banner-ink);}
@@ -142,11 +149,34 @@ body.night .tips{background:var(--banner);color:var(--banner-ink);}
 .banner .bt{font-size:1.25rem;font-weight:700;letter-spacing:4px;}
 .banner .ben{display:block;font-size:.6rem;letter-spacing:3px;opacity:.75;margin-bottom:12px;}
 .banner .bnum{position:absolute;right:136px;top:14px;position:absolute;right:120px;bottom:8px;font-size:.66rem;letter-spacing:2px;text-align:right;opacity:.9;}
-.stamp{color:var(--banner-ink);position:absolute;right:26px;top:46px;transform:translateY(-50%);width:84px;height:84px;border:3px dashed var(--banner-ink);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;letter-spacing:2px;background:color-mix(in srgb,var(--banner) 82%,black);}
-body.night .stamp{background:#7C9CB3;color:#0C365A;border-color:#0C365A;}
+.stamp{color:var(--banner-ink);position:absolute;right:26px;top:46px;transform:translateY(-50%);width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.62rem;letter-spacing:2px;background:color-mix(in srgb,var(--banner) 82%,black);}
+.stamp::before{content:"";position:absolute;inset:0;border:3px dashed var(--banner-ink);border-radius:50%;animation:stampspin 40s linear infinite;}
+@keyframes stampspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+body.night .stamp{background:#7C9CB3;color:#0C365A;}
+body.night .stamp::before{border-color:#0C365A;}
 .stamp b{font-size:1.15rem;}
 .bc-body{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;padding:16px 18px;}
 .btncol{display:flex;flex-direction:column;gap:10px;min-width:110px;}
+/* 声明框：虚线框小板块 */
+.declare{border:2px dashed var(--line-soft);padding:10px 12px;font-size:.6rem;letter-spacing:2px;line-height:2;color:var(--ink-2);margin-top:4px;}
+/* 侧栏音乐/设置按钮（像素风） */
+.lrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start;}
+.side-wrap{position:relative;}
+.side-btn{display:block;text-align:center;text-decoration:none;background:var(--card);color:var(--ink);border:2px solid var(--line);padding:12px 6px;font-size:.82rem;letter-spacing:4px;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s;box-shadow:3px 4px 0 var(--line-soft);}
+.side-btn small{display:block;font-size:.5rem;letter-spacing:2px;color:var(--ink-2);margin-top:3px;}
+.side-btn:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 var(--line-soft);background:var(--banner);color:var(--banner-ink);}
+.side-btn:hover small{color:var(--banner-ink);opacity:.7;}
+.side-btn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 var(--line-soft);}
+/* 音乐下拉面板 */
+.music-panel{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:60;background:var(--card);border:2px solid var(--line);box-shadow:5px 6px 0 var(--line-soft);padding:10px;font-size:.62rem;letter-spacing:1px;}
+.music-panel.open{display:block;}
+.mp-h{font-weight:700;letter-spacing:3px;border-bottom:2px dotted var(--line-soft);padding-bottom:6px;margin-bottom:6px;color:var(--banner);}
+.track-item{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px dotted var(--line-soft);padding:7px 4px;font-family:inherit;font-size:.62rem;letter-spacing:1px;color:var(--ink);cursor:pointer;}
+.track-item:hover,.track-item.on{background:var(--banner);color:var(--banner-ink);}
+.mp-row{display:flex;flex-direction:column;gap:6px;margin:8px 0 6px;}
+.mp-btn{width:100%;text-align:center;background:var(--card);border:2px solid var(--line);color:var(--ink);font-family:inherit;font-size:.66rem;letter-spacing:3px;padding:8px 2px;cursor:pointer;}
+.mp-btn:hover{background:var(--banner);color:var(--banner-ink);border-color:var(--banner);}
+.mp-status{font-size:.56rem;color:var(--ink-2);line-height:1.7;}
 .tback{text-align:center;text-decoration:none;display:block;font-size:.75rem;letter-spacing:2px;background:var(--card);color:var(--ink);border:2px solid var(--line);padding:6px 14px;cursor:pointer;font-family:inherit;}
 .tback:hover{background:var(--banner);color:var(--banner-ink);border-color:var(--banner);}
 .btn{display:block;position:relative;background:var(--btn);color:var(--btn-ink);text-decoration:none;padding:11px 16px;font-size:.8rem;letter-spacing:4px;transition:transform .18s,box-shadow .18s;box-shadow:3px 4px 0 var(--line-soft);}
@@ -154,6 +184,8 @@ body.night .stamp{background:#7C9CB3;color:#0C365A;border-color:#0C365A;}
 .btn::before{content:"";position:absolute;left:16px;right:16px;top:50%;border-top:1px solid color-mix(in srgb,var(--btn-ink) 35%,transparent);}
 .btn:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 var(--line-soft);}
 .btn:active{transform:translate(1px,1px);box-shadow:1px 2px 0 var(--line-soft);}
+/* 蓝色重点按钮（同 .btn 形制与克莱因蓝） */
+.btn-blue{background:var(--btn);color:var(--btn-ink);}
 /* 系统状态轨道（点线+LED） */
 .sys-track{border:2px dotted var(--line-soft);padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
 .track{position:relative;height:10px;margin:6px 0 2px;}
@@ -165,8 +197,22 @@ body.night .track i.on{background:var(--banner);outline-color:var(--card);}
 .sysline b{color:var(--ink);}
  
 /* ---- 模块安家格：图标+名+英文+解释 ---- */
-.modgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.mod{cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.modgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+/* 矩形细虚线框：一框装一按钮（全平台统一） */
+.mod{cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;
+  -webkit-mask:none!important;mask:none!important;background:var(--card);padding:0;
+  border:2px dashed var(--line-soft)!important;clip-path:none!important;filter:none!important;box-shadow:none!important;}
+.mod .rbox-in{-webkit-mask:none!important;mask:none!important;background:none;padding:13px 14px;display:flex;flex-direction:column;gap:6px;min-height:104px;clip-path:none!important;}
+.mod:hover{transform:translate(-2px,-3px);border-color:var(--banner);box-shadow:3px 4px 0 var(--line-soft)!important;}
+.mod:active{transform:translate(1px,2px);box-shadow:none!important;}
+.modgroup{display:contents!important;}
+.bigcard{filter:drop-shadow(5px 7px 0 var(--line-soft));}
+/* 蓝色重点按钮（设定图鉴） */
+.mod.accent .rbox-in{background:var(--banner);color:var(--banner-ink);}
+.mod.accent .me,.mod.accent .md,.mod.accent .no{color:var(--banner-ink);opacity:.75;}
+.mod.accent .md{border-top-color:rgba(255,255,255,.35);}
+.mod.accent{--ic1:var(--banner-ink);--ic2:rgba(255,255,255,.55);}
+.mod.accent:hover{filter:drop-shadow(6px 8px 0 var(--banner));}
 .mod .rbox-in{padding:13px 14px;display:flex;flex-direction:column;gap:6px;min-height:104px;}
 .mod .mt{font-size:.86rem;font-weight:700;letter-spacing:3px;display:flex;align-items:center;gap:8px;}
 .mod .mt svg{flex:none;}
@@ -174,12 +220,6 @@ body.night .track i.on{background:var(--banner);outline-color:var(--card);}
 .mod .md{font-size:.68rem;color:var(--ink-2);line-height:1.7;border-top:1px dashed var(--line-soft);padding-top:6px;}
 .mod .no{position:absolute;top:10px;right:12px;font-size:.56rem;letter-spacing:1px;color:var(--ink-2);}
 .badge{display:inline-block;background:var(--banner);color:var(--banner-ink);font-size:.56rem;padding:1px 6px;letter-spacing:1px;}
-.mod.hv1:hover{transform:translate(-3px,-4px);}
-.mod.hv2:hover{transform:translate(3px,-4px);}
-.mod.hv3:hover{transform:translate(-4px,3px);}
-.mod.hv4:hover{transform:translate(4px,3px);}
-.mod.hv5:hover{transform:translate(0,-5px);}
-.mod:hover{box-shadow:6px 8px 0 var(--line-soft);}
 .modrow .mod .rbox-in{min-height:84px;}
  
 .foot{position:relative;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:2;max-width:1200px;margin:12px auto 24px;display:flex;justify-content:space-between;font-size:.62rem;letter-spacing:2px;color:var(--ink-2);padding:0 16px;}
@@ -187,13 +227,13 @@ body.night .track i.on{background:var(--banner);outline-color:var(--card);}
 @media (max-width:960px){
   .frame{grid-template-columns:1fr;}
   .left{border-right:none;border-bottom:2px solid var(--line);}
-  .banner{padding:14px 16px;}
-  .banner .bnum{position:absolute;right:136px;top:14px;position:static;text-align:left;}
-  .stamp{width:64px;height:64px;right:12px;}
+  .banner{padding:14px 96px 14px 16px;min-height:72px;}
+  .banner .bnum{position:static;text-align:left;}
+  .stamp{width:64px;height:64px;right:12px;top:36px;}
   .bc-body{grid-template-columns:1fr;}
-  .modgrid{grid-template-columns:1fr 1fr;}
+  main{padding:16px 12px;}
+  .modgrid{grid-template-columns:1fr;}
 }
-@media (max-width:560px){.modgrid{grid-template-columns:1fr;}}
 body.night .brand,body.night .tb-left .sub{color:#D6D4C2;}
 body.night .foot{color:#9FB2C6;}
 body.night .lsub{color:#5D6B80;}
@@ -275,12 +315,19 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 @keyframes rib{to{background-position:44px 0}}
 .flicker{animation:wake .5s ease-out 1;}
 @keyframes wake{from{opacity:.25}to{opacity:1}}
+.scanline{position:fixed;left:0;right:0;height:80px;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:99;pointer-events:none;top:-10%;background:linear-gradient(180deg,transparent,rgba(124,156,179,.25),transparent);animation:scanmove 1.3s ease-out forwards;}
+@keyframes scanmove{from{top:-10%}to{top:110%}}
+/* 开屏双光束：碎裂前瞬间，蓝白两道斜光交叉闪过 */
 .fasttip{position:fixed;top:14px;right:16px;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:20;font-size:.6rem;letter-spacing:3px;color:var(--ink-2);}
  
 /* ===== 整页消散 ===== */
 .shardwrap{position:fixed;inset:0;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:90;pointer-events:none;}
 .shardwrap i{position:absolute;background:var(--bg);animation-fill-mode:forwards;}
-@keyframes shfly{to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.6);opacity:0;}}
+@keyframes shfly{
+  0%{opacity:1;transform:translate(0,0) rotate(0) scale(1);}
+  30%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.65);}
+}
 #introov.ovfade{opacity:0;transition:opacity .5s ease;}
 </style>
 </head>
@@ -292,7 +339,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 <div class="bgwrap"><i class="bggrid g-red"></i><i class="bggrid g-blue"></i></div>
  
 <div id="touch">
-  <div class="px" style="position:fixed;left:12px;bottom:12px;font-size:10px;opacity:.45;letter-spacing:1px;">TOUCH BUILD 1006-4 · 全屏点触版</div>
+  <div class="px" style="position:fixed;left:12px;bottom:12px;font-size:10px;opacity:.45;letter-spacing:1px;">TOUCH BUILD 1006-5 · 矩形虚线框版</div>
   <div class="t-ring"><i></i></div>
   <div class="t-text px">【 触碰以建立连接 】</div>
   <div class="t-sub px">TOUCH TO ESTABLISH LINK</div>
@@ -318,26 +365,47 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
   </div>
   <div class="btncol">
     <button id="themeBtn" class="px">☾ 夜间</button>
-    <a class="tback px" href="./index.html">◂ 返回</a>
+    <a class="tback px" href="./https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html">◂ 返回</a>
   </div>
 </div>
-<div class="ticker"><span class="ticker-in px" id="tk"></span></div>
+<div class="ticker"><span class="ticker-in px" id="tk">【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　</span></div>
  
 <div class="frame">
   <!-- 左：身份栏 -->
   <aside class="left">
     <div class="ltitle">千律州<small>QIANLVZHOU · SYSTEM TERMINAL</small></div>
     <div class="drule"></div>
-    <div class="lbox"><div class="k px">CURRENT CHAPTER</div><div class="v">※ 第※章</div></div>
+    <div class="lbox"><div class="k px">CURRENT CHAPTER</div><div class="v">第 1 章</div></div>
     <div class="lrow">
-      <div class="lbox"><div class="k px">NOTICE · 公告</div><div class="v px" style="font-size:1.1rem;">※ 未读 2</div></div>
-      <div class="lbox"><div class="k px">MEMOIR · 残章</div><div class="v px" style="font-size:1.1rem;">※ 已录 5</div></div>
+      <div class="side-wrap">
+        <a class="side-btn px" id="musicBtn" href="javascript:void(0)" onclick="__musicToggle&&__musicToggle(event)"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="4" y="0" width="1" height="5" fill="currentColor"/><rect x="5" y="0" width="2" height="1" fill="currentColor"/><rect x="2" y="4" width="2" height="3" fill="currentColor"/><rect x="1" y="5" width="1" height="2" fill="currentColor"/><rect x="3" y="6" width="1" height="1" fill="currentColor"/></svg> 音乐<br><small>MUSIC</small></a>
+        <div class="music-panel px" id="musicPanel">
+          <div class="mp-h">♪ MUSIC DECK</div>
+          <div id="trackList">
+            <button class="track-item px" data-url="音乐1.mp3">♪ 音乐1</button>
+            <button class="track-item px" data-url="音乐2.mp3">♪ 音乐2</button>
+            <button class="track-item px" data-url="音乐3.mp3">♪ 音乐3</button>
+          </div>
+          <div class="mp-row">
+            <button class="mp-btn" id="mpToggle">▶ 播放</button>
+            <button class="mp-btn" id="mpStop">■ 关闭</button>
+            <button class="mp-btn" id="mpUpload">⬆ 上传</button>
+          </div>
+          <input type="file" id="mpFile" accept="audio/*" multiple style="display:none;">
+          <div class="mp-status" id="mpStatus">※ 预设曲目待站长接入音频文件</div>
+        </div>
+      </div>
+      <a class="side-btn px" id="settingBtn" href="https://sfile.chatglm.cn/workspace/file/30/30b32a568e.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
+    </div>
+    <div class="wxblock px">
+      <div class="k">WEATHER · 天气系统</div>
+      <div class="wxv" id="wxVal">—</div>
+      <div class="wxtip" id="wxTip"></div>
     </div>
     <div class="ribbon"></div>
     <div class="ltag px">※ 标语占位：留给你亲笔。<br>旧日的名字，不可言说。</div>
     <div class="lsub px">SYS://LINK ESTABLISHED — ALL MODULES STANDING BY.</div>
-    <div class="wxrow px"><span class="led"></span><span>系统 · 在线期</span><span style="margin-left:auto;">※ 天气占位</span></div>
-    <div class="ribbon"></div>
+    <div class="ribbon ribbon-end"></div>
   </aside>
  
   <!-- 右：内容区 -->
@@ -350,19 +418,20 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
       <div class="banner">
         <span class="bt">剧情主线</span>
         <span class="ben px">STORY SIMULATION · MAIN LINE</span>
-        <span class="bnum px">※ 当前 CHAPTER · 占位</span>
+        <span class="bnum px">CHAPTER 01</span>
       </div>
       <div class="stamp px"><span>存档</span><b>3</b></div>
       <div class="bc-body">
         <div class="btncol">
           <a class="btn px" href="#" data-en="START">▶ 进入模拟</a>
           <a class="btn px" href="#" data-en="SAVE / LOAD">▤ 存档管理</a>
+          <div class="declare px">◆ 本模拟器改编自站长原创小说，仅供自娱与同好试玩。<br>◆ API 密钥请在「设置」中填写。<br>◆ 祝你在千律州，一切顺利。</div>
         </div>
         <div class="sys-track px">
           <span style="font-size:.62rem;letter-spacing:2px;color:var(--ink-2);">SYSTEM CYCLE</span>
           <div class="track"><i class="on"></i><i></i><i></i><i></i><i></i></div>
           <div class="sysline"><span>在线期 <b>●</b></span><span>休眠期 ○</span></div>
-          <div class="sysline"><span>※ 进度占位</span><span>30 / 80</span></div>
+          <div class="sysline"><span>段深泉 · 好感度</span><span><b>30</b> / 80</span></div>
         </div>
       </div>
     </div></div>
@@ -381,6 +450,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
             <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="6" height="5" fill="var(--ic1)"/><rect x="2" y="6" width="1" height="1" fill="var(--ic1)"/><rect x="3" y="5" width="2" height="2" fill="var(--ic1)"/><rect x="2" y="2" width="4" height="2" fill="var(--ic2)"/></svg>通讯终端<span class="badge">1</span></div>
             <div class="me px">TERMINAL · 重要功能</div>
             <div class="md px">与重要之人连线，与系统对话。※ 名单后置，此入口未来升为独立页面。</div>
+            <a class="btn px ctabtn" href="#" data-en="OPEN TERMINAL" style="margin-top:8px;text-align:center;">◈ 打开通讯终端</a>
           </div></div>
           <div class="mod rbox hv2"><div class="rbox-in"><span class="no px">02</span>
             <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><circle cx="4" cy="3" r="2" fill="var(--ic1)"/><rect x="2" y="5" width="4" height="2" fill="var(--ic1)"/></svg>人物资料</div>
@@ -435,10 +505,11 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
       <div class="stamp px"><span>残章</span><b>5</b></div>
       <div class="bc-body" style="grid-template-columns:1fr;">
         <div class="modgrid" style="padding:0;">
-          <div class="mod rbox hv3"><div class="rbox-in"><span class="no px">07</span>
+          <div class="mod rbox" style="grid-column:1/-1;"><div class="rbox-in"><span class="no px">07</span>
             <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="3" height="6" fill="var(--ic1)"/><rect x="4" y="1" width="3" height="6" fill="var(--ic1)"/><rect x="1" y="3" width="6" height="1" fill="var(--ic2)"/></svg>设定图鉴</div>
-            <div class="me px">ARCHIVE</div>
-            <div class="md px">名词·地点·事物的辞典。</div>
+            <div class="me px">ARCHIVE · 世界观辞典</div>
+            <div class="md px">名词·地点·事物的辞典。※ 词条后置，此入口未来升为独立页面。</div>
+            <a class="btn px btn-blue" href="#" data-en="OPEN ARCHIVE" style="margin-top:8px;text-align:center;">◈ 打开设定图鉴</a>
           </div></div>
           <div class="mod rbox hv4"><div class="rbox-in"><span class="no px">08</span>
             <div class="mt px"><svg width="16" height="16" viewBox="0 0 8 8" shape-rendering="crispEdges"><rect x="1" y="1" width="6" height="1" fill="var(--ic1)"/><rect x="2" y="2" width="4" height="1" fill="var(--ic1)"/><rect x="3" y="3" width="2" height="2" fill="var(--ic1)"/><rect x="2" y="5" width="4" height="1" fill="var(--ic1)"/><rect x="1" y="6" width="6" height="1" fill="var(--ic1)"/></svg>记忆残章</div>
@@ -467,6 +538,25 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 </div>
  
 <script>
+/* [0] 老内核垫片必须最先落地：WAAPI 缺失时给空实现，防止后续脚本全灭 */
+if(typeof Element!=='undefined'&&!Element.prototype.animate){
+  Element.prototype.animate=function(){return{cancel:function(){},pause:function(){},play:function(){},finished:{then:function(){},catch:function(){}}};};
+}
+/* [0] 音乐开关联动兜底：任何后续脚本报错都不影响下拉 */
+window.__musicToggle=window.__musicToggle||function(){
+  var p=document.getElementById('musicPanel');if(p)p.classList.toggle('open');
+};
+/* [0] 报错上屏（全局第一现场）：点击关闭，8秒自动消失 */
+window.addEventListener('error',function(ev){
+  try{
+    var d=document.createElement('div');
+    d.style.cssText='position:fixed;left:0;right:0;bottom:0;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:9999;background:#300;color:#fbb;font:12px/1.5 monospace;padding:6px 10px;word-break:break-all;cursor:pointer;';
+    d.textContent='[ERR] '+(ev.message||'unknown')+' @'+(ev.lineno||'?')+'（点击关闭）';
+    d.onclick=function(){if(d.parentNode)d.parentNode.removeChild(d);};
+    document.body.appendChild(d);
+    setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},8000);
+  }catch(e){}
+});
 /* ===== 内联入口兜底（必须最先定义：就算后面的脚本炸了，全屏点触也照常工作） ===== */
 var __introStarted=false;
 function __introFinish(){
@@ -510,6 +600,9 @@ function __introGate(e){
 var msg='【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　';
 document.getElementById('tk').textContent=msg+msg;
 var btn=document.getElementById('themeBtn');
+ 
+ 
+ 
 btn.onclick=function(){
   document.body.classList.toggle('night');
   var n=document.body.classList.contains('night');
@@ -526,12 +619,137 @@ window.addEventListener('storage',function(e){if(e.key!=='theme')return;
 /* 载入扫描线 */
 function hubScan(){
   var sc=document.createElement('div');
-  sc.style.cssText='position:fixed;left:0;right:0;height:80px;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:99;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(124,156,179,.25),transparent);top:-10%';
+  sc.className='scanline';
   document.body.appendChild(sc);
-  sc.animate([{top:'-10%'},{top:'110%'}],{duration:1300,easing:'ease-out'});
   setTimeout(function(){sc.remove();},1400);
 }
 </script>
+<script>/* 独立模块：天气 */
+try{/* 天气：每次进入随机（氛围词+生活提示，不新增世界观设定） */
+(function(){
+  var el=document.getElementById('wxVal'),tip=document.getElementById('wxTip');
+  if(!el)return;
+  var WX=[
+    ['晴 · 风平','今天天气很好，适合去做任务。'],
+    ['多云 · 云低','云层压得很低，出门记得看路。'],
+    ['细雨 · 潮','下雨了，注意带伞。'],
+    ['雾 · 视线三尺','雾很重，别走远，通讯可能断续。'],
+    ['雷雨 · 电流不稳','雷雨天气，系统信号可能不稳定。'],
+    ['阴 · 无风','天阴无风，适合睡个回笼觉。']
+  ];
+  var w=WX[Math.floor(Math.random()*WX.length)];
+  el.textContent=w[0];tip.textContent=w[1];
+})();}catch(e){}
+</script>
+<script>/* 独立模块：音乐 */
+/* ===== 音乐系统：预设占位 + 上传（IndexedDB 持久化）——整体容错，绝不拖死其他功能 ===== */
+try{(function(){
+  var panel=document.getElementById('musicPanel'),list=document.getElementById('trackList');
+  var status=document.getElementById('mpStatus'),fileIn=document.getElementById('mpFile');
+  if(!panel)return;
+  /* 开关函数必须最先注册：后面任何数据库/音频初始化出错都不能影响下拉 */
+  window.__musicToggle=function(e){
+    if(e&&e.stopPropagation)e.stopPropagation();
+    panel.classList.toggle('open');
+  };
+  var audio=new Audio();audio.volume=.7;var cur=-1,playing=false;
+  var tracks=[]; /* {name,url} */
+  var curBtn=null,playing=false;
+  function markOn(btn){
+    [].slice.call(list.querySelectorAll('.track-item')).forEach(function(x){x.classList.toggle('on',x===btn);});
+  }
+  function playUrl(btn,name,url){
+    if(curBtn===btn&&playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';return;}
+    curBtn=btn;markOn(btn);
+    status.textContent='正在播放：'+name;
+    try{
+      var p=audio.play();audio.src=url;audio.play();
+      playing=true;mpToggle.textContent='⏸ 暂停';
+      if(p&&p.catch)p.catch(function(){});
+    }catch(e){}
+  }
+  audio.addEventListener('error',function(){
+    if(curBtn){var n=curBtn.textContent.replace('⬆ ','').replace('♪ ','');
+      status.textContent='※「'+n+'」的音频文件还没上传（需与页面同目录）。';
+      audio.pause();playing=false;mpToggle.textContent='▶ 播放';}
+  });
+  [].slice.call(list.querySelectorAll('.track-item')).forEach(function(b){
+    b.onclick=function(){playUrl(b,b.textContent.replace('♪ ','').replace('⬆ ',''),b.getAttribute('data-url'));};
+  });
+  var mpToggle=document.getElementById('mpToggle');
+  mpToggle.onclick=function(){
+    if(!curBtn){status.textContent='※ 先在列表里点一首曲子。';return;}
+    if(playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';}
+    else{var p=audio.play();playing=true;mpToggle.textContent='⏸ 暂停';if(p&&p.catch)p.catch(function(){});}
+  };
+  document.getElementById('mpStop').onclick=function(){
+    audio.pause();audio.currentTime=0;playing=false;curBtn=null;mpToggle.textContent='▶ 播放';
+    markOn(null);status.textContent='音乐已关闭。';
+  };
+  document.getElementById('mpUpload').onclick=function(){fileIn.click();};
+  fileIn.onchange=function(){
+    var files=fileIn.files;if(!files.length)return;
+    openDB(function(db){
+      try{
+        var tx=db.transaction('tracks','readwrite');
+        Array.prototype.forEach.call(files,function(f){tx.objectStore('tracks').put(f);});
+        tx.oncomplete=loadUploaded;
+      }catch(e){status.textContent='※ 音乐库打开失败：'+e.message;}
+    });
+    fileIn.value='';
+  };
+  function openDB(cb){
+    var rq=https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.htmledDB.open('qlz_music',1);
+    rq.onupgradeneeded=function(e){
+      var d=e.target.result;
+      if(!d.objectStoreNames.contains('tracks'))d.createObjectStore('tracks',{autoIncrement:true});
+    };
+    rq.onsuccess=function(e){
+      var db=e.target.result;
+      if(!db.objectStoreNames.contains('tracks')){ /* 旧库缺仓：升版本重建 */
+        db.close();
+        var rq2=https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.htmledDB.open('qlz_music',db.version+1);
+        rq2.onupgradeneeded=function(ev){
+          var d2=ev.target.result;
+          if(!d2.objectStoreNames.contains('tracks'))d2.createObjectStore('tracks',{autoIncrement:true});
+        };
+        rq2.onsuccess=function(ev){cb(ev.target.result);};
+        rq2.onerror=function(){};
+      }else cb(db);
+    };
+    rq.onerror=function(){};
+  }
+  function loadUploaded(){
+    openDB(function(db){
+      try{
+        var tx=db.transaction('tracks','readonly').objectStore('tracks').openCursor();
+        tx.onsuccess=function(ev){
+          var c=ev.target.result;
+          if(c){var f=c.value;addUploaded(f.name,URL.createObjectURL(f));c.continue();}
+          void 0;
+        };
+      }catch(e){}
+    });
+  }
+  function addUploaded(name,url){
+    var old=list.querySelectorAll('.track-item');
+    for(var i=0;i<old.length;i++)if(old[i].textContent.replace('⬆ ','')===name)return;
+    var b=document.createElement('button');b.className='track-item px';
+    b.textContent='⬆ '+name;
+    b.onclick=function(){playUrl(b,name,url);};
+    list.appendChild(b);
+  }
+  if(window.https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.htmledDB){try{loadUploaded();}catch(e){}}
+  else{status.textContent='※ 本浏览器不支持本地音乐库，上传不可用。';}
+  var mBtn=document.getElementById('musicBtn');
+  document.addEventListener('click',function(e){
+    if(!panel.classList.contains('open'))return;
+    var inBtn=mBtn.contains(e.target),inPanel=panel.contains(e.target);
+    if(!inBtn&&!inPanel)panel.classList.remove('open');
+  },true);
+})();}catch(e){}
+</script>
+<script>/* 声明框：固定于存档管理下方，任何端不搬移 */</script>
 <script>
 /* ===== 环境 ===== */
 var FAST=false;
@@ -614,11 +832,11 @@ function pageShatter(){
     var dy=(r-(rows-1)/2)*(14+Math.random()*22);
     d.style.setProperty('--dx',dx+'px');d.style.setProperty('--dy',dy+'px');
     d.style.setProperty('--rot',(Math.random()*16-8)+'deg');
-    d.style.animation='shfly '+(260+Math.random()*220)+'ms ease-in '+(Math.random()*110)+'ms forwards';
+    d.style.animation='shfly '+(420+Math.random()*380)+'ms cubic-bezier(.2,.6,.35,1) '+(Math.random()*220)+'ms forwards';
     wrap.appendChild(d);
   }
   document.body.appendChild(wrap);
-  setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},1400);
+  setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},1900);
 }
  
 /* 就绪：通知壳 / 独立预览则跳转 */
@@ -684,16 +902,7 @@ function runShow(){
   })();
 }
  
-/* ===== 入口（移动端加固版：click/touchend 双绑定 + 容错，音效失败不阻断进入） ===== */
-/* 报错上屏：真机出问题时把错误直接画在屏幕上，方便回报 */
-window.addEventListener('error',function(ev){
-  try{
-    var d=document.createElement('div');
-    d.style.cssText='position:fixed;left:0;right:0;bottom:0;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:9999;background:#300;color:#fbb;font:12px/1.5 monospace;padding:6px 10px;word-break:break-all;';
-    d.textContent='[ERR] '+(ev.message||'unknown')+' @'+(ev.lineno||'?');
-    document.body.appendChild(d);
-  }catch(e){}
-});
+/* ===== 入口（移动端加固版） ===== */
 if(FAST){
   touch.classList.add('hidden');
   var ft=document.createElement('div');ft.className='fasttip px';ft.textContent='FAST BOOT · 快速载入';
