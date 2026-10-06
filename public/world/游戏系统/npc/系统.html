@@ -74,7 +74,7 @@ body{background:var(--bg);color:var(--ink);font-family:"Georgia","Songti SC",ser
     radial-gradient(circle at 100% 100%,transparent 10px,#000 10.5px) 100% 100%/51% 51% no-repeat;}
  
 /* ===== 顶部播报带（回收自旧版） ===== */
-.topbar{position:relative;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:2;max-width:1200px;margin:14px auto 10px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;}
+.topbar{position:relative;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:50;max-width:1200px;margin:14px auto 10px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;}
 .tb-left{display:flex;flex-direction:column;gap:4px;}
 .tb-left .sub{font-family:var(--pixel);font-size:.58rem;letter-spacing:3px;color:var(--ink-2);}
 .tb-left{display:flex;flex-direction:column;gap:5px;}
@@ -157,6 +157,14 @@ body.night .stamp::before{border-color:#0C365A;}
 .stamp b{font-size:1.15rem;}
 .bc-body{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;padding:16px 18px;}
 .btncol{display:flex;flex-direction:column;gap:10px;min-width:110px;}
+/* 系统汉堡菜单：右上角收拢夜间/返回 */
+.sysmenu-wrap{position:relative;}
+.sysmenu-btn{width:38px;height:38px;background:var(--card);color:var(--ink);border:2px solid var(--line);font-size:1rem;line-height:1;cursor:pointer;font-family:inherit;box-shadow:3px 4px 0 var(--line-soft);transition:transform .18s,box-shadow .18s;}
+.sysmenu-btn:hover{transform:translate(-2px,-3px);box-shadow:5px 6px 0 var(--line-soft);background:var(--banner);color:var(--banner-ink);}
+.sysmenu-btn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 var(--line-soft);}
+.sysmenu-panel{display:none;position:fixed;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:99999;background:var(--card);border:2px solid var(--line);box-shadow:5px 6px 0 var(--line-soft);padding:10px;min-width:130px;flex-direction:column;gap:8px;}
+.sysmenu-panel.open{display:flex;}
+.sysmenu-panel #themeBtn,.sysmenu-panel .tback{width:100%;text-align:center;}
 /* 声明框：虚线框小板块 */
 .declare{border:2px dashed var(--line-soft);padding:10px 12px;font-size:.6rem;letter-spacing:2px;line-height:2;color:var(--ink-2);margin-top:4px;}
 /* 侧栏音乐/设置按钮（像素风） */
@@ -188,6 +196,14 @@ body.night .stamp::before{border-color:#0C365A;}
 .btn-blue{background:var(--btn);color:var(--btn-ink);}
 /* 系统状态轨道（点线+LED） */
 .sys-track{border:2px dotted var(--line-soft);padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
+.sys-cap{display:flex;align-items:center;gap:8px;font-size:.62rem;letter-spacing:2px;color:var(--ink-2);}
+.sys-cap .led{width:8px;height:8px;background:var(--led);animation:breath 2.4s ease-in-out infinite;}
+.sys-cap .sys-cycle{margin-left:auto;font-size:.56rem;letter-spacing:2px;}
+/* 好感度动态条：克莱因蓝→勃艮第红渐变，数值每次进入小幅随机波动 */
+.favbar{height:12px;border:2px solid var(--line);background:var(--card-2);position:relative;overflow:hidden;}
+.favbar i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#222C6E,#550F10);transition:width 1.1s cubic-bezier(.3,.7,.3,1) .35s;}
+body.night .favbar{background:#0C365A;}
+body.night .favbar i{background:linear-gradient(90deg,#222C6E,#A8443E);}
 .track{position:relative;height:10px;margin:6px 0 2px;}
 .track i{position:absolute;top:2px;width:6px;height:6px;background:var(--line-soft);}
 .track i:nth-child(1){left:0}.track i:nth-child(2){left:25%}.track i:nth-child(3){left:50%}.track i:nth-child(4){left:75%}.track i:nth-child(5){right:0}
@@ -320,13 +336,16 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 /* 开屏双光束：碎裂前瞬间，蓝白两道斜光交叉闪过 */
 .fasttip{position:fixed;top:14px;right:16px;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:20;font-size:.6rem;letter-spacing:3px;color:var(--ink-2);}
  
-/* ===== 整页消散 ===== */
-.shardwrap{position:fixed;inset:0;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:90;pointer-events:none;}
-.shardwrap i{position:absolute;background:var(--bg);animation-fill-mode:forwards;}
-@keyframes shfly{
-  0%{opacity:1;transform:translate(0,0) rotate(0) scale(1);}
-  30%{opacity:1;}
-  100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(.65);}
+/* ===== 整页消散：单元素棋盘格mask像素溶解（性能友好，96节点→1节点） ===== */
+#introov.pixel{
+  -webkit-mask-image:repeating-conic-gradient(#000 0 25%,transparent 0 50%);
+  mask-image:repeating-conic-gradient(#000 0 25%,transparent 0 50%);
+  animation:pixeldissolve .8s steps(10) forwards;
+}
+@keyframes pixeldissolve{
+  from{-webkit-mask-size:14px 14px;mask-size:14px 14px;opacity:1;}
+  60%{opacity:1;}
+  to{-webkit-mask-size:180px 180px;mask-size:180px 180px;opacity:0;}
 }
 #introov.ovfade{opacity:0;transition:opacity .5s ease;}
 </style>
@@ -363,9 +382,8 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
     <div class="brand"><b>◆</b> QIANLVZHOU // 千律州系统终端</div>
     <div class="tsub px">DREAMLINK TERMINAL v0.7 · ALL MODULES STANDING BY</div>
   </div>
-  <div class="btncol">
-    <button id="themeBtn" class="px">☾ 夜间</button>
-    <a class="tback px" href="./index.html">◂ 返回</a>
+  <div class="sysmenu-wrap">
+    <button class="sysmenu-btn px" onclick="__sysToggle&&__sysToggle(event)" title="系统菜单">≡</button>
   </div>
 </div>
 <div class="ticker"><span class="ticker-in px" id="tk">【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　</span></div>
@@ -395,7 +413,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
           <div class="mp-status" id="mpStatus">※ 预设曲目待站长接入音频文件</div>
         </div>
       </div>
-      <a class="side-btn px" id="settingBtn" href="设置.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
+      <a class="side-btn px" id="settingBtn" href="./设置.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
     </div>
     <div class="wxblock px">
       <div class="k">WEATHER · 天气系统</div>
@@ -403,7 +421,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
       <div class="wxtip" id="wxTip"></div>
     </div>
     <div class="ribbon"></div>
-    <div class="ltag px">※ 守护以抹除为价，铭记以空白为碑。<br>旧日的名字，不可言说。</div>
+    <div class="ltag px">※ 标语占位：留给你亲笔。<br>旧日的名字，不可言说。</div>
     <div class="lsub px">SYS://LINK ESTABLISHED — ALL MODULES STANDING BY.</div>
     <div class="ribbon ribbon-end"></div>
   </aside>
@@ -411,7 +429,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
   <!-- 右：内容区 -->
   <main>
     <div class="rhead"><span class="t px">系统终端<i>SYSTEM CONSOLE</i></span></div>
-    <div class="tips px"><span>TIPS ※ 降临千律州第四年，系统已重启，主线不再接受拒绝。</span><span>SYS://ONLINE</span></div>
+    <div class="tips px"><span>TIPS ※ 此处放系统播报或操作提示，文案留白</span><span>SYS://ONLINE</span></div>
  
     <!-- 大卡1：剧情主线 -->
     <div class="bigcard rbox"><div class="rbox-in" style="padding:0;">
@@ -425,13 +443,12 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
         <div class="btncol">
           <a class="btn px" href="#" data-en="START">▶ 进入模拟</a>
           <a class="btn px" href="#" data-en="SAVE / LOAD">▤ 存档管理</a>
-          <div class="declare px">◆ 本模拟器改编自站长原创小说《这破游戏npc太能打了》，仅供自娱与同好试玩。<br>◆ API 密钥请在「设置」中填写。<br>◆ 祝你在千律州，一切顺利。</div>
+          <div class="declare px">◆ 本模拟器改编自站长原创小说，仅供自娱与同好试玩。<br>◆ API 密钥请在「设置」中填写。<br>◆ 祝你在千律州，一切顺利。</div>
         </div>
         <div class="sys-track px">
-          <span style="font-size:.62rem;letter-spacing:2px;color:var(--ink-2);">SYSTEM CYCLE</span>
-          <div class="track"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="sysline"><span>在线期 <b>●</b></span><span>休眠期 ○</span></div>
-          <div class="sysline"><span>段深泉 · 好感度</span><span><b>30</b> / 80</span></div>
+          <div class="sys-cap"><span class="led"></span>系统 · 在线期<span class="sys-cycle">CYCLE 01</span></div>
+          <div class="sysline"><span>段深泉 · 好感度</span><span><b id="favVal">--</b> / 80</span></div>
+          <div class="favbar"><i id="favFill"></i></div>
         </div>
       </div>
     </div></div>
@@ -599,18 +616,43 @@ function __introGate(e){
 });
 var msg='【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　';
 document.getElementById('tk').textContent=msg+msg;
+/* 好感度：基准30，每次进入在28~33间小幅波动，进度条延迟生长 */
+(function(){
+  var v=document.getElementById('favVal'),f=document.getElementById('favFill');
+  if(!f)return;
+  var base=30,dev=base-2+Math.floor(Math.random()*6); /* 28~33 */
+  v.textContent=dev;
+  setTimeout(function(){f.style.width=(dev/80*100)+'%';},80);
+})();
+/* 系统菜单（汉堡）：夜间/返回收拢 */
+window.__sysToggle=function(){
+  var p=document.getElementById('sysPanel');if(!p)return;
+  if(!p.classList.contains('open')){
+    var b=document.querySelector('.sysmenu-btn').getBoundingClientRect();
+    p.style.top=(b.bottom+6)+'px';
+    p.style.right=Math.max(8,innerWidth-b.right)+'px';
+  }
+  p.classList.toggle('open');
+};
+document.addEventListener('click',function(e){
+  var p=document.getElementById('sysPanel');
+  if(p&&p.classList.contains('open')&&!p.contains(e.target)&&!(e.target.closest&&e.target.closest('.sysmenu-btn')))p.classList.remove('open');
+},true);
+addEventListener('scroll',function(){var p=document.getElementById('sysPanel');if(p)p.classList.remove('open');},true);
 var btn=document.getElementById('themeBtn');
  
  
  
-btn.onclick=function(){
+/* 夜间切换：事件委托（按钮在body末尾，脚本执行时还未解析） */
+document.addEventListener('click',function(e){
+  if(!e.target||e.target.id!=='themeBtn')return;
   document.body.classList.toggle('night');
   var n=document.body.classList.contains('night');
-  btn.textContent=n?'☀ 日间':'☾ 夜间';
-  try{localStorage.setItem('theme',JSON.stringify({value:n?'dark':'light'}));}catch(e){}
-};
+  e.target.textContent=n?'☀ 日间':'☾ 夜间';
+  try{localStorage.setItem('theme',JSON.stringify({value:n?'dark':'light'}));}catch(err){}
+});
 try{var t=JSON.parse(localStorage.getItem('theme')||'null');
-  if(t&&t.value==='dark'){document.body.classList.add('night');btn.textContent='☀ 日间';}}catch(e){}
+  if(t&&t.value==='dark'){document.body.classList.add('night');}}catch(e){}
 window.addEventListener('storage',function(e){if(e.key!=='theme')return;
   try{var t2=JSON.parse(e.newValue||'null');var n=!!(t2&&t2.value==='dark');
     document.body.classList.toggle('night',n);
@@ -815,28 +857,10 @@ function scatterFinal(el){
   setTimeout(function(){try{sWhoosh();}catch(e){}},150);
 }
  
-/* 整页消散：米白碎块+零星红蓝点缀 */
+/* 整页消散：单层像素溶解 */
 function pageShatter(){
-  var wrap=document.createElement('div');wrap.className='shardwrap';
-  var cols=12,rows=8,cw=100/cols,ch=100/rows;
-  for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
-    var d=document.createElement('i');
-    var pick=(r*7+c*3)%11;
-    if(pick===0)d.style.background='var(--red)';
-    else if(pick===5)d.style.background='var(--line)';
-    else{d.style.background='var(--bg)';d.style.border='1px solid var(--line-soft)';}
-    d.style.width=(cw*.62)+'%';d.style.height=(ch*.62)+'%';
-    d.style.left='calc('+(c*cw)+'% + '+(cw*.19)+'%)';
-    d.style.top='calc('+(r*ch)+'% + '+(ch*.19)+'%)';
-    var dx=(c-(cols-1)/2)*(14+Math.random()*22);
-    var dy=(r-(rows-1)/2)*(14+Math.random()*22);
-    d.style.setProperty('--dx',dx+'px');d.style.setProperty('--dy',dy+'px');
-    d.style.setProperty('--rot',(Math.random()*16-8)+'deg');
-    d.style.animation='shfly '+(420+Math.random()*380)+'ms cubic-bezier(.2,.6,.35,1) '+(Math.random()*220)+'ms forwards';
-    wrap.appendChild(d);
-  }
-  document.body.appendChild(wrap);
-  setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},1900);
+  var ov=document.getElementById('introov');
+  if(ov)ov.classList.add('pixel');
 }
  
 /* 就绪：通知壳 / 独立预览则跳转 */
@@ -850,7 +874,7 @@ function finish(){
   try{document.body.classList.remove('intro-active');}catch(e){}
   try{hubScan();}catch(e){}
   try{var ov=document.getElementById('introov');ov.classList.add('ovfade');
-    setTimeout(function(){ov.remove();},650);}catch(e){}
+    setTimeout(function(){ov.remove();},900);}catch(e){}
   try{if(window.parent!==window)parent.postMessage({type:'intro:done'},'*');}catch(e){}
 }
  
@@ -909,6 +933,16 @@ if(FAST){
   document.body.appendChild(ft);
   setTimeout(function(){stage.classList.remove('hidden');runShow();},300);
 }
+</script>
+<div class="sysmenu-panel" id="sysPanel">
+  <button id="themeBtn" class="px">☾ 夜间</button>
+  <a class="tback px" href="./index.html">◂ 返回</a>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('themeBtn');
+  if(b)b.textContent=document.body.classList.contains('night')?'☀ 日间':'☾ 夜间';
+})();
 </script>
 </body>
 </html>
