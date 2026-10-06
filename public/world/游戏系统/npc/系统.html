@@ -237,6 +237,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
  
 /* ===== 阶段0：触碰唤醒 ===== */
 #touch{position:fixed;inset:0;z-https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;cursor:pointer;}
+#touch *,#stage *{pointer-events:none;}
 .t-ring{width:120px;height:120px;border:2px solid var(--line);position:relative;animation:ringpulse 2.4s ease-in-out infinite;}
 .t-ring::before,.t-ring::after{content:"";position:absolute;inset:-14px;border:2px dashed var(--line-soft);animation:ringspin 12s linear infinite;}
 .t-ring::after{inset:-28px;border-color:var(--line-soft);animation-direction:reverse;opacity:.6;}
@@ -286,7 +287,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 <body class="intro-active">
 <div class="bgwrap"><div class="blob a"></div><div class="blob b"></div></div>
  
-<div id="introov">
+<div id="introov" onclick="__introTap(event)">
   <i class="ovgrid g-red"></i><i class="ovgrid g-blue"></i>
 <div class="bgwrap"><i class="bggrid g-red"></i><i class="bggrid g-blue"></i></div>
  
@@ -296,7 +297,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
   <div class="t-sub px">TOUCH TO ESTABLISH LINK</div>
 </div>
  
-<div id="stage" class="hidden">
+<div id="stage" class="hidden" onclick="__stageTap(event)">
   <div id="win">
     <div class="winbar px"><span class="dots"><i></i><i></i><i></i></span>SYS://BINDING<span class="wno">№ 0x0721</span></div>
     <div id="winbox">
@@ -465,6 +466,26 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 </div>
  
 <script>
+/* ===== 内联入口兜底（必须最先定义：就算后面的脚本炸了，全屏点触也照常工作） ===== */
+var __introStarted=false;
+function __introFinish(){
+  try{finish();}catch(_){
+    try{document.body.classList.remove('intro-active');}catch(_){}
+    var ov=document.getElementById('introov');if(ov)ov.style.display='none';
+    try{localStorage.setItem('intro_seen','1');}catch(_){}
+  }
+}
+function __introTap(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  var t=document.getElementById('touch');if(t)t.classList.add('hidden');
+  if(__introStarted)return;__introStarted=true;
+  try{sBlip();}catch(_){}
+  try{runShow();}catch(_){__introFinish();}
+}
+function __stageTap(e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  __introFinish();
+}
 var msg='【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　';
 document.getElementById('tk').textContent=msg+msg;
 var btn=document.getElementById('themeBtn');
