@@ -292,6 +292,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 <div class="bgwrap"><i class="bggrid g-red"></i><i class="bggrid g-blue"></i></div>
  
 <div id="touch">
+  <div class="px" style="position:fixed;left:12px;bottom:12px;font-size:10px;opacity:.45;letter-spacing:1px;">TOUCH BUILD 1006-3 · 全屏点触版</div>
   <div class="t-ring"><i></i></div>
   <div class="t-text px">【 触碰以建立连接 】</div>
   <div class="t-sub px">TOUCH TO ESTABLISH LINK</div>
@@ -486,6 +487,17 @@ function __stageTap(e){
   if(e&&e.stopPropagation)e.stopPropagation();
   __introFinish();
 }
+/* ===== 全局捕获：开场期间，屏幕任何位置、任何形式的点击/触碰必然命中 ===== */
+function __introGate(e){
+  if(!document.body.classList.contains('intro-active'))return; /* 已结束，不干预 */
+  var touchEl=document.getElementById('touch');
+  var touchVisible=touchEl&&!touchEl.classList.contains('hidden');
+  if(touchVisible){__introTap(e);}
+  else{__stageTap(e);}
+}
+['touchstart','touchend','pointerup','click'].forEach(function(ev){
+  document.addEventListener(ev,function(e){__introGate(e);},true);
+});
 var msg='【SYS://BOOT_OK】模块自检完毕　　【WX】天气同步完成　　【MAP】检测到未解锁区域　　【SHOP】货币单位未配置（占位）　　【SYS】怀榆，别发呆。　　';
 document.getElementById('tk').textContent=msg+msg;
 var btn=document.getElementById('themeBtn');
