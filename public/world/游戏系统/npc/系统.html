@@ -413,7 +413,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
           <div class="mp-status" id="mpStatus">※ 预设曲目待站长接入音频文件</div>
         </div>
       </div>
-      <a class="side-btn px" id="settingBtn" href="./设置.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
+      <a class="side-btn px" id="settingBtn" href="设置.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
     </div>
     <div class="wxblock px">
       <div class="k">WEATHER · 天气系统</div>
@@ -700,7 +700,9 @@ try{(function(){
   function markOn(btn){
     [].slice.call(list.querySelectorAll('.track-item')).forEach(function(x){x.classList.toggle('on',x===btn);});
   }
+  var IN_SHELL=(function(){try{return window.QLZ_Music&&window.QLZ_Music.inShell&&window.QLZ_Music.inShell();}catch(e){return false;}})();
   function playUrl(btn,name,url){
+    if(IN_SHELL){QLZ_Music.play(url,name);markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';playing=true;mpToggle.textContent='⏸ 暂停';return;}
     if(curBtn===btn&&playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';return;}
     curBtn=btn;markOn(btn);
     status.textContent='正在播放：'+name;
@@ -720,11 +722,13 @@ try{(function(){
   });
   var mpToggle=document.getElementById('mpToggle');
   mpToggle.onclick=function(){
+    if(IN_SHELL){QLZ_Music.toggle();return;}
     if(!curBtn){status.textContent='※ 先在列表里点一首曲子。';return;}
     if(playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';}
     else{var p=audio.play();playing=true;mpToggle.textContent='⏸ 暂停';if(p&&p.catch)p.catch(function(){});}
   };
   document.getElementById('mpStop').onclick=function(){
+    if(IN_SHELL){QLZ_Music.stop();markOn(null);status.textContent='音乐已关闭。';playing=false;mpToggle.textContent='▶ 播放';return;}
     audio.pause();audio.currentTime=0;playing=false;curBtn=null;mpToggle.textContent='▶ 播放';
     markOn(null);status.textContent='音乐已关闭。';
   };
@@ -944,5 +948,6 @@ if(FAST){
   if(b)b.textContent=document.body.classList.contains('night')?'☀ 日间':'☾ 夜间';
 })();
 </script>
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
 </body>
 </html>
