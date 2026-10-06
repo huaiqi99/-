@@ -287,18 +287,18 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
 <body class="intro-active">
 <div class="bgwrap"><div class="blob a"></div><div class="blob b"></div></div>
  
-<div id="introov" onclick="__introTap(event)">
+<div id="introov">
   <i class="ovgrid g-red"></i><i class="ovgrid g-blue"></i>
 <div class="bgwrap"><i class="bggrid g-red"></i><i class="bggrid g-blue"></i></div>
  
 <div id="touch">
-  <div class="px" style="position:fixed;left:12px;bottom:12px;font-size:10px;opacity:.45;letter-spacing:1px;">TOUCH BUILD 1006-3 · 全屏点触版</div>
+  <div class="px" style="position:fixed;left:12px;bottom:12px;font-size:10px;opacity:.45;letter-spacing:1px;">TOUCH BUILD 1006-4 · 全屏点触版</div>
   <div class="t-ring"><i></i></div>
   <div class="t-text px">【 触碰以建立连接 】</div>
   <div class="t-sub px">TOUCH TO ESTABLISH LINK</div>
 </div>
  
-<div id="stage" class="hidden" onclick="__stageTap(event)">
+<div id="stage" class="hidden">
   <div id="win">
     <div class="winbar px"><span class="dots"><i></i><i></i><i></i></span>SYS://BINDING<span class="wno">№ 0x0721</span></div>
     <div id="winbox">
@@ -318,7 +318,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
   </div>
   <div class="btncol">
     <button id="themeBtn" class="px">☾ 夜间</button>
-    <a class="tback px" href="./index.html">◂ 返回</a>
+    <a class="tback px" href="./https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.html">◂ 返回</a>
   </div>
 </div>
 <div class="ticker"><span class="ticker-in px" id="tk"></span></div>
@@ -487,13 +487,22 @@ function __stageTap(e){
   if(e&&e.stopPropagation)e.stopPropagation();
   __introFinish();
 }
-/* ===== 全局捕获：开场期间，屏幕任何位置、任何形式的点击/触碰必然命中 ===== */
+/* ===== 全局捕获：开场期间，屏幕任何位置点/碰即可进入；再次点击（非同一次手势余波）才跳过 ===== */
+var __phase=0;          /* 0=等待触碰 1=动画中 2=已结束 */
+var __lastGate=0;
 function __introGate(e){
-  if(!document.body.classList.contains('intro-active'))return; /* 已结束，不干预 */
+  if(__phase===2)return;
+  if(!document.body.classList.contains('intro-active'))return;
+  var now=Date.now();
   var touchEl=document.getElementById('touch');
   var touchVisible=touchEl&&!touchEl.classList.contains('hidden');
-  if(touchVisible){__introTap(e);}
-  else{__stageTap(e);}
+  if(touchVisible){
+    if(__phase===0){__phase=1;__lastGate=now;__introTap(e);} /* 同一次手势的 touchend/click 余波到此全部拦下 */
+    return;
+  }
+  if(__phase!==1)return;
+  if(now-__lastGate<900)return; /* 一次点触产生多个信号，只认第一个；900ms后的下一次点击才算跳过 */
+  __phase=2;__stageTap(e);
 }
 ['touchstart','touchend','pointerup','click'].forEach(function(ev){
   document.addEventListener(ev,function(e){__introGate(e);},true);
@@ -676,23 +685,6 @@ function runShow(){
 }
  
 /* ===== 入口（移动端加固版：click/touchend 双绑定 + 容错，音效失败不阻断进入） ===== */
-function bootEnter(){
-  try{sBlip();}catch(e){}
-  touch.classList.add('hidden');
-  runShow();
-}
-function bootSkip(){
-  try{sBlip();}catch(e){}
-  try{finish();}catch(e){document.body.classList.remove('intro-active');
-    var ov=document.getElementById('introov');if(ov)ov.style.display='none';}
-}
-function bindTap(el,fn){
-  if(!el)return;
-  el.addEventListener('click',fn);
-  el.addEventListener('touchend',function(e){e.preventDefault();fn(e);},{passive:false});
-}
-bindTap(touch,function(e){e.preventDefault&&e.preventDefault();bootEnter();});
-bindTap(stage,bootSkip);
 /* 报错上屏：真机出问题时把错误直接画在屏幕上，方便回报 */
 window.addEventListener('error',function(ev){
   try{
