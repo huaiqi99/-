@@ -21,145 +21,113 @@ html[data-t="dark"],html[data-t="dark"] body{background:#0C365A;}
 /* 左下角 dock：全站唯一音乐开关 */
 #bgmDock{position:fixed;left:12px;bottom:12px;z-index:9999;
   background:rgba(250,249,245,.92);color:#23243B;border:2px solid #222C6E;
-  font-family:"Fusion Pixel","Zpix",monospace,sans-serif;font-size:.66rem;letter-spacing:1px;
-  padding:7px 12px;cursor:pointer;box-shadow:3px 4px 0 rgba(34,44,110,.32);
-  max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-color:#7C9CB3;box-shadow:3px 4px 0 rgba(12,54,90,.5);}
-#bgmDock:hover{background:#550F10;color:#F0EFEB;border-color:#550F10;}
+  font-family:"Fusion Pixel","Zpix",monospace,sans-serif;font-size:.7rem;letter-spacing:2px;
+  padding:8px 14px;cursor:pointer;box-shadow:3px 4px 0 rgba(34,44,110,.32);user-select:none;}
+html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-color:#7C9CB3;}
 </style>
 </head>
 <body>
-<iframe id="iframeBox" src="about:blank" title="千律州"></iframe>
-<button id="bgmDock" title="点击 播放/暂停">🔇 音乐</button>
+<iframe id="iframeBox" title="千律州"></iframe>
+<div id="bgmDock" title="点击 暂停/继续">🔇 音乐</div>
 <script>
 (function(){
   'use strict';
-  var VOL=0.7;
-  var audio=new Audio();audio.volume=0;audio.preload='none';
-  var want=false,idx=0,restored=false,fadeT=null,lastColor='';
-  var LIST=[
-    {name:'音乐1',src:'韩语.mp3'},
-    {name:'音乐2',src:'音乐2.mp3'},
-    {name:'音乐3',src:'音乐3.mp3'}
-  ];
+  var frame=document.getElementById('iframeBox');
+  var audio=new Audio();audio.volume=.7;audio.preload='auto';
+  var LIST=[{name:'音乐1',src:'音乐1.mp3'},{name:'音乐2',src:'音乐2.mp3'},{name:'音乐3',src:'音乐3.mp3'}];
+  var idx=0,want=false,cur={url:'',name:''},fadeT=null,restored=false,__lastThemeColor='';
   var KEY='qlz_bgm';
-  function save(){try{localStorage.setItem(KEY,JSON.stringify({on:want,index:idx,url:cur.url,name:cur.name,times:{},time:audio.currentTime}));}catch(e){}}
-  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}}
- 
-  /* ===== 曲库：预设 + IndexedDB 上传曲 ===== */
-  var uploaded=[];var cur={url:'',name:''};
-  function allTracks(){return LIST.concat(uploaded);}
-  function idbLoad(){
-    if(!window.indexedDB)return;
-    try{
-      var rq=indexedDB.open('qlz_music',1);
-      rq.onupgradeneeded=function(e){var d=e.target.result;if(!d.objectStoreNames.contains('tracks'))d.createObjectStore('tracks',{autoIncrement:true});};
-      rq.onsuccess=function(e){
-        var db=e.target.result;
-        if(!db.objectStoreNames.contains('tracks'))return;
-        try{
-          var tx=db.transaction('tracks','readonly').objectStore('tracks').openCursor();
-          tx.onsuccess=function(ev){var c=ev.target.result;
-            if(c){uploaded.push({name:c.value.name||('上传曲'+(uploaded.length+1)),src:URL.createObjectURL(c.value),uploaded:true});c.continue();}
-          };
-        }catch(e){}
-      };
-      rq.onerror=function(){};
-    }catch(e){}
-  }
-  idbLoad();
  
   function findTrack(url,name){
-    var all=allTracks();
-    for(var i=0;i<all.length;i++)if(all[i].src===url||all[i].name===name)return all[i];
-    return {name:name||'音乐',src:url};
+    for(var i=0;i<LIST.length;i++){
+      if(url&&LIST[i].src===url)return LIST[i];
+      if(!url&&name&&LIST[i].name===name)return LIST[i];
+    }
+    return {url:url||'',name:name||'音乐'};
   }
   function dockText(){
-    var b=document.getElementById('bgmDock');
-    if(b)b.textContent=want?('♪ '+cur.name):'🔇 音乐';
+    document.getElementById('bgmDock').textContent=want?('♪ '+cur.name):'🔇 音乐';
   }
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify({on:want,url:cur.url,name:cur.name,
+      index:LIST.indexOf(findTrack(cur.url,cur.name)),time:audio.currentTime||0}));}catch(e){}
+  }
+  function playTrack(url,name){
+    cur={url:url,name:name||'音乐'};want=true;restored=true;
+    audio.src=url;tryPlay();dockText();save();
+  }
+  function pause(){want=false;audio.pause();dockText();save();}
+  function resume(){want=true;tryPlay();dockText();save();}
+  function toggle(){want?pause():resume();}
+  function setTheme(dark){
+    document.body.style.background=dark?'#0C365A':'#F0EFEB';
+    setThemeColor(dark?'#0C365A':'#F0EFEB');
+  }
+  function tryPlay(){var p=audio.play();if(p&&p.catch)p.catch(function(){});}
   function fade(to,dur,done){clearInterval(fadeT);var from=audio.volume,t0=Date.now();
     fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur);audio.volume=from+(to-from)*k;
       if(k>=1){clearInterval(fadeT);if(done)done();}},40);}
-  function tryPlay(){var p=audio.play();if(p&&p.catch)p.catch(function(){});}
- 
-  /* ===== 对外：播放指定曲 ===== */
-  function playTrack(url,name,keepOn){
-    var t=findTrack(url,name);
-    var same=(cur.url===t.src&&t.src);
-    cur=t;
-    if(!same){audio.src=t.src;tryPlay();}
-    if(!want||keepOn===false){want=true;}
-    tryPlay();fade(VOL,same?300:600);dockText();save();
-  }
-  function pause(){want=false;fade(0,300,function(){audio.pause();});dockText();save();}
-  function resume(){want=true;tryPlay();fade(VOL,600);dockText();save();}
-  function toggle(){want?pause():resume();}
-  function gesture(){if(want&&audio.paused){tryPlay();fade(VOL,800);}}
- 
-  /* ===== 主题色同步 ===== */
   function swapMeta(color){
     var m=document.createElement('meta');m.setAttribute('name','theme-color');m.setAttribute('content',color);
     document.head.appendChild(m);
     var all=document.querySelectorAll('meta[name="theme-color"]');
     for(var i=0;i<all.length-1;i++)all[i].remove();
   }
-  function setTheme(night){
-    var c=night?'#0C365A':'#F0EFEB';
-    document.documentElement.setAttribute('data-t',night?'dark':'light');
-    if(lastColor!==c){lastColor=c;swapMeta(c);}
+  function setThemeColor(color){
+    swapMeta(color);
+    setTimeout(function(){if(__lastThemeColor!==color)return;swapMeta(color);},150);
   }
- 
-  /* ===== 内页消息总线 ===== */
-  window.addEventListener('message',function(ev){
-    var d=ev.data;if(!d||typeof d!=='object')return;
-    switch(d.type){
-      case 'qlz:gesture':gesture();break;
-      case 'qlz:track':playTrack(d.url,d.name);break;
-      case 'qlz:pause':pause();break;
-      case 'qlz:resume':resume();break;
-      case 'qlz:toggle':toggle();break;
-      case 'qlz:stop':pause();break;
-      case 'qlz:theme':setTheme(!!d.night);break;
-      case 'qlz:nav':load(d.href);break;
-    }
-  });
- 
-  /* ===== 换页：iframe src + hash 记忆 ===== */
-  var frame=document.getElementById('iframeBox');
   function load(href){
     try{if(new URL(href,location.href).pathname===frame.contentWindow.location.pathname)return;}catch(e){}
     frame.src=href;
     try{history.replaceState(null,'','#'+encodeURIComponent(href.replace(/^\.\//,'')));}catch(e){}
   }
  
-  /* ===== 启动：恢复上次状态 ===== */
-  var st=load();
-  var startPage='系统.html';
-  try{var h=decodeURIComponent(location.hash.replace(/^#/,''));if(h)startPage=h;}catch(e){}
-  if(st){
-    want=st.on!==false&&!!(st.url||st.name);
-    if(isFinite(st.index))idx=((st.index%LIST.length)+LIST.length)%LIST.length;
-    if(st.url)cur={url:st.url,name:st.name||'音乐'};
-    else if(st.name){var t0=findTrack('',st.name);cur={url:t0.src,name:t0.name};}
+  /* ===== 内页消息总线 ===== */
+  window.addEventListener('message',function(ev){
+    var msg=ev.data||{};
+    if(msg.type==='qlz:gesture'){if(want&&audio.paused){tryPlay();fade(.7,800);}return;}
+    if(msg.type==='qlz:track'&&(msg.url||msg.blob)){
+      var u=msg.url;
+      if(msg.blob){try{u=URL.createObjectURL(msg.blob);}catch(e){u=msg.url;}}
+      playTrack(u,msg.name||'音乐');return;}
+    if(msg.type==='qlz:pause'){pause();return;}
+    if(msg.type==='qlz:stop'){want=false;audio.pause();try{audio.currentTime=0;}catch(e){}dockText();save();return;}
+    if(msg.type==='qlz:resume'){resume();return;}
+    if(msg.type==='qlz:toggle'){toggle();return;}
+    if(msg.type==='qlz:theme'){setTheme(!!msg.night);return;}
+    if(msg.type==='qlz:nav'&&msg.href){load(msg.href);return;}
+  });
+ 
+  /* ===== 启动 ===== */
+  (function(){
+    var st=null,startPage='系统.html';
+    try{var h=decodeURIComponent(location.hash.replace(/^#/,''));if(h)startPage=h;}catch(e){}
+    try{var s=JSON.parse(localStorage.getItem(KEY)||'null');
+      if(s){want=s.on!==false&&!!(s.url||s.name);
+        if(isFinite(s.index))idx=((s.index%LIST.length)+LIST.length)%LIST.length;
+        if(s.url)cur={url:s.url,name:s.name||'音乐'};
+        else if(s.name){var t0=findTrack('',s.name);cur={url:t0.src,name:t0.name};}
+      }}catch(e){}
     audio.src=cur.url;setTheme(__t==='dark');
-  }
-  if(!cur.url){cur={url:LIST[idx].src,name:LIST[idx].name};}
-  dockText();
-  frame.src=startPage;
+    if(!cur.url){cur={url:LIST[idx].src,name:LIST[idx].name};}
+    dockText();
+    frame.src=startPage;
  
-  audio.addEventListener('loadedmetadata',function(){
-    try{if(st&&isFinite(st.time)&&st.time>0&&st.time<(audio.duration||1e9)-2)audio.currentTime=st.time;}catch(e){}
-  },{once:true});
-  setInterval(save,5000);
-  window.addEventListener('pagehide',save);
+    audio.addEventListener('loadedmetadata',function(){
+      try{if(st&&isFinite(st.time)&&st.time>0&&st.time<(audio.duration||1e9)-2)audio.currentTime=st.time;}catch(e){}
+    },{once:true});
+    audio.addEventListener('error',function(){
+      if(!want)return;var d=document.getElementById('bgmDock'),old=d.textContent;
+      d.textContent='🔇 无法播放';setTimeout(function(){dockText();},2500);});
+    setInterval(save,5000);
+    window.addEventListener('pagehide',save);
  
-  /* ===== dock ===== */
-  document.getElementById('bgmDock').onclick=function(){toggle();};
+    document.getElementById('bgmDock').onclick=function(){toggle();};
  
-  /* ===== 暴露给同源内页（备用直呼通道） ===== */
-  window.QLZ_SHELL=true;
-  window.QLZ_Shell={load:load,playTrack:playTrack,pause:pause,resume:resume,setTheme:setTheme};
+    window.QLZ_SHELL=true;
+    window.QLZ_Shell={load:load,playTrack:playTrack,pause:pause,resume:resume,setTheme:setTheme};
+  })();
 })();
 </script>
 </body>

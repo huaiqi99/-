@@ -413,7 +413,7 @@ body.night{--gred:rgba(168,68,62,.30);--gblue:rgba(124,156,179,.26);}
           <div class="mp-status" id="mpStatus">※ 预设曲目待站长接入音频文件</div>
         </div>
       </div>
-      <a class="side-btn px" id="settingBtn" href="设置.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
+      <a class="side-btn px" id="settingBtn" href="./设置.html"><svg width="14" height="14" viewBox="0 0 8 8" shape-rendering="crispEdges" style="vertical-align:-1px;"><rect x="3" y="0" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/><rect x="0" y="3" width="2" height="2" fill="currentColor"/><rect x="6" y="3" width="2" height="2" fill="currentColor"/><rect x="2" y="2" width="4" height="4" fill="currentColor"/></svg> 设置<br><small>SETTINGS</small></a>
     </div>
     <div class="wxblock px">
       <div class="k">WEATHER · 天气系统</div>
@@ -696,13 +696,14 @@ try{(function(){
   };
   var audio=new Audio();audio.volume=.7;var cur=-1,playing=false;
   var tracks=[]; /* {name,url} */
-  var curBtn=null,playing=false;
+  var curBtn=null,playing=false;var fileMap={};
   function markOn(btn){
     [].slice.call(list.querySelectorAll('.track-item')).forEach(function(x){x.classList.toggle('on',x===btn);});
   }
   var IN_SHELL=(function(){try{return window.QLZ_Music&&window.QLZ_Music.inShell&&window.QLZ_Music.inShell();}catch(e){return false;}})();
-  function playUrl(btn,name,url){
-    if(IN_SHELL){QLZ_Music.play(url,name);markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';playing=true;mpToggle.textContent='⏸ 暂停';return;}
+  function playUrl(btn,name,url,file){
+    if(IN_SHELL){try{window.parent.postMessage({type:'qlz:track',url:url,name:name,blob:file||null},'*');}catch(e){}
+      markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';playing=true;mpToggle.textContent='⏸ 暂停';return;}
     if(curBtn===btn&&playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';return;}
     curBtn=btn;markOn(btn);
     status.textContent='正在播放：'+name;
@@ -718,7 +719,7 @@ try{(function(){
       audio.pause();playing=false;mpToggle.textContent='▶ 播放';}
   });
   [].slice.call(list.querySelectorAll('.track-item')).forEach(function(b){
-    b.onclick=function(){playUrl(b,b.textContent.replace('♪ ','').replace('⬆ ',''),b.getAttribute('data-url'));};
+    b.onclick=function(){playUrl(b,b.textContent.replace('♪ ','').replace('⬆ ',''),b.getAttribute('data-url'),null);};
   });
   var mpToggle=document.getElementById('mpToggle');
   mpToggle.onclick=function(){
@@ -738,7 +739,8 @@ try{(function(){
     openDB(function(db){
       try{
         var tx=db.transaction('tracks','readwrite');
-        Array.prototype.forEach.call(files,function(f){tx.objectStore('tracks').put(f);});
+        Array.prototype.forEach.call(files,function(f){tx.objectStore('tracks').put(f);fileMap[f.name]=f;
+          addUploaded(f.name,URL.createObjectURL(f));});
         tx.oncomplete=loadUploaded;
       }catch(e){status.textContent='※ 音乐库打开失败：'+e.message;}
     });
@@ -771,7 +773,7 @@ try{(function(){
         var tx=db.transaction('tracks','readonly').objectStore('tracks').openCursor();
         tx.onsuccess=function(ev){
           var c=ev.target.result;
-          if(c){var f=c.value;addUploaded(f.name,URL.createObjectURL(f));c.continue();}
+          if(c){var f=c.value;fileMap[f.name]=f;addUploaded(f.name,URL.createObjectURL(f));c.continue();}
           void 0;
         };
       }catch(e){}
@@ -782,7 +784,7 @@ try{(function(){
     for(var i=0;i<old.length;i++)if(old[i].textContent.replace('⬆ ','')===name)return;
     var b=document.createElement('button');b.className='track-item px';
     b.textContent='⬆ '+name;
-    b.onclick=function(){playUrl(b,name,url);};
+    b.onclick=function(){playUrl(b,name,url,fileMap[name]||null);};
     list.appendChild(b);
   }
   if(window.https://sfile.chatglm.cn/workspace/file/c6/c689da6c21.htmledDB){try{loadUploaded();}catch(e){}}
