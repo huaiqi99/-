@@ -101,7 +101,7 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
  
   /* ===== 启动 ===== */
   (function(){
-    var st=null,startPage='系统.html';
+    var st=null,startPage='门户.html';
     try{var h=decodeURIComponent(location.hash.replace(/^#/,''));if(h)startPage=h;}catch(e){}
     try{var s=JSON.parse(localStorage.getItem(KEY)||'null');
       if(s){want=s.on!==false&&!!(s.url||s.name);
