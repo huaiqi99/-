@@ -353,7 +353,7 @@ body.night .left{background:#D6D4C2;}
       <div class="stamp px"><span>存档</span><b>3</b></div>
       <div class="bc-body">
         <div class="btncol">
-          <a class="btn px" href="#" data-en="START">▶ 进入模拟</a>
+          <a class="btn px" href="./模拟.html" data-en="START">▶ 进入模拟</a>
           <a class="btn px" href="#" data-en="SAVE / LOAD">▤ 存档管理</a>
           <div class="declare px">◆ 本模拟器改编自站长原创小说，仅供自娱与同好试玩。<br>◆ API 密钥请在「设置」中填写。<br>◆ 祝你在千律州，一切顺利。</div>
         </div>
@@ -577,8 +577,8 @@ try{(function(){
   function playUrl(btn,name,url,file){
     if(IN_SHELL){try{window.parent.postMessage({type:'qlz:track',url:url,name:name,blob:file||null},'*');}catch(e){}
       lastUrl=url;lastName=name;playing=true;
-      markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';mpToggle.textContent='■&#xFE0E; 关闭音乐';return;}
-    if(curBtn===btn&&playing){audio.pause();playing=false;mpToggle.textContent='▶&#xFE0E; 播放';return;}
+      markOn(btn);status.textContent='正在播放：'+name+'（由壳播放）';mpToggle.textContent='■ 关闭音乐';return;}
+    if(curBtn===btn&&playing){audio.pause();playing=false;mpToggle.textContent='▶ 播放';return;}
     curBtn=btn;markOn(btn);
     status.textContent='正在播放：'+name;
     try{
@@ -590,7 +590,7 @@ try{(function(){
   audio.addEventListener('error',function(){
     if(curBtn){var n=curBtn.textContent.replace('⬆ ','').replace('♪ ','');
       status.textContent='※「'+n+'」的音频文件还没上传（需与页面同目录）。';
-      audio.pause();playing=false;mpToggle.textContent='▶&#xFE0E; 播放';}
+      audio.pause();playing=false;mpToggle.textContent='▶ 播放';}
   });
   [].slice.call(list.querySelectorAll('.track-item')).forEach(function(b){
     b.onclick=function(){playUrl(b,b.textContent.replace('♪ ','').replace('⬆ ',''),b.getAttribute('data-url'),null);};
@@ -602,14 +602,14 @@ try{(function(){
       if(!playing){if(!lastUrl){status.textContent='※ 先在列表里点一首曲子。';return;}
         QLZ_Music.play(lastUrl,lastName);playing=true;mpToggle.textContent='■&#xFE0E; 关闭音乐';
         status.textContent='正在播放：'+lastName+'（由壳播放）';}
-      else{QLZ_Music.pause();playing=false;mpToggle.textContent='▶&#xFE0E; 播放';status.textContent='音乐已暂停。';}
+      else{QLZ_Music.pause();playing=false;mpToggle.textContent='▶ 播放';status.textContent='音乐已暂停。';}
       return;
     }
     if(!playing){
-      if(curBtn){var p=audio.play();playing=true;mpToggle.textContent='■&#xFE0E; 关闭音乐';status.textContent='正在播放…';if(p&&p.catch)p.catch(function(){});}
+      if(curBtn){var p=audio.play();playing=true;mpToggle.textContent='■ 关闭音乐';status.textContent='正在播放…';if(p&&p.catch)p.catch(function(){});}
       else{status.textContent='※ 先在列表里点一首曲子。';}
     }else{
-      audio.pause();playing=false;mpToggle.textContent='▶&#xFE0E; 播放';status.textContent='音乐已暂停。';
+      audio.pause();playing=false;mpToggle.textContent='▶ 播放';status.textContent='音乐已暂停。';
     }
   };
   document.getElementById('mpUpload').onclick=function(){
