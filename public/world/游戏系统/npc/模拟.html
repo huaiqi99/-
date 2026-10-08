@@ -9,9 +9,9 @@
 </style>
 </head>
 <body>
-<!-- 引擎自建全部界面（v5 模板）。
-     需要：chapters/ 章节包目录 + assets/ 音效（可选）。
-     密钥：设置页填写后走直连；不填则走 Worker（difu-ai）。 -->
+<!-- 章节包必须先于引擎加载。若改名/换文件夹，改下面 src 即可；
+     引擎也有自动兜底（https://sfile.chatglm.cn/workspace/file/34/34e1595aa3.js → 章节包1.js），但显式引用最稳。 -->
+<script src="./章节包/章节包1.js"></script>
 <script src="./模拟AI.js"></script>
 </body>
 </html>

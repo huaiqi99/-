@@ -63,6 +63,9 @@
     // ===== 章包加载 =====
     function pad2(n){ return (n<10?'0':'')+n; }
     function loadPack(n, cb){
+      /* 双路：优先读内嵌 章节包.js（QLZ_PACKS），无则 fetch 外链 */
+      var key = 'ch' + pad2(n);
+      if(window.QLZ_PACKS && window.QLZ_PACKS[key]) { setTimeout(function(){ cb(null, window.QLZ_PACKS[key]); }, 0); return; }
       fetch(CH_DIR + 'ch' + pad2(n) + '.json').then(function(r){
         if(!r.ok) throw new Error('章节包缺失 ch'+pad2(n));
         return r.json();
@@ -561,6 +564,22 @@
         }catch(_){}
       }
     }
+    /* 章节包自动兜底：页面没引用时，按候选路径动态加载（TA 换名/换目录也不怕） */
+    function ensurePacks(cb){
+      if(window.QLZ_PACKS){ cb(); return; }
+      var paths = ['章节包/章节包1.js','章节包1.js','章节包/章节包.js','chapters/章节包.js'];
+      var i = 0;
+      (function next(){
+        if(i >= paths.length){ cb(); return; }   /* 全失败 → 走 fetch 兜底 */
+        var s = document.createElement('script');
+        s.src = paths[i++];
+        s.onload = function(){ if(window.QLZ_PACKS) cb(); else next(); };
+        s.onerror = next;
+        document.head.appendChild(s);
+      })();
+    }
+    var __origBoot = boot;
+    boot = function(){ ensurePacks(function(){ __origBoot(); }); };
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
     else boot();
      
