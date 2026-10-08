@@ -1,26 +1,106 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>设置 · 千律州模拟器</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>千律州 · 设置</title>
 <style>
-:root{--bg:#F4F1E8;--ink:#20242B;--card:#FFFDF6;--line:#20242B;--line-soft:rgba(32,36,43,.35);--banner:#1E3A8A;--banner-ink:#F4F1E8;--ink-2:rgba(32,36,43,.62);}
-body{background:var(--bg);color:var(--ink);font-family:"Fusion Pixel","Zpix",monospace,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
-.panel{max-width:520px;width:calc(100% - 32px);background:var(--card);border:2px solid var(--line);box-shadow:6px 8px 0 var(--line-soft);padding:28px 26px;}
-h1{font-size:1.1rem;letter-spacing:6px;margin:0 0 6px;}
-small{display:block;font-size:.6rem;letter-spacing:3px;color:var(--ink-2);margin-bottom:18px;}
-p{font-size:.72rem;letter-spacing:2px;line-height:2.1;color:var(--ink-2);border:2px dashed var(--line-soft);padding:14px 16px;}
-a.back{display:block;text-align:center;margin-top:18px;text-decoration:none;background:var(--banner);color:var(--banner-ink);border:2px solid var(--line);padding:11px 16px;font-size:.78rem;letter-spacing:4px;box-shadow:3px 4px 0 var(--line-soft);}
-a.back:hover{transform:translate(-2px,-3px);box-shadow:6px 8px 0 var(--line-soft);}
+:root{--bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;--zhu:#A8443E;--mut:#5D6B80;--gc:rgba(85,15,16,.08);--gc2:rgba(34,44,110,.07);--hair:rgba(34,44,110,.3);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,"Songti SC",serif;color:var(--ink);min-height:100vh;
+  background:var(--bg);
+  background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
+  background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
+.wrap{max-width:760px;margin:0 auto;padding:30px 16px 60px;}
+h1{font-size:16px;letter-spacing:.2em;color:var(--burg);}
+h1 i{font-style:normal;display:block;font-family:Courier New,monospace;font-size:9px;letter-spacing:.2em;color:var(--mut);margin-top:4px;}
+.card{background:var(--card);border:1.5px solid var(--klein);box-shadow:4px 5px 0 rgba(34,44,110,.15);padding:18px 20px;margin-top:20px;}
+.card h2{font-size:12px;letter-spacing:.25em;color:var(--klein);border-bottom:1px solid var(--hair);padding-bottom:8px;margin-bottom:14px;font-family:Courier New,monospace;}
+label{display:block;font-size:12px;letter-spacing:.1em;color:var(--mut);margin:14px 0 5px;}
+input,select{width:100%;border:1.5px solid var(--klein);background:var(--bg);font-family:Georgia,"Songti SC",serif;font-size:13.5px;padding:10px 12px;color:var(--ink);}
+select{cursor:pointer;}
+.row{display:flex;gap:12px;}
+.row>div{flex:1;}
+.btn{margin-top:18px;display:flex;gap:12px;}
+button{border:none;font-family:inherit;font-size:12.5px;letter-spacing:.25em;padding:11px 22px;cursor:pointer;transition:.18s;}
+.save{background:var(--klein);color:#F0EFEB;}
+.save:hover{background:var(--burg);}
+.clear{background:transparent;border:1.5px solid var(--zhu)!important;color:var(--zhu);}
+.clear:hover{background:var(--zhu);color:#F0EFEB;}
+.tip{font-size:11px;line-height:1.9;color:var(--mut);margin-top:12px;border-left:2.5px solid var(--zhu);padding-left:10px;}
+.status{margin-top:14px;font-family:Courier New,monospace;font-size:11px;letter-spacing:.1em;padding:8px 12px;border:1.5px dashed var(--hair);}
+.status.ok{color:var(--klein);border-color:var(--klein);}
+.status.no{color:var(--zhu);border-color:var(--zhu);}
+.mode{font-size:12px;line-height:2;color:var(--ink);}
+.mode b{color:var(--burg);}
+a.tback{display:inline-block;margin-top:26px;font-size:12px;letter-spacing:.3em;color:var(--klein);text-decoration:none;border:1.5px solid var(--klein);padding:8px 18px;}
+a.tback:hover{background:var(--klein);color:#F0EFEB;}
 </style>
 </head>
 <body>
-<div class="panel">
-  <h1>设 置</h1>
-  <small>SETTINGS · UNDER CONSTRUCTION</small>
-  <p>※ 施工中：API 密钥填写、音乐偏好、存档管理等将陆续入驻。<br>※ 此页骨架仅为占位，功能由站长自定义填充。</p>
-  <a class="back" href="./系统.html">◂ 返回系统终端</a>
+<div class="wrap">
+  <h1>设 置<i>SYS://QIANLVZHOU · SETTINGS</i></h1>
+ 
+  <div class="card">
+    <h2>AI 接 入</h2>
+    <div class="mode">
+      <b>模式一 · 直连</b>：填入 API 密钥，演出由你的密钥直连模型驱动（推荐，与引渡人共用同一密钥，填一次两边通用）。<br>
+      <b>模式二 · Worker</b>：不填密钥时自动走站内代理，无需任何配置。
+    </div>
+    <label>服务商</label>
+    <select id="fProvider">
+      <option value="">— 未选择 —</option>
+      <option value="deepseek">DeepSeek</option>
+      <option value="claude">Claude</option>
+    </select>
+    <label>API 密钥</label>
+    <input id="fKey" type="password" placeholder="sk-…（留空则走站内 Worker）">
+    <div class="btn">
+      <button class="save" onclick="saveCfg()">保 存</button>
+      <button class="clear" onclick="clearCfg()">清除密钥</button>
+    </div>
+    <div class="status" id="qstatus">检测中…</div>
+    <div class="tip">密钥仅保存在你浏览器的 localStorage，不上传任何服务器。清除后回到 Worker 模式。与引渡人模拟器共用同一份配置。</div>
+  </div>
+ 
+  <a class="tback" href="./系统.html">◂ 返回</a>
 </div>
+ 
+<script>
+(function(){
+  'use strict';
+  // 与引渡人模拟AI.js 共用同一 CONFIG_KEY（同域 localStorage 共享）
+  var CONFIG_KEY = 'gzd_ai_config';
+  function loadCfg(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}'); }catch(e){ return {}; } }
+  function render(){
+    var c = loadCfg();
+    document.getElementById('fProvider').value = c.provider || '';
+    document.getElementById('fKey').value = c.apiKey || '';
+    var st = document.getElementById('qstatus');
+    if(c.apiKey && c.provider){
+      st.textContent = '当前：直连模式 · ' + (c.provider==='claude'?'Claude':'DeepSeek') + ' · 密钥已配置';
+      st.className = 'status ok';
+    } else {
+      st.textContent = '当前：Worker 模式 · 未配置密钥';
+      st.className = 'status no';
+    }
+  }
+  window.saveCfg = function(){
+    var provider = document.getElementById('fProvider').value;
+    var apiKey = document.getElementById('fKey').value.replace(/\s+/g,'');
+    if(!apiKey){ alert('密钥为空即走 Worker 模式——若要直连请填密钥。要清空配置请用“清除密钥”。'); return; }
+    if(!provider){ alert('请选择服务商'); return; }
+    localStorage.setItem(CONFIG_KEY, JSON.stringify({provider:provider, apiKey:apiKey}));
+    render();
+  };
+  window.clearCfg = function(){
+    localStorage.removeItem(CONFIG_KEY);
+    document.getElementById('fProvider').value='';
+    document.getElementById('fKey').value='';
+    render();
+  };
+  render();
+})();
+</script>
 </body>
 </html>
