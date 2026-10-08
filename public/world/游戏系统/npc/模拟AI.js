@@ -14,7 +14,7 @@
       (document.body||document.documentElement).appendChild(d);
     }catch(_){}
   });
-   
+  
   // ===== 配置 =====
   var WORKER_URL = 'https://difu-ai.2629885225.workers.dev';
   var PROFILE    = 'qlz';
@@ -23,7 +23,7 @@
   var K_STORY = 'gzd_qlz_story';
   var K_STATE = 'gzd_qlz_state';
   var K_THEME = 'theme';
-   
+  
   // 文风与输出协议（静态层）
   var PROTOCOL = [
   '【千律州演出协议】',
@@ -37,7 +37,7 @@
   '正文结束后另起一行输出<建议>["行动1","行动2","行动3"]</建议>：3条玩家下一步可采取的行动，每条不超过15字，第二人称祈使句。',
   '正文结束后再输出<状态>{"nodes":["本章触发的节点id"],"fav":当前好感整数}</状态>。nodes 只填本轮实际触发的节点id，没有填空数组；fav 填你演绎后建议的当前好感值。两个块都不可省略。'
   ].join('\n');
-   
+  
   var STAGES = [
     {min:0,  max:20,  name:'冷淡警惕'},
     {min:21, max:40,  name:'认识试探'},
@@ -46,7 +46,7 @@
     {min:81, max:100, name:'深厚感情'}
   ];
   function stageOf(f){ for(var i=STAGES.length-1;i>=0;i--) if(f>=STAGES[i].min) return STAGES[i]; return STAGES[0]; }
-   
+  
   // ===== 存档 =====
   function loadStory(){
     try{ var d = JSON.parse(localStorage.getItem(K_STORY)); if(d && d.ch) return d; }catch(e){}
@@ -54,12 +54,12 @@
   }
   function saveStory(s){ try{ localStorage.setItem(K_STORY, JSON.stringify(s)); }catch(e){} }
   function resetAll(){ localStorage.removeItem(K_STORY); localStorage.removeItem(K_STATE); state = loadStory(); }
-   
+  
   var state = loadStory();
   var pack = null;          // 当前章包缓存
   var lastOpts = [];        // 当前走位参考
   var busy = false;
-   
+  
   // ===== 章包加载 =====
   function pad2(n){ return (n<10?'0':'')+n; }
   function loadPack(n, cb){
@@ -71,7 +71,7 @@
       return r.json();
     }).then(function(j){ cb(null, j); }).catch(function(e){ cb(e); });
   }
-   
+  
   // ===== 三层导演组装 =====
   function buildParts(pack, state, userText, forced){
     var st = stageOf(state.fav);
@@ -88,7 +88,7 @@
     var sys = parts.join('\n\n');
     return { sys: sys, user: '── 玩家本轮呈报 ──\n' + userText };
   }
-   
+  
   // ===== AI 调用：密钥直连 / Worker 双路 =====
   var CONFIG_KEY = 'gzd_ai_config';   // 与引渡人共享：设置页填一次，两边通用
   function loadAIConfig(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}'); }catch(e){ return {}; } }
@@ -112,11 +112,11 @@
       if(pc.format==='claude'){
         url = baseUrl+'/v1/messages';
         headers = {'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-        body = JSON.stringify({model:model,max_tokens:1600,system:sys,messages:rest});
+        body = JSON.stringify({model:model,max_tokens:900,system:sys,messages:rest});
       } else {
         url = baseUrl+'/v1/chat/completions';
         headers = {'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey};
-        body = JSON.stringify({model:model,messages:messages,max_tokens:1600,temperature:0.8});
+        body = JSON.stringify({model:model,messages:messages,max_tokens:900,temperature:0.8});
       }
       return fetch(url,{method:'POST',headers:headers,body:body}).then(function(r){
         return r.json().then(function(d){
@@ -146,7 +146,9 @@
   }
   function callAI(userText, forced){
     var parts = buildParts(pack, state, userText, forced);
-    var messages = [{role:'system', content: PROTOCOL+'\n\n'+parts.sys}];
+    var lore = window.QLZ_LORE;
+    var loreTxt = [lore.STYLE===undefined?'':(lore.STYLE?('\n\n【世界书·文风】\n'+lore.STYLE):''), (lore.WORLD?'\n\n【世界书·世界观硬设定】\n'+lore.WORLD:''), (lore.CARDS?'\n\n【世界书·人物卡（严格执行，任何偏离即OOC事故）】\n'+lore.CARDS:''), (lore.SECRETS?'\n\n【封锁红线·以下信息在剧情未揭晓前绝不可确认/暗示/说漏，玩家追问一律“不知道/权限不足”】\n'+lore.SECRETS:'')].join('');
+    var messages = [{role:'system', content: PROTOCOL+'\n\n'+parts.sys+loreTxt}];
     state.stories.slice(-MAX_HISTORY).forEach(function(m){ messages.push({role:m.role, content:m.text}); });
     messages.push({role:'user', content:parts.user});
     return callMessages(messages);
@@ -165,7 +167,7 @@
       return o;
     });
   }
-   
+  
   // ===== 解析 AI 回复 =====
   function parseReply(reply, pack){
     var nodesHit = [], fav = null;
@@ -189,7 +191,7 @@
     }
     return { text: reply, nodesHit: nodesHit, fav: fav, opts: opts };
   }
-   
+  
   // ===== 轮次推进 =====
   function advance(parsed){
     var st0 = stageOf(state.fav);
@@ -211,12 +213,12 @@
     saveStory(state);
     return { sysLine: sysLine, forced: forced, transition: transition, stageChanged: st1.name!==st0.name };
   }
-   
+  
   // ===== 渲染器（v5 模板） =====
   var root, flow, elCache = {};
   function h(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-   
+  
   function injectApp(){
     if(document.getElementById('qlz-app')){ root = document.getElementById('qlz-app'); return; }
     root = h('div'); root.id = 'qlz-app';
@@ -284,7 +286,7 @@
     '#qlz-app .typing{font-family:Courier New,monospace;font-size:10px;color:var(--mut);letter-spacing:.2em;text-align:center;margin:14px 0;}'+
     '#qlz-app.night{--bg:#0C365A;--card:#0F3F6B;--ink:#F2EDE0;--burg:#A8443E;--klein:#7C9CB3;--zhu:#A8443E;--mut:#7C9CB3;--gc:rgba(124,156,179,.16);--gc2:rgba(124,156,179,.08);--hair:rgba(124,156,179,.4);}'+
     '</style>';
-   
+  
     var chap = h('div','chap');
     chap.innerHTML = '<span class="no" id="qno">CH.01</span><div class="t"><b id="qtitle">加载中…</b><i id="qsub">QIANLVZHOU // REC</i></div>';
     ['☰','A','☾'].forEach(function(t){
@@ -293,15 +295,15 @@
       chap.appendChild(b);
     });
     root.appendChild(chap);
-   
+  
     flow = h('div','flow'); root.appendChild(flow);
-   
+  
     var inbar = h('div','inbar');
     var input = h('input','in'); input.id='qin'; input.placeholder='今日欲行何事？';
     var go = h('button','go','呈报'); go.id='qgo';
     go.onclick = submit; input.onkeydown = function(e){ if(e.key==='Enter') submit(); };
     inbar.appendChild(input); inbar.appendChild(go); root.appendChild(inbar);
-   
+  
     // 右侧栏：菜单
     var r = h('div','side r'); r.id='qside-r';
     r.innerHTML = '<div class="st">系 统 · MENU</div>';
@@ -313,16 +315,16 @@
     mFont.onclick = changeFont;
     r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont);
     r.insertAdjacentHTML('beforeend', favBoxHTML());  // 字符串须insertAdjacentHTML
-   
+  
     var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='系统备份.html'; };
     r.appendChild(back);
     root.appendChild(r);
-   
+  
     // 左侧栏：目录
     var l = h('div','side l'); l.id='qside-l';
     l.innerHTML = '<div class="st">目 录 · CATALOG</div><div id="qtoc"><div class="sitem dim"><span>章节包加载中</span></div></div>';
     root.appendChild(l);
-   
+  
     document.body.appendChild(root);
     // 点击外部收起
     document.addEventListener('click', function(e){
@@ -332,7 +334,7 @@
       });
     }, true);
   }
-   
+  
   function favBoxHTML(){
     var st = stageOf(state.fav);
     var lvs = STAGES.map(function(s){ return '<span class="'+(s.name===st.name?'on':'')+'">'+s.min+'-'+s.max+' '+s.name+'</span>'; }).join('');
@@ -381,7 +383,7 @@
     }
     t.innerHTML = html;
   }
-   
+  
   // ===== 流渲染 =====
   function fmt(text){
     // 长段流渲染：括号提示行高亮，其余整段
@@ -460,7 +462,7 @@
     card.style.opacity='.35';
     send(input, card);
   }
-   
+  
   // ===== 主流程 =====
   function submit(){
     var i = document.getElementById('qin'), go = document.getElementById('qgo');
@@ -536,7 +538,7 @@
     document.getElementById('qtitle').textContent = pack.title;
     document.getElementById('qsub').textContent = 'QIANLVZHOU // '+pack.novelRef+' · REC';
   }
-   
+  
   // ===== 启动 =====
   function boot(){
     try{
@@ -586,7 +588,8 @@
   boot = function(){ ensurePacks(function(){ __origBoot(); }); };
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
-   
+  
   // 暴露（调试/壳联动）
   window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return state; } };
   })();
+  
