@@ -307,7 +307,7 @@
       r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont);
       r.insertAdjacentHTML('beforeend', favBoxHTML());  // 字符串须insertAdjacentHTML
      
-      var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='index.html'; };
+      var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='系统备份.html'; };
       r.appendChild(back);
       root.appendChild(r);
      
