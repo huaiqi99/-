@@ -32,6 +32,7 @@
   '场景切换或氛围转折时，可单独输出一行括号提示，如：（门后静了两拍。然后是低低的一声笑。）',
   '第二人称“你”指代怀榆。系统“我”偶尔冷面吐槽，语气四平八稳带嫌弃。',
   '导演指令中的必经节点是剧情轨道：玩家过程自由，节点事件必须自然发生；玩家跑偏时以最自然的方式拉回，严禁出戏。',
+  '开场衔接：上文【演出】里已播出的开场与剧情是既成事实。你的每轮演出必须从最近一次演出的结尾自然衔接（人物状态、地点、时间延续），严禁重播开场白、严禁另起炉灶、严禁无视玩家刚呈报的行动。',
   '信息封锁：导演指令中“不知道/不可提及”的内容，无论玩家怎么问，一律不给，可由系统以“权限不足”类话术封口。',
   '每轮回复固定格式：正文长段 + （括号场景提示，可选）+ 最后一行系统播报（好感变动或本章进度，用│分隔）。',
   '正文结束后另起一行输出<建议>["行动1","行动2","行动3"]</建议>：3条玩家下一步可采取的行动，每条不超过15字，第二人称祈使句。',
@@ -284,7 +285,14 @@
     '#qlz-app .backbtn{margin-top:14px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);width:100%;padding:8px;font-family:inherit;font-size:12px;letter-spacing:.3em;cursor:pointer;}'+
     '#qlz-app .backbtn:hover{background:var(--klein);color:#F0EFEB;}'+
     '#qlz-app .typing{font-family:Courier New,monospace;font-size:10px;color:var(--mut);letter-spacing:.2em;text-align:center;margin:14px 0;}'+
-    '#qlz-app.night{--bg:#0C365A;--card:#0F3F6B;--ink:#F2EDE0;--burg:#A8443E;--klein:#7C9CB3;--zhu:#A8443E;--mut:#7C9CB3;--gc:rgba(124,156,179,.16);--gc2:rgba(124,156,179,.08);--hair:rgba(124,156,179,.4);}'+
+    '#qlz-app.night{--bg:#161A20;--card:#1E242D;--ink:#D9D6C9;--burg:#C97F76;--klein:#93A9C7;--zhu:#C97F76;--mut:#8B99AC;--gc:rgba(147,169,199,.09);--gc2:rgba(147,169,199,.04);--hair:rgba(147,169,199,.32);}'+
+    /* 夜间模式按钮可读性：主按钮改深底亮字，描边月白 */
+    '#qlz-app.night .go{background:#2C3A4E;color:#E8E4D8;border:1px solid var(--klein);}'+
+    '#qlz-app.night .go:hover{background:var(--burg);color:#161A20;}'+
+    '#qlz-app.night .ico,#qlz-app.night .in{background:#1E242D;color:var(--ink);}'+
+    '#qlz-app.night .ico:hover{background:var(--klein);color:#161A20;}'+
+    '#qlz-app.night .opt:hover,#qlz-app.night .backbtn:hover,#qlz-app.night .sitem:hover{background:rgba(147,169,199,.12);color:var(--klein);}'+
+    '#qlz-app.night .recal:hover{background:var(--zhu);color:#161A20;}'+
     '#qlz-app .sitem.danger{color:var(--burg);}'+
     '#qlz-app .sitem.danger:hover{background:rgba(168,68,62,.08);color:var(--zhu);}'+
     '#qlz-app .declare .narr{font-size:14px;}'+
@@ -293,12 +301,14 @@
       '#qlz-app .chap .t b{font-size:14px;}'+
       '#qlz-app .chap .t i{font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'+
       '#qlz-app .ico{width:30px;height:30px;flex:none;}'+
+      '#qlz-app .side{width:70vw;max-width:258px;padding:14px 12px;}'+
       '#qlz-app .flow{margin:12px 10px 0;padding-left:13px;}'+
-      '#qlz-app .act{margin:16px 0 16px 14px;padding:15px 15px 12px;}'+
-      '#qlz-app .act::before{left:-28px;top:22px;}'+
+      /* 手机端气泡：贴紧红线，气泡整体加宽（左边距 14→4，红点间距 28→18） */
+      '#qlz-app .act{margin:16px 0 16px 4px;padding:15px 13px 12px;}'+
+      '#qlz-app .act::before{left:-18px;top:22px;}'+
       '#qlz-app .narr{font-size:14.5px;line-height:2.05;margin-bottom:18px;}'+
-      '#qlz-app .pcmd{margin:16px 0 16px 14px;padding:9px 11px 7px;}'+
-      '#qlz-app .pcmd::before{left:-31px;}'+
+      '#qlz-app .pcmd{margin:16px 0 16px 4px;padding:9px 11px 7px;}'+
+      '#qlz-app .pcmd::before{left:-22px;}'+
       '#qlz-app .inbar{margin:4px 10px 22px;gap:7px;}'+
       '#qlz-app .in{font-size:14px;padding:11px 12px;}'+
       '#qlz-app .go{padding:0 16px;letter-spacing:.15em;}'+
@@ -307,11 +317,10 @@
   
     var chap = h('div','chap');
     chap.innerHTML = '<span class="no" id="qno">CH.01</span><div class="t"><b id="qtitle">加载中…</b><i id="qsub">QIANLVZHOU // REC</i></div>';
-    ['☰','A','☾'].forEach(function(t){
-      var b = h('button','ico',t);
-      b.onclick = function(){ if(t==='☰') toggleSide('r'); else if(t==='☾') toggleNight(); else changeFont(); };
-      chap.appendChild(b);
-    });
+    /* 右上角只留汉堡菜单（夜间/字体入口在侧栏菜单里） */
+    var burger = h('button','ico','☰');
+    burger.onclick = function(){ toggleSide('r'); };
+    chap.appendChild(burger);
     root.appendChild(chap);
   
     flow = h('div','flow'); root.appendChild(flow);
@@ -329,8 +338,8 @@
     mToc.onclick = function(){ toggleSide('l'); renderToc(); };
     var mNight = h('div','sitem','<span>日间 / 夜间</span><span class="arr">切换</span>');
     mNight.onclick = function(){ toggleNight(); };
-    var mFont = h('div','sitem','<span>字体大小</span><span class="arr">A－ · A＋</span>');
-    mFont.onclick = changeFont;
+    /* 字体调节：A－ / A＋ 各自独立、真实生效，有上下限（12px～19px） */
+    var mFont = h('div','sitem','<span>字体大小</span><span style="display:flex;gap:6px;"><button class="op" id="qfminus">A－</button><button class="op" id="qfplus">A＋</button></span>');
     var mRound = h('div','sitem','<span>对话轮数</span><span class="arr" id="qround">— / —</span>');
     mRound.onclick = function(){ renderSys('本章进度：第 '+state.round+' 轮 / 上限 '+pack.maxRounds+' 轮　│　累计 '+Math.floor(state.stories.filter(function(m){return m.role==='user';}).length)+' 轮呈报'); };
     var mReset = h('div','sitem danger','<span>删档重来</span><span class="arr">清空全部存档</span>');
@@ -345,6 +354,11 @@
     var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='index.html'; };
     r.appendChild(back);
     root.appendChild(r);
+  
+    /* 字体按钮绑定：直接从 mFont 里取（root 此时尚未挂进 document，不能用 getElementById） */
+    var fminus = mFont.querySelector('#qfminus'), fplus = mFont.querySelector('#qfplus');
+    if(fminus) fminus.onclick = function(ev){ ev.stopPropagation(); setFont(-1); };
+    if(fplus)  fplus.onclick  = function(ev){ ev.stopPropagation(); setFont(1); };
   
     // 左侧栏：目录
     var l = h('div','side l'); l.id='qside-l';
@@ -390,6 +404,9 @@
     if(e && pack) e.textContent = state.round + ' / ' + pack.maxRounds;
   }
   function toggleSide(which){
+    /* 同时只允许一个侧栏展开——开这边，先收那边（防手机端双重覆盖） */
+    var other = document.getElementById(which==='r'?'qside-l':'qside-r');
+    if(other) other.classList.remove('open');
     var p = document.getElementById(which==='r'?'qside-r':'qside-l');
     if(p) p.classList.toggle('open');
   }
@@ -397,12 +414,21 @@
     var n = root.classList.toggle('night');
     try{ localStorage.setItem(K_THEME, JSON.stringify({value: n?'dark':'light'})); }catch(e){}
   }
-  function changeFont(){
-    var flow = document.querySelector('.flow'); if(!flow) return;
-    var cur = parseInt(flow.dataset.fs||'13.5',10);
-    var next = cur>=16?12:cur+1.25;
-    flow.dataset.fs = next;
-    flow.querySelectorAll('.narr,.tx,.dlg').forEach(function(e){ e.style.fontSize = next+'px'; });
+  /* 字体大小：step=+1 放大 / -1 缩小，边界 12~19px，持久记忆 */
+  function setFont(step){
+    var f = document.querySelector('.flow'); if(!f) return;
+    var cur = parseFloat(f.dataset.fs||'15');
+    var next = Math.max(12, Math.min(19, cur + step*1.5));
+    if(next===cur) return;
+    f.dataset.fs = next;
+    try{ localStorage.setItem('gzd_qlz_font', next); }catch(e){}
+    f.querySelectorAll('.narr,.tx').forEach(function(e){ e.style.fontSize = next+'px'; });
+  }
+  function restoreFont(){
+    var f = document.querySelector('.flow'); if(!f) return;
+    var v = 15; try{ v = parseFloat(localStorage.getItem('gzd_qlz_font'))||15; }catch(e){}
+    f.dataset.fs = v;
+    f.querySelectorAll('.narr,.tx').forEach(function(e){ e.style.fontSize = v+'px'; });
   }
   function renderToc(){
     var t = document.getElementById('qtoc'); if(!t || !pack) return;
@@ -507,7 +533,10 @@
   
   function beginFirstChapter(){
     var intro = (pack.locks||[]).filter(function(L){ return L.id==='C-1'; })[0];
-    var card = renderAct(intro ? intro.text : ('（第'+pack.id+'章 · '+pack.title+'）演出开始。'), 'ACT '+pack.id+'-1 · 开场', null, false);
+    var text = intro ? intro.text : ('（第'+pack.id+'章 · '+pack.title+'）演出开始。');
+    var card = renderAct(text, 'ACT '+pack.id+'-1 · 开场', null, false);
+    /* 关键：开场白写进对话记忆，否则 AI 看不到自己播过什么，玩家首轮呈报必然接不上 */
+    state.stories.push({role:'assistant', text:text});
     var firstNode = pack.mustNodes[0];
     attachOpts(card, pack.options[firstNode ? firstNode.id : '1a'] || []);
     state.started = true; saveStory(state); renderRound();
@@ -582,6 +611,8 @@
           (np.locks||[]).forEach(function(L){ if(L.id==='C-1') intro = L.text; });
           state.ch = nextCh; state.round = 0; state.nodes = []; state.summary = (state.summary||'') + '\n' + (pack.goal||'');
           pack = np; saveStory(state); renderChap(); renderToc();
+          /* 新章开场白同样写进记忆，保证转场后衔接 */
+          if(intro){ state.stories.push({role:'assistant', text:intro}); saveStory(state); }
           callAI(userText, null).then(function(reply){
             var parsed = parseReply(reply, np);
             var out = { parsed: parsed, sys:{ sysLine:'── 第'+nextCh+'章 · '+np.title+' ──', forced:null, transition:false } };
@@ -620,6 +651,7 @@
         if(last && last.role==='assistant') lastCard = renderAct(last.text, 'ACT '+state.ch+'-'+state.round+' · 回放', null, false);
         attachOpts(lastCard, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
       }
+      restoreFont();
     });
     }catch(err){
       try{
