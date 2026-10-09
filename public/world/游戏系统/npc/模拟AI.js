@@ -249,7 +249,7 @@
     '#qlz-app .ot{font-family:Courier New,monospace;font-size:9px;letter-spacing:.2em;color:var(--mut);margin-bottom:8px;}#qlz-app .ot b{color:var(--zhu);font-weight:400;}'+
     '#qlz-app .opt{display:block;width:100%;text-align:left;border:1px solid var(--hair);background:transparent;font-family:inherit;font-size:14px;padding:8px 12px;margin-bottom:6px;cursor:pointer;color:var(--ink);transition:.15s;}'+
     '#qlz-app .opt:hover{background:var(--klein);color:#F0EFEB;border-color:var(--klein);}'+
-    '#qlz-app .pcmd{border-left:3px solid var(--zhu);background:rgba(168,68,62,.05);padding:10px 13px 8px;margin:24px 0 24px 26px;position:relative;}'+
+    '#qlz-app .pcmd{border-left:3px solid var(--zhu);background:var(--card);color:var(--ink);padding:10px 13px 8px;margin:24px 0 24px 26px;position:relative;box-shadow:3px 3px 0 rgba(168,68,62,.18);}'+
     '#qlz-app .pl{font-family:Courier New,monospace;font-size:9.5px;letter-spacing:.18em;color:var(--zhu);display:flex;justify-content:space-between;margin-bottom:4px;}'+
     '#qlz-app .pl .op{margin-left:6px;}'+
     '#qlz-app .tx{font-size:14px;line-height:2;}#qlz-app .tx::before{content:"> ";font-family:Courier New,monospace;color:var(--zhu);}'+
@@ -288,6 +288,9 @@
     /* 夜间=系统页同款配方：石青蓝底 × 米白纸卡 × 深墨字 × 朱砂点缀（body 同步换肤，格子才不会留在日间色） */
     'body.night{--bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;--zhu:#B94A44;--mut:#5D6B80;--gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);--hair:rgba(42,44,63,.4);}'+
     'body.night #qlz-app{--bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;--zhu:#B94A44;--mut:#5D6B80;--gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);--hair:rgba(42,44,63,.4);}'+
+    /* 夜间可读性补丁：生成中提示/走位参考框在蓝底上提亮 */
+    'body.night #qlz-app .typing{color:#A9BFD9;}'+
+    'body.night #qlz-app .opts{background:#EAE5D6;}'+
     '#qlz-app .sitem.danger{color:var(--burg);}'+
     '#qlz-app .sitem.danger:hover{background:rgba(168,68,62,.08);color:var(--zhu);}'+
     '#qlz-app .declare .narr{font-size:14px;}'+
@@ -724,4 +727,5 @@
   // 暴露（调试/壳联动）
   window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return state; }, lockInput: lockInput };
   })();
+  
   
