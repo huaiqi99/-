@@ -50,7 +50,7 @@
   // ===== 存档 =====
   function loadStory(){
     try{ var d = JSON.parse(localStorage.getItem(K_STORY)); if(d && d.ch) return d; }catch(e){}
-    return { ch:1, round:0, fav:10, stories:[], nodes:[], summary:'' };
+    return { ch:1, round:0, fav:10, stories:[], nodes:[], summary:'', started:false };
   }
   function saveStory(s){ try{ localStorage.setItem(K_STORY, JSON.stringify(s)); }catch(e){} }
   function resetAll(){ localStorage.removeItem(K_STORY); localStorage.removeItem(K_STATE); state = loadStory(); }
@@ -285,6 +285,24 @@
     '#qlz-app .backbtn:hover{background:var(--klein);color:#F0EFEB;}'+
     '#qlz-app .typing{font-family:Courier New,monospace;font-size:10px;color:var(--mut);letter-spacing:.2em;text-align:center;margin:14px 0;}'+
     '#qlz-app.night{--bg:#0C365A;--card:#0F3F6B;--ink:#F2EDE0;--burg:#A8443E;--klein:#7C9CB3;--zhu:#A8443E;--mut:#7C9CB3;--gc:rgba(124,156,179,.16);--gc2:rgba(124,156,179,.08);--hair:rgba(124,156,179,.4);}'+
+    '#qlz-app .sitem.danger{color:var(--burg);}'+
+    '#qlz-app .sitem.danger:hover{background:rgba(168,68,62,.08);color:var(--zhu);}'+
+    '#qlz-app .declare .narr{font-size:14px;}'+
+    '@media(max-width:760px){'+
+      '#qlz-app .chap{margin:10px 10px 0;padding:9px 10px;gap:7px;}'+
+      '#qlz-app .chap .t b{font-size:14px;}'+
+      '#qlz-app .chap .t i{font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'+
+      '#qlz-app .ico{width:30px;height:30px;flex:none;}'+
+      '#qlz-app .flow{margin:12px 10px 0;padding-left:13px;}'+
+      '#qlz-app .act{margin:16px 0 16px 14px;padding:15px 15px 12px;}'+
+      '#qlz-app .act::before{left:-28px;top:22px;}'+
+      '#qlz-app .narr{font-size:14.5px;line-height:2.05;margin-bottom:18px;}'+
+      '#qlz-app .pcmd{margin:16px 0 16px 14px;padding:9px 11px 7px;}'+
+      '#qlz-app .pcmd::before{left:-31px;}'+
+      '#qlz-app .inbar{margin:4px 10px 22px;gap:7px;}'+
+      '#qlz-app .in{font-size:14px;padding:11px 12px;}'+
+      '#qlz-app .go{padding:0 16px;letter-spacing:.15em;}'+
+    '}'+
     '</style>';
   
     var chap = h('div','chap');
@@ -313,10 +331,18 @@
     mNight.onclick = function(){ toggleNight(); };
     var mFont = h('div','sitem','<span>字体大小</span><span class="arr">A－ · A＋</span>');
     mFont.onclick = changeFont;
-    r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont);
+    var mRound = h('div','sitem','<span>对话轮数</span><span class="arr" id="qround">— / —</span>');
+    mRound.onclick = function(){ renderSys('本章进度：第 '+state.round+' 轮 / 上限 '+pack.maxRounds+' 轮　│　累计 '+Math.floor(state.stories.filter(function(m){return m.role==='user';}).length)+' 轮呈报'); };
+    var mReset = h('div','sitem danger','<span>删档重来</span><span class="arr">清空全部存档</span>');
+    mReset.onclick = function(){
+      if(confirm('确认删档重来？\n\n全部剧情进度、好感度与对话记录将被清空，且无法恢复。')){
+        resetAll(); location.reload();
+      }
+    };
+    r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont); r.appendChild(mRound); r.appendChild(mReset);
     r.insertAdjacentHTML('beforeend', favBoxHTML());  // 字符串须insertAdjacentHTML
   
-    var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='系统备份.html'; };
+    var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='index.html'; };
     r.appendChild(back);
     root.appendChild(r);
   
@@ -358,6 +384,10 @@
       renderSeal(); renderSys('好感校准：'+state.fav+'（'+(o.delta>=0?'+':'')+(o.delta|0)+'）　│　'+(o.reason||''));
       if(b){ b.disabled=false; b.innerHTML='↻ 校准好感度<i>按下后后端 AI 参考当前剧情输出一次 · 不必每轮都算</i>'; }
     }).catch(function(e){ renderSys('校准失败：'+esc(e.message)); if(b){ b.disabled=false; b.innerHTML='↻ 校准好感度'; } });
+  }
+  function renderRound(){
+    var e = document.getElementById('qround');
+    if(e && pack) e.textContent = state.round + ' / ' + pack.maxRounds;
   }
   function toggleSide(which){
     var p = document.getElementById(which==='r'?'qside-r':'qside-l');
@@ -410,16 +440,18 @@
     scrollEnd();
     return a;
   }
-  function renderOpts(list){
-    if(!list || !list.length) return;
-    lastOpts = list;
+  function makeOpts(list){
     var o = h('div','opts','<div class="ot"><b>◇</b> 走位参考 · 仅为建议，可自行呈报</div>');
     list.forEach(function(t){
       var b = h('button','opt', esc(t));
       b.onclick = function(){ var i=document.getElementById('qin'); i.value=t; i.focus(); };
       o.appendChild(b);
     });
-    flow.appendChild(o); scrollEnd();
+    return o;
+  }
+  // 走位参考挂在演出卡内部底端（v2 写法），不再是独立版块
+  function attachOpts(card, list){
+    if(card && list && list.length){ card.appendChild(makeOpts(list)); lastOpts = list; }
   }
   function renderPcmd(text){
     var p = h('div','pcmd');
@@ -464,11 +496,39 @@
   }
   
   // ===== 主流程 =====
+  var DECLARATION = [
+  '【千律州系统 · 演出声明】',
+  '本模拟基于原著《业焰之国》第一章至第四章剧情架构搭建。你将扮演怀榆，由系统（我）与千律州世界共同为你演出。',
+  '演出方式：在下方输入框呈报你的行动或对话，由系统生成长段演出。每轮附「走位参考」，仅为建议，可自行呈报任意行动。',
+  '好感度：初始 10，分五阶段演进，影响角色态度与剧情分支。右侧栏可随时校准。',
+  '剧情轨道：每章设必经节点与轮数上限，过程自由，主线节点会自然发生。存档自动进行，右侧栏可随时删档重来。',
+  '——确认了解后，在下方输入「开始游戏」，第一章《'+'嗅骸与重启'+'》即刻开演。'
+  ].join('\n');
+  
+  function beginFirstChapter(){
+    var intro = (pack.locks||[]).filter(function(L){ return L.id==='C-1'; })[0];
+    var card = renderAct(intro ? intro.text : ('（第'+pack.id+'章 · '+pack.title+'）演出开始。'), 'ACT '+pack.id+'-1 · 开场', null, false);
+    var firstNode = pack.mustNodes[0];
+    attachOpts(card, pack.options[firstNode ? firstNode.id : '1a'] || []);
+    state.started = true; saveStory(state); renderRound();
+  }
+  
   function submit(){
     var i = document.getElementById('qin'), go = document.getElementById('qgo');
     var text = i.value.trim();
     if(!text || busy) return;
     i.value=''; busy=true; go.disabled=true;
+    // 开局拦截：演出声明之后，须输入「开始游戏」才进入第一章（同引渡人，不强买强卖）
+    if(!state.started && state.stories.length===0){
+      if(/^(开始游戏|开始|start)$/i.test(text.replace(/\s/g,''))){
+        renderPcmd(text);
+        beginFirstChapter();
+        busy=false; go.disabled=false; return;
+      }
+      renderPcmd(text);
+      renderSys('系统提示：请先输入「开始游戏」以开启第一章演出');
+      busy=false; go.disabled=false; return;
+    }
     renderPcmd(text);
     send(text, null, function(){ busy=false; go.disabled=false; });
   }
@@ -478,13 +538,13 @@
       typing.remove();
       if(replaceCard){ replaceCard.remove(); }
       var card = renderAct(res.parsed.text, null, null, false);
+      attachOpts(card, res.parsed.opts);
       renderSys(res.sys.sysLine);
       // 存档
       state.stories.push({role:'user', text:userText});
       state.stories.push({role:'assistant', text:res.parsed.text});
       advance(res.parsed);
-      renderOpts(res.parsed.opts);
-      renderSeal();
+      renderSeal(); renderRound();
       if(res.sys.forced) renderSys('⚠ '+res.sys.forced);
       if(res.sys.transition) prepareTransition();
       if(done) done();
@@ -547,18 +607,18 @@
       root.classList.add('night');
     loadPack(state.ch, function(err, p){
       if(err){ document.getElementById('qtitle').textContent = '章节包加载失败'; renderSys('加载失败：'+esc(err.message)+'　│　请确认 chapters/ 目录可访问'); return; }
-      pack = p; renderChap(); renderToc(); renderSeal();
+      pack = p; renderChap(); renderToc(); renderSeal(); renderRound();
       if(!state.stories.length){
-        // 首次：播开场白
-        var intro = (p.locks||[]).filter(function(L){ return L.id==='C-1'; })[0];
-        renderAct(intro ? intro.text : ('（第'+p.id+'章 · '+p.title+'）演出开始。'), 'ACT '+p.id+'-1 · 开场', null, true);
-        var firstNode = p.mustNodes[0];
-        renderOpts(p.options[firstNode ? firstNode.id : '1a'] || []);
+        // 首次：只播演出声明，玩家输入「开始游戏」后才开演（同引渡人，不强买强卖）
+        var dc = renderAct(DECLARATION, 'SYS · 声明', null, true);
+        dc.classList.add('declare');
       } else {
         // 续档：回放最近一轮
+        state.started = true;
         var last = state.stories[state.stories.length-1];
-        if(last && last.role==='assistant') renderAct(last.text, 'ACT '+state.ch+'-'+state.round+' · 回放', null, false);
-        renderOpts(lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
+        var lastCard = null;
+        if(last && last.role==='assistant') lastCard = renderAct(last.text, 'ACT '+state.ch+'-'+state.round+' · 回放', null, false);
+        attachOpts(lastCard, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
       }
     });
     }catch(err){
