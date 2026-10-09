@@ -455,7 +455,8 @@
     var mh = h('div','mh');
     mh.innerHTML = '<span class="mn">'+(label||('ACT '+state.ch+'-'+state.round+' · 演出'))+'</span><span class="ops">'+(isIntro?'':'<button class="op">✎ 编辑</button><button class="op hot">↻ 重生成</button>')+'</span>';
     a.appendChild(mh);
-    a.appendChild(h('div',null,fmt(text)));
+    var ab = h('div','abody'); ab.innerHTML = fmt(text);   /* abody=卡身，编辑时整体替换 */
+    a.appendChild(ab);
     if(!isIntro){
       var ops = a.querySelectorAll('.op');
       ops[0].onclick = function(){ editAct(a); };
@@ -481,6 +482,7 @@
   function renderPcmd(text){
     var p = h('div','pcmd');
     p.innerHTML = '<div class="pl"><span>玩家 · 呈报</span><button class="op">✎</button></div><div class="tx">'+esc(text)+'</div>';
+    p.querySelector('.op').onclick = function(){ editAct(p); };
     flow.appendChild(p); scrollEnd();
     return p;
   }
@@ -489,35 +491,79 @@
     flow.appendChild(s); scrollEnd();
   }
   function scrollEnd(){ window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); }
+  /* 编辑：整卡全文可编辑（演出卡=全部段落；呈报卡=行动全文），保存后写入存档。
+     呈报卡保存后同引渡人：截断后续剧情并自动重演 */
   function editAct(card){
-    var n = card.querySelector('.narr, .tx');
-    if(!n || card.dataset.editing) return;
+    if(card.dataset.editing) return;
+    var isP = card.classList.contains('pcmd');
+    var ab = card.querySelector('.abody') || card.querySelector('.tx');
+    if(!ab) return;
+    var paras = ab.classList.contains('tx') ? [ab] : Array.prototype.slice.call(ab.querySelectorAll('.narr'));
+    if(!paras.length) return;
+    var oldText = paras.map(function(p){ return p.textContent.replace(/^>\s*/,''); }).join('\n\n');
     card.dataset.editing = '1';
     var ta = document.createElement('textarea');
-    ta.style.cssText = 'width:100%;min-height:120px;font-family:inherit;font-size:13px;line-height:2;border:1.5px solid var(--klein);background:var(--bg);padding:8px;';
-    ta.value = n.textContent;
-    n.replaceWith(ta);
-    var save = h('button','op','✓ 保存');
-    save.style.cssText='margin:6px 0;';
-    ta.after(save);
+    ta.style.cssText = 'width:100%;min-height:140px;font-family:inherit;font-size:13px;line-height:2;border:1.5px solid var(--klein);background:var(--bg);padding:8px;';
+    ta.value = oldText;
+    var abOld = ab.cloneNode(false); abOld.innerHTML='';  /* 占位 */
+    var wrap = h('div'); wrap.appendChild(ta);
+    var bar = h('div'); bar.style.cssText='margin:6px 0;';
+    var save = h('button','op','✓ 保存并继续'); var cancel = h('button','op','取消');
+    bar.appendChild(save); bar.appendChild(cancel);
+    ab.style.display='none'; ab.parentNode.insertBefore(wrap, ab.nextSibling);
+    ab.parentNode.insertBefore(bar, wrap.nextSibling);
     save.onclick = function(){
-      var np = h('div', n.className, esc(ta.value));
-      ta.replaceWith(np); save.remove();
-      delete card.dataset.editing;
+      var val = ta.value.trim();
+      if(!val || val===oldText){ restore(); return; }
+      if(isP){
+        /* 呈报被改 → 找到存档中该条，截断到它之前，用新呈报重演（引渡人同款） */
+        if(oldText==='开始游戏'){ renderSys('「开始游戏」是开局指令，不可编辑'); restore(); return; }
+        var idx = -1;
+        for(var i=state.stories.length-1;i>=0;i--){ if(state.stories[i].role==='user' && state.stories[i].text===oldText){ idx=i; break; } }
+        if(idx<0){ restore(); return; }
+        state.stories = state.stories.slice(0, idx);
+        saveStory(state);
+        removeAfter(card);
+        restore(true);
+        send(val, null, null);
+      } else {
+        /* 演出被改 → 更新卡面与存档，后续剧情保持不变 */
+        var j = -1;
+        for(var k=state.stories.length-1;k>=0;k--){ if(state.stories[k].role==='assistant' && state.stories[k].text===oldText){ j=k; break; } }
+        if(j>=0){ state.stories[j].text = val; saveStory(state); }
+        ab.innerHTML = fmt(val);
+        restore(true);
+      }
     };
+    cancel.onclick = restore;
+    function restore(keepEditing){
+      ab.style.display='';
+      wrap.remove(); bar.remove();
+      if(!keepEditing) delete card.dataset.editing;
+    }
+  }
+  /* 删除某张卡之后的所有对话卡（回滚 DOM 用） */
+  function removeAfter(card){
+    var n = card.nextElementSibling;
+    while(n){ var nx = n.nextElementSibling; n.remove(); n = nx; }
   }
   function regenerate(card){
-    // 找到该卡前最近的玩家呈报作为输入，重演
-    var prev = card.previousElementSibling, input = null;
-    while(prev){ if(prev.classList.contains('pcmd')){ input = prev.querySelector('.tx').textContent.replace(/^>\s*/,''); break; } prev = prev.previousElementSibling; }
-    if(!input){ renderSys('重生成失败：未找到对应呈报'); return; }
-    // 回滚：从存档 stories 中删掉该轮，重发
+    /* 引渡人同款：找到本轮玩家呈报 → 存档回滚到该呈报之前 → 删掉后续 DOM → 重演 */
+    if(state.nodes._transition){ delete state.nodes._transition; }
+    var prev = card.previousElementSibling, input=null, pcmdEl=null;
+    while(prev){
+      if(prev.classList.contains('pcmd')){ pcmdEl=prev; input=prev.querySelector('.tx').textContent.replace(/^>\s*/,''); break; }
+      prev = prev.previousElementSibling;
+    }
+    if(!input){ renderSys('重生成失败：未找到对应的玩家呈报'); return; }
     var idx = -1;
-    for(var i=state.stories.length-1;i>=0;i--){ if(state.stories[i].role==='user' && state.stories[i].text.indexOf(input.slice(0,20))>=0){ idx=i; break; } }
-    if(idx>=0) state.stories = state.stories.slice(0, idx);
+    for(var i=state.stories.length-1;i>=0;i--){ if(state.stories[i].role==='user' && state.stories[i].text===input){ idx=i; break; } }
+    if(idx<0){ renderSys('重生成失败：该轮呈报不在存档中（开场卡不可重生成）'); return; }
+    state.stories = state.stories.slice(0, idx);
     saveStory(state);
-    card.style.opacity='.35';
-    send(input, card);
+    removeAfter(pcmdEl);
+    scrollEnd();
+    send(input, null, null);
   }
   
   // ===== 主流程 =====
@@ -575,6 +621,11 @@
       renderSeal(); renderRound();
       if(res.sys.forced) renderSys('⚠ '+res.sys.forced);
       if(res.sys.transition) prepareTransition();
+      /* 轮数兜底：本章轮数用尽仍未转场 → 自动触发转场（不依赖 AI 自觉，同引渡人的 MAX_ROUNDS 机制） */
+      if(!state.nodes._transition && state.round >= pack.maxRounds){
+        state.nodes._transition = 1; saveStory(state);
+        renderSys('本章轮数已用尽（'+state.round+'/'+pack.maxRounds+'）—— 呈报任意行动，演出自动衔接下一章');
+      }
       if(done) done();
     }).catch(function(e){
       typing.remove();
@@ -655,12 +706,13 @@
         var dc = renderAct(DECLARATION, 'SYS · 声明', null, true);
         dc.classList.add('declare');
       } else {
-        // 续档：回放最近一轮
+        // 续档：全量回放全部剧情（同引渡人——不是只回放最近一轮）
         state.started = true;
-        var last = state.stories[state.stories.length-1];
-        var lastCard = null;
-        if(last && last.role==='assistant') lastCard = renderAct(last.text, 'ACT '+state.ch+'-'+state.round+' · 回放', null, false);
-        attachOpts(lastCard, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
+        state.stories.forEach(function(m){
+          if(m.role==='user') renderPcmd(m.text);
+          else renderAct(m.text, 'ACT · 回放', null, false);
+        });
+        attachOpts(flow.lastElementChild, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
       }
       restoreFont();
       kickPaint();
