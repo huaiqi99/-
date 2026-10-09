@@ -285,14 +285,9 @@
     '#qlz-app .backbtn{margin-top:14px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);width:100%;padding:8px;font-family:inherit;font-size:12px;letter-spacing:.3em;cursor:pointer;}'+
     '#qlz-app .backbtn:hover{background:var(--klein);color:#F0EFEB;}'+
     '#qlz-app .typing{font-family:Courier New,monospace;font-size:10px;color:var(--mut);letter-spacing:.2em;text-align:center;margin:14px 0;}'+
-    '#qlz-app.night{--bg:#161A20;--card:#1E242D;--ink:#D9D6C9;--burg:#C97F76;--klein:#93A9C7;--zhu:#C97F76;--mut:#8B99AC;--gc:rgba(147,169,199,.09);--gc2:rgba(147,169,199,.04);--hair:rgba(147,169,199,.32);}'+
-    /* 夜间模式按钮可读性：主按钮改深底亮字，描边月白 */
-    '#qlz-app.night .go{background:#2C3A4E;color:#E8E4D8;border:1px solid var(--klein);}'+
-    '#qlz-app.night .go:hover{background:var(--burg);color:#161A20;}'+
-    '#qlz-app.night .ico,#qlz-app.night .in{background:#1E242D;color:var(--ink);}'+
-    '#qlz-app.night .ico:hover{background:var(--klein);color:#161A20;}'+
-    '#qlz-app.night .opt:hover,#qlz-app.night .backbtn:hover,#qlz-app.night .sitem:hover{background:rgba(147,169,199,.12);color:var(--klein);}'+
-    '#qlz-app.night .recal:hover{background:var(--zhu);color:#161A20;}'+
+    /* 夜间=系统页同款配方：石青蓝底 × 米白纸卡 × 深墨字 × 朱砂点缀（body 同步换肤，格子才不会留在日间色） */
+    'body.night{--bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;--zhu:#B94A44;--mut:#5D6B80;--gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);--hair:rgba(42,44,63,.4);}'+
+    'body.night #qlz-app{--bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;--zhu:#B94A44;--mut:#5D6B80;--gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);--hair:rgba(42,44,63,.4);}'+
     '#qlz-app .sitem.danger{color:var(--burg);}'+
     '#qlz-app .sitem.danger:hover{background:rgba(168,68,62,.08);color:var(--zhu);}'+
     '#qlz-app .declare .narr{font-size:14px;}'+
@@ -351,7 +346,7 @@
     r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont); r.appendChild(mRound); r.appendChild(mReset);
     r.insertAdjacentHTML('beforeend', favBoxHTML());  // 字符串须insertAdjacentHTML
   
-    var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='系统备份.html'; };
+    var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='index.html'; };
     r.appendChild(back);
     root.appendChild(r);
   
@@ -411,7 +406,8 @@
     if(p) p.classList.toggle('open');
   }
   function toggleNight(){
-    var n = root.classList.toggle('night');
+    var n = !root.classList.contains('night');
+    applyNight(n);  /* body/html/app 三处同步换肤，格子画在 body 上，只切 app 会留日间白格子 */
     try{ localStorage.setItem(K_THEME, JSON.stringify({value: n?'dark':'light'})); }catch(e){}
   }
   /* 字体大小：step=+1 放大 / -1 缩小，边界 12~19px，持久记忆 */
@@ -631,11 +627,23 @@
   }
   
   // ===== 启动 =====
+  /* iOS Safari 首屏不重绘（页面空白、划一下才出内容）：注入后轻推一次滚动强制重绘 */
+  function kickPaint(){
+    requestAnimationFrame(function(){
+      window.scrollTo(0, 1);
+      requestAnimationFrame(function(){ window.scrollTo(0, 0); });
+    });
+  }
+  function applyNight(on){
+    root.classList.toggle('night', on);
+    document.body.classList.toggle('night', on);
+    document.documentElement.style.background = on ? '#20405F' : '#F0EFEB';
+  }
   function boot(){
     try{
     injectApp();
-    if(document.body.classList.contains('night') || (function(){ try{return JSON.parse(localStorage.getItem(K_THEME)||'null').value==='dark';}catch(e){return false;} })())
-      root.classList.add('night');
+    applyNight(document.body.classList.contains('night') || (function(){ try{return JSON.parse(localStorage.getItem(K_THEME)||'null').value==='dark';}catch(e){return false;} })());
+    kickPaint();
     loadPack(state.ch, function(err, p){
       if(err){ document.getElementById('qtitle').textContent = '章节包加载失败'; renderSys('加载失败：'+esc(err.message)+'　│　请确认 chapters/ 目录可访问'); return; }
       pack = p; renderChap(); renderToc(); renderSeal(); renderRound();
@@ -652,6 +660,7 @@
         attachOpts(lastCard, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
       }
       restoreFont();
+      kickPaint();
     });
     }catch(err){
       try{
@@ -681,7 +690,38 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
   
+  // ===== 回忆线接口（引擎本体在 回忆AI.js；本文件只做路由与触发，不碰主线逻辑） =====
+  function lockInput(v){ busy = v ? true : busy; var g=document.getElementById('qgo'); if(g) g.disabled = !!v; }
+  var __origSubmit__ = submit;
+  submit = function(){
+    /* 回忆进行中：输入全部路由给回忆AI，主线不响应 */
+    if(window.__QLZ_MEM__ && window.__QLZ_MEM__.active()){ window.__QLZ_MEM__.submit(); return; }
+    __origSubmit__();
+  };
+  var __origSend__ = send;
+  send = function(u, rc, done){
+    __origSend__(u, rc, function(){
+      /* 主线演出落幕后：检查是否有回忆待触发（如救场闪回初遇） */
+      var M = window.__QLZ_MEM__;
+      var hit = M ? M.pick(state.nodes.slice()) : null;
+      if(hit){ M.start(hit, done || function(){}); }
+      else if(done){ done(); }
+    });
+  };
+  var __origReset__ = resetAll;
+  resetAll = function(){
+    try{ localStorage.removeItem('gzd_qlz_mem'); }catch(e){}
+    __origReset__();
+  };
+  /* go.onclick 在 injectApp 时绑定了原 submit 函数对象，重声明后必须在注入完成后重绑 */
+  var __prevBoot2__ = boot;
+  boot = function(){
+    __prevBoot2__();
+    var g = document.getElementById('qgo');
+    if(g) g.onclick = submit;
+  };
+  
   // 暴露（调试/壳联动）
-  window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return state; } };
+  window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return state; }, lockInput: lockInput };
   })();
   
