@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,interactive-widget=resizes-content">
+<title>千律州 · 信匣</title>
+<style>
+/* ═══ 千律州 · 信匣 V4 ═══
+   B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
+   右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/36/36ea7e64bf.js（MAIL_AI.reply，本页只调这一个口子） */
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
+  --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
+  --gc:rgba(85,15,16,.08);--gc2:rgba(34,44,110,.07);
+  --shadow:4px 4px 0 rgba(34,44,110,.14);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;
+  --zhu:#B94A44;--mut:#5D6B80;--hair:rgba(42,44,63,.4);
+  --gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);
+  --shadow:4px 4px 0 rgba(10,20,35,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:var(--serif);color:var(--ink);background:var(--bg);
+  background-image:
+    linear-gradient(var(--gc) 1px,transparent 1px),
+    linear-gradient(90deg,var(--gc) 1px,transparent 1px),
+    linear-gradient(var(--gc2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
+  background-size:117px 117px,117px 117px,26px 26px,26px 26px;
+  overflow:hidden;
+}
+b,i{font-style:normal}
+button{font-family:inherit;cursor:pointer}
+/* ── 整体：全窗左名册+右讯道 ── */
+.app{display:flex;height:100vh;height:100dvh;padding:14px;gap:14px;max-width:1200px;margin:0 auto}
+.card{background:var(--card);border:1.5px solid var(--klein);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0}
+#roster{width:340px;flex:none}
+/* ── 名册 ── */
+.rhead{padding:14px 16px 10px;border-bottom:2.5px dashed var(--hair)}
+.rhead .chip{display:inline-block;background:var(--zhu);color:#F0EFEB;font-family:var(--mono);font-size:9px;letter-spacing:.22em;padding:3px 8px;margin-bottom:6px}
+.rhead .t{display:flex;align-items:baseline;gap:8px}
+.rhead .t b{font-size:20px;letter-spacing:.35em}
+.rhead .t i{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--mut)}
+/* 返回系统页面：挂在信匣标题右侧，全端可见 */
+.sysback{margin-left:auto;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:4px 9px;cursor:pointer;white-space:nowrap}
+.sysback:hover{background:var(--klein);color:#F0EFEB}
+.clist{flex:1;overflow-y:auto}
+.contact{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1.5px dashed var(--hair);cursor:pointer;border-left:3px solid transparent;transition:.15s}
+/* ── 置顶：名字前一枚mono小签，排序置顶（JS排） ── */
+.contact .pinchip{font-family:var(--mono);font-size:7.5px;letter-spacing:.15em;color:var(--klein);border:1px solid var(--klein);padding:1px 4px;flex:none}
+/* ── 特别关心（定稿）：朱砂双实环印，名字标红 ── */
+.contact.care .seal{border:1.5px solid var(--zhu);outline:1.5px solid var(--zhu);outline-offset:2px;color:var(--zhu)}
+.contact.care .n{color:var(--zhu)}
+.contact:hover{background:var(--paper,#F4F2EA)}
+body.night .contact:hover{background:rgba(42,44,63,.08)}
+.contact.on{border-left-color:var(--zhu);background:var(--paper,#F4F2EA)}
+body.night .contact.on{background:rgba(42,44,63,.08)}
+.seal{width:36px;height:36px;flex:none;border:1.5px dashed var(--zhu);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--zhu);background:transparent;position:relative}
+.cinfo{flex:1;min-width:0}
+.cinfo .n{font-size:14px;letter-spacing:.08em}
+.cinfo .n span{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--mut);margin-left:6px}
+.cinfo .p{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--zhu)}
+.rfoot{border-top:2.5px dashed var(--hair);padding:9px 14px;display:flex;justify-content:space-between;align-items:center}
+.rfoot i{font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--mut)}
+.ico{width:32px;height:32px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer}
+.ico:hover{background:var(--klein);color:#F0EFEB}
+/* ── 讯道 ── */
+#chat{flex:1;min-width:0}
+.chead{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:2.5px dashed var(--hair)}
+.chead .back{border:none;background:none;font-size:13px;letter-spacing:.1em;color:var(--klein);cursor:pointer;padding:4px 6px;white-space:nowrap}
+.chead .seal{cursor:pointer;width:40px;height:40px;font-size:17px}
+.chead .seal:hover{background:rgba(168,68,62,.08)}
+.who{flex:1;min-width:0}
+.who b{font-size:15px;letter-spacing:.08em}
+.who b span{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:var(--mut);margin-left:7px}
+.who i{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mut);margin-top:3px}
+#msgs{flex:1;overflow-y:auto;padding:18px 16px 10px;display:flex;flex-direction:column}
+.day{text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--mut);margin:8px 0}
+.day::before,.day::after{content:"── ";letter-spacing:0}
+.day::after{content:" ──"}
+/* ── 中场提示（微信撤回式） ── */
+.sysnote{display:block;width:fit-content;max-width:86%;margin:10px auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--zhu);border:1.5px dashed var(--zhu);padding:5px 13px;background:transparent;text-align:center;cursor:default}
+/* ── 消息：无头像，mono标签+折角纸卡 ── */
+.mu{max-width:80%;margin:7px 0;position:relative;animation:rise .32s ease both}
+.mu.in{align-self:flex-start}
+.mu.out{align-self:flex-end;margin-left:auto}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.mu .lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--mut);margin-bottom:4px}
+.mu.out .lbl{text-align:right}
+.mu .bub{position:relative;font-size:13.5px;line-height:1.95;padding:8px 13px;border:1.5px solid var(--hair);background:var(--card);word-break:break-word;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* B 信笺折角：来信=白纸+右下折角；自己=克莱因蓝实底+左上朱砂角 */
+.mu.in .bub{border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12)}
+.mu.night-in{}
+body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
+.mu.out .bub{background:var(--klein);color:#F0EFEB;border-color:var(--klein);box-shadow:3px 3px 0 rgba(85,15,16,.18)}
+.mu.out .bub::after{content:"";position:absolute;left:0;top:0;border-style:solid;border-width:13px 13px 0 0;border-color:var(--zhu) transparent transparent transparent}
+/* 动效①：折角入场——卡先落，角后折 */
+.mu .bub::after{animation:fold .25s ease .22s both}
+@keyframes fold{from{transform:scale(2.2);opacity:0}to{transform:none;opacity:.85}}
+.mu.in .bub::after{animation-name:fold}
+.mu.out .bub::after{animation-name:fold}
+/* ── ② 碾墨指示 ── */
+.grind{width:fit-content;margin:13px 0;padding:7px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--mut);border:1.5px dashed var(--hair)}
+.grind i{display:inline-block;animation:dotf 1.2s infinite}
+.grind i:nth-child(2){animation-delay:.2s}.grind i:nth-child(3){animation-delay:.4s}
+@keyframes dotf{0%,60%,100%{opacity:.25}30%{opacity:1}}
+/* ── 操作钮：浮出条（双击讯文弹出，稳态显示） ── */
+.ops{display:none;gap:8px;margin-top:5px;font-family:var(--mono);font-size:9px;letter-spacing:.1em}
+.mu.sel .ops{display:flex}
+.ops{position:absolute;top:100%;left:0;background:var(--card);border:1.5px solid var(--hair);box-shadow:3px 3px 0 rgba(34,44,110,.15);padding:4px 9px;margin-top:4px;z-index:5;white-space:nowrap}
+.mu.out .ops{left:auto;right:0}
+.ops .o{border:none;background:none;color:var(--mut);cursor:pointer;padding:2px 0;letter-spacing:.1em}
+.ops .o:hover{color:var(--klein)}
+.ops .o.danger:hover{color:var(--zhu)}
+/* 编辑态 */
+.mu textarea{width:100%;min-height:60px;font-family:inherit;font-size:13px;line-height:1.9;border:1.5px solid var(--klein);background:var(--bg);padding:7px 10px;resize:vertical}
+.mu .ebtns{margin-top:5px;display:flex;gap:8px}
+.mu .ebtns button{font-family:var(--mono);font-size:9px;letter-spacing:.1em;border:1.5px solid var(--klein);background:var(--card);color:var(--klein);padding:3px 9px;cursor:pointer}
+/* ── 输入条 ── */
+.inputbar{display:flex;gap:9px;padding:10px 14px;border-top:2.5px dashed var(--hair);align-items:center}
+.inputbar .nt{display:none}
+.inputbar input{flex:1;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:13px;padding:9px 12px;letter-spacing:.04em;min-width:0}
+.inputbar input:focus{outline:none;border-color:var(--zhu)}
+.send{border:none;background:var(--klein);color:#F0EFEB;font-family:var(--mono);font-size:11px;letter-spacing:.3em;padding:10px 18px 10px 21px;cursor:pointer}
+.send:hover{background:var(--zhu)}
+/* ── 右上角菜单侧栏（同模拟页） ── */
+#menuBtn{flex:none}
+#mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;height:100vh;height:100dvh;background:var(--card);border-left:1.5px solid var(--klein);z-index:30;transition:right .28s ease;display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto}
+#mside.open{right:0}
+#mside .st{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--mut);border-bottom:2.5px dashed var(--hair);padding-bottom:10px;margin-bottom:8px}
+.sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1.5px dashed var(--hair);font-size:13px;letter-spacing:.08em;cursor:pointer}
+.sitem:hover{color:var(--klein)}
+.sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mut)}
+.sitem.danger{color:var(--zhu)}
+#findBox{margin:8px 0;padding:8px 10px;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:12px;width:100%}
+#mside .hint{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:var(--mut);margin:8px 0 2px}
+.sitem .plus{border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:11px;padding:2px 9px;cursor:pointer}
+.sitem .plus:hover{background:var(--klein);color:#F0EFEB}
+.backbtn{margin-top:14px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);width:100%;padding:8px;font-size:12px;letter-spacing:.3em;cursor:pointer}
+.backbtn:hover{background:var(--klein);color:#F0EFEB}
+/* ── 人物简介浮层 ── */
+#pfile{position:fixed;inset:0;background:rgba(20,28,48,.45);z-index:40;display:none;align-items:center;justify-content:center;padding:16px}
+#pfile.open{display:flex}
+#pfile .pf{background:var(--card);border:1.5px solid var(--klein);box-shadow:6px 6px 0 rgba(34,44,110,.2);max-width:360px;width:100%;padding:20px 20px 16px;position:relative;animation:rise .25s ease both}
+#pfile .seal{width:56px;height:56px;font-size:22px;margin-bottom:10px}
+#pfile .pf h3{font-size:17px;letter-spacing:.15em}
+#pfile .pf h3 span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mut);margin-left:8px}
+#pfile .pf .row{display:flex;gap:8px;font-size:12px;padding:7px 0;border-bottom:1.5px dashed var(--hair)}
+#pfile .pf .row i{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mut);flex:none;width:64px;padding-top:2px}
+#pfile .pf .quote{font-size:12px;color:var(--burg);border-left:3px solid var(--zhu);padding:6px 10px;margin-top:12px;background:var(--paper,#F4F2EA)}
+body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
+#pfile .x{position:absolute;top:10px;right:10px}
+/* ═══════════ 手机端 ═══════════ */
+@media(max-width:760px){
+  .app{padding:0;gap:0}
+  .card{border:none;box-shadow:none}
+  #roster{width:100%}
+  #chat{display:none;position:fixed;inset:0;z-index:5;background:var(--card)}
+  #chat.open{display:flex}
+  .chead .back{display:block}
+  .mu{max-width:88%}
+}
+</style>
+</head>
+<body class="bB">
+ 
+<div class="app">
+  <!-- 左：通讯栏 -->
+  <aside class="card" id="roster">
+    <div class="rhead">
+      <span class="chip">MAIL·01</span>
+      <div class="t"><b>信 匣</b><i>QIANLVZHOU // INBOX</i><button class="sysback" id="sysBack">返回系统页面 ◂</button></div>
+    </div>
+    <div class="clist" id="clist"></div>
+    <div class="rfoot">
+      <i>MAIL · SEALED · REC</i>
+    </div>
+  </aside>
+ 
+  <!-- 右：讯道 -->
+  <main class="card" id="chat">
+    <div class="chead">
+      <button class="back" id="backBtn">◂</button>
+      <button class="seal" id="avatarBtn" title="人物简介">段</button>
+      <div class="who"><b id="cName">段深泉<span>SHENQUAN</span></b><i id="cNote">命定之人</i></div>
+      <button class="ico" id="menuBtn" title="菜单">☰</button>
+    </div>
+    <div id="msgs"></div>
+    <div class="inputbar">
+      <input type="text" id="msgInput" placeholder="呈递讯文…">
+      <button class="send" id="sendBtn">呈 递</button>
+    </div>
+  </main>
+</div>
+ 
+<!-- 菜单侧栏 -->
+<aside id="mside">
+  <div class="st">信 匣 · MENU</div>
+  <div class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></div>
+  <div class="sitem" id="miPin"><span>置顶</span><span class="arr" id="pinArr">—</span></div>
+  <div class="sitem" id="miCare"><span>特别关心</span><span class="arr" id="careArr">—</span></div>
+  <div class="sitem" id="miNote"><span>备注</span><span class="arr" id="noteArr">编辑</span></div>
+  <div class="sitem danger" id="miDel"><span>删除好友</span><span class="arr">移出信匣</span></div>
+  <div class="hint">◇ 查找对话</div>
+  <input id="findBox" placeholder="输入关键词，回车查找…">
+  <div class="sitem" id="miFind"><span>查找对话</span><span class="arr" id="findArr">—</span></div>
+  <div class="hint">◇ 来自资料页 · 待添加（联动预留）</div>
+  <div id="pendBox"></div>
+  <button class="backbtn" id="sideBack">◂ 收起</button>
+</aside>
+ 
+<!-- 人物简介浮层 -->
+<div id="pfile">
+  <div class="pf">
+    <button class="ico x" id="pfClose">✕</button>
+    <div class="seal" id="pfSeal">段</div>
+    <h3 id="pfName">段深泉<span>SHENQUAN</span></h3>
+    <div id="pfRows"></div>
+    <div class="quote" id="pfQuote"></div>
+  </div>
+</div>
+ 
+<script src="./通讯AI.js"></script>
+<script>
+/* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
+   pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
+var K_ROSTER='gzd_qlz_mail_roster';
+function loadRoster(){
+  try{ var d=JSON.parse(localStorage.getItem(K_ROSTER)); if(d&&d.added){
+    d.notes=d.notes||{}; d.pending=d.pending||[]; d.pin=d.pin||[]; d.care=d.care||[]; return d;
+  } }catch(e){}
+  return { added:['段深泉','系统','瑞秋'], pending:['神谕院','黑鼠帮'], notes:{}, pin:[], care:['段深泉'] };
+}
+function saveRoster(r){ try{ localStorage.setItem(K_ROSTER,JSON.stringify(r)); }catch(e){} }
+var roster=loadRoster(), cur='段深泉';
+ 
+/* ═══════════════════════════════════════════════════════════════
+   ★ 添加新角色 · 三步走（以后加人照这个改，别的地方不用动） ★
+ 
+   第一步：进名册。
+     在下面 loadRoster() 的默认名单里，把角色名加进 added（直接显示）
+     或 pending（隐藏，等资料页联动/手动添加）。
+ 
+   第二步：写档案。
+     在 INFO 里加一段 '角色名':{...}，简介浮层会显示：
+       pin  = 名字拼音大写（mono 小字标签用）
+       rows = 档案行，每行 [标签, 内容]，想写几行写几行
+       q    = 底部朱砂引言（一句代表性台词）
+ 
+   第三步：写对话。
+     在 DATA 里加一段 '角色名':[...]，每条讯息一个花括号：
+       {t:'day',  x:'── 某某 ──'}      时间/分隔条（居中虚线）
+       {t:'note',x:'……'}              中场提示（朱砂虚线框，如任务播报、
+                                        "段深泉沉默了一会儿"这种）
+       {t:'in',  x:'……'}              对方来信（白纸卡，可修改/重新回复）
+       {t:'out', x:'……'}              怀榆发出（蓝卡，修改=重新生成）
+ 
+   注意：角色名三处必须完全一致（roster/INFO/DATA 的键）。
+   阶段二接 AI 后，AI 的回信会自动追加进 DATA（存档走 localStorage）。
+   ═══════════════════════════════════════════════════════════════ */
+var INFO={
+  '段深泉':{pin:'SHENQUAN',note:'命定之人',rows:[['身份','神使 · 城主级'],['眸色','金琥珀'],['好感','观测中 · 好感度系统已接入'],['状态','部分档案封存']],q:'“回去，这里不是你该来的地方。”'},
+  '系统':{pin:'SYSTEM',note:'主线托管',rows:[['身份','主线托管'],['模式','恋爱模式 · 运行中'],['权限','部分恢复']],q:'“本系统不提供情感咨询业务。”'},
+  '瑞秋':{pin:'RACHEL',note:'故人',rows:[['身份','故人'],['特长','消息灵通 · 干练毒舌'],['状态','下落不明']],q:'“还活着呢？”'},
+  '神谕院':{pin:'ORACLE',note:'并案观察',rows:[['身份','业焰城代治机构'],['态度','并案观察']],q:'“封印类卷宗，不得擅动。”'},
+  '黑鼠帮':{pin:'RATS',note:'收税的',rows:[['身份','地头收税的'],['业务','安宁税']],q:'“月底前。”'}
+};
+/* ═══ 写死的讯息（d:1 = 演示用的死对话标记；
+   提示条「双击可修改/重新生成·长按可删除」挂在死对话末尾，
+   死对话删光它就自动消失——同引渡人逻辑） ═══ */
+var DATA={
+  '段深泉':[
+    {t:'day',x:'── 第一日 · 午后 ──'},
+    {t:'note',x:'【主线任务】业焰城的阴影 · 已开启',d:1},
+    {t:'in',x:'……你来做什么。',d:1},
+    {t:'out',x:'路过！纯粹路过！我发誓！',d:1},
+    {t:'note',x:'段深泉沉默了一会儿',d:1},
+    {t:'in',x:'档案馆，东侧。别迟到。',d:1},
+    {t:'out',x:'好好好，马上到！',d:1}
+  ],
+  '系统':[
+    {t:'day',x:'── 系统频道 ──'},
+    {t:'note',x:'【主线任务】与命定之人缔结羁绊 · 进行中',d:1},
+    {t:'in',x:'【提示】检测到玩家情绪波动。恋爱模式运行正常，请勿担心。',d:1},
+    {t:'out',x:'谁情绪波动了！',d:1},
+    {t:'in',x:'【友情提醒】本系统不提供情感咨询业务。',d:1}
+  ],
+  '瑞秋':[
+    {t:'day',x:'── 瑞秋 ──'},
+    {t:'in',x:'哟，还活着呢？消息回头说，最近风声紧。',d:1},
+    {t:'out',x:'你也保重。',d:1},
+    {t:'in',x:'黑鼠帮最近收税收到神殿门口了，你悠着点。',d:1}
+  ],
+  '神谕院':[
+    {t:'day',x:'── 神谕院 ──'},
+    {t:'in',x:'（三日后，档案馆东侧，并案调查。）',d:1}
+  ],
+  '黑鼠帮':[
+    {t:'day',x:'── 黑鼠帮 ──'},
+    {t:'in',x:'安宁税，月底前。别让我们再跑一趟。',d:1}
+  ]
+};
+ 
+/* ═══ 渲染 ═══ */
+var msgsEl=document.getElementById('msgs'), listEl=document.getElementById('clist');
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderContacts(){
+  listEl.innerHTML='';
+  /* 排序：置顶的排前面，其余保持原顺序 */
+  var order=roster.added.slice().sort(function(a,b){
+    var pa=roster.pin.indexOf(a)>=0?0:1, pb=roster.pin.indexOf(b)>=0?0:1;
+    return pa-pb;
+  });
+  order.forEach(function(n){
+    var pinned=roster.pin.indexOf(n)>=0, cared=roster.care.indexOf(n)>=0;
+    var d=document.createElement('div');
+    d.className='contact'+(n===cur?' on':'')+(cared?' care':''); d.dataset.name=n;
+    var info=INFO[n], preview=lastPreview(n);
+    d.innerHTML='<div class="seal">'+n[0]+'</div><div class="cinfo"><div class="n">'+n+(pinned?'<span class="pinchip">置顶</span>':'')+'<span>'+info.pin+'</span></div><div class="p">'+esc(preview)+'</div></div>'+(n==='瑞秋'?'<div class="dot"></div>':'');
+    d.onclick=function(){ cur=n; renderContacts(); openChat(n); if(window.innerWidth<=760) document.getElementById('chat').classList.add('open'); };
+    listEl.appendChild(d);
+  });
+}
+function lastPreview(n){
+  var arr=DATA[n]||[]; var last=null;
+  for(var i=arr.length-1;i>=0;i--){ if(arr[i].t==='in'||arr[i].t==='out'){ last=arr[i].x; break; } }
+  return last||'（暂无讯息）';
+}
+function buildMu(m){
+  var d=document.createElement('div');
+  d.className='mu '+(m.t==='out'?'out':'in');
+  var who=m.t==='out'?'怀榆 · HUAIYU':cur+' · '+(INFO[cur]?INFO[cur].pin:'');
+  /* 操作钮按消息归属区分：
+     己方(out)=「修改·重生成」＋「删除」；对方(in)=「修改」＋「重新回复」＋「删除」 */
+  var btns = m.t==='out'
+    ? '<button class="o e">✎ 修改</button><button class="o danger del">✕ 删除</button>'
+    : '<button class="o e">✎ 修改</button><button class="o r">⟲ 重新回复</button><button class="o danger del">✕ 删除</button>';
+  d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
+  d.querySelector('.bub').textContent=m.x;
+  return d;
+}
+function renderChat(){
+  msgsEl.innerHTML='';
+  (DATA[cur]||[]).forEach(function(m){ addMsgEl(m,false); });
+  attachHint();
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+/* 提示条：只要还有写死对话(d:1)就挂在最后一条死对话下面；删光自动消失 */
+function attachHint(){
+  var old=document.getElementById('demoHint'); if(old) old.remove();
+  var arr=DATA[cur]||[];
+  if(!arr.some(function(m){return m.d;})) return;
+  var hint=document.createElement('span'); hint.className='sysnote'; hint.id='demoHint';
+  hint.textContent='上述为写死的演示对话 —— 双击可修改 / 重新生成 · 长按可删除 · 双击虚线提示框亦可删除';
+  /* 插到最后一条死对话的DOM后面 */
+  var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu')||x.classList.contains('sysnote');});
+  var arr2=arr.filter(function(m){return m.t==='in'||m.t==='out'||m.t==='note';});
+  var idx=0;
+  for(var i=arr2.length-1;i>=0;i--){ if(arr2[i].d){ idx=i; break; } }
+  if(kids[idx]) kids[idx].after(hint); else msgsEl.appendChild(hint);
+}
+/* 删光检查：删/改之后调用，死对话清零则提示条移除 */
+function refreshHint(){
+  var arr=(DATA[cur]||[]).filter(function(m){return m.d;});
+  if(!arr.length){ var h=document.getElementById('demoHint'); if(h) h.remove(); }
+}
+function addMsgEl(m,anim){
+  var el;
+  if(m.t==='day'){ el=document.createElement('div'); el.className='day'; el.textContent=m.x; }
+  else if(m.t==='note'){
+    el=document.createElement('span'); el.className='sysnote'; el.textContent=m.x;
+    /* 红色虚线提示框：双击删除（同样从存档移除）。用onTap兼容iPad */
+    onTap(el,function(){
+      var i=DATA[cur].indexOf(m); if(i>=0) DATA[cur].splice(i,1);
+      el.style.transition='.25s'; el.style.opacity='0';
+      setTimeout(function(){ el.remove(); },230);
+      persist(); refreshHint();
+    });
+  }
+  else { el=buildMu(m); bindOps(el,m); }
+  if(!anim) el.style.animation='none';
+  msgsEl.appendChild(el);
+  return el;
+}
+function openChat(n){
+  var info=INFO[n];
+  document.getElementById('cName').innerHTML=n+'<span>'+info.pin+'</span>';
+  document.getElementById('cNote').textContent=roster.notes[n]||info.note||'';
+  document.getElementById('avatarBtn').textContent=n[0];
+  syncPinMenu(); syncCareMenu();
+  renderChat();
+}
+ 
+/* ═══ 操作钮（浮出条：双击讯文弹出，稳态显示） ═══ */
+/* 通用双击检测：350ms内两次抬起。iPad Safari 的 dblclick 事件不可靠，
+   必须手写 pointerup 计时（虚线框删不掉的根因就是它） */
+function onTap(el, fn){
+  var last=0;
+  el.addEventListener('pointerup', function(e){
+    var now=Date.now();
+    if(now-last<350){ last=0; fn(e); } else last=now;
+  });
+}
+function bindOps(el,m){
+  var bub=el.querySelector('.bub'), ops=el.querySelector('.ops');
+  onTap(el,function(ev){
+    if(ev.target.closest('.ops')) return;
+    var was=el.classList.contains('sel');
+    document.querySelectorAll('.mu').forEach(function(x){x.classList.remove('sel')});
+    if(!was) el.classList.add('sel');
+  });
+  el.querySelectorAll('.e').forEach(function(b){ b.onclick=function(ev){ ev.stopPropagation(); startEdit(el,m); }; });
+  el.querySelectorAll('.r').forEach(function(b){ b.onclick=function(ev){ ev.stopPropagation(); regen(el,m); }; });
+  el.querySelectorAll('.del').forEach(function(b){ b.onclick=function(ev){ ev.stopPropagation(); removeMsg(el,m); refreshHint(); }; });
+}
+function msgIndex(el){ /* 该消息在 DATA[cur] 中的位置（按DOM顺序） */
+  var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu');});
+  var i=kids.indexOf(el); var c=0;
+  for(var k=0;k<(DATA[cur]||[]).length;k++){ var m=DATA[cur][k]; if(m.t==='in'||m.t==='out'){ if(c===i) return k; c++; } }
+  return -1;
+}
+function startEdit(el,m){
+  if(el.dataset.editing) return; el.dataset.editing='1';
+  var bub=el.querySelector('.bub'), old=m.x;
+  var ta=document.createElement('textarea'); ta.value=old;
+  var bar=document.createElement('div'); bar.className='ebtns';
+  bar.innerHTML='<button class="sv">✓ 保存</button><button class="cc">取消</button>';
+  bub.style.display='none'; bub.after(bar); bar.after(ta);
+  bar.querySelector('.sv').onclick=function(){ var v=ta.value.trim(); if(!v){restore();return;}
+    m.x=v; bub.textContent=v; restore(true); persist();
+    el.classList.remove('sel');   /* 修改完成默认收起 */
+    if(m.t==='out'){ regen(el,m); }   /* 己方讯：修改=重新生成（AI按新讯文重答） */
+  };
+  bar.querySelector('.cc').onclick=restore;
+  function restore(keep){ bub.style.display=''; ta.remove(); bar.remove(); if(!keep) delete el.dataset.editing; }
+}
+function regen(el,m){
+  if(m.t!=='in'){ /* 自己的讯"重新回复"=重发碾墨 */ }
+  var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
+  el.after(g); g.scrollIntoView({behavior:'smooth',block:'end'});
+  MAIL_AI.reply(cur,m.x).then(function(reply){
+    g.remove();
+    var newM={t:'in',x:reply};
+    var i=msgIndex(el); DATA[cur].splice(i+1,0,newM);
+    var ne=addMsgEl(newM,true); bindOps(ne,newM);
+    msgsEl.scrollTop=msgsEl.scrollHeight; persist();
+  });
+}
+function removeMsg(el,m){
+  var i=DATA[cur].indexOf(m); if(i>=0) DATA[cur].splice(i,1);
+  el.style.transition='.25s'; el.style.opacity='0'; el.style.transform='translateX(14px)';
+  setTimeout(function(){ el.remove(); },240); persist(); refreshHint();
+}
+function persist(){ try{ localStorage.setItem('gzd_qlz_mail_data',JSON.stringify(DATA)); }catch(e){} }
+ 
+/* ═══ 呈递 + ②碾墨 ═══ */
+document.getElementById('sendBtn').onclick=function(){
+  var i=document.getElementById('msgInput'), t=i.value.trim(); if(!t) return;
+  i.value='';
+  var m={t:'out',x:t}; DATA[cur].push(m);
+  var el=addMsgEl(m,true); bindOps(el,m);
+  msgsEl.scrollTop=msgsEl.scrollHeight; persist();
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/36/36ea7e64bf.js） */
+  var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
+  msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
+  MAIL_AI.reply(cur,t).then(function(reply){
+    g.remove();
+    var rm={t:'in',x:reply}; DATA[cur].push(rm);
+    var re=addMsgEl(rm,true); bindOps(re,rm);
+    msgsEl.scrollTop=msgsEl.scrollHeight; persist();
+  });
+};
+document.getElementById('msgInput').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('sendBtn').click(); });
+ 
+/* ═══ 长按删除（任意消息，550ms） ═══ */
+var lpTimer=null;
+document.getElementById('msgs').addEventListener('pointerdown',function(e){
+  var mu=e.target.closest('.mu'); if(!mu) return;
+  lpTimer=setTimeout(function(){
+    var m={}; /* 从DOM找到对应数据 */
+    var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu');});
+    var i=kids.indexOf(mu); var c=0;
+    for(var k=0;k<(DATA[cur]||[]).length;k++){ var mm=DATA[cur][k]; if(mm.t==='in'||mm.t==='out'){ if(c===i){ m=mm; break; } c++; } }
+    removeMsg(mu,m);
+    if(navigator.vibrate) navigator.vibrate(30);
+  },550);
+});
+['pointerup','pointerleave','pointercancel'].forEach(function(ev){
+  document.getElementById('msgs').addEventListener(ev,function(){ clearTimeout(lpTimer); });
+});
+ 
+/* 通用确认弹层（预览器会吞原生confirm，改用页内弹窗） */
+function askConfirm(msg, onYes){
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(20,28,48,.45);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px';
+  var c=document.createElement('div');
+  c.style.cssText='background:var(--card);border:1.5px solid var(--klein);box-shadow:var(--shadow);max-width:320px;width:100%;padding:18px 16px;font-size:13px;line-height:1.9;color:var(--ink)';
+  c.innerHTML='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--zhu);margin-bottom:8px">◆ SYSTEM CONFIRM</div><div class="msg"></div>';
+  c.querySelector('.msg').textContent=msg;
+  var bar=document.createElement('div'); bar.style.cssText='display:flex;gap:8px;margin-top:14px';
+  var no=document.createElement('button'); no.textContent='取消';
+  no.style.cssText='flex:1;border:1.5px solid var(--hair);background:transparent;color:var(--mut);padding:8px 0;font-size:12px;cursor:pointer';
+  var yes=document.createElement('button'); yes.textContent='确认';
+  yes.style.cssText='flex:1;border:none;background:var(--klein);color:#F0EFEB;padding:8px 0;font-size:12px;letter-spacing:.2em;cursor:pointer';
+  bar.appendChild(no); bar.appendChild(yes); c.appendChild(bar); ov.appendChild(c); document.body.appendChild(ov);
+  ov.onclick=function(e){ if(e.target===ov){ ov.remove(); } };
+  no.onclick=function(){ ov.remove(); };
+  yes.onclick=function(){ ov.remove(); onYes(); };
+}
+ 
+/* ═══ 菜单侧栏 ═══ */
+var mside=document.getElementById('mside');
+document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); mside.classList.toggle('open'); renderPending(); };
+document.getElementById('sideBack').onclick=function(){ mside.classList.remove('open'); };
+/* 点空白处收起侧栏（菜单按钮自身除外）+ 收起B案浮出条 */
+document.addEventListener('click',function(ev){
+  if(mside.classList.contains('open') && !mside.contains(ev.target) && ev.target!==document.getElementById('menuBtn') && !document.getElementById('menuBtn').contains(ev.target)){
+    mside.classList.remove('open');
+  }
+  if(!ev.target.closest('.mu')) document.querySelectorAll('.mu.sel').forEach(function(x){x.classList.remove('sel')});
+});
+/* 备注：点「备注」展开输入框，再点「保存」即存（Enter 也可） */
+document.getElementById('miNote').onclick=function(){
+  var arr=document.getElementById('noteArr');
+  if(arr.dataset.on){   /* 编辑态下再点 = 保存 */
+    var inp=document.getElementById('noteInp');
+    if(inp){ document.getElementById('cNote').textContent=inp.value; roster.notes[cur]=inp.value; saveRoster(roster); }
+    arr.textContent='编辑'; delete arr.dataset.on;
+    var old=document.getElementById('noteInp'); if(old) old.remove();
+    return;
+  }
+  arr.dataset.on='1'; arr.textContent='保存';
+  var inp=document.createElement('input'); inp.id='noteInp'; inp.value=roster.notes[cur]||INFO[cur].note||'';
+  inp.style.cssText='margin:6px 0;padding:7px 9px;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:12px;width:100%';
+  arr.closest('.sitem').after(inp);
+  inp.focus();
+  inp.onkeydown=function(e){ if(e.key==='Enter'){ document.getElementById('miNote').click(); } };
+};
+/* 删除好友：页内确认弹窗（聊天记录保留；记忆不断，AI阶段二会知道你删过） */
+document.getElementById('miDel').onclick=function(){
+  askConfirm('将「'+cur+'」移出信匣？\n\n· 该讯道将从通讯页消失\n· 聊天记录保留，重新添加后记忆不断\n· 重新添加入口在「来自资料页 · 待添加」', function(){
+    roster.added=roster.added.filter(function(n){return n!==cur;});
+    roster.pending.push(cur); saveRoster(roster);
+    DATA[cur]=DATA[cur]||[]; DATA[cur].push({t:'note',x:'── 怀榆将你移出了讯匣 ──'});   /* 记忆标记：AI据此抱怨 */
+    cur=roster.added[0]||'系统';
+    mside.classList.remove('open');
+    renderContacts(); openChat(cur);
+  });
+};
+/* 查找对话：当前讯道关键词过滤 */
+function doFind(){
+  var q=document.getElementById('findBox').value.trim();
+  var n=0;
+  [...msgsEl.children].forEach(function(el){
+    var hit=!q||el.textContent.indexOf(q)>=0;
+    el.style.display=hit?'':'none'; if(hit&&q&&el.classList.contains('mu')) n++;
+  });
+  document.getElementById('findArr').textContent=q?(n+' 条'):'—';
+}
+document.getElementById('miFind').onclick=doFind;
+document.getElementById('findBox').addEventListener('input',doFind);
+document.getElementById('findBox').addEventListener('keydown',function(e){ if(e.key==='Enter') doFind(); });
+/* 联动预留：待添加列表（演示用+号模拟资料页的「添加到通讯」） */
+function renderPending(){
+  var box=document.getElementById('pendBox'); box.innerHTML='';
+  roster.pending.forEach(function(n){
+    var d=document.createElement('div'); d.className='sitem';
+    d.innerHTML='<span>'+n+'</span>';
+    var b=document.createElement('button'); b.className='plus'; b.textContent='＋ 通讯';
+    b.onclick=function(ev){ ev.stopPropagation();
+      roster.pending=roster.pending.filter(function(x){return x!==n;});
+      roster.added.push(n); saveRoster(roster);
+      DATA[n]=DATA[n]||[]; DATA[n].push({t:'note',x:'── 怀榆重新添加了你 ──'});   /* 记忆标记：AI据此吐槽被删 */
+      renderContacts();
+      d.remove(); if(!roster.pending.length) box.innerHTML='<div class="hint">（名单已空 · 等待资料页同步）</div>';
+    };
+    d.appendChild(b); box.appendChild(d);
+  });
+  if(!roster.pending.length) box.innerHTML='<div class="hint">（名单已空 · 等待资料页同步）</div>';
+}
+/* ═══ 人物简介浮层 ═══ */
+document.getElementById('avatarBtn').onclick=function(){
+  var info=INFO[cur];
+  document.getElementById('pfSeal').textContent=cur[0];
+  document.getElementById('pfName').innerHTML=cur+'<span>'+info.pin+'</span>';
+  document.getElementById('pfRows').innerHTML=info.rows.map(function(r){ return '<div class="row"><i>'+r[0]+'</i><span>'+r[1]+'</span></div>'; }).join('');
+  document.getElementById('pfQuote').textContent=info.q;
+  document.getElementById('pfile').classList.add('open');
+};
+document.getElementById('pfClose').onclick=function(){ document.getElementById('pfile').classList.remove('open'); };
+document.getElementById('pfile').onclick=function(e){ if(e.target===this) this.classList.remove('open'); };
+ 
+/* ═══ 日夜 + 返回（夜间唯一入口=☰菜单）
+   主题存档与引渡人同款：公共键 theme={value}，全站共享日夜状态，开机读回延续 ═══ */
+function getTheme(){ try{ var r=JSON.parse(localStorage.getItem('theme')); return (r&&r.value)||'light'; }catch(e){ return 'light'; } }
+function applyTheme(t){
+  document.body.classList.toggle('night', t==='dark');
+  try{ localStorage.setItem('theme', JSON.stringify({value:t})); }catch(e){}
+}
+applyTheme(getTheme());   /* 开机延续 */
+document.getElementById('miNight').onclick=function(){ applyTheme(document.body.classList.contains('night')?'light':'dark'); };
+/* 置顶：写进名单存档，名册排序置顶+小签 */
+function syncPinMenu(){
+  var on=roster.pin.indexOf(cur)>=0;
+  document.getElementById('pinArr').textContent=on?'已置顶':'—';
+}
+document.getElementById('miPin').onclick=function(){
+  var i=roster.pin.indexOf(cur);
+  if(i>=0) roster.pin.splice(i,1); else roster.pin.push(cur);
+  saveRoster(roster); syncPinMenu(); renderContacts();
+};
+/* 特别关心：写进名单存档，名册视觉三案（临时切换器选型） */
+function syncCareMenu(){
+  var on=roster.care.indexOf(cur)>=0;
+  document.getElementById('careArr').textContent=on?'已关心':'—';
+}
+document.getElementById('miCare').onclick=function(){
+  var i=roster.care.indexOf(cur);
+  if(i>=0) roster.care.splice(i,1); else roster.care.push(cur);
+  saveRoster(roster); syncCareMenu(); renderContacts();
+};
+document.getElementById('backBtn').onclick=function(){
+  /* 手机端：关聊天层回名册；桌面端：这个◂是收起/导航用，回系统走右上sysBack */
+  if(window.innerWidth<=760) document.getElementById('chat').classList.remove('open');
+};
+/* 返回系统页面（信匣标题右侧，全端可见） */
+document.getElementById('sysBack').onclick=function(){ location.href='./系统备份.html'; };
+ 
+/* 临时切换器：特别关心视觉三案（选型用，选定后删除） */
+ 
+/* 启动 */
+renderContacts(); openChat(cur);
+</script>
+</body>
+</html>
