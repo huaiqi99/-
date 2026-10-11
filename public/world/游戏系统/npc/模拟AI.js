@@ -2,7 +2,7 @@
 // 架构：三层导演制（文风协议+章导演指令+幕锚点）+ 分层记忆 + 状态机 + 好感校准
 // 依赖：chapters/chXX.json 章节包；Worker 同引渡人（difu-ai）；UI 自渲染（v5 模板）
 // 存档：gzd_qlz_story（剧情）/ gzd_qlz_state（状态机）——与引渡人 gzd_* 隔离
-console.log('[千律州模拟器] BUILD 1012b — 声明置顶/走位存档/暗罩/呈报红字/iOS白屏补丁');
+console.log('[千律州模拟器] BUILD 1012c — 截断检测/走位兜底链/呈报红字/暗罩兼容/iOS白屏补丁');
 (function(){
 'use strict';
 /* 全局错误上屏（[ERR]横幅，同系统页惯例） */
@@ -114,11 +114,11 @@ function callMessages(messages){
     if(pc.format==='claude'){
       url = baseUrl+'/v1/messages';
       headers = {'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-      body = JSON.stringify({model:model,max_tokens:900,system:sys,messages:rest});
+      body = JSON.stringify({model:model,max_tokens:1500,system:sys,messages:rest});
     } else {
       url = baseUrl+'/v1/chat/completions';
       headers = {'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey};
-      body = JSON.stringify({model:model,messages:messages,max_tokens:900,temperature:0.8});
+      body = JSON.stringify({model:model,messages:messages,max_tokens:1500,temperature:0.8});
     }
     return fetch(url,{method:'POST',headers:headers,body:body}).then(function(r){
       return r.json().then(function(d){
@@ -131,6 +131,9 @@ function callMessages(messages){
         }
         var reply = pc.format==='claude' ? ((d.content&&d.content[0]&&d.content[0].text)||'') : ((d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'');
         if(!reply) throw new Error('AI 返回了空内容');
+        /* 截断检测：输出撞上限时 <建议>/<状态> 会被拦腰砍掉——上屏提醒（这曾经是走位参考消失的真凶） */
+        var fr = pc.format==='claude' ? (d.stop_reason||'') : ((d.choices&&d.choices[0]&&d.choices[0].finish_reason)||'');
+        window.QLZ_LAST_CUT = (fr==='length'||fr==='max_tokens');
         return reply;
       });
     });
@@ -186,10 +189,13 @@ function parseReply(reply, pack){
     return '';
   });
   reply = reply.trim();
-  // 走位参考兜底：AI 没给就用章包当前节点 options
+  // 走位参考兜底：AI 没给（或被截断）→ 先用上一轮 AI 建议，再退章包节点
   if(!opts.length){
-    var pend = pack.mustNodes.filter(function(n){ return state.nodes.indexOf(n.id)<0; })[0];
-    if(pend && pack.options[pend.id]) opts = pack.options[pend.id];
+    if(lastOpts.length){ opts = lastOpts.slice(0,3); }
+    else {
+      var pend = pack.mustNodes.filter(function(n){ return state.nodes.indexOf(n.id)<0; })[0];
+      if(pend && pack.options[pend.id]) opts = pack.options[pend.id];
+    }
   }
   return { text: reply, nodesHit: nodesHit, fav: fav, opts: opts };
 }
@@ -315,7 +321,7 @@ function injectApp(){
     '#qlz-app .go{padding:0 16px;letter-spacing:.15em;}'+
   '>'+
   /* 侧栏暗罩：开侧栏时主内容压暗一层（引渡人同款），点罩收起 */
-  '#qovl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s ease}'+
+  '#qovl{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(20,24,40,.35);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s ease}'+
   '#qovl.on{opacity:1;pointer-events:auto}'+
   '</style>';
 
@@ -355,7 +361,7 @@ function injectApp(){
   r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont); r.appendChild(mRound); r.appendChild(mReset);
   r.insertAdjacentHTML('beforeend', favBoxHTML());  // 字符串须insertAdjacentHTML
 
-  var back = h('button','backbtn','◂ 返回'); back.onclick = function(){ location.href='系统备份.html'; };
+  var back = h('button','backbtn','◂ 返'); back.onclick = function(){ location.href='系统备份.html'; };
   r.appendChild(back);
   root.appendChild(r);
 
@@ -640,11 +646,14 @@ function send(userText, replaceCard, done){
     typing.remove();
     if(replaceCard){ replaceCard.remove(); }
     var card = renderAct(res.parsed.text, null, null, false);
-    attachOpts(card, res.parsed.opts);
+    /* 走位参考兜底链：AI本轮建议 → 上一轮AI建议（lastOpts） → 章包节点 */
+    var useOpts = res.parsed.opts.length ? res.parsed.opts : (lastOpts.length ? lastOpts : res.parsed.opts);
+    attachOpts(card, useOpts);
     renderSys(res.sys.sysLine);
+    if(window.QLZ_LAST_CUT) renderSys('⚠ 本轮回复撞到输出长度上限被截断——走位参考可能缺失，可点该卡 ↻ 重生成');
     // 存档
     state.stories.push({role:'user', text:userText});
-    state.stories.push({role:'assistant', text:res.parsed.text, opts:res.parsed.opts});  /* 走位参考随卡存档 */
+    state.stories.push({role:'assistant', text:res.parsed.text, opts:useOpts});  /* 走上屏的那套建议随卡存档 */
     advance(res.parsed);
     renderSeal(); renderRound();
     if(res.sys.forced) renderSys('⚠ '+res.sys.forced);
