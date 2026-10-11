@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/36/36ea7e64bf.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/c9/c9a2b6ef4d.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -132,8 +132,11 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .send:hover{background:var(--zhu)}
 /* ── 右上角菜单侧栏（同模拟页） ── */
 #menuBtn{flex:none}
-#mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;height:100vh;height:100dvh;background:var(--card);border-left:1.5px solid var(--klein);z-index:30;transition:right .28s ease;display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto}
+#mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;height:100vh;height:100dvh;background:var(--card);border-left:1.5px solid var(--klein);z-index:31;transition:right .28s ease;display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto}
 #mside.open{right:0}
+/* 侧栏暗罩：开菜单时主内容压暗一层（引渡人同款），点罩收起 */
+#movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity .28s ease}
+#movl.on{opacity:1;pointer-events:auto}
 #mside .st{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--mut);border-bottom:2.5px dashed var(--hair);padding-bottom:10px;margin-bottom:8px}
 .sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1.5px dashed var(--hair);font-size:13px;letter-spacing:.08em;cursor:pointer}
 .sitem:hover{color:var(--klein)}
@@ -187,7 +190,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   <!-- 右：讯道 -->
   <main class="card" id="chat">
     <div class="chead">
-      <button class="back" id="backBtn">◂</button>
+      <button class="back" id="backBtn">◂ 返回</button>
       <button class="seal" id="avatarBtn" title="人物简介">段</button>
       <div class="who"><b id="cName">段深泉<span>SHENQUAN</span></b><i id="cNote">命定之人</i></div>
       <button class="ico" id="menuBtn" title="菜单">☰</button>
@@ -216,6 +219,8 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   <button class="backbtn" id="sideBack">◂ 收起</button>
 </aside>
  
+<!-- 侧栏暗罩 -->
+<div id="movl"></div>
 <!-- 人物简介浮层 -->
 <div id="pfile">
   <div class="pf">
@@ -227,7 +232,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   </div>
 </div>
  
-<script src="./通讯AI.js"></script>
+<script src="./https://sfile.chatglm.cn/workspace/file/c9/c9a2b6ef4d.js"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -467,7 +472,7 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/36/36ea7e64bf.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/c9/c9a2b6ef4d.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
@@ -517,12 +522,14 @@ function askConfirm(msg, onYes){
  
 /* ═══ 菜单侧栏 ═══ */
 var mside=document.getElementById('mside');
-document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); mside.classList.toggle('open'); renderPending(); };
-document.getElementById('sideBack').onclick=function(){ mside.classList.remove('open'); };
+var movl=document.getElementById('movl');
+document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); mside.classList.toggle('open'); movl.classList.toggle('on', mside.classList.contains('open')); renderPending(); };
+movl.onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
+document.getElementById('sideBack').onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
 /* 点空白处收起侧栏（菜单按钮自身除外）+ 收起B案浮出条 */
 document.addEventListener('click',function(ev){
   if(mside.classList.contains('open') && !mside.contains(ev.target) && ev.target!==document.getElementById('menuBtn') && !document.getElementById('menuBtn').contains(ev.target)){
-    mside.classList.remove('open');
+    mside.classList.remove('open'); movl.classList.remove('on');
   }
   if(!ev.target.closest('.mu')) document.querySelectorAll('.mu.sel').forEach(function(x){x.classList.remove('sel')});
 });

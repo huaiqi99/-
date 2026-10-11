@@ -310,7 +310,10 @@
       '#qlz-app .inbar{margin:4px 10px 22px;gap:7px;}'+
       '#qlz-app .in{font-size:14px;padding:11px 12px;}'+
       '#qlz-app .go{padding:0 16px;letter-spacing:.15em;}'+
-    '}'+
+    '>'+
+    /* 侧栏暗罩：开侧栏时主内容压暗一层（引渡人同款），点罩收起 */
+    '#qovl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s ease}'+
+    '#qovl.on{opacity:1;pointer-events:auto}'+
     '</style>';
   
     var chap = h('div','chap');
@@ -364,12 +367,18 @@
     root.appendChild(l);
   
     document.body.appendChild(root);
+    /* 侧栏暗罩（挂body，点罩收两侧栏） */
+    var qovl = h('div'); qovl.id='qovl';
+    qovl.onclick = function(){ document.getElementById('qside-r').classList.remove('open'); document.getElementById('qside-l').classList.remove('open'); qovl.classList.remove('on'); };
+    document.body.appendChild(qovl);
     // 点击外部收起
     document.addEventListener('click', function(e){
       ['qside-r','qside-l'].forEach(function(id){
         var p = document.getElementById(id);
-        if(p && p.classList.contains('open') && !p.contains(e.target) && e.target.tagName!=='BUTTON') p.classList.remove('open');
+        if(p && p.classList.contains('open') && !p.contains(e.target) && e.target.tagName!=='BUTTON' && e.target!==qovl) p.classList.remove('open');
       });
+      var anyOpen = ['qside-r','qside-l'].some(function(id){ var el=document.getElementById(id); return el&&el.classList.contains('open'); });
+      qovl.classList.toggle('on', anyOpen);
     }, true);
   }
   
@@ -407,6 +416,12 @@
     if(other) other.classList.remove('open');
     var p = document.getElementById(which==='r'?'qside-r':'qside-l');
     if(p) p.classList.toggle('open');
+    /* 暗罩联动：任一侧栏开着就点亮 */
+    var ovl = document.getElementById('qovl');
+    if(ovl){
+      var anyOpen = ['qside-r','qside-l'].some(function(id){ var e=document.getElementById(id); return e&&e.classList.contains('open'); });
+      ovl.classList.toggle('on', anyOpen);
+    }
   }
   function toggleNight(){
     var n = !root.classList.contains('night');
@@ -583,7 +598,10 @@
     /* 关键：开场白写进对话记忆，否则 AI 看不到自己播过什么，玩家首轮呈报必然接不上 */
     state.stories.push({role:'assistant', text:text});
     var firstNode = pack.mustNodes[0];
-    attachOpts(card, pack.options[firstNode ? firstNode.id : '1a'] || []);
+    var firstOpts = pack.options[firstNode ? firstNode.id : '1a'] || [];
+    attachOpts(card, firstOpts);
+    /* 走位参考随开场白一并存档，刷新回放时不丢 */
+    state.stories[state.stories.length-1].opts = firstOpts;
     state.started = true; saveStory(state); renderRound();
   }
   
@@ -616,7 +634,7 @@
       renderSys(res.sys.sysLine);
       // 存档
       state.stories.push({role:'user', text:userText});
-      state.stories.push({role:'assistant', text:res.parsed.text});
+      state.stories.push({role:'assistant', text:res.parsed.text, opts:res.parsed.opts});  /* 走位参考随卡存档 */
       advance(res.parsed);
       renderSeal(); renderRound();
       if(res.sys.forced) renderSys('⚠ '+res.sys.forced);
@@ -661,8 +679,11 @@
           (np.locks||[]).forEach(function(L){ if(L.id==='C-1') intro = L.text; });
           state.ch = nextCh; state.round = 0; state.nodes = []; state.summary = (state.summary||'') + '\n' + (pack.goal||'');
           pack = np; saveStory(state); renderChap(); renderToc();
-          /* 新章开场白同样写进记忆，保证转场后衔接 */
-          if(intro){ state.stories.push({role:'assistant', text:intro}); saveStory(state); }
+          /* 新章开场白同样写进记忆（含走位参考），保证转场后衔接 */
+          if(intro){
+            var fo = (np.mustNodes[0] && np.options[np.mustNodes[0].id]) || [];
+            state.stories.push({role:'assistant', text:intro, opts:fo}); saveStory(state);
+          }
           callAI(userText, null).then(function(reply){
             var parsed = parseReply(reply, np);
             var out = { parsed: parsed, sys:{ sysLine:'── 第'+nextCh+'章 · '+np.title+' ──', forced:null, transition:false } };
@@ -701,18 +722,23 @@
     loadPack(state.ch, function(err, p){
       if(err){ document.getElementById('qtitle').textContent = '章节包加载失败'; renderSys('加载失败：'+esc(err.message)+'　│　请确认 chapters/ 目录可访问'); return; }
       pack = p; renderChap(); renderToc(); renderSeal(); renderRound();
-      if(!state.stories.length){
-        // 首次：只播演出声明，玩家输入「开始游戏」后才开演（同引渡人，不强买强卖）
-        var dc = renderAct(DECLARATION, 'SYS · 声明', null, true);
-        dc.classList.add('declare');
-      } else {
+      /* 声明卡写死在最上面：无论首开还是续档，永远先渲染（TA定：刷新不消失） */
+      var dc = renderAct(DECLARATION, 'SYS · 声明', null, true);
+      dc.classList.add('declare');
+      if(state.stories.length){
         // 续档：全量回放全部剧情（同引渡人——不是只回放最近一轮）
         state.started = true;
         state.stories.forEach(function(m){
           if(m.role==='user') renderPcmd(m.text);
-          else renderAct(m.text, 'ACT · 回放', null, false);
+          else {
+            var c = renderAct(m.text, 'ACT · 回放', null, false);
+            if(m.opts && m.opts.length) attachOpts(c, m.opts);   /* 每张卡回放自己存档的走位参考 */
+          }
         });
-        attachOpts(flow.lastElementChild, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
+        /* 旧存档没有 opts 字段 → 兜底挂章包节点走位（只挂最后一张） */
+        var lastCard = flow.lastElementChild;
+        if(lastCard && !lastCard.querySelector('.opts'))
+          attachOpts(lastCard, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
       }
       restoreFont();
       kickPaint();
@@ -779,5 +805,4 @@
   // 暴露（调试/壳联动）
   window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return state; }, lockInput: lockInput };
   })();
-  
   
