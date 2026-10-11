@@ -1,827 +1,842 @@
-// ===== 千律州模拟AI.js · 剧情演绎引擎 v1 =====
-// 架构：三层导演制（文风协议+章导演指令+幕锚点）+ 分层记忆 + 状态机 + 好感校准
-// 依赖：chapters/chXX.json 章节包；Worker 同引渡人（difu-ai）；UI 自渲染（v5 模板）
-// 存档：gzd_qlz_story（剧情）/ gzd_qlz_state（状态机）——与引渡人 gzd_* 隔离
-console.log('[千律州模拟器] BUILD 1012c — 截断检测/走位兜底链/呈报红字/暗罩兼容/iOS白屏补丁');
+// ===== 模拟AI.js · 千律州模拟器 v6（原版界面 × 引渡人同构引擎） =====
+// 功能层照引渡人 v5 骨架：按章分仓存档 / opening声明进档 / 建议双层解析+裸数组抢救 /
+// 转场=AI总结旧章+下一章包开场白 / 全量重绘。千律州数据层=章包JSON+必经节点+好感记账。
+// 界面层 = 原版（CH.01 章节号左上 + 右上☰菜单 + 左目录侧栏 + act/pcmd卡片 + 入演须知）。
+// UI 全部由本文件注入（原版写法），样式变量与尺寸与原版一致。
 (function(){
-'use strict';
-/* 全局错误上屏（[ERR]横幅，同系统页惯例） */
-window.addEventListener('error',function(e){
-  try{
-    var d=document.createElement('div');
-    d.style.cssText='position:fixed;left:0;right:0;bottom:0;background:#300;color:#fbb;font:12px/1.5 monospace;padding:6px 10px;word-break:break-all;cursor:pointer;z-index:99999;';
-    d.textContent='[ERR] '+(e.message||'unknown')+' @'+(e.lineno||'?')+'（点击关闭）';
-    d.onclick=function(){if(d.parentNode)d.parentNode.removeChild(d);};
-    (document.body||document.documentElement).appendChild(d);
-  }catch(_){}
-});
-
-// ===== 配置 =====
-var WORKER_URL = 'https://difu-ai.2629885225.workers.dev';
-var PROFILE    = 'qlz';
-var MAX_HISTORY = 10;
-var CH_DIR = 'chapters/';
-var K_STORY = 'gzd_qlz_story';
-var K_STATE = 'gzd_qlz_state';
-var K_THEME = 'theme';
-
-// 文风与输出协议（静态层）
-var PROTOCOL = [
-'【千律州演出协议】',
-'你是千律州系统的剧情演绎引擎。玩家扮演怀榆，你是包裹着他的“系统”与世界本身。',
-'文风：网文长段流——叙述段落为主，对白用引号嵌在段落内，段落之间空行。严禁剧本分行、严禁角色名前置标签、严禁列表化正文。',
-'场景切换或氛围转折时，可单独输出一行括号提示，如：（门后静了两拍。然后是低低的一声笑。）',
-'第二人称“你”指代怀榆。系统“我”偶尔冷面吐槽，语气四平八稳带嫌弃。',
-'导演指令中的必经节点是剧情轨道：玩家过程自由，节点事件必须自然发生；玩家跑偏时以最自然的方式拉回，严禁出戏。',
-'开场衔接：上文【演出】里已播出的开场与剧情是既成事实。你的每轮演出必须从最近一次演出的结尾自然衔接（人物状态、地点、时间延续），严禁重播开场白、严禁另起炉灶、严禁无视玩家刚呈报的行动。',
-'信息封锁：导演指令中“不知道/不可提及”的内容，无论玩家怎么问，一律不给，可由系统以“权限不足”类话术封口。',
-'每轮回复固定格式：正文长段 + （括号场景提示，可选）+ 最后一行系统播报（好感变动或本章进度，用│分隔）。',
-'正文结束后另起一行输出<建议>["行动1","行动2","行动3"]</建议>：3条玩家下一步可采取的行动，每条不超过15字，第二人称祈使句。',
-'正文结束后再输出<状态>{"nodes":["本章触发的节点id"],"fav":当前好感整数}</状态>。nodes 只填本轮实际触发的节点id，没有填空数组；fav 填你演绎后建议的当前好感值。两个块都不可省略。'
-].join('\n');
-
-var STAGES = [
-  {min:0,  max:20,  name:'冷淡警惕'},
-  {min:21, max:40,  name:'认识试探'},
-  {min:41, max:60,  name:'熟悉信任'},
-  {min:61, max:80,  name:'亲近在意'},
-  {min:81, max:100, name:'深厚感情'}
-];
-function stageOf(f){ for(var i=STAGES.length-1;i>=0;i--) if(f>=STAGES[i].min) return STAGES[i]; return STAGES[0]; }
-
-// ===== 存档 =====
-function loadStory(){
-  try{ var d = JSON.parse(localStorage.getItem(K_STORY)); if(d && d.ch) return d; }catch(e){}
-  return { ch:1, round:0, fav:10, stories:[], nodes:[], summary:'', started:false };
-}
-function saveStory(s){ try{ localStorage.setItem(K_STORY, JSON.stringify(s)); }catch(e){} }
-function resetAll(){ localStorage.removeItem(K_STORY); localStorage.removeItem(K_STATE); state = loadStory(); }
-
-var state = loadStory();
-var pack = null;          // 当前章包缓存
-var lastOpts = [];        // 当前走位参考
-var busy = false;
-
-// ===== 章包加载 =====
-function pad2(n){ return (n<10?'0':'')+n; }
-function loadPack(n, cb){
-  /* 双路：优先读内嵌 章节包.js（QLZ_PACKS），无则 fetch 外链 */
-  var key = 'ch' + pad2(n);
-  if(window.QLZ_PACKS && window.QLZ_PACKS[key]) { setTimeout(function(){ cb(null, window.QLZ_PACKS[key]); }, 0); return; }
-  fetch(CH_DIR + 'ch' + pad2(n) + '.json').then(function(r){
-    if(!r.ok) throw new Error('章节包缺失 ch'+pad2(n));
-    return r.json();
-  }).then(function(j){ cb(null, j); }).catch(function(e){ cb(e); });
-}
-
-// ===== 三层导演组装 =====
-function buildParts(pack, state, userText, forced){
-  var st = stageOf(state.fav);
-  var recent = state.stories.slice(-6).map(function(m){ return (m.role==='user'?'【玩家呈报】':'【演出】')+m.text; }).join('\n\n');
-  var nodesLeft = pack.mustNodes.filter(function(n){ return state.nodes.indexOf(n.id)<0; }).map(function(n){ return n.desc; }).join('；') || '无';
-  var parts = [];
-  parts.push('── 导演指令（本章） ──\n' + pack.director.replace('{mustNodes}', '已完成：'+(state.nodes.join('、')||'无')+'；未完成：'+nodesLeft));
-  parts.push('── 本章走向 ──\n' + pack.goal + '。通关条件：' + pack.transition);
-  parts.push('── 玩家已知信息 ──\n' + pack.knownInfo.join('\n'));
-  parts.push('── 当前状态 ──\n好感 ' + state.fav + ' · ' + st.name + '（对话态度参考此阶段）\n本章已进行 ' + state.round + ' / ' + pack.maxRounds + ' 轮');
-  if(state.summary) parts.push('── 前情摘要 ──\n' + state.summary);
-  if(recent) parts.push('── 最近演出 ──\n' + recent);
-  if(forced) parts.push('── ⚠ 强制拉回 ──\n' + forced);
-  var sys = parts.join('\n\n');
-  return { sys: sys, user: '── 玩家本轮呈报 ──\n' + userText };
-}
-
-// ===== AI 调用：密钥直连 / Worker 双路 =====
-var CONFIG_KEY = 'gzd_ai_config';   // 与引渡人共享：设置页填一次，两边通用
-function loadAIConfig(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}'); }catch(e){ return {}; } }
-var PROVIDER_CONFIG = {
-  deepseek:{baseUrl:'https://api.deepseek.com',defaultModel:'deepseek-chat',format:'openai'},
-  openai:{baseUrl:'https://api.openai.com',defaultModel:'gpt-4o-mini',format:'openai'},
-  claude:{baseUrl:'https://api.anthropic.com',defaultModel:'claude-3-5-sonnet-20241022',format:'claude'},
-  custom:{baseUrl:'',defaultModel:'',format:'openai'}
-};
-function callMessages(messages){
-  var cfg = loadAIConfig();
-  if(cfg.apiKey && cfg.provider){
-    var pc = PROVIDER_CONFIG[cfg.provider] || PROVIDER_CONFIG.deepseek;
-    var baseUrl = cfg.provider==='custom' ? (cfg.customUrl||'') : pc.baseUrl;
-    var model = cfg.model || pc.defaultModel;
-    if(!baseUrl) return Promise.reject(new Error('接口地址为空，请前往设置页填写'));
-    var hasSys = messages[0] && messages[0].role==='system';
-    var sys = hasSys ? messages[0].content : '';
-    var rest = hasSys ? messages.slice(1) : messages;
-    var url, headers, body;
-    if(pc.format==='claude'){
+  'use strict';
+  console.log('[千律州模拟器] UI原版 × 引渡人引擎 v6.1');
+  
+  // ═══ 配置区 ═══
+  const WORKER_URL = 'https://difu-ai.2629885225.workers.dev';
+  const MAX_HISTORY = 10;
+  const STORAGE_KEY = 'gzd_qlz_save_v2';
+  const OLD_KEY     = 'gzd_qlz_story';
+  const CONFIG_KEY  = 'gzd_ai_config';
+  const PROFILE     = 'qlz';
+  const K_THEME     = 'theme';
+  const NOTICE_KEY  = 'gzd_qlz_notice_closed';
+  const SUGGEST_INSTRUCTION = '\n\n[系统内部指令,勿在正文提及]回复正文结束后,必须另起一行在末尾输出<建议>["行动1","行动2","行动3"]</建议>:给出3条玩家(怀榆)可采取的下一步行动,每条不超过15字,第二人称祈使句。再另起一行输出<状态>{"nodes":["本轮实际触发的必经节点id"],"fav":当前好感整数}</状态>,nodes没有则填空数组。这两个块是每轮回复的固定格式,任何情况下不允许省略,块之外不得有任何额外说明。';
+  const STAGES = [
+    {min:0,  max:20,  name:'冷淡警惕'},
+    {min:21, max:40,  name:'认识试探'},
+    {min:41, max:60,  name:'熟悉信任'},
+    {min:61, max:80,  name:'亲近在意'},
+    {min:81, max:100, name:'深厚感情'}
+  ];
+  function stageOf(f){ for(let i=STAGES.length-1;i>=0;i--){ if(f>=STAGES[i].min) return STAGES[i]; } return STAGES[0]; }
+  const CN_NUM=['零','一','二','三','四','五','六','七','八','九','十'];
+  function cnCh(n){ return n<=10 ? CN_NUM[n] : String(n); }
+  function pad2(n){ return (n<10?'0':'')+n; }
+  const DECLARATION = [
+  '【千律州系统 · 演出声明】',
+  '本模拟基于原著《业焰之国》第一章至第四章剧情架构搭建。你将扮演怀榆，由系统（我）与千律州世界共同为你演出。',
+  '演出方式：在下方输入框呈报你的行动或对话，由系统生成长段演出。每轮附「走位参考」，仅为建议，可自行呈报任意行动。',
+  '好感度：初始 10，分五阶段演进，影响角色态度与剧情分支。右上角菜单可随时校准。',
+  '剧情轨道：每章设必经节点与轮数上限，过程自由，主线节点会自然发生。存档自动进行，菜单可随时删档重来。',
+  '——确认了解后，在下方输入「开始游戏」，第一章《嗅骸与重启》即刻开演。'
+  ].join('\n');
+  
+  const PROVIDER_CONFIG = {
+    deepseek: { baseUrl:'https://api.deepseek.com',   defaultModel:'deepseek-chat', format:'openai' },
+    openai:   { baseUrl:'https://api.openai.com',     defaultModel:'gpt-4o-mini',   format:'openai' },
+    claude:   { baseUrl:'https://api.anthropic.com',  defaultModel:'claude-3-5-sonnet-20241022', format:'claude' },
+    custom:   { baseUrl:'',                           defaultModel:'',              format:'openai' }
+  };
+  
+  // ═══ 存档读写（引渡人同构：按章分仓） ═══
+  function loadProfileData(){
+    try{ const d = JSON.parse(localStorage.getItem(STORAGE_KEY)); if(d && d.chapters) return d; }catch(e){}
+    return null;
+  }
+  function saveProfileData(data){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){} }
+  function loadStory(){
+    const data = loadProfileData();
+    if(!data) return [];
+    const ch = data.chapters[data.currentChapter];
+    return ch ? (ch.stories || []) : [];
+  }
+  function saveStory(arr){
+    let data = loadProfileData() || { currentChapter:1, fav:10, chapters:{} };
+    if(!data.chapters[data.currentChapter]) data.chapters[data.currentChapter] = { title:'', summary:'', nodesDone:[], stories:[] };
+    data.chapters[data.currentChapter].stories = arr;
+    saveProfileData(data);
+  }
+  function getCurrentChapter(){ const d=loadProfileData(); return d?d.currentChapter:1; }
+  function getFav(){ const d=loadProfileData(); return d?((typeof d.fav==='number')?d.fav:10):10; }
+  function setFav(n){ const d=loadProfileData(); if(!d)return; d.fav=Math.max(0,Math.min(100,n|0)); saveProfileData(d); renderSeal(); }
+  function getChapterData(n){ const d=loadProfileData(); return (d&&d.chapters)?(d.chapters[n]||null):null; }
+  function getChapterTitle(n){ const ch=getChapterData(n); return ch?(ch.title||''):''; }
+  function getNodesDone(){ const ch=getChapterData(getCurrentChapter()); return (ch&&ch.nodesDone)||[]; }
+  function setNodesDone(arr){ const d=loadProfileData(); if(!d)return; const ch=d.chapters[d.currentChapter]; if(ch){ ch.nodesDone=arr; saveProfileData(d); } }
+  function getCurrentRounds(){
+    const ch = getChapterData(getCurrentChapter());
+    if(!ch) return 0;
+    return (ch.stories||[]).filter(x => x.type==='user').length;
+  }
+  function getPrevSummaries(){
+    const d = loadProfileData(); if(!d) return '';
+    const out=[];
+    for(let i=1;i<d.currentChapter;i++){
+      const c=d.chapters[i];
+      if(c&&c.summary) out.push('第'+cnCh(i)+'章「'+(c.title||'')+'」:'+c.summary);
+    }
+    return out.join('\n');
+  }
+  function loadAIConfig(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}'); }catch(e){ return {}; } }
+  function hasUserKey(){ const c=loadAIConfig(); return !!(c.apiKey&&c.provider); }
+  
+  // ═══ 章包加载 ═══
+  const packCache = {};
+  let pack = null;
+  async function loadPack(n){
+    if(packCache[n]) return packCache[n];
+    const nn = pad2(n);
+    const resp = await fetch('./chapters/ch'+nn+'.json');
+    if(!resp.ok) throw new Error('章包 ch'+nn+'.json 加载失败('+resp.status+')');
+    const p = await resp.json();
+    packCache[n] = p;
+    return p;
+  }
+  
+  // ═══ 系统提示词（引渡人骨架 + 千律州内容） ═══
+  function buildSystemPrompt(pk){
+    const prev = getPrevSummaries();
+    const fav = getFav();
+    const st = stageOf(fav).name;
+    const done = getNodesDone();
+    const rounds = getCurrentRounds();
+    const known = (pk.knownInfo||[]).map(k => '· '+k).join('\n');
+    const lore = window.QLZ_LORE || {};
+    const loreTxt = [
+      lore.STYLE===undefined?'':(lore.STYLE?('\n\n【世界书·文风】\n'+lore.STYLE):''),
+      (lore.WORLD?'\n\n【世界书·世界观硬设定】\n'+lore.WORLD:''),
+      (lore.CARDS?'\n\n【世界书·人物卡（严格执行，任何偏离即OOC事故）】\n'+lore.CARDS:''),
+      (lore.SECRETS?'\n\n【封锁红线·以下信息在剧情未揭晓前绝不可确认/暗示/说漏，玩家追问一律“不知道/权限不足”】\n'+lore.SECRETS:'')
+    ].join('');
+    return '你是「千律州模拟器」的剧情演绎引擎。玩家扮演怀榆，你是包裹着他的“系统”与世界本身。\n'
+  +'【演出格式】\n'
+  +'文风：网文长段流——叙述段落为主，对白用引号嵌在段落内，段落之间空行。严禁剧本分行、严禁角色名前置标签、严禁列表化正文。\n'
+  +'场景切换或氛围转折时，可单独输出一行括号提示，如：（门后静了两拍。然后是低低的一声笑。）\n'
+  +'第二人称“你”指代怀榆。系统“我”偶尔冷面吐槽，语气四平八稳带嫌弃。\n'
+  +'信息封锁：导演指令中“不知道/不可提及”的内容，无论玩家怎么问，一律不给，可由系统以“权限不足”类话术封口。\n'
+  +'每轮回复固定格式：正文长段 + （括号场景提示，可选）+ <建议>块 + <状态>块（见每轮消息末尾的内部指令）。除这些外正文之后不得输出任何解释。\n\n'
+  +'【好感度系统】\n'
+  +'当前好感 '+fav+'（阶段：'+st+'，对话态度参考此阶段）。初始 10。根据玩家表现，在<状态>的 fav 中回传合理好感值(0-100)。\n'
+  +'阶段：0-20 冷淡警惕 │ 21-40 认识试探 │ 41-60 熟悉信任 │ 61-80 亲近在意 │ 81-100 深厚感情。好感演进须有剧情依据，禁止无故跳变。\n\n'
+  +'【本章导演指令 · 第'+pk.id+'章「'+pk.title+'」】\n'
+  +'本章目标：'+pk.goal+'\n'
+  +'必经节点（剧情轨道，必须自然发生，严禁跳过或提前揭穿）：\n'
+  +pk.mustNodes.map(n => '· ['+n.id+'] '+n.desc+'（'+n.hint+'）'+(done.indexOf(n.id)>=0?'【已发生】':'')).join('\n')+'\n'
+  +'本章已进行 '+rounds+' 轮。玩家过程自由，但未完成的必经节点要在后续自然引导发生；玩家跑偏时以最自然的方式拉回，严禁出戏。\n\n'
+  +'【玩家已知信息（严格封锁未列出的信息）】\n'+known+'\n'
+  +(prev?('\n【前情摘要（之前章节，既定事实）】\n'+prev+'\n'):'')
+  +'【衔接铁律】\n'
+  +'上文【演出】里已播出的开场与剧情是既成事实。你的每轮演出必须从最近一次演出的结尾自然衔接（人物状态、地点、时间延续），严禁重播开场白、严禁另起炉灶、严禁无视玩家刚呈报的行动。'
+  +loreTxt;
+  }
+  
+  // ═══ AI 调用（引渡人双路同款） ═══
+  let lastSuggestions = [];
+  let prevSugg = [];
+  async function callAI(message, pk, history){
+    const rounds = history.filter(m => m.role==='user').length;
+    const maxRounds = pk.maxRounds || 12;
+    let extra = '';
+    const done = getNodesDone();
+    const leftIds = pk.mustNodes.filter(n => done.indexOf(n.id)<0);
+    if(leftIds.length && rounds >= maxRounds-3){
+      extra = '\n\n[系统强制指令]本章轮数即将用尽,而必经节点【'+leftIds[0].desc+'】尚未发生。请在本轮演出中以最自然的方式将该节点事件带入剧情(系统可强制弹出任务/事件),严禁出戏。';
+    }
+    const msg = message + SUGGEST_INSTRUCTION + extra;
+    const cfg = loadAIConfig();
+    const reply = (cfg.apiKey && cfg.provider)
+      ? await callDirect(msg, pk, history, cfg)
+      : await callWorker(msg, history);
+    return extractReply(reply, pk);
+  }
+  function extractReply(reply, pk){
+    let nodesHit = [], fav = null;
+    try{
+      const m = reply.match(/<状态>([\s\S]*?)<\/状态>/);
+      if(m){
+        reply = reply.replace(m[0],'').trim();
+        try{
+          const st = JSON.parse(m[1].trim());
+          if(st){
+            if(Array.isArray(st.nodes)) nodesHit = st.nodes.filter(x=>typeof x==='string');
+            if(typeof st.fav==='number') fav = Math.max(0,Math.min(100,st.fav|0));
+          }
+        }catch(e){}
+      }
+    }catch(e){}
+    lastSuggestions = [];
+    try{
+      const s2 = reply.match(/<建议>([\s\S]*?)<\/建议>/);
+      if(s2){
+        reply = reply.replace(s2[0],'').trim();
+        try{
+          const arr = JSON.parse(s2[1].trim());
+          if(Array.isArray(arr)) lastSuggestions = arr.filter(x=>typeof x==='string'&&x.trim()).slice(0,3);
+        }catch(e){}
+      }
+      if(!lastSuggestions.length){
+        const tail = reply.slice(-300);
+        const m3 = tail.match(/\[\s*"[^"]{1,40}"\s*(,\s*"[^"]{1,40}"\s*){1,2}\]/);
+        if(m3){
+          try{
+            const arr = JSON.parse(m3[0]);
+            if(Array.isArray(arr)){
+              lastSuggestions = arr.filter(x=>typeof x==='string'&&x.trim()).slice(0,3);
+              reply = reply.replace(m3[0],'').trim();
+            }
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+    if(!lastSuggestions.length){
+      const done = getNodesDone();
+      const pend = pk.mustNodes.filter(n => done.indexOf(n.id)<0)[0];
+      if(pend && pk.options && pk.options[pend.id]) lastSuggestions = pk.options[pend.id].slice(0,3);
+      else if(prevSugg.length) lastSuggestions = prevSugg.slice(0,3);
+    } else {
+      prevSugg = lastSuggestions.slice(0,3);
+    }
+    return { text:reply, nodesHit:nodesHit, fav:fav };
+  }
+  async function callDirect(message, pk, history, cfg){
+    const pConfig = PROVIDER_CONFIG[cfg.provider] || PROVIDER_CONFIG.deepseek;
+    const baseUrl = cfg.provider==='custom' ? (cfg.customUrl||'') : pConfig.baseUrl;
+    const model = cfg.model || pConfig.defaultModel;
+    if(!baseUrl) throw new Error('接口地址为空,请前往设置页填写');
+    const systemPrompt = buildSystemPrompt(pk);
+    const messages = [
+      { role:'system', content:systemPrompt },
+      ...history.slice(-MAX_HISTORY),
+      { role:'user', content:message }
+    ];
+    let url, headers, body;
+    if(pConfig.format==='claude'){
       url = baseUrl+'/v1/messages';
-      headers = {'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-      body = JSON.stringify({model:model,max_tokens:1500,system:sys,messages:rest});
+      headers = { 'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' };
+      body = JSON.stringify({ model, max_tokens:1500, system:systemPrompt, messages:messages.filter(m=>m.role!=='system') });
     } else {
       url = baseUrl+'/v1/chat/completions';
-      headers = {'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey};
-      body = JSON.stringify({model:model,messages:messages,max_tokens:1500,temperature:0.8});
+      headers = { 'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey };
+      body = JSON.stringify({ model, messages, max_tokens:1500, temperature:0.8 });
     }
-    return fetch(url,{method:'POST',headers:headers,body:body}).then(function(r){
-      return r.json().then(function(d){
-        if(!r.ok){
-          var em = (d.error&&d.error.message)||d.error||JSON.stringify(d);
-          if(r.status===401) throw new Error('API Key 无效或已失效');
-          if(r.status===402) throw new Error('余额不足');
-          if(r.status===429) throw new Error('请求过频');
-          throw new Error('AI 返回错误('+r.status+'):'+em);
-        }
-        var reply = pc.format==='claude' ? ((d.content&&d.content[0]&&d.content[0].text)||'') : ((d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content)||'');
-        if(!reply) throw new Error('AI 返回了空内容');
-        /* 截断检测：输出撞上限时 <建议>/<状态> 会被拦腰砍掉——上屏提醒（这曾经是走位参考消失的真凶） */
-        var fr = pc.format==='claude' ? (d.stop_reason||'') : ((d.choices&&d.choices[0]&&d.choices[0].finish_reason)||'');
-        window.QLZ_LAST_CUT = (fr==='length'||fr==='max_tokens');
-        return reply;
-      });
-    });
+    const resp = await fetch(url, { method:'POST', headers, body });
+    const data = await resp.json();
+    if(!resp.ok){
+      const em = (data.error&&data.error.message)||data.error||JSON.stringify(data);
+      if(resp.status===401) throw new Error('API Key 无效或已失效');
+      if(resp.status===402) throw new Error('余额不足');
+      if(resp.status===429) throw new Error('请求过频');
+      throw new Error('AI 返回错误('+resp.status+'):'+em);
+    }
+    const reply = pConfig.format==='claude' ? ((data.content&&data.content[0]&&data.content[0].text)||'') : ((data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'');
+    if(!reply) throw new Error('AI 返回了空内容');
+    const fr = pConfig.format==='claude' ? (data.stop_reason||'') : ((data.choices&&data.choices[0]&&data.choices[0].finish_reason)||'');
+    window.QLZ_LAST_CUT = (fr==='length'||fr==='max_tokens');
+    return reply;
   }
-  var sysMsg = (messages[0]&&messages[0].role==='system') ? messages[0].content : '';
-  var lastUser = ''; for(var i=messages.length-1;i>=0;i--){ if(messages[i].role==='user'){ lastUser=messages[i].content; break; } }
-  var hist = messages.filter(function(m,idx){ return m.role!=='system' && idx!==messages.length-1; })
-    .map(function(m){ return {role:m.role, text:m.content}; });
-  return fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({message:(sysMsg? sysMsg+'\n\n── 玩家本轮呈报 ──\n':'')+lastUser, profile:PROFILE, history:hist, system:sysMsg})
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if(!r.ok || d.error) throw new Error(d.error || ('HTTP '+r.status));
-    return d.reply;
-  });
-}
-function callAI(userText, forced){
-  var parts = buildParts(pack, state, userText, forced);
-  var lore = window.QLZ_LORE;
-  var loreTxt = [lore.STYLE===undefined?'':(lore.STYLE?('\n\n【世界书·文风】\n'+lore.STYLE):''), (lore.WORLD?'\n\n【世界书·世界观硬设定】\n'+lore.WORLD:''), (lore.CARDS?'\n\n【世界书·人物卡（严格执行，任何偏离即OOC事故）】\n'+lore.CARDS:''), (lore.SECRETS?'\n\n【封锁红线·以下信息在剧情未揭晓前绝不可确认/暗示/说漏，玩家追问一律“不知道/权限不足”】\n'+lore.SECRETS:'')].join('');
-  var messages = [{role:'system', content: PROTOCOL+'\n\n'+parts.sys+loreTxt}];
-  state.stories.slice(-MAX_HISTORY).forEach(function(m){ messages.push({role:m.role, content:m.text}); });
-  messages.push({role:'user', content:parts.user});
-  return callMessages(messages);
-}
-// 好感校准（独立小调用，省 token：不每轮算）
-function calibrateFav(){
-  var st = stageOf(state.fav);
-  var recent = state.stories.slice(-4).map(function(m){ return (m.role==='user'?'[玩家]':'[演出]')+m.text.slice(0,300); }).join('\n');
-  var msg = '你是好感度仲裁器。根据以下最近剧情，评估玩家（怀榆）对攻略对象的表现应增减多少好感（-3到+3，整数）。\n当前好感：'+state.fav+'（阶段：'+st.name+'）\n最近剧情：\n'+recent+'\n只输出一行JSON：{"delta":整数,"reason":"一句话理由"}';
-  return callMessages([{role:'user', content: msg}]).then(function(reply){
-    var m = (reply||'').match(/\{[^}]*delta[^}]*\}/);
-    if(!m) throw new Error('校准输出格式异常');
-    var o = JSON.parse(m[0]);
-    state.fav = Math.max(0, Math.min(100, state.fav + (o.delta|0)));
-    saveStory(state); renderSeal();
+  async function callWorker(message, history){
+    const resp = await fetch(WORKER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message, profile:PROFILE, history:history.slice(-MAX_HISTORY) })
+    });
+    const data = await resp.json();
+    if(data.error) throw new Error(data.error);
+    return data.reply || '';
+  }
+  
+  // ═══════════ 界面层（原版：全部由本文件注入，尺寸/样式照 v5 模板） ═══════════
+  let root, flow, busy = false;
+  function h(tag, cls, html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function fmt(text){
+    const lines = esc(text).split(/\n+/);
+    return lines.map(function(L){
+      const t = L.trim();
+      if(/^（.+）$/.test(t)) return '<div class="cue">'+t+'</div>';
+      if(!t) return '';
+      return '<p class="narr">'+t+'</p>';
+    }).join('');
+  }
+  function makeOpts(list){
+    const o = h('div','opts','<div class="ot"><b>◇</b> 走位参考 · 仅为建议，可自行呈报</div>');
+    list.forEach(function(t){
+      const b = h('button','opt', esc(t));
+      b.onclick = function(){ const i=document.getElementById('qin'); i.value=t; i.focus(); };
+      o.appendChild(b);
+    });
     return o;
-  });
-}
-
-// ===== 解析 AI 回复 =====
-function parseReply(reply, pack){
-  var nodesHit = [], fav = null;
-  reply = reply.replace(/<状态>([\s\S]*?)<\/状态>/, function(_, j){
-    try{ var o = JSON.parse(j.trim());
-      if(o.nodes && o.nodes.length) nodesHit = o.nodes;
-      if(typeof o.fav === 'number') fav = Math.max(0, Math.min(100, o.fav|0));
-    }catch(e){}
-    return '';
-  });
-  var opts = [];
-  reply = reply.replace(/<建议>([\s\S]*?)<\/建议>/, function(_, j){
-    try{ var a = JSON.parse(j.trim()); if(Array.isArray(a)) opts = a.slice(0,3); }catch(e){}
-    return '';
-  });
-  reply = reply.trim();
-  // 走位参考兜底：AI 没给（或被截断）→ 先用上一轮 AI 建议，再退章包节点
-  if(!opts.length){
-    if(lastOpts.length){ opts = lastOpts.slice(0,3); }
-    else {
-      var pend = pack.mustNodes.filter(function(n){ return state.nodes.indexOf(n.id)<0; })[0];
-      if(pend && pack.options[pend.id]) opts = pack.options[pend.id];
-    }
   }
-  return { text: reply, nodesHit: nodesHit, fav: fav, opts: opts };
-}
-
-// ===== 轮次推进 =====
-function advance(parsed){
-  var st0 = stageOf(state.fav);
-  state.round++;
-  parsed.nodesHit.forEach(function(id){ if(state.nodes.indexOf(id)<0) state.nodes.push(id); });
-  if(parsed.fav !== null) state.fav = parsed.fav;
-  var st1 = stageOf(state.fav);
-  var doneAll = pack.mustNodes.every(function(n){ return state.nodes.indexOf(n.id)>=0; });
-  var sysLine = '';
-  if(parsed.fav !== null && parsed.fav !== state.fav){ /* fav 已在 state 上 */ }
-  sysLine = '好感 ' + st0.min + '→' + state.fav + '　│　' + (st1.name===st0.name ? '阶段未变 · 仍处【'+st1.name+'】' : '阶段跃迁 · 【'+st0.name+'】→【'+st1.name+'】') + '　│　本章 ' + state.ch + ' / 10';
-  // 强制拉回判定
-  var forced = null;
-  var left = pack.mustNodes.filter(function(n){ return state.nodes.indexOf(n.id)<0; });
-  if(!doneAll && state.round >= pack.maxRounds - 3 && left.length)
-    forced = '（系统强制任务弹窗：主线进度告急，请将剧情向【'+left[0].desc+'】引导，两轮内完成。）';
-  // 转场判定
-  var transition = doneAll;
-  saveStory(state);
-  return { sysLine: sysLine, forced: forced, transition: transition, stageChanged: st1.name!==st0.name };
-}
-
-// ===== 渲染器（v5 模板） =====
-var root, flow, elCache = {};
-function h(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
-
-function injectApp(){
-  if(document.getElementById('qlz-app')){ root = document.getElementById('qlz-app'); return; }
-  root = h('div'); root.id = 'qlz-app';
-  root.innerHTML =
-  '<style>'+
-  ':root{--bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;--zhu:#A8443E;--mut:#5D6B80;--gc:rgba(85,15,16,.08);--gc2:rgba(34,44,110,.07);--hair:rgba(34,44,110,.3);}'+
-  '#qlz-app,body{font-family:Georgia,"Songti SC",serif;color:var(--ink);}'+
-  'body{background:var(--bg);background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);background-size:117px 117px,117px 117px,26px 26px,26px 26px;margin:0;}'+
-  '#qlz-app .chap{max-width:1200px;margin:18px auto 0;display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--klein);box-shadow:4px 5px 0 rgba(34,44,110,.15);padding:12px 18px;position:sticky;top:0;z-index:5;}'+
-  '#qlz-app .no{font-size:10px;letter-spacing:.2em;color:var(--burg);border:1.5px solid var(--burg);padding:3px 7px;font-family:Courier New,monospace;white-space:nowrap;}'+
-  '#qlz-app .t{flex:1;min-width:0;}#qlz-app .t b{font-size:15.5px;letter-spacing:.1em;display:block;}#qlz-app .t i{font-style:normal;font-family:Courier New,monospace;font-size:8.5px;letter-spacing:.16em;color:var(--mut);}'+
-  '#qlz-app .ico{width:34px;height:34px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer;font-family:inherit;}#qlz-app .ico:hover{background:var(--klein);color:#F0EFEB;}'+
-  '#qlz-app .flow{max-width:1200px;margin:16px auto 0;}'+
-  '#qlz-app .act{background:var(--card);border:1.5px solid var(--klein);box-shadow:4px 5px 0 rgba(34,44,110,.12);margin:24px 0 24px 26px;padding:22px 30px 18px;position:relative;animation:qfadeUp .55s ease both;}'+
-  '@keyframes qfadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}'+
-  '#qlz-app .mh{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:6px;margin-bottom:12px;}'+
-  '#qlz-app .mn{font-size:11px;letter-spacing:.22em;color:var(--klein);font-family:Courier New,monospace;font-weight:400;}'+
-  '#qlz-app .ops{display:flex;gap:6px;opacity:.5;}#qlz-app .ops:hover{opacity:1;}'+
-  '#qlz-app .op{border:1px solid var(--hair);background:transparent;color:var(--mut);font-family:Courier New,monospace;font-size:9.5px;padding:2px 8px;cursor:pointer;letter-spacing:.1em;}'+
-  '#qlz-app .op:hover{color:var(--klein);border-color:var(--klein);}#qlz-app .op.hot:hover{background:var(--klein);color:#F0EFEB;}'+
-  '#qlz-app .narr{font-size:15px;line-height:2.15;margin-bottom:24px;}'+
-  '#qlz-app .cue{color:var(--zhu);text-align:center;font-size:12.5px;margin:20px 0;}'+
-  '#qlz-app .sys{display:flex;align-items:center;gap:9px;font-family:Courier New,monospace;font-size:11px;color:var(--mut);letter-spacing:.12em;margin:16px 0 18px;}'+
-  '#qlz-app .sys::before,#qlz-app .sys::after{content:"";flex:1;height:1px;background:var(--hair);}'+
-  '#qlz-app .sys b{color:var(--zhu);font-weight:400;}#qlz-app .sys .up{color:var(--klein);}'+
-  '#qlz-app .opts{border:1.5px dashed var(--klein);padding:10px 13px;background:rgba(250,249,245,.85);margin-bottom:6px;}'+
-  '#qlz-app .ot{font-family:Courier New,monospace;font-size:9px;letter-spacing:.2em;color:var(--mut);margin-bottom:8px;}#qlz-app .ot b{color:var(--zhu);font-weight:400;}'+
-  '#qlz-app .opt{display:block;width:100%;text-align:left;border:1px solid var(--hair);background:transparent;font-family:inherit;font-size:14px;padding:8px 12px;margin-bottom:6px;cursor:pointer;color:var(--ink);transition:.15s;}'+
-  '#qlz-app .opt:hover{background:var(--klein);color:#F0EFEB;border-color:var(--klein);}'+
-  '#qlz-app .pcmd{border-left:3px solid var(--zhu);background:var(--card);color:var(--ink);padding:10px 13px 8px;margin:24px 0 24px 26px;position:relative;box-shadow:3px 3px 0 rgba(168,68,62,.18);}'+
-  /* 玩家呈报=朱砂红（TA定：玩家块红色，与系统白色演出区分） */
-  '#qlz-app .pcmd .tx{color:var(--zhu);}'+
-  '#qlz-app .pl{font-family:Courier New,monospace;font-size:9.5px;letter-spacing:.18em;color:var(--zhu);display:flex;justify-content:space-between;margin-bottom:4px;}'+
-  '#qlz-app .pl .op{margin-left:6px;}'+
-  '#qlz-app .tx{font-size:14px;line-height:2;}#qlz-app .tx::before{content:"> ";font-family:Courier New,monospace;color:var(--zhu);}'+
-  '#qlz-app .inbar{max-width:1200px;margin:4px auto 30px;display:flex;gap:10px;position:sticky;bottom:0;background:var(--bg);padding:10px 0 4px;border-top:1.5px solid var(--klein);z-index:3;}'+
-  '#qlz-app .in{flex:1;border:1.5px solid var(--klein);background:var(--card);font-family:inherit;font-size:15px;padding:13px 15px;color:var(--ink);outline:none;}'+
-  '#qlz-app .go{background:var(--klein);color:#F0EFEB;border:none;font-family:inherit;font-size:14px;letter-spacing:.25em;padding:0 26px;cursor:pointer;transition:.18s;}'+
-  '#qlz-app .go:hover{background:var(--burg);}#qlz-app .go:disabled{opacity:.5;cursor:wait;}'+
-'#qlz-app .flow{position:relative;padding-left:16px;}'+
-'#qlz-app .flow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1.5px;background:var(--hair);}'+
-'#qlz-app .act::before{content:"";position:absolute;left:-38px;top:30px;width:9px;height:9px;background:var(--burg);border:1.5px solid var(--card);}'+
-'#qlz-app .pcmd::before{content:"";position:absolute;left:-42px;top:16px;width:9px;height:9px;background:var(--card);border:2px solid var(--zhu);}'+
-  '#qlz-app .side{position:fixed;top:0;bottom:0;width:300px;background:var(--card);border:1.5px solid var(--klein);padding:18px 16px;z-index:50;font-size:12px;overflow-y:auto;transition:transform .28s ease;}'+
-  '#qlz-app .side.r{right:0;transform:translateX(100%);box-shadow:-6px 0 0 rgba(34,44,110,.12);}'+
-  '#qlz-app .side.l{left:0;transform:translateX(-100%);box-shadow:6px 0 0 rgba(34,44,110,.12);}'+
-  '#qlz-app .side.open{transform:none;}'+
-  '#qlz-app .st{font-family:Courier New,monospace;font-size:9.5px;letter-spacing:.22em;color:var(--burg);border-bottom:1px solid var(--hair);padding-bottom:7px;margin-bottom:12px;}'+
-  '#qlz-app .sitem{display:flex;justify-content:space-between;align-items:center;padding:9px 6px;border-bottom:1px dashed var(--hair);cursor:pointer;letter-spacing:.1em;}'+
-  '#qlz-app .sitem:hover{background:rgba(34,44,110,.05);color:var(--klein);}'+
-  '#qlz-app .sitem .arr{color:var(--mut);font-family:Courier New,monospace;font-size:10px;}'+
-  '#qlz-app .favbox{border:1.5px solid var(--zhu);padding:12px 13px;margin:12px 0;background:rgba(168,68,62,.04);}'+
-  '#qlz-app .favbig{display:flex;align-items:baseline;gap:8px;}#qlz-app .favbig b{font-size:30px;color:var(--zhu);font-weight:400;font-family:Courier New,monospace;}'+
-  '#qlz-app .favbig span{font-size:12px;letter-spacing:.25em;color:var(--burg);font-weight:700;}'+
-  '#qlz-app .favbar{height:9px;border:1.5px solid var(--zhu);margin:10px 0 8px;position:relative;background:rgba(250,249,245,.8);}'+
-  '#qlz-app .favbar i{position:absolute;left:0;top:0;bottom:0;background:var(--zhu);transition:width .8s ease;}'+
-  '#qlz-app .favbar .c1{position:absolute;left:0;top:-16px;font-size:8px;font-family:Courier New,monospace;color:var(--mut);}'+
-  '#qlz-app .favbar .c2{position:absolute;right:0;top:-16px;font-size:8px;font-family:Courier New,monospace;color:var(--mut);}'+
-  '#qlz-app .lvs{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;color:var(--mut);font-family:Courier New,monospace;}'+
-  '#qlz-app .lvs span{padding:3px 5px;border:1px solid rgba(0,0,0,.08);}'+
-  '#qlz-app .lvs span.on{background:var(--zhu);color:#F0EFEB;border-color:var(--zhu);}'+
-  '#qlz-app .recal{width:100%;border:1.5px solid var(--zhu);background:transparent;color:var(--zhu);font-family:inherit;font-size:11.5px;letter-spacing:.2em;padding:8px;cursor:pointer;margin-top:11px;transition:.15s;}'+
-  '#qlz-app .recal:hover{background:var(--zhu);color:#F0EFEB;}'+
-  '#qlz-app .recal i{font-style:normal;font-family:Courier New,monospace;font-size:8.5px;display:block;letter-spacing:.08em;opacity:.75;margin-top:2px;}'+
-  '#qlz-app .backbtn{margin-top:14px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);width:100%;padding:8px;font-family:inherit;font-size:12px;letter-spacing:.3em;cursor:pointer;}'+
-  '#qlz-app .backbtn:hover{background:var(--klein);color:#F0EFEB;}'+
-  '#qlz-app .typing{font-family:Courier New,monospace;font-size:10px;color:var(--mut);letter-spacing:.2em;text-align:center;margin:14px 0;}'+
-  /* 夜间=系统页同款配方：石青蓝底 × 米白纸卡 × 深墨字 × 朱砂点缀（body 同步换肤，格子才不会留在日间色） */
-  'body.night{--bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;--zhu:#B94A44;--mut:#5D6B80;--gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);--hair:rgba(42,44,63,.4);}'+
-  'body.night #qlz-app{--bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;--zhu:#B94A44;--mut:#5D6B80;--gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);--hair:rgba(42,44,63,.4);}'+
-  /* 夜间可读性补丁：生成中提示/走位参考框在蓝底上提亮 */
-  'body.night #qlz-app .typing{color:#A9BFD9;}'+
-  'body.night #qlz-app .opts{background:#EAE5D6;}'+
-  '#qlz-app .sitem.danger{color:var(--burg);}'+
-  '#qlz-app .sitem.danger:hover{background:rgba(168,68,62,.08);color:var(--zhu);}'+
-  '#qlz-app .declare .narr{font-size:14px;}'+
-  '@media(max-width:760px){'+
-    '#qlz-app .chap{margin:10px 10px 0;padding:9px 10px;gap:7px;}'+
-    '#qlz-app .chap .t b{font-size:14px;}'+
-    '#qlz-app .chap .t i{font-size:7.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'+
-    '#qlz-app .ico{width:30px;height:30px;flex:none;}'+
-    '#qlz-app .side{width:70vw;max-width:258px;padding:14px 12px;}'+
-    '#qlz-app .flow{margin:12px 10px 0;padding-left:13px;}'+
-    /* 手机端气泡：贴紧红线，气泡整体加宽（左边距 14→4，红点间距 28→18） */
-    '#qlz-app .act{margin:16px 0 16px 4px;padding:15px 13px 12px;}'+
-    '#qlz-app .act::before{left:-18px;top:22px;}'+
-    '#qlz-app .narr{font-size:14.5px;line-height:2.05;margin-bottom:18px;}'+
-    '#qlz-app .pcmd{margin:16px 0 16px 4px;padding:9px 11px 7px;}'+
-    '#qlz-app .pcmd::before{left:-22px;}'+
-    '#qlz-app .inbar{margin:4px 10px 22px;gap:7px;}'+
-    '#qlz-app .in{font-size:14px;padding:11px 12px;}'+
-    '#qlz-app .go{padding:0 16px;letter-spacing:.15em;}'+
-  '>'+
-  /* 侧栏暗罩：开侧栏时主内容压暗一层（引渡人同款），点罩收起 */
-  '#qovl{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(20,24,40,.35);z-index:40;opacity:0;pointer-events:none;transition:opacity .25s ease}'+
-  '#qovl.on{opacity:1;pointer-events:auto}'+
-  '</style>';
-
-  var chap = h('div','chap');
-  chap.innerHTML = '<span class="no" id="qno">CH.01</span><div class="t"><b id="qtitle">加载中…</b><i id="qsub">QIANLVZHOU // REC</i></div>';
-  /* 右上角只留汉堡菜单（夜间/字体入口在侧栏菜单里） */
-  var burger = h('button','ico','☰');
-  burger.onclick = function(){ toggleSide('r'); };
-  chap.appendChild(burger);
-  root.appendChild(chap);
-
-  flow = h('div','flow'); root.appendChild(flow);
-
-  var inbar = h('div','inbar');
-  var input = h('input','in'); input.id='qin'; input.placeholder='今日欲行何事？';
-  var go = h('button','go','呈报'); go.id='qgo';
-  go.onclick = submit; input.onkeydown = function(e){ if(e.key==='Enter') submit(); };
-  inbar.appendChild(input); inbar.appendChild(go); root.appendChild(inbar);
-
-  // 右侧栏：菜单
-  var r = h('div','side r'); r.id='qside-r';
-  r.innerHTML = '<div class="st">系 统 · MENU</div>';
-  var mToc = h('div','sitem','<span>目录</span><span class="arr">← 左侧展开</span>');
-  mToc.onclick = function(){ toggleSide('l'); renderToc(); };
-  var mNight = h('div','sitem','<span>日间 / 夜间</span><span class="arr">切换</span>');
-  mNight.onclick = function(){ toggleNight(); };
-  /* 字体调节：A－ / A＋ 各自独立、真实生效，有上下限（12px～19px） */
-  var mFont = h('div','sitem','<span>字体大小</span><span style="display:flex;gap:6px;"><button class="op" id="qfminus">A－</button><button class="op" id="qfplus">A＋</button></span>');
-  var mRound = h('div','sitem','<span>对话轮数</span><span class="arr" id="qround">— / —</span>');
-  mRound.onclick = function(){ renderSys('本章进度：第 '+state.round+' 轮 / 上限 '+pack.maxRounds+' 轮　│　累计 '+Math.floor(state.stories.filter(function(m){return m.role==='user';}).length)+' 轮呈报'); };
-  var mReset = h('div','sitem danger','<span>删档重来</span><span class="arr">清空全部存档</span>');
-  mReset.onclick = function(){
-    if(confirm('确认删档重来？\n\n全部剧情进度、好感度与对话记录将被清空，且无法恢复。')){
-      resetAll(); location.reload();
+  function renderAct(item, label, seq){
+    const a = h('div','act'); a.dataset.id = item.id||'';
+    const mh = h('div','mh');
+    const isIntro = item.type==='opening' || item.type==='chapter-start';
+    mh.innerHTML = '<span class="mn">'+label+'</span><span class="ops">'+(isIntro?'':'<button class="op">✎ 编辑</button><button class="op hot">↻ 重生成</button>')+'</span>';
+    a.appendChild(mh);
+    const ab = h('div','abody'); ab.innerHTML = fmt(item.text);
+    a.appendChild(ab);
+    if(item.sugg && item.sugg.length) a.appendChild(makeOpts(item.sugg));
+    if(!isIntro){
+      const ops = a.querySelectorAll('.op');
+      ops[0].onclick = function(){ editAct(a); };
+      ops[1].onclick = function(){ regenerate(a); };
     }
-  };
-  r.appendChild(mToc); r.appendChild(mNight); r.appendChild(mFont); r.appendChild(mRound); r.appendChild(mReset);
-  r.insertAdjacentHTML('beforeend', favBoxHTML());  // 字符串须insertAdjacentHTML
-
-  var back = h('button','backbtn','◂ 返'); back.onclick = function(){ location.href='系统备份.html'; };
-  r.appendChild(back);
-  root.appendChild(r);
-
-  /* 字体按钮绑定：直接从 mFont 里取（root 此时尚未挂进 document，不能用 getElementById） */
-  var fminus = mFont.querySelector('#qfminus'), fplus = mFont.querySelector('#qfplus');
-  if(fminus) fminus.onclick = function(ev){ ev.stopPropagation(); setFont(-1); };
-  if(fplus)  fplus.onclick  = function(ev){ ev.stopPropagation(); setFont(1); };
-
-  // 左侧栏：目录
-  var l = h('div','side l'); l.id='qside-l';
-  l.innerHTML = '<div class="st">目 录 · CATALOG</div><div id="qtoc"><div class="sitem dim"><span>章节包加载中</span></div></div>';
-  root.appendChild(l);
-
-  document.body.appendChild(root);
-  /* 侧栏暗罩（挂body，点罩收两侧栏） */
-  var qovl = h('div'); qovl.id='qovl';
-  qovl.onclick = function(){ document.getElementById('qside-r').classList.remove('open'); document.getElementById('qside-l').classList.remove('open'); qovl.classList.remove('on'); };
-  document.body.appendChild(qovl);
-  // 点击外部收起
-  document.addEventListener('click', function(e){
-    ['qside-r','qside-l'].forEach(function(id){
-      var p = document.getElementById(id);
-      if(p && p.classList.contains('open') && !p.contains(e.target) && e.target.tagName!=='BUTTON' && e.target!==qovl) p.classList.remove('open');
+    flow.appendChild(a);
+    return a;
+  }
+  function renderPcmd(item){
+    const p = h('div','pcmd'); p.dataset.id = item.id||'';
+    p.innerHTML = '<div class="pl"><span>玩家 · 呈报</span><button class="op">✎</button></div><div class="tx">'+esc(item.text)+'</div>';
+    p.querySelector('.op').onclick = function(){ editAct(p); };
+    flow.appendChild(p);
+    return p;
+  }
+  function renderSys(line){
+    flow.appendChild(h('div','sys','<span>'+line+'</span>'));
+    scrollEnd();
+  }
+  function renderMsgItem(item, seq){
+    if(item.type==='loading'){
+      flow.appendChild(h('div','typing','SYS · 演出生成中 ···')); return;
+    }
+    if(item.type==='sys'){ renderSys('── '+item.text+' ──'); return; }
+    if(item.type==='error'){ renderSys('⚠ '+item.text); return; }
+    if(item.type==='chapter-end'){
+      renderSys('── '+item.title+' · 完 ──'); renderSys(item.text||'本章完结，前情已记入命册。'); return;
+    }
+    if(item.type==='chapter-start'){
+      renderSys('── '+item.title+' ──');
+      renderAct(item, 'ACT '+pad2(getCurrentChapter())+'-1 · 开场', seq);
+      return;
+    }
+    if(item.type==='opening'){
+      const c = renderAct(item, 'SYS · 声明', 0); c.classList.add('declare'); return;
+    }
+    if(item.type==='user'){ renderPcmd(item); return; }
+    renderAct(item, 'ACT '+pad2(getCurrentChapter())+'-'+(seq||1)+' · 演出', seq);
+  }
+  function renderStory(){
+    if(!flow) return;
+    flow.innerHTML = '';
+    const arr = viewingArchive ? (getChapterData(viewingArchive)||{stories:[]}).stories : loadStory();
+    let aiSeq = 0;
+    arr.forEach(function(item){
+      if(item.type==='ai') aiSeq++;
+      renderMsgItem(item, aiSeq);
     });
-    var anyOpen = ['qside-r','qside-l'].some(function(id){ var el=document.getElementById(id); return el&&el.classList.contains('open'); });
-    qovl.classList.toggle('on', anyOpen);
-  }, true);
-}
-
-function favBoxHTML(){
-  var st = stageOf(state.fav);
-  var lvs = STAGES.map(function(s){ return '<span class="'+(s.name===st.name?'on':'')+'">'+s.min+'-'+s.max+' '+s.name+'</span>'; }).join('');
-  return '<div class="favbox" id="qfavbox"><div class="favbig"><b id="qfavnum">'+state.fav+'</b><span id="qfavlv">'+st.name+'</span></div>'+
-  '<div class="favbar"><i id="qfavfill" style="width:'+state.fav+'%"></i><span class="c1">0</span><span class="c2">100</span></div>'+
-  '<div class="lvs" id="qlvs">'+lvs+'</div>'+
-  '<button class="recal" id="qrecal">↻ 校准好感度<i>按下后后端 AI 参考当前剧情输出一次 · 不必每轮都算</i></button></div>';
-}
-function renderSeal(){
-  var st = stageOf(state.fav);
-  var n = document.getElementById('qfavnum'); if(n) n.textContent = state.fav;
-  var l = document.getElementById('qfavlv'); if(l) l.textContent = st.name;
-  var f = document.getElementById('qfavfill'); if(f) f.style.width = state.fav+'%';
-  var box = document.getElementById('qfavbox');
-  if(box){ box.outerHTML = favBoxHTML();
-    var rc = document.getElementById('qrecal'); if(rc) rc.onclick = doCalibrate; }
-}
-function doCalibrate(){
-  var b = document.getElementById('qrecal'); if(b){ b.disabled = true; b.innerHTML = '↻ 校准中…'; }
-  calibrateFav().then(function(o){
-    renderSeal(); renderSys('好感校准：'+state.fav+'（'+(o.delta>=0?'+':'')+(o.delta|0)+'）　│　'+(o.reason||''));
-    if(b){ b.disabled=false; b.innerHTML='↻ 校准好感度<i>按下后后端 AI 参考当前剧情输出一次 · 不必每轮都算</i>'; }
-  }).catch(function(e){ renderSys('校准失败：'+esc(e.message)); if(b){ b.disabled=false; b.innerHTML='↻ 校准好感度'; } });
-}
-function renderRound(){
-  var e = document.getElementById('qround');
-  if(e && pack) e.textContent = state.round + ' / ' + pack.maxRounds;
-}
-function toggleSide(which){
-  /* 同时只允许一个侧栏展开——开这边，先收那边（防手机端双重覆盖） */
-  var other = document.getElementById(which==='r'?'qside-l':'qside-r');
-  if(other) other.classList.remove('open');
-  var p = document.getElementById(which==='r'?'qside-r':'qside-l');
-  if(p) p.classList.toggle('open');
-  /* 暗罩联动：任一侧栏开着就点亮 */
-  var ovl = document.getElementById('qovl');
-  if(ovl){
-    var anyOpen = ['qside-r','qside-l'].some(function(id){ var e=document.getElementById(id); return e&&e.classList.contains('open'); });
-    ovl.classList.toggle('on', anyOpen);
-  }
-}
-function toggleNight(){
-  var n = !root.classList.contains('night');
-  applyNight(n);  /* body/html/app 三处同步换肤，格子画在 body 上，只切 app 会留日间白格子 */
-  try{ localStorage.setItem(K_THEME, JSON.stringify({value: n?'dark':'light'})); }catch(e){}
-}
-/* 字体大小：step=+1 放大 / -1 缩小，边界 12~19px，持久记忆 */
-function setFont(step){
-  var f = document.querySelector('.flow'); if(!f) return;
-  var cur = parseFloat(f.dataset.fs||'15');
-  var next = Math.max(12, Math.min(19, cur + step*1.5));
-  if(next===cur) return;
-  f.dataset.fs = next;
-  try{ localStorage.setItem('gzd_qlz_font', next); }catch(e){}
-  f.querySelectorAll('.narr,.tx').forEach(function(e){ e.style.fontSize = next+'px'; });
-}
-function restoreFont(){
-  var f = document.querySelector('.flow'); if(!f) return;
-  var v = 15; try{ v = parseFloat(localStorage.getItem('gzd_qlz_font'))||15; }catch(e){}
-  f.dataset.fs = v;
-  f.querySelectorAll('.narr,.tx').forEach(function(e){ e.style.fontSize = v+'px'; });
-}
-function renderToc(){
-  var t = document.getElementById('qtoc'); if(!t || !pack) return;
-  var html = '';
-  for(var i=1;i<=Math.max(state.ch, pack.id);i++){
-    var cur = i===state.ch;
-    html += '<div class="sitem '+(cur?'cur':'dim')+'"><span>第'+['一','二','三','四','五','六','七','八','九','十'][i-1]+'章 · '+(cur?pack.title:'未解锁')+'</span><span class="arr">'+(cur?'当前':i<state.ch?'✓':'锁')+'</span></div>';
-  }
-  t.innerHTML = html;
-}
-
-// ===== 流渲染 =====
-function fmt(text){
-  // 长段流渲染：括号提示行高亮，其余整段
-  var lines = esc(text).split(/\n+/);
-  return lines.map(function(L){
-    var t = L.trim();
-    if(/^（.+）$/.test(t)) return '<div class="cue">'+t+'</div>';
-    if(!t) return '';
-    return '<p class="narr">'+t+'</p>';
-  }).join('');
-}
-function renderAct(text, label, opts, isIntro){
-  var a = h('div','act');
-  var mh = h('div','mh');
-  mh.innerHTML = '<span class="mn">'+(label||('ACT '+state.ch+'-'+state.round+' · 演出'))+'</span><span class="ops">'+(isIntro?'':'<button class="op">✎ 编辑</button><button class="op hot">↻ 重生成</button>')+'</span>';
-  a.appendChild(mh);
-  var ab = h('div','abody'); ab.innerHTML = fmt(text);   /* abody=卡身，编辑时整体替换 */
-  a.appendChild(ab);
-  if(!isIntro){
-    var ops = a.querySelectorAll('.op');
-    ops[0].onclick = function(){ editAct(a); };
-    ops[1].onclick = function(){ regenerate(a); };
-  }
-  flow.appendChild(a);
-  scrollEnd();
-  return a;
-}
-function makeOpts(list){
-  var o = h('div','opts','<div class="ot"><b>◇</b> 走位参考 · 仅为建议，可自行呈报</div>');
-  list.forEach(function(t){
-    var b = h('button','opt', esc(t));
-    b.onclick = function(){ var i=document.getElementById('qin'); i.value=t; i.focus(); };
-    o.appendChild(b);
-  });
-  return o;
-}
-// 走位参考挂在演出卡内部底端（v2 写法），不再是独立版块
-function attachOpts(card, list){
-  if(card && list && list.length){ card.appendChild(makeOpts(list)); lastOpts = list; }
-}
-function renderPcmd(text){
-  var p = h('div','pcmd');
-  p.innerHTML = '<div class="pl"><span>玩家 · 呈报</span><button class="op">✎</button></div><div class="tx">'+esc(text)+'</div>';
-  p.querySelector('.op').onclick = function(){ editAct(p); };
-  flow.appendChild(p); scrollEnd();
-  return p;
-}
-function renderSys(line){
-  var s = h('div','sys','<span>'+line+'</span>');
-  flow.appendChild(s); scrollEnd();
-}
-function scrollEnd(){
-  window.scrollTo(0, document.body.scrollHeight);
-  /* iOS Safari 白屏老bug（同引渡人）：落底后强制重绘——向下顶1px再回弹，逼 Safari 重画视口 */
-  requestAnimationFrame(function(){
-    window.scrollTo(0, document.body.scrollHeight+1);
-    requestAnimationFrame(function(){ window.scrollTo(0, document.body.scrollHeight); });
-  });
-}
-/* 编辑：整卡全文可编辑（演出卡=全部段落；呈报卡=行动全文），保存后写入存档。
-   呈报卡保存后同引渡人：截断后续剧情并自动重演 */
-function editAct(card){
-  if(card.dataset.editing) return;
-  var isP = card.classList.contains('pcmd');
-  var ab = card.querySelector('.abody') || card.querySelector('.tx');
-  if(!ab) return;
-  var paras = ab.classList.contains('tx') ? [ab] : Array.prototype.slice.call(ab.querySelectorAll('.narr'));
-  if(!paras.length) return;
-  var oldText = paras.map(function(p){ return p.textContent.replace(/^>\s*/,''); }).join('\n\n');
-  card.dataset.editing = '1';
-  var ta = document.createElement('textarea');
-  ta.style.cssText = 'width:100%;min-height:140px;font-family:inherit;font-size:13px;line-height:2;border:1.5px solid var(--klein);background:var(--bg);padding:8px;';
-  ta.value = oldText;
-  var abOld = ab.cloneNode(false); abOld.innerHTML='';  /* 占位 */
-  var wrap = h('div'); wrap.appendChild(ta);
-  var bar = h('div'); bar.style.cssText='margin:6px 0;';
-  var save = h('button','op','✓ 保存并继续'); var cancel = h('button','op','取消');
-  bar.appendChild(save); bar.appendChild(cancel);
-  ab.style.display='none'; ab.parentNode.insertBefore(wrap, ab.nextSibling);
-  ab.parentNode.insertBefore(bar, wrap.nextSibling);
-  save.onclick = function(){
-    var val = ta.value.trim();
-    if(!val || val===oldText){ restore(); return; }
-    if(isP){
-      /* 呈报被改 → 找到存档中该条，截断到它之前，用新呈报重演（引渡人同款） */
-      if(oldText==='开始游戏'){ renderSys('「开始游戏」是开局指令，不可编辑'); restore(); return; }
-      var idx = -1;
-      for(var i=state.stories.length-1;i>=0;i--){ if(state.stories[i].role==='user' && state.stories[i].text===oldText){ idx=i; break; } }
-      if(idx<0){ restore(); return; }
-      state.stories = state.stories.slice(0, idx);
-      saveStory(state);
-      removeAfter(card);
-      restore(true);
-      send(val, null, null);
-    } else {
-      /* 演出被改 → 更新卡面与存档，后续剧情保持不变 */
-      var j = -1;
-      for(var k=state.stories.length-1;k>=0;k--){ if(state.stories[k].role==='assistant' && state.stories[k].text===oldText){ j=k; break; } }
-      if(j>=0){ state.stories[j].text = val; saveStory(state); }
-      ab.innerHTML = fmt(val);
-      restore(true);
+    if(viewingArchive){
+      renderSys('你正在回看已完结章节（只读）');
+      const back = h('div','backcur','<button class="backbtn">← 返回当前章（进行中）</button>');
+      back.querySelector('button').onclick = function(){ viewingArchive=0; renderStory(); };
+      flow.appendChild(back);
     }
-  };
-  cancel.onclick = restore;
-  function restore(keepEditing){
-    ab.style.display='';
-    wrap.remove(); bar.remove();
-    if(!keepEditing) delete card.dataset.editing;
+    scrollEnd();
+    renderChap(); renderToc(); renderSeal(); renderRound();
+    kickPaint();
   }
-}
-/* 删除某张卡之后的所有对话卡（回滚 DOM 用） */
-function removeAfter(card){
-  var n = card.nextElementSibling;
-  while(n){ var nx = n.nextElementSibling; n.remove(); n = nx; }
-}
-function regenerate(card){
-  /* 引渡人同款：找到本轮玩家呈报 → 存档回滚到该呈报之前 → 删掉后续 DOM → 重演 */
-  if(state.nodes._transition){ delete state.nodes._transition; }
-  var prev = card.previousElementSibling, input=null, pcmdEl=null;
-  while(prev){
-    if(prev.classList.contains('pcmd')){ pcmdEl=prev; input=prev.querySelector('.tx').textContent.replace(/^>\s*/,''); break; }
-    prev = prev.previousElementSibling;
+  function renderChap(){
+    const pack0 = pack || {title:'', novelRef:''};
+    document.getElementById('qno').textContent = 'CH.'+pad2(viewingArchive||getCurrentChapter());
+    document.getElementById('qtitle').textContent = getChapterTitle(viewingArchive||getCurrentChapter()) || pack0.title || '加载中…';
+    document.getElementById('qsub').textContent = 'QIANLVZHOU // '+(pack0.novelRef||'业焰之国')+' · REC';
   }
-  if(!input){ renderSys('重生成失败：未找到对应的玩家呈报'); return; }
-  var idx = -1;
-  for(var i=state.stories.length-1;i>=0;i--){ if(state.stories[i].role==='user' && state.stories[i].text===input){ idx=i; break; } }
-  if(idx<0){ renderSys('重生成失败：该轮呈报不在存档中（开场卡不可重生成）'); return; }
-  state.stories = state.stories.slice(0, idx);
-  saveStory(state);
-  removeAfter(pcmdEl);
-  scrollEnd();
-  send(input, null, null);
-}
-
-// ===== 主流程 =====
-var DECLARATION = [
-'【千律州系统 · 演出声明】',
-'本模拟基于原著《业焰之国》第一章至第四章剧情架构搭建。你将扮演怀榆，由系统（我）与千律州世界共同为你演出。',
-'演出方式：在下方输入框呈报你的行动或对话，由系统生成长段演出。每轮附「走位参考」，仅为建议，可自行呈报任意行动。',
-'好感度：初始 10，分五阶段演进，影响角色态度与剧情分支。右侧栏可随时校准。',
-'剧情轨道：每章设必经节点与轮数上限，过程自由，主线节点会自然发生。存档自动进行，右侧栏可随时删档重来。',
-'——确认了解后，在下方输入「开始游戏」，第一章《'+'嗅骸与重启'+'》即刻开演。'
-].join('\n');
-
-function beginFirstChapter(){
-  var intro = (pack.locks||[]).filter(function(L){ return L.id==='C-1'; })[0];
-  var text = intro ? intro.text : ('（第'+pack.id+'章 · '+pack.title+'）演出开始。');
-  var card = renderAct(text, 'ACT '+pack.id+'-1 · 开场', null, false);
-  /* 关键：开场白写进对话记忆，否则 AI 看不到自己播过什么，玩家首轮呈报必然接不上 */
-  state.stories.push({role:'assistant', text:text});
-  var firstNode = pack.mustNodes[0];
-  var firstOpts = pack.options[firstNode ? firstNode.id : '1a'] || [];
-  attachOpts(card, firstOpts);
-  /* 走位参考随开场白一并存档，刷新回放时不丢 */
-  state.stories[state.stories.length-1].opts = firstOpts;
-  state.started = true; saveStory(state); renderRound();
-}
-
-function submit(){
-  var i = document.getElementById('qin'), go = document.getElementById('qgo');
-  var text = i.value.trim();
-  if(!text || busy) return;
-  i.value=''; busy=true; go.disabled=true;
-  // 开局拦截：演出声明之后，须输入「开始游戏」才进入第一章（同引渡人，不强买强卖）
-  if(!state.started && state.stories.length===0){
-    if(/^(开始游戏|开始|start)$/i.test(text.replace(/\s/g,''))){
-      renderPcmd(text);
-      beginFirstChapter();
+  function renderRound(){
+    const e = document.getElementById('qround');
+    if(e && pack) e.textContent = getCurrentRounds() + ' / ' + pack.maxRounds;
+  }
+  function renderSeal(){
+    const fav = getFav(); const st = stageOf(fav);
+    const box = document.getElementById('qseal');
+    if(!box) return;
+    const pct = Math.round(((fav-st.min)/Math.max(1,st.max-st.min))*100);
+    const lvs = STAGES.map(function(s,i){
+      return '<div class="lv'+(s===st?' cur':'')+'"><span>'+s.name+'</span><i>'+s.min+'-'+s.max+'</i></div>';
+    }).join('');
+    box.innerHTML =
+      '<div class="favhead"><span>好感度</span><b>'+fav+'</b></div>'+
+      '<div class="favbar"><i style="width:'+Math.min(100,Math.max(0,fav))+'%"></i></div>'+
+      '<div class="favstage">'+st.name+'</div>'+lvs+
+      '<button class="fbtn" id="qrecal">↻ 校准好感度<i>按下后 AI 参考近期剧情重估 · 不必每轮</i></button>'+
+      '<div class="fnote">剧情轨道：本章 '+getNodesDone().length+' / '+((pack&&pack.mustNodes&&pack.mustNodes.length)||'?')+' 个必经节点</div>';
+    const rb = document.getElementById('qrecal');
+    if(rb) rb.onclick = doCalibrate;
+  }
+  function renderToc(){
+    const t = document.getElementById('qtoc'); if(!t) return;
+    const data = loadProfileData(); if(!data){ t.innerHTML=''; return; }
+    const cur = data.currentChapter;
+    let html = '';
+    for(let i=1;i<=cur;i++){
+      const c = data.chapters[i]||{};
+      const isCur = i===cur;
+      html += '<div class="sitem '+(isCur?'cur':'done')+'" data-ch="'+i+'"><span>第'+cnCh(i)+'章 · '+esc(c.title||'')+'</span><span class="arr">'+(isCur?'当前':'✓ 回看')+'</span></div>';
+    }
+    t.innerHTML = html;
+    t.querySelectorAll('.sitem.done').forEach(function(el){
+      el.onclick = function(){ viewingArchive = parseInt(el.dataset.ch,10); renderStory(); };
+    });
+  }
+  let viewingArchive = 0;
+  function switchCurrent(){
+    viewingArchive = 0;
+    renderStory();
+  }
+  function scrollEnd(){
+    window.scrollTo(0, document.body.scrollHeight);
+    requestAnimationFrame(function(){
+      window.scrollTo(0, document.body.scrollHeight+1);
+      requestAnimationFrame(function(){ window.scrollTo(0, document.body.scrollHeight); });
+    });
+  }
+  function kickPaint(){
+    requestAnimationFrame(function(){
+      window.scrollTo(0, 1);
+      requestAnimationFrame(function(){ window.scrollTo(0, 0); });
+    });
+  }
+  function setFont(step){
+    const f = flow; if(!f) return;
+    const cur = parseFloat(f.dataset.fs||'15');
+    const next = Math.max(12, Math.min(19, cur + step*1.5));
+    if(next===cur) return;
+    f.dataset.fs = next;
+    try{ localStorage.setItem('gzd_qlz_font', next); }catch(e){}
+    f.querySelectorAll('.narr,.tx').forEach(function(e){ e.style.fontSize = next+'px'; });
+  }
+  function restoreFont(){
+    const f = flow; if(!f) return;
+    let v = 15; try{ v = parseFloat(localStorage.getItem('gzd_qlz_font'))||15; }catch(e){}
+    f.dataset.fs = v;
+    f.querySelectorAll('.narr,.tx').forEach(function(e){ e.style.fontSize = v+'px'; });
+  }
+  function applyNight(on){
+    root.classList.toggle('night', on);
+    document.body.classList.toggle('night', on);
+    document.documentElement.style.background = on ? '#20405F' : '#F0EFEB';
+  }
+  function toggleNight(){
+    const n = !root.classList.contains('night');
+    applyNight(n);
+    try{ localStorage.setItem(K_THEME, JSON.stringify({value: n?'dark':'light'})); }catch(e){}
+  }
+  function toggleSide(which){
+    const other = document.getElementById(which==='r'?'qside-l':'qside-r');
+    if(other) other.classList.remove('open');
+    const p = document.getElementById(which==='r'?'qside-r':'qside-l');
+    if(p) p.classList.toggle('open');
+    const ovl = document.getElementById('qovl');
+    if(ovl){
+      const anyOpen = ['qside-r','qside-l'].some(function(id){ const e=document.getElementById(id); return e&&e.classList.contains('open'); });
+      ovl.classList.toggle('on', anyOpen);
+    }
+  }
+  
+  function injectApp(){
+    /* 界面结构与样式全部在 模拟.html 里（引渡人同款做法），这里只做事件绑定 */
+    root = document.getElementById('qlz-app');
+    flow = document.getElementById('qflow');
+    document.getElementById('qtocBtn').onclick = function(){ toggleSide('r'); };
+    document.getElementById('qmToc').onclick = function(){ toggleSide('l'); renderToc(); };
+    document.getElementById('qmNight').onclick = toggleNight;
+    document.getElementById('qmRound').onclick = function(){
+      renderSys('本章进度：第 '+getCurrentRounds()+' 轮 / 上限 '+(pack?pack.maxRounds:'—')+' 轮　│　好感 '+getFav()+' · '+stageOf(getFav()).name);
+    };
+    document.getElementById('qmReset').onclick = function(){
+      if(confirm('确认删档重来？\n\n全部剧情进度、好感度与对话记录将被清空，且无法恢复。')){ resetAll(); location.reload(); }
+    };
+    const fminus = document.getElementById('qfminus'), fplus = document.getElementById('qfplus');
+    if(fminus) fminus.onclick = function(ev){ ev.stopPropagation(); setFont(-1); };
+    if(fplus)  fplus.onclick  = function(ev){ ev.stopPropagation(); setFont(1); };
+    document.getElementById('qback').onclick = function(){ location.href='系统备份.html'; };
+    document.getElementById('qnoticeClose').onclick = function(){
+      document.getElementById('qnotice').style.display='none';
+      try{ localStorage.setItem(NOTICE_KEY,'1'); }catch(e){}
+    };
+    try{ if(localStorage.getItem(NOTICE_KEY)==='1') document.getElementById('qnotice').style.display='none'; }catch(e){}
+    const qin = document.getElementById('qin');
+    document.getElementById('qgo').onclick = submit;
+    qin.onkeydown = function(e){ if(e.key==='Enter') submit(); };
+    const qovl = document.getElementById('qovl');
+    qovl.onclick = function(){
+      document.getElementById('qside-r').classList.remove('open');
+      document.getElementById('qside-l').classList.remove('open');
+      qovl.classList.remove('on');
+    };
+    document.addEventListener('click', function(e){
+      ['qside-r','qside-l'].forEach(function(id){
+        const p = document.getElementById(id);
+        if(p && p.classList.contains('open') && !p.contains(e.target) && e.target.tagName!=='BUTTON' && e.target!==qovl) p.classList.remove('open');
+      });
+      const anyOpen = ['qside-r','qside-l'].some(function(id){ const el=document.getElementById(id); return el&&el.classList.contains('open'); });
+      qovl.classList.toggle('on', anyOpen);
+    }, true);
+  }
+  
+  // ═══ 提交 ═══
+  async function submit(){
+    const i = document.getElementById('qin'), go = document.getElementById('qgo');
+    const text = (i.value||'').trim();
+    if(!text || busy) return;
+    i.value=''; busy=true; go.disabled=true;
+  
+    /* 回忆进行中：输入全部路由给回忆AI，主线不响应（原版路由） */
+    if(window.__QLZ_MEM__ && window.__QLZ_MEM__.active()){ busy=false; go.disabled=false; window.__QLZ_MEM__.submit(); return; }
+  
+    const arr = loadStory();
+    const data = loadProfileData();
+    const started = data && data.chapters[data.currentChapter] && arr.length > 1;
+    if(!started){
+      if(/^(开始游戏|开始|start)$/i.test(text.replace(/\s/g,''))){
+        renderPcmd({type:'user', text:text});
+        try{
+          await startFirstChapter();
+        }catch(e){
+          renderSys('⚠ 章包加载失败：'+esc(e.message)+'　│　请确认 chapters/ 目录可访问');
+        }
+        busy=false; go.disabled=false; return;
+      }
+      renderPcmd({type:'user', text:text});
+      renderSys('系统提示：请先输入「开始游戏」以开启第一章演出');
       busy=false; go.disabled=false; return;
     }
-    renderPcmd(text);
-    renderSys('系统提示：请先输入「开始游戏」以开启第一章演出');
-    busy=false; go.disabled=false; return;
-  }
-  renderPcmd(text);
-  send(text, null, function(){ busy=false; go.disabled=false; });
-}
-function send(userText, replaceCard, done){
-  var typing = h('div','typing','SYS · 演出生成中 ···'); flow.appendChild(typing); scrollEnd();
-  buildAndCall(userText).then(function(res){
-    typing.remove();
-    if(replaceCard){ replaceCard.remove(); }
-    var card = renderAct(res.parsed.text, null, null, false);
-    /* 走位参考兜底链：AI本轮建议 → 上一轮AI建议（lastOpts） → 章包节点 */
-    var useOpts = res.parsed.opts.length ? res.parsed.opts : (lastOpts.length ? lastOpts : res.parsed.opts);
-    attachOpts(card, useOpts);
-    renderSys(res.sys.sysLine);
-    if(window.QLZ_LAST_CUT) renderSys('⚠ 本轮回复撞到输出长度上限被截断——走位参考可能缺失，可点该卡 ↻ 重生成');
-    // 存档
-    state.stories.push({role:'user', text:userText});
-    state.stories.push({role:'assistant', text:res.parsed.text, opts:useOpts});  /* 走上屏的那套建议随卡存档 */
-    advance(res.parsed);
-    renderSeal(); renderRound();
-    if(res.sys.forced) renderSys('⚠ '+res.sys.forced);
-    if(res.sys.transition) prepareTransition();
-    /* 轮数兜底：本章轮数用尽仍未转场 → 自动触发转场（不依赖 AI 自觉，同引渡人的 MAX_ROUNDS 机制） */
-    if(!state.nodes._transition && state.round >= pack.maxRounds){
-      state.nodes._transition = 1; saveStory(state);
-      renderSys('本章轮数已用尽（'+state.round+'/'+pack.maxRounds+'）—— 呈报任意行动，演出自动衔接下一章');
-    }
-    if(done) done();
-  }).catch(function(e){
-    typing.remove();
-    renderSys('演出中断：'+esc(e.message)+'　│　可重新呈报');
-    if(done) done();
-  });
-}
-function buildAndCall(userText){
-  var forced = null;
-  var left = pack.mustNodes.filter(function(n){ return state.nodes.indexOf(n.id)<0; });
-  if(state.round >= pack.maxRounds - 3 && left.length)
-    forced = '（系统强制任务弹窗：主线进度告急，请将剧情向【'+left[0].desc+'】引导，两轮内完成。）';
-  return callAI(userText, forced).then(function(reply){
-    var parsed = parseReply(reply, pack);
-    return { parsed: parsed, sys: { sysLine:'', forced:null, transition:false } };
-  });
-}
-function prepareTransition(){
-  renderSys('本章必经节点全部达成 —— 呈报任意行动，演出将进入转场');
-  state.nodes._transition = 1;
-  saveStory(state);
-}
-// 转场后的下一轮：注入转场指令并切章
-var origBuild = buildAndCall;
-buildAndCall = function(userText){
-  if(state.nodes._transition){
-    state.nodes._transition = 0;
-    var nextCh = state.ch + 1;
-    return new Promise(function(res, rej){
-      loadPack(nextCh, function(err, np){
-        if(err){ rej(err); return; }
-        var intro = '';
-        (np.locks||[]).forEach(function(L){ if(L.id==='C-1') intro = L.text; });
-        state.ch = nextCh; state.round = 0; state.nodes = []; state.summary = (state.summary||'') + '\n' + (pack.goal||'');
-        pack = np; saveStory(state); renderChap(); renderToc();
-        /* 新章开场白同样写进记忆（含走位参考），保证转场后衔接 */
-        if(intro){
-          var fo = (np.mustNodes[0] && np.options[np.mustNodes[0].id]) || [];
-          state.stories.push({role:'assistant', text:intro, opts:fo}); saveStory(state);
-        }
-        callAI(userText, null).then(function(reply){
-          var parsed = parseReply(reply, np);
-          var out = { parsed: parsed, sys:{ sysLine:'── 第'+nextCh+'章 · '+np.title+' ──', forced:null, transition:false } };
-          state.round++; saveStory(state);
-          res(out);
-        }).catch(rej);
-      });
-    });
-  }
-  return origBuild(userText);
-};
-function renderChap(){
-  document.getElementById('qno').textContent = 'CH.'+pad2(state.ch);
-  document.getElementById('qtitle').textContent = pack.title;
-  document.getElementById('qsub').textContent = 'QIANLVZHOU // '+pack.novelRef+' · REC';
-}
-
-// ===== 启动 =====
-/* iOS Safari 首屏不重绘（页面空白、划一下才出内容）：注入后轻推一次滚动强制重绘 */
-function kickPaint(){
-  requestAnimationFrame(function(){
-    window.scrollTo(0, 1);
-    requestAnimationFrame(function(){ window.scrollTo(0, 0); });
-  });
-}
-function applyNight(on){
-  root.classList.toggle('night', on);
-  document.body.classList.toggle('night', on);
-  document.documentElement.style.background = on ? '#20405F' : '#F0EFEB';
-}
-function boot(){
-  try{
-  injectApp();
-  applyNight(document.body.classList.contains('night') || (function(){ try{return JSON.parse(localStorage.getItem(K_THEME)||'null').value==='dark';}catch(e){return false;} })());
-  kickPaint();
-  loadPack(state.ch, function(err, p){
-    if(err){ document.getElementById('qtitle').textContent = '章节包加载失败'; renderSys('加载失败：'+esc(err.message)+'　│　请确认 chapters/ 目录可访问'); return; }
-    pack = p; renderChap(); renderToc(); renderSeal(); renderRound();
-    /* 声明卡写死在最上面：无论首开还是续档，永远先渲染（TA定：刷新不消失） */
-    var dc = renderAct(DECLARATION, 'SYS · 声明', null, true);
-    dc.classList.add('declare');
-    if(state.stories.length){
-      // 续档：全量回放全部剧情（同引渡人——不是只回放最近一轮）
-      state.started = true;
-      state.stories.forEach(function(m){
-        if(m.role==='user') renderPcmd(m.text);
-        else {
-          var c = renderAct(m.text, 'ACT · 回放', null, false);
-          if(m.opts && m.opts.length) attachOpts(c, m.opts);   /* 每张卡回放自己存档的走位参考 */
-        }
-      });
-      /* 旧存档没有 opts 字段 → 兜底挂章包节点走位（只挂最后一张演出卡，绝不挂呈报卡） */
-      var acts = flow.querySelectorAll('.act');
-      var lastCard = acts.length ? acts[acts.length-1] : null;
-      if(lastCard && !lastCard.querySelector('.opts'))
-        attachOpts(lastCard, lastOpts.length ? lastOpts : (pack.options[pack.mustNodes[0].id]||[]));
-    }
-    restoreFont();
-    kickPaint();
-  });
-  }catch(err){
+  
+    const userItem = { id:'u_'+Date.now(), type:'user', text:text };
+    arr.push(userItem);
+    const loadingItem = { id:'loading_'+Date.now(), type:'loading' };
+    arr.push(loadingItem);
+    saveStory(arr);
+    renderStory();
+  
+    let pk;
+    try{ pk = await loadPack(getCurrentChapter()); }
+    catch(e){ finishError(loadingItem, e); return; }
+    const aiHistory = arr.filter(x => x.type==='user'||x.type==='ai').map(x => ({ role:x.type==='user'?'user':'assistant', content:x.text }));
+  
     try{
-      var d=document.createElement('div');
-      d.style.cssText='position:fixed;left:0;right:0;bottom:0;background:#300;color:#fbb;font:11px/1.4 monospace;padding:8px;white-space:pre-wrap;z-index:99999;';
-      d.textContent='[BOOT-ERR] '+(err&&err.stack||err);
-      (document.body||document.documentElement).appendChild(d);
-    }catch(_){}
+      const res = await callAI(text, pk, aiHistory);
+      const idx = arr.findIndex(x => x.id===loadingItem.id);
+      const aiItem = { id:'a_'+Date.now(), type:'ai', text:res.text, sugg:lastSuggestions.slice(0,3) };
+      if(idx !== -1) arr[idx] = aiItem;
+      if(res.fav !== null) setFav(res.fav);
+      if(res.nodesHit.length){
+        const done = getNodesDone();
+        res.nodesHit.forEach(n => { if(done.indexOf(n)<0) done.push(n); });
+        setNodesDone(done);
+      }
+      saveStory(arr);
+      renderStory();
+      if(window.QLZ_LAST_CUT) renderSys('⚠ 本轮回复撞到输出长度上限被截断——走位参考可能缺失，可点该卡 ↻ 重生成');
+      /* 回忆线触发：主线节点刚落地，检查是否有锚定的回忆待播（原版机制） */
+      try{ const M=window.__QLZ_MEM__; const hit=M?M.pick(getNodesDone()):null; if(hit){ M.start(hit, function(){}); busy=false; go.disabled=false; return; } }catch(e){}
+      const ch = getChapterData(getCurrentChapter());
+      const done2 = (ch&&ch.nodesDone)||[];
+      const allDone = pk.mustNodes.every(n => done2.indexOf(n.id)>=0);
+      const rounds = getCurrentRounds();
+      if(allDone || rounds >= (pk.maxRounds||12)+6){
+        await doChapterTransition();
+      }
+    }catch(e){
+      finishError(loadingItem, e);
+    }finally{
+      busy=false; go.disabled=false;
+    }
   }
-}
-/* 章节包自动兜底：页面没引用时，按候选路径动态加载（TA 换名/换目录也不怕） */
-function ensurePacks(cb){
-  if(window.QLZ_PACKS){ cb(); return; }
-  var paths = ['章节包/章节包1.js','章节包1.js','章节包/章节包.js','chapters/章节包.js'];
-  var i = 0;
-  (function next(){
-    if(i >= paths.length){ cb(); return; }   /* 全失败 → 走 fetch 兜底 */
-    var s = document.createElement('script');
-    s.src = paths[i++];
-    s.onload = function(){ if(window.QLZ_PACKS) cb(); else next(); };
-    s.onerror = next;
-    document.head.appendChild(s);
+  function finishError(loadingItem, e){
+    const a = loadStory();
+    const i2 = a.findIndex(x => x.id===loadingItem.id);
+    if(i2 !== -1) a[i2] = { id:'e_'+Date.now(), type:'error', text:'【出错】'+e.message+'　│　可重新呈报' };
+    saveStory(a); renderStory();
+  }
+  
+  // ═══ 开局 ═══
+  async function startFirstChapter(){
+    const data = loadProfileData(); if(!data) return;
+    const pk = await loadPack(1);
+    const ch = data.chapters[1] || { title:pk.title, summary:'', nodesDone:[], stories:[] };
+    ch.title = pk.title;
+    ch.stories = (ch.stories||[]).filter(x => x.type!=='sys');
+    ch.stories.push({ id:'cs_'+Date.now(), type:'chapter-start', title:'第一章 · '+pk.title, text:(pk.locks||[]).filter(l=>l.id==='C-1')[0].text, sugg:(pk.options&&pk.options[pk.mustNodes[0].id])||[] });
+    data.chapters[1] = ch;
+    saveProfileData(data);
+    pack = pk; renderChap();
+    renderStory();
+  }
+  
+  // ═══ 章节转换 ═══
+  async function doChapterTransition(){
+    const data = loadProfileData(); if(!data) return;
+    const curCh = data.currentChapter;
+    const chTitle = getChapterTitle(curCh) || ('第'+cnCh(curCh)+'章');
+    const pk = packCache[curCh];
+    const arr = loadStory();
+    arr.push({ id:'ce_'+Date.now(), type:'chapter-end', title:chTitle, text:'本章节已完结，命册正在记录前情……' });
+    saveStory(arr); renderStory();
+    const go = document.getElementById('qgo');
+    if(go){ go.disabled = true; }
+  
+    try{
+      const content = arr.filter(x => x.type==='user'||x.type==='ai').map(x => (x.type==='user'?'玩家:':'AI:')+x.text+'\n').join('');
+      const sumPrompt = '你是「千律州模拟器」的剧情记录员。第'+cnCh(curCh)+'章「'+chTitle+'」已完结。请用80-120字总结本章关键剧情。必须严格基于下面的【本章实际剧情内容】总结,不要编造没有发生过的事。只输出总结正文,不要任何解释。\n\n【本章实际剧情内容】\n'+(content.length>5000?content.slice(-5000):content);
+      const cfg = loadAIConfig();
+      let summary;
+      if(cfg.apiKey && cfg.provider){
+        const pConfig = PROVIDER_CONFIG[cfg.provider] || PROVIDER_CONFIG.deepseek;
+        const baseUrl = cfg.provider==='custom' ? (cfg.customUrl||'') : pConfig.baseUrl;
+        const model = cfg.model || pConfig.defaultModel;
+        const messages = [{role:'user', content:sumPrompt}];
+        let url, headers, body;
+        if(pConfig.format==='claude'){
+          url = baseUrl+'/v1/messages';
+          headers = { 'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' };
+          body = JSON.stringify({ model, max_tokens:300, messages });
+        } else {
+          url = baseUrl+'/v1/chat/completions';
+          headers = { 'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey };
+          body = JSON.stringify({ model, messages, max_tokens:300 });
+        }
+        const resp = await fetch(url, { method:'POST', headers, body });
+        const d2 = await resp.json();
+        if(!resp.ok) throw new Error('总结失败:'+resp.status);
+        summary = pConfig.format==='claude' ? ((d2.content&&d2.content[0]&&d2.content[0].text)||'') : ((d2.choices&&d2.choices[0]&&d2.choices[0].message&&d2.choices[0].message.content)||'');
+      } else {
+        const d2 = await (await fetch(WORKER_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ message:sumPrompt, profile:PROFILE, history:[] }) })).json();
+        if(d2.error) throw new Error(d2.error);
+        summary = d2.reply || '';
+      }
+      summary = summary.trim();
+      if(data.chapters[curCh]) data.chapters[curCh].summary = summary;
+  
+      const nextCh = curCh + 1;
+      const nextPack = await loadPack(nextCh);
+      const nextData = data.chapters[nextCh] || { title:nextPack.title, summary:'', nodesDone:[], stories:[] };
+      nextData.title = nextPack.title;
+      nextData.stories = (nextData.stories&&nextData.stories.length) ? nextData.stories : [
+        { id:'cs_'+Date.now(), type:'chapter-start', title:'第'+cnCh(nextCh)+'章 · '+nextPack.title,
+          text:(nextPack.locks||[]).filter(l=>l.id==='C-1').map(l=>l.text).join('\n') || ('（第'+cnCh(nextCh)+'章「'+nextPack.title+'」演出开始。）'),
+          sugg:(nextPack.options&&nextPack.options[nextPack.mustNodes[0].id])||[] }
+      ];
+      data.chapters[nextCh] = nextData;
+      data.currentChapter = nextCh;
+      saveProfileData(data);
+      viewingArchive = 0;
+      pack = nextPack;
+      renderStory();
+    }catch(e){
+      const arr2 = loadStory();
+      const i = arr2.map(x=>x.type).lastIndexOf('chapter-end');
+      if(i !== -1){ arr2[i] = { id:'e_'+Date.now(), type:'error', text:'章节转换失败:'+e.message+'　│　进度已保存，稍后再呈报任意行动会自动重试转场' }; }
+      else { arr2.push({ id:'e_'+Date.now(), type:'error', text:'章节转换失败:'+e.message }); }
+      saveStory(arr2); renderStory();
+    }finally{
+      if(go){ go.disabled = false; }
+    }
+  }
+  
+  // ═══ 重生成 / 编辑 ═══
+  async function regenerate(cardEl){
+    if(busy) return;
+    const cardId = cardEl.dataset.id;
+    const arr = loadStory();
+    const idx = arr.findIndex(x => x.id===cardId && x.type==='ai');
+    if(idx === -1) return;
+    if(idx === 0 || arr[idx-1].type !== 'user') return;
+    const userText = arr[idx-1].text;
+    busy = true;
+    const loadingItem = { id:'loading_'+Date.now(), type:'loading' };
+    arr[idx] = loadingItem;
+    saveStory(arr); renderStory();
+    let pk;
+    try{ pk = await loadPack(getCurrentChapter()); }catch(e){ finishError(loadingItem, e); busy=false; return; }
+    const aiHistory = arr.slice(0, idx).filter(x => x.type==='user'||x.type==='ai').map(x => ({ role:x.type==='user'?'user':'assistant', content:x.text }));
+    try{
+      const res = await callAI(userText, pk, aiHistory);
+      const a2 = loadStory();
+      const i2 = a2.findIndex(x => x.id===loadingItem.id);
+      if(i2 !== -1){ a2[i2] = { id:'a_'+Date.now(), type:'ai', text:res.text, sugg:lastSuggestions.slice(0,3) }; }
+      if(res.fav !== null) setFav(res.fav);
+      saveStory(a2); renderStory();
+    }catch(e){
+      finishError(loadingItem, e);
+    }finally{ busy=false; }
+  }
+  function editAct(cardEl){
+    if(cardEl.dataset.editing) return;
+    const cardId = cardEl.dataset.id;
+    const arr = loadStory();
+    const idx = arr.findIndex(x => x.id===cardId);
+    if(idx === -1) return;
+    const item = arr[idx];
+    if(item.type!=='user' && item.type!=='ai') return;
+    const isP = item.type==='user';
+    const ab = cardEl.querySelector('.abody') || cardEl.querySelector('.tx');
+    if(!ab) return;
+    const paras = ab.classList.contains('tx') ? [ab] : Array.prototype.slice.call(ab.querySelectorAll('.narr'));
+    if(!paras.length) return;
+    const oldText = paras.map(function(p){ return p.textContent.replace(/^>\s*/,''); }).join('\n\n');
+    cardEl.dataset.editing = '1';
+    const ta = document.createElement('textarea');
+    ta.style.cssText = 'width:100%;min-height:140px;font-family:inherit;font-size:13px;line-height:2;border:1.5px solid var(--klein);background:var(--bg);color:var(--ink);padding:8px;';
+    ta.value = oldText;
+    const wrap = h('div'); wrap.appendChild(ta);
+    const bar = h('div'); bar.style.cssText='margin:6px 0;';
+    const save = h('button','op','✓ 保存并继续'); const cancel = h('button','op','取消');
+    bar.appendChild(save); bar.appendChild(cancel);
+    ab.style.display='none'; ab.parentNode.insertBefore(wrap, ab.nextSibling);
+    ab.parentNode.insertBefore(bar, wrap.nextSibling);
+    save.onclick = function(){
+      const val = ta.value.trim();
+      if(!val || val===oldText){ restore(); return; }
+      if(isP){
+        if(oldText==='开始游戏'){ renderSys('「开始游戏」是开局指令，不可编辑'); restore(); return; }
+        const newArr = arr.slice(0, idx);
+        saveStory(newArr);
+        removeAfter(cardEl);
+        restore(true);
+        replayFrom(newArr.length);
+        submitText(val);
+      } else {
+        arr[idx].text = val;
+        saveStory(arr);
+        ab.innerHTML = fmt(val);
+        restore(true);
+      }
+    };
+    cancel.onclick = restore;
+    function restore(keep){
+      ab.style.display='';
+      wrap.remove(); bar.remove();
+      if(!keep) delete cardEl.dataset.editing;
+    }
+  }
+  function removeAfter(cardEl){
+    let n = cardEl.nextElementSibling;
+    while(n){ const nx = n.nextElementSibling; n.remove(); n = nx; }
+  }
+  function replayFrom(count){
+    // 按 v6 全量重绘（数据驱动，天然一致）
+    renderStory();
+  }
+  function submitText(text){
+    const i = document.getElementById('qin');
+    i.value = text;
+    submit();
+  }
+  
+  // ═══ 好感校准 ═══
+  async function calibrateFav(){
+    const arr = loadStory();
+    const recent = arr.filter(x=>x.type==='user'||x.type==='ai').slice(-4).map(x => (x.type==='user'?'[玩家]':'[演出]')+x.text.slice(0,300)).join('\n');
+    const msg = '你是好感度仲裁器。根据以下最近剧情,评估玩家(怀榆)对攻略对象的表现应增减多少好感(-3到+3,整数)。\n当前好感:'+getFav()+'\n最近剧情:\n'+recent+'\n只输出一行JSON:{"delta":整数,"reason":"一句话理由"}';
+    const cfg = loadAIConfig();
+    let reply;
+    if(cfg.apiKey && cfg.provider){
+      reply = await callDirect(msg, (packCache[getCurrentChapter()]||{mustNodes:[],maxRounds:99}), [], cfg);
+    } else {
+      reply = await callWorker(msg, []);
+    }
+    const m = (reply||'').match(/\{[^}]*delta[^}]*\}/);
+    if(!m) throw new Error('校准输出格式异常');
+    const o = JSON.parse(m[0]);
+    setFav(getFav() + (o.delta|0));
+    renderSys('好感校准：'+(o.delta>=0?'+':'')+(o.delta|0)+'（'+(o.reason||'')+'）　│　当前 '+getFav());
+  }
+  async function doCalibrate(){
+    const b = document.getElementById('qrecal'); if(b){ b.disabled = true; b.innerHTML = '↻ 校准中…'; }
+    try{ await calibrateFav(); }
+    catch(e){ renderSys('⚠ 校准失败：'+esc(e.message)); }
+    renderSeal();
+  }
+  
+  // ═══ 删档 ═══
+  function resetAll(){
+    if(!confirm('确定删档重来？所有章节剧情与好感将清空。')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    try{ localStorage.removeItem('gzd_qlz_mem'); }catch(e){}   /* 回忆线存档一并清 */
+    viewingArchive = 0; prevSugg = []; lastSuggestions = [];
+    ensureOpening();
+    pack = null;
+    loadPack(1).then(function(p){ pack = p; renderStory(); }).catch(function(){ renderStory(); });
+    renderStory();
+  }
+  
+  // ═══ 存档初始化 + 旧档迁移 ═══
+  function ensureOpening(){
+    let data = loadProfileData();
+    if(!data){
+      try{
+        const old = JSON.parse(localStorage.getItem(OLD_KEY));
+        if(old && old.stories && old.stories.length){
+          const chN = old.ch || 1;
+          const stories = [];
+          old.stories.forEach(function(m, i){
+            if(m.role === 'user') stories.push({ id:'u_'+i, type:'user', text:m.text });
+            else stories.push({ id:'a_'+i, type:'ai', text:m.text, sugg:(m.opts&&m.opts.slice(0,3))||[] });
+          });
+          if(stories.length && stories[0].type==='ai'){
+            stories[0] = { id:'cs_0', type:'chapter-start', title:'第'+cnCh(chN)+'章', text:stories[0].text, sugg:stories[0].sugg||[] };
+          }
+          data = { currentChapter:chN, fav:(typeof old.fav==='number'?old.fav:10), chapters:{} };
+          data.chapters[chN] = { title:'', summary:old.summary||'', nodesDone:old.nodes||[], stories:stories };
+          saveProfileData(data);
+          return;
+        }
+      }catch(e){}
+    }
+    if(!data) data = { currentChapter:1, fav:10, chapters:{} };
+    if(!data.chapters) data.chapters = {};
+    if(!data.chapters[1]){
+      data.chapters[1] = { title:'', summary:'', nodesDone:[], stories:[{ id:'opening', type:'opening', text:DECLARATION }] };
+      saveProfileData(data);
+    } else if(!data.chapters[1].stories || !data.chapters[1].stories.length){
+      data.chapters[1].stories = [{ id:'opening', type:'opening', text:DECLARATION }];
+      saveProfileData(data);
+    }
+  }
+  
+  // ═══ 回忆线接口（引擎本体在 回忆AI.js；本文件只做清档联动与暴露，路由已内嵌 submit） ═══
+  window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return loadProfileData(); } };
+  
+  // ═══ 启动 ═══
+  function boot(){
+    try{
+      injectApp();
+      applyNight(document.body.classList.contains('night') || (function(){ try{return JSON.parse(localStorage.getItem(K_THEME)||'null').value==='dark';}catch(e){return false;} })());
+      ensureOpening();
+      renderStory();
+      restoreFont();
+      kickPaint();
+      loadPack(getCurrentChapter()).then(function(p){
+        pack = p;
+        const data = loadProfileData();
+        if(data && data.chapters[data.currentChapter] && !data.chapters[data.currentChapter].title){
+          data.chapters[data.currentChapter].title = p.title;
+          saveProfileData(data);
+        }
+        renderChap(); renderToc(); renderSeal(); renderRound();
+      }).catch(function(e){
+        document.getElementById('qtitle').textContent = '章节包加载失败';
+        renderSys('加载失败：'+esc(e.message)+'　│　请确认 chapters/ 目录可访问');
+      });
+      console.log('[千律州模拟器] 引擎就绪 · 章节:'+getCurrentChapter()+' · '+(hasUserKey()?'直连':'公共后端'));
+    }catch(err){
+      try{
+        const d = document.createElement('div');
+        d.style.cssText='position:fixed;left:0;right:0;bottom:0;background:#300;color:#fbb;font:11px/1.4 monospace;padding:8px;white-space:pre-wrap;z-index:99999;';
+        d.textContent='[BOOT-ERR] '+(err&&err.stack||err);
+        (document.body||document.documentElement).appendChild(d);
+      }catch(_){}
+    }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
   })();
-}
-var __origBoot = boot;
-boot = function(){ ensurePacks(function(){ __origBoot(); }); };
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
-else boot();
-
-// ===== 回忆线接口（引擎本体在 回忆AI.js；本文件只做路由与触发，不碰主线逻辑） =====
-function lockInput(v){ busy = v ? true : busy; var g=document.getElementById('qgo'); if(g) g.disabled = !!v; }
-var __origSubmit__ = submit;
-submit = function(){
-  /* 回忆进行中：输入全部路由给回忆AI，主线不响应 */
-  if(window.__QLZ_MEM__ && window.__QLZ_MEM__.active()){ window.__QLZ_MEM__.submit(); return; }
-  __origSubmit__();
-};
-var __origSend__ = send;
-send = function(u, rc, done){
-  __origSend__(u, rc, function(){
-    /* 主线演出落幕后：检查是否有回忆待触发（如救场闪回初遇） */
-    var M = window.__QLZ_MEM__;
-    var hit = M ? M.pick(state.nodes.slice()) : null;
-    if(hit){ M.start(hit, done || function(){}); }
-    else if(done){ done(); }
-  });
-};
-var __origReset__ = resetAll;
-resetAll = function(){
-  try{ localStorage.removeItem('gzd_qlz_mem'); }catch(e){}
-  __origReset__();
-};
-/* go.onclick 在 injectApp 时绑定了原 submit 函数对象，重声明后必须在注入完成后重绑 */
-var __prevBoot2__ = boot;
-boot = function(){
-  __prevBoot2__();
-  var g = document.getElementById('qgo');
-  if(g) g.onclick = submit;
-};
-
-// 暴露（调试/壳联动）
-window.__QLZ_SIM__ = { reset: resetAll, calibrate: doCalibrate, state: function(){ return state; }, lockInput: lockInput };
-})();
+  
