@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/c9/c9a2b6ef4d.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/3a/3a05879882.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -135,7 +135,7 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 #mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;height:100vh;height:100dvh;background:var(--card);border-left:1.5px solid var(--klein);z-index:31;transition:right .28s ease;display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto}
 #mside.open{right:0}
 /* 侧栏暗罩：开菜单时主内容压暗一层（引渡人同款），点罩收起 */
-#movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity .28s ease}
+#movl{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(20,24,40,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity .28s ease}
 #movl.on{opacity:1;pointer-events:auto}
 #mside .st{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--mut);border-bottom:2.5px dashed var(--hair);padding-bottom:10px;margin-bottom:8px}
 .sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 6px;border-bottom:1.5px dashed var(--hair);font-size:13px;letter-spacing:.08em;cursor:pointer}
@@ -232,16 +232,20 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   </div>
 </div>
  
-<script src="./https://sfile.chatglm.cn/workspace/file/c9/c9a2b6ef4d.js"></script>
+<script src="./通讯AI.js"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
 var K_ROSTER='gzd_qlz_mail_roster';
 function loadRoster(){
+  /* 默认全角色；旧存档存在时合并（新增角色自动补进，不丢玩家自己的置顶/关心/备注） */
+  var DEF=['段深泉','系统','瑞秋','黎昭','祝焱','凝淼','叶戈尔','阿列克谢'];
   try{ var d=JSON.parse(localStorage.getItem(K_ROSTER)); if(d&&d.added){
-    d.notes=d.notes||{}; d.pending=d.pending||[]; d.pin=d.pin||[]; d.care=d.care||[]; return d;
+    d.notes=d.notes||{}; d.pending=d.pending||[]; d.pin=d.pin||[]; d.care=d.care||[];
+    DEF.forEach(function(n){ if(d.added.indexOf(n)<0) d.added.push(n); });
+    return d;
   } }catch(e){}
-  return { added:['段深泉','系统','瑞秋'], pending:['神谕院','黑鼠帮'], notes:{}, pin:[], care:['段深泉'] };
+  return { added:DEF, pending:['神谕院','黑鼠帮'], notes:{}, pin:[], care:['段深泉'] };
 }
 function saveRoster(r){ try{ localStorage.setItem(K_ROSTER,JSON.stringify(r)); }catch(e){} }
 var roster=loadRoster(), cur='段深泉';
@@ -274,6 +278,11 @@ var INFO={
   '段深泉':{pin:'SHENQUAN',note:'命定之人',rows:[['身份','神使 · 城主级'],['眸色','金琥珀'],['好感','观测中 · 好感度系统已接入'],['状态','部分档案封存']],q:'“回去，这里不是你该来的地方。”'},
   '系统':{pin:'SYSTEM',note:'主线托管',rows:[['身份','主线托管'],['模式','恋爱模式 · 运行中'],['权限','部分恢复']],q:'“本系统不提供情感咨询业务。”'},
   '瑞秋':{pin:'RACHEL',note:'故人',rows:[['身份','故人'],['特长','消息灵通 · 干练毒舌'],['状态','下落不明']],q:'“还活着呢？”'},
+  '黎昭':{pin:'LIZHAO',note:'烬影会首领',rows:[['身份','烬影会首领'],['行踪','神出鬼没'],['状态','总在躲着你']],q:'“……别跟着我。”'},
+  '祝焱':{pin:'ZHUYAN',note:'逝者之影',rows:[['身份','前火神'],['状态','已陨落 · 逝者之影'],['旧事','死于怀榆之手（她的请求）']],q:'“这次的火，为我燃尽即可。”'},
+  '凝淼':{pin:'NINGMIAO',note:'被遗忘的女皇',rows:[['身份','前北境女皇'],['状态','已陨落 · 世界无人记得她'],['痕迹','永叹岭的雪']],q:'“你是唯一还记得我名字的人。”'},
+  '叶戈尔':{pin:'YEGOR',note:'北境贵族',rows:[['身份','双冕北境贵族'],['特长','利益交换 · 转移资产'],['状态','已告别']],q:'“合作愉快，东方人。”'},
+  '阿列克谢':{pin:'ALEKSEI',note:'巡林铁卫',rows:[['身份','巡林铁卫指挥官'],['驻地','永冻林海'],['态度','公事公办']],q:'“林海有规矩。”'},
   '神谕院':{pin:'ORACLE',note:'并案观察',rows:[['身份','业焰城代治机构'],['态度','并案观察']],q:'“封印类卷宗，不得擅动。”'},
   '黑鼠帮':{pin:'RATS',note:'收税的',rows:[['身份','地头收税的'],['业务','安宁税']],q:'“月底前。”'}
 };
@@ -472,7 +481,7 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/c9/c9a2b6ef4d.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/3a/3a05879882.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
