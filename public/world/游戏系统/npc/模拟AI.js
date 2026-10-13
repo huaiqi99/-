@@ -755,7 +755,7 @@
   
   // ═══ 删档 ═══
   function resetAll(){
-    if(!confirm('确定删档重来？所有章节剧情与好感将清空。')) return;
+    /* 确认已在菜单按钮做一次——这里直接清（双重 confirm 在 iPad 上会被吞，导致删了个寂寞） */
     localStorage.removeItem(STORAGE_KEY);
     try{ localStorage.removeItem('gzd_qlz_mem'); }catch(e){}   /* 回忆线存档一并清 */
     viewingArchive = 0; prevSugg = []; lastSuggestions = [];
