@@ -92,6 +92,12 @@
   async function loadPack(n){
     if(packCache[n]) return packCache[n];
     const nn = pad2(n);
+    /* 双路加载（引渡人同构）：优先读内嵌 章节包1.js（QLZ_PACKS），无则 fetch 外链 chapters/ */
+    if(window.QLZ_PACKS && window.QLZ_PACKS['ch'+nn]){
+      const p = window.QLZ_PACKS['ch'+nn];
+      packCache[n] = p;
+      return p;
+    }
     const resp = await fetch('./chapters/ch'+nn+'.json');
     if(!resp.ok) throw new Error('章包 ch'+nn+'.json 加载失败('+resp.status+')');
     const p = await resp.json();
@@ -292,7 +298,7 @@
   }
   function renderPcmd(item){
     const p = h('div','pcmd'); p.dataset.id = item.id||'';
-    p.innerHTML = '<div class="pl"><span>玩家 · 呈报</span><button class="op">✎</button></div><div class="tx">'+esc(item.text)+'</div>';
+    p.innerHTML = '<div class="pl"><span>玩家 · 呈报</span><button class="op">✎ 编辑</button></div><div class="tx">'+esc(item.text)+'</div>';
     p.querySelector('.op').onclick = function(){ editAct(p); };
     flow.appendChild(p);
     return p;
@@ -757,7 +763,8 @@
   function resetAll(){
     /* 确认已在菜单按钮做一次——这里直接清（双重 confirm 在 iPad 上会被吞，导致删了个寂寞） */
     localStorage.removeItem(STORAGE_KEY);
-    try{ localStorage.removeItem('gzd_qlz_mem'); }catch(e){}   /* 回忆线存档一并清 */
+    try{ localStorage.removeItem(OLD_KEY); }catch(e){}          /* v5旧档键：留着会被迁移逻辑复活，删档=白删 */
+    try{ localStorage.removeItem('gzd_qlz_mem'); }catch(e){}    /* 回忆线存档一并清 */
     viewingArchive = 0; prevSugg = []; lastSuggestions = [];
     ensureOpening();
     pack = null;

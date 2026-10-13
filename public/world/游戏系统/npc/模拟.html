@@ -17,8 +17,9 @@ body{background:var(--bg);background-image:linear-gradient(var(--gc) 1px,transpa
 #qlz-app .ico{width:34px;height:34px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer;font-family:inherit;}#qlz-app .ico:hover{background:var(--klein);color:#F0EFEB;}
 #qlz-app .flow{max-width:1200px;margin:16px auto 0;}
 #qlz-app .act{background:var(--card);border:1.5px solid var(--klein);box-shadow:4px 5px 0 rgba(34,44,110,.12);margin:24px 0 24px 26px;padding:22px 30px 18px;position:relative;animation:qfadeUp .55s ease both;}
+#qlz-app .act::before{content:"";position:absolute;left:-42px;top:16px;width:9px;height:9px;background:var(--bg);border:2px solid var(--klein);}
 @keyframes qfadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-#qlz-app .mh{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--hair);padding-bottom:6px;margin-bottom:12px;}
+#qlz-app .mh{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1.5px solid var(--hair);padding-bottom:6px;margin-bottom:12px;}
 #qlz-app .mn{font-family:"Courier New",monospace;font-size:9.5px;letter-spacing:.18em;color:var(--mut);}
 #qlz-app .ops .op{background:transparent;border:none;color:var(--mut);font-family:"Courier New",monospace;font-size:9px;letter-spacing:.12em;cursor:pointer;padding:2px 4px;}
 #qlz-app .ops .op.hot{color:var(--zhu);}
@@ -28,16 +29,16 @@ body{background:var(--bg);background-image:linear-gradient(var(--gc) 1px,transpa
 #qlz-app .opts{border:1.5px dashed var(--klein);padding:10px 13px;background:rgba(250,249,245,.85);margin-bottom:6px;}
 body.night #qlz-app .opts{background:rgba(234,229,214,.92);}
 #qlz-app .ot{font-family:"Courier New",monospace;font-size:9px;letter-spacing:.2em;color:var(--mut);margin-bottom:8px;}#qlz-app .ot b{color:var(--zhu);font-weight:400;}
-#qlz-app .opt{display:block;width:100%;text-align:left;border:1px solid var(--hair);background:transparent;font-family:inherit;font-size:14px;padding:8px 12px;margin-bottom:6px;cursor:pointer;color:var(--ink);transition:.15s;}
+#qlz-app .opt{display:block;width:100%;text-align:left;border:1.5px solid var(--hair);background:transparent;font-family:inherit;font-size:14px;padding:8px 12px;margin-bottom:6px;cursor:pointer;color:var(--ink);transition:.15s;}
 #qlz-app .opt:hover{background:var(--klein);color:#F0EFEB;border-color:var(--klein);}
-#qlz-app .pcmd{border-left:3px solid var(--burg);background:var(--zhu);color:#F0EFEB;padding:10px 13px 8px;margin:24px 0 24px 26px;position:relative;box-shadow:3px 3px 0 rgba(168,68,62,.18);}
-#qlz-app .pcmd::before{content:"";position:absolute;left:-42px;top:16px;width:9px;height:9px;background:var(--bg);border:2px solid var(--zhu);}
-#qlz-app .pcmd .pl{color:rgba(240,239,235,.85);}
-#qlz-app .pcmd .pl .op{color:rgba(240,239,235,.85);border-color:rgba(240,239,235,.6);}
-#qlz-app .pcmd .tx{color:#F0EFEB;}
-#qlz-app .pcmd .tx::before{color:rgba(240,239,235,.8);}
+#qlz-app .pcmd{border:2px solid var(--burg);background:var(--card);color:var(--ink);padding:10px 13px 8px;margin:24px 0 24px 26px;position:relative;box-shadow:3px 3px 0 rgba(85,15,16,.15);}
+#qlz-app .pcmd::before{content:"";position:absolute;left:-43px;top:15px;width:9px;height:9px;background:var(--bg);border:2px solid var(--burg);}
+#qlz-app .pcmd .pl{color:var(--zhu);}
+#qlz-app .pcmd .pl .op{color:var(--mut);}
+#qlz-app .pcmd .tx{color:var(--burg);}
 #qlz-app .pl{font-family:"Courier New",monospace;font-size:9.5px;letter-spacing:.18em;color:var(--zhu);display:flex;justify-content:space-between;margin-bottom:4px;}
-#qlz-app .pl .op{margin-left:6px;}
+#qlz-app .pl .op{margin-left:6px;background:transparent;border:none;cursor:pointer;}
+#qlz-app .pcmd .pl .op:hover{color:var(--burg);}
 #qlz-app .tx{font-size:14px;line-height:2;}#qlz-app .tx::before{content:"> ";font-family:"Courier New",monospace;color:var(--zhu);}
 #qlz-app .inbar{max-width:1200px;margin:4px auto 30px;display:flex;gap:10px;position:sticky;bottom:0;background:var(--bg);padding:10px 0 4px;border-top:1.5px solid var(--klein);z-index:3;}
 #qlz-app .in{flex:1;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:13.5px;padding:10px 12px;letter-spacing:.03em;}
@@ -83,7 +84,7 @@ body.night #qlz-app .fbtn:hover i{color:#EAE5D6;}
   #qlz-app .chap{margin:10px 8px 0;padding:9px 12px;}
   #qlz-app .act{margin:16px 0 16px 4px;padding:14px 15px 12px;}
   #qlz-app .pcmd{margin:16px 0 16px 4px;padding:9px 11px 7px;}
-  #qlz-app .pcmd::before{left:-22px;}
+  #qlz-app .pcmd::before,#qlz-app .act::before{left:-24px;}
   #qlz-app .inbar{margin:4px 10px 22px;gap:7px;}
   #qlz-app .in{font-size:14px;padding:11px 12px;}
   #qlz-app .go{padding:0 16px;letter-spacing:.15em;}
@@ -99,7 +100,7 @@ body.night #qlz-app .fbtn:hover i{color:#EAE5D6;}
     <button class="ncl" id="qnoticeClose">✕ 收起</button>
     ◈ <b>入演须知</b> —— 你将以 <b>怀榆</b> 的视角演出，直接输入想做的事即可，无需格式。每轮附「走位参考」，仅为建议。<br>
     ◈ 每章设必经节点与轮数上限，节点齐后自动进入下一章；右上「☰」可校准好感/删档，左侧「目录」可回看已完结章节。<br>
-    ◈ 内容由 AI 生成，可能出现剧情崩坏或 OOC；对演出不满意可点该卡「↻ 重生成」。本模拟为《业焰之国》二次创作，密钥前往<a href="./https://sfile.chatglm.cn/workspace/file/f8/f8cf4a5087.html" style="color:var(--klein)">设置页</a>配置。
+    ◈ 内容由 AI 生成，可能出现剧情崩坏或 OOC；对演出不满意可点该卡「↻ 重新生成」。本模拟为《业焰之国》二次创作，密钥前往<a href="./设置.html" style="color:var(--klein)">设置页</a>配置。
   </div>
  
   <!-- 顶栏：左=章节号+章节标题，右=汉堡菜单 -->
@@ -146,10 +147,10 @@ body.night #qlz-app .fbtn:hover i{color:#EAE5D6;}
 try{ if(localStorage.getItem('gzd_qlz_notice_closed')==='1') document.getElementById('qnotice').style.display='none'; }catch(e){}
 </script>
 <!-- 数据文件须先于引擎加载。若改名换目录，直接改下面几行 src -->
+<script src="./章节包/章节包1.js"></script>
 <script src="./回忆AI.js"></script>
-<script src="./核心.js"></script>
-<script src="./章节包/回忆剧本.js"></script>
 <script src="./章节包/章节包1.js"></script>
 <script src="./模拟AI.js"></script>
+<script src="./核心.js"></script>
 </body>
 </html>
