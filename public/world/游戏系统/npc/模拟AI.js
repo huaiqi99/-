@@ -28,14 +28,8 @@
   const CN_NUM=['零','一','二','三','四','五','六','七','八','九','十'];
   function cnCh(n){ return n<=10 ? CN_NUM[n] : String(n); }
   function pad2(n){ return (n<10?'0':'')+n; }
-  const DECLARATION = [
-  '【千律州系统 · 演出声明】',
-  '本模拟基于原著《业焰之国》第一章至第四章剧情架构搭建。你将扮演怀榆，由系统（我）与千律州世界共同为你演出。',
-  '演出方式：在下方输入框呈报你的行动或对话，由系统生成长段演出。每轮附「走位参考」，仅为建议，可自行呈报任意行动。',
-  '好感度：初始 10，分五阶段演进，影响角色态度与剧情分支。右上角菜单可随时校准。',
-  '剧情轨道：每章设必经节点与轮数上限，过程自由，主线节点会自然发生。存档自动进行，菜单可随时删档重来。',
-  '——确认了解后，在下方输入「开始游戏」，第一章《嗅骸与重启》即刻开演。'
-  ].join('\n');
+  /* 演出声明已并入 模拟.html「入演须知」，JS 不再重复输出（2026-10-13） */
+  const DECLARATION = '';
   
   const PROVIDER_CONFIG = {
     deepseek: { baseUrl:'https://api.deepseek.com',   defaultModel:'deepseek-chat', format:'openai' },
@@ -123,6 +117,7 @@
     return '你是「千律州模拟器」的剧情演绎引擎。玩家扮演怀榆，你是包裹着他的“系统”与世界本身。\n'
   +'【演出格式】\n'
   +'文风：网文长段流——叙述段落为主，对白用引号嵌在段落内，段落之间空行。严禁剧本分行、严禁角色名前置标签、严禁列表化正文。\n'
+  +'篇幅：单轮正文控制在500字以内（对齐引渡人标准），收束干净，不注水不拖沓，宁可留白不可硬凑。\n'
   +'场景切换或氛围转折时，可单独输出一行括号提示，如：（门后静了两拍。然后是低低的一声笑。）\n'
   +'第二人称“你”指代怀榆。系统“我”偶尔冷面吐槽，语气四平八稳带嫌弃。\n'
   +'信息封锁：导演指令中“不知道/不可提及”的内容，无论玩家怎么问，一律不给，可由系统以“权限不足”类话术封口。\n'
@@ -225,11 +220,11 @@
     if(pConfig.format==='claude'){
       url = baseUrl+'/v1/messages';
       headers = { 'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' };
-      body = JSON.stringify({ model, max_tokens:1500, system:systemPrompt, messages:messages.filter(m=>m.role!=='system') });
+      body = JSON.stringify({ model, max_tokens:1000, system:systemPrompt, messages:messages.filter(m=>m.role!=='system') });
     } else {
       url = baseUrl+'/v1/chat/completions';
       headers = { 'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey };
-      body = JSON.stringify({ model, messages, max_tokens:1500, temperature:0.8 });
+      body = JSON.stringify({ model, messages, max_tokens:1000, temperature:0.8 });
     }
     const resp = await fetch(url, { method:'POST', headers, body });
     const data = await resp.json();
@@ -322,7 +317,7 @@
       return;
     }
     if(item.type==='opening'){
-      const c = renderAct(item, 'SYS · 声明', 0); c.classList.add('declare'); return;
+      return; /* 声明只在HTML须知里，开场卡一律不渲染（新旧档统一） */
     }
     if(item.type==='user'){ renderPcmd(item); return; }
     renderAct(item, 'ACT '+pad2(getCurrentChapter())+'-'+(seq||1)+' · 演出', seq);
@@ -344,7 +339,7 @@
     }
     scrollEnd();
     renderChap(); renderToc(); renderSeal(); renderRound();
-    kickPaint();
+    /* kickPaint 只留在 boot 时做一次粘性栏重绘——放这里会把 scrollEnd 顶回页首（自动滑顶bug根源） */
   }
   function renderChap(){
     const pack0 = pack || {title:'', novelRef:''};
