@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/6e/6eced11de7.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/3a/3aaccf7fce.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -211,6 +211,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   <div class="sitem" id="miCare"><span>特别关心</span><span class="arr" id="careArr">—</span></div>
   <div class="sitem" id="miNote"><span>备注</span><span class="arr" id="noteArr">编辑</span></div>
   <div class="sitem danger" id="miDel"><span>删除好友</span><span class="arr">移出信匣</span></div>
+  <div class="sitem danger" id="miReset"><span>删档重来</span><span class="arr">清空讯匣</span></div>
   <div class="hint">◇ 查找对话</div>
   <input id="findBox" placeholder="输入关键词，回车查找…">
   <div class="sitem" id="miFind"><span>查找对话</span><span class="arr" id="findArr">—</span></div>
@@ -232,7 +233,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   </div>
 </div>
  
-<script src="./通讯AI.js"></script>
+<script src="./模拟AI.js"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -323,7 +324,9 @@ var DATA={
 };
 /* 新角色无存档记录时自动补空对话，防止发送/渲染炸undefined；
    同时读取localStorage旧存档（persist有写无读=刷新即丢，补齐） */
+var MAIL_DATA_DEFAULTS=null;   /* 内置默认档快照（删档重来用） */
 (function(){
+  MAIL_DATA_DEFAULTS=JSON.parse(JSON.stringify(DATA));
   var K='gzd_qlz_mail_data';
   try{
     var saved=JSON.parse(localStorage.getItem(K)||'null');
@@ -366,9 +369,9 @@ function buildMu(m){
   d.className='mu '+(m.t==='out'?'out':'in');
   var who=m.t==='out'?'怀榆 · HUAIYU':cur+' · '+(INFO[cur]?INFO[cur].pin:'');
   /* 操作钮按消息归属区分：
-     己方(out)=「修改·重生成」＋「删除」；对方(in)=「修改」＋「重新回复」＋「删除」 */
+     己方(out)=「修改·重生成」＋「重新回复」＋「删除」；对方(in)=「修改」＋「重新回复」＋「删除」 */
   var btns = m.t==='out'
-    ? '<button class="o e">✎ 修改</button><button class="o danger del">✕ 删除</button>'
+    ? '<button class="o e">✎ 修改</button><button class="o r">⟲ 重新回复</button><button class="o danger del">✕ 删除</button>'
     : '<button class="o e">✎ 修改</button><button class="o r">⟲ 重新回复</button><button class="o danger del">✕ 删除</button>';
   d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
   d.querySelector('.bub').textContent=m.x;
@@ -430,13 +433,17 @@ function openChat(n){
 /* 通用双击检测：350ms内两次抬起。iPad Safari 的 dblclick 事件不可靠，
    必须手写 pointerup 计时（虚线框删不掉的根因就是它） */
 function onTap(el, fn){
-  var last=0;
+  var last=0, lastFire=0;
+  function fire(e){ var now=Date.now(); if(now-lastFire<200) return; lastFire=now; fn(e); }
   el.addEventListener('pointerup', function(e){
     var now=Date.now();
-    if(now-last<350){ last=0; fn(e); } else last=now;
+    if(now-last<500){ last=0; fire(e); } else last=now;
   });
+  /* 桌面浏览器原生dblclick兜底（fire自带去重，不会连触两次） */
+  el.addEventListener('dblclick', function(e){ fire(e); });
 }
 function bindOps(el,m){
+  if(el.dataset.opsBound) return; el.dataset.opsBound='1';   /* 防重复绑定：绑两次=sel加又删=双击失灵 */
   var bub=el.querySelector('.bub'), ops=el.querySelector('.ops');
   onTap(el,function(ev){
     if(ev.target.closest('.ops')) return;
@@ -470,13 +477,20 @@ function startEdit(el,m){
   function restore(keep){ bub.style.display=''; ta.remove(); bar.remove(); if(!keep) delete el.dataset.editing; }
 }
 function regen(el,m){
-  if(m.t!=='in'){ /* 自己的讯"重新回复"=重发碾墨 */ }
+  /* 己方讯：碾墨重答本条；对方讯：旧回信作废，按上一条己方讯重答（引渡人同语义） */
+  if(m.t!=='out'){
+    var oi=DATA[cur].indexOf(m); if(oi>=0) DATA[cur].splice(oi,1);
+    el.remove();
+    m=null;
+    for(var k=DATA[cur].length-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ m=DATA[cur][k]; break; } }
+    if(!m){ persist(); renderChat(); return; }
+  }
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
-  el.after(g); g.scrollIntoView({behavior:'smooth',block:'end'});
+  msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,m.x).then(function(reply){
     g.remove();
     var newM={t:'in',x:reply};
-    var i=msgIndex(el); DATA[cur].splice(i+1,0,newM);
+    DATA[cur].push(newM);
     var ne=addMsgEl(newM,true); bindOps(ne,newM);
     msgsEl.scrollTop=msgsEl.scrollHeight; persist();
   });
@@ -495,7 +509,7 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/6e/6eced11de7.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/3a/3aaccf7fce.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
@@ -580,6 +594,20 @@ document.getElementById('miDel').onclick=function(){
     roster.pending.push(cur); saveRoster(roster);
     DATA[cur]=DATA[cur]||[]; DATA[cur].push({t:'note',x:'── 怀榆将你移出了讯匣 ──'});   /* 记忆标记：AI据此抱怨 */
     cur=roster.added[0]||'系统';
+    mside.classList.remove('open');
+    renderContacts(); openChat(cur);
+  });
+};
+/* 删档重来：页内确认弹窗，全讯匣清空回默认档（模拟页删档同款语义） */
+document.getElementById('miReset').onclick=function(){
+  askConfirm('删档重来？\n\n· 所有讯道的聊天记录清空，回初始演示档\n· 名单/置顶/备注保留\n· 此操作不可撤销', function(){
+    try{ localStorage.removeItem('gzd_qlz_mail_data'); }catch(e){}
+    Object.keys(DATA).forEach(function(k){ delete DATA[k]; });
+    var def=MAIL_DATA_DEFAULTS||{};
+    Object.keys(def).forEach(function(k){ DATA[k]=JSON.parse(JSON.stringify(def[k])); });
+    roster.added.forEach(function(n){ if(!DATA[n]) DATA[n]=[]; });
+    persist();
+    cur=roster.added[0]||'段深泉';
     mside.classList.remove('open');
     renderContacts(); openChat(cur);
   });
