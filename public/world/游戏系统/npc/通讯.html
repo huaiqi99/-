@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/a8/a853cde40f.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/75/75b6730587.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -478,9 +478,8 @@ function startEdit(el,m){
   function restore(keep){ bub.style.display=''; ta.remove(); bar.remove(); if(!keep) delete el.dataset.editing; }
 }
 function regen(el,m){
-  /* 引渡人同款语义：重答=旧回信记忆彻底作废。
-     己方讯(修改后自动调用)：该讯之后的所有旧回信从存档删除再重答；
-     对方讯(重新回复)：本条作废，退回上一条己方讯重答。 */
+  /* 引渡人同款语义：从被修改/被重答的那条重开，其后的一切全部作废删除——
+     旧回信、玩家后续消息都从存档清除，AI记忆绝不含过期对话。 */
   if(m.t!=='out'){
     var oi=DATA[cur].indexOf(m); if(oi>=0) DATA[cur].splice(oi,1);
     m=null;
@@ -488,9 +487,7 @@ function regen(el,m){
   }
   if(!m){ persist(); renderChat(); return; }
   var oi2=DATA[cur].indexOf(m);
-  for(var k2=DATA[cur].length-1;k2>oi2;k2--){
-    if(DATA[cur][k2].t==='in') DATA[cur].splice(k2,1);   /* 旧回信不进AI记忆=不会重复输出 */
-  }
+  DATA[cur].splice(oi2+1);   /* 后面所有消息（无论谁发的）全删 */
   persist(); renderChat();
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
@@ -516,7 +513,7 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/a8/a853cde40f.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/75/75b6730587.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
