@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/75/75b6730587.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/1a/1ad1e15d51.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -96,6 +96,9 @@ body.night .contact.on{background:rgba(42,44,63,.08)}
 .mu.out .lbl{text-align:right}
 .mu .bub{position:relative;font-size:13.5px;line-height:1.95;padding:8px 13px;border:1.5px solid var(--hair);background:var(--card);word-break:break-word;white-space:pre-wrap;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 /* B 信笺折角：来信=白纸+右下折角；自己=克莱因蓝实底+左上朱砂角 */
+/* 括号分层配色：来信白纸=朱砂；己方蓝底=浅金（日夜通用，蓝底上朱砂看不清） */
+.mu .bub .pb{color:var(--zhu)}
+.mu.out .bub .pb2{color:#E9C97E}
 .mu.in .bub{border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12)}
 .mu.night-in{}
 body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
@@ -211,10 +214,13 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   <div class="sitem" id="miCare"><span>特别关心</span><span class="arr" id="careArr">—</span></div>
   <div class="sitem" id="miNote"><span>备注</span><span class="arr" id="noteArr">编辑</span></div>
   <div class="sitem danger" id="miDel"><span>删除好友</span><span class="arr">移出信匣</span></div>
+  <div class="sitem danger" id="miWipe"><span>清空此讯道</span><span class="arr" id="wipeArr">仅当前角色</span></div>
   <div class="sitem danger" id="miReset"><span>删档重来</span><span class="arr">清空讯匣</span></div>
   <div class="hint">◇ 查找对话</div>
   <input id="findBox" placeholder="输入关键词，回车查找…">
   <div class="sitem" id="miFind"><span>查找对话</span><span class="arr" id="findArr">—</span></div>
+  <div class="sitem" id="miExport"><span>导出聊天记录</span><span class="arr">.md 留档</span></div>
+  <div class="hint" style="line-height:1.8">◇ 每讯道保留最近 150 条，更早的自动消失（写死的演示对话不计）。想留底请先导出。</div>
   <div class="hint">◇ 来自资料页 · 待添加（联动预留）</div>
   <div id="pendBox"></div>
   <button class="backbtn" id="sideBack">◂ 收起</button>
@@ -364,6 +370,12 @@ function lastPreview(n){
   for(var i=arr.length-1;i>=0;i--){ if(arr[i].t==='in'||arr[i].t==='out'){ last=arr[i].x; break; } }
   return last||'（暂无讯息）';
 }
+/* 括号分层：（神态/动作）内层变色，对话本体保持墨色。
+   先esc转义再包裹，防消息内容破坏页面；己方蓝底用浅金，对方白纸用朱砂 */
+function colored(s,out){
+  var cls=out?'pb2':'pb';
+  return esc(s).replace(/（[^（）\n]*）/g,function(w){ return '<span class="'+cls+'">'+w+'</span>'; });
+}
 function buildMu(m){
   var d=document.createElement('div');
   d.className='mu '+(m.t==='out'?'out':'in');
@@ -375,7 +387,7 @@ function buildMu(m){
     ? '<button class="o e">✎ 修改</button><button class="o danger del">✕ 删除</button>'
     : '<button class="o e">✎ 修改</button><button class="o r">⟲ 重新回复</button><button class="o danger del">✕ 删除</button>';
   d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
-  d.querySelector('.bub').textContent=m.x;
+  d.querySelector('.bub').innerHTML=colored(m.x, m.t==='out');
   return d;
 }
 function renderChat(){
@@ -496,7 +508,7 @@ function regen(el,m){
     var newM={t:'in',x:reply};
     DATA[cur].push(newM);
     var ne=addMsgEl(newM,true); bindOps(ne,newM);
-    msgsEl.scrollTop=msgsEl.scrollHeight; persist();
+    msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
 }
 function removeMsg(el,m){
@@ -506,6 +518,32 @@ function removeMsg(el,m){
 }
 function persist(){ try{ localStorage.setItem('gzd_qlz_mail_data',JSON.stringify(DATA)); }catch(e){} }
  
+/* ═══ 记忆上限150条（引渡人同款）：超出自动删最旧的活跃讯息（in/out，
+   写死演示对话d:1与note/day不占额、永不被删）。到达上限弹一次朱砂提示 ═══ */
+var MAX_CHAT=150, K_CAPFLAG='gzd_qlz_mail_cap150';
+function liveCount(arr){ var n=0; arr.forEach(function(m){ if((m.t==='in'||m.t==='out')&&!m.d) n++; }); return n; }
+function capChat(contact){
+  var arr=DATA[contact]||[];
+  while(liveCount(arr)>MAX_CHAT){
+    var idx=-1;
+    for(var i=0;i<arr.length;i++){ if((arr[i].t==='in'||arr[i].t==='out')&&!arr[i].d){ idx=i; break; } }
+    if(idx<0) break; arr.splice(idx,1);
+  }
+  /* 到达上限：每角色只弹一次（写进存档标记） */
+  var flags={}; try{ flags=JSON.parse(localStorage.getItem(K_CAPFLAG)||'{}'); }catch(e){}
+  if(!flags[contact]){
+    var n=liveCount(arr);
+    if(n>=MAX_CHAT){ flags[contact]=1; try{ localStorage.setItem(K_CAPFLAG,JSON.stringify(flags)); }catch(e){}
+      toast('「'+contact+'」讯息已达 150 条上限，最早的对话将从存档自动消失 —— 可在 ☰ 菜单导出留档'); }
+  }
+}
+function toast(msg){
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:70;max-width:86%;width:fit-content;background:var(--card);border:1.5px dashed var(--zhu);color:var(--zhu);font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:8px 14px;line-height:1.8;box-shadow:3px 3px 0 rgba(85,15,16,.18);animation:rise .3s ease both';
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(function(){ t.style.transition='.4s'; t.style.opacity='0'; setTimeout(function(){ t.remove(); },400); },4200);
+}
+ 
 /* ═══ 呈递 + ②碾墨 ═══ */
 document.getElementById('sendBtn').onclick=function(){
   var i=document.getElementById('msgInput'), t=i.value.trim(); if(!t) return;
@@ -513,14 +551,14 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/75/75b6730587.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/1a/1ad1e15d51.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
     g.remove();
     var rm={t:'in',x:reply}; DATA[cur].push(rm);
     var re=addMsgEl(rm,true); bindOps(re,rm);
-    msgsEl.scrollTop=msgsEl.scrollHeight; persist();
+    msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
 };
 document.getElementById('msgInput').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('sendBtn').click(); });
@@ -615,6 +653,36 @@ document.getElementById('miReset').onclick=function(){
     mside.classList.remove('open');
     renderContacts(); openChat(cur);
   });
+};
+/* 清空此讯道：只清当前角色的聊天记录（名单/备注/其他角色全不动），
+   并重置该角色的150条提示标记 */
+document.getElementById('miWipe').onclick=function(){
+  askConfirm('清空「'+cur+'」的聊天记录？\n\n· 仅清当前讯道，其他角色不受影响\n· 名单/备注/置顶保留\n· 此操作不可撤销，想留底请先导出', function(){
+    DATA[cur]=[];
+    try{ var flags=JSON.parse(localStorage.getItem(K_CAPFLAG)||'{}'); delete flags[cur]; localStorage.setItem(K_CAPFLAG,JSON.stringify(flags)); }catch(e){}
+    persist(); renderContacts(); renderChat();
+    mside.classList.remove('open'); movl.classList.remove('on');
+  });
+};
+/* 导出聊天记录：当前讯道整档导出为 Markdown（.md），文件名带角色与日期 */
+document.getElementById('miExport').onclick=function(){
+  var arr=DATA[cur]||[];
+  if(!arr.length){ toast('「'+cur+'」暂无讯息可导出'); return; }
+  var lines=['# 千律州 · 信匣记录','','## '+cur+' × 怀榆','','（导出于 '+new Date().toLocaleDateString('zh-CN')+' · 共 '+liveCount(arr)+' 条活跃讯息）',''];
+  var OUT='【怀榆】', IN='【'+cur+'】';
+  arr.forEach(function(m){
+    if(m.t==='day'){ lines.push('','── '+m.x.replace(/[─\s]/g,'')+' ──',''); }
+    else if(m.t==='note'){ lines.push('> '+m.x); }
+    else if(m.t==='out'){ lines.push(OUT+' '+m.x); }
+    else if(m.t==='in'){ lines.push(IN+' '+m.x); }
+  });
+  lines.push('','── 完 ──');
+  var blob=new Blob([lines.join('\n')],{type:'text/markdown;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='信匣_'+cur+'_'+new Date().toISOString().slice(0,10)+'.md';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },300);
 };
 /* 查找对话：当前讯道关键词过滤 */
 function doFind(){
