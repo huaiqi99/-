@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/3a/3aaccf7fce.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/cf/cfff72254e.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -94,7 +94,7 @@ body.night .contact.on{background:rgba(42,44,63,.08)}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .mu .lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--mut);margin-bottom:4px}
 .mu.out .lbl{text-align:right}
-.mu .bub{position:relative;font-size:13.5px;line-height:1.95;padding:8px 13px;border:1.5px solid var(--hair);background:var(--card);word-break:break-word;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.mu .bub{position:relative;font-size:13.5px;line-height:1.95;padding:8px 13px;border:1.5px solid var(--hair);background:var(--card);word-break:break-word;white-space:pre-wrap;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 /* B 信笺折角：来信=白纸+右下折角；自己=克莱因蓝实底+左上朱砂角 */
 .mu.in .bub{border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12)}
 .mu.night-in{}
@@ -509,7 +509,7 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/3a/3aaccf7fce.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/cf/cfff72254e.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
