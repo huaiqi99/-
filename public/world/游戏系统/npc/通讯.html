@@ -99,6 +99,9 @@ body.night .contact.on{background:rgba(42,44,63,.08)}
 /* 括号分层配色：来信白纸=朱砂；己方蓝底=浅金（日夜通用，蓝底上朱砂看不清） */
 .mu .bub .pb{color:var(--zhu)}
 .mu.out .bub .pb2{color:#E9C97E}
+/* 行距统一：每行自带一点呼吸感，AI输出\n还是\n\n都一样 */
+.mu .bub .bl{margin:0 0 4px}
+.mu .bub .bl:last-child{margin-bottom:0}
 .mu.in .bub{border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12)}
 .mu.night-in{}
 body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
@@ -371,10 +374,15 @@ function lastPreview(n){
   return last||'（暂无讯息）';
 }
 /* 括号分层：（神态/动作）内层变色，对话本体保持墨色。
-   先esc转义再包裹，防消息内容破坏页面；己方蓝底用浅金，对方白纸用朱砂 */
+   先esc转义再包裹，防消息内容破坏页面；己方蓝底用浅金，对方白纸用朱砂。
+   换行归一：AI有时输出\n有时\n\n，渲染时全部压成单行断，行距交给.bl的margin统一管 */
 function colored(s,out){
   var cls=out?'pb2':'pb';
-  return esc(s).replace(/（[^（）\n]*）/g,function(w){ return '<span class="'+cls+'">'+w+'</span>'; });
+  var t=String(s).replace(/\r/g,'').replace(/\n{2,}/g,'\n');
+  return t.split('\n').map(function(ln){
+    ln=esc(ln).replace(/（[^（）\n]*）/g,function(w){ return '<span class="'+cls+'">'+w+'</span>'; });
+    return '<div class="bl">'+ln+'</div>';
+  }).join('');
 }
 function buildMu(m){
   var d=document.createElement('div');
