@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/3a/3a05879882.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/6e/6eced11de7.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -321,6 +321,20 @@ var DATA={
     {t:'in',x:'安宁税，月底前。别让我们再跑一趟。',d:1}
   ]
 };
+/* 新角色无存档记录时自动补空对话，防止发送/渲染炸undefined；
+   同时读取localStorage旧存档（persist有写无读=刷新即丢，补齐） */
+(function(){
+  var K='gzd_qlz_mail_data';
+  try{
+    var saved=JSON.parse(localStorage.getItem(K)||'null');
+    if(saved && typeof saved==='object'){
+      Object.keys(saved).forEach(function(k){ if(!DATA[k]) DATA[k]=saved[k]||[]; });
+      /* 已有角色的存档记录也要合并回来（以存档为准，保留玩家聊天记录） */
+      Object.keys(saved).forEach(function(k){ if(saved[k]&&saved[k].length) DATA[k]=saved[k]; });
+    }
+  }catch(e){}
+  roster.added.forEach(function(n){ if(!DATA[n]) DATA[n]=[]; });
+})();
  
 /* ═══ 渲染 ═══ */
 var msgsEl=document.getElementById('msgs'), listEl=document.getElementById('clist');
@@ -481,7 +495,7 @@ document.getElementById('sendBtn').onclick=function(){
   var m={t:'out',x:t}; DATA[cur].push(m);
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/3a/3a05879882.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/6e/6eced11de7.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){

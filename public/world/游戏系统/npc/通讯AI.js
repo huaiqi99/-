@@ -521,17 +521,110 @@
   
   /* ─────────────────────────────────────────────
      对外接口（通讯.html 只调这一个函数）
+     接线照抄 模拟AI.js：设置页有key→直连；无→Worker；都失败→演示池兜底
      ───────────────────────────────────────────── */
+  var CONFIG_KEY = 'gzd_ai_config';   /* 与模拟页/设置页同一键，无需另行配置 */
+  var MAX_HISTORY = 12;               /* 讯息上下文轮数 */
+  var PROVIDER_CONFIG = {
+    deepseek: { baseUrl:'https://api.deepseek.com',  defaultModel:'deepseek-chat', format:'openai' },
+    openai:   { baseUrl:'https://api.openai.com',    defaultModel:'gpt-4o-mini',   format:'openai' },
+    claude:   { baseUrl:'https://api.anthropic.com', defaultModel:'claude-3-5-sonnet-20241022', format:'claude' },
+    custom:   { baseUrl:'',                          defaultModel:'',              format:'openai' }
+  };
+  
+  function loadAIConfig(){ try{ return JSON.parse(localStorage.getItem(CONFIG_KEY)||'{}'); }catch(e){ return {}; } }
+  
+  /* 超时保险：AI 20秒没回就放弃，绝不让「碾墨」卡死 */
+  function withTimeout(p, ms){
+    return new Promise(function(res, rej){
+      var done=false;
+      var t=setTimeout(function(){ if(!done){ done=true; rej(new Error('回信超时')); } }, ms||20000);
+      p.then(function(v){ if(!done){ done=true; clearTimeout(t); res(v); } },
+             function(e){ if(!done){ done=true; clearTimeout(t); rej(e); } });
+    });
+  }
+  
+  /* 从 DATA（通讯.html全局）取该角色最近几条聊天做上下文 */
+  function buildHistory(contact){
+    var hist=[];
+    try{
+      var arr=(window.DATA && DATA[contact])||[];
+      for(var i=0;i<arr.length;i++){
+        var m=arr[i];
+        if(m.t==='out') hist.push({role:'user',content:m.x});
+        else if(m.t==='in') hist.push({role:'assistant',content:m.x});
+      }
+    }catch(e){}
+    return hist.slice(-MAX_HISTORY);
+  }
+  
+  /* 直连模式：性格由 buildSystem 全量带进 system（模拟AI.js 同构） */
+  async function callDirect(contact, message, history, cfg){
+    var pConfig = PROVIDER_CONFIG[cfg.provider] || PROVIDER_CONFIG.deepseek;
+    var baseUrl = cfg.provider==='custom' ? (cfg.customUrl||'') : pConfig.baseUrl;
+    var model = cfg.model || pConfig.defaultModel;
+    if(!baseUrl) throw new Error('接口地址为空，请前往设置页填写');
+    var systemPrompt = buildSystem(contact);
+    var messages = history.concat([{ role:'user', content:message }]);
+    var url, headers, body;
+    if(pConfig.format==='claude'){
+      url = baseUrl+'/v1/messages';
+      headers = { 'Content-Type':'application/json','x-api-key':cfg.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' };
+      body = JSON.stringify({ model:model, max_tokens:300, system:systemPrompt, messages:messages });
+    } else {
+      url = baseUrl+'/v1/chat/completions';
+      headers = { 'Content-Type':'application/json','Authorization':'Bearer '+cfg.apiKey };
+      body = JSON.stringify({ model:model, messages:[{role:'system',content:systemPrompt}].concat(messages), max_tokens:300, temperature:0.9 });
+    }
+    var resp = await fetch(url, { method:'POST', headers:headers, body:body });
+    var data = await resp.json();
+    if(!resp.ok){
+      var em = (data.error&&data.error.message)||data.error||JSON.stringify(data);
+      if(resp.status===401) throw new Error('API Key 无效或已失效');
+      if(resp.status===402) throw new Error('余额不足');
+      if(resp.status===429) throw new Error('请求过频');
+      throw new Error('AI 返回错误('+resp.status+')：'+em);
+    }
+    var reply = pConfig.format==='claude'
+      ? ((data.content&&data.content[0]&&data.content[0].text)||'')
+      : ((data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'');
+    if(!reply) throw new Error('AI 返回了空内容');
+    return reply;
+  }
+  
+  /* Worker模式（无key时）：Worker自带人设，性格可能打折扣，作保底 */
+  async function callWorker(contact, message, history){
+    var resp = await fetch(WORKER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message:message, profile:PROFILE, history:history })
+    });
+    var data = await resp.json();
+    if(data.error) throw new Error(data.error);
+    return data.reply || '';
+  }
+  
+  /* 演示池兜底：AI全挂了页面也不能卡死 */
+  function demoReply(contact){
+    var pool = POOL[contact] || ['……'];
+    IDX[contact] = ((IDX[contact]||0) + 1) % pool.length;
+    return pool[IDX[contact]];
+  }
+  
   window.MAIL_AI = {
     reply: function(contact, text){
-      /* 阶段二接真AI：在这里把 fetch(WORKER_URL / 密钥) 换上即可，
-         system 用 buildSystem(contact)，性格自动带上。当前为演示桩。 */
-      var pool = POOL[contact] || ['……'];
-      IDX[contact] = ((IDX[contact]||0) + 1) % pool.length;
-      var t = pool[IDX[contact]];
-      return new Promise(function(res){ setTimeout(function(){ res(t); }, 1100 + Math.random()*600); });
+      var cfg = loadAIConfig();
+      var history = buildHistory(contact);
+      var p;
+      if(cfg.apiKey && cfg.provider){
+        p = withTimeout(callDirect(contact, text, history, cfg), 30000);
+      } else {
+        p = withTimeout(callWorker(contact, text, history), 20000).catch(function(){ return demoReply(contact); });
+      }
+      /* 任何AI故障都转成一条可见回信，绝不让「碾墨」卡死 */
+      return p.catch(function(err){ return '【讯匣故障】'+err.message; });
     },
-    buildSystem: buildSystem,   /* 阶段二接线时取性格用 */
+    buildSystem: buildSystem,   /* 调试用：可在此看每人的完整提示词 */
     findChar: findChar,
     PLAYER: PLAYER,             /* 玩家档案（资料页等地方要用可直接取） */
     WORLD: WORLD                /* 世界观底牌全文 */
