@@ -34,8 +34,9 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
   background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),
     linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
   background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
-.page{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 16px 26px;
-  min-height:100vh;display:flex;flex-direction:column;}
+.page{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:14px;
+  height:100vh;height:100dvh;display:flex;flex-direction:column;}
+/* 通讯页同款：卡片死高撑满一屏，超出部分列表内部滚动，底边距恒定14px */
  
 /* ── 顶部横条：2px蓝框，距顶留一段（与主卡间距一致） ── */
 .band{max-width:1200px;width:100%;margin:14px auto 14px;border:2px solid var(--klein);background:var(--card);
@@ -53,7 +54,7 @@ body.night .band{color:var(--mut);}
 .menubtn:hover{border-color:var(--burg);color:var(--burg);}
  
 /* ── 主体三段 ── */
-.main{display:flex;min-height:520px;flex:1;}
+.main{display:flex;min-height:0;flex:1;}
 /* 索引轨 */
 .rail{width:150px;flex:none;border-right:1.5px dashed var(--hair);padding:12px 0;}
 .rail .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);padding:0 14px 8px;}
@@ -65,7 +66,7 @@ body.night .band{color:var(--mut);}
 .ritem.on{border-left-color:var(--burg);background:var(--gc);}
 .ritem.on .cn{color:var(--burg);font-weight:bold;}
 /* 陈列列 */
-.show{flex:2;min-width:0;padding:14px 16px;border-right:1.5px dashed var(--hair);}
+.show{flex:2;min-width:0;min-height:0;padding:14px 16px;border-right:1.5px dashed var(--hair);overflow-y:auto;}
 .showcap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:10px;}
 .cards{display:flex;flex-direction:column;gap:9px;}
 .pcard{display:block;text-decoration:none;color:var(--ink);background:var(--card);
@@ -133,7 +134,8 @@ body.night .band{color:var(--mut);}
 /* ── 手机端：药丸条替代索引轨，右栏并入卡底 ── */
 .pills{display:none;}
 @media(max-width:760px){
-  .page{padding:0 0 10px;}
+  .page{padding:0;}
+  .frame{border-left:none;border-right:none;box-shadow:none;}
   .band{margin:10px 0;padding:6px 4px;font-size:.62rem;letter-spacing:2px;}
   .band .tail{display:none;}                 /* 手机端截掉 · END OF RECORD，不再折行 */
   .title{font-size:13px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
