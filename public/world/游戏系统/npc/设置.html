@@ -161,6 +161,8 @@ a.tback:hover{background:var(--klein);color:#F0EFEB;}
   })();
   if(!window.QLZ_Music)console.warn('[音乐台] https://sfile.chatglm.cn/workspace/file/07/072d948f72.js 未加载，已启用本地兜底播放器（仅本页可播）');
   var IN_SHELL=(function(){try{return M.inShell&&M.inShell();}catch(e){return false;}})();
+  /* 直发通道：不依赖https://sfile.chatglm.cn/workspace/file/07/072d948f72.js版本（旧缓存的核心没有新口子也能用） */
+  function tellShell(msg){try{if(window.parent&&window.parent!==window)window.parent.postMessage(msg,'*');}catch(e){}}
   function say(t,ok){status.textContent=t;status.className='status '+(ok?'ok':'no');}
   var PRESETS=[{name:'音乐1',url:'音乐1.mp3'},{name:'音乐2',url:'音乐2.mp3'},{name:'音乐3',url:'音乐3.mp3'}];
   var curSel='';   /* 当前点选的曲目名，仅用于高亮 */
@@ -276,6 +278,7 @@ a.tback:hover{background:var(--klein);color:#F0EFEB;}
   vol.oninput=function(){
     volV.textContent=vol.value+'%';
     try{M.setVolume(vol.value/100);}catch(e){}
+    tellShell({type:'qlz:volume',v:vol.value/100}); /* 兜底直发 */
   };
   /* ── 左下角按钮显隐 ── */
   var dockBtn=document.getElementById('mDockBtn');
@@ -285,6 +288,7 @@ a.tback:hover{background:var(--klein);color:#F0EFEB;}
     var hide=!dockHidden();
     try{localStorage.setItem('qlz_bgm_dock',hide?'1':'0');}catch(e){}
     try{M.dock(hide);}catch(e){}
+    tellShell({type:'qlz:dockhide',hide:hide}); /* 兜底直发（旧缓存https://sfile.chatglm.cn/workspace/file/07/072d948f72.js没有dock口子也能生效） */
     dockLabel();
     say(hide?'左下角按钮已隐藏（全站生效，刷新也记得）':'左下角按钮已恢复显示',true);
   };

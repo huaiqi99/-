@@ -45,29 +45,38 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
   var idx=0,want=false,cur={url:'',name:''},fadeT=null,restored=false,__lastThemeColor='';
   var KEY='qlz_bgm';
  
-  /* ===== 上传曲库读取（与系统页/设置页共用同一 IndexedDB） ===== */
-  function loadLib(){
+  /* ===== 上传曲库读取（与系统页/设置页共用同一 IndexedDB） =====
+     懒加载：启动绝不读曲库（大音频全量载入会卡死开机），首次切歌/收到曲库变更通知才读 */
+  var libLoaded=false;
+  function loadLib(done){
     try{
-      if(!window.indexedDB)return;
+      if(!window.indexedDB){if(done)done();return;}
       var rq=indexedDB.open('qlz_music',1);
       rq.onupgradeneeded=function(e){var d=e.target.result;
         if(!d.objectStoreNames.contains('tracks'))d.createObjectStore('tracks',{autoIncrement:true});};
       rq.onsuccess=function(e){
         try{
           var db=e.target.result,tx=db.transaction('tracks','readonly'),st=tx.objectStore('tracks');
-          var rqVals=st.getAll(),rqKeys=st.getAllKeys();
-          rqVals.onsuccess=rqKeys.onsuccess=function(){
+          var vals=null,keys=null;
+          function joined(){
+            if(!vals||!keys){if(done)done();return;}
             DB=[];try{
-              for(var i=0;i<rqVals.result.length;i++){
-                var f=rqVals.result[i],k=rqKeys.result[i];
+              for(var i=0;i<vals.length;i++){
+                var f=vals[i],k=keys[i];
                 if(!(f instanceof Blob))continue;
                 DB.push({name:f.name||('曲'+(i+1)),url:URL.createObjectURL(f),key:k});
               }
             }catch(e){}
-          };
-        }catch(e){}
+            libLoaded=true;if(done)done();
+          }
+          var rqVals=st.getAll(),rqKeys=st.getAllKeys();
+          rqVals.onsuccess=function(){vals=rqVals.result;joined();};
+          rqKeys.onsuccess=function(){keys=rqKeys.result;joined();};
+          rqVals.onerror=rqKeys.onerror=function(){libLoaded=true;if(done)done();};
+        }catch(e){libLoaded=true;if(done)done();}
       };
-    }catch(e){}
+      rq.onerror=function(){libLoaded=true;if(done)done();};
+    }catch(e){libLoaded=true;if(done)done();}
   }
   /* 合并播放列表：内置3首 + 上传曲库 */
   function playlist(){
@@ -77,6 +86,7 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
     return p;
   }
   function nextTrack(dir){
+    if(!libLoaded){loadLib(function(){nextTrack(dir);});return;} /* 首次切歌才读曲库 */
     var pl=playlist();if(!pl.length)return;
     var at=-1;
     for(var i=0;i<pl.length;i++){if(pl[i].url===cur.url||(cur.name&&pl[i].name===cur.name)){at=i;break;}}
@@ -174,7 +184,6 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
     var dockHide='0';
     try{dockHide=localStorage.getItem('qlz_bgm_dock')||'0';}catch(e){}
     dockShow(dockHide!=='1');
-    loadLib();
     dockText();
     frame.src=startPage;
  

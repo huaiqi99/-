@@ -132,8 +132,11 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 /* ── 输入条 ── */
 .inputbar{display:flex;gap:9px;padding:10px 14px;border-top:2.5px dashed var(--hair);align-items:center}
 .inputbar .nt{display:none}
-.inputbar input{flex:1;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:13px;padding:9px 12px;letter-spacing:.04em;min-width:0}
-.inputbar input:focus{outline:none;border-color:var(--zhu)}
+.inputbar input,.inputbar textarea{flex:1;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:13px;padding:9px 12px;letter-spacing:.04em;min-width:0}
+.inputbar input:focus,.inputbar textarea:focus{outline:none;border-color:var(--zhu)}
+/* 讯文框：可换行的textarea，外观尺寸与旧版输入框完全一致（单行高，多行时内部滚动） */
+.inputbar textarea{resize:none;height:37px;line-height:1.5;overflow-y:auto;display:block}
+textarea#msgInput{height:37px}
 .send{border:none;background:var(--klein);color:#F0EFEB;font-family:var(--mono);font-size:11px;letter-spacing:.3em;padding:10px 18px 10px 21px;cursor:pointer}
 .send:hover{background:var(--zhu)}
 /* ── 右上角菜单侧栏（同模拟页） ── */
@@ -176,7 +179,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   .chead .back{display:block}
   .mu{max-width:88%}
   /* iOS聚焦<16px会自动放大页面（TA实测按到误删的根源），提到16px根除 */
-  .inputbar input,#findBox{font-size:16px}
+  .inputbar input,.inputbar textarea,#findBox{font-size:16px}
 }
 </style>
 </head>
@@ -205,7 +208,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
     </div>
     <div id="msgs"></div>
     <div class="inputbar">
-      <input type="text" id="msgInput" placeholder="呈递讯文…">
+      <textarea id="msgInput" rows="1" placeholder="呈递讯文…（Enter发送 · Shift+Enter换行）"></textarea>
       <button class="send" id="sendBtn">呈 递</button>
     </div>
   </main>
@@ -571,7 +574,18 @@ document.getElementById('sendBtn').onclick=function(){
     msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
 };
-document.getElementById('msgInput').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('sendBtn').click(); });
+/* 讯文框回车规则：电脑端 Enter=发送 / Shift+Enter=换行；
+   手机端（无精确Shift）Enter=换行，发送按呈递钮 —— 靠 pointer 类型判端 */
+var msgInput=document.getElementById('msgInput');
+var IS_TOUCH=(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
+msgInput.addEventListener('keydown',function(e){
+  if(e.key!=='Enter') return;
+  if(IS_TOUCH) return;                 /* 手机：Enter 交给默认行为=换行 */
+  if(e.shiftKey) return;               /* 电脑：Shift+Enter=换行 */
+  e.preventDefault(); document.getElementById('sendBtn').click();
+});
+/* textarea 固定单行高，无需自增高 */
+msgInput.addEventListener('input',function(){});
  
 /* 长按删除已移除（2026-10-15 TA裁定：手机端误触率高）——删除统一走 双击→操作条→✕ */
  
