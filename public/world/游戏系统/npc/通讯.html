@@ -175,6 +175,8 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   #chat.open{display:flex}
   .chead .back{display:block}
   .mu{max-width:88%}
+  /* iOS聚焦<16px会自动放大页面（TA实测按到误删的根源），提到16px根除 */
+  .inputbar input,#findBox{font-size:16px}
 }
 </style>
 </head>
@@ -378,8 +380,8 @@ function lastPreview(n){
    换行归一：AI有时输出\n有时\n\n，渲染时全部压成单行断，行距交给.bl的margin统一管 */
 function colored(s,out){
   var cls=out?'pb2':'pb';
-  var t=String(s).replace(/\r/g,'').replace(/\n{2,}/g,'\n');
-  return t.split('\n').map(function(ln){
+  var t=String(s).replace(/\r/g,'').replace(/\n[ \t]+(?=\n)/g,'\n').replace(/\n{2,}/g,'\n');
+  return t.split('\n').filter(function(ln){ return ln.trim()!==''; }).map(function(ln){
     ln=esc(ln).replace(/（[^（）\n]*）/g,function(w){ return '<span class="'+cls+'">'+w+'</span>'; });
     return '<div class="bl">'+ln+'</div>';
   }).join('');
@@ -410,7 +412,7 @@ function attachHint(){
   var arr=DATA[cur]||[];
   if(!arr.some(function(m){return m.d;})) return;
   var hint=document.createElement('span'); hint.className='sysnote'; hint.id='demoHint';
-  hint.textContent='上述为写死的演示对话 —— 双击可修改 / 重新生成 · 长按可删除 · 双击虚线提示框亦可删除';
+  hint.textContent='上述为写死的演示对话 —— 双击可修改 / 重新生成 · 双击虚线提示框亦可删除';
   /* 插到最后一条死对话的DOM后面 */
   var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu')||x.classList.contains('sysnote');});
   var arr2=arr.filter(function(m){return m.t==='in'||m.t==='out'||m.t==='note';});
@@ -571,22 +573,7 @@ document.getElementById('sendBtn').onclick=function(){
 };
 document.getElementById('msgInput').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('sendBtn').click(); });
  
-/* ═══ 长按删除（任意消息，550ms） ═══ */
-var lpTimer=null;
-document.getElementById('msgs').addEventListener('pointerdown',function(e){
-  var mu=e.target.closest('.mu'); if(!mu) return;
-  lpTimer=setTimeout(function(){
-    var m={}; /* 从DOM找到对应数据 */
-    var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu');});
-    var i=kids.indexOf(mu); var c=0;
-    for(var k=0;k<(DATA[cur]||[]).length;k++){ var mm=DATA[cur][k]; if(mm.t==='in'||mm.t==='out'){ if(c===i){ m=mm; break; } c++; } }
-    removeMsg(mu,m);
-    if(navigator.vibrate) navigator.vibrate(30);
-  },550);
-});
-['pointerup','pointerleave','pointercancel'].forEach(function(ev){
-  document.getElementById('msgs').addEventListener(ev,function(){ clearTimeout(lpTimer); });
-});
+/* 长按删除已移除（2026-10-15 TA裁定：手机端误触率高）——删除统一走 双击→操作条→✕ */
  
 /* 通用确认弹层（预览器会吞原生confirm，改用页内弹窗） */
 function askConfirm(msg, onYes){
