@@ -1,12 +1,12 @@
 /* ============================================================
-   千律州 · https://sfile.chatglm.cn/workspace/file/73/730ae10037.js（精简版 v1.1）
+   千律州 · https://sfile.chatglm.cn/workspace/file/07/072d948f72.js（精简版 v1.1）
    职责：内页与壳之间的翻译官。
    - 在壳内：手势/切歌/主题/站内导航 转告壳，音乐播放权归壳；
    - 单独打开：自立门户，内建播放器照常接续；
    - 导航规则（照引渡人）：殿内 .html 链接壳内换页（BGM 不断）；
      殿外链接（../ 或 / 或 https: 或 mailto/tel）整个标签页跳出壳。
    用法（内页底部引入）：
-     <script src="./https://sfile.chatglm.cn/workspace/file/73/730ae10037.js" data-bgm="音乐1.mp3"></script>
+     <script src="./https://sfile.chatglm.cn/workspace/file/07/072d948f72.js" data-bgm="音乐1.mp3"></script>
    内页可控接口：
      QLZ_Music.play(url,name) / pause() / resume() / stop() / toggle() / inShell()
    ============================================================ */
@@ -20,9 +20,10 @@
   
     /* ===== 音乐接口：壳模式转告 / 独立模式自管 ===== */
     var localAudio=null,localOn=false,localCur={url:'',name:''};
+    function storedVol(){try{var v=parseFloat(localStorage.getItem('qlz_bgm_vol'));return isFinite(v)?v:.7;}catch(e){return .7;}}
     function localPlay(url,name){
       if(!url)return;
-      if(!localAudio){localAudio=new Audio();localAudio.volume=.7;}
+      if(!localAudio){localAudio=new Audio();localAudio.volume=storedVol();}
       if(localCur.url!==url){localAudio.src=url;localCur={url:url,name:name};}
       var p=localAudio.play();if(p&&p.catch)p.catch(function(){});
       localOn=true;
@@ -39,7 +40,16 @@
       pause:function(){if(IN_SHELL)tell({type:'qlz:pause'});else localPause();},
       resume:function(){if(IN_SHELL)tell({type:'qlz:resume'});else if(localAudio){var p=localAudio.play();if(p&&p.catch)p.catch(function(){});localOn=true;}},
       stop:function(){if(IN_SHELL)tell({type:'qlz:stop'});else localPause();},
-      toggle:function(){if(IN_SHELL)tell({type:'qlz:toggle'});else{localOn?localPause():localPlay(localCur.url||DATA_BGM,localCur.name||'音乐');}}
+      toggle:function(){if(IN_SHELL)tell({type:'qlz:toggle'});else{localOn?localPause():localPlay(localCur.url||DATA_BGM,localCur.name||'音乐');}},
+      /* 音乐总控台（设置页）用：音量 / 左下角按钮显隐 / 切歌 */
+      setVolume:function(v){
+        v=Math.max(0,Math.min(1,Number(v)||0));
+        try{localStorage.setItem('qlz_bgm_vol',String(v));}catch(e){}
+        if(IN_SHELL)tell({type:'qlz:volume',v:v});
+        else if(localAudio)localAudio.volume=v;
+      },
+      dock:function(hide){if(IN_SHELL)tell({type:'qlz:dockhide',hide:!!hide});},
+      next:function(dir){if(IN_SHELL)tell({type:'qlz:next',dir:dir||1});}
     };
   
     /* ===== 手势转告：移动端自动播放策略的通行证 ===== */

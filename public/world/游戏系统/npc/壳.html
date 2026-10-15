@@ -18,25 +18,74 @@ if(__t==='dark')document.documentElement.setAttribute('data-t','dark');
 html,body{margin:0;height:100%;background:#F0EFEB;}
 html[data-t="dark"],html[data-t="dark"] body{background:#0C365A;}
 #iframeBox{position:fixed;inset:0;border:0;width:100%;height:100%;background:transparent;}
-/* 左下角 dock：全站唯一音乐开关 */
-#bgmDock{position:fixed;left:12px;bottom:12px;z-index:9999;
+/* 左下角 dock：全站音乐开关（主体=暂停/继续，▸▸=下一首；可在设置页隐藏） */
+#bgmDock{position:fixed;left:12px;bottom:12px;z-index:9999;display:none;align-items:center;
   background:rgba(250,249,245,.92);color:#23243B;border:2px solid #222C6E;
   font-family:"Fusion Pixel","Zpix",monospace,sans-serif;font-size:.7rem;letter-spacing:2px;
   padding:8px 14px;cursor:pointer;box-shadow:3px 4px 0 rgba(34,44,110,.32);user-select:none;}
+#bgmDock.show{display:flex}
+#dockNext{margin-left:10px;padding-left:10px;border-left:1.5px solid currentColor;opacity:.75}
+#dockNext:hover{opacity:1}
 html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-color:#7C9CB3;}
 </style>
 </head>
 <body>
 <iframe id="iframeBox" title="千律州"></iframe>
-<div id="bgmDock" title="点击 暂停/继续">🔇 音乐</div>
+<div id="bgmDock" title="点击 暂停/继续 · ▸▸ 切下一首"><span id="dockMain">🔇 音乐</span><span id="dockNext">▸▸</span></div>
 <script>
 (function(){
   'use strict';
   var frame=document.getElementById('iframeBox');
-  var audio=new Audio();audio.volume=.7;audio.preload='auto';
+  var audio=new Audio();audio.preload='auto';
+  var vol=.7;
+  try{var sv=parseFloat(localStorage.getItem('qlz_bgm_vol'));if(isFinite(sv))vol=Math.max(0,Math.min(1,sv));}catch(e){}
+  audio.volume=vol;
   var LIST=[{name:'音乐1',src:'音乐1.mp3'},{name:'音乐2',src:'音乐2.mp3'},{name:'音乐3',src:'音乐3.mp3'}];
+  var DB=[]; /* 上传曲库（IndexedDB qlz_music）：[{name,url,key}]，objectURL在壳内长效 */
   var idx=0,want=false,cur={url:'',name:''},fadeT=null,restored=false,__lastThemeColor='';
   var KEY='qlz_bgm';
+ 
+  /* ===== 上传曲库读取（与系统页/设置页共用同一 IndexedDB） ===== */
+  function loadLib(){
+    try{
+      if(!window.indexedDB)return;
+      var rq=indexedDB.open('qlz_music',1);
+      rq.onupgradeneeded=function(e){var d=e.target.result;
+        if(!d.objectStoreNames.contains('tracks'))d.createObjectStore('tracks',{autoIncrement:true});};
+      rq.onsuccess=function(e){
+        try{
+          var db=e.target.result,tx=db.transaction('tracks','readonly'),st=tx.objectStore('tracks');
+          var rqVals=st.getAll(),rqKeys=st.getAllKeys();
+          rqVals.onsuccess=rqKeys.onsuccess=function(){
+            DB=[];try{
+              for(var i=0;i<rqVals.result.length;i++){
+                var f=rqVals.result[i],k=rqKeys.result[i];
+                if(!(f instanceof Blob))continue;
+                DB.push({name:f.name||('曲'+(i+1)),url:URL.createObjectURL(f),key:k});
+              }
+            }catch(e){}
+          };
+        }catch(e){}
+      };
+    }catch(e){}
+  }
+  /* 合并播放列表：内置3首 + 上传曲库 */
+  function playlist(){
+    var p=[];
+    LIST.forEach(function(t){p.push({name:t.name,url:t.src,blob:null});});
+    DB.forEach(function(t){p.push({name:t.name,url:t.url,blob:1});});
+    return p;
+  }
+  function nextTrack(dir){
+    var pl=playlist();if(!pl.length)return;
+    var at=-1;
+    for(var i=0;i<pl.length;i++){if(pl[i].url===cur.url||(cur.name&&pl[i].name===cur.name)){at=i;break;}}
+    at=((at<0?0:at+dir)%pl.length+pl.length)%pl.length;
+    playTrack(pl[at].url,pl[at].name);
+  }
+  function dockShow(show){
+    document.getElementById('bgmDock').classList.toggle('show',!!show);
+  }
  
   function findTrack(url,name){
     for(var i=0;i<LIST.length;i++){
@@ -46,7 +95,7 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
     return {url:url||'',name:name||'音乐'};
   }
   function dockText(){
-    document.getElementById('bgmDock').textContent=want?('♪ '+cur.name):'🔇 音乐';
+    document.getElementById('dockMain').textContent=want?('♪ '+cur.name):'🔇 音乐';
   }
   function save(){
     try{localStorage.setItem(KEY,JSON.stringify({on:want,url:cur.url,name:cur.name,
@@ -67,6 +116,11 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
   function fade(to,dur,done){clearInterval(fadeT);var from=audio.volume,t0=Date.now();
     fadeT=setInterval(function(){var k=Math.min(1,(Date.now()-t0)/dur);audio.volume=from+(to-from)*k;
       if(k>=1){clearInterval(fadeT);if(done)done();}},40);}
+  function setVol(v){
+    vol=Math.max(0,Math.min(1,Number(v)||0));
+    try{localStorage.setItem('qlz_bgm_vol',String(vol));}catch(e){}
+    clearInterval(fadeT);audio.volume=vol; /* 拖滑条时直给，不做淡入，手感才跟手 */
+  }
   function swapMeta(color){
     var m=document.createElement('meta');m.setAttribute('name','theme-color');m.setAttribute('content',color);
     document.head.appendChild(m);
@@ -86,7 +140,7 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
   /* ===== 内页消息总线 ===== */
   window.addEventListener('message',function(ev){
     var msg=ev.data||{};
-    if(msg.type==='qlz:gesture'){if(want&&audio.paused){tryPlay();fade(.7,800);}return;}
+    if(msg.type==='qlz:gesture'){if(want&&audio.paused){tryPlay();fade(vol,800);}return;}
     if(msg.type==='qlz:track'&&(msg.url||msg.blob)){
       var u=msg.url;
       if(msg.blob){try{u=URL.createObjectURL(msg.blob);}catch(e){u=msg.url;}}
@@ -95,6 +149,11 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
     if(msg.type==='qlz:stop'){want=false;audio.pause();try{audio.currentTime=0;}catch(e){}dockText();save();return;}
     if(msg.type==='qlz:resume'){resume();return;}
     if(msg.type==='qlz:toggle'){toggle();return;}
+    if(msg.type==='qlz:volume'&&isFinite(msg.v)){setVol(msg.v);return;}
+    if(msg.type==='qlz:next'){nextTrack(msg.dir||1);return;}
+    if(msg.type==='qlz:dockhide'){try{localStorage.setItem('qlz_bgm_dock',msg.hide?'1':'0');}catch(e){}
+      dockShow(!msg.hide);return;}
+    if(msg.type==='qlz:lib'){loadLib();return;}
     if(msg.type==='qlz:theme'){setTheme(!!msg.night);return;}
     if(msg.type==='qlz:nav'&&msg.href){load(msg.href);return;}
   });
@@ -111,6 +170,11 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
       }}catch(e){}
     audio.src=cur.url;setTheme(__t==='dark');
     if(!cur.url){cur={url:LIST[idx].src,name:LIST[idx].name};}
+    /* dock显隐：设置页可隐藏（存qlz_bgm_dock，1=藏）；默认显示 */
+    var dockHide='0';
+    try{dockHide=localStorage.getItem('qlz_bgm_dock')||'0';}catch(e){}
+    dockShow(dockHide!=='1');
+    loadLib();
     dockText();
     frame.src=startPage;
  
@@ -118,12 +182,15 @@ html[data-t="dark"] #bgmDock{background:rgba(12,54,90,.92);color:#D6D4C2;border-
       try{if(st&&isFinite(st.time)&&st.time>0&&st.time<(audio.duration||1e9)-2)audio.currentTime=st.time;}catch(e){}
     },{once:true});
     audio.addEventListener('error',function(){
-      if(!want)return;var d=document.getElementById('bgmDock'),old=d.textContent;
-      d.textContent='🔇 无法播放';setTimeout(function(){dockText();},2500);});
+      if(!want)return;document.getElementById('dockMain').textContent='🔇 无法播放';
+      setTimeout(function(){dockText();},2500);});
     setInterval(save,5000);
     window.addEventListener('pagehide',save);
  
     document.getElementById('bgmDock').onclick=function(){toggle();};
+    document.getElementById('dockNext').onclick=function(e){
+      e.stopPropagation();nextTrack(1);
+    };
  
     window.QLZ_SHELL=true;
     window.QLZ_Shell={load:load,playTrack:playTrack,pause:pause,resume:resume,setTheme:setTheme};

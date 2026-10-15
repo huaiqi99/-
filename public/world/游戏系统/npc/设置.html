@@ -35,6 +35,23 @@ button{border:none;font-family:inherit;font-size:12.5px;letter-spacing:.25em;pad
 .mode b{color:var(--burg);}
 a.tback{display:inline-block;margin-top:26px;font-size:12px;letter-spacing:.3em;color:var(--klein);text-decoration:none;border:1.5px solid var(--klein);padding:8px 18px;}
 a.tback:hover{background:var(--klein);color:#F0EFEB;}
+/* ── 音乐台 ── */
+#mlist{margin-top:12px}
+.track{display:flex;align-items:center;gap:8px;border:1.5px solid var(--hair);background:var(--bg);
+  padding:9px 12px;margin-bottom:6px;font-size:12.5px;letter-spacing:.06em;cursor:pointer;transition:.15s;}
+.track:hover{border-color:var(--klein);background:var(--gc2);}
+.track.on{background:var(--klein);color:#F0EFEB;border-color:var(--klein);}
+.track .idx{font-family:Courier New,monospace;font-size:10px;opacity:.6;flex:none;}
+.track .del{margin-left:auto;flex:none;border:none;background:transparent;color:var(--zhu);
+  font-size:13px;cursor:pointer;padding:2px 6px;font-family:inherit;}
+.track .del:hover{background:var(--zhu);color:#F0EFEB;}
+.mrow{display:flex;gap:10px;margin-top:14px;}
+.mbtn{flex:1;border:1.5px solid var(--klein)!important;background:transparent;color:var(--klein);
+  padding:9px 0;font-size:12px;letter-spacing:.2em;}
+.mbtn:hover{background:var(--klein);color:#F0EFEB;}
+.vrow{display:flex;align-items:center;gap:12px;}
+.vrow input[type=range]{flex:1;accent-color:var(--klein);padding:0;border:none;background:transparent;height:22px;}
+.vrow span{font-family:Courier New,monospace;font-size:11px;color:var(--mut);width:38px;text-align:right;flex:none;}
 </style>
 </head>
 <body>
@@ -63,9 +80,31 @@ a.tback:hover{background:var(--klein);color:#F0EFEB;}
     <div class="tip">密钥仅保存在你浏览器的 localStorage，不上传任何服务器。清除后回到 Worker 模式。与引渡人模拟器共用同一份配置。</div>
   </div>
  
+  <!-- 音乐台：全站音乐总控（播放权归壳；曲库 IndexedDB 与系统页共用） -->
+  <div class="card">
+    <h2>音 乐 台 · BGM</h2>
+    <div class="mode">内置曲 + 你上传的曲子都列在这，<b>点曲即播</b>，切页不断。上传的曲子存进本机曲库（IndexedDB），下次来还在。</div>
+    <div id="mlist"></div>
+    <div class="mrow">
+      <button class="mbtn" id="mPrev">◂ 上一首</button>
+      <button class="mbtn" id="mToggle">⏸ 暂停</button>
+      <button class="mbtn" id="mNext">下一首 ▸</button>
+    </div>
+    <label>音 量</label>
+    <div class="vrow"><input type="range" id="mVol" min="0" max="100" value="70"><span id="mVolV">70%</span></div>
+    <div class="btn">
+      <button class="save" id="mUploadBtn">⬆ 上传曲目</button>
+      <button class="clear" id="mDockBtn">隐藏左下角按钮</button>
+    </div>
+    <input type="file" id="mFile" accept="audio/*" multiple style="display:none">
+    <div class="status" id="mStatus">…</div>
+    <div class="tip">上传只存在你自己的浏览器里（IndexedDB 本地曲库，容量按百 MB 算，随便传），不上传任何服务器。删除同样只在本地生效。「隐藏左下角按钮」全站生效，想再显示回来点这里即可。</div>
+  </div>
+ 
   <a class="tback" href="./系统备份.html">◂ 返回</a>
 </div>
  
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
 <script>
 (function(){
   'use strict';
@@ -100,6 +139,157 @@ a.tback:hover{background:var(--klein);color:#F0EFEB;}
     render();
   };
   render();
+})();
+ 
+/* ═══════ 音乐台 · BGM ═══════
+   播放权归壳（QLZ_Music 转告）；曲库 = 内置3首 + IndexedDB『qlz_music』上传库（与系统页共用）。
+   整体容错：任何一步炸了只提示，不拖死页面。 */
+(function(){
+  'use strict';
+  var list=document.getElementById('mlist'),status=document.getElementById('mStatus');
+  /* https://sfile.chatglm.cn/workspace/file/07/072d948f72.js 加载不到（预览环境改文件名常见）时不再整块罢工：
+     自建一个本地播放器顶上，曲库管理照常，只有切歌/隐藏按钮需要壳 */
+  var M=window.QLZ_Music||(function(){
+    var a=null,curU='',vol=.7;
+    try{var sv=parseFloat(localStorage.getItem('qlz_bgm_vol'));if(isFinite(sv))vol=sv;}catch(e){}
+    return {inShell:function(){return false;},
+      play:function(u,n){if(!a){a=new Audio();a.volume=vol;}if(curU!==u){a.src=u;curU=u;}
+        var p=a.play();if(p&&p.catch)p.catch(function(){});},
+      toggle:function(){if(!a)return;if(a.paused){var p=a.play();if(p&&p.catch)p.catch(function(){});}else a.pause();},
+      setVolume:function(v){vol=v;if(a)a.volume=v;},
+      next:function(){},dock:function(){return 'no-shell';}};
+  })();
+  if(!window.QLZ_Music)console.warn('[音乐台] https://sfile.chatglm.cn/workspace/file/07/072d948f72.js 未加载，已启用本地兜底播放器（仅本页可播）');
+  var IN_SHELL=(function(){try{return M.inShell&&M.inShell();}catch(e){return false;}})();
+  function say(t,ok){status.textContent=t;status.className='status '+(ok?'ok':'no');}
+  var PRESETS=[{name:'音乐1',url:'音乐1.mp3'},{name:'音乐2',url:'音乐2.mp3'},{name:'音乐3',url:'音乐3.mp3'}];
+  var curSel='';   /* 当前点选的曲目名，仅用于高亮 */
+  var onRow=null;  /* 当前高亮行 */
+ 
+  /* ── 曲库渲染 ── */
+  function row(name,url,file,delKey,i){
+    var d=document.createElement('div');d.className='track';d.dataset.name=name;
+    var n=document.createElement('span');n.className='idx';n.textContent=(i<10?'0':'')+i;
+    var t=document.createElement('span');t.textContent=name;t.style.flex='1';
+    d.appendChild(n);d.appendChild(t);
+    if(delKey!=null){
+      var x=document.createElement('button');x.className='del';x.title='从本地曲库删除';x.textContent='✕';
+      x.onclick=function(ev){ev.stopPropagation();delTrack(delKey,name);};
+      d.appendChild(x);
+    }
+    d.onclick=function(){
+      var u=url;
+      if(file){try{u=URL.createObjectURL(file);}catch(e){}}
+      try{M.play(u,name);}catch(e){say('播放失败：'+e.message);return;}
+      curSel=name;
+      if(onRow)onRow.classList.remove('on');onRow=d;d.classList.add('on');
+      say('正在播放：'+name+(IN_SHELL?'':'（单独打开模式 · 由本页播放）'),true);
+    };
+    return d;
+  }
+  function renderList(uploads){
+    list.innerHTML='';
+    PRESETS.forEach(function(p,i){list.appendChild(row(p.name,p.url,null,null,list.children.length+1));});
+    (uploads||[]).forEach(function(u){list.appendChild(row(u.name,null,u.file,u.key,list.children.length+1));});
+    if(curSel){ /* 恢复高亮 */
+      var hit=list.querySelectorAll('.track');
+      for(var k=0;k<hit.length;k++)if(hit[k].dataset.name===curSel){onRow=hit[k];hit[k].classList.add('on');break;}
+    }
+  }
+  /* ── IndexedDB（与系统页同一库同一仓） ── */
+  var DB_OK=(function(){try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return !!window.indexedDB;}catch(e){return false;}})();
+  function openDB(cb){
+    var rq=indexedDB.open('qlz_music',1);
+    rq.onupgradeneeded=function(e){var d=e.target.result;
+      if(!d.objectStoreNames.contains('tracks'))d.createObjectStore('tracks',{autoIncrement:true});};
+    rq.onsuccess=function(e){cb(e.target.result);};
+    rq.onerror=function(){say('⚠ 本地曲库打开失败（预览环境常见，部署后正常）');};
+  }
+  function loadLib(){
+    if(!DB_OK){renderList([]);say('※ 本环境不支持本地曲库：上传不可用，内置曲可直接点播');return;}
+    openDB(function(db){
+      try{
+        var tx=db.transaction('tracks','readonly'),st=tx.objectStore('tracks');
+        var vals=null,keys=null;
+        function done(){ /* 两个请求都到齐才渲染，避免晚到的那个拿空值静默失败 */
+          if(!vals||!keys)return;
+          try{
+            var ups=[];
+            for(var i=0;i<vals.length;i++)ups.push({name:vals[i].name||('曲'+(i+1)),file:vals[i],key:keys[i]});
+            renderList(ups);
+            say(ups.length?('曲库就绪：内置 3 首 + 已上传 '+ups.length+' 首'+(IN_SHELL?'':' · 当前为单独打开模式')):'曲库就绪：内置 3 首（还没有上传曲目）'+(IN_SHELL?'':' · 当前为单独打开模式'),true);
+          }catch(e){say('⚠ 曲库解析失败：'+e.message);}
+        }
+        var rv=st.getAll(),rk=st.getAllKeys();
+        rv.onsuccess=function(){vals=rv.result;done();};
+        rk.onsuccess=function(){keys=rk.result;done();};
+      }catch(e){say('⚠ 读取本地曲库失败：'+e.message);}
+    });
+  }
+  function delTrack(key,name){
+    if(!DB_OK)return;
+    openDB(function(db){
+      try{
+        var tx=db.transaction('tracks','readwrite');
+        tx.objectStore('tracks').delete(key);
+        tx.oncomplete=function(){
+          try{window.parent.postMessage({type:'qlz:lib'},'*');}catch(e){} /* 通知壳刷新曲库 */
+          say('已删除「'+name+'」');
+          loadLib();
+        };
+      }catch(e){say('⚠ 删除失败：'+e.message);}
+    });
+  }
+  /* ── 上传 ── */
+  document.getElementById('mUploadBtn').onclick=function(){ if(DB_OK)document.getElementById('mFile').click(); else say('⚠ 本环境不支持本地曲库，上传不可用'); };
+  document.getElementById('mFile').onchange=function(){
+    var files=this.files;if(!files||!files.length)return;
+    openDB(function(db){
+      try{
+        var tx=db.transaction('tracks','readwrite'),st=tx.objectStore('tracks');
+        Array.prototype.forEach.call(files,function(f){st.put(f);});
+        tx.oncomplete=function(){
+          try{window.parent.postMessage({type:'qlz:lib'},'*');}catch(e){}
+          say('已收入曲库 '+files.length+' 首，点列表即可播放',true);
+          loadLib();
+        };
+      }catch(e){say('⚠ 收录失败：'+e.message);}
+    });
+    this.value='';
+  };
+  /* ── 播放控制 ── */
+  var playing=false;
+  document.getElementById('mToggle').onclick=function(){
+    try{M.toggle();}catch(e){}
+    playing=!playing;this.textContent=playing?'▶ 播放':'⏸ 暂停';
+  };
+  document.getElementById('mPrev').onclick=function(){
+    if(IN_SHELL){try{M.next(-1);}catch(e){}}else say('切歌由壳统一播放——请从门户进站后使用');
+  };
+  document.getElementById('mNext').onclick=function(){
+    if(IN_SHELL){try{M.next(1);}catch(e){}}else say('切歌由壳统一播放——请从门户进站后使用');
+  };
+  /* ── 音量 ── */
+  var vol=document.getElementById('mVol'),volV=document.getElementById('mVolV');
+  try{var sv=parseFloat(localStorage.getItem('qlz_bgm_vol'));if(isFinite(sv))vol.value=Math.round(sv*100);}catch(e){}
+  volV.textContent=vol.value+'%';
+  vol.oninput=function(){
+    volV.textContent=vol.value+'%';
+    try{M.setVolume(vol.value/100);}catch(e){}
+  };
+  /* ── 左下角按钮显隐 ── */
+  var dockBtn=document.getElementById('mDockBtn');
+  function dockHidden(){try{return localStorage.getItem('qlz_bgm_dock')==='1';}catch(e){return false;}}
+  function dockLabel(){dockBtn.textContent=dockHidden()?'显示左下角按钮':'隐藏左下角按钮';}
+  dockBtn.onclick=function(){
+    var hide=!dockHidden();
+    try{localStorage.setItem('qlz_bgm_dock',hide?'1':'0');}catch(e){}
+    try{M.dock(hide);}catch(e){}
+    dockLabel();
+    say(hide?'左下角按钮已隐藏（全站生效，刷新也记得）':'左下角按钮已恢复显示',true);
+  };
+  dockLabel();
+  loadLib();
 })();
 </script>
 </body>
