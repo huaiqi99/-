@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 人物资料</title>
+<style>
+/* ═══ 人物资料 list.html —— 角色陈列中转页（C5定稿） ═══
+   索引轨：全部/业焰之国/双冕北境/时衍天宫/特殊；排序：默认/按等级。
+   卡片点击 → ./角色名.html。背景：格子+最底层135°红蓝渐变。
+   尺寸基准照系统.html：框架1200px、外框2px、内线1.5px、页距14px。 */
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
+  --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
+  --gc:rgba(85,15,16,.08);--gc2:rgba(34,44,110,.07);
+  --shadow:6px 6px 0 rgba(34,44,110,.2);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;
+  --zhu:#B94A44;--mut:#5D6B80;--hair:rgba(42,44,63,.4);
+  --gc:rgba(10,20,35,.25);--gc2:rgba(10,20,35,.18);
+  --shadow:6px 6px 0 rgba(10,20,35,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);color:var(--ink);min-height:100vh;background:var(--bg);transition:background .4s;}
+/* 最底层：135°红蓝渐变垫全页 */
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:linear-gradient(135deg,rgba(85,15,16,.13) 0%,rgba(85,15,16,.05) 30%,rgba(34,44,110,.05) 65%,rgba(34,44,110,.15) 100%);}
+body.night::before{background:linear-gradient(135deg,rgba(185,74,68,.12) 0%,rgba(10,20,35,.0) 40%,rgba(11,63,107,.45) 100%);}
+/* 格子层叠在渐变上（通讯页同款配方） */
+body::after{content:'';position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),
+    linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
+  background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
+.page{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 16px 26px;
+  min-height:100vh;display:flex;flex-direction:column;}
+ 
+/* ── 顶部横条：2px蓝框，距顶留一段（与主卡间距一致） ── */
+.band{max-width:1200px;width:100%;margin:14px auto 14px;border:2px solid var(--klein);background:var(--card);
+  font-family:var(--mono);font-size:.72rem;letter-spacing:4px;color:var(--ink);text-align:center;padding:7px 0;}
+body.night .band{color:var(--mut);}
+ 
+/* ── 主卡（全页唯一2px框）：高度撑满视口，底边永远贴底，不随角色数量缩水 ── */
+.frame{max-width:1200px;width:100%;margin:0 auto;background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);
+  flex:1;display:flex;flex-direction:column;}
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px dashed var(--burg);}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--zhu);border:1.5px dashed var(--zhu);padding:4px 9px;flex:none;}
+.title{flex:1;font-size:16px;letter-spacing:2px;font-weight:bold;}
+.title em{font-style:normal;color:var(--burg);}
+.menubtn{flex:none;width:32px;height:32px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer;padding:0;line-height:1;}
+.menubtn:hover{border-color:var(--burg);color:var(--burg);}
+ 
+/* ── 主体三段 ── */
+.main{display:flex;min-height:520px;flex:1;}
+/* 索引轨 */
+.rail{width:150px;flex:none;border-right:1.5px dashed var(--hair);padding:12px 0;}
+.rail .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);padding:0 14px 8px;}
+.ritem{display:block;width:100%;text-align:left;background:none;border:none;border-left:3px solid transparent;
+  font-family:var(--serif);color:var(--ink);padding:9px 14px;cursor:pointer;}
+.ritem .cn{font-size:13px;}
+.ritem .en{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--mut);margin-top:1px;}
+.ritem:hover{background:var(--gc2);}
+.ritem.on{border-left-color:var(--burg);background:var(--gc);}
+.ritem.on .cn{color:var(--burg);font-weight:bold;}
+/* 陈列列 */
+.show{flex:2;min-width:0;padding:14px 16px;border-right:1.5px dashed var(--hair);}
+.showcap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:10px;}
+.cards{display:flex;flex-direction:column;gap:9px;}
+.pcard{display:block;text-decoration:none;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--klein);border-left:3px solid var(--burg);padding:10px 13px;transition:.15s;}
+.pcard:hover{border-color:var(--burg);box-shadow:3px 3px 0 rgba(85,15,16,.18);transform:translate(-1px,-1px);}
+.pcard.lead{border:1.5px solid var(--burg);border-left:4px solid var(--burg);}
+.pcard .r1{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.lv{font-family:var(--mono);font-size:9px;color:var(--zhu);border:1px solid var(--zhu);padding:1px 6px;flex:none;}
+.pcard .nm{font-size:15px;font-weight:bold;}
+.pcard.lead .nm{color:var(--burg);}
+.pcard .pin{font-size:11px;color:var(--burg);}
+.pcard .nat{font-size:11px;color:var(--mut);}
+.pcard .r2{font-size:11px;color:var(--mut);margin-top:4px;line-height:1.7;}
+.pcard .go{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--mut);flex:none;}
+.pcard:hover .go{color:var(--zhu);}
+/* 右栏：圆章+统计（C4口径：约占三分之一） */
+.side{flex:1;min-width:0;padding:16px 18px;display:flex;flex-direction:column;}
+.sealwrap{text-align:center;margin-bottom:18px;}
+.seal{width:96px;height:96px;margin:0 auto;position:relative;}
+.seal .ring{position:absolute;inset:0;border:2px dashed var(--burg);border-radius:50%;animation:spin 14s linear infinite;}
+.seal .dia{position:absolute;left:50%;top:50%;width:18px;height:18px;background:var(--klein);transform:translate(-50%,-50%) rotate(45deg);}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.seal .ring{animation:none}}
+.sealwrap .nm{font-size:14px;letter-spacing:6px;font-weight:bold;margin-top:9px;}
+.sealwrap .slog{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-top:4px;}
+.stats{font-size:12px;}
+.stats .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:5px;}
+.stats .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1.5px dashed var(--hair);line-height:1.6;}
+.stats .row:last-child{border-bottom:none;}
+.stats .row b{color:var(--burg);}
+/* 空态 */
+.empty{display:none;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--mut);padding:26px 0;}
+ 
+/* ── ☰ 菜单侧栏（方框包住内容，同系统/通讯菜单） ── */
+.movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;display:none;}
+.movl.on{display:block;}
+.mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;background:var(--card);
+  height:100vh;height:100dvh;z-index:41;transition:right .28s ease;
+  padding:16px 16px 20px;overflow-y:auto;}
+.mside.open{right:0;}
+.mbox{padding:0 0 6px;}
+.srow{display:flex;gap:8px;}
+.srow input{flex:1;min-width:0;border:1.5px solid var(--klein);background:var(--bg);color:var(--ink);
+  font-family:var(--serif);font-size:13px;padding:8px 10px;}
+.srow input:focus{outline:none;border-color:var(--zhu);}
+.srow .go{flex:none;border:none;background:var(--klein);color:#F0EFEB;font-family:var(--mono);
+  font-size:10px;letter-spacing:2px;padding:0 12px;cursor:pointer;}
+.srow .go:hover{background:var(--zhu);}
+.sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1.5px dashed var(--hair);
+  background:none;border-left:none;border-right:none;border-top:none;width:100%;font-family:var(--serif);
+  font-size:13px;color:var(--ink);cursor:pointer;}
+.sitem:hover{color:var(--klein);}
+.sitem.miBack{border:1.5px solid var(--klein);margin:8px 0 4px;padding:9px 12px;color:var(--klein);}
+.sitem.miBack:hover{background:var(--klein);color:#F0EFEB;}
+.sitem.miBack .arr{color:inherit;opacity:.7;}
+.mside .mh{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--mut);margin:4px 0 8px;}
+.sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);}
+.sitem.danger{color:var(--burg);}
+.sortrow{display:flex;gap:8px;margin-top:8px;}
+.sortbtn{flex:1;border:1.5px solid var(--klein);background:transparent;color:var(--ink);
+  font-family:var(--serif);font-size:12px;padding:7px 0;cursor:pointer;}
+.sortbtn.on{border-color:var(--burg);background:var(--gc);color:var(--burg);font-weight:bold;}
+.sortnote{font-size:9px;color:var(--mut);margin-top:6px;line-height:1.8;}
+ 
+/* ── 手机端：药丸条替代索引轨，右栏并入卡底 ── */
+.pills{display:none;}
+@media(max-width:760px){
+  .page{padding:0 0 10px;}
+  .band{margin:10px 0;padding:6px 4px;font-size:.62rem;letter-spacing:2px;}
+  .band .tail{display:none;}                 /* 手机端截掉 · END OF RECORD，不再折行 */
+  .title{font-size:13px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chip{font-size:8px;padding:3px 6px;letter-spacing:1px;}
+  .topbar{gap:8px;padding:10px 12px;}
+  .main{flex-direction:column;min-height:0;}
+  .rail{display:none;}
+  .pills{display:flex;gap:6px;padding:8px 10px;border-bottom:1.5px dashed var(--hair);
+    overflow-x:auto;scrollbar-width:thin;}
+  .pills::-webkit-scrollbar{height:4px;}     /* 滚动条细到不挤空间 */
+  .pills::-webkit-scrollbar-thumb{background:var(--hair);}
+  .pill{flex:none;border:1.5px solid var(--klein);background:transparent;color:var(--ink);
+    font-family:var(--serif);font-size:11px;padding:4px 14px;cursor:pointer;}
+  .pill.on{background:var(--burg);border-color:var(--burg);color:var(--card);font-weight:bold;}
+  .show{border-right:none;padding:12px;}
+  .side{width:auto;border-top:1.5px dashed var(--hair);flex-direction:row;align-items:center;gap:14px;}
+  .sealwrap{margin-bottom:0;flex:none;}
+  .seal{width:44px;height:44px;}
+  .seal .dia{width:10px;height:10px;}
+  .sealwrap .nm{font-size:11px;letter-spacing:3px;}
+  .sealwrap .slog{display:none;}
+  .stats{flex:1;}
+  .stats .cap{display:none;}
+  .stats .row{padding:4px 0;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+ 
+  <!-- 顶部横条 -->
+  <div class="band">QIANLVZHOU · DOSSIER ARCHIVE<span class="tail"> · END OF RECORD</span></div>
+ 
+  <!-- 主卡 -->
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">DOSSIER·01</span>
+      <div class="title">◆ QIANLVZHOU // <em>人物资料</em></div>
+      <button class="menubtn" id="menuBtn" title="菜单">☰</button>
+    </div>
+ 
+    <!-- 手机端索引药丸 -->
+    <div class="pills" id="pills"></div>
+ 
+    <div class="main">
+      <!-- 索引轨 -->
+      <nav class="rail" id="rail"><div class="cap">INDEX</div></nav>
+ 
+      <!-- 陈列列 -->
+      <section class="show">
+        <div class="showcap" id="showcap">SHOWING // 全部 · 默认排序</div>
+        <div class="cards" id="cards"></div>
+        <div class="empty" id="empty">NO MATCH · 未检得该名</div>
+      </section>
+ 
+      <!-- 右栏 -->
+      <aside class="side">
+        <div class="sealwrap">
+          <div class="seal"><span class="ring"></span><span class="dia"></span></div>
+          <div class="nm">千律州</div>
+          <div class="slog">EVERY NAME · ON RECORD</div>
+        </div>
+        <div class="stats">
+          <div class="cap">ARCHIVE STATS</div>
+          <div class="row"><span>收录人物</span><b id="stCount">—</b></div>
+          <div class="row"><span>覆盖国别</span><b>3 + 特殊</b></div>
+          <div class="row"><span>最高战力</span><b id="stMax">—</b></div>
+          <div class="row"><span>最近收录</span><b>左令仪</b></div>
+          <div class="row"><span>档案状态</span><b>开放阅览</b></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+ 
+<!-- ☰ 菜单 -->
+<div class="movl" id="movl"></div>
+<aside class="mside" id="mside">
+ <div class="mbox">
+  <button class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></button>
+  <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
+  <div class="mh" style="margin-top:16px">◇ 查找人物</div>
+  <div class="srow">
+    <input id="findBox" placeholder="名字 / 称号…">
+    <button class="go" id="findGo">查找</button>
+  </div>
+  <div class="mh" style="margin-top:16px">◇ 排序方式</div>
+  <div class="sortrow">
+    <button class="sortbtn on" id="sortDef">默认</button>
+    <button class="sortbtn" id="sortLv">按等级</button>
+  </div>
+  <div class="sortnote">按等级时，各国内部按 LV 降序陈列（如祝焱列业焰之国第一）。</div>
+ </div>
+</aside>
+ 
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+<script>
+(function(){
+  'use strict';
+  /* ═══ 人物数据（身份照抄通讯AI.js） ═══
+     nat: 业焰之国 / 双冕北境 / 时衍天宫 / 特殊
+     url: 每个角色的资料卡路径，明写，照 './通讯.html' 格式改这里即可
+     lead: 全部视图置顶；lv: 战力标注（null 显示 LV·?） */
+  var CHARS=[
+    {name:'段深泉',en:'SHENQUAN', pin:'命定之人',     lv:50, nat:'时衍天宫', url:'./段深泉.html', line:'业焰之国前大神使，时衍天宫长大的孤儿，50级半神。', lead:true},
+    {name:'祝焱',  en:'ZHUYAN',   pin:'逝者之影',     lv:85, nat:'业焰之国', url:'./祝焱.html',   line:'前火神，已陨落。留在世间的是一缕残念，以倒影为媒介显现。'},
+    {name:'瑞秋',  en:'RACHEL',   pin:'故人',         lv:14, nat:'业焰之国', url:'./瑞秋.html',   line:'业焰之国现任执政者，维里迪姆家族末裔。曾是业焰城大神使，后被囚禁两年。'},
+    {name:'凝淼',  en:'NINGMIAO', pin:'被遗忘的女皇', lv:89, nat:'双冕北境', url:'./凝淼.html',   line:'双冕北境前女皇，已陨落，被世界遗忘。留在世间的是一缕残念。'},
+    {name:'阿列克谢',en:'ALEKSEI',pin:'巡林铁卫',     lv:34, nat:'双冕北境', url:'./阿列克谢.html',line:'双冕北境巡林铁卫最高指挥官，沃尔科夫家族现任族长。'},
+    {name:'叶戈尔',en:'YEGOR',    pin:'北境贵族',     lv:26, nat:'双冕北境', url:'./叶戈尔.html', line:'双冕北境贵族，精于利益交换与转移资产。'},
+    {name:'左令仪',en:'ZUOLINGYI',pin:'新收录',       lv:null,nat:'时衍天宫', url:'./左令仪.html', line:'新收录 · 资料待补全。'},
+    {name:'黎昭',  en:'LIZHAO',   pin:'烬影会首领',   lv:30, nat:'特殊',     url:'./黎昭.html',   line:'烬影会首领，北境地下势力的实际掌控者。表面是被女皇扶正的民间组织头目。'}
+  ];
+  var NATIONS=['业焰之国','双冕北境','时衍天宫','特殊'];
+  var K_THEME='theme';
+ 
+  /* ── 状态 ── */
+  var curNat='全部', curSort='def', kw='';
+ 
+  /* ── 日夜：公共键 theme（{value:'light'|'dark'}），与全站一致 ── */
+  function applyTheme(){
+    var dark=false;
+    try{var r=localStorage.getItem(K_THEME); if(r){var p=JSON.parse(r); if(p&&p.value==='dark')dark=true;}}catch(e){}
+    document.body.classList.toggle('night',dark);
+    /* 同步壳底色 */
+    try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'qlz:theme',night:dark},'*');}catch(e){}
+    return dark;
+  }
+ 
+  /* ── 索引轨 + 药丸 ── */
+  var rail=document.getElementById('rail'),pills=document.getElementById('pills');
+  function countOf(nat){ return nat==='全部'?CHARS.length:CHARS.filter(function(c){return c.nat===nat;}).length; }
+  function buildNav(){
+    var list=['全部'].concat(NATIONS);
+    rail.innerHTML='<div class="cap">INDEX</div>';
+    pills.innerHTML='';
+    list.forEach(function(nat){
+      var b=document.createElement('button'); b.className='ritem'+(curNat===nat?' on':'');
+      b.innerHTML='<div class="cn">'+(nat==='全部'?'全 部':nat)+'</div><div class="en">'+countOf(nat)+' ENTR'+(countOf(nat)===1?'Y':'IES')+'</div>';
+      b.onclick=function(){ curNat=nat; buildNav(); render(); };
+      rail.appendChild(b);
+      var p=document.createElement('button'); p.className='pill'+(curNat===nat?' on':'');
+      p.textContent=nat==='全部'?'全部':nat;
+      p.onclick=function(){ curNat=nat; buildNav(); render(); };
+      pills.appendChild(p);
+    });
+  }
+ 
+  /* ── 陈列 ── */
+  var cardsEl=document.getElementById('cards'),emptyEl=document.getElementById('empty'),capEl=document.getElementById('showcap');
+  function render(){
+    var arr=CHARS.filter(function(c){ return curNat==='全部'||c.nat===curNat; });
+    if(kw){
+      arr=arr.filter(function(c){ return (c.name+c.pin+c.en+c.line).toLowerCase().indexOf(kw.toLowerCase())>=0; });
+    }
+    if(curSort==='lv'){
+      arr=arr.slice().sort(function(a,b){ return (b.lv||-1)-(a.lv||-1); });
+    }else{
+      /* 默认序：置顶角色最先，其余按数据表原序（即各国国内陈列序） */
+      arr=arr.slice().sort(function(a,b){ return (b.lead?1:0)-(a.lead?1:0); });
+    }
+    capEl.textContent='SHOWING // '+curNat+' · '+(curSort==='lv'?'按等级':'默认')+(kw?' · 关键词「'+kw+'」':'');
+    cardsEl.innerHTML='';
+    arr.forEach(function(c){
+      var a=document.createElement('a'); a.className='pcard'+(c.lead?' lead':'');
+      a.href=c.url;
+      var natTag=(curNat==='全部')?'<span class="pin">'+c.pin+'</span><span class="nat"> · '+c.nat+'</span>'
+                                  :'<span class="pin">'+c.pin+'</span>';
+      a.innerHTML='<div class="r1"><span class="lv">'+(c.lv==null?'LV·?':'LV'+c.lv)+'</span>'
+        +'<span class="nm">'+c.name+'</span>'+natTag
+        +'<span class="go">OPEN ▸</span></div>'
+        +'<div class="r2">'+c.line+'</div>';
+      cardsEl.appendChild(a);
+    });
+    emptyEl.style.display=arr.length?'none':'block';
+    /* 统计（全库口径） */
+    document.getElementById('stCount').textContent=CHARS.length+' 人';
+    var maxLv=0; CHARS.forEach(function(c){ if(c.lv&&c.lv>maxLv)maxLv=c.lv; });
+    document.getElementById('stMax').textContent='LV'+maxLv;
+  }
+ 
+  /* ── ☰ 菜单 ── */
+  var mside=document.getElementById('mside'),movl=document.getElementById('movl');
+  function toggleMenu(open){
+    mside.classList.toggle('open',open);
+    movl.classList.toggle('on',open);
+  }
+  document.getElementById('menuBtn').onclick=function(e){ e.stopPropagation(); toggleMenu(!mside.classList.contains('open')); };
+  movl.onclick=function(){ toggleMenu(false); };
+  document.getElementById('findBox').addEventListener('input',function(){ kw=this.value.trim(); render(); });
+  document.getElementById('findGo').onclick=function(){ kw=document.getElementById('findBox').value.trim(); render(); toggleMenu(false); };
+  document.getElementById('sortDef').onclick=function(){ curSort='def'; syncSort(); render(); };
+  document.getElementById('sortLv').onclick=function(){ curSort='lv'; syncSort(); render(); };
+  function syncSort(){
+    document.getElementById('sortDef').classList.toggle('on',curSort==='def');
+    document.getElementById('sortLv').classList.toggle('on',curSort==='lv');
+  }
+  document.getElementById('miNight').onclick=function(){
+    var dark=!document.body.classList.contains('night');
+    try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
+    applyTheme();
+  };
+  document.getElementById('miBack').onclick=function(){ location.href='./系统备份.html'; };
+ 
+  /* ── 启动 ── */
+  applyTheme(); buildNav(); render();
+})();
+</script>
+</body>
+</html>
