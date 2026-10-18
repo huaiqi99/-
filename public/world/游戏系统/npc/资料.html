@@ -35,7 +35,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
   background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),
     linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
   background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
-.page{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:14px;
+.page{position:relative;z-index:2;padding:14px;
   height:100vh;height:100dvh;display:flex;flex-direction:column;}
 /* 通讯页同款：卡片死高撑满一屏，超出部分列表内部滚动，底边距恒定14px */
  
@@ -245,19 +245,19 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
      lead: 全部视图置顶；lv: 战力标注（null 显示 LV·?） */
   var CHARS=[
     {name:'段深泉',en:'SHENQUAN', pin:'命定之人',     lv:50, nat:'时衍天宫', url:'./段深泉.html', line:'业焰之国前大神使，时衍天宫长大的孤儿，50级半神。', lead:true},
+    {name:'怀榆',  en:'HUAIYU',   pin:'玩家本人',     lv:null,nat:'特殊',     url:'./怀榆.html',   line:'玩家自己的档案。系统展出，仅供本人查阅。'},
     {name:'祝焱',  en:'ZHUYAN',   pin:'逝者之影',     lv:85, nat:'业焰之国', url:'./祝焱.html',   line:'前火神，已陨落。留在世间的是一缕残念，以倒影为媒介显现。'},
     {name:'瑞秋',  en:'RACHEL',   pin:'故人',         lv:14, nat:'业焰之国', url:'./瑞秋.html',   line:'业焰之国现任执政者，维里迪姆家族末裔。曾是业焰城大神使，后被囚禁两年。'},
-    {name:'凝淼',  en:'NINGMIAO', pin:'被遗忘的女皇', lv:89, nat:'双冕北境', url:'./凝淼.html',   line:'双冕北境前女皇，已陨落，被世界遗忘。留在世间的是一缕残念。'},
-    {name:'阿列克谢',en:'ALEKSEI',pin:'巡林铁卫',     lv:34, nat:'双冕北境', url:'./阿列克谢.html',line:'双冕北境巡林铁卫最高指挥官，沃尔科夫家族现任族长。'},
     {name:'叶戈尔',en:'YEGOR',    pin:'北境贵族',     lv:26, nat:'双冕北境', url:'./叶戈尔.html', line:'双冕北境贵族，精于利益交换与转移资产。'},
-    {name:'尘歌',  en:'CHENGE',   pin:'新收录',       lv:null,nat:'归墟之庭', url:'./尘歌.html',   line:'新收录 · 资料待补全。'},
-    {name:'瑶英',  en:'YAOYING',  pin:'新收录',       lv:null,nat:'圣草之邦', url:'./瑶英.html',   line:'新收录 · 资料待补全。'},
+    {name:'黎昭',  en:'LIZHAO',   pin:'烬影会首领',   lv:30, nat:'特殊',     url:'./黎昭.html',   line:'烬影会首领，北境地下势力的实际掌控者。表面是被女皇扶正的民间组织头目。'},
+    {name:'阿列克谢',en:'ALEKSEI',pin:'巡林铁卫',     lv:34, nat:'双冕北境', url:'./阿列克谢.html',line:'双冕北境巡林铁卫最高指挥官，沃尔科夫家族现任族长。'},
+    {name:'凝淼',  en:'NINGMIAO', pin:'被遗忘的女皇', lv:89, nat:'双冕北境', url:'./凝淼.html',   line:'双冕北境前女皇，已陨落，被世界遗忘。留在世间的是一缕残念。'},
     {name:'左令仪',en:'ZUOLINGYI',pin:'新收录',       lv:null,nat:'时衍天宫', url:'./左令仪.html', line:'新收录 · 资料待补全。'},
+    {name:'李怀渊',en:'LIHUAIYUAN',pin:'新收录',      lv:null,nat:'时衍天宫', url:'./李怀渊.html', line:'新收录 · 资料待补全。'},
     {name:'时渊',  en:'SHIYUAN',  pin:'新收录',       lv:null,nat:'时衍天宫', url:'./时渊.html',   line:'新收录 · 资料待补全。'},
     {name:'芥舟',  en:'JIEZHOU',  pin:'新收录',       lv:null,nat:'时衍天宫', url:'./芥舟.html',   line:'新收录 · 资料待补全。'},
-    {name:'李怀渊',en:'LIHUAIYUAN',pin:'新收录',      lv:null,nat:'时衍天宫', url:'./李怀渊.html', line:'新收录 · 资料待补全。'},
-    {name:'怀榆',  en:'HUAIYU',   pin:'玩家本人',     lv:null,nat:'特殊',     url:'./怀榆.html',   line:'玩家自己的档案。系统展出，仅供本人查阅。'},
-    {name:'黎昭',  en:'LIZHAO',   pin:'烬影会首领',   lv:30, nat:'特殊',     url:'./黎昭.html',   line:'烬影会首领，北境地下势力的实际掌控者。表面是被女皇扶正的民间组织头目。'}
+    {name:'尘歌',  en:'CHENGE',   pin:'新收录',       lv:null,nat:'归墟之庭', url:'./尘歌.html',   line:'新收录 · 资料待补全。'},
+    {name:'瑶英',  en:'YAOYING',  pin:'新收录',       lv:null,nat:'圣草之邦', url:'./瑶英.html',   line:'新收录 · 资料待补全。'}
   ];
   var NATIONS=['业焰之国','双冕北境','时衍天宫','圣草之邦','归墟之庭','特殊'];
   var K_THEME='theme';
