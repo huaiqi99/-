@@ -25,6 +25,7 @@ body.night{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--serif);color:var(--ink);min-height:100vh;background:var(--bg);transition:background .4s;}
+html,body{overflow-x:hidden;}   /* 严禁横向滑出主页 */
 /* 最底层：135°红蓝渐变垫全页 */
 body::before{content:'';position:fixed;inset:0;z-index:0;
   background:linear-gradient(135deg,rgba(85,15,16,.13) 0%,rgba(85,15,16,.05) 30%,rgba(34,44,110,.05) 65%,rgba(34,44,110,.15) 100%);}
@@ -38,14 +39,15 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
   height:100vh;height:100dvh;display:flex;flex-direction:column;}
 /* 通讯页同款：卡片死高撑满一屏，超出部分列表内部滚动，底边距恒定14px */
  
-/* ── 顶部横条：2px蓝框，距顶留一段（与主卡间距一致） ── */
-.band{max-width:1200px;width:100%;margin:14px auto 14px;border:2px solid var(--klein);background:var(--card);
-  font-family:var(--mono);font-size:.72rem;letter-spacing:4px;color:var(--ink);text-align:center;padding:7px 0;}
-body.night .band{color:var(--mut);}
+/* ── 档案尾线（原顶部横条移此）：夹在两段虚线中间的mono小字 ── */
+.archline{display:flex;align-items:center;gap:10px;margin-top:14px;
+  font-family:var(--mono);font-size:8px;letter-spacing:3px;color:var(--mut);white-space:nowrap;}
+.archline::before,.archline::after{content:'';flex:1;border-top:1.5px dashed var(--hair);}
  
-/* ── 主卡（全页唯一2px框）：高度撑满视口，底边永远贴底，不随角色数量缩水 ── */
+/* ── 主卡（全页唯一2px框）：高度撑满视口，底边永远贴底，不随角色数量缩水 ──
+   min-height:0 是命门：没有它，flex子项默认"最小高=内容高"，卡片会被内容无限拉长（段深泉同款锁法） */
 .frame{max-width:1200px;width:100%;margin:0 auto;background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);
-  flex:1;display:flex;flex-direction:column;}
+  flex:1;min-height:0;display:flex;flex-direction:column;}
 .topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px dashed var(--burg);}
 .chip{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--zhu);border:1.5px dashed var(--zhu);padding:4px 9px;flex:none;}
 .title{flex:1;font-size:16px;letter-spacing:2px;font-weight:bold;}
@@ -54,7 +56,7 @@ body.night .band{color:var(--mut);}
 .menubtn:hover{border-color:var(--burg);color:var(--burg);}
  
 /* ── 主体三段 ── */
-.main{display:flex;min-height:0;flex:1;}
+.main{display:flex;min-height:0;flex:1;overflow:hidden;}
 /* 索引轨 */
 .rail{width:150px;flex:none;border-right:1.5px dashed var(--hair);padding:12px 0;}
 .rail .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);padding:0 14px 8px;}
@@ -83,7 +85,7 @@ body.night .band{color:var(--mut);}
 .pcard .go{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--mut);flex:none;}
 .pcard:hover .go{color:var(--zhu);}
 /* 右栏：圆章+统计（C4口径：约占三分之一） */
-.side{flex:1;min-width:0;padding:16px 18px;display:flex;flex-direction:column;}
+.side{flex:1;min-width:0;min-height:0;padding:16px 18px;display:flex;flex-direction:column;overflow:hidden;}
 .sealwrap{text-align:center;margin-bottom:18px;}
 .seal{width:96px;height:96px;margin:0 auto;position:relative;}
 .seal .ring{position:absolute;inset:0;border:2px dashed var(--burg);border-radius:50%;animation:spin 14s linear infinite;}
@@ -134,10 +136,11 @@ body.night .band{color:var(--mut);}
 /* ── 手机端：药丸条替代索引轨，右栏并入卡底 ── */
 .pills{display:none;}
 @media(max-width:760px){
-  .page{padding:0;}
-  .frame{border-left:none;border-right:none;box-shadow:none;}
-  .band{margin:10px 0;padding:6px 4px;font-size:.62rem;letter-spacing:2px;}
-  .band .tail{display:none;}                 /* 手机端截掉 · END OF RECORD，不再折行 */
+  /* 手机端：卡片最少撑满一屏（内容少也不缩），内容多则整页自然滚；无任何内置滚动条，侧栏随内容走不钉死 */
+  .page{padding:0;height:auto;min-height:100dvh;}
+  .frame{border-left:none;border-right:none;box-shadow:none;flex:none;min-height:100dvh;height:auto;}
+  .main{flex-direction:column;flex:none;min-height:0;overflow:visible;}
+  .show{overflow:visible;flex:none;}
   .title{font-size:13px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .chip{font-size:8px;padding:3px 6px;letter-spacing:1px;}
   .topbar{gap:8px;padding:10px 12px;}
@@ -151,7 +154,10 @@ body.night .band{color:var(--mut);}
     font-family:var(--serif);font-size:11px;padding:4px 14px;cursor:pointer;}
   .pill.on{background:var(--burg);border-color:var(--burg);color:var(--card);font-weight:bold;}
   .show{border-right:none;padding:12px;}
-  .side{width:auto;border-top:1.5px dashed var(--hair);flex-direction:row;align-items:center;gap:14px;}
+  .side{width:auto;flex:none;border-top:1.5px dashed var(--hair);flex-direction:row;flex-wrap:wrap;align-items:center;gap:14px;overflow:visible;}
+  .pills{scrollbar-width:none;}
+  .pills::-webkit-scrollbar{display:none;}
+  .archline{flex-basis:100%;justify-content:center;white-space:normal;text-align:center;font-size:7px;letter-spacing:2px;}
   .sealwrap{margin-bottom:0;flex:none;}
   .seal{width:44px;height:44px;}
   .seal .dia{width:10px;height:10px;}
@@ -166,10 +172,7 @@ body.night .band{color:var(--mut);}
 <body>
 <div class="page">
  
-  <!-- 顶部横条 -->
-  <div class="band">QIANLVZHOU · DOSSIER ARCHIVE<span class="tail"> · END OF RECORD</span></div>
- 
-  <!-- 主卡 -->
+  <!-- 主卡（原顶部横条已撤，主卡上移放大，尺寸对齐段深泉.html） -->
   <div class="frame">
     <div class="topbar">
       <span class="chip">DOSSIER·01</span>
@@ -201,11 +204,12 @@ body.night .band{color:var(--mut);}
         <div class="stats">
           <div class="cap">ARCHIVE STATS</div>
           <div class="row"><span>收录人物</span><b id="stCount">—</b></div>
-          <div class="row"><span>覆盖国别</span><b>3 + 特殊</b></div>
+          <div class="row"><span>覆盖国别</span><b>5 + 特殊</b></div>
           <div class="row"><span>最高战力</span><b id="stMax">—</b></div>
-          <div class="row"><span>最近收录</span><b>左令仪</b></div>
+          <div class="row"><span>最近收录</span><b>李怀渊</b></div>
           <div class="row"><span>档案状态</span><b>开放阅览</b></div>
         </div>
+        <div class="archline">QIANLVZHOU · DOSSIER ARCHIVE · END OF RECORD</div>
       </aside>
     </div>
   </div>
@@ -246,10 +250,16 @@ body.night .band{color:var(--mut);}
     {name:'凝淼',  en:'NINGMIAO', pin:'被遗忘的女皇', lv:89, nat:'双冕北境', url:'./凝淼.html',   line:'双冕北境前女皇，已陨落，被世界遗忘。留在世间的是一缕残念。'},
     {name:'阿列克谢',en:'ALEKSEI',pin:'巡林铁卫',     lv:34, nat:'双冕北境', url:'./阿列克谢.html',line:'双冕北境巡林铁卫最高指挥官，沃尔科夫家族现任族长。'},
     {name:'叶戈尔',en:'YEGOR',    pin:'北境贵族',     lv:26, nat:'双冕北境', url:'./叶戈尔.html', line:'双冕北境贵族，精于利益交换与转移资产。'},
+    {name:'尘歌',  en:'CHENGE',   pin:'新收录',       lv:null,nat:'归墟之庭', url:'./尘歌.html',   line:'新收录 · 资料待补全。'},
+    {name:'瑶英',  en:'YAOYING',  pin:'新收录',       lv:null,nat:'圣草之邦', url:'./瑶英.html',   line:'新收录 · 资料待补全。'},
     {name:'左令仪',en:'ZUOLINGYI',pin:'新收录',       lv:null,nat:'时衍天宫', url:'./左令仪.html', line:'新收录 · 资料待补全。'},
+    {name:'时渊',  en:'SHIYUAN',  pin:'新收录',       lv:null,nat:'时衍天宫', url:'./时渊.html',   line:'新收录 · 资料待补全。'},
+    {name:'芥舟',  en:'JIEZHOU',  pin:'新收录',       lv:null,nat:'时衍天宫', url:'./芥舟.html',   line:'新收录 · 资料待补全。'},
+    {name:'李怀渊',en:'LIHUAIYUAN',pin:'新收录',      lv:null,nat:'时衍天宫', url:'./李怀渊.html', line:'新收录 · 资料待补全。'},
+    {name:'怀榆',  en:'HUAIYU',   pin:'玩家本人',     lv:null,nat:'特殊',     url:'./怀榆.html',   line:'玩家自己的档案。系统展出，仅供本人查阅。'},
     {name:'黎昭',  en:'LIZHAO',   pin:'烬影会首领',   lv:30, nat:'特殊',     url:'./黎昭.html',   line:'烬影会首领，北境地下势力的实际掌控者。表面是被女皇扶正的民间组织头目。'}
   ];
-  var NATIONS=['业焰之国','双冕北境','时衍天宫','特殊'];
+  var NATIONS=['业焰之国','双冕北境','时衍天宫','圣草之邦','归墟之庭','特殊'];
   var K_THEME='theme';
  
   /* ── 状态 ── */
