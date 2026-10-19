@@ -5,33 +5,29 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>千律州 · 段深泉</title>
 <style>
-/* ═══ 角色资料卡 · 段深泉（V10） ═══
-   骨架照 https://sfile.chatglm.cn/workspace/file/7d/7d571bd3b9.html：1200px 死高满屏横矩形，外框2px、内线1.5px、页距14px。
-   日间=V6原样＋金色五条（数值/阵营/遮挡条/雷达/系统备注转金）。
-   夜间=TA小样点选方案3：深绿底#35655A×米黄卡#EAE5D6×结构绿#3F7A6D×印象#F0E2AF（底色=比结构绿深一档的绿，非蓝）
-   （印象文字加深版#8A7430，遮挡条/雷达奶油色加#C9B98A细边保可见；雷达面夜0.55通透/日0.4）。
-   雷达切主题instant直出；夜间雷达面fill-opacity .85、日间.4。 */
+/* ═══ 角色资料卡 · 段深泉（墨蓝×暖金版） ═══ */
 :root{
-  --bg:#F0EFEB;--card:#FAF9F5;--ink:#1B1F1C;--klein:#014520;
-  --acc:#E0C993;
-  --accd:#8A6D1F;
-  --mut:#46505B;--hair:rgba(1,69,32,.55);
-  --gc:rgba(1,69,32,.1);--gc2:rgba(1,69,32,.06);
-  --shadow:4px 4px 0 rgba(1,69,32,.18);--shadowS:4px 4px 0 rgba(1,69,32,.18);
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#1B1F1C;
+  --klein:#2A3A5C;                /* 墨蓝结构色 */
+  --acc:#E0C88A;                  /* 暖沙金印象色 */
+  --accd:#8A6D1F;                 /* 深金强调色 */
+  --mut:#46505B;--hair:rgba(42,58,92,.55);
+  --gc:rgba(42,58,92,.1);--gc2:rgba(42,58,92,.06);
+  --shadow:4px 4px 0 rgba(42,58,92,.18);--shadowS:4px 4px 0 rgba(42,58,92,.18);
   --serif:Georgia,"Times New Roman","Songti SC",serif;
   --mono:"Courier New",monospace;
 }
 body.night{
-  --bg:#35655A;--card:#EAE5D6;--ink:#1B1F1C;--klein:#3F7A6D;
+  --bg:#1A2E4A;--card:#EAE5D6;--ink:#1B1F1C;
+  --klein:#4A5F80;
   --acc:#F0E2AF;--accd:#8A7430;
-  --mut:#414D5C;--hair:rgba(42,60,52,.4);
-  --gc:rgba(20,50,42,.35);--gc2:rgba(20,50,42,.25);
-  --shadow:4px 4px 0 rgba(1,69,32,.18);--shadowS:4px 4px 0 rgba(1,69,32,.18);
+  --mut:#414D5C;--hair:rgba(42,60,80,.4);
+  --gc:rgba(20,40,60,.35);--gc2:rgba(20,40,60,.25);
+  --shadow:4px 4px 0 rgba(20,40,60,.18);--shadowS:4px 4px 0 rgba(20,40,60,.18);
 }
 body.night .rbar{outline:1px solid #C9B98A;outline-offset:-1px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--serif);color:var(--ink);min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden}
-/* 底层：格子＋最底层135°渐变（墨绿→沙金，低浓度不抢戏） */
 body::before{content:'';position:fixed;inset:0;z-index:-2;background:
   repeating-linear-gradient(0deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
   repeating-linear-gradient(90deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
@@ -39,11 +35,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-2;background:
   repeating-linear-gradient(90deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
   var(--bg)}
 body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(135deg,rgba(1,69,32,.06) 0%,rgba(1,69,32,.02) 38%,rgba(224,201,147,.13) 100%)}
-body.night::after{background:linear-gradient(135deg,rgba(20,60,50,.2) 0%,rgba(20,60,50,.05) 40%,rgba(244,234,197,.08) 100%)}
- 
+  background:linear-gradient(135deg,rgba(42,58,92,.06) 0%,rgba(42,58,92,.02) 38%,rgba(224,200,138,.13) 100%)}
+body.night::after{background:linear-gradient(135deg,rgba(20,50,80,.2) 0%,rgba(20,50,80,.05) 40%,rgba(244,234,197,.08) 100%)}
 .page{height:100vh;height:100dvh;padding:14px;display:flex;flex-direction:column;position:relative;z-index:1}
-/* ═══ 主卡 ═══ */
 .frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;
   background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);overflow:hidden}
 .topbar{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1.5px solid var(--klein)}
@@ -51,28 +45,21 @@ body.night::after{background:linear-gradient(135deg,rgba(20,60,50,.2) 0%,rgba(20
 .title{font-size:15px;letter-spacing:1px;color:var(--klein);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .title em{font-style:normal;color:var(--accd);font-weight:bold}
 .sysline{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--mut);white-space:nowrap}
-.backbtn{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--klein);background:transparent;
-  border:1.5px solid var(--klein);padding:4px 10px;cursor:pointer;text-decoration:none;box-shadow:var(--shadowS);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
-.backbtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(1,69,32,.18)}
-.backbtn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(1,69,32,.18)}
-/* ☰ 菜单（替代返回按钮，高度同原按钮） */
 .menuwrap{flex:none;position:relative}
 .menubtn{flex:none;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--klein);background:transparent;
   border:1.5px solid var(--klein);padding:4px 11px;cursor:pointer;line-height:1.4;box-shadow:var(--shadowS);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
-.menubtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(1,69,32,.18)}
-.menubtn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(1,69,32,.18)}
+.menubtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(42,58,92,.18)}
+.menubtn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(42,58,92,.18)}
 .mdown{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:170px;display:none;
-  background:var(--card);border:2px solid var(--klein);box-shadow:5px 5px 0 rgba(1,69,32,.18)}
+  background:var(--card);border:2px solid var(--klein);box-shadow:5px 5px 0 rgba(42,58,92,.18)}
 .mdown.open{display:block}
 .mdown .mi{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1.5px dashed var(--hair);
   font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--ink);padding:11px 14px;cursor:pointer;text-decoration:none}
 .mdown .mi:last-child{border-bottom:none}
-.mdown .mi:hover{color:var(--klein);background:rgba(224,201,147,.15)}
+.mdown .mi:hover{color:var(--klein);background:rgba(224,200,138,.15)}
 body.night .mdown .mi:hover{background:rgba(244,234,197,.14)}
-body.night .mdown{box-shadow:4px 4px 0 rgba(1,69,32,.18)}
- 
+body.night .mdown{box-shadow:4px 4px 0 rgba(20,40,60,.18)}
 .main{flex:1;min-height:0;display:flex}
-/* ═══ 左列：名签 ═══ */
 .left{flex:none;width:230px;border-right:1.5px dashed var(--hair);padding:18px 16px;display:flex;flex-direction:column;gap:0;overflow-y:auto}
 .avwrap{position:relative;width:100%;aspect-ratio:1/1;border:1.5px solid var(--klein);background:var(--bg);overflow:hidden}
 .avwrap img{width:100%;height:100%;object-fit:cover;display:block}
@@ -83,7 +70,7 @@ body.night .mdown{box-shadow:4px 4px 0 rgba(1,69,32,.18)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 9px;border:1.5px solid var(--klein);color:var(--ink);box-shadow:var(--shadowS)}
 .tag.hot{background:var(--klein);color:var(--acc);border-color:var(--klein)}
-.affin{margin-top:14px;border:1.5px solid var(--klein);padding:10px 11px;background:rgba(224,201,147,.16);box-shadow:var(--shadowS)}
+.affin{margin-top:14px;border:1.5px solid var(--klein);padding:10px 11px;background:rgba(224,200,138,.16);box-shadow:var(--shadowS)}
 body.night .affin{background:rgba(244,234,197,.14)}
 .affin .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd)}
 .abar{margin-top:6px;height:8px;border:1.5px solid var(--klein);background:var(--card);overflow:hidden}
@@ -94,15 +81,11 @@ body.night .affin{background:rgba(244,234,197,.14)}
 .brief{margin-top:12px;font-size:12px;line-height:1.8;color:var(--mut);border-top:1.5px dashed var(--hair);padding-top:10px}
 .leftspace{flex:1}
 .systail{flex:none;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--mut);line-height:1.9;text-align:left}
- 
-/* ═══ 右列：档案 ═══ */
 .dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px}
 .sec{margin-bottom:22px}
 .sechead{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);
   display:inline-block;padding:3px 10px;margin-bottom:10px;box-shadow:var(--shadowS)}
 .sechead .zh{font-family:var(--serif);font-size:11px;letter-spacing:2px;margin-left:6px}
- 
-/* 基础信息 */
 .igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--klein);box-shadow:var(--shadowS)}
 .cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--hair);min-width:0}
 .cell:nth-child(odd){border-right:1.5px dashed var(--hair);padding-right:14px}
@@ -112,19 +95,15 @@ body.night .affin{background:rgba(244,234,197,.14)}
 .iv{font-size:13px;color:var(--ink);min-width:0;overflow-wrap:anywhere}
 .iv b{color:var(--accd)}
 .iv small{font-family:var(--mono);font-size:9px;color:var(--mut);letter-spacing:1px;margin-left:6px}
- 
-/* 档案记录 */
 .rec{border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);box-shadow:var(--shadow)}
 .rec p{font-size:13px;line-height:2;color:var(--ink);text-align:justify;text-indent:2em}
 .rec p+p{margin-top:8px}
 .rbar{display:inline-block;height:.85em;vertical-align:text-bottom;background:var(--acc);margin:0 1px}
-.r1{width:.9em}.r2{width:2em}.r3{width:3.4em}.r4{width:5em}
+.r2{width:2em}.r3{width:3.4em}
 .rnote{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);
   font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd);text-align:right}
 .rclose{margin-top:10px;font-size:12px;color:var(--accd);letter-spacing:.5px}
 .rclose::first-letter{color:var(--klein)}
- 
-/* 能力评估 */
 .bars{border:1.5px solid var(--klein);padding:12px 14px;background:var(--card);box-shadow:var(--shadowS)}
 .brow{padding:8px 0;border-bottom:1.5px dashed var(--hair)}
 .brow:last-child{border-bottom:none;padding-bottom:0}
@@ -135,9 +114,6 @@ body.night .affin{background:rgba(244,234,197,.14)}
 .bfill{display:block;height:100%;width:0;background:var(--acc);transition:width 1.1s ease}
 .bnum{flex:none;font-family:var(--mono);font-size:11px;color:var(--accd);width:52px;text-align:right}
 .bdesc{margin-top:4px;padding-left:98px;font-size:11px;color:var(--mut);line-height:1.6}
- 
-/* 雷达 */
-/* 金色虚线分隔（V3质感回归）：用于后段版块 */
 .golddiv{height:0;border-top:2px dashed rgba(138,109,31,.55);margin-bottom:14px}
 body.night .golddiv{border-top-color:rgba(166,146,63,.5)}
 .radarbox{display:flex;gap:18px;border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);align-items:flex-start;box-shadow:var(--shadow)}
@@ -149,37 +125,28 @@ body.night .golddiv{border-top-color:rgba(166,146,63,.5)}
 .rn1 b{font-family:var(--mono);color:var(--accd);margin-left:8px}
 .rn2{font-size:11px;color:var(--mut);margin-top:1px;line-height:1.5}
 .radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);font-size:11px;color:var(--mut);line-height:1.7}
- 
-/* 关系网 */
 .rels{display:flex;flex-wrap:wrap;gap:10px}
 .rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1;max-width:240px;
-  border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:9px 12px;text-decoration:none;background:var(--card);box-shadow:3px 3px 0 rgba(1,69,32,.18);transition:transform .18s,box-shadow .18s,background .18s}
-.rel:hover{background:rgba(224,201,147,.15);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(1,69,32,.18)}
-.rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(1,69,32,.18)}
+  border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:9px 12px;text-decoration:none;background:var(--card);box-shadow:3px 3px 0 rgba(42,58,92,.18);transition:transform .18s,box-shadow .18s,background .18s}
+.rel:hover{background:rgba(224,200,138,.15);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(42,58,92,.18)}
+.rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(42,58,92,.18)}
 body.night .rel:hover{background:rgba(244,234,197,.14)}
 .rel .rn{font-size:13px;font-weight:bold;color:var(--ink)}
 .rel .rt{font-size:11px;color:var(--mut);line-height:1.5}
- 
-/* 系统备注 */
-.sysnote{border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:12px 14px;background:rgba(224,201,147,.12);box-shadow:var(--shadowS)}
+.sysnote{border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:12px 14px;background:rgba(224,200,138,.12);box-shadow:var(--shadowS)}
 body.night .sysnote{background:rgba(244,234,197,.14)}
 .sysnote .who{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd);margin-bottom:5px}
 .sysnote .txt{font-size:12px;line-height:1.9;color:var(--accd)}
 .sysnote .txt b{color:var(--accd)}
- 
-/* 未解锁 */
 .locked{border:1.5px dashed var(--hair);padding:14px;text-align:center;background:transparent;box-shadow:var(--shadowS)}
 .locked .lb{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--accd)}
 .locked .ls{margin-top:4px;font-size:10px;color:var(--mut);letter-spacing:1px}
- 
-/* ═══ 手机端：满贴边框＋紧凑横带 ═══ */
 @media (max-width:760px){
   .page{padding:0}
   .frame{border-left:none;border-right:none;box-shadow:none}
   .topbar{padding:9px 12px}
   .sysline{display:none}
   .main{flex-direction:column;overflow-y:auto;display:block}
-  /* 头像区回归V3：小头像居左，名+称号贴右侧，标签/好感度整行在下 */
   .left{width:100%;flex:none;display:grid;overflow:visible;
     grid-template-columns:86px 1fr;grid-template-areas:"av name" "av pin" "tags tags" "affin affin";
     gap:8px 12px;align-items:center;
@@ -214,16 +181,16 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       <div class="title">◆ QIANLVZHOU // <em>段深泉</em></div>
       <span class="sysline">[ 人物档案已载入 · LOADED ]</span>
       <div class="menuwrap">
-        <button class="menubtn" id="menuBtn" aria-label="菜单">☰</button>
+        <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
         <div class="mdown" id="mDown">
           <a class="mi" href="./资料.html">◂ 返回名册</a>
-          <button class="mi" id="miNight">◐ 夜间模式</button>
+          <button class="mi" id="miNight" type="button">◐ 夜间模式</button>
         </div>
       </div>
     </div>
- 
+
     <div class="main">
-      <!-- 左列：头像+名签 -->
+      <!-- 左列 -->
       <div class="left">
         <div class="avwrap" id="avwrap"><img id="avimg" src="./头像/段深泉.jpg" alt="段深泉"></div>
         <div class="name">段深泉</div>
@@ -235,17 +202,17 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
         </div>
         <div class="affin">
           <div class="cap">AFFINITY // 好感度</div>
-          <div class="abar"><i data-lv="10"></i></div>
-          <div class="afoot"><b>10<span style="font-size:9px">/100</span></b><span>阶段 · 冷淡警惕</span></div>
+          <div class="abar"><i data-lv="77"></i></div>
+          <div class="afoot"><b>77<span style="font-size:9px">/100</span></b><span>阶段 · 命定之人</span></div>
         </div>
-        <div class="brief">【待填：一句话简介】</div>
+        <div class="brief">时衍天宫出身，业焰之国前任大神使。沉默寡言的半神级战力，记忆碎片化中，与玩家共同行动。</div>
         <div class="leftspace"></div>
         <div class="systail">QIANLVZHOU · DOSSIER FILE 001<br>档案密级 · Ⅲ级<br>数据来源 · 系统实时同步</div>
       </div>
- 
-      <!-- 右列：档案正文 -->
+
+      <!-- 右列 -->
       <div class="dossier">
- 
+
         <div class="sec" id="secBasic">
           <div class="sechead">BASIC INFO<span class="zh">基础信息</span></div>
           <div class="igrid">
@@ -256,19 +223,19 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">段深泉<small>DUAN SHENQUAN</small></span></div>
           </div>
         </div>
- 
+
         <div class="sec" id="secRecord">
           <div class="sechead">RECORD<span class="zh">档案记录</span></div>
           <div class="rec">
             <p>出身时衍天宫，姓名格式与命名传统均符合该国规范，姓氏“段”疑似对应时衍天宫四御家族之一的段家。有确切记录显示其曾长期居住于时衍天宫上界，时长约二十年，驻界期间行踪成谜，日常记载极少。约五年前，关于他的记录突然中断，此后第一次出现在有明确记载的地方，是业焰之国。</p>
             <p>进入业焰之国后不久，被卷入神使更迭事件。原大神使维里迪姆家族覆灭后，段深泉继任大神使之职，暂代神明治理业焰城。关于代行者时期的记忆已被格式化清除，仅存碎片。当前与玩家共同行动中，记忆恢复进度约 23%。</p>
             <p>性格沉默寡言，行事果决，不喜多言。战斗风格以金光法术为主，攻防兼备，兼具近战能力。对玩家表现出远超常人的容忍度与保护欲，原因不明，可能与“命定之人”绑定机制有关。</p>
-            <p><span class="rbar r3"></span>其为<span class="rbar" style="width:4em"></span>大神使，获得<span class="rbar" style="width:3em"></span><span class="rbar" style="width:8.5em"></span>半数<span class="rbar r2"></span>，继承权柄：<span class="rbar r2"></span>。</p>
+            <p><span class="rbar r3"></span>其为<span class="rbar r2"></span>大神使，获得<span class="rbar r2"></span>半数<span class="rbar r2"></span>，继承权柄：<span class="rbar r2"></span>。</p>
             <p class="rclose">该段记录完整性校验失败，剩余内容不予显示——</p>
             <div class="rnote">RECORD INCOMPLETE · 本页存在已抹除条目 · 随剧情推进开放</div>
           </div>
         </div>
- 
+
         <div class="sec" id="secAbility">
           <div class="sechead">ABILITY<span class="zh">能力评估</span></div>
           <div class="bars">
@@ -290,7 +257,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             </div>
           </div>
         </div>
- 
+
         <div class="sec" id="secRadar">
           <div class="sechead">RADAR<span class="zh">专精六维</span></div>
           <div class="golddiv"></div>
@@ -300,212 +267,243 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
           </div>
           <div class="radarfoot">基准满值 70（妖神/半神段），当前映射 71%。形状偏向“法术输出”方向，治疗净化明显凹陷，整体属于全能偏攻击型。</div>
         </div>
- 
+
         <div class="sec" id="secRel">
           <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
           <div class="rels">
-            <a class="rel" href="./祝焱.html"><span class="rn">祝焱</span><span class="rt">【待填：关系描述】</span></a>
-            <a class="rel" href="./瑞秋.html"><span class="rn">瑞秋</span><span class="rt">【待填：关系描述】</span></a>
-            <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">【待填：关系描述】</span></a>
+            <a class="rel" href="./祝焱.html"><span class="rn">祝焱</span><span class="rt">业焰火神 · 已封印 · 无直接交集</span></a>
+            <a class="rel" href="./瑞秋.html"><span class="rn">瑞秋</span><span class="rt">前任大神使 · 视段深泉为仇敌</span></a>
+            <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">烬影会首领 · 曾私下会面 · 意图不明</span></a>
           </div>
         </div>
- 
+
         <div class="sec" id="secNote">
           <div class="sechead">SYS NOTE<span class="zh">系统备注</span></div>
           <div class="golddiv"></div>
           <div class="sysnote">
             <div class="who">[ SYSTEM · 观测记录 ]</div>
-            <div class="txt">【待填：系统腔短评，一句】示例格式：<b>“目标对玩家的异常容忍度已记录在案，成因待查。”</b></div>
+            <div class="txt">目标对玩家的异常容忍度已记录在案，成因待查。记忆碎片化进度缓慢，建议持续观测。<b>命定之人羁绊值已突破阈值，双生道具激活条件已满足。</b></div>
           </div>
         </div>
- 
+
         <div class="sec" id="secLocked">
           <div class="locked">
             <div class="lb">▓▓▓ 数据未解锁 ▓▓▓</div>
             <div class="ls">CLASSIFIED · 该条目随剧情推进开放</div>
           </div>
         </div>
- 
+
       </div>
     </div>
   </div>
 </div>
- 
-<script src="./https://sfile.chatglm.cn/workspace/file/07/072d948f72.js" data-bgm="音乐1.mp3"></script>
+
 <script>
 (function(){
   'use strict';
-  /* ── 日夜：公共键 theme ── */
-  var K_THEME='theme';
+
+  /* ============ 主题 ============ */
+  var K_THEME = 'theme';
   function applyTheme(){
-    var dark=false;
-    try{var r=localStorage.getItem(K_THEME); if(r){var p=JSON.parse(r); if(p&&p.value==='dark')dark=true;}}catch(e){}
-    document.body.classList.toggle('night',dark);
-    try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'qlz:theme',night:dark},'*');}catch(e){}
+    var dark = false;
+    try{
+      var r = localStorage.getItem(K_THEME);
+      if(r){ var p = JSON.parse(r); if(p && p.value === 'dark') dark = true; }
+    }catch(e){}
+    document.body.classList.toggle('night', dark);
   }
   applyTheme();
- 
-  /* ── 头像容错 ── */
-  var img=document.getElementById('avimg');
-  img.onerror=function(){ document.getElementById('avwrap').classList.add('noimg'); };
-  if(img.complete&&img.naturalWidth===0){ img.onerror(); }
- 
-  /* ── 滚动触发：照罗修 reveal 机制（IntersectionObserver 优先，scroll 兜底） ── */
-  var abilityDone=false,radarDone=false,affinDone=false;
- 
+
+  /* ============ 头像 ============ */
+  var img = document.getElementById('avimg');
+  img.onerror = function(){ document.getElementById('avwrap').classList.add('noimg'); };
+  if(img.complete && img.naturalWidth === 0){ img.onerror(); }
+
+  /* ============ 动画触发 ============ */
+  var abilityDone = false, radarDone = false, affinDone = false;
+
   function growBars(){
-    if(abilityDone)return; abilityDone=true;
-    document.querySelectorAll('#secAbility .bfill').forEach(function(b,i){
-      setTimeout(function(){ b.style.width=b.dataset.lv+'%'; },120*i);
+    if(abilityDone) return; abilityDone = true;
+    document.querySelectorAll('#secAbility .bfill').forEach(function(b, i){
+      setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 120 * i);
     });
   }
   function growAffin(){
-    if(affinDone)return; affinDone=true;
-    var b=document.querySelector('.affin .abar i');
-    if(b)setTimeout(function(){ b.style.width=b.dataset.lv+'%'; },300);
+    if(affinDone) return; affinDone = true;
+    var b = document.querySelector('.affin .abar i');
+    if(b) setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 300);
   }
-  /* ── 雷达：照罗修 drawRadar 机制。网格#666灰虚线；图形墨绿；点落多边形顶点 ── */
-  var RADAR=[
-    {n:'墟元力操控',v:82,d:'精准且浑厚，能支撑高强度战斗与长时间消耗'},
-    {n:'蚀光抗性',v:60,d:'中等偏上，无污染但抗性并非专精领域'},
-    {n:'近战体术',v:80,d:'近身战斗能力强，攻防兼备，无明显短板'},
-    {n:'法术输出',v:100,d:'最高项，金光法术威力极强，可一击破开高阶屏障'},
-    {n:'治疗净化',v:20,d:'非专精领域，仅能处理基础伤势，无法净化蚀光'},
-    {n:'战术判断',v:75,d:'战斗决策稳健，经验丰富，但非顶尖战术型'}
+
+  /* ============ 雷达图 ============ */
+  var RADAR = [
+    {n:'墟元力操控', v:82, d:'精准且浑厚，能支撑高强度战斗与长时间消耗'},
+    {n:'蚀光抗性',   v:60, d:'中等偏上，无污染但抗性并非专精领域'},
+    {n:'近战体术',   v:80, d:'近身战斗能力强，攻防兼备，无明显短板'},
+    {n:'法术输出',   v:100, d:'最高项，金光法术威力极强，可一击破开高阶屏障'},
+    {n:'治疗净化',   v:20, d:'非专精领域，仅能处理基础伤势，无法净化蚀光'},
+    {n:'战术判断',   v:75, d:'战斗决策稳健，经验丰富，但非顶尖战术型'}
   ];
-  var GRIDMAX=100;
+  var GRIDMAX = 100;
+  var polyAnimRef = null, dotAnims = [], valAnims = [];
+
   function drawRadar(instant){
-    var svg=document.getElementById('radarSvg');
-    if(!svg||svg.dataset.drawn)return; svg.dataset.drawn='1';
-    var NS='http://www.w3.org/2000/svg';
-    function el(t,at){var e=document.createElementNS(NS,t);for(var k in at)e.setAttribute(k,at[k]);return e;}
-    var cx=0,cy=0,maxR=104;
-    var cs=getComputedStyle(document.body);
-    var kGreen=cs.getPropertyValue('--klein').trim()||'#014520';
-    var kGold=cs.getPropertyValue('--acc').trim()||'#E0C993';
-    var kGoldD=cs.getPropertyValue('--accd').trim()||'#8A6D1F';
-    var mut=cs.getPropertyValue('--mut').trim()||'#666';
-    var isNight=document.body.classList.contains('night');
-    var polyOp=isNight?'0.55':'0.4';
-    var angles=[0,60,120,180,240,300].map(function(d){return d*Math.PI/180;});
-    /* 灰色虚线环（照罗修 #666） */
-    [0.3,0.5,0.7,1.0].forEach(function(ratio){
-      var r=maxR*ratio;
-      var pts=angles.map(function(a){return (cx+r*Math.sin(a))+','+(cy-r*Math.cos(a));}).join(' ');
-      var p=el('polygon',{points:pts,fill:'none',stroke:mut,'stroke-width':ratio===1.0?'1.2':'0.8'});
-      if(ratio!==1.0)p.setAttribute('stroke-dasharray','4,4');
+    var svg = document.getElementById('radarSvg');
+    if(!svg) return;
+    if(svg.dataset.drawn && !instant) return;
+    svg.dataset.drawn = '1';
+    svg.innerHTML = '';
+    polyAnimRef = null; dotAnims = []; valAnims = [];
+
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(t, at){ var e = document.createElementNS(NS, t); for(var k in at) e.setAttribute(k, at[k]); return e; }
+
+    var cx = 0, cy = 0, maxR = 104;
+    var cs = getComputedStyle(document.body);
+    var kGold  = cs.getPropertyValue('--acc').trim()  || '#E0C88A';
+    var kGoldD = cs.getPropertyValue('--accd').trim() || '#8A6D1F';
+    var mut    = cs.getPropertyValue('--mut').trim()  || '#666';
+    var isNight = document.body.classList.contains('night');
+    var polyOp = isNight ? '0.55' : '0.4';
+    var angles = [0,60,120,180,240,300].map(function(d){ return d * Math.PI / 180; });
+
+    [0.3, 0.5, 0.7, 1.0].forEach(function(ratio){
+      var r = maxR * ratio;
+      var pts = angles.map(function(a){ return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a)); }).join(' ');
+      var p = el('polygon', { points: pts, fill:'none', stroke: mut, 'stroke-width': ratio === 1.0 ? '1.2' : '0.8' });
+      if(ratio !== 1.0) p.setAttribute('stroke-dasharray', '4,4');
       svg.appendChild(p);
     });
     angles.forEach(function(a){
-      var x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);
-      svg.appendChild(el('line',{x1:cx,y1:cy,x2:x,y2:y,stroke:mut,'stroke-width':'0.6','stroke-dasharray':'3,4'}));
+      var x = cx + maxR * Math.sin(a), y = cy - maxR * Math.cos(a);
+      svg.appendChild(el('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: mut, 'stroke-width': '0.6', 'stroke-dasharray': '3,4' }));
     });
-    /* 数据顶点（点落在多边形上） */
-    var verts=RADAR.map(function(d,i){
-      var r=(d.v/GRIDMAX)*maxR,a=angles[i];
-      return {x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),v:d.v,n:d.n};
+
+    var verts = RADAR.map(function(d, i){
+      var r = (d.v / GRIDMAX) * maxR, a = angles[i];
+      return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a), v: d.v, n: d.n };
     });
-    var target=verts.map(function(v){return v.x+','+v.y;}).join(' ');
-    var center=angles.map(function(){return cx+','+cy;}).join(' ');
-    /* 金色雷达：沙金面+深金描边；instant=true 时直出最终形态（切主题重绘用） */
+    var target = verts.map(function(v){ return v.x + ',' + v.y; }).join(' ');
+    var center = angles.map(function(){ return cx + ',' + cy; }).join(' ');
+
     var poly;
     if(instant){
-      poly=el('polygon',{points:target,fill:kGold,'fill-opacity':polyOp,stroke:kGoldD,'stroke-width':'2.5','stroke-linejoin':'round'});
+      poly = el('polygon', { points: target, fill: kGold, 'fill-opacity': polyOp, stroke: kGoldD, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
       svg.appendChild(poly);
-    }else{
-      poly=el('polygon',{points:center,fill:kGold,'fill-opacity':polyOp,stroke:kGoldD,'stroke-width':'2.5','stroke-linejoin':'round'});
-      var anim=el('animate',{attributeName:'points',from:center,to:target,dur:'1.2s',fill:'freeze',calcMode:'spline',keySplines:'0.25 0.1 0.25 1',begin:'indefinite'});
-      poly.appendChild(anim);svg.appendChild(poly);polyAnimRef=anim;
+    } else {
+      poly = el('polygon', { points: center, fill: kGold, 'fill-opacity': polyOp, stroke: kGoldD, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+      var anim = el('animate', { attributeName:'points', from: center, to: target, dur:'1.2s', fill:'freeze', calcMode:'spline', keySplines:'0.25 0.1 0.25 1', begin:'indefinite' });
+      poly.appendChild(anim);
+      svg.appendChild(poly);
+      polyAnimRef = anim;
     }
-    verts.forEach(function(v,i){
-      var c;
+
+    verts.forEach(function(v, i){
+      var a = angles[i];
       if(instant){
-        c=el('circle',{cx:v.x,cy:v.y,r:'2.5',fill:kGoldD,opacity:'1'});
-        svg.appendChild(c);
-      }else{
-        c=el('circle',{cx:v.x,cy:v.y,r:'2.5',fill:kGoldD,opacity:'0'});
-        var cf=el('animate',{attributeName:'opacity',from:'0',to:'1',dur:'0.3s',begin:'indefinite',fill:'freeze'});
-        c.appendChild(cf);svg.appendChild(c);dotAnims.push(cf);
+        svg.appendChild(el('circle', { cx: v.x, cy: v.y, r: '2.5', fill: kGoldD, opacity: '1' }));
+      } else {
+        var c = el('circle', { cx: v.x, cy: v.y, r: '2.5', fill: kGoldD, opacity: '0' });
+        var cf = el('animate', { attributeName:'opacity', from:'0', to:'1', dur:'0.3s', begin:'indefinite', fill:'freeze' });
+        c.appendChild(cf); svg.appendChild(c); dotAnims.push(cf);
       }
-      var a=angles[i],lx=cx+(maxR+18)*Math.sin(a),ly=cy-(maxR+18)*Math.cos(a);
-      var t=el('text',{x:lx,y:ly,fill:mut,'font-size':'10','font-family':'Courier New,monospace','text-anchor':'middle','dominant-baseline':'central'});
-      t.textContent=v.n;svg.appendChild(t);
+      var lx = cx + (maxR + 18) * Math.sin(a), ly = cy - (maxR + 18) * Math.cos(a);
+      var t = el('text', { x: lx, y: ly, fill: mut, 'font-size':'10', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central' });
+      t.textContent = v.n; svg.appendChild(t);
       if(instant){
-        var t2i=el('text',{x:lx,y:ly+13,fill:kGoldD,'font-size':'9','font-weight':'bold','font-family':'Courier New,monospace','text-anchor':'middle','dominant-baseline':'central',opacity:'1'});
-        t2i.textContent=v.v;svg.appendChild(t2i);
-      }else{
-        var t2=el('text',{x:lx,y:ly+13,fill:kGoldD,'font-size':'9','font-weight':'bold','font-family':'Courier New,monospace','text-anchor':'middle','dominant-baseline':'central',opacity:'0'});
-        var tf=el('animate',{attributeName:'opacity',from:'0',to:'1',dur:'0.3s',begin:'indefinite',fill:'freeze'});
-        t2.appendChild(tf);t2.textContent=v.v;svg.appendChild(t2);valAnims.push(tf);
+        var t2i = el('text', { x: lx, y: ly + 13, fill: kGoldD, 'font-size':'9', 'font-weight':'bold', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central', opacity:'1' });
+        t2i.textContent = v.v; svg.appendChild(t2i);
+      } else {
+        var t2 = el('text', { x: lx, y: ly + 13, fill: kGoldD, 'font-size':'9', 'font-weight':'bold', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central', opacity:'0' });
+        var tf = el('animate', { attributeName:'opacity', from:'0', to:'1', dur:'0.3s', begin:'indefinite', fill:'freeze' });
+        t2.appendChild(tf); t2.textContent = v.v; svg.appendChild(t2); valAnims.push(tf);
       }
     });
   }
-  var polyAnimRef=null,dotAnims=[],valAnims=[];
+
   function growRadar(){
-    if(radarDone)return; radarDone=true; drawRadar();
+    if(radarDone) return; radarDone = true;
+    drawRadar(false);
     requestAnimationFrame(function(){
-      try{if(polyAnimRef)polyAnimRef.beginElement();}catch(e){}
-      setTimeout(function(){dotAnims.forEach(function(a){try{a.beginElement();}catch(e){}});},800);
-      setTimeout(function(){valAnims.forEach(function(a){try{a.beginElement();}catch(e){}});},1000);
+      try{ if(polyAnimRef) polyAnimRef.beginElement(); }catch(e){}
+      setTimeout(function(){ dotAnims.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 800);
+      setTimeout(function(){ valAnims.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 1000);
     });
   }
-  /* ── 雷达注释：逐维说明（随主题变色无需重绘，纯文字） ── */
-  var notes=document.getElementById('radarNotes');
+
+  /* ============ 雷达注释 ============ */
+  var notes = document.getElementById('radarNotes');
   if(notes){
-    notes.innerHTML=RADAR.map(function(d){
-      return '<div class="rrow"><div class="rn1">'+d.n+'<b>'+d.v+'</b></div><div class="rn2">'+d.d+'</div></div>';
+    notes.innerHTML = RADAR.map(function(d){
+      return '<div class="rrow"><div class="rn1">' + d.n + '<b>' + d.v + '</b></div><div class="rn2">' + d.d + '</div></div>';
     }).join('');
   }
- 
+
+  /* ============ 滚动触发 ============ */
   function check(){
-    var vh=window.innerHeight;
-    ['secAbility','secRadar','secRecord'].forEach(function(id){
-      var s=document.getElementById(id);
-      if(s&&s.getBoundingClientRect().top<vh*0.9){
-        if(id==='secAbility')growBars();
-        if(id==='secRadar')growRadar();
+    var vh = window.innerHeight;
+    ['secAbility', 'secRadar'].forEach(function(id){
+      var s = document.getElementById(id);
+      if(s && s.getBoundingClientRect().top < vh * 0.9){
+        if(id === 'secAbility') growBars();
+        if(id === 'secRadar')   growRadar();
       }
     });
-    var af=document.querySelector('.affin');
-    if(af&&af.getBoundingClientRect().top<vh*0.95)growAffin();
+    var af = document.querySelector('.affin');
+    if(af && af.getBoundingClientRect().top < vh * 0.95) growAffin();
   }
   if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){
+    var io = new IntersectionObserver(function(es){
       es.forEach(function(e){
-        if(!e.isIntersecting)return;
-        if(e.target.id==='secAbility')growBars();
-        if(e.target.id==='secRadar')growRadar();
-        if(e.target.classList.contains('affin'))growAffin();
+        if(!e.isIntersecting) return;
+        if(e.target.id === 'secAbility') growBars();
+        if(e.target.id === 'secRadar')   growRadar();
+        if(e.target.classList.contains('affin')) growAffin();
         io.unobserve(e.target);
       });
-    },{threshold:0.25});
-    ['secAbility','secRadar'].forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
-    var af=document.querySelector('.affin');if(af)io.observe(af);
-    /* 兜底：视野初始就盖住时手动查一次 */
-    setTimeout(check,300);
+    }, { threshold: 0.25 });
+    ['secAbility', 'secRadar'].forEach(function(id){ var s = document.getElementById(id); if(s) io.observe(s); });
+    var af = document.querySelector('.affin'); if(af) io.observe(af);
+    setTimeout(check, 300);
   }
-  window.addEventListener('scroll',check,{passive:true});
-  window.addEventListener('resize',check);
- 
-  /* ── ☰ 菜单：返回 + 夜间切换 ── */
-  var mBtn=document.getElementById('menuBtn'),mDown=document.getElementById('mDown'),mNight=document.getElementById('miNight');
+  window.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check);
+
+  /* ============ 菜单 + 夜间切换 ============ */
+  var mBtn   = document.getElementById('menuBtn');
+  var mDown  = document.getElementById('mDown');
+  var mNight = document.getElementById('miNight');
+
   function syncNightLabel(){
-    if(mNight)mNight.textContent=document.body.classList.contains('night')?'◐ 日间模式':'◐ 夜间模式';
+    if(mNight) mNight.textContent = document.body.classList.contains('night') ? '◐ 日间模式' : '◐ 夜间模式';
   }
-  if(mBtn&&mDown){
-    mBtn.addEventListener('click',function(e){ e.stopPropagation(); mDown.classList.toggle('open'); });
-    document.addEventListener('click',function(e){ if(!mDown.contains(e.target))mDown.classList.remove('open'); });
-  }
-  if(mNight){
-    mNight.addEventListener('click',function(){
-      var dark=!document.body.classList.contains('night');
-      try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
-      applyTheme(); syncNightLabel();
-      /* 雷达已画出时按新主题重绘取色 */
-      var svg=document.getElementById('radarSvg');
-      if(svg&&radarDone){ delete svg.dataset.drawn; svg.innerHTML=''; drawRadar(true); }
+
+  if(mBtn && mDown){
+    mBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      mDown.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e){
+      if(mDown && !mDown.contains(e.target)) mDown.classList.remove('open');
     });
   }
+
+  if(mNight){
+    mNight.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var dark = !document.body.classList.contains('night');
+      try{ localStorage.setItem(K_THEME, JSON.stringify({ value: dark ? 'dark' : 'light' })); }catch(err){}
+      document.body.classList.toggle('night', dark);
+      syncNightLabel();
+      /* 重绘雷达以更新主题色 */
+      if(radarDone){
+        drawRadar(true);
+      }
+      /* 关闭菜单 */
+      if(mDown) mDown.classList.remove('open');
+    });
+  }
+
   syncNightLabel();
 })();
 </script>
