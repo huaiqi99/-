@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>千律州 · 段深泉</title>
 <style>
-/* ═══ 角色资料卡 · 段深泉（墨蓝×暖金版） ═══ */
+/* ═══ 角色资料卡 · 段深泉（墨蓝×暖金版） ═══
+   2026-10-19 两处微调（其余为TA原版逐字保留）：
+   ① .igrid 加淡金衬底（同系统备注浓度）；
+   ② .rel flex-basis 改 25% → 关系卡一排最多四张。 */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#1B1F1C;
   --klein:#2A3A5C;                /* 墨蓝结构色 */
@@ -86,7 +89,9 @@ body.night .affin{background:rgba(244,234,197,.14)}
 .sechead{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);
   display:inline-block;padding:3px 10px;margin-bottom:10px;box-shadow:var(--shadowS)}
 .sechead .zh{font-family:var(--serif);font-size:11px;letter-spacing:2px;margin-left:6px}
-.igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--klein);box-shadow:var(--shadowS)}
+.igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--klein);box-shadow:var(--shadowS);
+  background:rgba(224,200,138,.12)}   /* ① 基础信息淡金衬底（同系统备注浓度） */
+body.night .igrid{background:rgba(244,234,197,.14)}
 .cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--hair);min-width:0}
 .cell:nth-child(odd){border-right:1.5px dashed var(--hair);padding-right:14px}
 .cell:nth-child(even){padding-left:14px}
@@ -126,7 +131,7 @@ body.night .golddiv{border-top-color:rgba(166,146,63,.5)}
 .rn2{font-size:11px;color:var(--mut);margin-top:1px;line-height:1.5}
 .radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);font-size:11px;color:var(--mut);line-height:1.7}
 .rels{display:flex;flex-wrap:wrap;gap:10px}
-.rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1;max-width:240px;
+.rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1 1 calc(25% - 10px);max-width:240px;   /* ② flex-basis 25% → 一排最多四张 */
   border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:9px 12px;text-decoration:none;background:var(--card);box-shadow:3px 3px 0 rgba(42,58,92,.18);transition:transform .18s,box-shadow .18s,background .18s}
 .rel:hover{background:rgba(224,200,138,.15);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(42,58,92,.18)}
 .rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(42,58,92,.18)}
@@ -188,7 +193,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
         </div>
       </div>
     </div>
-
+ 
     <div class="main">
       <!-- 左列 -->
       <div class="left">
@@ -209,10 +214,10 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
         <div class="leftspace"></div>
         <div class="systail">QIANLVZHOU · DOSSIER FILE 001<br>档案密级 · Ⅲ级<br>数据来源 · 系统实时同步</div>
       </div>
-
+ 
       <!-- 右列 -->
       <div class="dossier">
-
+ 
         <div class="sec" id="secBasic">
           <div class="sechead">BASIC INFO<span class="zh">基础信息</span></div>
           <div class="igrid">
@@ -223,7 +228,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">段深泉<small>DUAN SHENQUAN</small></span></div>
           </div>
         </div>
-
+ 
         <div class="sec" id="secRecord">
           <div class="sechead">RECORD<span class="zh">档案记录</span></div>
           <div class="rec">
@@ -235,7 +240,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             <div class="rnote">RECORD INCOMPLETE · 本页存在已抹除条目 · 随剧情推进开放</div>
           </div>
         </div>
-
+ 
         <div class="sec" id="secAbility">
           <div class="sechead">ABILITY<span class="zh">能力评估</span></div>
           <div class="bars">
@@ -257,7 +262,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             </div>
           </div>
         </div>
-
+ 
         <div class="sec" id="secRadar">
           <div class="sechead">RADAR<span class="zh">专精六维</span></div>
           <div class="golddiv"></div>
@@ -267,7 +272,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
           </div>
           <div class="radarfoot">基准满值 70（妖神/半神段），当前映射 71%。形状偏向“法术输出”方向，治疗净化明显凹陷，整体属于全能偏攻击型。</div>
         </div>
-
+ 
         <div class="sec" id="secRel">
           <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
           <div class="rels">
@@ -276,7 +281,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">烬影会首领 · 曾私下会面 · 意图不明</span></a>
           </div>
         </div>
-
+ 
         <div class="sec" id="secNote">
           <div class="sechead">SYS NOTE<span class="zh">系统备注</span></div>
           <div class="golddiv"></div>
@@ -285,23 +290,23 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
             <div class="txt">目标对玩家的异常容忍度已记录在案，成因待查。记忆碎片化进度缓慢，建议持续观测。<b>命定之人羁绊值已突破阈值，双生道具激活条件已满足。</b></div>
           </div>
         </div>
-
+ 
         <div class="sec" id="secLocked">
           <div class="locked">
             <div class="lb">▓▓▓ 数据未解锁 ▓▓▓</div>
             <div class="ls">CLASSIFIED · 该条目随剧情推进开放</div>
           </div>
         </div>
-
+ 
       </div>
     </div>
   </div>
 </div>
-
+ 
 <script>
 (function(){
   'use strict';
-
+ 
   /* ============ 主题 ============ */
   var K_THEME = 'theme';
   function applyTheme(){
@@ -313,15 +318,15 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
     document.body.classList.toggle('night', dark);
   }
   applyTheme();
-
+ 
   /* ============ 头像 ============ */
   var img = document.getElementById('avimg');
   img.onerror = function(){ document.getElementById('avwrap').classList.add('noimg'); };
   if(img.complete && img.naturalWidth === 0){ img.onerror(); }
-
+ 
   /* ============ 动画触发 ============ */
   var abilityDone = false, radarDone = false, affinDone = false;
-
+ 
   function growBars(){
     if(abilityDone) return; abilityDone = true;
     document.querySelectorAll('#secAbility .bfill').forEach(function(b, i){
@@ -333,7 +338,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
     var b = document.querySelector('.affin .abar i');
     if(b) setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 300);
   }
-
+ 
   /* ============ 雷达图 ============ */
   var RADAR = [
     {n:'墟元力操控', v:82, d:'精准且浑厚，能支撑高强度战斗与长时间消耗'},
@@ -345,7 +350,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
   ];
   var GRIDMAX = 100;
   var polyAnimRef = null, dotAnims = [], valAnims = [];
-
+ 
   function drawRadar(instant){
     var svg = document.getElementById('radarSvg');
     if(!svg) return;
@@ -353,10 +358,10 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
     svg.dataset.drawn = '1';
     svg.innerHTML = '';
     polyAnimRef = null; dotAnims = []; valAnims = [];
-
+ 
     var NS = 'http://www.w3.org/2000/svg';
     function el(t, at){ var e = document.createElementNS(NS, t); for(var k in at) e.setAttribute(k, at[k]); return e; }
-
+ 
     var cx = 0, cy = 0, maxR = 104;
     var cs = getComputedStyle(document.body);
     var kGold  = cs.getPropertyValue('--acc').trim()  || '#E0C88A';
@@ -365,7 +370,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
     var isNight = document.body.classList.contains('night');
     var polyOp = isNight ? '0.55' : '0.4';
     var angles = [0,60,120,180,240,300].map(function(d){ return d * Math.PI / 180; });
-
+ 
     [0.3, 0.5, 0.7, 1.0].forEach(function(ratio){
       var r = maxR * ratio;
       var pts = angles.map(function(a){ return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a)); }).join(' ');
@@ -377,14 +382,14 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       var x = cx + maxR * Math.sin(a), y = cy - maxR * Math.cos(a);
       svg.appendChild(el('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: mut, 'stroke-width': '0.6', 'stroke-dasharray': '3,4' }));
     });
-
+ 
     var verts = RADAR.map(function(d, i){
       var r = (d.v / GRIDMAX) * maxR, a = angles[i];
       return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a), v: d.v, n: d.n };
     });
     var target = verts.map(function(v){ return v.x + ',' + v.y; }).join(' ');
     var center = angles.map(function(){ return cx + ',' + cy; }).join(' ');
-
+ 
     var poly;
     if(instant){
       poly = el('polygon', { points: target, fill: kGold, 'fill-opacity': polyOp, stroke: kGoldD, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
@@ -396,7 +401,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       svg.appendChild(poly);
       polyAnimRef = anim;
     }
-
+ 
     verts.forEach(function(v, i){
       var a = angles[i];
       if(instant){
@@ -419,7 +424,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       }
     });
   }
-
+ 
   function growRadar(){
     if(radarDone) return; radarDone = true;
     drawRadar(false);
@@ -429,7 +434,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       setTimeout(function(){ valAnims.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 1000);
     });
   }
-
+ 
   /* ============ 雷达注释 ============ */
   var notes = document.getElementById('radarNotes');
   if(notes){
@@ -437,7 +442,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       return '<div class="rrow"><div class="rn1">' + d.n + '<b>' + d.v + '</b></div><div class="rn2">' + d.d + '</div></div>';
     }).join('');
   }
-
+ 
   /* ============ 滚动触发 ============ */
   function check(){
     var vh = window.innerHeight;
@@ -467,16 +472,16 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
   }
   window.addEventListener('scroll', check, { passive: true });
   window.addEventListener('resize', check);
-
+ 
   /* ============ 菜单 + 夜间切换 ============ */
   var mBtn   = document.getElementById('menuBtn');
   var mDown  = document.getElementById('mDown');
   var mNight = document.getElementById('miNight');
-
+ 
   function syncNightLabel(){
     if(mNight) mNight.textContent = document.body.classList.contains('night') ? '◐ 日间模式' : '◐ 夜间模式';
   }
-
+ 
   if(mBtn && mDown){
     mBtn.addEventListener('click', function(e){
       e.stopPropagation();
@@ -486,7 +491,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       if(mDown && !mDown.contains(e.target)) mDown.classList.remove('open');
     });
   }
-
+ 
   if(mNight){
     mNight.addEventListener('click', function(e){
       e.preventDefault();
@@ -503,7 +508,7 @@ body.night .sysnote{background:rgba(244,234,197,.14)}
       if(mDown) mDown.classList.remove('open');
     });
   }
-
+ 
   syncNightLabel();
 })();
 </script>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 怀榆</title>
+<style>
+/* ═══ 角色资料卡 · 怀榆（V4） ═══
+   色彩逻辑=DeepSeek版「曜石黑×琥珀金」：日间象牙白底+黑灰结构+琥珀金强调；
+   夜间=深暖灰底(非纯黑)+米白纸面+深灰结构+压暗金。
+   排版UI=本版：双面档案（左列SYS PANEL切换按钮）、虚线行面板页、段深泉按钮卡关系网。 */
+:root{
+  --bg:#F6F5F1;--card:#FCFCFA;--ink:#1B1F1C;--klein:#2B2C30;
+  --acc:#D49A34;
+  --accd:#8A5D13;
+  --gold:#D49A34;
+  --goldtxt:#8A5D13;
+  --mut:#59595E;--hair:rgba(43,44,48,.55);
+  --gc:rgba(43,44,48,.08);--gc2:rgba(43,44,48,.05);
+  --shadow:4px 4px 0 rgba(43,44,48,.15);--shadowS:4px 4px 0 rgba(43,44,48,.15);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#3B3835;--card:#EFECE3;--ink:#1B1F1C;--klein:#3D3C42;
+  --acc:#C58A28;--accd:#754D0B;
+  --gold:#C58A28;--goldtxt:#754D0B;
+  --mut:#5B5A5E;--hair:rgba(61,60,66,.35);
+  --gc:rgba(235,226,205,.09);--gc2:rgba(235,226,205,.05);
+  --shadow:4px 4px 0 rgba(0,0,0,.4);--shadowS:4px 4px 0 rgba(0,0,0,.4);
+}
+body.night .rbar{outline:1px solid #D8B45A;outline-offset:-1px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);color:var(--ink);min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  repeating-linear-gradient(0deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
+  repeating-linear-gradient(90deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
+  repeating-linear-gradient(0deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
+  repeating-linear-gradient(90deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
+  var(--bg)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(135deg,rgba(43,44,48,.03) 0%,rgba(43,44,48,.01) 38%,rgba(212,154,52,.08) 100%)}
+body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.08) 40%,rgba(197,138,40,.05) 100%)}
+ 
+.page{height:100vh;height:100dvh;padding:14px;display:flex;flex-direction:column;position:relative;z-index:1}
+.frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;
+  background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);overflow:hidden}
+.topbar{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1.5px solid var(--klein)}
+.chip{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);padding:3px 9px}
+.title{font-size:15px;letter-spacing:1px;color:var(--klein);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title em{font-style:normal;color:var(--accd);font-weight:bold}
+.sysline{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--mut);white-space:nowrap}
+.menuwrap{flex:none;position:relative}
+.menubtn{flex:none;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--klein);background:transparent;
+  border:1.5px solid var(--klein);padding:4px 11px;cursor:pointer;line-height:1.4;box-shadow:var(--shadowS);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.menubtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(43,44,48,.15)}
+.menubtn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(43,44,48,.15)}
+.mdown{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:170px;display:none;
+  background:var(--card);border:2px solid var(--klein);box-shadow:5px 5px 0 rgba(43,44,48,.15)}
+.mdown.open{display:block}
+.mdown .mi{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1.5px dashed var(--hair);
+  font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--ink);padding:11px 14px;cursor:pointer;text-decoration:none}
+.mdown .mi:last-child{border-bottom:none}
+.mdown .mi:hover{color:var(--klein);background:rgba(212,154,52,.1)}
+body.night .mdown .mi:hover{background:rgba(197,138,40,.15)}
+ 
+.main{flex:1;min-height:0;display:flex}
+/* ═══ 左列 ═══ */
+.left{flex:none;width:230px;border-right:1.5px dashed var(--hair);padding:18px 16px;display:flex;flex-direction:column;gap:0;overflow-y:auto}
+.avwrap{position:relative;width:100%;aspect-ratio:1/1;border:1.5px solid var(--klein);background:var(--bg);overflow:hidden}
+.avwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.avwrap.noimg::after{content:'NO IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--mut)}
+.name{margin-top:12px;font-size:24px;font-weight:bold;letter-spacing:4px;color:var(--ink)}
+.pin{margin-top:4px;font-size:12px;letter-spacing:2px;color:var(--accd);font-weight:bold}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 9px;border:1.5px solid var(--klein);color:var(--ink);box-shadow:var(--shadowS)}
+.tag.hot{background:var(--klein);color:var(--acc);border-color:var(--klein)}
+.tag.gd{border-color:var(--goldtxt);color:var(--goldtxt)}
+/* 玩家面板切换按钮（原好感度位置） */
+.ptab{margin-top:14px;display:block;width:100%;font-family:var(--mono);font-size:11px;letter-spacing:2px;
+  color:var(--klein);background:rgba(212,154,52,.08);border:1.5px solid var(--klein);padding:10px 11px;
+  cursor:pointer;text-align:left;box-shadow:var(--shadowS);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+body.night .ptab{background:rgba(197,138,40,.1)}
+body.night .ptab:hover{background:var(--klein);color:var(--card)}
+.ptab:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(43,44,48,.15)}
+.ptab:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(43,44,48,.15)}
+.ptab .cap{display:block;font-size:9px;letter-spacing:2px;color:var(--goldtxt);margin-bottom:2px}
+.ptab:hover .cap{color:var(--card)}
+.brief{margin-top:12px;font-size:12px;line-height:1.8;color:var(--mut);border-top:1.5px dashed var(--hair);padding-top:10px}
+.leftspace{flex:1}
+.systail{flex:none;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--mut);line-height:1.9;text-align:left}
+ 
+/* ═══ 右列 ═══ */
+.dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px}
+.ppage{display:none}
+.ppage.on{display:block}
+.sec{margin-bottom:22px}
+.sechead{font-family:var(--serif);font-size:12px;font-weight:bold;letter-spacing:3px;color:var(--card);background:var(--klein);
+  display:inline-block;padding:4px 12px;margin-bottom:10px;box-shadow:var(--shadowS)}
+.sechead .en{font-family:var(--mono);font-size:8px;font-weight:normal;letter-spacing:2px;opacity:.72;margin-left:8px}
+.sechead.gd{background:var(--goldtxt)}
+ 
+/* 基础信息 */
+.igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--klein);box-shadow:var(--shadowS);
+  background:rgba(212,154,52,.06)}
+body.night .igrid{background:rgba(197,138,40,.07)}
+.cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--hair);min-width:0}
+.cell:nth-child(odd){border-right:1.5px dashed var(--hair);padding-right:14px}
+.cell:nth-child(even){padding-left:14px}
+.il{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--mut);width:58px}
+.iv{font-size:13px;color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.iv b{color:var(--accd)}
+.iv small{font-family:var(--mono);font-size:9px;color:var(--mut);letter-spacing:1px;margin-left:6px}
+ 
+/* 档案记录 */
+.rec{border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);box-shadow:var(--shadow)}
+body.night .rec{background:var(--card)}
+.rec p{font-size:13px;line-height:2;color:var(--ink);text-align:justify;text-indent:2em}
+.rec p+p{margin-top:8px}
+.rbar{display:inline-block;height:.85em;vertical-align:text-bottom;background:var(--acc);margin:0 1px}
+.r1{width:.9em}.r2{width:2em}.r3{width:3.4em}.r4{width:5em}
+.rnote{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);
+  font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd);text-align:right}
+.rclose{margin-top:10px;font-size:12px;color:var(--accd);letter-spacing:.5px}
+ 
+/* 能力评估 */
+.bars{border:1.5px solid var(--klein);padding:12px 14px;background:var(--card);box-shadow:var(--shadowS)}
+.brow{padding:8px 0;border-bottom:1.5px dashed var(--hair)}
+.brow:last-child{border-bottom:none;padding-bottom:0}
+.brow:first-child{padding-top:0}
+.btop{display:flex;align-items:baseline;gap:10px}
+.bn{flex:none;font-size:12px;font-weight:bold;color:var(--ink);width:88px}
+.btrack{flex:1;height:9px;border:1.5px solid var(--klein);background:var(--card)}
+.bfill{display:block;height:100%;width:0;background:var(--acc);transition:width 1.1s ease}
+.bfill.gd{background:var(--gold)}
+.bnum{flex:none;font-family:var(--mono);font-size:11px;color:var(--accd);width:52px;text-align:right}
+.bdesc{margin-top:4px;padding-left:98px;font-size:11px;color:var(--mut);line-height:1.6}
+ 
+/* 雷达 */
+.golddiv{height:0;border-top:2px dashed rgba(138,93,19,.45);margin-bottom:14px}
+body.night .golddiv{border-top-color:rgba(117,77,11,.4)}
+.radarbox{display:flex;gap:18px;border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);align-items:flex-start;box-shadow:var(--shadow)}
+.radarbox svg{flex:none}
+.rnotes{flex:1;min-width:0}
+.rrow{padding:5px 0;border-bottom:1.5px dashed var(--hair)}
+.rrow:last-child{border-bottom:none}
+.rn1{font-size:12px;font-weight:bold;color:var(--ink)}
+.rn1 b{float:right;font-family:var(--mono);font-size:11px;color:var(--accd)}
+.rn2{font-size:11px;color:var(--mut);margin-top:1px;line-height:1.5}
+.radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);font-size:11px;color:var(--mut);line-height:1.7}
+ 
+/* 关系网：尺寸照段深泉逐字（min150/max240/flex1+左5px色条），一行最多四张自动换行 */
+.rels{display:flex;flex-wrap:wrap;gap:10px}
+.rel{flex:1 1 calc(25% - 10px);min-width:150px;max-width:240px;display:flex;flex-direction:column;gap:3px;text-decoration:none;
+  border:1.5px solid var(--klein);border-left:5px solid var(--klein);background:var(--card);padding:9px 12px;
+  box-shadow:3px 3px 0 rgba(43,44,48,.15);transition:transform .18s,box-shadow .18s,background .18s}
+.rel:hover{background:rgba(212,154,52,.12);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(43,44,48,.15)}
+.rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(43,44,48,.15)}
+body.night .rel:hover{background:rgba(197,138,40,.12)}
+.rel .rn{font-size:13px;font-weight:bold;color:var(--ink)}
+.rel .rt{font-size:11px;color:var(--mut);line-height:1.5}
+ 
+/* 系统备注 */
+.sysnote{border:1.5px solid var(--klein);border-left:5px solid var(--acc);padding:12px 14px;background:rgba(212,154,52,.06);box-shadow:var(--shadowS)}
+body.night .sysnote{background:rgba(197,138,40,.08)}
+.sysnote .who{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--goldtxt);margin-bottom:5px}
+.sysnote .txt{font-size:12px;line-height:1.9;color:var(--accd)}
+.sysnote .txt b{color:var(--goldtxt)}
+ 
+/* 未解锁 */
+.locked{border:1.5px dashed var(--hair);padding:14px;text-align:center;background:transparent;box-shadow:var(--shadowS)}
+.locked .lb{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--accd)}
+.locked .ls{margin-top:4px;font-size:10px;color:var(--mut);letter-spacing:1px}
+ 
+/* ═══ 玩家面板页：等级横幅＋左金条版块＋进度条，混排不做色块堆叠 ═══ */
+.lvrow{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:10px 2px 14px;border-bottom:1.5px dashed var(--hair)}
+.lvrow .lvbig{font-size:26px;font-weight:bold;color:var(--accd);letter-spacing:1px}
+.lvrow .lvtag{font-size:11px;letter-spacing:1px;color:var(--klein);border:1px solid var(--klein);padding:2px 8px}
+.lvrow .lvsys{margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--mut)}
+.bglock{border:1.5px dashed var(--hair);border-left:5px solid var(--acc);padding:10px 14px;margin-top:12px;background:transparent}
+.bglock .bl-c{display:block;font-size:12px;font-weight:bold;color:var(--accd);margin-bottom:4px}
+.bglock .bl-d{display:block;font-size:11.5px;line-height:2;color:var(--mut)}
+.skgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sk{border-top:1.5px solid var(--klein);border-left:5px solid var(--gold);padding:10px 14px 12px;background:rgba(212,154,52,.04);transition:transform .18s,box-shadow .18s}
+.sk:hover{transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(43,44,48,.15)}
+.sk .skno{display:block;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--goldtxt)}
+.sk .skname{display:block;font-size:17px;font-weight:bold;color:var(--ink);margin-top:3px}
+.sk .skname .sklv{font-family:var(--mono);font-size:10px;font-weight:normal;color:var(--accd);margin-left:7px;letter-spacing:1px}
+.sk .sktype{display:inline-block;font-size:10px;letter-spacing:1px;color:var(--klein);border:1px dashed var(--klein);padding:1px 8px;margin:6px 0 8px}
+.sk p{font-size:11.5px;line-height:1.95;color:var(--mut)}
+.armrow{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:10px 2px 12px;border-bottom:1.5px dashed var(--hair)}
+.armrow .armname{font-size:16px;font-weight:bold;color:var(--ink)}
+.armrow .armlv{font-family:var(--mono);font-size:10px;font-weight:normal;color:var(--accd);margin-left:6px;letter-spacing:1px}
+.armrow .armstat{font-size:12px;color:var(--mut)}
+.armrow .armstat b{color:var(--accd);font-family:var(--mono)}
+.armrow .trait{flex-basis:100%;font-size:11px;line-height:1.8;color:var(--mut);border-top:1.5px dashed var(--hair);padding-top:8px}
+.armrow .trait b{color:var(--accd)}
+.quest{border-left:5px solid var(--acc);padding:12px 16px;font-size:15px;font-weight:bold;color:var(--ink);letter-spacing:1px;background:rgba(212,154,52,.06)}
+.bagchips{display:flex;flex-wrap:wrap;gap:8px}
+.bagchips span{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--ink);
+  border:1.5px dashed var(--goldtxt);padding:4px 10px;background:var(--card)}
+.expbars{display:flex;flex-direction:column;gap:10px;flex:none;min-width:0}
+.exp{display:flex;align-items:center;gap:10px}
+.exp .en{flex:none;font-size:12px;font-weight:bold;width:80px}
+.exp .etrack{flex:1;height:9px;border:1.5px solid var(--klein);background:var(--card)}
+.exp .etrack i{display:block;height:100%;width:0;background:var(--gold);transition:width 1s ease}
+.exp .enum{flex:none;font-family:var(--mono);font-size:11px;color:var(--accd);width:48px;text-align:right}
+.exp .enum.mut{color:var(--mut);letter-spacing:1px}
+.pfoot{margin-top:12px;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);text-align:right}
+body.night .sk{background:rgba(197,138,40,.07)}
+body.night .quest{background:rgba(197,138,40,.08)}
+ 
+/* ═══ 手机端 ═══ */
+@media (max-width:760px){
+  .page{padding:0}
+  .frame{border-left:none;border-right:none;box-shadow:none}
+  .topbar{padding:9px 12px}
+  .sysline{display:none}
+  .main{flex-direction:column;overflow-y:auto;display:block}
+  .left{width:100%;flex:none;display:grid;overflow:visible;
+    grid-template-columns:86px 1fr;grid-template-areas:"av name" "av pin" "tags tags" "ptab ptab";
+    gap:8px 12px;align-items:center;
+    border-right:none;border-bottom:1.5px dashed var(--hair);padding:12px}
+  .avwrap{grid-area:av;width:86px;flex:none;aspect-ratio:1/1}
+  .name{grid-area:name;margin:0;text-align:left;font-size:20px;letter-spacing:3px}
+  .pin{grid-area:pin;margin:0}
+  .tags{grid-area:tags;margin:0}
+  .ptab{grid-area:ptab;margin:0;padding:8px 10px}
+  .ptab .cap{display:inline;margin-right:8px}
+  .brief,.systail,.leftspace{display:none}
+  .dossier{overflow:visible;padding:14px 12px 22px}
+  .igrid{grid-template-columns:1fr}
+  .cell:nth-child(odd){border-right:none;padding-right:4px}
+  .cell:nth-child(even){padding-left:4px}
+  .skgrid{grid-template-columns:1fr}
+  .lvrow .lvsys{flex-basis:100%;margin-left:0}
+  .exp .en{width:72px;font-size:11px}
+  .radarbox{flex-direction:column;align-items:center}
+  .radarbox svg{width:min(280px,78vw);height:auto}
+  .rnotes{width:100%}
+  .bdesc{padding-left:0}
+  .bars{padding:10px 10px}
+  .bn{width:64px;font-size:11px}
+  .btop{gap:6px}
+  .bnum{width:44px;font-size:10px}
+  .rel{max-width:none}
+  .prow{flex-wrap:wrap;gap:4px 12px}
+  .prow .pk{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">FILE·000</span>
+      <div class="title">◆ QIANLVZHOU // <em>怀榆</em></div>
+      <span class="sysline">[ 玩家档案已载入 · SYNCED ]</span>
+      <div class="menuwrap">
+        <button class="menubtn" id="menuBtn" aria-label="菜单">☰</button>
+        <div class="mdown" id="mDown">
+          <a class="mi" href="./资料.html">◂ 返回名册</a>
+          <button class="mi" id="miNight">◐ 夜间模式</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="main">
+      <!-- 左列：头像+名签+面板切换 -->
+      <div class="left">
+        <div class="avwrap" id="avwrap"><img id="avimg" src="./头像/怀榆.jpg" alt="怀榆"></div>
+        <div class="name">怀榆</div>
+        <div class="pin">命定之人</div>
+        <div class="tags">
+          <span class="tag hot">玩家</span>
+          <span class="tag">LV·21（妖/鬼级）</span>
+          <span class="tag gd">净化专精</span>
+        </div>
+        <button class="ptab" id="panelTab" aria-pressed="false">
+          <span class="cap">SYS PANEL</span>▣ 玩家数据 ▾
+        </button>
+        <div class="brief">身份成谜的玩家，携带净化之力，与段深泉同行中。</div>
+        <div class="leftspace"></div>
+        <div class="systail">QIANLVZHOU · DOSSIER FILE 000<br>档案密级 · Ⅲ级<br>数据来源 · 系统实时同步<br>权限 · 仅玩家本人可查</div>
+      </div>
+ 
+      <!-- 右列：档案页 / 面板页 双面切换 -->
+      <div class="dossier">
+ 
+        <!-- ── 页1：档案 ── -->
+        <div class="ppage on" id="pgDossier">
+          <div class="sec" id="secBasic">
+            <div class="sechead">基础信息<span class="en">BASIC INFO</span></div>
+            <div class="igrid">
+              <div class="cell"><span class="il">所属国度</span><span class="iv"><b>无</b><small>自由玩家</small></span></div>
+              <div class="cell"><span class="il">阵营</span><span class="iv"><b>无</b><small>系统绑定中</small></span></div>
+              <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV·21</b>（妖/鬼级）</span></div>
+              <div class="cell"><span class="il">当前状态</span><span class="iv">正常 · 与段深泉同行中</span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">怀榆<small>HUAI YU</small></span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">背景</span><span class="iv"><b>【未解锁】</b></span></div>
+            </div>
+          </div>
+ 
+          <div class="sec" id="secRecord">
+            <div class="sechead">档案记录<span class="en">RECORD</span></div>
+            <div class="rec">
+              <p>约四年前出现在业焰之国境内，首次接触时等级 LV.1，无背景记录、无来源记录、无过往记录，判定为"玩家身份绑定者"，赋予主线任务。其后脱离主线三年，期间休眠，世界时间线自然推进。约半年前重新接入主线，等级从 LV.1 重新累积。</p>
+              <p>业焰之国篇期间卷入神使更迭事件，被误判为代行者嫌疑人入狱。越狱后坠入火山封印空间，目睹祝焱记忆，完成祝焱相关主线。双冕北境篇期间参与矿洞调查、永冻林海探索、遗忘碑谷探索及女皇改革事件。</p>
+              <p>对蚀光污染具有天然净化能力，表现为金色光芒。此能力与已知任何神明权柄均不完全匹配，标注为"待查"。当前与命定之人·段深泉同行，正向时衍天宫方向移动。</p>
+              <p><span class="rbar r3"></span>其为<span class="rbar" style="width:4em"></span>玩家，<span class="rbar" style="width:3em"></span><span class="rbar" style="width:8.5em"></span>真实身份<span class="rbar r2"></span>，具体含义：<span class="rbar r2"></span>。</p>
+              <p class="rclose">▓▓▓ 出身背景、真实身份、以及"玩家"身份的具体含义，均被锁定为【未解锁】状态。▓▓▓</p>
+              <div class="rnote">RECORD INCOMPLETE · 本页存在已锁定条目 · 随剧情推进开放</div>
+            </div>
+          </div>
+ 
+          <div class="sec" id="secAbility">
+            <div class="sechead">能力评估<span class="en">ABILITY</span></div>
+            <div class="bars">
+              <div class="brow">
+                <div class="btop"><span class="bn">净化强度</span><div class="btrack"><i class="bfill gd" data-lv="100"></i></div><span class="bnum">100/100</span></div>
+                <div class="bdesc">对蚀光污染天然净化，表现为金色光芒，来源标注"待查"</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">墟元力强度</span><div class="btrack"><i class="bfill" data-lv="45"></i></div><span class="bnum">45/100</span></div>
+                <div class="bdesc">LV.21 妖/鬼级水准，成长曲线陡峭（特质·缓慢苏醒）</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">战斗威胁度</span><div class="btrack"><i class="bfill" data-lv="28"></i></div><span class="bnum">28/100</span></div>
+                <div class="bdesc">单体战力有限，战术价值集中在净化与辅助</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="72"></i></div><span class="bnum">72/100</span></div>
+                <div class="bdesc">状态正常，三年休眠期无不良反应记录</div>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="sec" id="secRadar">
+            <div class="sechead">专精六维<span class="en">RADAR</span></div>
+            <div class="golddiv"></div>
+            <div class="radarbox">
+              <svg id="radarSvg" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图"></svg>
+              <div class="rnotes" id="radarNotes"></div>
+            </div>
+            <div class="radarfoot">基准满值 70（妖神/半神段），当前映射 71%。形状极端偏向"治疗净化"单维，唯一满值项，与已知权柄均不匹配，整体属于特化辅助型。</div>
+          </div>
+ 
+          <div class="sec" id="secRel">
+            <div class="sechead">关系网<span class="en">RELATIONS</span></div>
+            <div class="rels">
+              <a class="rel" href="./段深泉.html"><span class="rn">段深泉</span><span class="rt">命定之人 · 同行羁绊，羁绊值已突破阈值</span></a>
+              <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">雇主/合作 · 债务已清 · 保持联系</span></a>
+              <a class="rel" href="./瑞秋.html"><span class="rn">瑞秋</span><span class="rt">敌对 · 因代行者事件结仇 · 暂时停战</span></a>
+              <a class="rel" href="./凝淼.html"><span class="rn">凝淼</span><span class="rt">已陨落 · 曾有过短暂接触</span></a>
+              <a class="rel" href="./祝焱.html"><span class="rn">祝焱</span><span class="rt">已陨落 · 见证其消散</span></a>
+            </div>
+          </div>
+ 
+          <div class="sec" id="secNote">
+            <div class="sechead">系统备注<span class="en">SYS NOTE</span></div>
+            <div class="golddiv"></div>
+            <div class="sysnote">
+              <div class="who">[ SYSTEM · 观测记录 ]</div>
+              <div class="txt">当前世界唯一"玩家"身份绑定者。任务完成度：业焰之国 60%，双冕北境 33%。净化能力来源待查，与已知神明权柄均不匹配。命定之人羁绊值已突破阈值，建议尽快激活双生道具。<b>注意：与代行者存在外观高度相似性，相关数据已标记为"待观察"。</b></div>
+            </div>
+          </div>
+ 
+          <div class="sec" id="secLocked">
+            <div class="locked">
+              <div class="lb">▓▓▓ 数据未解锁 ▓▓▓</div>
+              <div class="ls">CLASSIFIED · 背景、出身、真实身份、玩家身份的具体含义 · 随剧情推进开放</div>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- ── 页2：玩家面板（虚线行+左色条版块混排，不做色块堆叠） ── -->
+        <div class="ppage" id="pgPanel">
+          <div class="sec">
+            <div class="sechead gd">玩家数据<span class="en">SYS PANEL</span></div>
+ 
+            <!-- 等级横幅 -->
+            <div class="lvrow">
+              <span class="lvbig">LV.21</span>
+              <span class="lvtag">妖/鬼级</span>
+              <span class="lvsys">SYSTEM UI · 实时同步</span>
+            </div>
+ 
+            <!-- 背景（剧情锁定，带解说） -->
+            <div class="bglock">
+              <span class="bl-c">背景 · <b>【未解锁】</b></span>
+              <span class="bl-d">该栏位与主线剧情深度关联——你从哪里来，为何而来，系统与你之间的契约究竟是什么。<span class="rbar r2"></span><span class="rbar r1"></span>这些问题，请玩家在旅途中自行寻找答案。</span>
+            </div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sechead">技能<span class="en">SKILLS</span></div>
+            <div class="skgrid">
+              <div class="sk">
+                <span class="skno">SK·01</span>
+                <span class="skname">天罗<span class="sklv">LV.21</span></span>
+                <span class="sktype">控制 · 金色丝线</span>
+                <p>以无数缕金色丝线织就天网，缠缚范围内的一切行动。丝线细若发丝、韧若精钢，被缚者越挣扎，收束越紧。</p>
+              </div>
+              <div class="sk">
+                <span class="skno">SK·02</span>
+                <span class="skname">圣愈<span class="sklv">LV.21</span></span>
+                <span class="sktype">净化 · 治疗</span>
+                <p>引净化之力化作柔光，抚平创伤、驱散蚀光污染。光芒所及之处，伤势如积雪遇春阳，缓缓消融。</p>
+              </div>
+            </div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sechead">装备<span class="en">ARMS</span></div>
+            <div class="armrow">
+              <span class="armname">渡厄<span class="armlv">LV.35</span></span>
+              <span class="armstat">攻击力 <b>2067</b></span>
+              <span class="trait">特质 · <b>【缓慢苏醒】</b>与持有者联系越深，越能展现潜力</span>
+            </div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sechead">行囊<span class="en">BAG</span></div>
+            <div class="bagchips"><span>奥术晶尘 x5</span><span>麻麻饼 x3</span><span>金翎石 x1</span><span>霜凝核心 x1</span></div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sechead">当前主线<span class="en">MAIN QUEST</span></div>
+            <div class="quest">前往时衍天宫，调查时空裂隙</div>
+          </div>
+ 
+          <div class="sec">
+            <div class="sechead">探索进度<span class="en">EXPLORATION</span></div>
+            <div class="expbars">
+              <span class="exp"><span class="en">业焰之国</span><span class="etrack"><i data-lv="60"></i></span><span class="enum">60%</span></span>
+              <span class="exp"><span class="en">双冕北境</span><span class="etrack"><i data-lv="33"></i></span><span class="enum">33%</span></span>
+              <span class="exp"><span class="en">时衍天宫</span><span class="etrack"><i data-lv="0"></i></span><span class="enum mut">未探索</span></span>
+              <span class="exp"><span class="en">圣草之邦</span><span class="etrack"><i data-lv="0"></i></span><span class="enum mut">未探索</span></span>
+              <span class="exp"><span class="en">归墟之庭</span><span class="etrack"><i data-lv="0"></i></span><span class="enum mut">未探索</span></span>
+            </div>
+            <div class="pfoot">DATA SYNCED WITH SYSTEM UI · 与系统界面实时同步</div>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+<script>
+(function(){
+  'use strict';
+  /* ── 日夜：公共键 theme ── */
+  var K_THEME='theme';
+  function applyTheme(){
+    var dark=false;
+    try{var r=localStorage.getItem(K_THEME); if(r){var p=JSON.parse(r); if(p&&p.value==='dark')dark=true;}}catch(e){}
+    document.body.classList.toggle('night',dark);
+    try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'qlz:theme',night:dark},'*');}catch(e){}
+  }
+  applyTheme();
+ 
+  /* ── 头像容错 ── */
+  var img=document.getElementById('avimg');
+  img.onerror=function(){ document.getElementById('avwrap').classList.add('noimg'); };
+  if(img.complete&&img.naturalWidth===0){ img.onerror(); }
+ 
+  /* ── 双面切换：档案 / SYS PANEL ── */
+  var panelTab=document.getElementById('panelTab'),
+      pgDossier=document.getElementById('pgDossier'),
+      pgPanel=document.getElementById('pgPanel');
+  var panelOpen=false,panelInited=false;
+  function setPanel(open){
+    panelOpen=open;
+    pgDossier.classList.toggle('on',!open);
+    pgPanel.classList.toggle('on',open);
+    panelTab.setAttribute('aria-pressed',open?'true':'false');
+    panelTab.innerHTML=open?'<span class="cap">SYS PANEL</span>◂ 返回档案 ▴'
+                           :'<span class="cap">SYS PANEL</span>▣ 玩家数据 ▾';
+    if(open&&!panelInited){
+      panelInited=true;
+      requestAnimationFrame(function(){
+        document.querySelectorAll('#pgPanel .etrack i').forEach(function(b,i){
+          setTimeout(function(){ b.style.width=b.dataset.lv+'%'; },120*i);
+        });
+      });
+    }
+    var d=document.querySelector('.dossier'); if(d)d.scrollTop=0;
+  }
+  panelTab.addEventListener('click',function(){ setPanel(!panelOpen); });
+ 
+  /* ── 滚动触发：照段深泉 reveal 机制 ── */
+  var abilityDone=false,radarDone=false;
+  function growBars(){
+    if(abilityDone)return; abilityDone=true;
+    document.querySelectorAll('#secAbility .bfill').forEach(function(b,i){
+      setTimeout(function(){ b.style.width=b.dataset.lv+'%'; },120*i);
+    });
+  }
+  /* ── 雷达：照段深泉 drawRadar 机制 ── */
+  var RADAR=[
+    {n:'墟元力操控',v:45,d:'LV.21 妖/鬼级水准，成长曲线陡峭（缓慢苏醒）'},
+    {n:'蚀光抗性',v:70,d:'中长期暴露无污染记录，抗性天然偏高'},
+    {n:'近战体术',v:40,d:'非专精领域，仅基础自卫水平'},
+    {n:'法术输出',v:55,d:'【天罗】为主力手段，中规中矩'},
+    {n:'治疗净化',v:100,d:'唯一满值项，金色光芒净化蚀光，来源待查'},
+    {n:'战术判断',v:60,d:'直觉型决策，偶有超预测表现，成因待查'}
+  ];
+  var GRIDMAX=100;
+  function drawRadar(instant){
+    var svg=document.getElementById('radarSvg');
+    if(!svg||svg.dataset.drawn)return; svg.dataset.drawn='1';
+    var NS='http://www.w3.org/2000/svg';
+    function el(t,at){var e=document.createElementNS(NS,t);for(var k in at)e.setAttribute(k,at[k]);return e;}
+    var cx=0,cy=0,maxR=104;
+    var cs=getComputedStyle(document.body);
+    var kLine=cs.getPropertyValue('--accd').trim()||'#8A5D13';
+    var kFill=cs.getPropertyValue('--acc').trim()||'#D49A34';
+    var mut=cs.getPropertyValue('--mut').trim()||'#666';
+    var isNight=document.body.classList.contains('night');
+    var polyOp=isNight?'0.55':'0.4';
+    var angles=[0,60,120,180,240,300].map(function(d){return d*Math.PI/180;});
+    [0.3,0.5,0.7,1.0].forEach(function(ratio){
+      var r=maxR*ratio;
+      var pts=angles.map(function(a){return (cx+r*Math.sin(a))+','+(cy-r*Math.cos(a));}).join(' ');
+      var p=el('polygon',{points:pts,fill:'none',stroke:mut,'stroke-width':ratio===1.0?'1.2':'0.8'});
+      if(ratio!==1.0)p.setAttribute('stroke-dasharray','4,4');
+      svg.appendChild(p);
+    });
+    angles.forEach(function(a){
+      var x=cx+maxR*Math.sin(a),y=cy-maxR*Math.cos(a);
+      svg.appendChild(el('line',{x1:cx,y1:cy,x2:x,y2:y,stroke:mut,'stroke-width':'0.6','stroke-dasharray':'3,4'}));
+    });
+    var verts=RADAR.map(function(d,i){
+      var r=(d.v/GRIDMAX)*maxR,a=angles[i];
+      return {x:cx+r*Math.sin(a),y:cy-r*Math.cos(a),v:d.v,n:d.n};
+    });
+    var target=verts.map(function(v){return v.x+','+v.y;}).join(' ');
+    var center=angles.map(function(){return cx+','+cy;}).join(' ');
+    var poly;
+    if(instant){
+      poly=el('polygon',{points:target,fill:kFill,'fill-opacity':polyOp,stroke:kLine,'stroke-width':'2.5','stroke-linejoin':'round'});
+      svg.appendChild(poly);
+    }else{
+      poly=el('polygon',{points:center,fill:kFill,'fill-opacity':polyOp,stroke:kLine,'stroke-width':'2.5','stroke-linejoin':'round'});
+      var anim=el('animate',{attributeName:'points',from:center,to:target,dur:'1.2s',fill:'freeze',calcMode:'spline',keySplines:'0.25 0.1 0.25 1',begin:'indefinite'});
+      poly.appendChild(anim);svg.appendChild(poly);polyAnimRef=anim;
+    }
+    verts.forEach(function(v,i){
+      var c;
+      if(instant){
+        c=el('circle',{cx:v.x,cy:v.y,r:'2.5',fill:kLine,opacity:'1'});
+        svg.appendChild(c);
+      }else{
+        c=el('circle',{cx:v.x,cy:v.y,r:'2.5',fill:kLine,opacity:'0'});
+        var cf=el('animate',{attributeName:'opacity',from:'0',to:'1',dur:'0.3s',begin:'indefinite',fill:'freeze'});
+        c.appendChild(cf);svg.appendChild(c);dotAnims.push(cf);
+      }
+      var a=angles[i],lx=cx+(maxR+18)*Math.sin(a),ly=cy-(maxR+18)*Math.cos(a);
+      var t=el('text',{x:lx,y:ly,fill:mut,'font-size':'10','font-family':'Courier New,monospace','text-anchor':'middle','dominant-baseline':'central'});
+      t.textContent=v.n;svg.appendChild(t);
+      if(instant){
+        var t2i=el('text',{x:lx,y:ly+13,fill:kLine,'font-size':'9','font-weight':'bold','font-family':'Courier New,monospace','text-anchor':'middle','dominant-baseline':'central',opacity:'1'});
+        t2i.textContent=v.v;svg.appendChild(t2i);
+      }else{
+        var t2=el('text',{x:lx,y:ly+13,fill:kLine,'font-size':'9','font-weight':'bold','font-family':'Courier New,monospace','text-anchor':'middle','dominant-baseline':'central',opacity:'0'});
+        var tf=el('animate',{attributeName:'opacity',from:'0',to:'1',dur:'0.3s',begin:'indefinite',fill:'freeze'});
+        t2.appendChild(tf);t2.textContent=v.v;valAnims.push(tf);
+      }
+    });
+  }
+  var polyAnimRef=null,dotAnims=[],valAnims=[];
+  function growRadar(){
+    if(radarDone)return; radarDone=true; drawRadar();
+    requestAnimationFrame(function(){
+      try{if(polyAnimRef)polyAnimRef.beginElement();}catch(e){}
+      setTimeout(function(){dotAnims.forEach(function(a){try{a.beginElement();}catch(e){}});},800);
+      setTimeout(function(){valAnims.forEach(function(a){try{a.beginElement();}catch(e){}});},1000);
+    });
+  }
+  /* ── 雷达注释 ── */
+  var notes=document.getElementById('radarNotes');
+  if(notes){
+    notes.innerHTML=RADAR.map(function(d){
+      return '<div class="rrow"><div class="rn1">'+d.n+'<b>'+d.v+'</b></div><div class="rn2">'+d.d+'</div></div>';
+    }).join('');
+  }
+ 
+  function check(){
+    var vh=window.innerHeight;
+    ['secAbility','secRadar'].forEach(function(id){
+      var s=document.getElementById(id);
+      if(s&&s.getBoundingClientRect().top<vh*0.9){
+        if(id==='secAbility')growBars();
+        if(id==='secRadar')growRadar();
+      }
+    });
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting)return;
+        if(e.target.id==='secAbility')growBars();
+        if(e.target.id==='secRadar')growRadar();
+        io.unobserve(e.target);
+      });
+    },{threshold:0.25});
+    ['secAbility','secRadar'].forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
+    setTimeout(check,300);
+  }
+  window.addEventListener('scroll',check,{passive:true});
+  window.addEventListener('resize',check);
+ 
+  /* ── ☰ 菜单 ── */
+  var mBtn=document.getElementById('menuBtn'),mDown=document.getElementById('mDown'),mNight=document.getElementById('miNight');
+  function syncNightLabel(){
+    if(mNight)mNight.textContent=document.body.classList.contains('night')?'◐ 日间模式':'◐ 夜间模式';
+  }
+  if(mBtn&&mDown){
+    mBtn.addEventListener('click',function(e){ e.stopPropagation(); mDown.classList.toggle('open'); });
+    document.addEventListener('click',function(e){ if(!mDown.contains(e.target))mDown.classList.remove('open'); });
+  }
+  if(mNight){
+    mNight.addEventListener('click',function(){
+      var dark=!document.body.classList.contains('night');
+      try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
+      applyTheme(); syncNightLabel();
+      var svg=document.getElementById('radarSvg');
+      if(svg&&radarDone){ delete svg.dataset.drawn; svg.innerHTML=''; drawRadar(true); }
+    });
+  }
+  syncNightLabel();
+})();
+</script>
+</body>
+</html>
