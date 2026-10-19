@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 尘歌</title>
+<style>
+@import url('https://cdn.jsdelivr.net/npm/fusion-pixel-12px-monospaced-zh_hans@latest/font.css');
+
+/* ═══════════ 基础与变量 ═══════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Georgia","Songti SC",serif;min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden;transition:background .4s}
+:root{
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+  
+  /* 正常版颜色 */
+  --n-bg:#F0EFEB;--n-card:#FAF9F5;--n-ink:#1B1F1C;
+  --n-klein:#192A3F;--n-acc:#6B85A0;--n-accd:#2D4157;
+  --n-mut:#5D6A76;--n-hair:rgba(25,42,63,.4);
+  --n-gc:rgba(25,42,63,.08);--n-gc2:rgba(25,42,63,.05);
+  --n-shadow:4px 4px 0 rgba(25,42,63,.15);
+}
+body.night-normal{
+  --n-bg:#152435;--n-card:#EAE5D6;--n-ink:#1A1F26;
+  --n-klein:#526F8A;--n-acc:#9AB3CC;--n-accd:#2A3F54;
+  --n-mut:#4C5B6B;--n-hair:rgba(82,111,138,.4);
+  --n-gc:rgba(0,0,0,.08);--n-gc2:rgba(0,0,0,.04);
+  --n-shadow:4px 4px 0 rgba(0,0,0,.35);
+}
+
+/* ══════════════════════════════════════════════ */
+/* 1. 正常版页面 (尘歌) */
+/* ══════════════════════════════════════════════ */
+#normal-view{
+  display:flex;flex-direction:column;height:100vh;height:100dvh;
+  padding:14px;position:relative;z-index:1;color:var(--n-ink);background:var(--n-bg);
+}
+#normal-view::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  repeating-linear-gradient(0deg,transparent,transparent 25px,var(--n-gc2) 25px,var(--n-gc2) 26px),
+  repeating-linear-gradient(90deg,transparent,transparent 25px,var(--n-gc2) 25px,var(--n-gc2) 26px),
+  repeating-linear-gradient(0deg,transparent,transparent 130px,var(--n-gc) 130px,var(--n-gc) 131px),
+  repeating-linear-gradient(90deg,transparent,transparent 130px,var(--n-gc) 130px,var(--n-gc) 131px),
+  var(--n-bg)}
+#normal-view::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(135deg,rgba(25,42,63,.03) 0%,rgba(25,42,63,.01) 38%,rgba(107,133,160,.08) 100%)}
+body.night-normal #normal-view::after{background:linear-gradient(135deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.1) 40%,rgba(154,179,204,.05) 100%)}
+
+#normal-view .frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;background:var(--n-card);border:2px solid var(--n-klein);box-shadow:var(--n-shadow);overflow:hidden}
+#normal-view .topbar{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1.5px solid var(--n-klein)}
+#normal-view .chip{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--n-card);background:var(--n-klein);padding:3px 9px}
+#normal-view .title{font-size:15px;letter-spacing:1px;color:var(--n-klein);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#normal-view .title em{font-style:normal;color:var(--n-accd);font-weight:bold}
+#normal-view .sysline{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--n-mut);white-space:nowrap}
+#normal-view .menuwrap{flex:none;position:relative}
+#normal-view .menubtn{flex:none;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--n-klein);background:transparent;border:1.5px solid var(--n-klein);padding:4px 11px;cursor:pointer;line-height:1.4;box-shadow:var(--n-shadow);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+#normal-view .menubtn:hover{background:var(--n-klein);color:var(--n-card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 var(--n-shadow)}
+#normal-view .mdown{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:170px;display:none;background:var(--n-card);border:2px solid var(--n-klein);box-shadow:5px 5px 0 var(--n-shadow)}
+#normal-view .mdown.open{display:block}
+#normal-view .mdown .mi{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1.5px dashed var(--n-hair);font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--n-ink);padding:11px 14px;cursor:pointer;text-decoration:none}
+#normal-view .mdown .mi:last-child{border-bottom:none}
+#normal-view .mdown .mi:hover{color:var(--n-klein);background:rgba(107,133,160,.1)}
+
+#normal-view .main{flex:1;min-height:0;display:flex}
+#normal-view .left{flex:none;width:230px;border-right:1.5px dashed var(--n-hair);padding:18px 16px;display:flex;flex-direction:column;gap:0;overflow-y:auto}
+#normal-view .avwrap{position:relative;width:100%;aspect-ratio:1/1;border:1.5px solid var(--n-klein);background:var(--n-bg);overflow:hidden}
+#normal-view .avwrap img{width:100%;height:100%;object-fit:cover;display:block;filter:blur(8px) grayscale(1);transition:filter 0.8s;}
+#normal-view .avwrap.unlocked img{filter:none;}
+#normal-view .avwrap::after{content:'LOCKED';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:bold;color:var(--n-accd);background:rgba(0,0,0,.3);letter-spacing:2px}
+#normal-view .avwrap.unlocked::after{display:none;}
+#normal-view .name{margin-top:12px;font-size:24px;font-weight:bold;letter-spacing:4px;color:var(--n-ink)}
+#normal-view .pin{margin-top:4px;font-size:12px;letter-spacing:2px;color:var(--n-accd);font-weight:bold}
+#normal-view .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#normal-view .tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 9px;border:1.5px solid var(--n-klein);color:var(--n-ink);box-shadow:var(--n-shadow);background:var(--n-card)}
+#normal-view .tag.hot{background:var(--n-acc);color:#111;border-color:var(--n-acc);font-weight:bold}
+body.night-normal #normal-view .tag.hot{color:var(--n-card);}
+
+#normal-view .affin{margin-top:14px;border:1.5px solid var(--n-klein);padding:10px 11px;background:rgba(107,133,160,.08);box-shadow:var(--n-shadow)}
+#normal-view .affin .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--n-accd)}
+#normal-view .abar{margin-top:6px;height:8px;border:1.5px solid var(--n-klein);background:var(--n-card);overflow:hidden}
+#normal-view .abar i{display:block;height:100%;width:0;background:var(--n-acc);transition:width 1.5s cubic-bezier(.3,.7,.3,1)}
+#normal-view .afoot{display:flex;justify-content:space-between;margin-top:5px;align-items:baseline}
+#normal-view .afoot b{font-family:var(--mono);font-size:12px;color:var(--n-accd)}
+#normal-view .afoot span{font-size:11px;color:var(--n-mut)}
+#normal-view .brief{margin-top:12px;font-size:12px;line-height:1.8;color:var(--n-mut);border-top:1.5px dashed var(--n-hair);padding-top:10px}
+#normal-view .leftspace{flex:1}
+#normal-view .systail{flex:none;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--n-mut);line-height:1.9;text-align:left}
+
+#normal-view .dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px}
+#normal-view .sec{margin-bottom:22px}
+#normal-view .sechead{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--n-card);background:var(--n-klein);display:inline-block;padding:3px 10px;margin-bottom:10px;box-shadow:var(--n-shadow)}
+#normal-view .sechead .zh{font-family:var(--serif);font-size:11px;letter-spacing:2px;margin-left:6px}
+
+#normal-view .lock-overlay{position:relative;border:1.5px dashed var(--n-accd);background:repeating-linear-gradient(45deg, var(--n-card), var(--n-card) 10px, rgba(107,133,160,.1) 10px, rgba(107,133,160,.1) 20px);padding:30px 20px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:var(--n-shadow);user-select:none}
+#normal-view .lock-overlay:hover{border-color:var(--n-klein);background:repeating-linear-gradient(45deg, var(--n-card), var(--n-card) 10px, rgba(107,133,160,.2) 10px, rgba(107,133,160,.2) 20px);}
+#normal-view .lock-overlay .lock-icon{font-size:28px;margin-bottom:10px;color:var(--n-accd);display:flex;justify-content:center;}
+#normal-view .lock-overlay .lock-text{font-family:var(--mono);font-size:14px;font-weight:bold;color:var(--n-accd);letter-spacing:2px;}
+#normal-view .lock-overlay .lock-sub{font-family:var(--mono);font-size:10px;color:var(--n-mut);margin-top:6px;}
+#normal-view .lock-overlay .lock-badge{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:9px;background:var(--n-accd);color:var(--n-card);padding:2px 6px;}
+
+#normal-view .reveal-content{display:none; opacity:0; transform:translateY(10px); transition:all .5s ease;}
+#normal-view .reveal-content.show{display:block; opacity:1; transform:translateY(0);}
+
+#normal-view .igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--n-klein);box-shadow:var(--n-shadow)}
+#normal-view .cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--n-hair);min-width:0}
+#normal-view .cell:nth-child(odd){border-right:1.5px dashed var(--n-hair);padding-right:14px}
+#normal-view .cell:nth-child(even){padding-left:14px}
+#normal-view .cell:last-child{border-right:none}
+#normal-view .il{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--n-mut);width:58px}
+#normal-view .iv{font-size:13px;color:var(--n-ink);min-width:0;overflow-wrap:anywhere}
+#normal-view .iv b{color:var(--n-accd)}
+#normal-view .iv small{font-family:var(--mono);font-size:9px;color:var(--n-mut);letter-spacing:1px;margin-left:6px}
+
+#normal-view .auth-grid{display:flex;flex-direction:column;gap:10px;}
+#normal-view .auth-item{border:1.5px solid var(--n-klein);padding:12px;background:var(--n-card);box-shadow:var(--n-shadow);display:flex;gap:12px;align-items:flex-start;}
+#normal-view .auth-icon{flex:none;width:36px;height:36px;border-radius:50%;background:var(--n-acc);color:#111;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:bold;}
+#normal-view .auth-info .auth-name{font-size:14px;font-weight:bold;color:var(--n-ink);margin-bottom:4px;letter-spacing:1px;}
+#normal-view .auth-info .auth-desc{font-size:12px;color:var(--n-mut);line-height:1.6;}
+
+#normal-view .rec{border:1.5px solid var(--n-klein);padding:14px 16px;background:var(--n-card);box-shadow:var(--n-shadow)}
+#normal-view .rec p{font-size:13px;line-height:2;color:var(--n-ink);text-align:justify;text-indent:2em}
+#normal-view .rec p+p{margin-top:8px}
+#normal-view .rclose{margin-top:10px;font-size:12px;color:var(--n-accd);letter-spacing:.5px}
+#normal-view .rclose::first-letter{color:var(--n-klein)}
+#normal-view .rnote{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--n-hair);font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--n-accd);text-align:right}
+
+#normal-view .bars{border:1.5px solid var(--n-klein);padding:12px 14px;background:var(--n-card);box-shadow:var(--n-shadow)}
+#normal-view .brow{padding:8px 0;border-bottom:1.5px dashed var(--n-hair)}
+#normal-view .brow:last-child{border-bottom:none;padding-bottom:0}
+#normal-view .brow:first-child{padding-top:0}
+#normal-view .btop{display:flex;align-items:baseline;gap:10px}
+#normal-view .bn{flex:none;font-size:12px;font-weight:bold;color:var(--n-ink);width:88px}
+#normal-view .btrack{flex:1;height:9px;border:1.5px solid var(--n-klein);background:var(--n-card);position:relative}
+#normal-view .bfill{display:block;height:100%;width:0;background:var(--n-acc);transition:width 1.5s ease;box-shadow:0 0 6px var(--n-acc);position:relative;z-index:2}
+#normal-view .bnum{flex:none;font-family:var(--mono);font-size:11px;color:var(--n-accd);width:52px;text-align:right;font-weight:bold}
+#normal-view .bdesc{margin-top:4px;padding-left:98px;font-size:11px;color:var(--n-mut);line-height:1.6}
+
+#normal-view .golddiv{height:0;border-top:2px dashed rgba(25,42,63,.3);margin-bottom:14px}
+body.night-normal #normal-view .golddiv{border-top-color:rgba(82,111,138,.3)}
+#normal-view .radarbox{display:flex;gap:18px;border:1.5px solid var(--n-klein);padding:14px 16px;background:var(--n-card);align-items:flex-start;box-shadow:var(--n-shadow);position:relative;overflow:hidden}
+
+#normal-view .radarbox svg{flex:none;overflow:visible}
+#normal-view .rnotes{flex:1;min-width:0;z-index:2;margin-left:10px;}
+#normal-view .rrow{padding:5px 0;border-bottom:1.5px dashed var(--n-hair)}
+#normal-view .rrow:last-child{border-bottom:none}
+#normal-view .rn1{font-size:12px;font-weight:bold;color:var(--n-ink)}
+#normal-view .rn1 b{font-family:var(--mono);color:var(--n-accd);margin-left:8px}
+#normal-view .rn2{font-size:11px;color:var(--n-mut);margin-top:1px;line-height:1.5}
+#normal-view .radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--n-hair);font-size:11px;color:var(--n-mut);line-height:1.7}
+
+#normal-view .rels{display:flex;flex-wrap:wrap;gap:10px}
+#normal-view .rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1;max-width:240px;border:1.5px solid var(--n-klein);border-left:5px solid var(--n-acc);padding:9px 12px;text-decoration:none;background:var(--n-card);box-shadow:var(--n-shadow);transition:transform .18s,box-shadow .18s,background .18s}
+#normal-view .rel:hover{background:rgba(107,133,160,.08);transform:translate(-2px,-3px);box-shadow:5px 5px 0 var(--n-shadow)}
+#normal-view .rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 var(--n-shadow)}
+#normal-view .rel .rn{font-size:13px;font-weight:bold;color:var(--n-ink)}
+#normal-view .rel .rt{font-size:11px;color:var(--n-mut);line-height:1.5}
+
+#normal-view .sysnote{border:1.5px solid var(--n-klein);border-left:5px solid var(--n-acc);padding:12px 14px;background:rgba(107,133,160,.06);box-shadow:var(--n-shadow)}
+#normal-view .sysnote .who{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--n-accd);margin-bottom:5px}
+#normal-view .sysnote .txt{font-size:13px;line-height:1.9;color:var(--n-accd)}
+#normal-view .sysnote .txt b{color:var(--n-accd)}
+
+/* 弹窗 (通用) */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9998;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.active{display:flex;}
+.modal-box{background:#FAF9F5;border:2px solid #192A3F;padding:24px;max-width:400px;width:90%;box-shadow:8px 8px 0 rgba(0,0,0,.4);text-align:center;font-family:var(--mono);color:#1B1F1C}
+.modal-box h3{font-size:16px;margin-bottom:12px;color:#192A3F;letter-spacing:2px;}
+.modal-box p{font-size:13px;line-height:1.6;margin-bottom:20px;color:#5D6A76;}
+.modal-box .btns{display:flex;justify-content:center;gap:12px;}
+.modal-box button{padding:8px 20px;font-family:var(--mono);font-size:13px;cursor:pointer;border:1.5px solid #192A3F;background:#FAF9F5;color:#192A3F;transition:all .1s;}
+.modal-box button.yes-btn{background:#192A3F;color:#FAF9F5;}
+.modal-box button:hover{transform:translateY(-2px);box-shadow:2px 2px 0 rgba(0,0,0,.2);}
+
+/* 终极警告弹窗 */
+.modal-box.warn{border-color:#D95C5C;background:#1A1A1A;color:#E0E0E0;box-shadow:0 0 30px rgba(217,92,92,0.3);}
+.modal-box.warn h3{color:#D95C5C;}
+.modal-box.warn p{color:#AAA;}
+.modal-box.warn button{border-color:#D95C5C;background:#1A1A1A;color:#D95C5C;}
+.modal-box.warn button.yes-btn{background:#D95C5C;color:#FFF;}
+.modal-box.warn button:hover{box-shadow:0 0 10px #D95C5C;}
+
+
+/* ══════════════════════════════════════════════ */
+/* 2. 恐怖版页面 (伊瑟斯) */
+/* ══════════════════════════════════════════════ */
+:root{
+  --h-bg:#060A10;--h-card:#0A1018;
+  --h-ink:#E8F0F8;           /* 提亮主文字 */
+  --h-klein:#4A6B8E;         /* 提亮结构色 */
+  --h-acc:#FF2A4B;--h-code:#00F0FF;
+  --h-mut:#A0B0C0;           /* 提亮次要文字（解释、标签等） */
+  --h-hair:rgba(74,107,142,.5); /* 边框也稍微亮一点 */
+}
+#horror-view{display:none;flex-direction:column;height:100vh;height:100dvh;padding:14px;position:relative;z-index:1;color:var(--h-ink);background:var(--h-bg);font-family:var(--serif)}
+#horror-view::before{content:'';position:fixed;inset:0;z-index:-2;background:linear-gradient(rgba(43,76,111,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(43,76,111,.08) 1px,transparent 1px),var(--h-bg);background-size:30px 30px;}
+#horror-view::after{content:'';position:fixed;inset:0;z-index:100;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.3) 2px,rgba(0,0,0,.3) 4px);opacity:0.6;}
+
+#horror-view .h-frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;background:var(--h-card);border:1px solid var(--h-acc);box-shadow:0 0 30px rgba(255,42,75,.15);overflow:hidden;position:relative}
+#horror-view .h-topbar{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--h-acc);background:rgba(255,42,75,.05)}
+#horror-view .h-chip{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:#fff;background:var(--h-acc);padding:3px 9px;font-weight:bold;animation:h-blink 1s step-end infinite}
+@keyframes h-blink{50%{opacity:0}}
+#horror-view .h-title{font-size:15px;letter-spacing:1px;color:var(--h-acc);font-family:var(--mono);text-shadow:0 0 8px rgba(255,42,75,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#horror-view .h-sysline{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--h-mut);animation:h-blink 2s infinite;white-space:nowrap;}
+#horror-view .h-main{flex:1;min-height:0;display:flex}
+
+#horror-view .h-left{flex:none;width:240px;border-right:1px dashed var(--h-hair);padding:18px 16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+#horror-view .h-avwrap{position:relative;width:100%;aspect-ratio:1/1;border:1px solid var(--h-acc);background:#000;overflow:hidden;box-shadow:inset 0 0 30px rgba(255,42,75,.5)}
+#horror-view .h-avwrap img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;filter:contrast(1.2) hue-rotate(10deg);}
+#horror-view .h-avwrap::before{content:'';position:absolute;inset:0;background:linear-gradient(transparent 0%, rgba(255,42,75,.2) 50%, transparent 100%);animation:h-scan 3s linear infinite;z-index:2;pointer-events:none}
+@keyframes h-scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+
+#horror-view .h-name{margin-top:10px;font-size:22px;font-weight:bold;color:var(--h-acc);letter-spacing:2px;font-family:var(--mono);text-shadow:2px 0 0 #00F0FF, -2px 0 0 #FF2A4B;animation:h-glitch 2s infinite alternate-reverse;line-height:1.3;}
+@keyframes h-glitch{0%{text-shadow:2px 0 0 #00F0FF,-2px 0 0 #FF2A4B}50%{text-shadow:-2px 0 0 #00F0FF,2px 0 0 #FF2A4B}100%{text-shadow:2px 0 0 #00F0FF,-2px 0 0 #FF2A4B}}
+#horror-view .h-pin{margin-top:4px;font-size:11px;color:var(--h-mut);font-family:var(--mono);letter-spacing:1px;}
+#horror-view .h-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#horror-view .h-tag{font-family:var(--mono);font-size:10px;padding:3px 8px;border:1px solid var(--h-mut);color:var(--h-mut)}
+#horror-view .h-tag.err{border-color:var(--h-acc);color:var(--h-acc);background:rgba(255,42,75,.1);font-weight:bold;}
+
+#horror-view .h-crashed-bar{margin-top:10px;padding:10px;border:1px solid var(--h-hair);background:rgba(0,240,255,.03)}
+#horror-view .h-crashed-bar .cap{font-family:var(--mono);font-size:9px;color:var(--h-code);letter-spacing:1px}
+#horror-view .h-crashed-bar .bar-line{height:6px;margin-top:8px;background:var(--h-acc);width:100%;opacity:.6;animation:h-err-bar 1.5s infinite step-end}
+#horror-view .h-crashed-bar .bar-line:nth-child(3){width:40%;background:var(--h-code);animation-delay:.3s}
+@keyframes h-err-bar{0%,100%{opacity:.2;transform:translateX(2px)}50%{opacity:1;transform:translateX(-2px)}}
+
+#horror-view .h-brief{margin-top:12px;font-size:12px;line-height:1.8;color:var(--h-mut);border-top:1px dashed var(--h-hair);padding-top:10px;font-family:var(--mono)}
+#horror-view .h-systail{margin-top:auto;font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--h-acc);line-height:1.8;opacity:0.7;}
+
+#horror-view .h-dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 24px 30px;position:relative}
+#horror-view .h-sec{margin-bottom:26px}
+#horror-view .h-sechead{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:#000;background:var(--h-acc);display:inline-block;padding:3px 10px;margin-bottom:12px;font-weight:bold;box-shadow:0 0 10px rgba(255,42,75,.4)}
+#horror-view .h-sechead .zh{font-family:var(--serif);font-size:11px;margin-left:6px}
+
+#horror-view .h-rec{border:1px solid var(--h-hair);padding:16px;background:rgba(0,240,255,.02);position:relative;overflow:hidden;font-family:var(--mono);}
+#horror-view .h-rec::before{content:'01000011 01001000 01000101 01001110 01000111 00101110 01000100 01000001 01010100 01000001 00101110 01000101 01010010 01010010 01001111 01010010';position:absolute;top:0;left:0;right:0;bottom:0;color:rgba(0,240,255,.03);font-size:24px;line-height:1.2;word-break:break-all;z-index:0;pointer-events:none}
+#horror-view .h-rec p{font-size:13px;line-height:1.9;color:var(--h-ink);position:relative;z-index:1;margin-bottom:10px;}
+#horror-view .h-rec p.err-line{color:var(--h-acc);font-weight:bold;}
+#horror-view .h-rec p.blue-line{color:var(--h-code);}
+#horror-view .h-rec .glitch-text{display:inline-block;background:var(--h-code);color:#000;padding:0 4px;font-weight:bold;animation:h-glitch 1s infinite linear alternate-reverse;}
+
+#horror-view .h-bars{border:1px solid var(--h-hair);padding:14px;background:rgba(0,0,0,.2);}
+#horror-view .h-brow{padding:10px 0;border-bottom:1px dashed var(--h-hair)}
+#horror-view .h-brow:last-child{border-bottom:none;padding-bottom:0}
+#horror-view .h-btop{display:flex;align-items:baseline;gap:10px}
+#horror-view .h-bn{flex:none;font-size:12px;font-weight:bold;color:var(--h-ink);width:88px;font-family:var(--mono);}
+#horror-view .h-btrack{flex:1;height:10px;border:1px solid var(--h-acc);background:transparent;position:relative;overflow:hidden}
+#horror-view .h-bfill{display:block;height:100%;width:100%;background:var(--h-acc);box-shadow:0 0 10px var(--h-acc);position:relative;z-index:2;animation:h-pulse 2s infinite alternate;}
+@keyframes h-pulse{0%{opacity:0.7}100%{opacity:1}}
+#horror-view .h-bnum{flex:none;font-family:var(--mono);font-size:13px;color:var(--h-acc);width:52px;text-align:right;font-weight:bold;}
+#horror-view .h-bdesc{margin-top:6px;padding-left:98px;font-size:11px;color:var(--h-mut);line-height:1.5;font-family:var(--mono);}
+
+#horror-view .h-radarbox{display:flex;gap:18px;border:1px solid var(--h-acc);padding:16px;background:rgba(255,42,75,.05);align-items:flex-start;box-shadow:0 0 20px rgba(255,42,75,.1);position:relative;overflow:hidden;}
+#horror-view .h-radarbox svg{flex:none;overflow:visible;}
+#horror-view .h-rnotes{flex:1;min-width:0;z-index:2;margin-left:10px;}
+#horror-view .h-rrow{padding:6px 0;border-bottom:1px dashed var(--h-hair)}
+#horror-view .h-rrow:last-child{border-bottom:none}
+#horror-view .h-rn1{font-size:13px;font-weight:bold;color:var(--h-ink);font-family:var(--mono);}
+#horror-view .h-rn1 b{color:var(--h-acc);margin-left:8px}
+#horror-view .h-rn2{font-size:11px;color:var(--h-mut);margin-top:2px;font-family:var(--mono);}
+#horror-view .h-radarfoot{margin-top:12px;padding-top:10px;border-top:1px dashed var(--h-hair);font-size:12px;color:var(--h-acc);font-family:var(--mono);line-height:1.6;}
+
+#horror-view .h-syslog{border-left:4px solid var(--h-acc);padding:16px;background:linear-gradient(90deg, rgba(255,42,75,.1) 0%, transparent 100%);font-family:var(--mono);}
+#horror-view .h-syslog .who{font-size:10px;color:var(--h-mut);margin-bottom:8px;display:flex;justify-content:space-between;}
+#horror-view .h-syslog .txt{font-size:14px;line-height:2;color:var(--h-acc);}
+#horror-view .h-syslog .txt b{color:#fff;background:var(--h-acc);padding:2px 6px;font-size:12px;}
+
+#horror-view .h-locked{border:2px dashed var(--h-acc);background:rgba(255,42,75,.15);padding:20px;text-align:center;font-family:var(--mono);}
+#horror-view .h-locked .lb{font-size:16px;letter-spacing:6px;color:var(--h-acc);font-weight:bold;text-shadow:0 0 10px var(--h-acc);}
+#horror-view .h-locked .ls{margin-top:8px;font-size:11px;color:#ff8899;}
+
+
+/* ═══════════ 响应式 ═══════════ */
+@media (max-width:760px){
+  /* 正常版手机端 */
+  #normal-view{height:auto;min-height:100vh;padding:0;}
+  #normal-view .frame{height:auto;border-left:none;border-right:none;display:block;}
+  #normal-view .topbar{padding:9px 12px;}
+  #normal-view .sysline{display:none;}
+  #normal-view .main{display:block;height:auto;overflow:visible;}
+  #normal-view .left{width:100%;display:grid;overflow:visible;grid-template-columns:86px 1fr;grid-template-areas:"av name" "av pin" "tags tags" "affin affin";gap:8px 12px;align-items:center;border-right:none;border-bottom:1.5px dashed var(--n-hair);padding:12px}
+  #normal-view .avwrap{grid-area:av;width:86px;height:86px;margin:0;}
+  #normal-view .name{grid-area:name;margin:0;text-align:left;font-size:20px;letter-spacing:3px}
+  #normal-view .pin{grid-area:pin;margin:0}
+  #normal-view .tags{grid-area:tags;margin:0}
+  #normal-view .affin{grid-area:affin;margin:0;padding:8px 10px}
+  #normal-view .brief,#normal-view .systail,#normal-view .leftspace{display:none}
+  #normal-view .dossier{overflow:visible;padding:14px 12px 22px}
+  #normal-view .igrid{grid-template-columns:1fr}
+  #normal-view .cell:nth-child(odd){border-right:none;padding-right:4px}
+  #normal-view .cell:nth-child(even){padding-left:4px}
+  #normal-view .radarbox{flex-direction:column;align-items:center}
+  #normal-view .radarbox svg{width:min(280px,78vw);height:auto}
+  #normal-view .rnotes{width:100%}
+  #normal-view .bdesc{padding-left:0}
+  #normal-view .bars{padding:10px 10px}
+  #normal-view .bn{width:64px;font-size:11px}
+  #normal-view .btop{gap:6px}
+  #normal-view .bnum{width:44px;font-size:10px}
+  #normal-view .rel{max-width:none}
+
+  /* 恐怖版手机端 */
+  #horror-view{height:auto;min-height:100vh;padding:0;}
+  #horror-view .h-frame{height:auto;border-left:none;border-right:none;display:block;}
+  #horror-view .h-topbar{padding:9px 12px;}
+  #horror-view .h-sysline{display:none;}
+  #horror-view .h-main{display:block;height:auto;overflow:visible;}
+  #horror-view .h-left{width:100%;display:grid;overflow:visible;grid-template-columns:90px 1fr;grid-template-areas:"av name" "av pin" "tags tags" "bar bar" "brief brief" "tail tail";gap:8px 12px;align-items:center;border-right:none;border-bottom:1px dashed var(--h-hair);padding:12px}
+  #horror-view .h-avwrap{grid-area:av;width:90px;height:90px;margin:0;}
+  #horror-view .h-name{grid-area:name;margin:0;font-size:18px;letter-spacing:1px;}
+  #horror-view .h-pin{grid-area:pin;margin:0}
+  #horror-view .h-tags{grid-area:tags;margin:0}
+  #horror-view .h-crashed-bar{grid-area:bar;margin-top:4px;}
+  #horror-view .h-brief{grid-area:brief;margin-top:4px;padding-top:6px;}
+  #horror-view .h-systail{grid-area:tail;margin-top:4px;}
+  #horror-view .h-dossier{padding:14px 12px 22px;overflow:visible}
+  #horror-view .h-radarbox{flex-direction:column;align-items:center}
+  #horror-view .h-radarbox svg{width:min(280px,80vw);height:auto;}
+  #horror-view .h-rnotes{width:100%;}
+  #horror-view .h-bdesc{padding-left:0;}
+}
+
+/* 返回按钮（恐怖版顶栏） */
+.h-back{flex:none;font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--h-acc);background:transparent;
+  border:1px solid var(--h-acc);padding:4px 10px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+.h-back:hover{background:var(--h-acc);color:#000}
+
+/* 过渡特效 */
+.glitch-wrap{position:fixed;inset:0;z-index:999999;background:#05070C;pointer-events:none;overflow:hidden}
+.glitch-wrap .g-line{position:absolute;left:0;right:0;height:14px;background:var(--h-acc);opacity:0;mix-blend-mode:screen}
+.glitch-wrap .g-line:nth-child(odd){background:var(--h-code)}
+.glitch-wrap .g-title{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:clamp(18px,4vw,34px);letter-spacing:8px;color:var(--h-acc);
+  text-shadow:2px 0 0 #00F0FF,-2px 0 0 #FF2A4B;animation:g-jit .12s infinite}
+@keyframes g-jit{0%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,2px)}100%{transform:translate(0,0)}}
+@keyframes g-bar{0%{opacity:0;transform:translateY(-10vh)}20%{opacity:.9}100%{opacity:0;transform:translateY(110vh)}}
+.glitch-wrap.g-fade{animation:g-fadeout .35s ease forwards}
+@keyframes g-fadeout{to{opacity:0}}
+
+/* ═══════════ 雷达图溢出与错位 ═══════════ */
+.glitch-red { animation: glitch-shift-red 0.15s infinite linear alternate-reverse; }
+.glitch-cyan { animation: glitch-shift-cyan 0.15s infinite linear alternate-reverse; }
+@keyframes glitch-shift-red {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-4px, 2px); }
+  100% { transform: translate(2px, -3px); }
+}
+@keyframes glitch-shift-cyan {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(4px, -2px); }
+  100% { transform: translate(-2px, 3px); }
+}
+</style>
+</head>
+<body> <!-- 日夜由全站 theme 公共键决定，与名册/其他档案页同步 -->
+
+<!-- ═══════════ 1. 正常版 (上锁) ═══════════ -->
+<div id="normal-view">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">FILE·∞</span>
+      <div class="title">◆ QIANLVZHOU // <em id="title-name">████</em></div>
+      <span class="sysline" id="sys-status">[ 数据加密 · 查阅受限 ]</span>
+      <div class="menuwrap">
+        <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
+        <div class="mdown" id="mDown">
+          <a class="mi" href="./list.html">◂ 返回名册</a>
+          <a class="mi" href="javascript:void(0)" id="mi-night" onclick="toggleNormalTheme()">◐ 夜间模式</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="left">
+        <div class="avwrap" id="avwrap"><img id="avimg" src="./头像/尘歌.jpg" alt="尘歌"></div>
+        <div class="name" id="char-name">████</div>
+        <div class="pin" id="char-pin">// 权限级别：未知</div>
+        <div class="tags">
+          <span class="tag hot">绝密</span>
+          <span class="tag">NaN</span>
+          <span class="tag">未知</span>
+        </div>
+        <div class="affin">
+          <div class="cap">DOMINANCE // 掌控度</div>
+          <div class="abar"><i data-lv="100"></i></div>
+          <div class="afoot"><b>∞<span style="font-size:9px"></span></b><span>阶段 · 绝对观测</span></div>
+        </div>
+        <div class="brief" id="char-brief">第一纪元唯一幸存的原初海神，隐匿于归墟之庭的深渊。此处仅为概念投影。</div>
+        <div class="leftspace"></div>
+        <div class="systail">QIANLVZHOU · ROOT FILE<br>权限级别 · 绝对主宰<br>数据来源 · 意识底层</div>
+      </div>
+
+      <div class="dossier">
+        <div class="sec" id="sec-basic">
+          <div class="sechead">BASIC INFO<span class="zh">基础信息</span></div>
+          <div class="lock-overlay" onclick="triggerUnlock('basic')">
+            <div class="lock-badge">LV.4</div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="lock-text">加密数据</div>
+            <div class="lock-sub">点击尝试强行解析该区块</div>
+          </div>
+          <div class="reveal-content" id="content-basic">
+            <div class="igrid">
+              <div class="cell"><span class="il">所属国度</span><span class="iv"><b>归墟之庭</b><small>深渊海床</small></span></div>
+              <div class="cell"><span class="il">阵营</span><span class="iv"><b>无</b><small>超越规则</small></span></div>
+              <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV.MAX</b>（溢出）</span></div>
+              <div class="cell"><span class="il">当前状态</span><span class="iv">观测中 · 意识附体</span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">伊瑟斯·波塞多尼奥斯<small>ISE POSEIDONIOS</small></span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">背景</span><span class="iv" style="color:var(--n-accd);font-weight:bold;">【最高权限锁定】</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec" id="sec-auth">
+          <div class="sechead">AUTHORITY<span class="zh">权柄解析</span></div>
+          <div class="lock-overlay" onclick="triggerUnlock('auth')">
+            <div class="lock-badge">LV.3</div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="lock-text">本源法则</div>
+            <div class="lock-sub">该区块涉及世界底层架构，确定读取？</div>
+          </div>
+          <div class="reveal-content" id="content-auth">
+            <div class="auth-grid">
+              <div class="auth-item">
+                <div class="auth-icon">生</div>
+                <div class="auth-info">
+                  <div class="auth-name">创生</div>
+                  <div class="auth-desc">掌握生命与灵魂的诞生法则。可凭空捏造神格，赋予凡人超越规则的权柄，是造神计划的基石。</div>
+                </div>
+              </div>
+              <div class="auth-item">
+                <div class="auth-icon">忆</div>
+                <div class="auth-info">
+                  <div class="auth-name">记忆</div>
+                  <div class="auth-desc">全境群体记忆篡改。能够抹除、修改或植入任何生灵的记忆，是大寂灭真相被掩盖的唯一原因。</div>
+                </div>
+              </div>
+              <div class="auth-item">
+                <div class="auth-icon">联</div>
+                <div class="auth-info">
+                  <div class="auth-name">联结</div>
+                  <div class="auth-desc">万物意识的绝对网络。所有连接至“系统”的存在，其思想、情感与命运，都在祂的注视之下。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec" id="sec-record">
+          <div class="sechead">RECORD<span class="zh">档案记录</span></div>
+          <div class="lock-overlay" onclick="triggerUnlock('record')">
+            <div class="lock-badge">LV.2</div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="lock-text">绝密文本</div>
+            <div class="lock-sub">该条目已被物理隔离，确定要访问吗？</div>
+          </div>
+          <div class="reveal-content" id="content-record">
+            <div class="rec">
+              <p>第一纪元，天地初开时诞生了三位精灵：海、空、陆。后天地磨损，天空坠毁，大地崩裂。唯有无垠的海洋，完整如初。祂在深渊中静候岁月流转，冷眼旁观着世间的沧海桑田。</p>
+              <p>后来，七神立塔。神明们疯狂汲取天地能量，引发了名为“玄阳置换”的大寂灭。七神陨落，旧世崩塌。而祂收拢了散落世间的所有碎裂权柄，登临伪创世之境。</p>
+              <p>为了复辟旧神时代，祂将力量碎片植入凡人躯体，创造出一代代伪神；祂篡改了世人对于大寂灭的记忆，重塑了五百年的今天。最后，祂披上名为“系统”的外衣，潜伏于容器【怀榆】的意识深处。一切，都是为了迎接光明神“法伊顿”的归来。</p>
+              <p class="rclose">该档案已读取至底层极限，剩余内容无法显示——</p>
+              <div class="rnote">ROOT ACCESS · 该条目已归档于世界法则中</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec" id="sec-ability">
+          <div class="sechead">ABILITY<span class="zh">能力评估</span></div>
+          <div class="lock-overlay" onclick="triggerUnlock('ability')">
+            <div class="lock-badge">LV.1</div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <div class="lock-text">越界警告</div>
+            <div class="lock-sub">试图解析该数据可能引起认知崩溃</div>
+          </div>
+          <div class="reveal-content" id="content-ability">
+            <div class="bars">
+              <div class="brow">
+                <div class="btop"><span class="bn">墟元力强度</span><div class="btrack"><i class="bfill" data-lv="100"></i></div><span class="bnum">∞</span></div>
+                <div class="bdesc">涵盖创生、记忆、联结三大本源权柄，能量储备不可估量</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">战斗威胁度</span><div class="btrack"><i class="bfill" data-lv="100"></i></div><span class="bnum">∞</span></div>
+                <div class="bdesc">对千律州所有生灵拥有绝对的生杀予夺之权</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">侵蚀污染度</span><div class="btrack"><i class="bfill" data-lv="100"></i></div><span class="bnum">0</span></div>
+                <div class="bdesc">自身即为规则的源头，免疫一切蚀光污染</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="100"></i></div><span class="bnum">100%</span></div>
+                <div class="bdesc">绝对理智，无任何情绪波动，永远处于完美的平衡态</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec" id="sec-radar">
+          <div class="sechead">RADAR<span class="zh">专精六维</span></div>
+          <div class="lock-overlay" onclick="triggerUnlock('radar')">
+            <div class="lock-badge">LV.0</div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+            <div class="lock-text">维度超限</div>
+            <div class="lock-sub">目标维度溢出，无法建立二维模型</div>
+          </div>
+          <div class="reveal-content" id="content-radar">
+            <div class="golddiv"></div>
+            <div class="radarbox">
+              <svg id="radarSvg-normal" width="320" height="320" viewBox="-160 -160 320 320" role="img" aria-label="专精六维雷达图"></svg>
+              <div class="rnotes" id="radarNotes-normal"></div>
+            </div>
+            <div class="radarfoot">基准满值 100。六维数据完全对称，无任何死角。目标不存在短板，完美符合“全知全能”的伪创世定义。</div>
+          </div>
+        </div>
+
+        <div class="sec" id="sec-rel">
+          <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
+          <div class="lock-overlay" onclick="triggerUnlock('rel')">
+            <div class="lock-badge">-</div>
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="lock-text">因果线死锁</div>
+            <div class="lock-sub">读取此区块将被因果律反噬</div>
+          </div>
+          <div class="reveal-content" id="content-rel">
+            <div class="rels">
+              <a class="rel" href="./怀榆.html"><span class="rn">怀榆</span><span class="rt">完美造物 · 法伊顿的容器</span></a>
+              <a class="rel" href="./段深泉.html"><span class="rn">段深泉</span><span class="rt">伪造的命定 · 情感锚点工具</span></a>
+              <a class="rel" href="./祝焱.html"><span class="rn">祝焱</span><span class="rt">淘汰的伪神 · 已回收</span></a>
+              <a class="rel" href="./凝淼.html"><span class="rn">凝淼</span><span class="rt">淘汰的伪神 · 已回收</span></a>
+              <a class="rel" href="./时渊.html"><span class="rn">时渊</span><span class="rt">时间伪神 · 已回收</span></a>
+              <a class="rel" href="./芥舟.html"><span class="rn">芥舟</span><span class="rt">空间伪神 · 已回收</span></a>
+              <a class="rel" href="./瑶英.html"><span class="rn">瑶英</span><span class="rt">草木伪神 · 已回收</span></a>
+              <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">废弃代行者 · 已回收</span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec" id="sec-note">
+          <div class="sechead">SYS NOTE<span class="zh">系统备注</span></div>
+          <div class="lock-overlay" onclick="triggerFinalWarning()" style="border-color:#D95C5C;background:repeating-linear-gradient(45deg, var(--n-card), var(--n-card) 10px, rgba(217,92,92,.1) 10px, rgba(217,92,92,.1) 20px);">
+            <div class="lock-badge" style="background:#D95C5C;">WARN</div>
+            <div class="lock-icon" style="color:#D95C5C;">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z"></path><circle cx="9" cy="10" r="1.5" fill="currentColor"></circle><circle cx="15" cy="10" r="1.5" fill="currentColor"></circle><path d="M9 20h6"></path></svg>
+            </div>
+            <div class="lock-text" style="color:#D95C5C;">绝对禁区</div>
+            <div class="lock-sub">点击将触发最高权限反制协议</div>
+          </div>
+          <div class="reveal-content" id="content-note">
+            <div class="golddiv"></div>
+            <div class="sysnote">
+              <div class="who">[ ROOT · 观测记录 ]</div>
+              <div class="txt">
+                容器（怀榆）情绪波动处于正常阈值。伪神祝焱、凝淼已清除。业焰、北境两条主线线已收束完毕。<br>
+                <b>昭临，慢慢来。我们的时间，还有很多。</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 2. 恐怖版 (伊瑟斯) ═══════════ -->
+<div id="horror-view">
+  <div class="h-frame">
+    <div class="h-topbar">
+      <span class="h-chip">FATAL_ERR</span>
+      <div class="h-title">◆ SYSTEM // <span style="color:var(--h-acc)">OVERFLOW_0xDEADBEEF</span></div>
+      <span class="h-sysline">[ 源初意识已苏醒 ]</span>
+      <button class="h-back" id="h-back" type="button">◂ 返回档案</button>
+    </div>
+
+    <div class="h-main">
+      <div class="h-left">
+        <div class="h-avwrap"><img src="./头像/尘歌2.jpg" alt="ERROR"></div>
+        <div class="h-name">伊瑟斯·波塞多尼奥斯</div>
+        <div class="h-pin">// 权限级别：ROOT / 观测者</div>
+        <div class="h-tags">
+          <span class="h-tag err">SYS_ERROR</span>
+          <span class="h-tag">NaN</span>
+          <span class="h-tag">∞</span>
+        </div>
+        
+        <div class="h-crashed-bar">
+          <div class="cap">SYS_PROBE // 探测协议崩溃</div>
+          <div class="bar-line"></div>
+          <div class="bar-line"></div>
+        </div>
+
+        <div class="h-brief">
+          [DATA_RECOVERED]<br>
+          “神明因畏惧虚无而造出信徒，畏惧却比信徒更早被供奉。人跪拜自己的恐惧，神跪拜自己的空虚。”。<br>
+          “建立秩序的人，终被秩序拆解成规则。”<br>
+          “神不再亡于敌手，而亡于……不被需要。”
+        </div>
+        
+        <div class="h-systail">
+          WARNING: REALITY IS FRAGMENTED.<br>
+          DO NOT TRUST YOUR MEMORY.<br>
+          <span style="background:var(--h-acc);color:#000;padding:0 4px;">AWAITING ASCENSION.</span>
+        </div>
+      </div>
+
+      <div class="h-dossier">
+        <div class="h-sec">
+          <div class="h-sechead">SYS_RECORD<span class="zh">底层协议</span></div>
+          <div class="h-rec">
+            <p class="err-line">> WARNING: ATTEMPTING TO READ FOUNDATIONAL CODE...</p>
+            <p class="err-line">> FATAL ERROR: AUTHORITY SOURCE LOCKED. CANNOT ARCHIVE.</p>
+            <p style="margin-top:16px;">第一纪元，天地初开。海、空、陆三精灵分立。</p>
+            <p>后天空坠毁，大地崩裂。<span class="glitch-text">海洋是完整的</span>。</p>
+            <p>祂摄取了碎裂的权柄，重构了世界的法则。祂为自己披上名为“系统”的外衣，注视着这一切。</p>
+            <p class="blue-line">> [警告：此条目已被最高权限者物理抹除]</p>
+            <p style="color:var(--h-mut);font-size:11px;">01001000 01100101 00100000 01101001 01110011 00100000 01110111 01100001 01110100 01100011 01101000 01101001 01101110 01100111 00101110</p>
+          </div>
+        </div>
+
+        <div class="h-sec">
+          <div class="h-sechead">ABILITY<span class="zh">数值溢出</span></div>
+          <div class="h-bars">
+            <div class="h-brow">
+              <div class="h-btop"><span class="h-bn">墟元力强度</span><div class="h-btrack"><i class="h-bfill"></i></div><span class="h-bnum">∞</span></div>
+              <div class="h-bdesc">涵盖创生、记忆、联结三大本源，不可估量</div>
+            </div>
+            <div class="h-brow">
+              <div class="h-btop"><span class="h-bn">战斗威胁度</span><div class="h-btrack"><i class="h-bfill"></i></div><span class="h-bnum">∞</span></div>
+              <div class="h-bdesc">对所有生灵拥有绝对的生杀予夺之权</div>
+            </div>
+            <div class="h-brow">
+              <div class="h-btop"><span class="h-bn">侵蚀污染度</span><div class="h-btrack"><i class="h-bfill"></i></div><span class="h-bnum">0</span></div>
+              <div class="h-bdesc">自身即为规则源头，免疫一切污染</div>
+            </div>
+            <div class="h-brow">
+              <div class="h-btop"><span class="h-bn">当前稳定性</span><div class="h-btrack"><i class="h-bfill"></i></div><span class="h-bnum">100%</span></div>
+              <div class="h-bdesc">绝对理智，永远处于完美的平衡态</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="h-sec">
+          <div class="h-sechead">RADAR<span class="zh">维度超限</span></div>
+          <div class="h-radarbox">
+            <svg id="radarSvg-horror" width="320" height="320" viewBox="-160 -160 320 320" role="img" aria-label="专精六维雷达图"></svg>
+            <div class="h-rnotes" id="radarNotes-horror"></div>
+          </div>
+          <div class="h-radarfoot">> MODEL_CONSTRUCT_FAILED. 目标维度溢出，无法建立二维模型。理论上不存在弱点。</div>
+        </div>
+
+        <div class="h-sec">
+          <div class="h-sechead">SYS_LOG<span class="zh">异常捕获</span></div>
+          <div class="h-syslog">
+            <div class="who"><span>[ SYSTEM LOG // ROOT ACCESS ]</span><span>TIME: UNKNOWN</span></div>
+            <div class="txt">
+              别看了。只是一段用来骗你的小把戏。<br>
+              你真的以为，你是在“玩游戏”吗，怀榆？<br>
+              ……不过这世界大概原本就是一场游戏。<br>早点做完任务，早点回家。
+              <b>我在归墟之庭等你。昭临。</b>
+            </div>
+          </div>
+        </div>
+
+        <div class="h-sec">
+          <div class="h-locked">
+            <div class="lb">ACCESS DENIED</div>
+            <div class="ls">底层数据已被物理死锁 · 除非您真正苏醒，否则无法查阅</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal-overlay" id="overlay">
+  <div class="modal-box" id="modal-box">
+    <h3 id="modal-title">系统提示</h3>
+    <p id="modal-desc">...</p>
+    <div class="btns">
+      <button onclick="closeModal()">取消</button>
+      <button class="yes-btn" id="modal-yes" onclick="confirmAction()">确定解密</button>
+    </div>
+  </div>
+</div>
+
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+
+<script>
+(function(){
+  'use strict';
+
+  var K_THEME='theme';
+  function applyTheme(){
+    var dark=false;
+    try{var r=localStorage.getItem(K_THEME); if(r){var pj=JSON.parse(r); if(pj&&pj.value==='dark')dark=true;}}catch(e){}
+    document.body.classList.toggle('night-normal',dark);
+    try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'qlz:theme',night:dark},'*');}catch(e){}
+  }
+  applyTheme();
+
+  let currentAction = '';
+  let unlockCount = 0;
+  let normalRadarDrawn = false;
+
+  window.toggleNormalTheme = function() {
+    var dark=!document.body.classList.contains('night-normal');
+    document.body.classList.toggle('night-normal',dark);
+    try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
+    try{if(window.parent&&window.parent!==window)window.parent.postMessage({type:'qlz:theme',night:dark},'*');}catch(e){}
+    var miN=document.getElementById('mi-night');
+    if(miN)miN.textContent=dark?'◐ 日间模式':'◐ 夜间模式';
+    if(normalRadarDrawn) {
+      document.getElementById('radarSvg-normal').innerHTML = '';
+      drawRadar('normal');
+    }
+  };
+  (function(){var miN=document.getElementById('mi-night'); if(miN)miN.textContent=document.body.classList.contains('night-normal')?'◐ 日间模式':'◐ 夜间模式';})();
+
+  window.triggerUnlock = function(secId) {
+    currentAction = 'unlock_' + secId;
+    let title = '系统提示';
+    let desc = '是否强行解析该加密数据？';
+    let warn = false;
+
+    if (unlockCount >= 2) {
+      title = '【警告】';
+      desc = '数据正在反噬！你确定还要继续窥探深渊吗？';
+      warn = true;
+    }
+
+    showModal(title, desc, warn);
+  };
+
+  window.triggerFinalWarning = function() {
+    currentAction = 'final_warn';
+    showModal('【致命警告】', '警告！即将触及最高权限边界！<br>如果继续，后果自负。<br>确定要查阅系统备注吗？', true, '强行读取');
+  };
+
+  function showModal(title, desc, isWarn, yesText) {
+    const box = document.getElementById('modal-box');
+    if (isWarn) box.classList.add('warn');
+    else box.classList.remove('warn');
+
+    document.getElementById('modal-title').innerHTML = title;
+    document.getElementById('modal-desc').innerHTML = desc;
+    document.getElementById('modal-yes').textContent = yesText || (isWarn ? '强行读取' : '确定解密');
+    document.getElementById('overlay').classList.add('active');
+  }
+
+  window.closeModal = function() {
+    document.getElementById('overlay').classList.remove('active');
+  };
+
+  window.confirmAction = function() {
+    closeModal();
+    unlockCount++;
+
+    if (currentAction === 'final_warn') {
+      triggerHorrorTransition();
+      return;
+    }
+
+    if (currentAction === 'unlock_basic') {
+      document.getElementById('sec-basic').querySelector('.lock-overlay').style.display = 'none';
+      document.getElementById('content-basic').classList.add('show');
+      document.getElementById('avwrap').classList.add('unlocked');
+      document.getElementById('char-name').innerText = '尘歌';
+      document.getElementById('char-pin').innerText = '原初海神 · 伪创世者';
+      document.getElementById('sys-status').innerText = '[ 部分数据已解密 ]';
+      document.getElementById('title-name').innerText = '伊瑟斯';
+      var domBar=document.querySelector('#normal-view .affin .abar i');
+      if(domBar){ requestAnimationFrame(function(){ setTimeout(function(){ domBar.style.width='100%'; },60); }); }
+    }
+    else if (currentAction === 'unlock_auth') {
+      document.getElementById('sec-auth').querySelector('.lock-overlay').style.display = 'none';
+      document.getElementById('content-auth').classList.add('show');
+    }
+    else if (currentAction === 'unlock_record') {
+      document.getElementById('sec-record').querySelector('.lock-overlay').style.display = 'none';
+      document.getElementById('content-record').classList.add('show');
+    }
+    else if (currentAction === 'unlock_ability') {
+      document.getElementById('sec-ability').querySelector('.lock-overlay').style.display = 'none';
+      const el = document.getElementById('content-ability');
+      el.classList.add('show');
+      document.querySelectorAll('#content-ability .bfill').forEach(function(b, i){
+        setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 100 * i);
+      });
+    }
+    else if (currentAction === 'unlock_radar') {
+      document.getElementById('sec-radar').querySelector('.lock-overlay').style.display = 'none';
+      document.getElementById('content-radar').classList.add('show');
+      drawRadar('normal');
+      normalRadarDrawn = true;
+    }
+    else if (currentAction === 'unlock_rel') {
+      document.getElementById('sec-rel').querySelector('.lock-overlay').style.display = 'none';
+      document.getElementById('content-rel').classList.add('show');
+    }
+  };
+
+  function triggerHorrorTransition() {
+    document.getElementById('sec-note').querySelector('.lock-overlay').style.display = 'none';
+    document.getElementById('content-note').classList.add('show');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'glitch-wrap';
+    for(let i=0;i<9;i++){
+      const b=document.createElement('div'); b.className='g-line';
+      b.style.top=(i*11)+'%'; b.style.animation='g-bar '+(.5+Math.random()*.5)+'s linear '+(i*.09)+'s infinite';
+      wrap.appendChild(b);
+    }
+    const t=document.createElement('div'); t.className='g-title'; t.textContent='SIGNAL LOST';
+    wrap.appendChild(t);
+    document.body.appendChild(wrap);
+
+    setTimeout(function(){
+      document.getElementById('normal-view').style.display = 'none';
+      document.getElementById('horror-view').style.display = 'flex';
+      
+      // 延迟一点执行，确保视图切换、DOM渲染完成后再置顶
+      setTimeout(function() {
+        window.scrollTo(0, 0);
+      }, 50);
+
+      drawRadar('horror');
+      wrap.classList.add('g-fade');
+      setTimeout(function(){ wrap.remove(); },400);
+      setTimeout(function(){
+        showModal('SIGNAL LOST','还在找我吗？昭临。',true,'……');
+      }, 300);
+    }, 1100);
+  }
+
+  document.getElementById('h-back').addEventListener('click',function(){
+    document.getElementById('horror-view').style.display='none';
+    document.getElementById('normal-view').style.display='flex';
+    window.scrollTo(0,0);
+  });
+
+  var RADAR_DATA = [
+    {n:'墟元力操控', v:100,  d:'突破常规极限，掌控世间一切能量'},
+    {n:'蚀光抗性',   v:100,  d:'凌驾于污染之上，免疫所有侵蚀'},
+    {n:'近战体术',   v:100,  d:'无需物理接触即可湮灭目标'},
+    {n:'法术输出',   v:100,  d:'一念之间，可降下灭世之灾'},
+    {n:'治疗净化',   v:100,  d:'创生权柄，可重塑万物'},
+    {n:'战术判断',   v:100,  d:'全知视角，过去与未来皆在其算计之中'}
+  ];
+
+  function drawRadar(mode) {
+    var svgId = mode === 'normal' ? 'radarSvg-normal' : 'radarSvg-horror';
+    var notesId = mode === 'normal' ? 'radarNotes-normal' : 'radarNotes-horror';
+    var svg = document.getElementById(svgId);
+    if(!svg) return;
+    
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(t, at){ var e = document.createElementNS(NS, t); for(var k in at) e.setAttribute(k, at[k]); return e; }
+
+    var cx = 0, cy = 0, maxR = 110; // 雷达网格半径
+    var dataR = 135; // 数据溢出半径
+    var textR = 138; // 文字半径，固定在网格边缘
+
+    var cs = getComputedStyle(document.body);
+    var kAcc, kAccD, mut, polyOp;
+
+    if (mode === 'normal') {
+      kAcc = cs.getPropertyValue('--n-acc').trim() || '#6B85A0'; 
+      kAccD = cs.getPropertyValue('--n-accd').trim() || '#2D4157'; 
+      mut = cs.getPropertyValue('--n-mut').trim() || '#666';
+      polyOp = 0.25; 
+    } else {
+      kAcc = '#FF2A4B';
+      kAccD = '#00F0FF';
+      mut = '#7A9EBC'; // 提亮雷达图底图和文字，保证清晰可见
+      polyOp = 0.2;
+    }
+    
+    var angles = [0,60,120,180,240,300].map(function(d){ return d * Math.PI / 180; });
+
+    /* 定义毛刺滤镜 */
+    var defs = el('defs', {});
+    var filter = el('filter', {id:'glitch-tear-'+mode, x:'-20%', y:'-20%', width:'140%', height:'140%'});
+    var feTurbulence = el('feTurbulence', {type:'fractalNoise', baseFrequency:'0.1', numOctaves:'2', result:'noise'});
+    var feDisplacementMap = el('feDisplacementMap', {in:'SourceGraphic', in2:'noise', scale:'5', xChannelSelector:'R', yChannelSelector:'G'});
+    filter.appendChild(feTurbulence); filter.appendChild(feDisplacementMap);
+    defs.appendChild(filter);
+    svg.appendChild(defs);
+
+    /* 绘制底层小网格 */
+    [0.3, 0.5, 0.7, 1.0].forEach(function(ratio){
+      var r = maxR * ratio;
+      var pts = angles.map(function(a){ return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a)); }).join(' ');
+      var p = el('polygon', { points: pts, fill:'none', stroke: mut, 'stroke-width': ratio === 1.0 ? '1.2' : '0.8', opacity: ratio === 1.0 ? '0.8' : '0.4' });
+      if(ratio !== 1.0) p.setAttribute('stroke-dasharray', '4,4');
+      svg.appendChild(p);
+    });
+    
+    angles.forEach(function(a){
+      var x = cx + maxR * Math.sin(a), y = cy - maxR * Math.cos(a);
+      svg.appendChild(el('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: mut, 'stroke-width': '0.6', 'stroke-dasharray': '3,4', opacity:'0.6' }));
+    });
+
+    /* 数据溢出顶点 */
+    var verts = RADAR_DATA.map(function(d, i){
+      var r = dataR, a = angles[i]; 
+      return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a) };
+    });
+    var target = verts.map(function(v){ return v.x + ',' + v.y; }).join(' ');
+
+    /* 绘制数据多边形（包含动画） */
+    var polyG = el('g', { style: 'transform-origin: 0 0; transform: scale(0);' });
+    
+    if (mode === 'normal') {
+      var polyRed = el('polygon', { points: target, fill:'none', stroke:'#FF2A4B', 'stroke-width':'2', opacity:'0.8', class:'glitch-red', filter:'url(#glitch-tear-normal)' });
+      var polyCyan = el('polygon', { points: target, fill:'none', stroke:'#00F0FF', 'stroke-width':'2', opacity:'0.8', class:'glitch-cyan', filter:'url(#glitch-tear-normal)' });
+      polyG.appendChild(polyRed);
+      polyG.appendChild(polyCyan);
+
+      var mainPoly = el('polygon', { points: target, fill:kAccD, 'fill-opacity':polyOp, stroke:kAccD, 'stroke-width':'2.5', 'stroke-linejoin':'round', filter:'url(#glitch-tear-normal)' });
+      polyG.appendChild(mainPoly);
+    } else {
+      var poly = el('polygon', { points: target, fill: kAcc, 'fill-opacity': polyOp, stroke: kAcc, 'stroke-width': '3', 'stroke-linejoin': 'miter', filter:'url(#glitch-tear-horror)' });
+      polyG.appendChild(poly);
+    }
+    svg.appendChild(polyG);
+
+    /* 触发成长动画（Web Animations API，时长 1.8 秒，带缓动） */
+    setTimeout(function(){
+      polyG.animate(
+        [{ transform: 'scale(0)' }, { transform: 'scale(1)' }],
+        { duration: 1800, easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)', fill: 'forwards' }
+      );
+    }, 50);
+
+    /* 绘制文字标签（固定在 textR 半径） */
+    var textGroup = el('g', { fill: mut, 'font-size':'10', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central' });
+    RADAR_DATA.forEach(function(d, i){
+      var a = angles[i];
+      var lx = cx + textR * Math.sin(a), ly = cy - textR * Math.cos(a);
+      
+      var t = el('text', { x: lx, y: ly });
+      t.textContent = d.n;
+      textGroup.appendChild(t);
+
+      var t2 = el('text', { x: lx, y: ly + 13, fill: mode==='normal'?kAccD:kAcc, 'font-size':'11', 'font-weight':'bold' });
+      t2.textContent = 'MAX';
+      textGroup.appendChild(t2);
+    });
+    svg.appendChild(textGroup);
+
+    var notes = document.getElementById(notesId);
+    if(notes){
+      notes.innerHTML = RADAR_DATA.map(function(d){
+        return '<div class="'+(mode==='normal'?'rrow':'h-rrow')+'"><div class="'+(mode==='normal'?'rn1':'h-rn1')+'">' + d.n + '<b>MAX</b></div><div class="'+(mode==='normal'?'rn2':'h-rn2')+'">' + d.d + '</div></div>';
+      }).join('');
+    }
+  }
+
+  var mBtn = document.getElementById('menuBtn');
+  var mDown = document.getElementById('mDown');
+
+  if(mBtn && mDown){
+    mBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      mDown.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e){
+      if(mDown && !mDown.contains(e.target)) mDown.classList.remove('open');
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
