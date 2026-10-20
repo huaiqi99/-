@@ -101,7 +101,9 @@ body.night-normal #normal-view .tag.hot{color:var(--n-card);}
 #normal-view .reveal-content{display:none; opacity:0; transform:translateY(10px); transition:all .5s ease;}
 #normal-view .reveal-content.show{display:block; opacity:1; transform:translateY(0);}
 
-#normal-view .igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--n-klein);box-shadow:var(--n-shadow)}
+#normal-view .igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--n-klein);box-shadow:var(--n-shadow);
+  background:rgba(107,133,160,.08)}   /* 淡蓝衬底，掌控度同款 */
+body.night-normal #normal-view .igrid{background:rgba(107,133,160,.1)}
 #normal-view .cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--n-hair);min-width:0}
 #normal-view .cell:nth-child(odd){border-right:1.5px dashed var(--n-hair);padding-right:14px}
 #normal-view .cell:nth-child(even){padding-left:14px}
@@ -111,11 +113,47 @@ body.night-normal #normal-view .tag.hot{color:var(--n-card);}
 #normal-view .iv b{color:var(--n-accd)}
 #normal-view .iv small{font-family:var(--mono);font-size:9px;color:var(--n-mut);letter-spacing:1px;margin-left:6px}
 
-#normal-view .auth-grid{display:flex;flex-direction:column;gap:10px;}
-#normal-view .auth-item{border:1.5px solid var(--n-klein);padding:12px;background:var(--n-card);box-shadow:var(--n-shadow);display:flex;gap:12px;align-items:flex-start;}
-#normal-view .auth-icon{flex:none;width:36px;height:36px;border-radius:50%;background:var(--n-acc);color:#111;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:bold;}
-#normal-view .auth-info .auth-name{font-size:14px;font-weight:bold;color:var(--n-ink);margin-bottom:4px;letter-spacing:1px;}
-#normal-view .auth-info .auth-desc{font-size:12px;color:var(--n-mut);line-height:1.6;}
+/* 权柄解析 · 方案A顶界线式（TA 2026-10-21 定案）：顶粗线+右上编号+右下大水印 */
+#normal-view .auth-block{position:relative;padding:12px 14px 14px;overflow:hidden;margin-bottom:14px;opacity:0}
+#normal-view .auth-block:last-child{margin-bottom:0}
+#normal-view .auth-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--n-klein);transform:scaleX(0);transform-origin:left}
+#normal-view .auth-no{position:absolute;top:8px;right:0;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--n-accd)}
+#normal-view .auth-wm{position:absolute;right:10px;bottom:-20px;font-size:72px;font-weight:bold;color:rgba(42,58,92,.08);line-height:1;pointer-events:none;opacity:0;transition:opacity 1.1s ease .45s}
+#normal-view .auth-name{font-size:16px;font-weight:bold;color:var(--n-ink);letter-spacing:1px}
+#normal-view .auth-desc{font-size:11.5px;color:var(--n-mut);line-height:1.8;max-width:75%;position:relative;margin-top:4px}
+body.night-normal #normal-view .auth-wm{color:rgba(107,133,160,.14)}
+
+/* ── 解锁入场动画（TA：档案记录/权柄/关系网也要有动态） ── */
+@keyframes chg-fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes chg-line{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+/* 权柄：顶线逐块画出+块体错峰上浮+水印延迟显形 */
+#content-auth.show .auth-block{animation:chg-fadeUp .55s ease forwards}
+#content-auth.show .auth-block:nth-of-type(1){animation-delay:.05s}
+#content-auth.show .auth-block:nth-of-type(2){animation-delay:.22s}
+#content-auth.show .auth-block:nth-of-type(3){animation-delay:.39s}
+#content-auth.show .auth-block::before{animation:chg-line .65s ease forwards}
+#content-auth.show .auth-block:nth-of-type(1)::before{animation-delay:.05s}
+#content-auth.show .auth-block:nth-of-type(2)::before{animation-delay:.22s}
+#content-auth.show .auth-block:nth-of-type(3)::before{animation-delay:.39s}
+#content-auth.show .auth-wm{opacity:1}
+/* 档案记录：段落逐段显形，涂黑条随段走 */
+#content-record p{opacity:0}
+#content-record.show p{animation:chg-fadeUp .6s ease forwards}
+#content-record.show p:nth-of-type(1){animation-delay:.05s}
+#content-record.show p:nth-of-type(2){animation-delay:.3s}
+#content-record.show p:nth-of-type(3){animation-delay:.55s}
+#content-record.show p.rclose{animation-delay:.85s}
+/* 关系网：卡片逐张翻入 */
+#content-rel .rel{opacity:0}
+#content-rel.show .rel{animation:chg-fadeUp .45s ease forwards}
+#content-rel.show .rel:nth-child(1){animation-delay:.04s}
+#content-rel.show .rel:nth-child(2){animation-delay:.1s}
+#content-rel.show .rel:nth-child(3){animation-delay:.16s}
+#content-rel.show .rel:nth-child(4){animation-delay:.22s}
+#content-rel.show .rel:nth-child(5){animation-delay:.28s}
+#content-rel.show .rel:nth-child(6){animation-delay:.34s}
+#content-rel.show .rel:nth-child(7){animation-delay:.4s}
+#content-rel.show .rel:nth-child(8){animation-delay:.46s}
 
 #normal-view .rec{border:1.5px solid var(--n-klein);padding:14px 16px;background:var(--n-card);box-shadow:var(--n-shadow)}
 #normal-view .rec p{font-size:13px;line-height:2;color:var(--n-ink);text-align:justify;text-indent:2em}
@@ -149,9 +187,9 @@ body.night-normal #normal-view .golddiv{border-top-color:rgba(82,111,138,.3)}
 #normal-view .radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--n-hair);font-size:11px;color:var(--n-mut);line-height:1.7}
 
 #normal-view .rels{display:flex;flex-wrap:wrap;gap:10px}
-#normal-view .rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1;max-width:240px;border:1.5px solid var(--n-klein);border-left:5px solid var(--n-acc);padding:9px 12px;text-decoration:none;background:var(--n-card);box-shadow:var(--n-shadow);transition:transform .18s,box-shadow .18s,background .18s}
-#normal-view .rel:hover{background:rgba(107,133,160,.08);transform:translate(-2px,-3px);box-shadow:5px 5px 0 var(--n-shadow)}
-#normal-view .rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 var(--n-shadow)}
+#normal-view .rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1 1 calc(25% - 10px);max-width:240px;border:1.5px solid var(--n-klein);border-left:5px solid var(--n-acc);padding:9px 12px;text-decoration:none;background:var(--n-card);box-shadow:3px 3px 0 rgba(25,42,63,.15);transition:transform .18s,box-shadow .18s,background .18s}
+#normal-view .rel:hover{background:rgba(107,133,160,.08);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(25,42,63,.18)}
+#normal-view .rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(25,42,63,.15)}
 #normal-view .rel .rn{font-size:13px;font-weight:bold;color:var(--n-ink)}
 #normal-view .rel .rt{font-size:11px;color:var(--n-mut);line-height:1.5}
 
@@ -362,7 +400,7 @@ body.night-normal #normal-view .golddiv{border-top-color:rgba(82,111,138,.3)}
       <div class="menuwrap">
         <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
         <div class="mdown" id="mDown">
-          <a class="mi" href="./list.html">◂ 返回名册</a>
+          <a class="mi" href="./资料.html">◂ 返回名册</a>
           <a class="mi" href="javascript:void(0)" id="mi-night" onclick="toggleNormalTheme()">◐ 夜间模式</a>
         </div>
       </div>
@@ -422,28 +460,23 @@ body.night-normal #normal-view .golddiv{border-top-color:rgba(82,111,138,.3)}
             <div class="lock-sub">该区块涉及世界底层架构，确定读取？</div>
           </div>
           <div class="reveal-content" id="content-auth">
-            <div class="auth-grid">
-              <div class="auth-item">
-                <div class="auth-icon">生</div>
-                <div class="auth-info">
-                  <div class="auth-name">创生</div>
-                  <div class="auth-desc">掌握生命与灵魂的诞生法则。可凭空捏造神格，赋予凡人超越规则的权柄，是造神计划的基石。</div>
-                </div>
-              </div>
-              <div class="auth-item">
-                <div class="auth-icon">忆</div>
-                <div class="auth-info">
-                  <div class="auth-name">记忆</div>
-                  <div class="auth-desc">全境群体记忆篡改。能够抹除、修改或植入任何生灵的记忆，是大寂灭真相被掩盖的唯一原因。</div>
-                </div>
-              </div>
-              <div class="auth-item">
-                <div class="auth-icon">联</div>
-                <div class="auth-info">
-                  <div class="auth-name">联结</div>
-                  <div class="auth-desc">万物意识的绝对网络。所有连接至“系统”的存在，其思想、情感与命运，都在祂的注视之下。</div>
-                </div>
-              </div>
+            <div class="auth-block">
+              <span class="auth-no">Ⅰ · GENESIS</span>
+              <span class="auth-wm">生</span>
+              <div class="auth-name">创生</div>
+              <div class="auth-desc">掌握生命与灵魂的诞生法则。可凭空捏造神格，赋予凡人超越规则的权柄，是造神计划的基石。</div>
+            </div>
+            <div class="auth-block">
+              <span class="auth-no">Ⅱ · MNEME</span>
+              <span class="auth-wm">忆</span>
+              <div class="auth-name">记忆</div>
+              <div class="auth-desc">全境群体记忆篡改。能够抹除、修改或植入任何生灵的记忆，是大寂灭真相被掩盖的唯一原因。</div>
+            </div>
+            <div class="auth-block">
+              <span class="auth-no">Ⅲ · NEXUS</span>
+              <span class="auth-wm">联</span>
+              <div class="auth-name">联结</div>
+              <div class="auth-desc">万物意识的绝对网络。所有连接至“系统”的存在，其思想、情感与命运，都在祂的注视之下。</div>
             </div>
           </div>
         </div>
