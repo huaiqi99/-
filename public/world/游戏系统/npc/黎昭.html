@@ -109,9 +109,14 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
 .leftspace{flex:1}
 .systail{flex:none;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--mut);line-height:1.9;text-align:left}
 
-.dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px}
+.dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px;position:relative}
 .ppage{display:none}
 .ppage.on{display:block}
+.dossier .scanline{position:absolute;left:0;right:0;top:0;height:2px;z-index:6;pointer-events:none;opacity:0;
+  background:var(--klein);box-shadow:0 0 14px 3px rgba(58,55,104,.45)}
+.dossier .scanline.run{animation:scandown .55s cubic-bezier(.4,0,.3,1) forwards}
+@keyframes scandown{0%{opacity:.95;top:0}80%{opacity:.95}100%{opacity:0;top:100%}}
+.dossier .ppage{animation:none}
 .sec{margin-bottom:22px}
 .sechead{font-family:var(--serif);font-size:12px;font-weight:bold;letter-spacing:3px;color:var(--card);background:var(--klein);
   display:inline-block;padding:4px 12px;margin-bottom:10px;box-shadow:var(--shadowS)}
@@ -355,7 +360,7 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
             <div class="igrid">
               <div class="cell"><span class="il">所属国度</span><span class="iv"><b>无</b></span></div>
               <div class="cell"><span class="il">阵营</span><span class="iv"><b>烬影会</b>（首领）</span></div>
-              <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV.45</b>（原为半神级）</span></div>
+              <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV.30</b></span></div>
               <div class="cell"><span class="il">当前状态</span><span class="iv">污染重度 / 依靠意志压制</span></div>
               <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">黎昭<small>LI ZHAO</small></span></div>
             </div>
@@ -399,17 +404,17 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
               <svg id="radarSvg" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图"></svg>
               <div class="rnotes" id="radarNotes"></div>
             </div>
-            <div class="radarfoot">极度偏科的深渊型作战面板，以燃烧生命为代价换取极端的破坏力。</div>
+            <div class="radarfoot">极度偏科的蚀光型作战面板，以燃烧生命为代价换取极端的破坏力。</div>
           </div>
 
           <div class="sec">
             <div class="sechead">关系网<span class="en">RELATIONS</span></div>
             <div class="rels">
-              <a class="rel" href="./怀榆.html"><span class="rn">怀榆</span><span class="rt">同一张脸，不同的命。避之不及的“系统雷达”。</span></a>
+              <a class="rel" href="./怀榆.html"><span class="rn">怀榆</span><span class="rt">已然抛弃的身份。</span></a>
+              <a class="rel" href="./阿列克谢.html"><span class="rn">阿列克谢</span><span class="rt">不愿承认的港湾。</span></a>
               <a class="rel" href="./段深泉.html"><span class="rn">段深泉</span><span class="rt">已然遗忘的命运。</span></a>
-              <a class="rel" href="./尘歌.html"><span class="rn">尘歌</span><span class="rt">造物主。</span></a>
-              <a class="rel" href="./阿列克谢.html"><span class="rn">阿列克谢</span><span class="rt">唯一的锚点。落魄时被其收留，是破败躯壳唯一的避风港。</span></a>
-              <a class="rel" href="./凝淼.html"><span class="rn">凝淼</span><span class="rt">合作对象。各取所需，互相利用。</span></a>
+              <a class="rel" href="./尘歌.html"><span class="rn">尘歌</span><span class="rt">无法背叛的造物主。</span></a>
+              <a class="rel" href="./凝淼.html"><span class="rn">凝淼</span><span class="rt">不错的合作对象。</span></a>
             </div>
           </div>
 
@@ -457,10 +462,39 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
   
   var panelOpen = false;
   
+  function pageTurn(outEl,inEl,back){
+    var box=document.querySelector('.dossier');
+    var line=box.querySelector('.scanline');
+    if(!line){ line=document.createElement('div'); line.className='scanline'; box.appendChild(line); }
+    var outs=Array.prototype.slice.call(outEl.children);
+    var ins=Array.prototype.slice.call(inEl.children);
+    inEl.classList.add('on');
+    box.scrollTop=0;
+    /* 旧页：下沉淡出 */
+    outs.forEach(function(sec,i){
+      sec.animate([
+        {opacity:1,transform:'translateY(0)',filter:'brightness(1)'},
+        {opacity:0,transform:'translateY(16px)',filter:'brightness(.8)'}
+      ],{duration:240,delay:i*24,easing:'ease-in',fill:'forwards'});
+    });
+    /* 扫描线：从上往下扫 */
+    line.classList.remove('run'); void line.offsetWidth; line.classList.add('run');
+    /* 新页：跟着扫描线过顶逐块浮现 */
+    ins.forEach(function(sec,i){
+      sec.animate([
+        {opacity:0,transform:'translateY(-10px)',filter:'brightness(1.25)'},
+        {opacity:1,transform:'translateY(0)',filter:'brightness(1)'}
+      ],{duration:300,delay:170+i*45,easing:'ease-out',fill:'backwards'});
+    });
+    setTimeout(function(){
+      outs.forEach(function(sec){ sec.getAnimations().forEach(function(a){ a.cancel(); }); });
+      outEl.classList.remove('on');
+    },260+outs.length*24);
+  }
   function setPanel(open){
     panelOpen = open;
-    pgCover.classList.toggle('on', !open);
-    pgReal.classList.toggle('on', open);
+    if(open){ pageTurn(pgCover,pgReal,false); }
+    else{ pageTurn(pgReal,pgCover,true); }
     panelTab.setAttribute('aria-pressed', open ? 'true' : 'false');
     
     // 按钮文案切换
