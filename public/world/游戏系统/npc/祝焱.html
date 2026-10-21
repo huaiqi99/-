@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 祝焱</title>
+<style>
+/* ═══ 角色资料卡 · 祝焱（双卷档案） ═══
+   一个文件，两套完整档案：卷壹·基础观测（神格期） / 卷贰·终局归档（崩解期）。
+   顶部卷宗标签排切换；测试后门 ?vol=1 / ?vol=2 直达对应卷。
+   印象色：深绯 #7A2418 × 鎏金 #C98F3D；卷贰炭烬 #5A3234 × #A85C50（作用域换肤）。 */
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#1B1F1C;
+  --klein:#7A2418;                /* 深绯红结构色 */
+  --acc:#C98F3D;                  /* 鎏金印象色 */
+  --accd:#8F5A1C;                 /* 深金强调色 */
+  --mut:#5C5650;--hair:rgba(122,36,24,.55);
+  --gc:rgba(122,36,24,.1);--gc2:rgba(122,36,24,.06);
+  --shadow:4px 4px 0 rgba(122,36,24,.18);--shadowS:4px 4px 0 rgba(122,36,24,.18);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#4E1D15;--card:#EAE5D6;--ink:#1B1F1C;
+  --klein:#9A4638;
+  --acc:#D9A441;--accd:#8A6D1F;
+  --mut:#414D5C;--hair:rgba(80,28,20,.4);
+  --gc:rgba(60,20,14,.35);--gc2:rgba(60,20,14,.25);
+  --shadow:4px 4px 0 rgba(60,20,14,.18);--shadowS:4px 4px 0 rgba(60,20,14,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);color:var(--ink);min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  repeating-linear-gradient(0deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
+  repeating-linear-gradient(90deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
+  repeating-linear-gradient(0deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
+  repeating-linear-gradient(90deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
+  var(--bg)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(135deg,rgba(122,36,24,.06) 0%,rgba(122,36,24,.02) 38%,rgba(201,143,61,.13) 100%)}
+body.night::after{background:linear-gradient(135deg,rgba(60,20,14,.2) 0%,rgba(60,20,14,.05) 40%,rgba(217,164,65,.08) 100%)}
+.page{height:100vh;height:100dvh;padding:14px;display:flex;flex-direction:column;position:relative;z-index:1}
+.frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;
+  background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);overflow:hidden}
+.topbar{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1.5px solid var(--klein)}
+.chip{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);padding:3px 9px}
+.title{font-size:15px;letter-spacing:1px;color:var(--klein);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title em{font-style:normal;color:var(--accd);font-weight:bold}
+.sysline{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--mut);white-space:nowrap}
+.menuwrap{flex:none;position:relative}
+.menubtn{flex:none;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--klein);background:transparent;
+  border:1.5px solid var(--klein);padding:4px 11px;cursor:pointer;line-height:1.4;box-shadow:var(--shadowS);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.menubtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(122,36,24,.18)}
+.menubtn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(122,36,24,.18)}
+.mdown{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:170px;display:none;
+  background:var(--card);border:2px solid var(--klein);box-shadow:5px 5px 0 rgba(122,36,24,.18)}
+.mdown.open{display:block}
+.mdown .mi{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1.5px dashed var(--hair);
+  font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--ink);padding:11px 14px;cursor:pointer;text-decoration:none}
+.mdown .mi:last-child{border-bottom:none}
+.mdown .mi:hover{color:var(--klein);background:rgba(201,143,61,.15)}
+body.night .mdown .mi:hover{background:rgba(217,164,65,.12)}
+body.night .mdown{box-shadow:4px 4px 0 rgba(60,20,14,.18)}
+
+/* ── 卷宗标签排 ── */
+
+.main{flex:1;min-height:0;display:flex;border-top:1.5px solid var(--klein)}
+.left{flex:none;width:230px;border-right:1.5px dashed var(--hair);padding:18px 16px;display:flex;flex-direction:column;gap:0;overflow-y:auto}
+.avwrap{position:relative;width:100%;aspect-ratio:1/1;border:1.5px solid var(--klein);background:var(--bg);overflow:hidden}
+.avwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.avwrap.noimg::after{content:'NO IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--mut)}
+.name{margin-top:12px;font-size:24px;font-weight:bold;letter-spacing:4px;color:var(--ink)}
+.pin{margin-top:4px;font-size:12px;letter-spacing:2px;color:var(--accd);font-weight:bold}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 9px;border:1.5px solid var(--klein);color:var(--ink);box-shadow:var(--shadowS)}
+.tag.hot{background:var(--klein);color:var(--acc);border-color:var(--klein)}
+.tag.dead{background:#8C3B3B;color:#F2E6DC;border-color:#8C3B3B}
+.affin{margin-top:14px;border:1.5px solid var(--klein);padding:10px 11px;background:rgba(201,143,61,.16);box-shadow:var(--shadowS)}
+body.night .affin{background:rgba(217,164,65,.12)}
+.affin .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd)}
+.volbtn{display:block;width:100%;margin-top:6px;font-family:var(--serif);font-size:12.5px;font-weight:bold;letter-spacing:1px;
+  color:var(--klein);background:transparent;border:1.5px solid var(--klein);padding:7px 9px;text-align:left;cursor:pointer;
+  transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.volbtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--shc)}
+.volbtn:active{transform:translate(0,1px);box-shadow:1px 1px 0 var(--shc)}
+.volbtn .vb-no{display:block}
+.volbtn .vb-sub{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:1px;font-weight:normal;opacity:.65;margin-top:2px}
+/* ═══ 卷贰态颜色适配（按钮/FILE·003/标签） ═══ */
+body.is-vol2 .volbtn{color:#5A3234;border-color:#5A3234}
+body.is-vol2 .volbtn:hover{background:#5A3234;color:#F2F1F4;box-shadow:4px 4px 0 rgba(90,50,52,.16)}
+body.is-vol2 .volhint{color:#8C3B3B}
+body.is-vol2 .chip{background:#5A3234}
+body.is-vol2 .tag.hot{background:#8C3B3B;border-color:#8C3B3B}
+.tag.dead{background:#8C3B3B;border-color:#8C3B3B;color:#F2F1F4}
+.volbtn .vb-no{display:block}
+.volbtn .vb-sub{display:block;font-family:var(--mono);font-size:9px;letter-spacing:1px;font-weight:normal;opacity:.75;margin-top:3px}
+.volhint{margin-top:8px;font-family:var(--mono);font-size:10px;line-height:1.6;color:#8C3B3B}
+.abar{margin-top:6px;height:8px;border:1.5px solid var(--klein);background:var(--card);overflow:hidden}
+.abar i{display:block;height:100%;width:0;background:var(--acc);transition:width 1s ease}
+.afoot{display:flex;justify-content:space-between;margin-top:5px;align-items:baseline}
+.afoot b{font-family:var(--mono);font-size:12px;color:var(--accd)}
+.afoot span{font-size:11px;color:var(--mut)}
+.brief{margin-top:12px;font-size:12px;line-height:1.8;color:var(--mut);border-top:1.5px dashed var(--hair);padding-top:10px}
+.leftspace{flex:1}
+.systail{flex:none;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--mut);line-height:1.9;text-align:left}
+.dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px}
+/* 扫描线（黎昭逐行照搬）：pageTurn时从顶扫到底 */
+.dossier{position:relative}
+.dossier .scanline{position:absolute;left:0;right:0;top:0;height:2px;z-index:6;pointer-events:none;opacity:0;
+  background:var(--klein);box-shadow:0 0 14px 3px rgba(122,36,24,.45)}
+.dossier .scanline.run{animation:scandown .55s cubic-bezier(.4,0,.3,1) forwards}
+@keyframes scandown{0%{opacity:.95;top:0}80%{opacity:.95}100%{opacity:0;top:100%}}
+.vol{display:none}
+.vol.on{display:block}
+.sec{margin-bottom:22px}
+.sechead{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);
+  display:inline-block;padding:3px 10px;margin-bottom:10px;box-shadow:var(--shadowS)}
+.sechead .zh{font-family:var(--serif);font-size:11px;letter-spacing:2px;margin-left:6px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--klein);box-shadow:var(--shadowS);
+  background:rgba(201,143,61,.12)}
+body.night .igrid{background:rgba(217,164,65,.12)}
+.cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--hair);min-width:0}
+.cell:nth-child(odd){border-right:1.5px dashed var(--hair);padding-right:14px}
+.cell:nth-child(even){padding-left:14px}
+.cell:last-child{border-right:none}
+.il{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--mut);width:58px}
+.iv{font-size:13px;color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.iv b{color:var(--accd)}
+.iv small{font-family:var(--mono);font-size:9px;color:var(--mut);letter-spacing:1px;margin-left:6px}
+.rec{border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);box-shadow:var(--shadow)}
+.rec p{font-size:13px;line-height:2;color:var(--ink);text-align:justify;text-indent:2em}
+.rec p+p{margin-top:8px}
+
+/* ── 权柄解析 · 尘歌定案同构（顶界线式：顶粗线+右上编号+右下大水印） ── */
+@keyframes chg-fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes chg-line{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.authwrap{position:relative;padding:0 14px 0}
+.auth-block{position:relative;padding:6px 14px 2px;overflow:hidden;margin-bottom:0;opacity:0}
+.auth-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--klein);transform:scaleX(0);transform-origin:left}
+.auth-no{position:absolute;top:8px;right:0;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--accd)}
+.auth-wm{position:absolute;right:10px;bottom:-20px;font-family:var(--serif);font-size:72px;font-weight:bold;color:rgba(122,36,24,.08);line-height:1;pointer-events:none;opacity:0;transition:opacity 1.1s ease .45s}
+body.night .auth-wm{color:rgba(217,164,65,.14)}
+.auth-name{font-size:16px;font-weight:bold;color:var(--ink);letter-spacing:1px}
+.auth-desc{font-size:11.5px;color:var(--mut);line-height:1.8;max-width:75%;position:relative;margin-top:4px}
+.authwrap.show .auth-block{animation:chg-fadeUp .55s ease forwards}
+.authwrap.show .auth-block:nth-of-type(1){animation-delay:.05s}
+.authwrap.show .auth-block::before{animation:chg-line .65s ease forwards}
+.authwrap.show .auth-block:nth-of-type(1)::before{animation-delay:.05s}
+.authwrap.show .auth-wm{opacity:1}
+
+.bars{border:1.5px solid var(--klein);padding:12px 14px;background:var(--card);box-shadow:var(--shadowS)}
+.brow{padding:8px 0;border-bottom:1.5px dashed var(--hair)}
+.brow:last-child{border-bottom:none;padding-bottom:0}
+.brow:first-child{padding-top:0}
+.btop{display:flex;align-items:baseline;gap:10px}
+.bn{flex:none;font-size:12px;font-weight:bold;color:var(--ink);width:88px}
+.btrack{flex:1;height:9px;border:1.5px solid var(--klein);background:var(--card)}
+.bfill{display:block;height:100%;width:0;background:var(--acc);transition:width 1.1s ease}
+.bfill.red{background:#8C3B3B}
+.bnum{flex:none;font-family:var(--mono);font-size:11px;color:var(--accd);width:52px;text-align:right;overflow-wrap:anywhere}
+.bdesc{margin-top:4px;padding-left:98px;font-size:11px;color:var(--mut);line-height:1.6}
+.golddiv{height:0;border-top:2px dashed rgba(143,90,28,.55);margin-bottom:14px}
+body.night .golddiv{border-top-color:rgba(217,164,65,.5)}
+.radarbox{display:flex;gap:18px;border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);align-items:flex-start;box-shadow:var(--shadow)}
+.radarbox svg{flex:none}
+.rnotes{flex:1;min-width:0}
+.rrow{padding:5px 0;border-bottom:1.5px dashed var(--hair)}
+.rrow:last-child{border-bottom:none}
+.rn1{font-size:12px;font-weight:bold;color:var(--ink)}
+.rn1 b{font-family:var(--mono);color:var(--accd);margin-left:8px}
+.rn2{font-size:11px;color:var(--mut);margin-top:1px;line-height:1.5}
+.radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);font-size:11px;color:var(--mut);line-height:1.7}
+.rels{display:flex;flex-wrap:wrap;gap:10px}
+.rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1 1 calc(25% - 10px);max-width:240px;
+  border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:9px 12px;text-decoration:none;background:var(--card);box-shadow:3px 3px 0 rgba(122,36,24,.18);transition:transform .18s,box-shadow .18s,background .18s}
+.rel:hover{background:rgba(201,143,61,.15);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(122,36,24,.18)}
+.rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(122,36,24,.18)}
+body.night .rel:hover{background:rgba(217,164,65,.12)}
+.rel .rn{font-size:13px;font-weight:bold;color:var(--ink)}
+.rel .rt{font-size:11px;color:var(--mut);line-height:1.5}
+.sysnote{border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:12px 14px;background:rgba(201,143,61,.12);box-shadow:var(--shadowS)}
+body.night .sysnote{background:rgba(217,164,65,.12)}
+.sysnote .who{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd);margin-bottom:5px}
+.sysnote .txt{font-size:12px;line-height:1.9;color:var(--accd)}
+.sysnote .txt b{color:var(--accd)}
+.sysnote.term{border-left-color:#8C3B3B;border-color:#8C3B3B;background:rgba(140,59,59,.08)}
+.sysnote.term .who,.sysnote.term .txt,.sysnote.term .txt b{color:#8C3B3B}
+.locked{border:1.5px dashed var(--hair);padding:14px;text-align:center;background:transparent;box-shadow:var(--shadowS)}
+.locked .lb{font-family:var(--mono);font-size:11px;letter-spacing:3px;color:var(--accd)}
+.locked .ls{margin-top:4px;font-size:10px;color:var(--mut);letter-spacing:1px}
+
+/* ── 卷贰 · 终局归档：炭烬作用域换肤 ── */
+#vol2{--klein:#5A3234;--acc:#A85C50;--accd:#7E463C;
+  --hair:rgba(90,50,52,.45);--gc:rgba(90,50,52,.07);--gc2:rgba(90,50,52,.04);
+  --shadow:4px 4px 0 rgba(90,50,52,.16);--shadowS:4px 4px 0 rgba(90,50,52,.16)}
+#vol2 .auth-wm{color:rgba(90,50,52,.1)}
+
+@media (max-width:760px){
+  .page{padding:0}
+  .frame{border-left:none;border-right:none;box-shadow:none}
+  .topbar{padding:9px 12px}
+  .sysline{display:none}
+  .vtab{padding:6px 12px 8px;white-space:nowrap}
+  .main{flex-direction:column;overflow-y:auto;display:block;border-top:none}
+  .left{width:100%;flex:none;display:grid;overflow:visible;
+    grid-template-columns:86px 1fr;grid-template-areas:"av name" "av pin" "tags tags" "affin affin";
+    gap:8px 12px;align-items:center;
+    border-right:none;border-bottom:1.5px dashed var(--hair);padding:12px}
+  .avwrap{grid-area:av;width:86px;flex:none;aspect-ratio:1/1}
+  .name{grid-area:name;margin:0;text-align:left;font-size:20px;letter-spacing:3px}
+  .pin{grid-area:pin;margin:0}
+  .tags{grid-area:tags;margin:0}
+  .affin{grid-area:affin;margin:0;padding:8px 10px}
+  .brief,.systail,.leftspace{display:none}
+  .dossier{overflow:visible;padding:14px 12px 22px}
+  .igrid{grid-template-columns:1fr}
+  .cell:nth-child(odd){border-right:none;padding-right:4px}
+  .cell:nth-child(even){padding-left:4px}
+  .radarbox{flex-direction:column;align-items:center}
+  .radarbox svg{width:min(280px,78vw);height:auto}
+  .rnotes{width:100%}
+  .bdesc{padding-left:0}
+  .bars{padding:10px 10px}
+  .bn{width:64px;font-size:11px}
+  .btop{gap:6px}
+  .bnum{width:44px;font-size:10px}
+  .rel{max-width:none}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">FILE·003</span>
+      <div class="title">◆ QIANLVZHOU // <em>祝焱</em></div>
+      <span class="sysline">[ 人物档案已载入 · LOADED ]</span>
+      <div class="menuwrap">
+        <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
+        <div class="mdown" id="mDown">
+          <a class="mi" href="./资料.html">◂ 返回名册</a>
+          <button class="mi" id="miNight" type="button">◐ 夜间模式</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="main">
+      <!-- 左列（随卷切换刷新） -->
+      <div class="left">
+        <div class="avwrap" id="avwrap"><img id="avimg" src="./头像/祝焱.png" alt="祝焱"></div>
+        <div class="name">祝焱</div>
+        <div class="pin" id="pinTxt">火焰之主</div>
+        <div class="tags" id="tagsBox"></div>
+        <div class="affin" id="affinBox">
+          <div class="cap">VOLUME // 卷宗</div>
+          <button class="volbtn" id="volBtn" type="button">
+            <span class="vb-no" id="vbNo">卷壹 · 基础观测</span>
+            <span class="vb-sub" id="vbSub">点按调阅另一卷 →</span>
+          </button>
+          <div class="volhint" id="volHint" style="display:none"></div>
+        </div>
+        <div class="brief" id="briefTxt">业焰之国信仰的火焰之主。现阶段去向与状态皆无法确认。</div>
+        <div class="leftspace"></div>
+        <div class="systail">QIANLVZHOU · DOSSIER FILE 003<br>档案密级 · Ⅲ级<br>数据来源 · 系统实时同步</div>
+      </div>
+
+      <!-- 右列：两套完整档案 -->
+      <div class="dossier">
+
+        <!-- ═══ 卷壹 · 基础观测（V1.0） ═══ -->
+        <div class="vol on" id="vol1">
+          <div class="sec">
+            <div class="sechead">BASIC INFO<span class="zh">基础信息</span></div>
+            <div class="igrid">
+              <div class="cell"><span class="il">所属国度</span><span class="iv"><b>业焰之国</b></span></div>
+              <div class="cell"><span class="il">阵营</span><span class="iv">神谕院<small>已脱离神位</small></span></div>
+              <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV.85</b><small>历史峰值</small></span></div>
+              <div class="cell"><span class="il">当前状态</span><span class="iv">去向不明 / 无法定位</span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">祝焱<small>ZHU YAN</small></span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">背景</span><span class="iv" style="text-align:left">业焰之国信仰的火焰之主</span></div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">AUTHORITY<span class="zh">权柄解析</span></div>
+            <div class="authwrap" id="authAnimA"><div class="auth-block">
+              <span class="auth-no">Ⅰ · DESTRUCTION</span>
+              <span class="auth-wm">毁</span>
+              <div class="auth-name">毁灭</div>
+              <div class="auth-desc">火之权柄的极致体现，具备摧毁物质、焚烧灵魂、乃至引发大范围地火天灾的法则级破坏力。</div>
+            </div></div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">RECORD<span class="zh">档案记录</span></div>
+            <div class="rec">
+              <p>祝焱为业焰之国信仰的火焰之主。现阶段所有观测数据均指向异常结论，其已不在神位之上，去向与状态皆无法确认。目前该城邦的实际治理权，已由以大神使段深泉为首的神谕院全面接管。</p>
+              <p>在调取该区域历史档案时发现，官方文本的叙事逻辑与当前城邦的实际物理环境存在严重的数据冲突。多处遗迹与地脉残留显示，该区域曾发生过规模远超官方记载的毁灭性事件。</p>
+              <p>城中的高塔区域存有大量与现存历史完全相悖的加密信息。祝焱的真实命运，似乎与该城邦被掩盖的历史真相存在高度关联。</p>
+            </div>
+          </div>
+
+          <div class="sec" id="secAbility1">
+            <div class="sechead">ABILITY<span class="zh">能力评估</span></div>
+            <div class="bars">
+              <div class="brow">
+                <div class="btop"><span class="bn">墟元力强度</span><div class="btrack"><i class="bfill" data-lv="100"></i></div><span class="bnum">100/100</span></div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">战斗威胁度</span><div class="btrack"><i class="bfill" data-lv="100"></i></div><span class="bnum">100/100</span></div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">侵蚀污染度</span><div class="btrack"><i class="bfill" data-lv="0"></i></div><span class="bnum">数据缺失</span></div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="0"></i></div><span class="bnum">——</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec" id="secRadar1">
+            <div class="sechead">RADAR<span class="zh">专精六维</span></div>
+            <div class="golddiv"></div>
+            <div class="radarbox">
+              <svg id="radarSvg1" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图·基础观测"></svg>
+              <div class="rnotes" id="radarNotes1"></div>
+            </div>
+            <div class="radarfoot">基准满值 100。正神级完整面板，攻防极值，无明显短板。</div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
+            <div class="sysnote">
+              <div class="who">[ SYSTEM · 观测提示 ]</div>
+              <div class="txt">暂无可用数据。</div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">SYS NOTE<span class="zh">系统备注</span></div>
+            <div class="golddiv"></div>
+            <div class="sysnote">
+              <div class="who">[ 观测记录 ]</div>
+              <div class="txt">数据存在重度污染与篡改痕迹，历史记录存疑。建议继续探索高塔区域以获取补充数据。</div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="locked">
+              <div class="lb">▓▓▓ 数据未解锁 ▓▓▓</div>
+              <div class="ls">CLASSIFIED · 该条目随剧情推进开放</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ 卷贰 · 终局归档（V2.0） ═══ -->
+        <div class="vol" id="vol2">
+          <div class="sec">
+            <div class="sechead">BASIC INFO<span class="zh">基础信息</span></div>
+            <div class="igrid">
+              <div class="cell"><span class="il">所属国度</span><span class="iv"><b>业焰之国</b></span></div>
+              <div class="cell"><span class="il">阵营</span><span class="iv">神谕院<small>已陨落</small></span></div>
+              <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV.17</b><small>持续衰弱中 / 历史峰值LV.85</small></span></div>
+              <div class="cell"><span class="il">当前状态</span><span class="iv"><b>神魂崩解 / 灵肉消散</b></span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">祝焱<small>本名：莫妮卡</small></span></div>
+              <div class="cell" style="grid-column:1/-1"><span class="il">背景</span><span class="iv" style="text-align:left">由未知白袍个体强行赋予权柄的二代伪神</span></div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">AUTHORITY<span class="zh">权柄解析</span></div>
+            <div class="authwrap" id="authAnimB"><div class="auth-block">
+              <span class="auth-no">Ⅰ · DESTRUCTION</span>
+              <span class="auth-wm">毁</span>
+              <div class="auth-name">毁灭</div>
+              <div class="auth-desc">火之权柄的极致体现，具备摧毁物质、焚烧灵魂、乃至引发大范围地火天灾的法则级破坏力。</div>
+            </div></div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">RECORD<span class="zh">档案记录</span></div>
+            <div class="rec">
+              <p>祝焱并非原生神明。本名莫妮卡，原为普通人类。在某一时间节点，被一名身份未知的白袍个体强行赋予火之权柄，推入神位。该白袍个体的身份与目的至今无数据支撑。</p>
+              <p>在长达四百年的神位存续期间，由于长期面临无法化解的天灾与资源枯竭，且未获得权柄赋予者的任何后续指引，其神智遭受到极高强度的外部污染与内在磨损。</p>
+              <p>为规避彻底异化为失控魔物，祝焱在极度绝望的状态下，强行将自身神魂剥离为两部分。一方为承载全部污染与怨念的疯狂体，另一方为保留部分理智的残影。</p>
+              <p>最终在火山深处，其神魂被外部力量强制干预并击溃。残存的本源神力在崩解瞬间，自发转化为大范围的净化波，清除了弥漫于该区域的所有游魂与高浓度污染。</p>
+            </div>
+          </div>
+
+          <div class="sec" id="secAbility2">
+            <div class="sechead">ABILITY<span class="zh">能力评估</span></div>
+            <div class="bars">
+              <div class="brow">
+                <div class="btop"><span class="bn">墟元力强度</span><div class="btrack"><i class="bfill" data-lv="25"></i></div><span class="bnum">25/100</span></div>
+                <div class="bdesc">持续流失</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">战斗威胁度</span><div class="btrack"><i class="bfill" data-lv="85"></i></div><span class="bnum">85/100</span></div>
+                <div class="bdesc">濒死反扑极度危险</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">侵蚀污染度</span><div class="btrack"><i class="bfill red" data-lv="99"></i></div><span class="bnum">99/100</span></div>
+                <div class="bdesc">已深度反噬</div>
+              </div>
+              <div class="brow">
+                <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="0"></i></div><span class="bnum">0/100</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec" id="secRadar2">
+            <div class="sechead">RADAR<span class="zh">专精六维</span></div>
+            <div class="golddiv"></div>
+            <div class="radarbox">
+              <svg id="radarSvg2" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图·终局归档"></svg>
+              <div class="rnotes" id="radarNotes2"></div>
+            <div class="radarfoot">当前战力较峰值大幅下降，不构成威胁，亦无法再承担神职——目标正处于不可逆的崩解之中。</div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
+            <div class="rels">
+              <span class="rel" href="./瑞秋.html"><span class="rn">瑞秋·维里迪姆</span><span class="rt">业焰之国前任大神使。祝焱最忠诚的信徒，最终被托付了业焰城的未来。</span></span>
+              <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">代行者。执行系统指令，将祝焱封印于火山深处的人。</span></a>
+              <a class="rel" href="./尘歌.html"><span class="rn" style="font-family:var(--mono);letter-spacing:2px;color:var(--accd)">▓▓▓▓▓</span><span class="rt">赋予火之权柄的白袍个体。彻底抛弃了祝焱。</span></a>
+              <a class="rel" href="./怀榆.html"><span class="rn">怀榆</span><span class="rt">打破封印的变数。被祝焱误认为“昭临”。</span></a>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sechead">SYS NOTE<span class="zh">系统备注</span></div>
+            <div class="golddiv"></div>
+            <div class="sysnote term">
+              <div class="who">[ 观测记录 ]</div>
+              <div class="txt">容器编号03已彻底宕机，火之权柄回归天地。其最终以自我崩解的方式，完成了对业焰城区域的净化。<b>造物回收价值归零。</b></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============ 主题 ============ */
+  var K_THEME = 'theme';
+  function applyTheme(){
+    var dark = false;
+    try{
+      var r = localStorage.getItem(K_THEME);
+      if(r){ var p = JSON.parse(r); if(p && p.value === 'dark') dark = true; }
+    }catch(e){}
+    document.body.classList.toggle('night', dark);
+  }
+  applyTheme();
+
+  /* ============ 头像 ============ */
+  var img = document.getElementById('avimg');
+  img.onerror = function(){ document.getElementById('avwrap').classList.add('noimg'); };
+  if(img.complete && img.naturalWidth === 0){ img.onerror(); }
+
+  /* ============ 两卷数据 ============ */
+  var VOL = {
+    1: {
+      pin:'火焰之主',
+      tags:'<span class="tag hot">业焰之国</span><span class="tag">火之权柄</span><span class="tag">历史峰值 LV·85</span>',
+      abar:85, anum:'85<span style="font-size:9px">/100</span>', astage:'阶段 · 历史峰值',
+      brief:'业焰之国信仰的火焰之主。现阶段去向与状态皆无法确认。'
+    },
+    2: {
+      pin:'已终结 · 神魂崩解',
+      tags:'<span class="tag dead">已终结</span><span class="tag">污染·99</span><span class="tag">本名·莫妮卡</span>',
+      abar:17, anum:'17<span style="font-size:9px">/100</span>', astage:'阶段 · 峰值85 · 衰弱中',
+      brief:'由未知白袍个体强行赋予权柄的二代伪神。神魂崩解，灵肉消散。'
+    }
+  };
+
+  var RADAR_ONE = [
+    {n:'墟元力操控', v:95, d:'权柄直连，操控精度接近法则本体'},
+    {n:'蚀光抗性',   v:90, d:'火海领域内几乎免疫同类侵蚀'},
+    {n:'近战体术',   v:80, d:'四百年神位未荒废的战斗本能'},
+    {n:'法术输出',   v:100, d:'面板极值 · 毁灭权柄的本体'},
+    {n:'治疗净化',   v:60, d:'正神水准，非其权柄侧重'},
+    {n:'战术判断',   v:85, d:'长期独力应对天灾的决策沉淀'}
+  ];
+  var RADAR_TWO = [
+    {n:'墟元力操控', v:40, d:'仅余本能'},
+    {n:'蚀光抗性',   v:5,  d:'全面崩溃'},
+    {n:'近战体术',   v:60, d:'—'},
+    {n:'法术输出',   v:95, d:'回光返照式爆发'},
+    {n:'治疗净化',   v:0,  d:'—'},
+    {n:'战术判断',   v:10, d:'受污染影响严重'}
+  ];
+  var GRIDMAX = 100;
+
+  /* ============ 雷达（段深泉机制原样：SMIL begin indefinite + IO 触发） ============ */
+  var radarState = {
+    1:{data:RADAR_ONE, drawn:false, poly:null, dots:[], vals:[]},
+    2:{data:RADAR_TWO, drawn:false, poly:null, dots:[], vals:[]}
+  };
+
+  function radarColors(){
+    var cs = getComputedStyle(document.body);
+    return {
+      acc:   cs.getPropertyValue('--acc').trim()  || '#C98F3D',
+      accd:  cs.getPropertyValue('--accd').trim() || '#8F5A1C',
+      mut:   cs.getPropertyValue('--mut').trim()  || '#666',
+      night: document.body.classList.contains('night')
+    };
+  }
+
+  function drawRadar(vol, instant){
+    var st = radarState[vol];
+    var svg = document.getElementById('radarSvg' + vol);
+    if(!svg) return;
+    if(st.drawn && !instant) return;
+    st.drawn = true;
+    svg.innerHTML = '';
+    st.poly = null; st.dots = []; st.vals = [];
+
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(t, at){ var e = document.createElementNS(NS, t); for(var k in at) e.setAttribute(k, at[k]); return e; }
+
+    var cx = 0, cy = 0, maxR = 104;
+    var c = radarColors();
+    var polyOp = c.night ? '0.55' : '0.4';
+    var angles = [0,60,120,180,240,300].map(function(d){ return d * Math.PI / 180; });
+
+    [0.3, 0.5, 0.7, 1.0].forEach(function(ratio){
+      var r = maxR * ratio;
+      var pts = angles.map(function(a){ return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a)); }).join(' ');
+      var p = el('polygon', { points: pts, fill:'none', stroke: c.mut, 'stroke-width': ratio === 1.0 ? '1.2' : '0.8' });
+      if(ratio !== 1.0) p.setAttribute('stroke-dasharray', '4,4');
+      svg.appendChild(p);
+    });
+    angles.forEach(function(a){
+      var x = cx + maxR * Math.sin(a), y = cy - maxR * Math.cos(a);
+      svg.appendChild(el('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: c.mut, 'stroke-width': '0.6', 'stroke-dasharray': '3,4' }));
+    });
+
+    var verts = st.data.map(function(d, i){
+      var r = (d.v / GRIDMAX) * maxR, a = angles[i];
+      return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a), v: d.v, n: d.n };
+    });
+    var target = verts.map(function(v){ return v.x + ',' + v.y; }).join(' ');
+    var center = angles.map(function(){ return cx + ',' + cy; }).join(' ');
+
+    var poly;
+    if(instant){
+      poly = el('polygon', { points: target, fill: c.acc, 'fill-opacity': polyOp, stroke: c.accd, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+      svg.appendChild(poly);
+    } else {
+      poly = el('polygon', { points: center, fill: c.acc, 'fill-opacity': polyOp, stroke: c.accd, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+      var anim = el('animate', { attributeName:'points', from: center, to: target, dur:'1.2s', fill:'freeze', calcMode:'spline', keySplines:'0.25 0.1 0.25 1', begin:'indefinite' });
+      poly.appendChild(anim);
+      svg.appendChild(poly);
+      st.poly = anim;
+    }
+
+    verts.forEach(function(v, i){
+      var a = angles[i];
+      if(instant){
+        svg.appendChild(el('circle', { cx: v.x, cy: v.y, r: '2.5', fill: c.accd, opacity: '1' }));
+      } else {
+        var cc = el('circle', { cx: v.x, cy: v.y, r: '2.5', fill: c.accd, opacity: '0' });
+        var cf = el('animate', { attributeName:'opacity', from:'0', to:'1', dur:'0.3s', begin:'indefinite', fill:'freeze' });
+        cc.appendChild(cf); svg.appendChild(cc); st.dots.push(cf);
+      }
+      var lx = cx + (maxR + 18) * Math.sin(a), ly = cy - (maxR + 18) * Math.cos(a);
+      var t = el('text', { x: lx, y: ly, fill: c.mut, 'font-size':'10', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central' });
+      t.textContent = v.n; svg.appendChild(t);
+      if(instant){
+        var t2i = el('text', { x: lx, y: ly + 13, fill: c.accd, 'font-size':'9', 'font-weight':'bold', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central', opacity:'1' });
+        t2i.textContent = v.v; svg.appendChild(t2i);
+      } else {
+        var t2 = el('text', { x: lx, y: ly + 13, fill: c.accd, 'font-size':'9', 'font-weight':'bold', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central', opacity:'0' });
+        var tf = el('animate', { attributeName:'opacity', from:'0', to:'1', dur:'0.3s', begin:'indefinite', fill:'freeze' });
+        t2.appendChild(tf); t2.textContent = v.v; svg.appendChild(t2); st.vals.push(tf);
+      }
+    });
+  }
+
+  function playRadar(vol){
+    var st = radarState[vol];
+    requestAnimationFrame(function(){
+      try{ if(st.poly) st.poly.beginElement(); }catch(e){}
+      setTimeout(function(){ st.dots.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 800);
+      setTimeout(function(){ st.vals.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 1000);
+    });
+  }
+
+  /* 雷达注释（各卷各填） */
+  [1,2].forEach(function(vol){
+    var notes = document.getElementById('radarNotes' + vol);
+    if(notes){
+      notes.innerHTML = radarState[vol].data.map(function(d){
+        return '<div class="rrow"><div class="rn1">' + d.n + '<b>' + d.v + '</b></div><div class="rn2">' + d.d + '</div></div>';
+      }).join('');
+    }
+  });
+
+  /* ============ 能力条 + 掌控度（各卷独立触发） ============ */
+  var barsDone = {1:false, 2:false};
+  var affinDone = false;
+
+  function growBars(vol){
+    if(barsDone[vol]) return; barsDone[vol] = true;
+    document.querySelectorAll('#secAbility' + vol + ' .bfill').forEach(function(b, i){
+      setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 120 * i);
+    });
+  }
+  function growAffin(instantVal){
+    var b = document.getElementById('abarFill');
+    if(!b) return;
+    b.style.width = '0%';
+    var v = instantVal || b.dataset.lv;
+    setTimeout(function(){ b.style.width = v + '%'; }, 60);
+  }
+
+  /* ============ 卷切换 ============ */
+  var curVol = 1;
+  function setVol(n, force){
+    if(!force && n === curVol) return;
+    curVol = n;
+    var d = VOL[n];
+    document.body.classList.toggle('is-vol2', n === 2);
+    syncVolLabel();
+    document.getElementById('pinTxt').textContent = d.pin;
+    document.getElementById('tagsBox').innerHTML = d.tags;
+    document.getElementById('briefTxt').textContent = d.brief;
+    /* 该卷动画若已播过→瞬态重绘；未播→归零等滚动触发 */
+    if(radarState[n].drawn){ drawRadar(n, true); }
+    window.scrollTo(0, 0);
+    document.querySelector('.dossier').scrollTop = 0;
+    setTimeout(check, 80);
+  }
+
+  /* ============ 卷贰解锁闸门 ============ */
+  function volTwoAllowed(){
+    try{
+      var q = new URLSearchParams(location.search);
+      if(q.get('vol') === '2' || q.get('demo') === '2') return true;
+      var pj = JSON.parse(localStorage.getItem('gzd_qlz_progress') || 'null');
+      if(pj && pj.flags && pj.flags.zhurong_卷二) return true;
+    }catch(e){}
+    return false;
+  }
+  var volBtn=document.getElementById('volBtn'), volHint=document.getElementById('volHint');
+  var vbNo=document.getElementById('vbNo'), vbSub=document.getElementById('vbSub');
+  var GATE_ENABLED=false; /* 剧情解锁闸门：TA测试通过后改 true 并接 gzd_qlz_progress */
+  if(!volTwoAllowed()){
+
+  }
+  function syncVolLabel(){
+    if(vbNo) vbNo.textContent = curVol===1 ? '卷贰 · 终局归档' : '卷壹 · 基础观测';
+    if(vbSub) vbSub.textContent = curVol===1 ? '点按调阅另一卷 →' : '◂ 返回基础观测';
+  }
+  /* ═══ 黎昭 pageTurn 逐行照搬：旧页逐块下沉淡出→扫描线扫过→新页跟线浮现 ═══ */
+  function pageTurn(outEl,inEl){
+    var box=document.querySelector('.dossier');
+    var line=box.querySelector('.scanline');
+    if(!line){ line=document.createElement('div'); line.className='scanline'; box.appendChild(line); }
+    var outs=Array.prototype.slice.call(outEl.children);
+    var ins=Array.prototype.slice.call(inEl.children);
+    inEl.classList.add('on');
+    box.scrollTop=0;
+    outs.forEach(function(sec,i){
+      sec.animate([
+        {opacity:1,transform:'translateY(0)',filter:'brightness(1)'},
+        {opacity:0,transform:'translateY(16px)',filter:'brightness(.8)'}
+      ],{duration:240,delay:i*24,easing:'ease-in',fill:'forwards'});
+    });
+    line.classList.remove('run'); void line.offsetWidth; line.classList.add('run');
+    ins.forEach(function(sec,i){
+      sec.animate([
+        {opacity:0,transform:'translateY(-10px)',filter:'brightness(1.25)'},
+        {opacity:1,transform:'translateY(0)',filter:'brightness(1)'}
+      ],{duration:300,delay:170+i*45,easing:'ease-out',fill:'backwards'});
+    });
+    setTimeout(function(){
+      outs.forEach(function(sec){ sec.getAnimations().forEach(function(a){ a.cancel(); }); });
+      outEl.classList.remove('on');
+    },260+outs.length*24);
+  }
+  if(volBtn) volBtn.addEventListener('click', function(){
+    var next = curVol===1 ? 2 : 1;
+    if(next===2 && GATE_ENABLED && !volTwoAllowed()){
+      volHint.style.display='block';
+      volHint.textContent='▓ 该卷宗尚未解封 —— 需随剧情推进方可调阅';
+      setTimeout(function(){ volHint.style.display='none'; },2600);
+      return;
+    }
+    volHint.style.display='none';
+    pageTurn(document.getElementById('vol'+curVol), document.getElementById('vol'+next));
+    setVol(next,true);
+  });
+  /* 后门直达：?vol=1 / ?vol=2（demo=1/demo=2 同义） */
+  (function(){
+    var v = null;
+    try{
+      var q = new URLSearchParams(location.search);
+      if(q.get('vol') === '2' || q.get('demo') === '2') v = 2;
+      else if(q.get('vol') === '1' || q.get('demo') === '1') v = 1;
+    }catch(e){}
+    if(v === 2) setVol(2, true);
+  })();
+
+  /* ============ 滚动触发（对当前可见卷生效） ============ */
+  function check(){
+    var vh = window.innerHeight;
+    ['secAbility' + curVol, 'secRadar' + curVol].forEach(function(id){
+      var s = document.getElementById(id);
+      if(s && s.getBoundingClientRect().top < vh * 0.9){
+        if(id.indexOf('secAbility') === 0) growBars(curVol);
+        else { if(!radarState[curVol].drawn){ drawRadar(curVol, false); playRadar(curVol); } }
+      }
+    });
+  }
+  if('IntersectionObserver' in window){
+    var ioAuth = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('show'); ioAuth.unobserve(e.target); }
+      });
+    },{threshold:0.35});
+    ['authAnimA','authAnimB'].forEach(function(id){ var el=document.getElementById(id); if(el) ioAuth.observe(el); });
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        if(e.target.id === 'secAbility1') growBars(1);
+        if(e.target.id === 'secAbility2') growBars(2);
+        if(e.target.id === 'secRadar1' && !radarState[1].drawn){ drawRadar(1, false); playRadar(1); }
+        if(e.target.id === 'secRadar2' && !radarState[2].drawn){ drawRadar(2, false); playRadar(2); }
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.25 });
+    ['secAbility1','secAbility2','secRadar1','secRadar2'].forEach(function(id){
+      var s = document.getElementById(id); if(s) io.observe(s);
+    });
+    var af = document.querySelector('.affin');
+    if(af){
+      var aio = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting){ aio.unobserve(e.target); } });
+      }, { threshold: 0.25 });
+      aio.observe(af);
+    }
+    setTimeout(check, 300);
+  }
+  window.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check);
+
+  /* ============ 菜单 + 夜间切换 ============ */
+  var mBtn   = document.getElementById('menuBtn');
+  var mDown  = document.getElementById('mDown');
+  var mNight = document.getElementById('miNight');
+
+  function syncNightLabel(){
+    if(mNight) mNight.textContent = document.body.classList.contains('night') ? '◐ 日间模式' : '◐ 夜间模式';
+  }
+
+  if(mBtn && mDown){
+    mBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      mDown.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e){
+      if(mDown && !mDown.contains(e.target)) mDown.classList.remove('open');
+    });
+  }
+
+  if(mNight){
+    mNight.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var dark = !document.body.classList.contains('night');
+      try{ localStorage.setItem(K_THEME, JSON.stringify({ value: dark ? 'dark' : 'light' })); }catch(err){}
+      document.body.classList.toggle('night', dark);
+      syncNightLabel();
+      /* 切主题：已画过的卷瞬态重绘（SMIL 触发开关已消耗，不重放） */
+      [1,2].forEach(function(v){ if(radarState[v].drawn) drawRadar(v, true); });
+      if(mDown) mDown.classList.remove('open');
+    });
+  }
+
+  syncNightLabel();
+})();
+</script>
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+</body>
+</html>
