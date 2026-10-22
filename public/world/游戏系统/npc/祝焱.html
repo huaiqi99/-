@@ -197,6 +197,9 @@ body.night .sysnote{background:rgba(217,164,65,.12)}
 #vol2 .auth-wm{color:rgba(90,50,52,.1)}
 
 @media (max-width:760px){
+  /* 手机端：档案区自然撑高，线改固定在视口内扫（否则0.55s划完整页=瞬移） */
+  .dossier .scanline{position:fixed;left:0;right:0}
+  @keyframes scandown{0%{opacity:.95;top:0}80%{opacity:.95}100%{opacity:0;top:100vh}}
   .page{padding:0}
   .frame{border-left:none;border-right:none;box-shadow:none}
   .topbar{padding:9px 12px}
@@ -416,14 +419,14 @@ body.night .sysnote{background:rgba(217,164,65,.12)}
             <div class="radarbox">
               <svg id="radarSvg2" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图·终局归档"></svg>
               <div class="rnotes" id="radarNotes2"></div>
-            <div class="radarfoot">当前战力较峰值大幅下降，不构成威胁，亦无法再承担神职——目标正处于不可逆的崩解之中。</div>
             </div>
+            <div class="radarfoot">当前战力较峰值大幅下降，不构成威胁，亦无法再承担神职——目标正处于不可逆的崩解之中。</div>
           </div>
 
           <div class="sec">
             <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
             <div class="rels">
-              <span class="rel" href="./瑞秋.html"><span class="rn">瑞秋·维里迪姆</span><span class="rt">业焰之国前任大神使。祝焱最忠诚的信徒，最终被托付了业焰城的未来。</span></span>
+              <span class="rel"><span class="rn">瑞秋·维里迪姆</span><span class="rt">业焰之国前任大神使。祝焱最忠诚的信徒，最终被托付了业焰城的未来。</span></span>
               <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">代行者。执行系统指令，将祝焱封印于火山深处的人。</span></a>
               <a class="rel" href="./尘歌.html"><span class="rn" style="font-family:var(--mono);letter-spacing:2px;color:var(--accd)">▓▓▓▓▓</span><span class="rt">赋予火之权柄的白袍个体。彻底抛弃了祝焱。</span></a>
               <a class="rel" href="./怀榆.html"><span class="rn">怀榆</span><span class="rt">打破封印的变数。被祝焱误认为“昭临”。</span></a>
@@ -709,7 +712,7 @@ body.night .sysnote{background:rgba(217,164,65,.12)}
       if(q.get('vol') === '2' || q.get('demo') === '2') v = 2;
       else if(q.get('vol') === '1' || q.get('demo') === '1') v = 1;
     }catch(e){}
-    if(v === 2) setVol(2, true);
+    if(v === 2){ setVol(2, true); document.getElementById('vol2').classList.add('on'); document.getElementById('vol1').classList.remove('on'); }
   })();
 
   /* ============ 滚动触发（对当前可见卷生效） ============ */

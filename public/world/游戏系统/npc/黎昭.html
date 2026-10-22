@@ -204,6 +204,9 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
 .modal-box .mbtn:hover{background:var(--klein);color:var(--card)}
 
 @media (max-width:760px){
+  /* 手机端：档案区自然撑高，线固定在视口内扫 */
+  .dossier .scanline{position:fixed;left:0;right:0}
+  @keyframes scandown{0%{opacity:.95;top:0}80%{opacity:.95}100%{opacity:0;top:100vh}}
   .page{padding:0}
   .frame{border-left:none;border-right:none;box-shadow:none}
   .topbar{padding:9px 12px}
@@ -387,7 +390,7 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
                 <div class="bdesc">出手极度狠辣、不留余地，深谙一击必杀</div>
               </div>
               <div class="brow">
-                <div class="btop"><span class="bn">侵蚀污染度</span><div class="btrack"><i class="bfill red" data-lv="90"></i></div><span class="bnum" style="color:var(--accd);">90/100</span></div>
+                <div class="btop"><span class="bn">侵蚀污染度</span><div class="btrack"><i class="bfill red" data-lv="65"></i></div><span class="bnum" style="color:var(--accd);">65/100</span></div>
                 <div class="bdesc">蚀光已与经脉高度融合，随时可能失控</div>
               </div>
               <div class="brow">
