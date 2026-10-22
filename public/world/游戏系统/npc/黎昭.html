@@ -237,6 +237,27 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
   .bnum{width:44px;font-size:10px}
   .rel{max-width:none; flex-basis: 100%;}
 }
+/* ── 蚀光侵蚀评估 · 侵蚀光谱带 ── */
+.eband{position:relative;height:178px;margin:16px 6px 0}
+.eband-track{position:absolute;left:0;right:0;top:70px;height:14px;
+  background:linear-gradient(90deg,var(--klein) 0 8%,var(--acc) 40% 100%);
+  border:1.5px solid var(--klein);
+  transform:scaleX(0);transform-origin:left;transition:transform 1.2s cubic-bezier(.3,0,.2,1) .2s}
+.eband.go .eband-track{transform:scaleX(1)}
+.eband-knot{position:absolute;left:55%;top:64px;width:14px;height:26px;
+  background:linear-gradient(180deg,rgba(58,55,104,.85),rgba(217,174,85,.85));
+  clip-path:polygon(0 0,100% 0,60% 100%,40% 100%);opacity:.9}
+.eb-lab{position:absolute;font-family:var(--mono);color:var(--mut);line-height:1.7}
+.eb-lab div,.eb-lab i{font-size:12px;font-style:normal;color:var(--mut);display:block;margin-top:3px}
+.eb-lab b{font-size:19px;color:var(--acc)}
+.eb-lab .big{font-size:32px;color:#A3621E;font-weight:bold;line-height:1.1}
+.eb-lab .cap9{font-size:12px}
+.eb-stem{position:absolute;width:1.5px}
+.eb-stem.g{background:var(--acc)}
+.eb-stem.o{background:#A3621E}
+.eb-lab.r{text-align:right}
+.elog{border-top:1.5px dashed var(--hair);padding:11px 4px 2px;font-family:var(--mono);font-size:10.5px;line-height:1.9;color:var(--mut);margin:14px 6px 0}
+.elog b{color:var(--accd)}
 </style>
 </head>
 <body>
@@ -369,6 +390,23 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
             </div>
           </div>
 
+
+          <div class="sec" id="secErosion">
+            <div class="sechead">蚀光侵蚀评估<span class="en">EROSION</span></div>
+            <div class="eband" id="eband">
+              <div class="eb-lab" style="left:0;top:0"><span class="cap9">分界 · 压制失效</span></div>
+              <div class="eb-lab r" style="right:0;top:0"><span class="cap9">蚀光转化率</span><span class="big">55%</span></div>
+              <div class="eband-track"></div>
+              <div class="eband-knot"></div>
+              <div class="eb-stem o" style="right:26px;top:46px;height:22px"></div>
+              <div class="eb-stem g" style="left:30px;top:92px;height:18px"></div>
+              <div class="eb-lab" style="left:0;top:114px"><span class="cap9">墟元力残存</span><b>72/100</b><i>底子硬抗 · 部分转化为杀伤力</i></div>
+              <div class="eb-lab r" style="right:0;top:114px"><span class="cap9">等效战力增幅</span><b>LV.46</b><i>反噬加剧 · 生命力不可逆流失</i></div>
+            </div>
+            <div class="elog">&gt; 异常能量解析：拥有极高的战斗素养与实力底子。前期依靠机制或药物压制蚀光，但在系统监测失效后，失去制衡的蚀光正在持续侵蚀经脉与神魂。</div>
+          </div>
+
+
           <div class="sec">
             <div class="sechead">档案记录<span class="en">RECORD</span></div>
             <div class="rec">
@@ -394,7 +432,7 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
                 <div class="bdesc">蚀光已与经脉高度融合，随时可能失控</div>
               </div>
               <div class="brow">
-                <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="35"></i></div><span class="bnum">35/100</span></div>
+                <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="40"></i></div><span class="bnum">40/100</span></div>
                 <div class="bdesc">身体状况极度脆弱，每次高强度战斗都在透支生命</div>
               </div>
             </div>
@@ -407,7 +445,7 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
               <svg id="radarSvg" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图"></svg>
               <div class="rnotes" id="radarNotes"></div>
             </div>
-            <div class="radarfoot">极度偏科的蚀光型作战面板，以燃烧生命为代价换取极端的破坏力。</div>
+            <div class="radarfoot">基准满值 70（半神段）。战力被污染大幅拖累，且需分心压制。</div>
           </div>
 
           <div class="sec">
@@ -540,6 +578,8 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
           t.querySelectorAll('.bfill').forEach(function(b,i){
             setTimeout(function(){ b.style.width=b.dataset.lv+'%'; },140*i);
           });
+        }else if(t.classList.contains('eband')){
+          t.classList.add('go');
         }else if(t.classList.contains('radarbox')){
           setTimeout(function(){ try{if(polyAnimRef)polyAnimRef.beginElement();}catch(e){} },150);
           setTimeout(function(){ dotAnims.forEach(function(a){try{a.beginElement();}catch(e){}}); },1350);
@@ -550,6 +590,7 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
     },{threshold:0.3});
     var b1=document.querySelector('#pgReal .bars'); if(b1)realIO.observe(b1);
     var r1=document.querySelector('#pgReal .radarbox'); if(r1)realIO.observe(r1);
+    var e1=document.querySelector('#pgReal .eband'); if(e1)realIO.observe(e1);
   }
   panelTab.addEventListener('click',function(){
     if(!panelOpen){ document.getElementById('authOverlay').classList.add('active'); }
@@ -605,7 +646,7 @@ body.night::after{background:linear-gradient(135deg,rgba(0,0,0,.14) 0%,rgba(0,0,
   /* ── 真实档案雷达图 ── */
   var RADAR=[
     {n:'墟元力操控',v:75,d:'精准到恐怖的控制力'},
-    {n:'蚀光抗性',v:95,d:'与污染共生后产生的极端抗性'},
+    {n:'蚀光抗性',v:45,d:'远超常人，依靠代行者的底子、意志力与药物强行压制，但在不断消耗'},
     {n:'近战体术',v:60,d:'非专精，但足够致命'},
     {n:'法术输出',v:70,d:'不如怀榆正统，偏向破坏与暗杀'},
     {n:'治疗净化',v:5,d:'几乎完全丧失自愈能力'},
