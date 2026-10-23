@@ -256,11 +256,6 @@ body.night .quest{background:rgba(197,138,40,.08)}
   .prow{flex-wrap:wrap;gap:4px 12px}
   .prow .pk{width:100%}
 }
-
-/* 版块滚动显形（与其他档案页同语言）：滚到可见 fadeUp 一次 */
-@keyframes sec-fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.dossier .sec{opacity:0}
-.dossier .sec.reveal{animation:sec-fadeUp .55s ease forwards}
 </style>
 </head>
 <body>
@@ -647,13 +642,6 @@ body.night .quest{background:rgba(197,138,40,.08)}
       });
     },{threshold:0.25});
     ['secAbility','secRadar'].forEach(function(id){var s=document.getElementById(id);if(s)io.observe(s);});
-  /* 版块入场：滚到可见 fadeUp 一次 */
-  var secIo=new IntersectionObserver(function(es){
-    es.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('reveal'); secIo.unobserve(e.target); }
-    });
-  },{threshold:0.12});
-  document.querySelectorAll('.dossier .sec').forEach(function(sec){ secIo.observe(sec); });
     setTimeout(check,300);
   }
   window.addEventListener('scroll',check,{passive:true});
