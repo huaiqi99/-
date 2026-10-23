@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 凝淼</title>
+<style>
+/* ═══ 角色资料卡 · 凝淼（深蓝×浅蓝版） ═══
+   机制底子 = 段深泉.html 逐字同构（主题/头像回退/能力条/雷达/滚动触发/菜单）。
+   权柄解析 = 祝焱.html 模板（顶界线式：顶粗线+右上编号+右下大水印）。
+   版块顺序 = 基础信息 →(神明)权柄解析 → 蚀光侵蚀评估 → 档案记录 → 能力评估 → 专精六维 → 关系网 → 系统备注。
+   死亡机制 = 方案B「勘误追加」：V1 原文永不动，死亡后由模拟AI 写 localStorage
+   (键: gzd_qlz_nm_dead = '1')，本页读取后追加 V2 条目 + 状态翻面；
+   后门 ?dead=1 / ?dead=0 可强制预览任一版本（仅当前页生效，不写入存储）。 */
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#1B1F1C;
+  --klein:#003371;                /* 藏蓝结构色 */
+  --acc:#D8D8D4;                  /* 浅灰印象色（填充） */
+  --accd:#4E565E;                 /* 深灰强调色（文字） */
+  --mut:#46505B;--hair:rgba(0,51,113,.5);
+  --gc:rgba(0,51,113,.1);--gc2:rgba(0,51,113,.06);
+  --shadow:4px 4px 0 rgba(0,51,113,.18);--shadowS:4px 4px 0 rgba(0,51,113,.18);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#12253C;--card:#EAE5D6;--ink:#1B1F1C;
+  --klein:#5F87B5;
+  --acc:#D6D6CE;--accd:#5A6470;
+  --mut:#414D5C;--hair:rgba(95,135,181,.4);
+  --gc:rgba(20,45,70,.35);--gc2:rgba(20,45,70,.25);
+  --shadow:4px 4px 0 rgba(20,45,70,.18);--shadowS:4px 4px 0 rgba(20,45,70,.18);
+}
+body.night .rbar{outline:1px solid #9FB9CE;outline-offset:-1px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);color:var(--ink);min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  repeating-linear-gradient(0deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
+  repeating-linear-gradient(90deg,transparent,transparent 25px,var(--gc2) 25px,var(--gc2) 26px),
+  repeating-linear-gradient(0deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
+  repeating-linear-gradient(90deg,transparent,transparent 130px,var(--gc) 130px,var(--gc) 131px),
+  var(--bg)}
+body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(135deg,rgba(0,51,113,.06) 0%,rgba(0,51,113,.02) 38%,rgba(216,216,212,.16) 100%)}
+body.night::after{background:linear-gradient(135deg,rgba(20,50,80,.2) 0%,rgba(20,50,80,.05) 40%,rgba(216,216,212,.08) 100%)}
+.page{height:100vh;height:100dvh;padding:14px;display:flex;flex-direction:column;position:relative;z-index:1}
+.frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;
+  background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);overflow:hidden}
+.topbar{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1.5px solid var(--klein)}
+.chip{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);padding:3px 9px}
+.title{font-size:15px;letter-spacing:1px;color:var(--klein);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title em{font-style:normal;color:var(--accd);font-weight:bold}
+.sysline{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--mut);white-space:nowrap}
+.menuwrap{flex:none;position:relative}
+.menubtn{flex:none;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--klein);background:transparent;
+  border:1.5px solid var(--klein);padding:4px 11px;cursor:pointer;line-height:1.4;box-shadow:var(--shadowS);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.menubtn:hover{background:var(--klein);color:var(--card);transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(0,51,113,.18)}
+.menubtn:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(0,51,113,.18)}
+.mdown{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:170px;display:none;
+  background:var(--card);border:2px solid var(--klein);box-shadow:5px 5px 0 rgba(0,51,113,.18)}
+.mdown.open{display:block}
+.mdown .mi{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1.5px dashed var(--hair);
+  font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--ink);padding:11px 14px;cursor:pointer;text-decoration:none}
+.mdown .mi:last-child{border-bottom:none}
+.mdown .mi:hover{color:var(--klein);background:rgba(216,216,212,.22)}
+body.night .mdown .mi:hover{background:rgba(216,216,212,.14)}
+body.night .mdown{box-shadow:4px 4px 0 rgba(20,45,70,.18)}
+.main{flex:1;min-height:0;display:flex}
+.left{flex:none;width:230px;border-right:1.5px dashed var(--hair);padding:18px 16px;display:flex;flex-direction:column;gap:0;overflow-y:auto}
+.avwrap{position:relative;width:100%;aspect-ratio:1/1;border:1.5px solid var(--klein);background:var(--bg);overflow:hidden}
+.avwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.avwrap.noimg::after{content:'NO IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--mut)}
+/* 死亡态：头像灰化 + 右上角观测终止章 */
+.avwrap .deadstamp{display:none;position:absolute;top:8px;right:-30px;transform:rotate(38deg);z-index:3;
+  background:var(--klein);color:var(--card);font-family:var(--mono);font-size:9px;letter-spacing:3px;padding:3px 36px;
+  box-shadow:2px 2px 4px rgba(0,0,0,.22)}
+body.dead .avwrap img{filter:grayscale(1) contrast(.95)}
+body.dead .avwrap .deadstamp{display:block}
+.name{margin-top:12px;font-size:24px;font-weight:bold;letter-spacing:4px;color:var(--ink)}
+.pin{margin-top:4px;font-size:12px;letter-spacing:2px;color:var(--accd);font-weight:bold}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 9px;border:1.5px solid var(--klein);color:var(--ink);box-shadow:var(--shadowS)}
+.tag.hot{background:var(--klein);color:var(--acc);border-color:var(--klein)}
+.tag.dead{display:none;background:var(--klein);color:var(--acc);border-color:var(--klein)}
+body.dead .tag.dead{display:inline-block}
+/* 左列状态块（复用 affin 机制）：在位期=神格稳定 92；死亡后=信号丢失 */
+.affin{margin-top:14px;border:1.5px solid var(--klein);padding:10px 11px;background:rgba(216,216,212,.22);box-shadow:var(--shadowS)}
+body.night .affin{background:rgba(216,216,212,.14)}
+.affin .cap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd)}
+.abar{margin-top:6px;height:8px;border:1.5px solid var(--klein);background:var(--card);overflow:hidden}
+.abar i{display:block;height:100%;width:0;background:var(--acc);transition:width 1s ease}
+.afoot{display:flex;justify-content:space-between;margin-top:5px;align-items:baseline}
+.afoot b{font-family:var(--mono);font-size:12px;color:var(--accd)}
+.afoot span{font-size:11px;color:var(--mut)}
+.brief{margin-top:12px;font-size:12px;line-height:1.8;color:var(--mut);border-top:1.5px dashed var(--hair);padding-top:10px}
+.leftspace{flex:1}
+.systail{flex:none;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--mut);line-height:1.9;text-align:left}
+.dossier{flex:1;min-width:0;overflow-y:auto;padding:18px 20px 26px}
+.sec{margin-bottom:22px}
+.sechead{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--card);background:var(--klein);
+  display:inline-block;padding:3px 10px;margin-bottom:10px;box-shadow:var(--shadowS)}
+.sechead .zh{font-family:var(--serif);font-size:11px;letter-spacing:2px;margin-left:6px}
+.igrid{display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid var(--klein);box-shadow:var(--shadowS);
+  background:rgba(216,216,212,.18)}
+body.night .igrid{background:rgba(216,216,212,.14)}
+.cell{display:flex;align-items:baseline;gap:10px;padding:9px 4px;border-bottom:1.5px dashed var(--hair);min-width:0}
+.cell:nth-child(odd){border-right:1.5px dashed var(--hair);padding-right:14px}
+.cell:nth-child(even){padding-left:14px}
+.cell:last-child{border-right:none}
+.il{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--mut);width:58px}
+.iv{font-size:13px;color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.iv b{color:var(--accd)}
+.iv small{font-family:var(--mono);font-size:9px;color:var(--mut);letter-spacing:1px;margin-left:6px}
+.rec{border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);box-shadow:var(--shadow)}
+.rec p{font-size:13px;line-height:2;color:var(--ink);text-align:justify;text-indent:2em}
+.rec p+p{margin-top:8px}
+.rbar{display:inline-block;height:.85em;vertical-align:text-bottom;background:var(--acc);margin:0 1px}
+.r2{width:2em}.r3{width:3.4em}
+.rnote{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);
+  font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd);text-align:right}
+/* ── 方案B：V2 勘误追加块（死亡后显现，附在 V1 原文之后，原文永不改动） ── */
+@keyframes v2-fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.v2app{display:none}
+body.dead .v2app{display:block;animation:v2-fadeUp .6s ease both}
+.rec.v2{margin-top:10px;background:rgba(216,216,212,.2)}
+body.night .rec.v2{background:rgba(216,216,212,.14)}
+.v2tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--card);
+  background:var(--klein);padding:2px 8px;margin-bottom:8px}
+/* ── 权柄解析 · 祝焱定案同构（顶界线式：顶粗线+右上编号+右下大水印） ── */
+@keyframes chg-fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes chg-line{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.authwrap{position:relative;padding:0 14px 0}
+.auth-block{position:relative;padding:6px 14px 2px;overflow:hidden;margin-bottom:0;opacity:0}
+.auth-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:var(--klein);transform:scaleX(0);transform-origin:left}
+.auth-no{position:absolute;top:8px;right:0;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--accd)}
+.auth-wm{position:absolute;right:10px;bottom:-20px;font-family:var(--serif);font-size:72px;font-weight:bold;color:rgba(0,51,113,.08);line-height:1;pointer-events:none;opacity:0;transition:opacity 1.1s ease .45s}
+body.night .auth-wm{color:rgba(216,216,212,.16)}
+.auth-name{font-size:16px;font-weight:bold;color:var(--ink);letter-spacing:1px}
+.auth-desc{font-size:11.5px;color:var(--mut);line-height:1.8;max-width:75%;position:relative;margin-top:4px}
+.authwrap.show .auth-block{animation:chg-fadeUp .55s ease forwards}
+.authwrap.show .auth-block:nth-of-type(1){animation-delay:.05s}
+.authwrap.show .auth-block::before{animation:chg-line .65s ease forwards}
+.authwrap.show .auth-block:nth-of-type(1)::before{animation-delay:.05s}
+.authwrap.show .auth-wm{opacity:1}
+.bars{border:1.5px solid var(--klein);padding:12px 14px;background:var(--card);box-shadow:var(--shadowS)}
+.brow{padding:8px 0;border-bottom:1.5px dashed var(--hair)}
+.brow:last-child{border-bottom:none;padding-bottom:0}
+.brow:first-child{padding-top:0}
+.btop{display:flex;align-items:baseline;gap:10px}
+.bn{flex:none;font-size:12px;font-weight:bold;color:var(--ink);width:88px}
+.btrack{flex:1;height:9px;border:1.5px solid var(--klein);background:var(--card)}
+.bfill{display:block;height:100%;width:0;background:var(--acc);transition:width 1.1s ease}
+.bnum{flex:none;font-family:var(--mono);font-size:11px;color:var(--accd);width:52px;text-align:right;overflow-wrap:anywhere}
+.bdesc{margin-top:4px;padding-left:98px;font-size:11px;color:var(--mut);line-height:1.6}
+.golddiv{height:0;border-top:2px dashed rgba(0,51,113,.5);margin-bottom:14px}
+body.night .golddiv{border-top-color:rgba(95,135,181,.45)}
+.radarbox{display:flex;gap:18px;border:1.5px solid var(--klein);padding:14px 16px;background:var(--card);align-items:flex-start;box-shadow:var(--shadow)}
+.radarbox svg{flex:none}
+.rnotes{flex:1;min-width:0}
+.rrow{padding:5px 0;border-bottom:1.5px dashed var(--hair)}
+.rrow:last-child{border-bottom:none}
+.rn1{font-size:12px;font-weight:bold;color:var(--ink)}
+.rn1 b{font-family:var(--mono);color:var(--accd);margin-left:8px}
+.rn2{font-size:11px;color:var(--mut);margin-top:1px;line-height:1.5}
+.radarfoot{margin-top:10px;padding-top:8px;border-top:1.5px dashed var(--hair);font-size:11px;color:var(--mut);line-height:1.7}
+.rels{display:flex;flex-wrap:wrap;gap:10px}
+.rel{display:flex;flex-direction:column;gap:3px;min-width:150px;flex:1 1 calc(25% - 10px);max-width:240px;
+  border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:9px 12px;text-decoration:none;background:var(--card);box-shadow:3px 3px 0 rgba(0,51,113,.18);transition:transform .18s,box-shadow .18s,background .18s}
+a.rel:hover{background:rgba(216,216,212,.25);transform:translate(-2px,-3px);box-shadow:4px 4px 0 rgba(0,51,113,.18)}
+a.rel:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(0,51,113,.18)}
+body.night a.rel:hover{background:rgba(216,216,212,.14)}
+.rel .rn{font-size:13px;font-weight:bold;color:var(--ink)}
+.rel .rt{font-size:11px;color:var(--mut);line-height:1.5}
+.sysnote{border:1.5px solid var(--klein);border-left:5px solid var(--klein);padding:12px 14px;background:rgba(216,216,212,.18);box-shadow:var(--shadowS)}
+body.night .sysnote{background:rgba(216,216,212,.14)}
+.sysnote+.sysnote{margin-top:10px}
+.sysnote .who{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--accd);margin-bottom:5px}
+.sysnote .txt{font-size:12px;line-height:1.9;color:var(--accd)}
+.sysnote .txt b{color:var(--accd)}
+@media (max-width:760px){
+  .page{padding:0}
+  .frame{border-left:none;border-right:none;box-shadow:none}
+  .topbar{padding:9px 12px}
+  .sysline{display:none}
+  .main{flex-direction:column;overflow-y:auto;display:block}
+  .left{width:100%;flex:none;display:grid;overflow:visible;
+    grid-template-columns:86px 1fr;grid-template-areas:"av name" "av pin" "tags tags" "affin affin";
+    gap:8px 12px;align-items:center;
+    border-right:none;border-bottom:1.5px dashed var(--hair);padding:12px}
+  .avwrap{grid-area:av;width:86px;flex:none;aspect-ratio:1/1}
+  .name{grid-area:name;margin:0;text-align:left;font-size:20px;letter-spacing:3px}
+  .pin{grid-area:pin;margin:0}
+  .tags{grid-area:tags;margin:0}
+  .affin{grid-area:affin;margin:0;padding:8px 10px}
+  .brief,.systail,.leftspace{display:none}
+  .dossier{overflow:visible;padding:14px 12px 22px}
+  .igrid{grid-template-columns:1fr}
+  .cell:nth-child(odd){border-right:none;padding-right:4px}
+  .cell:nth-child(even){padding-left:4px}
+  .radarbox{flex-direction:column;align-items:center}
+  .radarbox svg{width:min(280px,78vw);height:auto}
+  .rnotes{width:100%}
+  .bdesc{padding-left:0}
+  .bars{padding:10px 10px}
+  .bn{width:64px;font-size:11px}
+  .btop{gap:6px}
+  .bnum{width:44px;font-size:10px}
+  .rel{max-width:none}
+  .auth-desc{max-width:100%}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">FILE·009</span>
+      <div class="title">◆ QIANLVZHOU // <em>凝淼</em></div>
+      <span class="sysline" id="sysline">[ 人物档案已载入 · LOADED ]</span>
+      <div class="menuwrap">
+        <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
+        <div class="mdown" id="mDown">
+          <a class="mi" href="./资料.html">◂ 返回名册</a>
+          <button class="mi" id="miNight" type="button">◐ 夜间模式</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="main">
+      <!-- 左列 -->
+      <div class="left">
+        <div class="avwrap" id="avwrap">
+          <img id="avimg" src="./头像/凝淼.jpg" alt="凝淼">
+          <span class="deadstamp">观测终止</span>
+        </div>
+        <div class="name">凝淼</div>
+        <div class="pin">双冕北境女皇 · 霜霆之主</div>
+        <div class="tags" id="tags">
+          <span class="tag hot">双冕北境</span>
+          <span class="tag">神明</span>
+          <span class="tag">冰雷权柄</span>
+          <span class="tag">LV·89（正神级）</span>
+          <span class="tag dead">已故 · 残留数据</span>
+        </div>
+        <div class="affin" id="stabBox">
+          <div class="cap" id="stabCap">STABILITY // 神格稳定</div>
+          <div class="abar"><i data-lv="92" id="stabBar"></i></div>
+          <div class="afoot"><b id="stabNum">92<span style="font-size:9px">/100</span></b><span id="stabFoot">绝对压制 · 执政四百年</span></div>
+        </div>
+        <div class="brief">双冕北境的最高统治者。对于玩家的靠近，她似乎抱有某种不知名的熟稔。</div>
+        <div class="leftspace"></div>
+        <div class="systail">QIANLVZHOU · DOSSIER FILE 009<br>档案密级 · Ⅲ级<br>数据来源 · 系统实时同步</div>
+      </div>
+ 
+      <!-- 右列 -->
+      <div class="dossier">
+ 
+        <div class="sec" id="secBasic">
+          <div class="sechead">BASIC INFO<span class="zh">基础信息</span></div>
+          <div class="igrid">
+            <div class="cell"><span class="il">所属国度</span><span class="iv"><b>双冕北境</b></span></div>
+            <div class="cell"><span class="il">阵营</span><span class="iv"><b>七神之座</b></span></div>
+            <div class="cell"><span class="il">战力等级</span><span class="iv"><b>LV·89</b><small>正神级</small></span></div>
+            <div class="cell"><span class="il">当前状态</span><span class="iv" id="stateCell">在位近四百年 · 执政稳固</span></div>
+            <div class="cell" style="grid-column:1/-1"><span class="il">全名</span><span class="iv">达里娅·彼得罗娃<small>DARIA PETROVA</small></span></div>
+            <div class="cell" style="grid-column:1/-1"><span class="il">背景</span><span class="iv">北境最高神明</span></div>
+          </div>
+        </div>
+ 
+        <div class="sec" id="secAuth">
+          <div class="sechead">AUTHORITY<span class="zh">权柄解析</span></div>
+          <div class="authwrap" id="authAnim"><div class="auth-block">
+            <span class="auth-no">Ⅰ · FROST THUNDER</span>
+            <span class="auth-wm">霜</span>
+            <div class="auth-name">冰雷（霜雪与雷霆）</div>
+            <div class="auth-desc">执掌极寒与裁决的复合权柄，是北境气候与秩序的绝对化身。</div>
+          </div></div>
+        </div>
+ 
+ 
+        <div class="sec" id="secRecord">
+          <div class="sechead">RECORD<span class="zh">档案记录</span></div>
+          <div class="rec">
+            <p>凝淼，在位近四百年，与业焰之国火神处于同一时期。作为双冕北境最高领导者，执掌冰雷权柄与世俗政务，在北境贵族与平民之间维持着冷峻的平衡。关于其最初的登神过程，当前档案缺乏数据支撑，暂未记录。</p>
+            <p>在近期接触中，该目标对玩家展现出异常的熟稔态度。多次交谈中，该目标会抛出含有旧事隐喻的言辞进行试探。相关内容无法与当前已知历史对应。其具体动机与隐藏信息尚不明确。</p>
+            <div class="rnote">RECORD OPEN · 观测持续中 · 条目随剧情推进追加</div>
+          </div>
+          <!-- 方案B：V2 勘误追加（死亡后显现；V1 原文一个字不动） -->
+          <div class="rec v2 v2app">
+            <span class="v2tag">勘误追加 · V2 终局期</span>
+            <p>北境推行一系列颠覆性政令后，爆发黎明起义。凝淼在该场动乱中死亡，具体死因与交战过程缺乏明确记录，无法还原。</p>
+            <p>该死亡事件与玩家的能量痕迹存在极高关联度，被标记为最高优先级观测事件。</p>
+            <p>目标死亡后，关于其历史记载、民众记忆及物理存在痕迹，均被极高规格的力量从世界中全面抹除。当前档案为残留数据。</p>
+            <div class="rnote">RECORD SEALED · 本档案转为残留数据 · 停止更新</div>
+          </div>
+        </div>
+ 
+        <div class="sec" id="secAbility">
+          <div class="sechead">ABILITY<span class="zh">能力评估</span></div>
+          <div class="bars">
+            <div class="brow">
+              <div class="btop"><span class="bn">墟元力强度</span><div class="btrack"><i class="bfill" data-lv="80"></i></div><span class="bnum">80/100</span></div>
+              <div class="bdesc">深厚庞大，但尚未触及 100 的极限</div>
+            </div>
+            <div class="brow">
+              <div class="btop"><span class="bn">战斗威胁度</span><div class="btrack"><i class="bfill" data-lv="85"></i></div><span class="bnum">85/100</span></div>
+              <div class="bdesc">冰雷复合权柄的破坏力极强</div>
+            </div>
+            <div class="brow">
+              <div class="btop"><span class="bn">侵蚀污染度</span><div class="btrack"><i class="bfill" data-lv="10"></i></div><span class="bnum">10/100</span></div>
+              <div class="bdesc">神格稳固，仅轻度接触蚀光</div>
+            </div>
+            <div class="brow">
+              <div class="btop"><span class="bn">当前稳定性</span><div class="btrack"><i class="bfill" data-lv="92"></i></div><span class="bnum">92/100</span></div>
+              <div class="bdesc">执政四百年，理智处于绝对压制状态</div>
+            </div>
+          </div>
+        </div>
+ 
+        <div class="sec" id="secRadar">
+          <div class="sechead">RADAR<span class="zh">专精六维</span></div>
+          <div class="golddiv"></div>
+          <div class="radarbox">
+            <svg id="radarSvg" width="300" height="290" viewBox="-150 -145 300 290" role="img" aria-label="专精六维雷达图"></svg>
+            <div class="rnotes" id="radarNotes"></div>
+          </div>
+          <div class="radarfoot">基准满值 100（正神级段）。形状偏向「战术判断 × 法术输出」双峰，近战体术与治疗净化明显凹陷，属于远程压制 · 指挥型。</div>
+        </div>
+ 
+        <div class="sec" id="secRel">
+          <div class="sechead">RELATIONS<span class="zh">关系网</span></div>
+          <div class="rels">
+            <a class="rel" href="./怀榆.html"><span class="rn">怀榆</span><span class="rt">极端关注 · 态度不明 · 多次隐喻试探，疑似了解其部分隐秘</span></a>
+            <a class="rel" href="./黎昭.html"><span class="rn">黎昭</span><span class="rt">合作者 · 烬影会与她有深度的暗中合作</span></a>
+            <a class="rel" href="./阿列克谢.html"><span class="rn">阿列克谢</span><span class="rt">君臣 · 巡林铁卫最高指挥官</span></div>
+            <a class="rel" href="./叶戈尔.html"><span class="rn">叶戈尔</span><span class="rt">君臣 · 北境贵族，配合其改革，但也互相提防</span></div>
+            <a class="rel" href="./尘歌.html"><span class="rn" style="font-family:var(--mono);letter-spacing:2px;color:var(--accd)">▓▓▓▓▓</span><span class="rt">赋予权柄也抹去她的存在。</span></a>
+          </div>
+        </div>
+ 
+        <div class="sec" id="secNote">
+          <div class="sechead">SYS NOTE<span class="zh">系统备注</span></div>
+          <div class="golddiv"></div>
+          <div class="sysnote">
+            <div class="who">[ SYSTEM · 观测记录 · V1 在位期 ]</div>
+            <div class="txt">目标掌握超出常规记录的历史情报。其对玩家的试探行为缺乏敌意，但严重违反常规信息交互逻辑。<b>建议在后续接触中保持戒备，避免被其引导节奏。</b></div>
+          </div>
+          <!-- 方案B：V2 备注追加（死亡后显现） -->
+          <div class="sysnote v2app">
+            <div class="who">[ SYSTEM · 观测记录 · V2 终局期 ]</div>
+            <div class="txt">目标已死亡。存在痕迹已从世界层面彻底抹除。<b>遗留异常：该目标在拥有正神级战力的情况下，未在起义中进行任何实质性抵抗，主动走向死亡。其死前言行与引动黎明起义的动机，最终指向了一个无法归档的隐秘目的。</b></div>
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<script>
+(function(){
+  'use strict';
+ 
+  /* ============ 主题 ============ */
+  var K_THEME = 'theme';
+  function applyTheme(){
+    var dark = false;
+    try{
+      var r = localStorage.getItem(K_THEME);
+      if(r){ var p = JSON.parse(r); if(p && p.value === 'dark') dark = true; }
+    }catch(e){}
+    document.body.classList.toggle('night', dark);
+  }
+  applyTheme();
+ 
+  /* ============ 死亡状态（方案B · 勘误追加） ============
+     常规：模拟AI 在死亡节点执行 localStorage.setItem('gzd_qlz_nm_dead','1')
+     后门：?dead=1 / ?dead=0 仅当前页强制预览，不写存储 */
+  var K_DEAD = 'gzd_qlz_nm_dead';
+  function isDead(){
+    var q = location.search.indexOf('dead=');
+    if(q > -1){
+      var v = location.search.charAt(q + 5);
+      if(v === '1') return true;
+      if(v === '0') return false;
+    }
+    try{ return localStorage.getItem(K_DEAD) === '1'; }catch(e){}
+    return false;
+  }
+  function applyDead(){
+    var dead = isDead();
+    document.body.classList.toggle('dead', dead);
+    if(dead){
+      var sl = document.getElementById('sysline');
+      if(sl) sl.textContent = '[ 残留数据 · RESIDUAL DATA ]';
+      var st = document.getElementById('stateCell');
+      if(st) st.textContent = '已死亡 · 存在痕迹遭世界级抹除';
+      var cap = document.getElementById('stabCap');
+      if(cap) cap.textContent = 'SIGNAL // 观测状态';
+      var num = document.getElementById('stabNum');
+      if(num) num.innerHTML = '0<span style="font-size:9px">/100</span>';
+      var foot = document.getElementById('stabFoot');
+      if(foot) foot.textContent = '信号丢失 · 观测终止';
+      /* 稳定条归零（死亡态下 growAffin 会按 data-lv=0 处理） */
+      var sb = document.getElementById('stabBar');
+      if(sb) sb.dataset.lv = '0';
+    }
+  }
+  applyDead();
+ 
+  /* ============ 头像 ============ */
+  var img = document.getElementById('avimg');
+  img.onerror = function(){ document.getElementById('avwrap').classList.add('noimg'); };
+  if(img.complete && img.naturalWidth === 0){ img.onerror(); }
+ 
+  /* ============ 动画触发 ============ */
+  var abilityDone = false, radarDone = false, affinDone = false;
+ 
+  function growBars(){
+    if(abilityDone) return; abilityDone = true;
+    document.querySelectorAll('#secAbility .bfill').forEach(function(b, i){
+      setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 120 * i);
+    });
+  }
+  function growAffin(){
+    if(affinDone) return; affinDone = true;
+    var b = document.querySelector('.affin .abar i');
+    if(b) setTimeout(function(){ b.style.width = b.dataset.lv + '%'; }, 300);
+  }
+ 
+  /* ============ 雷达图 ============ */
+  var RADAR = [
+    {n:'墟元力操控', v:85, d:'对冰雷之力的掌控极为精准'},
+    {n:'蚀光抗性',   v:64, d:'具备正神级别的规则抗性'},
+    {n:'近战体术',   v:50, d:'神明之躯，但非常规战斗手段'},
+    {n:'法术输出',   v:89, d:'匹配其等级的毁灭性范围伤害'},
+    {n:'治疗净化',   v:20, d:'权柄主杀伐与禁锢，极度缺乏治愈能力'},
+    {n:'战术判断',   v:95, d:'执政四百年的阅历与冷酷的谋略'}
+  ];
+  var GRIDMAX = 100;
+  var polyAnimRef = null, dotAnims = [], valAnims = [];
+ 
+  function drawRadar(instant){
+    var svg = document.getElementById('radarSvg');
+    if(!svg) return;
+    if(svg.dataset.drawn && !instant) return;
+    svg.dataset.drawn = '1';
+    svg.innerHTML = '';
+    polyAnimRef = null; dotAnims = []; valAnims = [];
+ 
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(t, at){ var e = document.createElementNS(NS, t); for(var k in at) e.setAttribute(k, at[k]); return e; }
+ 
+    var cx = 0, cy = 0, maxR = 104;
+    var cs = getComputedStyle(document.body);
+    var kAcc  = cs.getPropertyValue('--acc').trim()  || '#D8D8D4';
+    var kAccD = cs.getPropertyValue('--accd').trim() || '#4E565E';
+    var mut    = cs.getPropertyValue('--mut').trim() || '#666';
+    var isNight = document.body.classList.contains('night');
+    var polyOp = isNight ? '0.55' : '0.6';
+    var angles = [0,60,120,180,240,300].map(function(d){ return d * Math.PI / 180; });
+ 
+    [0.3, 0.5, 0.7, 1.0].forEach(function(ratio){
+      var r = maxR * ratio;
+      var pts = angles.map(function(a){ return (cx + r * Math.sin(a)) + ',' + (cy - r * Math.cos(a)); }).join(' ');
+      var p = el('polygon', { points: pts, fill:'none', stroke: mut, 'stroke-width': ratio === 1.0 ? '1.2' : '0.8' });
+      if(ratio !== 1.0) p.setAttribute('stroke-dasharray', '4,4');
+      svg.appendChild(p);
+    });
+    angles.forEach(function(a){
+      var x = cx + maxR * Math.sin(a), y = cy - maxR * Math.cos(a);
+      svg.appendChild(el('line', { x1: cx, y1: cy, x2: x, y2: y, stroke: mut, 'stroke-width': '0.6', 'stroke-dasharray': '3,4' }));
+    });
+ 
+    var verts = RADAR.map(function(d, i){
+      var r = (d.v / GRIDMAX) * maxR, a = angles[i];
+      return { x: cx + r * Math.sin(a), y: cy - r * Math.cos(a), v: d.v, n: d.n };
+    });
+    var target = verts.map(function(v){ return v.x + ',' + v.y; }).join(' ');
+    var center = angles.map(function(){ return cx + ',' + cy; }).join(' ');
+ 
+    var poly;
+    if(instant){
+      poly = el('polygon', { points: target, fill: kAcc, 'fill-opacity': polyOp, stroke: kAccD, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+      svg.appendChild(poly);
+    } else {
+      poly = el('polygon', { points: center, fill: kAcc, 'fill-opacity': polyOp, stroke: kAccD, 'stroke-width': '2.5', 'stroke-linejoin': 'round' });
+      var anim = el('animate', { attributeName:'points', from: center, to: target, dur:'1.2s', fill:'freeze', calcMode:'spline', keySplines:'0.25 0.1 0.25 1', begin:'indefinite' });
+      poly.appendChild(anim);
+      svg.appendChild(poly);
+      polyAnimRef = anim;
+    }
+ 
+    verts.forEach(function(v, i){
+      var a = angles[i];
+      if(instant){
+        svg.appendChild(el('circle', { cx: v.x, cy: v.y, r: '2.5', fill: kAccD, opacity: '1' }));
+      } else {
+        var c = el('circle', { cx: v.x, cy: v.y, r: '2.5', fill: kAccD, opacity: '0' });
+        var cf = el('animate', { attributeName:'opacity', from:'0', to:'1', dur:'0.3s', begin:'indefinite', fill:'freeze' });
+        c.appendChild(cf); svg.appendChild(c); dotAnims.push(cf);
+      }
+      var lx = cx + (maxR + 18) * Math.sin(a), ly = cy - (maxR + 18) * Math.cos(a);
+      var t = el('text', { x: lx, y: ly, fill: mut, 'font-size':'10', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central' });
+      t.textContent = v.n; svg.appendChild(t);
+      if(instant){
+        var t2i = el('text', { x: lx, y: ly + 13, fill: kAccD, 'font-size':'9', 'font-weight':'bold', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central', opacity:'1' });
+        t2i.textContent = v.v; svg.appendChild(t2i);
+      } else {
+        var t2 = el('text', { x: lx, y: ly + 13, fill: kAccD, 'font-size':'9', 'font-weight':'bold', 'font-family':'Courier New,monospace', 'text-anchor':'middle', 'dominant-baseline':'central', opacity:'0' });
+        var tf = el('animate', { attributeName:'opacity', from:'0', to:'1', dur:'0.3s', begin:'indefinite', fill:'freeze' });
+        t2.appendChild(tf); t2.textContent = v.v; svg.appendChild(t2); valAnims.push(tf);
+      }
+    });
+  }
+ 
+  function growRadar(){
+    if(radarDone) return; radarDone = true;
+    drawRadar(false);
+    requestAnimationFrame(function(){
+      try{ if(polyAnimRef) polyAnimRef.beginElement(); }catch(e){}
+      setTimeout(function(){ dotAnims.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 800);
+      setTimeout(function(){ valAnims.forEach(function(a){ try{ a.beginElement(); }catch(e){} }); }, 1000);
+    });
+  }
+ 
+  /* ============ 雷达注释 ============ */
+  var notes = document.getElementById('radarNotes');
+  if(notes){
+    notes.innerHTML = RADAR.map(function(d){
+      return '<div class="rrow"><div class="rn1">' + d.n + '<b>' + d.v + '</b></div><div class="rn2">' + d.d + '</div></div>';
+    }).join('');
+  }
+ 
+  /* ============ 滚动触发 ============ */
+  function check(){
+    var vh = window.innerHeight;
+    ['secAbility', 'secRadar'].forEach(function(id){
+      var s = document.getElementById(id);
+      if(s && s.getBoundingClientRect().top < vh * 0.9){
+        if(id === 'secAbility') growBars();
+        if(id === 'secRadar')   growRadar();
+      }
+    });
+    var au = document.getElementById('secAuth');
+    if(au && au.getBoundingClientRect().top < vh * 0.9){
+      var aw = document.getElementById('authAnim'); if(aw) aw.classList.add('show');
+    }
+    var af = document.querySelector('.affin');
+    if(af && af.getBoundingClientRect().top < vh * 0.95) growAffin();
+  }
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        if(e.target.id === 'secAbility') growBars();
+        if(e.target.id === 'secRadar')   growRadar();
+        if(e.target.id === 'secAuth'){ var ax=document.getElementById('authAnim'); if(ax) ax.classList.add('show'); }
+        if(e.target.classList.contains('affin')) growAffin();
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.25 });
+    ['secAbility', 'secRadar', 'secAuth'].forEach(function(id){ var s = document.getElementById(id); if(s) io.observe(s); });
+    var af = document.querySelector('.affin'); if(af) io.observe(af);
+    setTimeout(check, 300);
+  }
+  window.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check);
+ 
+  /* ============ 菜单 + 夜间切换 ============ */
+  var mBtn   = document.getElementById('menuBtn');
+  var mDown  = document.getElementById('mDown');
+  var mNight = document.getElementById('miNight');
+ 
+  function syncNightLabel(){
+    if(mNight) mNight.textContent = document.body.classList.contains('night') ? '◐ 日间模式' : '◐ 夜间模式';
+  }
+ 
+  if(mBtn && mDown){
+    mBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      mDown.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e){
+      if(mDown && !mDown.contains(e.target)) mDown.classList.remove('open');
+    });
+  }
+ 
+  if(mNight){
+    mNight.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      var dark = !document.body.classList.contains('night');
+      try{ localStorage.setItem(K_THEME, JSON.stringify({ value: dark ? 'dark' : 'light' })); }catch(err){}
+      document.body.classList.toggle('night', dark);
+      syncNightLabel();
+      /* 重绘雷达以更新主题色 */
+      if(radarDone){
+        drawRadar(true);
+      }
+      /* 关闭菜单 */
+      if(mDown) mDown.classList.remove('open');
+    });
+  }
+ 
+  syncNightLabel();
+})();
+</script>
+</body>
+</html>
