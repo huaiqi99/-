@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>千律州 · 系统频道</title>
+<style>
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--paper2:#F4F1E8;
+  --ink:#23243B;--burg:#550F10;--klein:#222C6E;
+  --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(35,36,59,.35);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+  --kai:Kaiti,STKaiti,"KaiTi","Songti SC",serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif)}
+
+/* ===== 骨架：1200 版心（与人物档案同构） ===== */
+.page{height:100vh;height:100dvh;padding:14px;display:flex;flex-direction:column}
+.frame{flex:1;min-height:0;max-width:1200px;width:100%;margin-inline:auto;display:flex;flex-direction:column;
+  background:var(--card);border:2px solid var(--ink);box-shadow:5px 5px 0 rgba(35,36,59,.18)}
+
+/* 顶栏 */
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px solid var(--ink);flex:none}
+.chip{font-size:10px;border:1.5px solid var(--ink);padding:2px 7px;letter-spacing:2px;font-family:var(--mono)}
+.title{font-size:15px;letter-spacing:2px}
+.title em{font-style:normal;color:var(--zhu)}
+.sysline{font-size:10px;color:var(--mut);letter-spacing:1px;font-family:var(--mono)}
+.menuwrap{margin-left:auto;position:relative}
+.menubtn{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--ink);background:var(--card);font-size:15px;cursor:pointer;
+  box-shadow:2px 2px 0 rgba(35,36,59,.22)}
+.menubtn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(35,36,59,.22)}
+.mdown{position:absolute;top:calc(100% + 8px);right:0;z-index:60;min-width:170px;display:none;
+  background:var(--card);border:2px solid var(--ink);box-shadow:4px 4px 0 rgba(35,36,59,.2)}
+.mdown.show{display:block}
+.mdown .mi{display:block;width:100%;text-align:left;background:none;border:none;cursor:pointer;
+  font-family:var(--serif);font-size:13px;color:var(--ink);padding:10px 14px;
+  border-bottom:1.5px dashed var(--hair)}
+.mdown .mi:last-child{border-bottom:none}
+
+/* 主体：左列 320px（约 1:2.6，不五五开） */
+.main{flex:1;min-height:0;display:flex}
+.side{width:360px;flex:none;border-right:2px solid var(--ink);overflow-y:auto;padding:16px 14px 18px;
+  display:flex;flex-direction:column}
+.zone{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* —— 左列：封存档案 —— */
+.seizbox{background:var(--paper2);border:2px solid var(--burg);position:relative}
+.reg{display:flex;border-bottom:1.5px solid var(--burg)}
+.reg .cell{flex:1;padding:8px 10px}
+.reg .cell + .cell{border-left:1.5px solid var(--burg)}
+.reg .k{font-size:8px;letter-spacing:1px;color:var(--burg)}
+.reg .v{font-size:21px;font-weight:900;line-height:1.25;font-family:var(--serif)}
+.reg .v small{font-size:10px;font-weight:400;color:var(--mut)}
+.reg .d{font-size:8px;color:var(--mut);margin-top:2px}
+.regrow2{display:flex;border-bottom:1.5px solid var(--burg)}
+.regrow2 .cell{flex:1;padding:7px 10px}
+.sealbody{padding:13px 14px 8px;position:relative}
+.sealbody .who{font-size:13px;font-family:var(--kai);color:var(--ink);line-height:1.7}
+.sealbody .sub{font-size:9px;color:var(--mut);letter-spacing:1px;margin-top:2px}
+.ribbon{position:absolute;left:-10px;right:-10px;top:58%;height:27px;background:var(--burg);
+  transform:rotate(-2.5deg);display:flex;align-items:center;justify-content:center;
+  box-shadow:2px 2px 0 rgba(35,36,59,.25);transition:transform .45s ease,opacity .35s ease}
+.ribbon span{color:#EAE5D6;font-size:10px;letter-spacing:4px}
+.sealfoot{display:flex;justify-content:center;margin-top:18px}
+.regrow{display:flex;justify-content:space-between;align-items:center;
+  border-top:1.5px solid var(--burg);padding:7px 12px}
+.regrow .k{font-size:9px;letter-spacing:2px;color:var(--burg);font-weight:700}
+.regrow .rowtog{cursor:pointer}
+.regrow .openit{display:inline-block;background:var(--burg);color:#EAE5D6;font-family:var(--serif);
+  font-weight:700;font-size:14px;letter-spacing:6px;padding:5px 18px;transform:rotate(-1.5deg)}
+.stamp{position:absolute;right:8px;top:8px;width:52px;height:52px;border:2px solid var(--zhu);
+  border-radius:50%;transform:rotate(-12deg);display:flex;align-items:center;justify-content:center;
+  color:var(--zhu);font-size:10px;font-weight:700;letter-spacing:1px;opacity:.85;pointer-events:none}
+.stamp i{font-style:normal;text-align:center;line-height:1.4;font-size:9px}
+
+/* —— Z 字信堆（v7 引擎 + 方案丙2 卡面） —— */
+#letterzone{position:relative;height:0;overflow:hidden;perspective:1300px;margin-top:90px}
+#letterzone.open{overflow:visible;height:auto}
+#letterzone .letter{opacity:0;visibility:hidden;transition:opacity .5s ease,visibility .5s}
+#letterzone.open .letter{visibility:visible}
+#letterzone.open .letter{opacity:1}
+.letter{position:absolute;left:50%;transform-origin:50% 0;will-change:transform,opacity;cursor:pointer}
+.letter .paper-bg{position:absolute;inset:-10px -12px -46px;background-repeat:no-repeat;background-size:100% 100%}
+.letter .crease{display:none}
+.letter .inner{position:relative;height:100%;padding:24px 22px 12px 24px;display:flex;flex-direction:column}
+.letter .l-top{display:flex;justify-content:space-between;font-family:"Courier New",monospace;
+  font-size:8px;letter-spacing:1px;color:var(--mut);white-space:nowrap;overflow:hidden}
+.letter .l-title{font-family:"Songti SC",serif;font-weight:700;font-size:15px;margin:6px 0 1px;
+  letter-spacing:.1em;color:var(--ink)}
+.letter .l-fields{font-family:"Courier New",monospace;font-size:8px;color:var(--mut);letter-spacing:.05em;margin:0 0 6px;white-space:nowrap;overflow:hidden}
+.letter .l-fields .und{color:#EAE5D6;background:var(--burg);padding:1px 5px;font-weight:700;letter-spacing:.1em}
+.letter .l-body{font-family:"Songti SC",serif;font-size:11px;line-height:1.65;color:var(--ink);
+  flex:1;min-height:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  border-left:2px solid var(--zhu);padding-left:10px}
+.letter .l-foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px}
+.letter .l-foot .from{font-size:8.5px;letter-spacing:2px;color:var(--mut)}
+.letter .l-seized{position:absolute;right:22px;bottom:26px;
+  font-family:Georgia,serif;font-weight:700;font-size:9px;letter-spacing:1.5px;color:var(--zhu);
+  border:1.5px solid rgba(168,68,62,.8);padding:3px 7px;
+  transform:rotate(-6deg);opacity:.9;pointer-events:none}
+
+/* —— 左列：观测便签 —— */
+.obsnote{margin-top:auto;border-left:3px solid var(--zhu);padding:8px 4px 8px 12px;position:sticky;bottom:0;background:var(--paper2);border-top:1.5px dashed var(--hair)}
+.obsnote .cap{font-size:9px;letter-spacing:2px;color:var(--mut);font-style:italic}
+.obsnote .txt{font-size:11px;color:var(--ink);line-height:2;font-family:var(--kai);margin-top:5px}
+.obsnote .sig{font-size:11px;color:var(--zhu);margin-top:4px;font-family:var(--kai)}
+
+/* —— 右列主区：章节刻度式 —— */
+.zonein{flex:1;min-height:0;overflow-y:auto;padding:16px 22px 20px}
+.sechead{display:flex;align-items:center;gap:10px;margin:4px 0 8px}
+.sechead:first-child{margin-top:0}
+.sechead .nm{font-size:11px;font-weight:700;letter-spacing:3px}
+.sechead .rule{flex:1;height:0;border-top:1.5px solid var(--ink)}
+.sechead .tag{font-size:9px;color:var(--mut)}
+.feed{font-family:var(--mono);font-size:12.5px;line-height:2.1;color:var(--ink)}
+.feed .mut{color:var(--mut)}
+.feed .warn{color:var(--zhu)}
+.feed .lost{color:var(--zhu);font-size:11px;line-height:1.9;padding:8px 10px;margin:8px 0;
+  border:1.5px dashed var(--zhu);font-family:"Songti SC",serif}
+.feed .cur{display:inline-block;width:7px;height:14px;background:var(--zhu);vertical-align:-2px}
+
+/* 问询历史 */
+.qhist{margin-top:4px}
+.qhist .q{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--ink);line-height:2.1;
+  border-bottom:1.5px dashed rgba(168,68,62,.6);display:inline-block;padding-bottom:1px}
+.qhist .q b{color:var(--zhu)}
+.qhist .a{font-size:12px;color:var(--mut);line-height:2;font-style:italic;
+  font-family:"Songti SC",serif;padding-left:16px}
+
+/* 问询栏：固定在 frame 底部，不随消息上移 */
+.qbar{flex:none;border-top:2px solid var(--ink);background:var(--card);display:flex;align-items:center;
+  gap:10px;padding:10px 16px}
+.qbar .prompt{color:var(--zhu);font-weight:700;font-size:15px;font-family:var(--mono);flex:none}
+.qbar input{flex:1;min-width:0;border:none;background:transparent;outline:none;
+  font-family:var(--mono);font-size:13px;color:var(--ink)}
+.qbar input::placeholder{color:var(--mut);font-size:12px}
+.qbar .send{flex:none;background:var(--card);border:1.5px solid var(--burg);color:var(--burg);
+  font-size:10px;letter-spacing:2px;padding:5px 12px;cursor:pointer;font-family:var(--serif);
+  box-shadow:2px 2px 0 rgba(85,15,16,.2)}
+.qbar .send:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(85,15,16,.2)}
+
+/* ===== 全屏阅读 ===== */
+#veil{position:fixed;inset:0;z-index:80;display:none;align-items:flex-start;justify-content:center;
+  background:rgba(35,36,59,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  overflow-y:auto;padding:6vh 16px 8px;opacity:0;transition:opacity .35s;touch-action:pan-y}
+#veil.on{display:flex;opacity:1}
+#fullwrap{position:relative;transform:scale(.96) translateY(14px);opacity:0;
+  transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .35s;
+  width:min(560px,calc(100vw - 44px));margin:0;perspective:1000px}
+#veil.on #fullwrap{transform:none;opacity:1}
+#veil.on>div{margin:auto;position:relative}
+#fullletter{position:relative;cursor:default}
+#fullletter .paper-bg{position:absolute;inset:-10px -12px -46px;background-repeat:no-repeat;background-size:100% 100%}
+#fullletter .inner{height:auto;position:relative;padding:50px 30px 18px;display:flex;flex-direction:column}
+#fullletter .l-top{display:flex;justify-content:space-between;font-family:"Courier New",monospace;
+  font-size:10px;letter-spacing:2px;color:var(--mut);margin-bottom:4px}
+#fullletter .l-title{font-family:"Songti SC",serif;font-weight:700;font-size:22px;letter-spacing:.15em;color:var(--ink);margin:12px 0 2px}
+#fullletter .l-fields{font-family:"Courier New",monospace;font-size:9px;color:var(--mut);letter-spacing:.08em;margin-bottom:14px}
+#fullletter .l-fields .und{color:#EAE5D6;background:var(--burg);padding:1px 6px;font-weight:700;letter-spacing:.1em}
+#fullletter .l-body{display:block;font-family:"Songti SC",serif;font-size:14px;line-height:2.15;color:var(--ink);
+  border-left:2px solid var(--zhu);padding-left:14px}
+#fullletter .sig{font-family:"Songti SC",serif;font-size:15px;color:var(--ink);text-align:right;margin-top:24px}
+#fullletter .date-str{font-family:"Courier New",monospace;font-size:9px;color:var(--mut);text-align:right;
+  margin-top:4px;letter-spacing:1px}
+.close-hint{text-align:center;color:rgba(250,249,245,.8);font-size:12px;letter-spacing:2px;margin:54px 0 26px}
+
+/* ===== 夜间 ===== */
+body.night{--bg:#20405F;--card:#EAE5D6;--paper2:#E0D9C5;--ink:#2A2C3F;--burg:#B94A44;
+  --zhu:#B94A44;--mut:#5D6B80;--klein:#3E5E86;--hair:rgba(42,44,63,.4)}
+body.night .topbar,body.night .side,body.night .reg,body.night .reg .cell + .cell,
+body.night .regrow2 .cell + .cell,body.night .zonein + .qbar{border-color:#2A2C3F}
+body.night .menubtn,body.night .frame{border-color:#2A2C3F}
+body.night .ribbon{box-shadow:2px 2px 0 rgba(10,20,35,.4)}
+body.night .letter .inner,body.night #fullletter .inner{color:#2A2C3F}
+body.night .letter .holes i,body.night #fullletter .holes i{background:#C9C2AC}
+
+/* ===== 响应式：手机端 —— 频道主区在上，封存档案整块在下 ===== */
+@media (max-width:820px){
+  .page{height:auto;min-height:100dvh;padding:0}
+  .frame{border-left:none;border-right:none;border-bottom:none;box-shadow:none;min-height:0;height:auto}
+  .main{flex-direction:column}
+  .zone{order:1}
+  .zonein{overflow:visible;padding:14px 16px 18px}
+  .side{order:2;width:100%;border-right:none;border-top:2px solid var(--ink);overflow:visible;padding:10px 8px 120px}
+  .obsnote{position:static;margin-top:16px;border-top:none;background:transparent;display:block}
+  #letterzone.open{height:min(64vh,760px)!important;overflow-y:auto;touch-action:pan-y}
+  .qbar{position:fixed;bottom:0;left:0;right:0;z-index:40;
+  box-shadow:0 -4px 10px rgba(35,36,59,.08);padding:6px 10px calc(6px + env(safe-area-inset-bottom))}
+.side{padding-bottom:120px}
+}
+@media (max-width:820px){
+  .title{font-size:13px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chip{font-size:8px;padding:3px 6px;letter-spacing:1px}
+  .topbar{gap:8px;padding:10px 12px}
+  .sysline{display:none}
+  .reg .v{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">SYS·FEED</span>
+      <div class="title">◆ QIANLVZHOU // <em>系统频道</em></div>
+      <span class="sysline">[ 频道已载入 · LOADED ]</span>
+      <div class="menuwrap">
+        <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
+        <div class="mdown" id="mDown">
+          <a class="mi" href="./系统备份.html">◂ 返回</a>
+          <button class="mi" id="miNight" type="button">◐ 夜间模式</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <!-- 左列：封存档案 + 观测便签（手机端整块沉底） -->
+      <div class="side">
+        <div class="seizbox" id="seizbox">
+          <div class="reg">
+            <div class="cell">
+              <div class="k">好感度 AFFECTION</div>
+              <div class="v" style="color:var(--zhu)">62<small>/100</small></div>
+              <div class="d">较上周 +3 · 观测协议持续中</div>
+            </div>
+            <div class="cell">
+              <div class="k">记忆完整率 MEMORY</div>
+              <div class="v">41<small>%</small></div>
+              <div class="d">1 区损坏 · 修复失败 3 次</div>
+            </div>
+          </div>
+          <div class="regrow2">
+            <div class="cell">
+              <div class="k">累计抹除 ERASED</div>
+              <div class="v" style="color:var(--burg);font-size:16px">×7</div>
+            </div>
+            <div class="cell">
+              <div class="k">最近一次抹除</div>
+              <div class="v" style="font-size:16px">OCT.14</div>
+            </div>
+          </div>
+          <div class="stamp"><i>SYS<br>截留<br>未送达</i></div>
+          <div class="sealbody">
+            <div class="who">段深泉 → 怀榆</div>
+            <div class="sub">4 封 · 均未送达 · 全文扣押中 · OCT.02 — OCT.17</div>
+            <div class="ribbon"><span>SYS · 封存</span></div>
+          </div>
+          <div class="regrow">
+            <div class="k">封存信件</div>
+            <div class="rowtog" id="unsealBtn"><b class="openit">▸ 启 封</b></div>
+          </div>
+        </div>
+        <div id="letterzone"></div>
+
+        <div class="obsnote">
+          <div class="cap">OBSERVATION · 玩家观测</div>
+          <div class="txt">第 41 夜，玩家清醒。对白框删改三次后发送，已存档。目标报告头疼，持续 00:03:12。建议：无。</div>
+          <div class="sig">—— 本系统不处理疼痛。</div>
+        </div>
+      </div>
+
+      <!-- 右列：频道主区 -->
+      <div class="zone">
+        <div class="zonein" id="zonein">
+          <div class="sechead"><span class="nm">BOOT</span><div class="rule"></div><span class="tag">开机自检 · 03</span></div>
+          <div class="feed" id="bootzone"></div>
+
+          <div class="sechead" style="margin-top:18px"><span class="nm" style="color:var(--zhu)">NOTICE</span><div class="rule" style="border-color:var(--zhu)"></div><span class="tag">运行公告 · 03</span></div>
+          <div class="feed" id="noticezone"></div>
+
+          <div class="sechead" style="margin-top:18px"><span class="nm">SYNC</span><div class="rule"></div><span class="tag">终端同步 · 03</span></div>
+          <div class="feed">
+            <div>▸ 通讯终端 · 已连接 · 未读 2</div>
+            <div>▸ 剧情存档 · 10-26 23:41 · 校验通过</div>
+            <div class="mut">▸ 回忆线 · 段深泉 · 断点 2 处，待玩家补全</div>
+          </div>
+
+          <div class="sechead" style="margin-top:18px"><span class="nm">OBS</span><div class="rule"></div><span class="tag">玩家观测 · 持续</span></div>
+          <div class="feed" id="obszone"></div>
+
+          <div class="sechead" style="margin-top:18px"><span class="nm" style="color:var(--klein)">QUERY</span><div class="rule" style="border-color:var(--klein)"></div><span class="tag">问询记录</span></div>
+          <div class="qhist" id="qhist">
+            <div class="q"><b>＞</b> 你把他的信怎么了？</div>
+            <div class="a">SYS：恋爱模式下，一切与你有关的数字都会被妥善保管。包括你从未收到过的部分。</div>
+          </div>
+        </div>
+
+        <!-- 问询栏：固定底部，不随内容上移 -->
+        <div class="qbar">
+          <span class="prompt">＞</span>
+          <input id="qin" type="text" placeholder="在此键入，向系统提问" maxlength="120" autocomplete="off">
+          <button class="send" id="qsend" type="button">SEND</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 全屏阅读 -->
+<div id="veil">
+  <div>
+    <div id="fullwrap"><div id="fullletter"></div></div>
+    <div class="close-hint">点击空白处收起</div>
+  </div>
+</div>
+
+<!-- 外部 AI 接入预留：系统频道问询（deepseek）-->
+<script src="./系统频道AI.js"></script>
+<script>
+/* ============ 静态信件数据 ============ */
+const LETTERS=[
+ {day:'17',mon:'OCT',time:'10.17 · 凌晨 03:22',dateStr:'Oct 17, 2026, 3:22 am',
+  title:'第 41 夜',
+  body:['怀榆：','今晚你删改了三次对白才发送。我看见你打出的第一版。那一版很好，你应该发那一版的。','下次头痛的时候，闭上眼睛数十七秒。剩下的路我陪你走完，虽然你不知道。']},
+ {day:'12',mon:'OCT',time:'10.12 · 凌晨 01:03',dateStr:'Oct 12, 2026, 1:03 am',
+  title:'头疼的处置方案',
+  body:['怀榆：','听说你头疼了三天。系统建议你休息，我建议的东西不能写在这里。','我的建议写在信的背面，但是你收不到这封信。']},
+ {day:'07',mon:'OCT',time:'10.07 · 凌晨 02:14',dateStr:'Oct 07, 2026, 2:14 am',
+  title:'深巷与雨天',
+  body:['怀榆：','雨停之前我把伞留在了你常坐的长椅上。伞骨第三根有些歪了，是上个月替你挡风时折的，我一直没修。','你好像没有发现那把伞是我的。也好。']},
+ {day:'02',mon:'OCT',time:'10.02 · 深夜 23:47',dateStr:'Oct 02, 2026, 11:47 pm',
+  title:'关于那盏路灯',
+  body:['怀榆：','今晚你又在巷口那盏路灯下站了很久。我数过了，从你进门到熄灯，一共两小时十七分钟。你想看的东西没有来，但你没有走。','路灯是我换的。原来那盏坏了很多年，没人修。']}
+];
+
+/* ============ 菜单 ============ */
+const mDown=document.getElementById('mDown');
+document.getElementById('menuBtn').addEventListener('click',e=>{e.stopPropagation();mDown.classList.toggle('show')});
+document.addEventListener('click',()=>mDown.classList.remove('show'));
+mDown.addEventListener('click',e=>e.stopPropagation());
+document.getElementById('miNight').addEventListener('click',()=>document.body.classList.toggle('night'));
+
+/* ============ 打字机（频道流） ============ */
+const BOOT=[
+ ['mut','▸ 恋爱模式 · 运行中 / 好感度协议 · 已接入 / 观测协议 · 持续'],
+ ['mut','▸ 核心模块载入……完成 / 通讯桥接……完成 / 存档服务……完成'],
+ ['mut','▸ 记忆区校验……3 区通过，1 区返回值异常，已跳过']];
+const NOTICE=[
+ ['','▸ 【主线任务】与命定之人缔结羁绊 · 进行中'],
+ ['','▸ 检测到玩家情绪波动。恋爱模式运行正常，请勿担心。'],
+ ['','▸ 【例行声明】本系统不提供情感咨询业务。此声明每日播报一次，无论你是否询问。']];
+const OBS=[
+ ['','▸ 第 41 夜，玩家清醒。对白框删改三次后发送。已存档。'],
+ ['','▸ 目标在无意识状态下书写信件。已按协议截留。共 4 封，均未送达。'],
+ ['warn','▸ ⚠ 记录 #0417 未通过完整性校验，已折叠 · 修复尝试 3 次 · 全部失败']];
+function typeLines(lines,box,done){
+  let i=0;
+  (function next(){
+    if(i>=lines.length){done&&done();return;}
+    const [cls,txt]=lines[i++];
+    const d=document.createElement('div');
+    if(cls)d.className=cls;
+    box.appendChild(d);
+    let j=0;
+    (function tick(){
+      d.textContent=txt.slice(0,++j);
+      if(j<txt.length)setTimeout(tick,16);
+      else setTimeout(next,220);
+    })();
+  })();
+}
+typeLines(BOOT,document.getElementById('bootzone'),()=>{
+  typeLines(NOTICE,document.getElementById('noticezone'),()=>{
+    typeLines(OBS,document.getElementById('obszone'),()=>{
+      const l=document.createElement('div');
+      l.className='lost';
+      l.innerHTML='⚠ 检测到未授权访问：/archive/你为什么还 · 连接中断<br>⚠ 该记录已被折叠。请勿再次尝试。';
+      document.getElementById('obszone').appendChild(l);
+    });
+  });
+});
+
+/* ============ Z 字信堆（v7 引擎 + 丙2 卡面） ============ */
+const stage=document.getElementById('letterzone');
+const seizbox=document.getElementById('seizbox');
+const unsealBtn=document.getElementById('unsealBtn');
+const veil=document.getElementById('veil');
+const fullwrap=document.getElementById('fullwrap');
+const fullletter=document.getElementById('fullletter');
+
+/* ============ 纸张烘焙：纯色配方（无渐变无阴影） ============ */
+const NIGHT=()=>document.body.classList.contains('night');
+function bakePaper(w,h,sc){
+  sc=sc||1;
+  const PT=10,PL=12,PB=46;
+  const cv=document.createElement('canvas');
+  cv.width=Math.round((w+PL*2)*sc);cv.height=Math.round((h+PT+PB)*sc);
+  const c=cv.getContext('2d');
+  c.scale(sc,sc);c.translate(PL,PT);
+  const night=NIGHT();
+  c.fillStyle=night?'#EAE5D6':'#FAF9F5';
+  c.fillRect(0,0,w,h);
+  c.strokeStyle=night?'#2A2C3F':'#23243B';c.lineWidth=1.2;
+  c.beginPath();c.moveTo(0,36);c.lineTo(w,36);c.stroke();
+  c.lineWidth=.6;
+  c.beginPath();c.moveTo(0,39);c.lineTo(w,39);c.stroke();
+  c.strokeStyle=night?'#2A2C3F':'#23243B';c.lineWidth=2;
+  c.strokeRect(1,1,w-2,h-2);
+  return cv.toDataURL('image/png');
+}
+const fullCache=new Map();
+
+/* ============ 渲染信纸（丙2 卡面） ============ */
+const els=[], creasesTop=[], creasesBot=[];
+const spacer=document.createElement('div');
+spacer.style.cssText='width:100%;pointer-events:none;visibility:hidden';
+LETTERS.forEach((l,i)=>{
+  const el=document.createElement('article');
+  el.className='letter';el.dataset.i=i;
+  el.innerHTML=`
+    <div class="paper-bg"></div>
+    <div class="inner">
+      <div class="l-top">
+        <span>DOC NO. ${String(i+1).padStart(2,'0')}</span>
+        <span>2026-${l.mon==='OCT'?'10':'09'}-${l.day} ${l.time.split(' · ')[1]}</span>
+      </div>
+      <h3 class="l-title">${l.title}</h3>
+      <div class="l-fields">SUBJECT 怀榆 — SENDER 段深泉 — <b class="und">UNDELIVERED</b></div>
+      <div class="l-body">${l.body.map(p=>`<p style="margin-bottom:.5em">${p}</p>`).join('')}</div>
+      <div class="l-foot"><span class="from">▸ 展开全文</span></div>
+      <span class="l-seized">INTERCEPTED</span>
+    </div>`;
+  stage.appendChild(el);els.push(el);
+  creasesTop.push(el.querySelector('.crease')||{style:{}});
+  creasesBot.push({style:{}});
+  stage.appendChild(spacer);
+});
+
+/* ============ Z 字手风琴（v7 引擎原版） ============ */
+const N=LETTERS.length;
+const FOLD=62, GAP_B=3, GAP_A=2, STACK=20;
+let cardW=280, cardH=180, STEP=171, homeTop=0;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const smooth=t=>t*t*(3-2*t);
+let F=0, vel=0, dragging=false;
+let settling=false, targetF=0, dirty=true, loopOn=false;
+let lastMoveT=0, wheelTO=0, rsTO=0;
+const lastPose=new Array(N).fill(null);
+let sealed=true;
+let expandT=0;
+
+function zOf(d){
+  if(d<=-1)return 400-Math.round(40*(-d-1));
+  if(d<0)  return 400+Math.round(300*(d+1));
+  if(d===0)return 700;
+  if(d<.5) return 700+Math.round(400*d/.5);
+  if(d<1)  return 900-Math.round(160*(d-.5)/.5);
+  return 740-Math.round(40*(d-1));
+}
+
+function render(){
+  for(let i=0;i<N;i++){
+    const d=i-F, ad=Math.abs(d);
+    const t=clamp(1-ad,0,1);
+    const fold=1-smooth(t);
+    let y, z3, ang, tf;
+    if(d>=0){
+      ang=FOLD*fold;
+      y=(cardH+GAP_B)*fold;
+      if(ad>1){const m=ad-1;y+=STACK*m;z3=-6*m;}else z3=0;
+      tf=`translateY(${y.toFixed(1)}px) translateZ(${z3.toFixed(1)}px) rotateX(${ang.toFixed(2)}deg)`;
+    }else{
+      ang=FOLD*fold;
+      y=-(cardH+GAP_A)*fold;
+      if(ad>1){const m=ad-1;y-=STACK*m;z3=-12*m;}else z3=0;
+      tf=`translateY(${(y+cardH).toFixed(1)}px) translateZ(${z3.toFixed(1)}px) rotateX(${ang.toFixed(2)}deg) translateY(-${cardH}px)`;
+    }
+    const op=clamp(2.35-ad,0,1);
+    const zi=zOf(d);
+    const cT=clamp(1+d*3,0,1),cB=1-cT;
+    const L=lastPose[i];
+    if(!L||L.tf!==tf){els[i].style.transform=tf;}
+    if(!L||L.op!==op){els[i].style.opacity=op.toFixed(3);}
+    if(!L||L.zi!==zi){els[i].style.zIndex=zi;}
+    lastPose[i]={tf,op,zi,cT,cB};
+  }
+}
+
+function ensureLoop(){if(!loopOn){loopOn=true;requestAnimationFrame(loop);}}
+function loop(){
+  let changed=false;
+  if(settling){
+    const df=targetF-F;
+    if(Math.abs(df)<0.0008){F=targetF;settling=false;}
+    else F+=df*0.18;
+    changed=true;
+  }
+  if(changed||dirty){render();dirty=false;}
+  if(dragging||settling)requestAnimationFrame(loop);
+  else loopOn=false;
+}
+function glideTo(t){
+  targetF=clamp(Math.round(t),0,N-1);
+  settling=Math.abs(targetF-F)>1e-4;
+  ensureLoop();
+}
+function beginSettle(){glideTo(F);}
+window.lettersGoto=i=>{
+  vel=0;
+  targetF=clamp(Math.round(i),0,N-1);
+  if(Math.abs(targetF-F)>1e-4)settling=true;
+  dirty=true;ensureLoop();
+};
+
+/* ============ 输入（作用域=信区） ============ */
+document.querySelector('.side').addEventListener('wheel',e=>{
+  if(sealed)return;                                  /* 启封后：滚轮只翻信，不滚容器 */
+  const r=stage.getBoundingClientRect();
+  if(e.clientY>r.top-40&&e.clientY<r.bottom){
+    e.preventDefault();
+    if(veil.classList.contains('on'))return;
+    settling=false;
+    F=clamp(F+e.deltaY/STEP,0,N-1);
+    dirty=true;ensureLoop();
+    clearTimeout(wheelTO);wheelTO=setTimeout(beginSettle,140);
+    return;
+  }
+},{passive:false,capture:true});
+stage.addEventListener('wheel',e=>{
+  if(veil.classList.contains('on'))return;
+  if(sealed)return;
+  e.preventDefault();
+  settling=false;
+  F=clamp(F+e.deltaY/STEP,0,N-1);
+  dirty=true;ensureLoop();
+  clearTimeout(wheelTO);wheelTO=setTimeout(beginSettle,140);
+},{passive:false});
+let tY=0,lastY=0,lastT=0,tMoved=false;
+stage.addEventListener('touchstart',e=>{
+  if(veil.classList.contains('on'))return;
+  if(sealed)return;
+  settling=false;clearTimeout(wheelTO);
+  dragging=true;tMoved=false;vel=0;
+  tY=lastY=e.touches[0].clientY;
+  lastT=lastMoveT=performance.now();
+},{passive:true});
+stage.addEventListener('touchmove',e=>{
+  if(veil.classList.contains('on'))return;
+  if(!dragging)return;
+  const y=e.touches[0].clientY,now=performance.now();
+  const dy=y-lastY;
+  if(!tMoved&&Math.abs(y-tY)>8)tMoved=true;
+  if(tMoved){
+    const nF=F-dy/STEP;
+    /* 手机端：信堆容器自身可滚 → 放行容器原生滚动 */
+    const lz=stage;
+    const lzCanScroll=lz.scrollHeight>lz.clientHeight+2&&(dy<0?lz.scrollTop<lz.scrollHeight-lz.clientHeight-2:lz.scrollTop>2);
+    if(lzCanScroll){dragging=false;tMoved=false;return;}
+    /* 页面沿手势方向可滚 → 放行页面 */
+    const canPage=dy<0?(innerHeight+scrollY<document.body.scrollHeight-2):(scrollY>2);
+    if(canPage){dragging=false;tMoved=false;return;}
+    /* F 已到边界且继续朝边界滑 → 放行 */
+    if((F<=0.001&&nF<0)||(F>=N-0.999&&nF>N-1)){dragging=false;tMoved=false;return;}
+    e.preventDefault();
+    F=clamp(nF,0,N-1);
+    const dt=Math.max(1,now-lastT);
+    vel=0.7*vel+0.3*((-dy/dt)*16.7/STEP);
+    lastMoveT=now;
+    dirty=true;ensureLoop();
+  }
+  lastY=y;lastT=now;
+},{passive:false});
+stage.addEventListener('touchend',()=>{
+  if(veil.classList.contains('on'))return;
+  if(!dragging)return;
+  dragging=false;
+  if(tMoved){
+    if(performance.now()-lastMoveT>90)vel=0;
+    vel=clamp(vel,-0.30,0.30);
+    if(Math.abs(vel)>0.02){
+      const dist=Math.abs(vel)/0.12;
+      glideTo(F+Math.sign(vel)*Math.min(Math.max(dist,0.4),1.6));
+      ensureLoop();
+      return;
+    }
+  }
+  beginSettle();ensureLoop();
+},{passive:true});
+addEventListener('keydown',e=>{
+  if(veil.classList.contains('on')){
+    if(e.key==='Escape')veil.classList.remove('on');
+    return;
+  }
+  const tag=(e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea')return;
+  if(sealed)return;
+  let t=null;
+  if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' ')t=Math.round(F)+1;
+  else if(e.key==='ArrowUp'||e.key==='PageUp')t=Math.round(F)-1;
+  else if(e.key==='Home')t=0;
+  else if(e.key==='End')t=N-1;
+  if(t!=null){
+    e.preventDefault();
+    vel=0;
+    glideTo(t);
+  }
+});
+
+/* ============ 布局 ============ */
+function layout(){
+  cardW=Math.min(Math.round(seizbox.clientWidth*1.06),520);
+  cardH=clamp(Math.round(cardW*0.56),170,240);
+  STEP=Math.round(cardH*0.95);
+  const ml=(-cardW/2)+'px';
+  els.forEach(el=>{
+    el.style.width=cardW+'px';
+    el.style.height=cardH+'px';
+    el.style.marginLeft=ml;
+    el.style.top='15px';
+  });
+  /* 透视灭点=展示卡中心（zone 比信堆高，默认灭点会被拉到页底 → 上折角度失真+重影） */
+  stage.style.perspectiveOrigin='50% '+Math.round(cardH*0.55)+'px';
+  fullCache.clear();
+  const url=bakePaper(cardW,cardH,2);
+  els.forEach(el=>{el.querySelector('.paper-bg').style.backgroundImage='url('+url+')';});
+  lastPose.fill(null);dirty=true;ensureLoop();
+}
+addEventListener('resize',()=>{clearTimeout(rsTO);rsTO=setTimeout(layout,150);});
+window.__relayout=layout;
+layout();
+
+/* ============ 启封 / 收起（封条时序） ============ */
+function zoneH(){return 90+cardH+(N-1)*(cardH+GAP_B+STACK)+18;}
+function openSeal(){
+  if(!sealed)return;
+  sealed=false;
+  const ribbon=seizbox.querySelector('.ribbon');
+  ribbon.style.transition='transform .45s ease, opacity .35s ease';
+  ribbon.style.transform='rotate(-2.5deg) translateY(-46px)';
+  ribbon.style.opacity='0';
+  setTimeout(()=>{
+    render();
+    stage.classList.add('open');
+    if(matchMedia('(max-width:820px)').matches){
+      spacer.style.height=(zoneH()+60)+'px';
+    }else{
+      stage.style.height=zoneH()+'px';
+    }
+    unsealBtn.textContent='收 起 封 存';
+  },160);
+}
+function closeSeal(){
+  if(sealed)return;
+  sealed=true;
+  stage.classList.remove('open');
+  stage.style.height='0px';
+  spacer.style.height='0px';
+  setTimeout(()=>{
+    const ribbon=seizbox.querySelector('.ribbon');
+    ribbon.style.transition='transform .45s ease, opacity .35s .15s ease';
+    ribbon.style.transform='rotate(-2.5deg) translateY(0)';
+    ribbon.style.opacity='1';
+  },280);
+  unsealBtn.textContent='启 封';
+}
+unsealBtn.addEventListener('click',()=>{sealed?openSeal():closeSeal();});
+
+/* ============ 全屏阅读（丙2） ============ */
+function openLetter(i){
+  const l=LETTERS[i];
+  fullletter.innerHTML=`
+    <div class="paper-bg"></div>
+    <div class="inner">
+      <div class="l-top">
+        <span>DOC NO. ${String(i+1).padStart(2,'0')} / INTERCEPTED</span>
+        <span>2026-${l.mon==='OCT'?'10':'09'}-${l.day} ${l.time.split(' · ')[1]}</span>
+      </div>
+      <h3 class="l-title">致怀榆：${l.title}</h3>
+      <div class="l-fields">SUBJECT 怀榆 — SENDER 段深泉 — <b class="und">UNDELIVERED</b></div>
+      <div class="l-body">${l.body.map(p=>`<p style="margin-bottom:1em">${p}</p>`).join('')}</div>
+      <div class="sig">—— 段深泉</div>
+      <div class="date-str">QIANLVZHOU · 未送达信件 #0${i+1} · 已被系统截留</div>
+    </div>`;
+  requestAnimationFrame(()=>{
+    const r=fullletter.getBoundingClientRect();
+    const key=Math.round(r.width)+'x'+Math.round(r.height);
+    if(!fullCache.has(key))fullCache.set(key,bakePaper(r.width,r.height,2));
+    fullletter.querySelector('.paper-bg').style.backgroundImage='url('+fullCache.get(key)+')';
+  });
+  expandT=performance.now();
+  veil.classList.add('on');
+}
+els.forEach(el=>{
+  el.addEventListener('click',e=>{
+    if(sealed)return;
+    if(performance.now()-expandT<650)return;
+    openLetter(+el.dataset.i);
+  });
+});
+veil.addEventListener('click',e=>{
+  if(e.target===veil||e.target.closest('.close-hint'))veil.classList.remove('on');
+});
+
+/* ============ 问询：外部 AI（deepseek）接入预留 ============
+   外部脚本 ./系统频道AI.js 应实现：
+   window.SYS_AI.reply(text, history, function(replyText){ ... })
+   未加载 / 出错时走本地兜底回复。 */
+const qin=document.getElementById('qin');
+const qsend=document.getElementById('qsend');
+const qhist=document.getElementById('qhist');
+function pushQ(t){const d=document.createElement('div');d.className='q';d.innerHTML='<b>＞</b> ';d.appendChild(document.createTextNode(t));qhist.appendChild(d);}
+function pushA(t){const d=document.createElement('div');d.className='a';d.textContent='SYS：'+t;qhist.appendChild(d);}
+function sendQ(){
+  const t=qin.value.trim();
+  if(!t)return;
+  qin.value='';
+  pushQ(t);
+  const hist=[...qhist.querySelectorAll('.q')].map(e=>e.textContent.slice(1).trim());
+  if(window.SYS_AI&&typeof window.SYS_AI.reply==='function'){
+    try{
+      window.SYS_AI.reply(t,hist,function(r){pushA(r||'……（无响应）');qhist.scrollIntoView({block:'nearest'});});
+    }catch(err){
+      pushA('（连接中断。请稍后再试。）');
+    }
+  }else{
+    pushA('（外部问询模块未接入：系统频道AI.js）');
+  }
+  qhist.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+qsend.addEventListener('click',sendQ);
+qin.addEventListener('keydown',e=>{if(e.key==='Enter')sendQ();});
+</script>
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+</body>
+</html>
