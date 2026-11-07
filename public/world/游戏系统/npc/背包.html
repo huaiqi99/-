@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 背包</title>
+<style>
+/* ═══ 背包.html —— 储物格版（定稿）
+   骨架照任务.html：表头红虚线制、配色日/夜双档、页距14、框架1200px、外框2px、内线1.5px。
+   结构：左竖分类（墨字清单）→ 中物品格 → 右固定详情（sticky）。
+   手机端：分类折顶横排、详情改底部抽屉。═══ */
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
+  --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
+  --gc:rgba(85,15,16,.08);--gc2:rgba(34,44,110,.07);
+  --shadow:6px 6px 0 rgba(34,44,110,.2);--shadowS:4px 4px 0 rgba(34,44,110,.18);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;
+  --zhu:#B94A44;--mut:#5D6B80;--hair:rgba(42,44,63,.4);
+  --gc:rgba(10,20,35,.25);--gc2:rgba(10,20,35,.15);
+  --shadow:6px 6px 0 rgba(10,20,35,.3);--shadowS:4px 4px 0 rgba(10,20,35,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--serif);color:var(--ink);min-height:100vh;min-height:100dvh;position:relative;overflow-x:hidden;
+  background:linear-gradient(135deg,rgba(85,15,16,.13) 0%,rgba(85,15,16,.05) 30%,rgba(34,44,110,.05) 65%,rgba(34,44,110,.15) 100%);}
+body.night{background:linear-gradient(135deg,rgba(185,74,68,.12) 0%,rgba(10,20,35,0) 40%,rgba(11,63,107,.45) 100%);}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),
+    linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
+  background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
+.page{position:relative;z-index:2;padding:14px;height:100vh;height:100dvh;display:flex;flex-direction:column;}
+
+/* ── 主卡（全页唯一2px框） ── */
+.frame{max-width:1200px;width:100%;margin:0 auto;background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);
+  flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px dashed var(--burg);flex:none;}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--zhu);border:1.5px dashed var(--zhu);padding:4px 9px;flex:none;}
+.title{flex:1;font-size:16px;letter-spacing:2px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.title em{font-style:normal;color:var(--burg);}
+.menubtn{flex:none;width:32px;height:32px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer;padding:0;line-height:1;}
+.menubtn:hover{border-color:var(--burg);color:var(--burg);}
+
+/* ── 主体三栏 ── */
+.main{flex:1;min-height:0;display:flex;}
+
+/* 左：分类列（墨字清单，无框无牌） */
+.cats{flex:none;width:172px;border-right:1.5px dashed var(--hair);padding:16px 14px 14px;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:thin;}
+.catscap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:10px;}
+.cat{display:flex;align-items:baseline;gap:8px;padding:7px 2px;cursor:pointer;background:none;border:none;width:100%;text-align:left;
+  font-family:var(--serif);font-size:13px;color:var(--mut);transition:color .15s;}
+.cat:hover{color:var(--ink);}
+.cat .cn{white-space:nowrap;}
+.cat .cn i{display:block;height:3px;width:0;background:var(--burg);margin-top:3px;transition:width .2s;font-style:normal;}
+.cat.on{color:var(--ink);font-weight:bold;}
+.cat.on .cn i{width:100%;}
+.cat .cnum{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--mut);opacity:.75;}
+.cat.trash .cn,.cat.trash .cnum{color:var(--mut);opacity:.8;}
+.cat.vault{color:var(--zhu);margin-top:8px;padding-top:12px;border-top:1.5px dashed rgba(168,68,62,.45);}
+.cat.vault:hover{color:var(--burg);}
+.cat.vault.on{color:var(--burg);}
+.catspace{flex:1}
+.catstail{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--mut);line-height:1.9;}
+
+/* 中：物品格（直接铺纸面，格子自己有边） */
+.show{flex:1;min-width:0;min-height:0;overflow-y:auto;padding:16px 18px 18px;scrollbar-width:thin;}
+.showcap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:12px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:14px;}
+.cell{position:relative;aspect-ratio:1;border:1.5px solid var(--klein);background:var(--card);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--shadowS);
+  transition:transform .18s,box-shadow .18s,background .18s;}
+.cell:hover{transform:translate(-2px,-3px);box-shadow:5px 5px 0 rgba(34,44,110,.18);}
+.cell:active{transform:translate(1px,2px);box-shadow:1px 2px 0 rgba(34,44,110,.18);}
+.cell svg{width:56%;height:56%;}
+.cell .num{position:absolute;right:4px;bottom:2px;font-family:var(--mono);font-size:12px;font-weight:bold;color:var(--klein);}
+.cell.red{border-color:var(--burg);}
+.cell.red .num{color:var(--burg);}
+.cell.dash{border-style:dashed;}
+.cell.trash{border-color:var(--mut);background:transparent;}
+.cell.trash .num{color:var(--mut);}
+.cell.trash::after{content:'✕';position:absolute;top:2px;left:5px;font-size:9px;color:var(--mut);}
+.cell.on{outline:2px solid var(--burg);outline-offset:2px;}
+.emptycat{padding:34px 6px;text-align:center;font-size:12px;color:var(--mut);letter-spacing:1px;}
+.emptycat::before{content:'── ';color:var(--hair);}
+.emptycat::after{content:' ──';color:var(--hair);}
+
+/* 右：详情（sticky 文字层级，仅一条红墨线起头） */
+.detail{flex:none;width:262px;border-left:1.5px dashed var(--hair);padding:16px 18px 18px;overflow-y:auto;scrollbar-width:thin;}
+.dcap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:4px;}
+.dred{height:3px;width:44px;background:var(--burg);margin:8px 0 12px;}
+.dtype{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--mut);}
+.dname{font-size:22px;font-weight:bold;letter-spacing:2px;margin:5px 0 12px;color:var(--ink);}
+.dname.red{color:var(--burg);}
+.drow{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.drow svg{width:34px;height:34px;flex:none;}
+.dcount{font-family:var(--mono);font-size:20px;font-weight:bold;color:var(--klein);}
+.dcount.red{color:var(--burg);}
+.ddiv{border-top:1.5px dashed var(--hair);padding-top:10px;font-size:13px;line-height:2;color:var(--mut);text-align:justify;}
+.dsrc{margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--zhu);}
+.dstamp{display:inline-block;border:2px solid var(--burg);color:var(--burg);font-size:10px;letter-spacing:2px;
+  padding:2px 9px;transform:rotate(-4deg);margin-top:14px;background:var(--card);white-space:nowrap;}
+.dvault{margin-top:16px;padding:10px 12px;border-left:3px solid var(--zhu);background:var(--gc);
+  font-size:11px;color:var(--mut);line-height:1.9;display:none;}
+.dvault b{color:var(--zhu);font-weight:normal;font-family:var(--mono);font-size:9px;letter-spacing:2px;display:block;margin-bottom:3px;}
+
+/* ── ☰ 菜单侧栏（任务页同款） ── */
+.movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;display:none;}
+.movl.on{display:block;}
+.mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;background:var(--card);
+  height:100vh;height:100dvh;z-index:41;transition:right .28s ease;padding:16px 16px 20px;overflow-y:auto;
+  border-left:2px solid var(--klein);box-shadow:-6px 0 0 rgba(34,44,110,.15);}
+.mside.open{right:0;}
+.sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1.5px dashed var(--hair);
+  background:none;border-left:none;border-right:none;border-top:none;width:100%;font-family:var(--serif);
+  font-size:13px;color:var(--ink);cursor:pointer;}
+.sitem:hover{color:var(--klein);}
+.sitem.miBack{border:1.5px solid var(--klein);margin:8px 0 4px;padding:9px 12px;color:var(--klein);}
+.sitem.miBack:hover{background:var(--klein);color:#F0EFEB;}
+.sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);}
+.mside .mh{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--mut);margin:4px 0 8px;}
+
+/* ── 手机端：分类折顶横排 + 详情底部抽屉 ── */
+.mcats{display:none;}
+.drawer{display:none;}
+@media(max-width:760px){
+  .page{padding:0;height:auto;min-height:100dvh;}
+  .frame{border-left:none;border-right:none;box-shadow:none;flex:none;min-height:100dvh;height:auto;}
+  .topbar{gap:8px;padding:10px 12px;}
+  .title{font-size:13px;letter-spacing:1px;}
+  .chip{font-size:8px;padding:3px 6px;letter-spacing:1px;}
+  .menubtn{width:28px;height:28px;font-size:11px;}
+  .main{flex-direction:column;overflow:visible;display:block;}
+  /* 分类横排 */
+  .cats{display:none;}
+  .mcats{display:flex;gap:0;overflow-x:auto;padding:10px 12px 8px;border-bottom:1.5px dashed var(--hair);scrollbar-width:none;flex:none;position:sticky;top:0;background:var(--card);z-index:5;}
+  .mcats::-webkit-scrollbar{display:none;}
+  .mcat{flex:none;background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:13px;color:var(--mut);padding:4px 10px;white-space:nowrap;}
+  .mcat:not(:last-child){border-right:1.5px dashed var(--hair);}
+  .mcat .cn i{display:block;height:3px;width:0;background:var(--burg);margin-top:3px;transition:width .2s;font-style:normal;}
+  .mcat.on{color:var(--ink);font-weight:bold;}
+  .mcat.on .cn i{width:100%;}
+  .mcat.vault{color:var(--zhu);}
+  .mcat.vault.on{color:var(--burg);}
+  .show{overflow:visible;flex:none;padding:12px 12px 90px;}
+  .showcap{margin-bottom:10px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:10px;}
+  /* 抽屉 */
+  .detail{display:none;}
+  .drawer{display:block;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);
+    border-top:2px solid var(--klein);box-shadow:0 -6px 14px rgba(20,24,40,.25);
+    transform:translateY(105%);transition:transform .3s ease;max-height:72dvh;overflow-y:auto;}
+  .drawer.open{transform:translateY(0);}
+  .dgrab{position:sticky;top:0;background:var(--card);padding:8px 0 2px;cursor:grab;touch-action:none;}
+  .dgrab::before{content:'';display:block;width:46px;height:4px;background:var(--klein);margin:0 auto;border-radius:2px;}
+  .dgrab .dx{position:absolute;right:10px;top:4px;width:30px;height:30px;border:1.5px solid var(--klein);background:none;color:var(--klein);
+    font-size:14px;cursor:pointer;line-height:1;}
+  .dinner{padding:6px 16px 22px;}
+  .dname{font-size:20px;}
+  .dvault{font-size:11px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .cell,.drawer{transition:none;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">SYS·BAG</span>
+      <div class="title">◆ QIANLVZHOU // <em>背包</em></div>
+      <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
+    </div>
+
+    <!-- 手机端分类横排 -->
+    <div class="mcats" id="mcats"></div>
+
+    <div class="main">
+      <!-- 左：分类 -->
+      <nav class="cats" id="cats" aria-label="物品分类">
+        <div class="catscap">CATEGORY // 分类</div>
+        <div id="catList"></div>
+        <div class="catspace"></div>
+        <div class="catstail">QIANLVZHOU · STORAGE<br>分类由持有者自设<br>数据来源 · 系统实时同步</div>
+      </nav>
+
+      <!-- 中：物品格 -->
+      <div class="show" id="show">
+        <div class="showcap" id="showcap"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <!-- 右：详情（桌面 sticky / 手机转抽屉） -->
+      <aside class="detail" id="detail" aria-label="物品详情"></aside>
+    </div>
+  </div>
+</div>
+
+<!-- 手机端详情抽屉 -->
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="dgrab" id="dgrab"><button class="dx" id="dxBtn" aria-label="关闭">×</button></div>
+  <div class="dinner" id="dInner"></div>
+</div>
+
+<!-- ☰ 菜单 -->
+<div class="movl" id="movl"></div>
+<aside class="mside" id="mside">
+ <div class="sitem" style="border:none;padding:0 0 2px;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--mut);">◇ 千律州 · 背包</div>
+ <div class="mbox">
+  <button class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></button>
+  <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
+  <div class="mh" style="margin-top:16px">◇ 说明</div>
+  <div style="font-size:11px;color:var(--mut);line-height:1.9;">点物品格查看详情：桌面在右栏，手机从底部滑出。✦ 时存柜为系统单独开辟，内存物时间静止。分类由怀榆自设，随取随用。</div>
+ </div>
+</aside>
+
+<script src="./https://sfile.chatglm.cn/workspace/file/a5/a507a88269.js" data-bgm="音乐1.mp3"></script>
+<script>
+(function(){
+'use strict';
+
+/* ═══ 物品数据（占位：任务奖励为原文，私人物品/时存柜待TA清单替换） ═══
+   cat 对应分类；red=贵重/随身红边；dash=一次性/会坏虚线；trash=垃圾 */
+var CATS=['全部','任务奖励','好感礼包','随机礼包','私人物品','书籍','零食','杂物','垃圾桶','✦ 时存柜'];
+var VAULT='✦ 时存柜';
+var ITEMS=[
+ /* ── 任务奖励 ── */
+ {n:'渡厄',c:1,t:'武器 · 法杖',cat:'任务奖励',red:1,stamp:'已随身',ic:'due',src:'命名后 · 武器详情',d:'“旧神遗留之物，似乎曾蕴含巨大力量，现已沉寂。”升级后：轻微提升墟元力引导效率，攻击时附带微弱驱邪效果，对负能量生物有额外伤害。特质：【缓慢苏醒】这根法杖似乎正在从漫长的沉眠中逐渐苏醒，它与持有者的联系越深，越能展现出潜在的力量。'},
+ {n:'奥术晶尘',c:80,t:'材料 · 武器升级',cat:'任务奖励',ic:'dust',src:'多项任务累计',d:'“据说是远古法师打喷嚏时，喷出的奥术火花凝结而成。因此，手动打磨的过程，也被一些学派戏称为‘为你的法杖擤鼻涕’——虽然不雅，但确实能让它通畅不少。效果：可用于武器升级。”'},
+ {n:'高塔的钥匙',c:1,t:'道具 · 已使用',cat:'任务奖励',ic:'key',src:'神使的协助 CH.01',d:'任务奖励原文：“……高塔的钥匙x1……”打开过业焰城高塔的门。钥匙还在，门已经没了。'},
+ {n:'余烬护身符',c:2,t:'护符 · 一次性',cat:'任务奖励',dash:1,ic:'charm',src:'再施援手 CH.01',d:'“一枚不起眼的暗红色椭圆形石符，材质类似火山岩，表面有细微的裂纹。效果：可抵挡一次由游魂发动的攻击。”原为三枚，一枚给了莉娜。'},
+ {n:'阴影斗篷',c:1,t:'一次性隐蔽道具',cat:'任务奖励',dash:1,ic:'cloak',src:'自由的代价 CH.01',d:'任务奖励原文：“一次性隐蔽道具【阴影斗篷】”。一直没用。'},
+ {n:'记忆残片',c:3,t:'特殊材料',cat:'任务奖励',ic:'crystal',src:'自由与探索 CH.02',d:'任务奖励原文：“特殊材料记忆残片x3”。触感冰凉，贴近耳边能听到极细微的低语。'},
+ {n:'净化护符',c:1,t:'护符 · 一次性',cat:'任务奖励',dash:1,ic:'charm2',src:'自由与探索 CH.02',d:'任务奖励原文：“道具净化护符x1”。系统标注为净化类道具，未说明对什么有效。'},
+ {n:'加绒雨伞',c:2,t:'日用品',cat:'任务奖励',ic:'umbrella',src:'第一章结算 CH.01',d:'任务奖励原文：“加绒雨伞x2”。伞面厚实，内衬加绒。'},
+ {n:'随机低级净化道具',c:1,t:'道具 · 未使用',cat:'任务奖励',ic:'potion',src:'污染溯源 CH.02',d:'任务奖励原文：“随机低级净化道具x1”。具体效果未查看。'},
+
+ /* ── 好感礼包 ── */
+ {n:'以退为进战术眼泪',c:1,t:'消耗品 · 眼药水',cat:'好感礼包',ic:'tear',src:'好感度大礼包1.0',d:'“一瓶粉红色的眼药水。交谈屡屡碰壁？有时候，示弱比逞强更有力。效果：滴入眼中可营造出欲语还休的脆弱效果，持续时间30秒。注意：仅改变视觉效果，无法真正调动情绪，使用后可能伴随轻微眼干。”'},
+ {n:'强制坦白药水（稀释型）',c:1,t:'消耗品 · 药水',cat:'好感礼包',ic:'potion',src:'好感度大礼包1.0',d:'“一瓶闪烁着可疑粉红色气泡的液体，标签写着‘让你的心，说真话！’。效果：掺入饮品中，可使饮用者在接下来五分钟内倾诉欲大幅提升，降低对敏感话题的防备。稀释版效果有限，对意志坚定或目标等级过高者可能无效。”'},
+ {n:'好感度可视化眼镜',c:1,t:'工具 · 特殊',cat:'好感礼包',ic:'glasses',src:'好感度大礼包1.0',d:'“一副看起来很精美的金框眼镜。效果：戴上后，可尝试捕捉视线范围内特定目标对佩戴者的当前情绪倾向，并以简易符号或色彩光晕形式模糊显示。”'},
+ {n:'尴尬话题转移卡',c:1,t:'消耗品 · 卡片',cat:'好感礼包',ic:'card',src:'好感度大礼包1.0',d:'“使用后能强制周围五米内生物持续讨论天气一分钟。”'},
+ {n:'万能台阶制造机',c:1,t:'工具 · 特殊',cat:'好感礼包',ic:'step',src:'好感度大礼包1.0',d:'“让人永不冷场。”具体怎么用，还没研究明白。'},
+ {n:'心意相通巧克力',c:1,t:'消耗品 · 食物',cat:'好感礼包',ic:'chocolate',src:'好感度大礼包1.0',d:'“能短暂提升好感度。”一直没舍得用。'},
+ {n:'迟来的道歉信笺',c:1,t:'消耗品 · 信纸',cat:'好感礼包',dash:1,ic:'letter',src:'好感度大礼包2.0',d:'“一张泛黄的信纸。效果：在信笺上写下‘对不起’三个字，并将其放置在目标可以看到的位置。目标看到后，有概率回忆起与书写者之间某段与歉意相关的往事。信笺使用一次后即焚毁。”'},
+ {n:'匿名倾诉信纸',c:1,t:'消耗品 · 信纸',cat:'好感礼包',dash:1,ic:'letter',src:'好感度大礼包2.0',d:'“一沓看起来非常普通的信纸，包装上写着：‘说不敢说的话，给不敢给的人。’效果：在信纸上写下文字，然后将收信人的名字写在背面。信纸会自动折叠、密封，并在一个小时内出现在收信人最常随身携带的物品中，且不会显示寄信人信息。”'},
+ {n:'往昔回响碎片',c:1,t:'消耗品 · 晶石',cat:'好感礼包',dash:1,ic:'crystal',src:'好感度大礼包2.0',d:'“一块晶石碎片，握在手中能感觉到心跳般的震颤。效果：紧握碎片，有概率想起目标对象某段被遗忘的真实记忆片段。碎片本身残缺，看到的画面零散且不受控制，使用三次后碎裂。”一直没敢用。'},
+ {n:'同行者的誓约银戒',c:1,t:'饰品 · 一次性',cat:'好感礼包',dash:1,ic:'ring',src:'好感度大礼包2.0',d:'“一枚款式极简的银色戒指，内壁刻着看不清的细小铭文。效果：佩戴者与另一指定目标建立心灵链接，可在一定距离内传递简短的语句或单一情绪。链接持续一小时，使用后戒指变为普通铁环。注意：传递信息需消耗精神力，过度使用可能导致头晕。”'},
+
+ /* ── 随机礼包 ── */
+ {n:'易燃防火布',c:1,t:'道具 · 防具',cat:'随机礼包',ic:'cloth',src:'随机道具大礼包 CH.01',d:'“一块闻起来有股焦糊味的厚布。经过特殊工艺处理，极大提升了材料的燃点。但任何技术都存在微小瑕疵，请谅解。效果：火属性抗性+15%，但受到火属性攻击时，有25%概率使使用者进入【灼烧】状态。”'},
+ {n:'以德服人板砖',c:1,t:'武器 · 物理',cat:'随机礼包',ic:'brick',src:'随机道具大礼包 CH.01',d:'“一块刻有‘德’字的板砖。效果：物理攻击力+50。攻击时有30%概率触发‘说服’效果，使目标陷入‘聆听教诲’状态，强制聆听你的道德说教。可重复利用，冷却时间1小时。”'},
+ {n:'嘲讽假发',c:1,t:'道具 · 防具',cat:'随机礼包',ic:'wig',src:'随机道具大礼包 CH.01',d:'“一顶色彩艳丽的假发，戴上后，你会成为全场最亮的崽，仇恨值立即拉满。效果：魅力值-100，强制吸引周围所有敌人的第一次攻击。”'},
+ {n:'哑炮的爆竹',c:1,t:'消耗品 · 爆炸物',cat:'随机礼包',dash:1,ic:'firecracker',src:'随机道具大礼包 CH.01',d:'“一捆红彤彤的爆竹，引线看起来有点潮——延迟满足，是提升伤害的有效途径。请善用其不确定性。效果：投掷后，有70%概率爆炸，对范围内敌人造成中等火焰伤害；30%概率哑火，掉落在地，被踩到时会爆炸，对踩中者造成巨额伤害（敌我不分）。”'},
+ {n:'语言学家的耳塞',c:1,t:'道具 · 防具',cat:'随机礼包',ic:'ear',src:'随机道具大礼包 CH.01',d:'“一副柔软的泡沫耳塞，据说由某位厌倦了无意义对话的语言学家发明。效果：佩戴后，完全免疫所有‘迷惑’、‘恐惧’等通过语言释放的精神类法术。但同时，你也听不到任何队友的指挥和NPC的任务提示。”'},
+ {n:'防水火柴',c:1,t:'工具 · 消耗品',cat:'随机礼包',ic:'match',src:'随机道具大礼包 CH.01',d:'“一盒精心密封的火柴，标签上用潦草的字迹写着‘即便在暴风雨中也能点燃！’效果：在潮湿环境或雨天时，点燃成功率提升100%。在正常干燥环境下点燃成功率降低50%。”'},
+ {n:'以毒攻毒口服液',c:1,t:'消耗品 · 药水',cat:'随机礼包',dash:1,ic:'potion',src:'随机道具大礼包 CH.01',d:'“用魔法打败魔法。至于新来的这位‘魔法’是强是弱，敬请期待。效果：使用后，立即清除身上所有的中毒效果，并随机获得一种新的中毒效果。”'},
+ {n:'薛定谔的急救包',c:1,t:'消耗品 · 医疗',cat:'随机礼包',dash:1,ic:'aid',src:'随机道具大礼包 CH.01',d:'原文只列了名字与“打开前无法确定里面有什么”一句，具体效果未展开。'},
+
+ /* ── 私人物品 ── */
+ {n:'段深泉的背景资料',c:1,t:'文书 · 重要',cat:'私人物品',red:1,ic:'scroll',src:'叶戈尔给的 CH.02',d:'叶戈尔给的额外报酬。“从出身，行径记录，再到时衍天宫时期的居住记录，全都列在上面。”'},
+ {n:'藕荷色交领长衫',c:1,t:'衣物 · 时衍天宫',cat:'私人物品',ic:'robe',src:'星落镇布庄 CH.03',d:'“那是一套藕荷色的交领长衫，腰间系着一条同色的丝绦，垂坠感极好。”段深泉挑的，衬肤色。'},
+ {n:'发簪·耳坠·胭脂',c:5,t:'杂物 · 时衍天宫',cat:'私人物品',ic:'hairpin',src:'星落镇小摊 CH.03',d:'“发簪，耳坠，花花绿绿的珠串，又摸出几盒胭脂水粉。”买的时候没细看，回来才发现是女款。'},
+ {n:'瑞秋的通行文书',c:1,t:'文书 · 已过期',cat:'私人物品',ic:'scroll',src:'离开业焰城时 CH.02',d:'“盖有她代理人印鉴的通行文书。”在北境没用上，但一直收着。'},
+ {n:'暖石',c:3,t:'日用品 · 北境',cat:'私人物品',ic:'warmstone',src:'瑞秋给的 CH.02',d:'“里面装着些衣服食物，和一些能暂提供热源的暖石。”在时衍天宫用不上了。'},
+
+ /* ── 书籍 ── */
+ {n:'《归墟志异》',c:1,t:'小说 · 字已消失',cat:'书籍',red:1,ic:'novel',src:'叶戈尔给的 CH.02',d:'李怀渊著。原本写满了字，翻过一遍之后，除了书名和作者名，其他字全部消失了。'},
+ {n:'《女皇陛下的秘密情人：凝淼感情史疑云录》',c:1,t:'小说 · 野史',cat:'书籍',ic:'novel',src:'叶戈尔书房 CH.02',d:'“据说是米洛斯拉夫斯基家族以前一位旁支子弟的手笔。”内容离谱，但挺好看。'},
+ {n:'《北境通史》',c:1,t:'史书 · 北境',cat:'书籍',ic:'novel',src:'叶戈尔送来 CH.02',d:'叶戈尔送来让熟读的北境历史书之一。折角处标着重点。'},
+ {n:'《北境编年史》',c:1,t:'史书 · 北境',cat:'书籍',ic:'novel',src:'叶戈尔送来 CH.02',d:'“《北境编年史》的第一卷，记载的是五百年前大寂灭之后，北境疆域初定，女皇登基的事。再往前没有记载。”'},
+ {n:'《北境贵族谱系简要》',c:1,t:'史书 · 北境',cat:'书籍',ic:'novel',src:'叶戈尔送来 CH.02',d:'礼仪特训时抄过相关章节。抄过几遍之后就再也没错过。'},
+ {n:'《千律州通史·概略》',c:1,t:'史书 · 千律州',cat:'书籍',ic:'novel',src:'业焰城档案馆 CH.01',d:'“千律州的历史始于五百年前一场席卷天地的‘大寂灭’，五百年前的一切则是无法考证的传说。”'},
+ {n:'《墟元力基础导论》',c:1,t:'典籍 · 基础',cat:'书籍',ic:'novel',src:'业焰城档案馆 CH.01',d:'基础得不能再基础的读物。'},
+ {n:'《业焰城风物志》',c:1,t:'方志 · 业焰城',cat:'书籍',ic:'novel',src:'业焰城档案馆 CH.01',d:'记录业焰城风土人情的方志。'},
+
+ /* ── 零食 ── */
+ {n:'麻麻饼',c:3,t:'食物 · 系统出品',cat:'零食',ic:'cake',src:'神使的协助 CH.01',d:'“似乎是一位热爱甜食的美食家亲手制作，里面加入了无法计量的糖类，甜食爱好者福音，糖尿病患者噩梦。效果：立即恢复10%最大生命值。”'},
+ {n:'糖烤栗子',c:1,t:'零食 · 北境',cat:'零食',dash:1,ic:'cake',src:'莉卡给的 CH.02',d:'“给，糖烤栗子。北境特产，趁热吃。”'},
+
+ /* ── 杂物 ── */
+ {n:'路边摘的野花',c:2,t:'私物 · 会枯萎',cat:'杂物',dash:1,ic:'flower',src:'不知道哪条路边',d:'摘的时候没想那么多，塞进来才发现没地方插瓶。'},
+ {n:'牙刷',c:1,t:'私物',cat:'杂物',ic:'tooth',src:'家里带的',d:'系统背包居然也收纳牙刷。它并不对此发表意见。'},
+ {n:'旧杯子',c:1,t:'私物',cat:'杂物',ic:'cup',src:'家里带的',d:'杯沿有个小豁口，用惯了，舍不得换。'},
+ {n:'换洗衣服',c:3,t:'私物',cat:'杂物',ic:'cloak',src:'家里带的',d:'“很多，很占地方，但总得带。”'},
+ {n:'小玩意儿',c:6,t:'玩具 · 时衍天宫',cat:'杂物',ic:'trinket',src:'星落镇集市 CH.03',d:'“能自己转的木头陀螺，还有什么一吹就响的草编蚱蜢。”看见就走不动路。'},
+
+ /* ── 垃圾桶 ── */
+ {n:'糖纸',c:7,t:'垃圾',cat:'垃圾桶',trash:1,ic:'trash',src:'吃糖剩下的',d:'不知道为什么没扔。大概是一时忘了。'},
+ {n:'破碎的灯笼骨',c:1,t:'垃圾',cat:'垃圾桶',trash:1,ic:'trash',src:'上元灯会捡的',d:'灯已经不在了，骨架还挺好看。'},
+
+ /* ── 时存柜 ── */
+ {n:'金币',c:214,t:'货币 · 时存',cat:VAULT,ic:'coin',src:'各处攒的',d:'沉甸甸的一小袋。各处货币都有，业焰城的、北境的、时衍天宫的。'},
+ {n:'漂亮衣服',c:1,t:'贵重 · 时存',cat:VAULT,ic:'cloak',src:'布庄买的',d:'还没舍得穿。放在时存柜里，永远崭新。'},
+ {n:'一朵很好的花',c:1,t:'贵重 · 时存',cat:VAULT,ic:'flower',src:'不记得谁给的了',d:'放进时存柜的那天，它就不谢了。'},
+ {n:'凝霜核心',c:1,t:'特殊材料 · 贵重',cat:VAULT,red:1,ic:'crystal',src:'遗失之物 CH.03',d:'任务目标原文：“收集【凝霜核心】x1”。从永叹岭碎石里挖出的蓝色水晶，原本裹着冰，碰到天罗丝线后冰层消融，变成一颗温热的小石头。'},
+ {n:'不灭的余烬',c:1,t:'特殊纪念品 · 贵重',cat:VAULT,red:1,ic:'fire',src:'魔女的秘密 CH.02',d:'“并非神骸，亦非凡火。是‘祝焱’这个名字所承载的最后一点心念。它已无法点燃烽火，却能在寒夜中提供一缕恒久的光热。”'}
+];
+
+/* ═══ 8×8 像素图标（双色制：klein 结构 / zhu 强调） ═══ */
+var ICON={
+ due:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="0" width="2" height="2" fill="var(--zhu)"/><rect x="3" y="2" width="2" height="6" fill="var(--klein)"/></svg>',
+ dust:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="1" width="3" height="3" fill="var(--klein)"/><rect x="4" y="4" width="3" height="3" fill="var(--klein)"/><rect x="5" y="1" width="2" height="2" fill="var(--zhu)"/></svg>',
+ cake:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="4" height="1" fill="var(--zhu)"/><rect x="1" y="2" width="6" height="4" fill="var(--klein)" opacity=".75"/><rect x="2" y="3" width="1" height="1" fill="var(--klein)"/></svg>',
+ novel:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="4" height="8" fill="var(--klein)"/><rect x="3" y="1" width="2" height="6" fill="var(--card)"/></svg>',
+ flower:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="2" fill="var(--zhu)"/><rect x="1" y="2" width="2" height="2" fill="var(--zhu)"/><rect x="5" y="2" width="2" height="2" fill="var(--zhu)"/><rect x="2" y="5" width="4" height="1" fill="var(--klein)"/><rect x="3" y="6" width="2" height="2" fill="var(--klein)"/></svg>',
+ tooth:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="1" height="5" fill="var(--card)"/><rect x="5" y="1" width="1" height="5" fill="var(--card)"/><rect x="2" y="1" width="4" height="1" fill="var(--klein)"/><rect x="1" y="6" width="6" height="1" fill="var(--klein)"/></svg>',
+ cup:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="4" height="5" fill="var(--klein)" opacity=".75"/><rect x="6" y="2" width="1" height="2" fill="var(--klein)"/><rect x="2" y="7" width="4" height="1" fill="var(--klein)"/></svg>',
+ cloak:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="4" height="3" fill="var(--klein)"/><rect x="1" y="3" width="6" height="4" fill="var(--klein)" opacity=".75"/><rect x="3" y="4" width="2" height="2" fill="var(--zhu)"/></svg>',
+ trash:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="5" fill="var(--mut)" opacity=".55"/><rect x="2" y="1" width="4" height="1" fill="var(--mut)" opacity=".55"/></svg>',
+ bead:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="3" width="6" height="2" fill="var(--klein)"/><rect x="3" y="2" width="2" height="4" fill="var(--zhu)"/><rect x="0" y="3" width="1" height="2" fill="var(--klein)"/><rect x="7" y="3" width="1" height="2" fill="var(--klein)"/></svg>',
+ coin:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="4" height="6" fill="var(--zhu)"/><rect x="3" y="0" width="2" height="1" fill="var(--zhu)"/><rect x="3" y="2" width="2" height="4" fill="var(--card)"/></svg>',
+ key:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="1" width="3" height="3" fill="var(--klein)"/><rect x="2" y="2" width="1" height="1" fill="var(--card)"/><rect x="4" y="3" width="4" height="1" fill="var(--klein)"/><rect x="6" y="4" width="1" height="2" fill="var(--klein)"/></svg>',
+ charm:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="2" width="4" height="4" fill="var(--zhu)" opacity=".85"/><rect x="3" y="1" width="2" height="1" fill="var(--zhu)" opacity=".85"/><rect x="3" y="6" width="2" height="1" fill="var(--zhu)" opacity=".85"/><rect x="3" y="3" width="1" height="1" fill="var(--card)"/></svg>',
+ crystal:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="0" width="2" height="1" fill="var(--klein)"/><rect x="2" y="1" width="4" height="1" fill="var(--klein)"/><rect x="1" y="2" width="6" height="2" fill="var(--klein)" opacity=".8"/><rect x="2" y="4" width="4" height="1" fill="var(--klein)" opacity=".8"/><rect x="3" y="5" width="2" height="1" fill="var(--klein)" opacity=".8"/><rect x="3" y="2" width="1" height="1" fill="var(--zhu)"/></svg>',
+ charm2:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="2" width="4" height="4" fill="var(--klein)" opacity=".85"/><rect x="3" y="1" width="2" height="1" fill="var(--klein)" opacity=".85"/><rect x="3" y="6" width="2" height="1" fill="var(--klein)" opacity=".85"/><rect x="3" y="3" width="1" height="1" fill="var(--zhu)"/></svg>',
+ umbrella:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="1" fill="var(--klein)"/><rect x="2" y="1" width="4" height="1" fill="var(--klein)"/><rect x="4" y="3" width="1" height="4" fill="var(--klein)"/><rect x="3" y="7" width="2" height="1" fill="var(--zhu)"/></svg>',
+ potion:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="0" width="2" height="2" fill="var(--klein)"/><rect x="2" y="2" width="4" height="5" fill="var(--klein)" opacity=".4"/><rect x="3" y="4" width="2" height="3" fill="var(--zhu)"/></svg>',
+ tear:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="4" fill="var(--zhu)" opacity=".8"/><rect x="2" y="5" width="4" height="1" fill="var(--zhu)" opacity=".8"/><rect x="6" y="3" width="1" height="1" fill="var(--klein)"/></svg>',
+ glasses:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="3" width="2" height="2" fill="var(--klein)"/><rect x="5" y="3" width="2" height="2" fill="var(--klein)"/><rect x="3" y="3" width="2" height="1" fill="var(--klein)"/><rect x="1" y="2" width="1" height="1" fill="var(--zhu)"/><rect x="6" y="2" width="1" height="1" fill="var(--zhu)"/></svg>',
+ card:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="4" fill="var(--klein)" opacity=".75"/><rect x="1" y="2" width="2" height="1" fill="var(--zhu)"/><rect x="2" y="4" width="3" height="1" fill="var(--card)"/></svg>',
+ step:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="6" width="6" height="1" fill="var(--klein)"/><rect x="3" y="4" width="4" height="1" fill="var(--klein)"/><rect x="5" y="2" width="2" height="1" fill="var(--klein)"/><rect x="1" y="5" width="1" height="1" fill="var(--zhu)"/></svg>',
+ chocolate:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="4" height="6" fill="var(--klein)" opacity=".8"/><rect x="4" y="1" width="1" height="6" fill="var(--zhu)"/><rect x="2" y="3" width="4" height="1" fill="var(--zhu)"/></svg>',
+ letter:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="4" fill="var(--card)"/><rect x="1" y="2" width="6" height="1" fill="var(--klein)"/><rect x="1" y="5" width="6" height="1" fill="var(--klein)"/><rect x="1" y="6" width="1" height="1" fill="var(--klein)"/><rect x="6" y="6" width="1" height="1" fill="var(--klein)"/><rect x="2" y="3" width="1" height="1" fill="var(--zhu)"/><rect x="3" y="4" width="1" height="1" fill="var(--zhu)"/><rect x="4" y="3" width="1" height="1" fill="var(--zhu)"/></svg>',
+ ring:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="4" width="4" height="1" fill="var(--klein)"/><rect x="1" y="5" width="1" height="1" fill="var(--klein)"/><rect x="6" y="5" width="1" height="1" fill="var(--klein)"/><rect x="2" y="6" width="4" height="1" fill="var(--klein)"/><rect x="3" y="2" width="2" height="2" fill="var(--zhu)"/></svg>',
+ cloth:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="4" fill="var(--klein)" opacity=".7"/><rect x="1" y="4" width="6" height="1" fill="var(--zhu)"/><rect x="1" y="1" width="6" height="1" fill="var(--klein)"/></svg>',
+ brick:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="4" fill="var(--klein)" opacity=".85"/><rect x="3" y="3" width="2" height="1" fill="var(--card)"/><rect x="3" y="4" width="1" height="1" fill="var(--card)"/><rect x="3" y="2" width="2" height="1" fill="var(--zhu)"/></svg>',
+ wig:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="4" height="3" fill="var(--zhu)"/><rect x="1" y="2" width="1" height="3" fill="var(--zhu)"/><rect x="6" y="2" width="1" height="3" fill="var(--zhu)"/><rect x="2" y="4" width="4" height="1" fill="var(--klein)"/></svg>',
+ firecracker:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="6" fill="var(--zhu)"/><rect x="3" y="3" width="2" height="1" fill="var(--card)"/><rect x="5" y="0" width="1" height="1" fill="var(--klein)"/><rect x="6" y="1" width="1" height="1" fill="var(--klein)"/></svg>',
+ ear:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="4" fill="var(--klein)" opacity=".75"/><rect x="3" y="0" width="2" height="1" fill="var(--zhu)"/><rect x="4" y="5" width="1" height="2" fill="var(--klein)"/></svg>',
+ match:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="2" fill="var(--zhu)"/><rect x="4" y="3" width="1" height="4" fill="var(--klein)"/><rect x="5" y="5" width="3" height="2" fill="var(--klein)" opacity=".55"/></svg>',
+ aid:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="2" width="6" height="4" fill="var(--klein)" opacity=".8"/><rect x="3" y="2" width="2" height="1" fill="var(--zhu)"/><rect x="2" y="3" width="1" height="1" fill="var(--zhu)"/><rect x="5" y="3" width="1" height="1" fill="var(--zhu)"/><rect x="3" y="4" width="2" height="1" fill="var(--zhu)"/></svg>',
+ scroll:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="1" y="1" width="1" height="6" fill="var(--klein)"/><rect x="6" y="1" width="1" height="6" fill="var(--klein)"/><rect x="2" y="2" width="4" height="4" fill="var(--card)"/><rect x="2" y="3" width="3" height="1" fill="var(--zhu)"/><rect x="2" y="5" width="2" height="1" fill="var(--zhu)" opacity=".6"/></svg>',
+ robe:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="4" height="2" fill="var(--klein)"/><rect x="1" y="2" width="6" height="5" fill="var(--klein)" opacity=".7"/><rect x="3" y="0" width="2" height="3" fill="var(--zhu)" opacity=".8"/></svg>',
+ hairpin:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="1" width="1" height="1" fill="var(--klein)"/><rect x="3" y="2" width="1" height="1" fill="var(--klein)"/><rect x="4" y="3" width="1" height="1" fill="var(--klein)"/><rect x="5" y="4" width="1" height="1" fill="var(--klein)"/><rect x="4" y="4" width="1" height="1" fill="var(--zhu)"/><rect x="2" y="5" width="1" height="1" fill="var(--klein)"/><rect x="3" y="5" width="1" height="1" fill="var(--klein)"/><rect x="4" y="6" width="1" height="1" fill="var(--klein)"/><rect x="5" y="6" width="1" height="1" fill="var(--klein)"/></svg>',
+ warmstone:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="2" width="4" height="4" fill="var(--klein)" opacity=".7"/><rect x="3" y="3" width="2" height="2" fill="var(--zhu)"/><rect x="2" y="0" width="1" height="1" fill="var(--zhu)" opacity=".6"/><rect x="5" y="0" width="1" height="1" fill="var(--zhu)" opacity=".6"/></svg>',
+ trinket:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="1" fill="var(--zhu)"/><rect x="2" y="2" width="4" height="3" fill="var(--klein)" opacity=".8"/><rect x="3" y="5" width="2" height="1" fill="var(--klein)"/><rect x="0" y="7" width="2" height="1" fill="var(--klein)" opacity=".4"/><rect x="6" y="7" width="2" height="1" fill="var(--klein)" opacity=".4"/></svg>',
+ fire:'<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="3" y="1" width="2" height="1" fill="var(--zhu)"/><rect x="2" y="2" width="4" height="2" fill="var(--zhu)"/><rect x="1" y="4" width="6" height="2" fill="var(--zhu)" opacity=".85"/><rect x="2" y="6" width="4" height="1" fill="var(--zhu)" opacity=".85"/><rect x="3" y="4" width="2" height="1" fill="var(--card)"/></svg>'
+};
+
+/* ═══ 状态 ═══ */
+var curCat='全部', curIdx=0;
+var elCats=document.getElementById('catList');
+var elMcats=document.getElementById('mcats');
+var elGrid=document.getElementById('grid');
+var elCap=document.getElementById('showcap');
+var elDetail=document.getElementById('detail');
+var elDrawer=document.getElementById('drawer');
+var elDInner=document.getElementById('dInner');
+var isMobile=function(){return window.matchMedia('(max-width:760px)').matches;};
+
+function catCount(cat){
+  return cat==='全部'?ITEMS.length:ITEMS.filter(function(x){return x.cat===cat;}).length;
+}
+function visible(){
+  return curCat==='全部'?ITEMS:ITEMS.filter(function(x){return x.cat===curCat;});
+}
+
+/* ── 分类渲染（桌面清单 + 手机横排） ── */
+function renderCats(){
+  elCats.innerHTML=''; elMcats.innerHTML='';
+  CATS.forEach(function(cat){
+    /* 桌面 */
+    var b=document.createElement('button');
+    b.type='button'; b.className='cat'+(cat==='垃圾桶'?' trash':'')+(cat===VAULT?' vault':'')+(cat===curCat?' on':'');
+    b.innerHTML='<span class="cn">'+cat+'<i></i></span><span class="cnum">'+catCount(cat)+'</span>';
+    b.onclick=function(){setCat(cat);};
+    elCats.appendChild(b);
+    /* 手机 */
+    var m=document.createElement('button');
+    m.type='button'; m.className='mcat'+(cat===VAULT?' vault':'')+(cat===curCat?' on':'');
+    m.innerHTML='<span class="cn">'+cat+'<i></i></span>';
+    m.onclick=function(){setCat(cat);};
+    elMcats.appendChild(m);
+  });
+}
+
+/* ── 格子渲染 ── */
+function renderGrid(){
+  elGrid.innerHTML='';
+  var list=visible();
+  elCap.textContent='SHOWING // '+curCat+' · '+list.length+' 种 · 选中 '+(curIdx+1>list.length?'—':String(curIdx+1).padStart(2,'0'));
+  if(!list.length){
+    var e=document.createElement('div');
+    e.className='emptycat'; e.style.gridColumn='1/-1';
+    e.textContent='这一格还空着';
+    elGrid.appendChild(e); return;
+  }
+  if(curIdx>=list.length)curIdx=0;
+  list.forEach(function(it,i){
+    var c=document.createElement('div');
+    c.className='cell'+(it.red?' red':'')+(it.dash&&!it.trash?' dash':'')+(it.trash?' trash':'')+(i===curIdx?' on':'');
+    c.setAttribute('role','button'); c.tabIndex=0;
+    c.setAttribute('aria-label',it.n);
+    c.innerHTML=ICON[it.ic]+(it.c>1?'<span class="num">'+it.c+'</span>':'');
+    c.onclick=function(){pick(i);};
+    c.onkeydown=function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();pick(i);}};
+    elGrid.appendChild(c);
+  });
+}
+
+/* ── 详情渲染（右栏 & 手机抽屉共用） ── */
+function detailHTML(it){
+  return '<div class="dcap">DETAIL // 物品详情</div>'
+    +'<div class="dred"></div>'
+    +'<div class="dtype">'+it.t+'</div>'
+    +'<div class="dname'+(it.red?' red':'')+'">'+it.n+'</div>'
+    +'<div class="drow">'+ICON[it.ic]+'<span class="dcount'+(it.red?' red':'')+'">x'+it.c+'</span></div>'
+    +'<div class="ddiv">'+it.d+'</div>'
+    +'<div class="dsrc">来源 · '+it.src+'</div>'
+    +(it.stamp?'<div class="dstamp">'+it.stamp+'</div>':'')
+    +(it.cat===VAULT?'<div class="dvault"><b>✦ TIME-LOCKED</b>时存柜内存物：时间静止，不会腐坏。随时可取出。</div>':'');
+}
+function renderDetail(){
+  var list=visible();
+  var it=list[curIdx]||ITEMS[0];
+  var html=detailHTML(it);
+  elDetail.innerHTML=html; elDInner.innerHTML=html;
+}
+
+/* ── 选中 / 分类切换 ── */
+function pick(i){
+  curIdx=i;
+  var cells=elGrid.children;
+  for(var j=0;j<cells.length;j++)cells[j].classList.remove('on');
+  if(cells[i])cells[i].classList.add('on');
+  renderDetail();
+  var list=visible();
+  elCap.textContent='SHOWING // '+curCat+' · '+list.length+' 种 · 选中 '+String(i+1).padStart(2,'0');
+  if(isMobile())openDrawer();
+}
+function setCat(cat){
+  curCat=cat; curIdx=0;
+  renderCats(); renderGrid(); renderDetail();
+  if(isMobile())closeDrawer();
+}
+
+/* ── 抽屉（手机） ── */
+function openDrawer(){elDrawer.classList.add('open');elDrawer.setAttribute('aria-hidden','false');}
+function closeDrawer(){elDrawer.classList.remove('open');elDrawer.setAttribute('aria-hidden','true');}
+document.getElementById('dxBtn').onclick=closeDrawer;
+(function(){
+  var grab=document.getElementById('dgrab'),sy=0,dy=0,drag=false;
+  grab.addEventListener('touchstart',function(e){drag=true;sy=e.touches[0].clientY;dy=elDrawer.getBoundingClientRect().top;},{passive:true});
+  grab.addEventListener('touchmove',function(e){
+    if(!drag)return;
+    var off=e.touches[0].clientY-sy;
+    if(off>0){elDrawer.style.transition='none';elDrawer.style.transform='translateY('+off+'px)';}
+  },{passive:true});
+  grab.addEventListener('touchend',function(e){
+    if(!drag)return; drag=false;
+    var off=e.changedTouches[0].clientY-sy;
+    elDrawer.style.transition=''; elDrawer.style.transform='';
+    if(off>60)closeDrawer();
+  },{passive:true});
+})();
+
+/* ═══ 主题 / 菜单（任务页同款） ═══ */
+var K_THEME='theme';
+function applyTheme(){
+  var dark=false;
+  try{var r=localStorage.getItem(K_THEME);if(r){var p=JSON.parse(r);if(p&&p.value==='dark')dark=true;}}catch(e){}
+  document.body.classList.toggle('night',dark);
+}
+applyTheme();
+var menuBtn=document.getElementById('menuBtn'),mside=document.getElementById('mside'),movl=document.getElementById('movl');
+function toggleMenu(on){
+  mside.classList.toggle('open',on);movl.classList.toggle('on',on);
+}
+menuBtn.onclick=function(e){e.stopPropagation();toggleMenu(!mside.classList.contains('open'));};
+movl.onclick=closeMenu;
+function closeMenu(){toggleMenu(false);}
+document.addEventListener('click',function(e){if(mside.classList.contains('open')&&!mside.contains(e.target)&&e.target!==menuBtn)closeMenu();});
+document.getElementById('miNight').onclick=function(){
+  var dark=!document.body.classList.contains('night');
+  try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
+  document.body.classList.toggle('night',dark);closeMenu();
+};
+document.getElementById('miBack').onclick=function(){location.href='./系统备份.html';};
+
+/* ═══ 启动 ═══ */
+renderCats(); renderGrid(); renderDetail();
+window.addEventListener('resize',function(){if(!isMobile())closeDrawer();});
+})();
+</script>
+</body>
+</html>
