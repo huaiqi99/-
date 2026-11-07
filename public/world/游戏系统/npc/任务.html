@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>千律州 · 任务归档</title>
+<style>
+/* ═══ 任务归档 任务.html —— C行军线版（定稿）
+   骨架：国家组夹实线 → 章节点线压缩段（默认收起）→ 任务挂主干，虚线岔支线，红断头标失败。
+   表头照资料.html；配色资料.html 同款日/夜双档；尺寸基准：框架1200px、外框2px、内线1.5px、页距14px。 ═══ */
+:root{
+  --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
+  --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
+  --gc:rgba(85,15,16,.08);--gc2:rgba(34,44,110,.07);
+  --shadow:6px 6px 0 rgba(34,44,110,.2);
+  --serif:Georgia,"Times New Roman","Songti SC",serif;
+  --mono:"Courier New",monospace;
+}
+body.night{
+  --bg:#20405F;--card:#EAE5D6;--ink:#2A2C3F;--burg:#B94A44;--klein:#5B7FA6;
+  --zhu:#B94A44;--mut:#5D6B80;--hair:rgba(42,44,63,.4);
+  --gc:rgba(10,20,35,.25);--gc2:rgba(10,20,35,.18);
+  --shadow:6px 6px 0 rgba(10,20,35,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden;}   /* 严禁横向滑出主页 */
+body{font-family:var(--serif);color:var(--ink);min-height:100vh;background:var(--bg);transition:background .4s;}
+/* 最底层：135°红蓝渐变垫全页（资料页同款） */
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:linear-gradient(135deg,rgba(85,15,16,.13) 0%,rgba(85,15,16,.05) 30%,rgba(34,44,110,.05) 65%,rgba(34,44,110,.15) 100%);}
+body.night::before{background:linear-gradient(135deg,rgba(185,74,68,.12) 0%,rgba(10,20,35,.0) 40%,rgba(11,63,107,.45) 100%);}
+/* 格子层叠在渐变上（通讯页同款配方） */
+body::after{content:'';position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),
+    linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
+  background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
+.page{position:relative;z-index:2;padding:14px;height:100vh;height:100dvh;display:flex;flex-direction:column;}
+
+/* ── 主卡（全页唯一2px框） ── */
+.frame{max-width:1200px;width:100%;margin:0 auto;background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);
+  flex:1;min-height:0;display:flex;flex-direction:column;}
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px dashed var(--burg);flex:none;}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--zhu);border:1.5px dashed var(--zhu);padding:4px 9px;flex:none;}
+.title{flex:1;font-size:16px;letter-spacing:2px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.title em{font-style:normal;color:var(--burg);}
+.menubtn{flex:none;width:32px;height:32px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer;padding:0;line-height:1;}
+.menubtn:hover{border-color:var(--burg);color:var(--burg);}
+
+/* ── 主体：行军线列（单列直排，内部滚动） ── */
+.show{flex:1;min-width:0;min-height:0;overflow-y:auto;padding:14px 18px 18px;scrollbar-width:thin;}
+.showcap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:10px;}
+.note{border-left:3px solid var(--klein);padding:3px 10px;font-size:11px;color:var(--mut);margin-bottom:6px;}
+
+/* 国家组：名字夹实线 */
+.ngt{display:flex;align-items:center;gap:12px;margin:16px 0 6px;}
+.ngt::before,.ngt::after{content:'';flex:1;border-top:2px solid var(--klein);}
+.ngt b{font-size:14px;letter-spacing:5px;color:var(--ink);white-space:nowrap;}
+.ngt:first-of-type{margin-top:8px;}
+
+/* 章头：点线压缩段（整行热区，默认收起） */
+.ch{margin-bottom:4px;}
+.chhead{position:relative;display:flex;align-items:baseline;gap:12px;padding:14px 6px 12px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.chhead::after{content:'';position:absolute;left:0;right:0;top:60%;border-top:4px dashed var(--hair);transition:border-color .2s;}
+.chhead .cn{position:relative;z-index:1;background:var(--card);font-size:14px;letter-spacing:1px;font-weight:bold;padding-right:8px;white-space:nowrap;}
+.chhead .meta{position:relative;z-index:1;background:var(--card);font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);padding-right:8px;white-space:nowrap;}
+.chhead .curled{position:relative;z-index:1;background:var(--card);width:8px;height:8px;flex:none;align-self:center;background:var(--burg);border-radius:50%;animation:breath 2.4s ease-in-out infinite;margin-right:-4px;}
+@keyframes breath{0%,100%{opacity:.3}50%{opacity:1}}
+.chhead .ar{position:relative;z-index:1;background:var(--card);margin-left:auto;font-size:12px;color:var(--klein);transition:transform .25s;padding-left:8px;flex:none;}
+.chhead:hover::after{border-color:var(--burg);}
+.chhead:hover .ar{color:var(--burg);}
+.ch.open .chhead .ar{transform:rotate(90deg);}
+
+/* 章展开体：任务行挂主干 */
+.chbody{display:none;padding:0 0 8px;}
+.ch.open .chbody{display:block;}
+
+.qrow{display:flex;opacity:0;transform:translateY(6px);}
+.ch.on .qrow{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease;}
+.qrow .rail{width:26px;flex:none;display:flex;flex-direction:column;align-items:center;align-self:stretch;}
+.qrow .stem{flex:1;width:3px;background:var(--klein);}
+.qrow .nd{width:10px;height:10px;border:3px solid var(--klein);border-radius:50%;background:var(--card);flex:none;margin:2px 0;}
+.qrow .rail-l{flex:1;width:3px;background:var(--klein);}
+
+/* 类型节点形 */
+.qforce .nd{width:14px;height:14px;background:var(--klein);border:none;margin:0;}
+.qside .nd{width:8px;height:8px;background:var(--klein);border:none;}
+.qtrig .nd{width:9px;height:9px;border-radius:0;transform:rotate(45deg);margin:1px 0;}
+.qurgent .nd{width:0;height:0;border:7px solid transparent;border-bottom:13px solid var(--burg);border-top:none;margin:1px 0;}
+.qfail .nd{width:8px;height:8px;background:var(--burg);border:none;}
+.qtrans .nd{width:10px;height:10px;border:2.5px dashed var(--klein);background:transparent;border-radius:50%;}
+
+/* 岔线：支线虚线右岔 / 失败红粗断头岔出 */
+.fork{width:14px;flex:none;align-self:flex-start;margin-top:8px;}
+.qside .fork,.qtransfork{border-top:2px dashed var(--klein);}
+.qfail .fork{border-top:3px solid var(--burg);}
+
+/* 任务内容列 */
+.qwrap{flex:1;min-width:0;padding:0 0 12px 10px;}
+.qside .qwrap{margin-left:-1px;border-left:2px dashed var(--klein);padding-left:9px;}
+.qfail .qwrap{margin-left:-1px;border-left:3px solid var(--burg);padding-left:9px;}
+.qtrans .qwrap{border:1.5px dashed var(--klein);padding:8px 12px 10px;margin:0 0 12px;}
+.qline{cursor:pointer;padding:2px 0;user-select:none;-webkit-user-select:none;}
+.qline b{font-size:13px;transition:color .15s;}
+.qline:hover b{color:var(--burg);}
+.qline .tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);margin-left:8px;white-space:nowrap;}
+.qline .miss{font-size:10px;color:var(--mut);font-style:italic;}
+.qline .unk{font-size:10px;color:var(--burg);border-bottom:1px dotted var(--burg);}
+.qfail .qline b{text-decoration:line-through;color:var(--burg);}
+.fstamp{display:inline-block;border:2px solid var(--burg);color:var(--burg);font-size:9px;letter-spacing:2px;padding:0 5px;transform:rotate(-5deg);margin-left:7px;background:var(--card);white-space:nowrap;}
+.timer{font-family:var(--mono);font-size:10px;background:var(--burg);color:#F0EFEB;padding:1px 7px;letter-spacing:1px;margin-left:8px;white-space:nowrap;}
+.timer i{font-style:normal;font-size:8px;opacity:.85;margin-left:4px;}
+.brk{font-family:var(--mono);font-size:9px;color:var(--burg);letter-spacing:1px;margin-top:10px;}
+.brk::before{content:'';display:block;width:52%;border-top:3px solid var(--burg);margin-bottom:6px;}
+
+/* 任务详情：原文全引（手风琴） */
+.qdetail{max-height:0;overflow:hidden;transition:max-height .45s ease;}
+.qrow.opx .qdetail{max-height:1200px;}
+.qdetail .box{border-left:2px solid var(--hair);margin:9px 0 4px;padding:6px 0 6px 12px;}
+.qdetail p{font-size:13.5px;line-height:2.0;color:var(--ink);}
+.qdetail p em{font-style:normal;font-family:var(--mono);font-size:11.5px;letter-spacing:2px;color:var(--zhu);display:block;margin-bottom:2px;}
+.qdetail p.nolabel{color:var(--mut);}
+
+/* 失败任务首次展开：红闪一帧+抖动一次 */
+@keyframes qshake{0%{background:rgba(85,15,16,.14)}
+  15%{background:rgba(85,15,16,.07);transform:translateX(-3px)}
+  35%{transform:translateX(3px)}55%{transform:translateX(-2px)}
+  75%{transform:translateX(1px)}100%{background:transparent;transform:none}}
+body.night .qrow.boom{animation-name:qshaken;}
+@keyframes qshaken{0%{background:rgba(185,74,68,.2)}
+  15%{background:rgba(185,74,68,.1);transform:translateX(-3px)}
+  35%{transform:translateX(3px)}55%{transform:translateX(-2px)}
+  75%{transform:translateX(1px)}100%{background:transparent;transform:none}}
+.qrow.boom{animation:qshake .55s ease 1;}
+
+/* 图例 + 尾线 */
+.legend{margin-top:14px;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);line-height:2.2;border-top:1.5px dashed var(--hair);padding-top:10px;}
+.legend b{color:var(--ink);font-weight:normal;}
+.archline{display:flex;align-items:center;gap:10px;margin-top:14px;
+  font-family:var(--mono);font-size:8px;letter-spacing:3px;color:var(--mut);white-space:nowrap;}
+.archline::before,.archline::after{content:'';flex:1;border-top:1.5px dashed var(--hair);}
+
+/* ── ☰ 菜单侧栏（资料页同款） ── */
+.movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;display:none;}
+.movl.on{display:block;}
+.mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;background:var(--card);
+  height:100vh;height:100dvh;z-index:41;transition:right .28s ease;
+  padding:16px 16px 20px;overflow-y:auto;}
+.mside.open{right:0;}
+.mbox{padding:0 0 6px;}
+.sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1.5px dashed var(--hair);
+  background:none;border-left:none;border-right:none;border-top:none;width:100%;font-family:var(--serif);
+  font-size:13px;color:var(--ink);cursor:pointer;}
+.sitem:hover{color:var(--klein);}
+.sitem.miBack{border:1.5px solid var(--klein);margin:8px 0 4px;padding:9px 12px;color:var(--klein);}
+.sitem.miBack:hover{background:var(--klein);color:#F0EFEB;}
+.sitem.miBack .arr{color:inherit;opacity:.7;}
+.mside .mh{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--mut);margin:4px 0 8px;}
+.sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);}
+.sortrow{display:flex;gap:8px;margin-top:8px;}
+.sortbtn{flex:1;border:1.5px solid var(--klein);background:transparent;color:var(--ink);
+  font-family:var(--serif);font-size:12px;padding:7px 0;cursor:pointer;}
+.sortbtn.on{border-color:var(--burg);background:var(--gc);color:var(--burg);font-weight:bold;}
+.sortnote{font-size:9px;color:var(--mut);margin-top:6px;line-height:1.8;}
+
+/* ── 手机端 ── */
+@media(max-width:760px){
+  .page{padding:0;height:auto;min-height:100dvh;}
+  .frame{border-left:none;border-right:none;box-shadow:none;flex:none;min-height:100dvh;height:auto;}
+  .show{overflow:visible;flex:none;padding:12px 12px 16px;}
+  .topbar{gap:8px;padding:10px 12px;}
+  .title{font-size:13px;letter-spacing:1px;}
+  .chip{font-size:8px;padding:3px 6px;letter-spacing:1px;}
+  .menubtn{width:28px;height:28px;font-size:11px;}
+  .qwrap{padding-bottom:10px;}
+  .qdetail p{font-size:13px;line-height:1.9;}
+  .qdetail p em{font-size:11px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .chhead .curled{animation:none;}
+  .qrow.boom{animation:none;}
+  .ch.on .qrow{transition:none;}
+  .qdetail{transition:none;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="frame">
+    <div class="topbar">
+      <span class="chip">SYS·QUEST</span>
+      <div class="title">◆ QIANLVZHOU // <em>任务归档</em></div>
+      <button class="menubtn" id="menuBtn" aria-label="菜单" type="button">☰</button>
+    </div>
+    <div class="show" id="show">
+      <div class="showcap">SHOWING // 三国四章 · 25 项 · 断裂 2</div>
+      <div class="note">※ 归档检索正常。跨三国四章，失败 2 项已标记归位。</div>
+      <div id="questList"></div>
+      <div class="legend">节点图例 ── <b>●</b> 强制主线　<b>○</b> 主线　<b>·</b> 支线（虚线右岔·可跳过）　<b>◇</b> 触发　<b>▲</b> 紧急（红）　<b>╳</b> 失败（红实线岔出·不可逆断裂）　<b>◌</b> 过渡（点线）</div>
+      <div class="archline">QIANLVZHOU · QUEST ARCHIVE · END OF RECORD</div>
+    </div>
+  </div>
+</div>
+
+<!-- ☰ 菜单 -->
+<div class="movl" id="movl"></div>
+<aside class="mside" id="mside">
+ <div class="mbox">
+  <button class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></button>
+  <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
+  <div class="mh" style="margin-top:16px">◇ 章节</div>
+  <div class="sortrow">
+    <button class="sortbtn" id="exAll" type="button">全部展开</button>
+    <button class="sortbtn" id="coAll" type="button">全部收起</button>
+  </div>
+  <div class="sortnote">默认全部收起。点击章节行名展开该章行军线；点击任务行展开原文全引。</div>
+ </div>
+</aside>
+
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+<script>
+(function(){
+'use strict';
+/* ═══ 任务数据（照《任务归档.txt》逐条录入，原文全引不改字） ═══
+   t: force强制 main主线 side支线 trig触发 urgent紧急 fail失败 trans过渡
+   d: [标签, 原文] 数组，标签取原文关键词，无关键词的整句段落标签留空 */
+var QUESTS=[
+ {nation:'业焰之国',chapters:[
+  {no:'CH.01',title:'第一章 · 业焰城的阴影',meta:'任务 9 · 断裂 1',tasks:[
+   {n:'业焰城的阴影',t:'force',tag:'强制主线',d:[
+     ['','检测到玩家已重新连接主线网络。强制主线任务第一章【业焰城的阴影】已发布。'],
+     ['任务目标','前往业焰城，配合神谕院调查城中夜游魂事件的真相。'],
+     ['任务失败惩罚','玩家权限永久冻结。']]},
+   {n:'路见不平',t:'side',tag:'支线',d:[
+     ['','支线任务【路见不平】已开启。'],
+     ['任务目标','解救受欺压的平民。'],
+     ['任务奖励','业焰城声望微幅提升。等级经验x50。']]},
+   {n:'神使的协助',t:'main',tag:'主线',d:[
+     ['','主线任务【神使的协助】已开启。'],
+     ['任务要求','寻求神使段深泉的帮助，获取进入中央神殿档案馆的许可。'],
+     ['任务奖励','业焰城声望x100，线索提示x1，麻麻饼x3，奥术晶尘x3，等级经验x500。']]},
+   {n:'白日的怨灵',t:'side',tag:'支线',d:[
+     ['','支线任务【白日的怨灵】已开启。'],
+     ['任务目标','解救被袭击的平民，初步调查夜游魂白日显形的缘由。'],
+     ['任务奖励','业焰城声望+200，神秘线索x1。']]},
+   {n:'神明的故居',t:'main',tag:'主线',d:[
+     ['','主线任务【神明的故居】已开启，任务要求：探索高塔，调查祝焱的秘密。'],
+     ['任务奖励','金币x10000，等级经验x1000，奥术晶尘x2，随机道具大礼包x1。']]},
+   {n:'无名者的援手',t:'main',tag:'主线',d:[
+     ['','主线任务【无名者的援手】已开启，任务要求：化解酒馆角落的冲突，与关键人物建立初步联系。'],
+     ['任务奖励','金币x500，业焰城声望+100。']]},
+   {n:'再施援手',t:'main',tag:'主线',d:[
+     ['','主线任务【再施援手】已开启。'],
+     ['任务目标','解救莉娜，埃米特，击退游魂。'],
+     ['任务奖励','金币x300，经验值x50，与莉娜、埃米特关系度提升，余烬护身符x3。']]},
+   {n:'熔火祝祭的守护',t:'fail',tag:'主线 · 失败',d:[
+     ['','主线任务【熔火祝祭的守护】已开启。'],
+     ['任务内容','护送埃米特、莉娜参与熔火祝祭，确保二人安全完成祭典仪式。'],
+     ['任务奖励','经验值x1000，业焰城声望+300，特殊线索x1。'],
+     ['失败惩罚','痛苦共鸣48小时、等级降低3级、主线【业焰城的阴影】不可逆偏转。']]},
+   {n:'自由的代价',t:'urgent',tag:'紧急主线',timer:'47:31:52',d:[
+     ['','紧急主线任务【自由的代价】已开启。'],
+     ['任务背景','你身负冤屈，深陷绝境。审判不公，盟友沉默，生存的唯一途径似乎只剩下挣脱牢笼。然而，越狱并非坦途，隐藏在黑暗中的引路人，其目的绝非单纯。'],
+     ['任务目标','在行刑前（剩余时间：47小时32分），成功逃离神殿地牢。'],
+     ['任务奖励','经验值x500，特殊技能书【墟元力初级应用】，一次性隐蔽道具【阴影斗篷】。'],
+     ['失败惩罚','强制进入囚徒生涯线，角色将永久锁定于黑水矿坑场景，直至死亡。系统辅助功能将极大受限。']]}
+  ]},
+  {no:'CH.02',title:'第二章 · 魔女的归宿',meta:'任务 6 · 紧急 1',tasks:[
+   {n:'魔女的归宿',t:'main',tag:'主线',d:[
+     ['','主线任务第二章【魔女的归宿】已开启。']]},
+   {n:'污染溯源',t:'trig',tag:'触发主线',d:[
+     ['','触发主线任务【污染溯源】：业焰城周边水源出现异常污染迹象，可能影响区域生态稳定性及目标生存资源。请调查污染源头。'],
+     ['任务目标','抵达污染核心区域并确认污染性质。'],
+     ['任务奖励','经验值x50，金币x180，随机低级净化道具x1。']]},
+   {n:'遗迹的秘密',t:'main',tag:'主线',d:[
+     ['','主线任务【遗迹的秘密】已开启。'],
+     ['任务内容','探索火山下的神秘遗迹。'],
+     ['任务奖励','经验值x50，奥术晶尘x2。']]},
+   {n:'魔女的秘密',t:'main',tag:'主线',d:[
+     ['','主线任务【魔女的秘密】已开启。'],
+     ['任务内容','探索魔女的记忆，想办法离开秘境。'],
+     ['任务奖励','核心纪念品x1，经验值x400。']]},
+   {n:'神使的危机',t:'main',tag:'主线',d:[
+     ['','主线任务【神使的危机】已开启。'],
+     ['任务目标','找到并确保关键npc段深泉的生命安全。'],
+     ['任务奖励','好感度大礼包x1。']]},
+   {n:'终局之战',t:'urgent',tag:'紧急任务',unk:true,d:[
+     ['','紧急任务【终局之战】已开启。'],
+     ['任务内容','协助段深泉，击败异常单位祝焱。'],
+     ['任务奖励','未知。']]}
+  ]}
+ ]},
+ {nation:'双冕北境',chapters:[
+  {no:'CH.03',title:'第三章 · 冰雷之厄',meta:'任务 8 · 断裂 1 · 过渡 1',tasks:[
+   {n:'冰雷之厄',t:'main',tag:'主线',d:[
+     ['','主线任务第三章【冰雷之厄】已发布。任务地点：双冕北境。'],
+     ['任务背景','遥远的北方国度双冕北境近期天象骤变，异常狂暴的雷暴与雪暴频繁侵袭国土，冰层之下更有蚀光污染悄然蔓延，已渗入地脉、污染水源，严重侵蚀当地的生态与民生。'],
+     ['任务目标','调查异常天象与蚀光污染的成因，追踪污染源头并予以净化。'],
+     ['提示','该区域环境极端恶劣，蚀光污染可能与非自然因素有关，请做好充分准备。']]},
+   {n:'污染前线',t:'main',tag:'主线',d:[
+     ['','主线任务【污染前线】已开启。'],
+     ['任务内容','异常雷暴破坏了霜冠城西郊的冻土，大量蚀光污染物正在释放并快速蔓延，已对城市地下水脉构成直接威胁。请立即前往污染前线，尝试获取样本。当前环境下，生存与获取信息同等重要。'],
+     ['任务奖励','经验值x900，金币x500，奥术晶尘x2。']]},
+   {n:'深入调查',t:'main',tag:'主线',d:[
+     ['','主线任务【深入调查】已开启。'],
+     ['任务内容','检测到目标区域存在蚀光源头共振。核心坐标已标记：遗忘碑谷。请继续深入，抵达遗忘碑谷进行调查。'],
+     ['任务奖励','经验值x1500，好感度大礼包2.0x1。']]},
+   {n:'时空回响',t:'main',tag:'主线',unk:true,d:[
+     ['','主线任务【时空回响】已开启。'],
+     ['任务内容','进入遗忘碑谷，见证此地真正的过往。'],
+     ['任务奖励','未知。']]},
+   {n:'施以援手',t:'main',tag:'主线',d:[
+     ['','主线任务【施以援手】已开启。'],
+     ['任务内容','前往霜冠城地下区，调查水源污染源头并清除污染。'],
+     ['任务奖励','经验值x1000，金币x500。']]},
+   {n:'雷暴异变',t:'fail',tag:'主线 · 失败',d:[
+     ['','主线任务【雷暴异变】已开启。'],
+     ['任务目标','前往永叹岭，调查雷暴中心异常能量波动，阻止雷暴进一步发展。'],
+     ['任务奖励','经验值x800，金币x800，奥术晶尘x20。'],
+     ['失败惩罚','墟元过载（全属性-30%持续48小时）、扣除本次任务已获取经验值50%、等级不变。']]},
+   {n:'街头之火',t:'main',tag:'主线',miss:true,d:[
+     ['','主线任务【街头之火】已开启。'],
+     ['注','※ 原文任务内容栏缺失，仅保留奖励与失败惩罚。'],
+     ['任务奖励','经验值x1000，奥术晶尘x25，金币x500。'],
+     ['失败惩罚','北境声望下降，后续任务链可能锁定。']]},
+   {n:'遗失之物',t:'trans',tag:'过渡任务',d:[
+     ['','过渡任务【遗失之物】已开启。'],
+     ['任务目标','前往永叹岭，收集【凝霜核心】x1，并寻回你的武器【渡厄】。'],
+     ['任务描述','您的法杖目前正在永叹岭的某个石缝里躺着，请尽快将它捡回来。'],
+     ['任务期限','无。']]}
+  ]}
+ ]},
+ {nation:'时衍天宫',cur:true,chapters:[
+  {no:'CH.04',title:'第四章 · 时空之楔',meta:'任务 2 · 在途',cur:true,tasks:[
+   {n:'时空之楔',t:'main',tag:'主线',d:[
+     ['','主线任务第四章【时空之楔】已发布。任务地点：时衍天宫。'],
+     ['任务背景','东方古国时衍天宫近日频繁出现时空裂隙，部分地区时间流速异常、空间折叠错位，已严重扰乱民生。此外，系统检测到关键人物‘命定之人·段深泉’的真实身世与该国存在深层关联，其被封印的记忆或许是解开时空乱象的关键。'],
+     ['任务目标','前往时衍天宫，调查时空乱象的成因并修复裂痕；探寻命定之人段深泉的真实身世。'],
+     ['提示','该国由双子神明‘时渊’与‘芥舟’共同执掌，两位神明的意志与时空的稳定息息相关，请做好充分准备。']]},
+   {n:'双生之证',t:'main',tag:'主线',d:[
+     ['','主线任务【双生之证】已开启。'],
+     ['任务内容','将【命定之痕】加工为两件可佩戴的饰物，一件交予任务目标·段深泉，一件自行佩戴。'],
+     ['任务奖励','【命定之痕·双生】，永久羁绊道具，佩戴双方可在危急时刻感知彼此位置与状态。']]}
+  ]}
+ ]}
+];
+
+var K_THEME='theme';
+var listEl=document.getElementById('questList');
+
+/* ── 渲染 ── */
+function buildTask(q){
+  var cls='qrow q'+q.t;
+  var fork=(q.t==='side'||q.t==='fail')?'<i class="fork"></i>':'';
+  var line='<div class="qline"><b>'+q.n+'</b><span class="tag">'+q.tag+'</span>';
+  if(q.t==='fail'){line+='<span class="fstamp">失败</span>';}
+  if(q.timer){line+='<span class="timer">'+q.timer+'<i>定格</i></span>';}
+  if(q.miss){line+='<span class="miss">　※ 内容栏缺失</span>';}
+  if(q.unk){line+='<span class="unk"> 奖励：未知</span>';}
+  line+='</div>';
+  var det='<div class="qdetail"><div class="box">';
+  q.d.forEach(function(p){
+    det+='<p><em>［'+(p[0]||'发布')+'］</em>'+p[1]+'</p>';
+  });
+  det+='</div></div>';
+  if(q.t==='fail'){det+='<div class="brk">╳ 岔路至此断裂 · 主线不可逆偏转</div>';}
+  return '<div class="'+cls+'" data-fail="'+(q.t==='fail'?'1':'')+'">'
+    +'<div class="rail"><i class="stem"></i><span class="nd"></span><i class="stem"></i></div>'
+    +fork+'<div class="qwrap">'+line+det+'</div></div>';
+}
+function build(){
+  var h='';
+  QUESTS.forEach(function(nat){
+    h+='<div class="ngt"><b>'+nat.nation.split('').join(' ')+'</b></div>';
+    nat.chapters.forEach(function(ch){
+      h+='<div class="ch'+(ch.cur?' cur':'')+'" id="ch-'+ch.no+'">'
+        +'<div class="chhead" role="button" tabindex="0" aria-expanded="false">'
+        +(ch.cur?'<span class="curled"></span>':'')
+        +'<span class="cn">'+ch.title+'</span>'
+        +'<span class="meta">'+ch.no+' · '+ch.meta+'</span>'
+        +'<span class="ar">▸</span></div><div class="chbody">';
+      ch.tasks.forEach(function(q){h+=buildTask(q);});
+      h+='</div></div>';
+    });
+  });
+  listEl.innerHTML=h;
+  /* 逐行入场延迟（行军线生长感） */
+  listEl.querySelectorAll('.chbody .qrow').forEach(function(r){});
+}
+
+/* ── 章节展开/收起：点线立起，主干生长 ── */
+function toggleCh(ch){
+  var body=ch.querySelector('.chbody');
+  var head=ch.querySelector('.chhead');
+  if(!body)return;
+  if(ch.classList.contains('open')){
+    ch.classList.remove('open','on');
+    head.setAttribute('aria-expanded','false');
+    body.querySelectorAll('.qrow').forEach(function(r){r.style.transitionDelay='';r.classList.remove('opx');});
+  }else{
+    ch.classList.add('open');
+    head.setAttribute('aria-expanded','true');
+    /* 任务详情默认全展开：不用逐条点 */
+    body.querySelectorAll('.qrow').forEach(function(r,i){
+      r.style.transitionDelay=(60+i*55)+'ms';
+      r.classList.add('opx');
+    });
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      ch.classList.add('on');
+      /* 失败任务首次展开：红闪+抖动一次 */
+      body.querySelectorAll('.qrow[data-fail="1"]').forEach(function(r){
+        if(!r.classList.contains('boom')){setTimeout(function(){r.classList.add('boom');},380);}
+      });
+    });});
+  }
+}
+/* ── 任务详情展开/收起（原文全引） ── */
+function toggleQ(row){
+  row.classList.toggle('opx');
+}
+
+build();
+listEl.addEventListener('click',function(e){
+  var head=e.target.closest('.chhead');
+  if(head){toggleCh(head.parentElement);return;}
+  var line=e.target.closest('.qline');
+  if(line){toggleQ(line.closest('.qrow'));}
+});
+listEl.addEventListener('keydown',function(e){
+  if(e.key!=='Enter'&&e.key!==' ')return;
+  var head=e.target.closest('.chhead');
+  if(head){e.preventDefault();toggleCh(head.parentElement);}
+});
+
+/* ── ☰ 菜单 ── */
+var mBtn=document.getElementById('menuBtn'),mOvl=document.getElementById('movl'),
+    mSide=document.getElementById('mside');
+function toggleMenu(on){
+  if(typeof on==='undefined')on=!mSide.classList.contains('open');
+  mSide.classList.toggle('open',on);
+  mOvl.classList.toggle('on',on);
+}
+if(mBtn)mBtn.onclick=function(){toggleMenu();};
+if(mOvl)mOvl.onclick=function(){toggleMenu(false);};
+
+/* 展开/收起全部（菜单） */
+document.getElementById('exAll').onclick=function(){
+  listEl.querySelectorAll('.ch').forEach(function(ch){
+    if(!ch.classList.contains('open'))toggleCh(ch);
+  });
+  toggleMenu(false);
+};
+document.getElementById('coAll').onclick=function(){
+  listEl.querySelectorAll('.ch.open').forEach(function(ch){toggleCh(ch);});
+  listEl.querySelectorAll('.qrow.opx').forEach(function(r){r.classList.remove('opx');});
+  toggleMenu(false);
+};
+
+/* 返回系统页（照资料页） */
+document.getElementById('miBack').onclick=function(){location.href='./系统备份.html';};
+
+/* ── 日夜：公共键 theme（{value:'light'|'dark'}），与全站一致 ── */
+function applyTheme(){
+  var dark=false;
+  try{var r=localStorage.getItem(K_THEME); if(r){var p=JSON.parse(r); if(p&&p.value==='dark')dark=true;}}catch(e){}
+  document.body.classList.toggle('night',dark);
+  return dark;
+}
+document.getElementById('miNight').onclick=function(){
+  var dark=!document.body.classList.contains('night');
+  try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
+  applyTheme();
+  toggleMenu(false);
+};
+applyTheme();
+})();
+</script>
+</body>
+</html>
