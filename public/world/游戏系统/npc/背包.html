@@ -120,6 +120,13 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .sitem.miBack:hover{background:var(--klein);color:#F0EFEB;}
 .sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);}
 .mside .mh{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--mut);margin:4px 0 8px;}
+.srow{display:flex;gap:8px;}
+.srow input{flex:1;min-width:0;border:1.5px solid var(--klein);background:var(--bg);color:var(--ink);
+  font-family:var(--serif);font-size:13px;padding:8px 10px;}
+.srow input:focus{outline:none;border-color:var(--zhu);}
+.srow .go{flex:none;border:none;background:var(--klein);color:#F0EFEB;font-family:var(--mono);
+  font-size:10px;letter-spacing:2px;padding:0 12px;cursor:pointer;}
+.srow .go:hover{background:var(--zhu);}
 
 /* ── 手机端：分类折顶横排 + 详情底部抽屉 ── */
 .mcats{display:none;}
@@ -211,12 +218,18 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
  <div class="mbox">
   <button class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></button>
   <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
+  <div class="mh" style="margin-top:16px">◇ 查找物品</div>
+  <div class="srow">
+    <input id="findBox" placeholder="名称 / 类型 / 来源…">
+    <button class="go" id="findGo">查找</button>
+  </div>
   <div class="mh" style="margin-top:16px">◇ 说明</div>
   <div style="font-size:11px;color:var(--mut);line-height:1.9;">点物品格查看详情：桌面在右栏，手机从底部滑出。✦ 时存柜为系统单独开辟，内存物时间静止。分类由怀榆自设，随取随用。</div>
  </div>
 </aside>
 
-<script src="./https://sfile.chatglm.cn/workspace/file/a5/a507a88269.js" data-bgm="音乐1.mp3"></script>
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
+<script src="./sfx.js"></script>
 <script>
 (function(){
 'use strict';
@@ -341,7 +354,7 @@ var ICON={
 };
 
 /* ═══ 状态 ═══ */
-var curCat='全部', curIdx=0;
+var curCat='全部', curIdx=0, kw='';
 var elCats=document.getElementById('catList');
 var elMcats=document.getElementById('mcats');
 var elGrid=document.getElementById('grid');
@@ -355,7 +368,11 @@ function catCount(cat){
   return cat==='全部'?ITEMS.length:ITEMS.filter(function(x){return x.cat===cat;}).length;
 }
 function visible(){
-  return curCat==='全部'?ITEMS:ITEMS.filter(function(x){return x.cat===curCat;});
+  var arr=curCat==='全部'?ITEMS:ITEMS.filter(function(x){return x.cat===curCat;});
+  if(kw){
+    arr=arr.filter(function(x){return (x.n+x.t+(x.src||'')).toLowerCase().indexOf(kw.toLowerCase())>=0;});
+  }
+  return arr;
 }
 
 /* ── 分类渲染（桌面清单 + 手机横排） ── */
@@ -381,11 +398,11 @@ function renderCats(){
 function renderGrid(){
   elGrid.innerHTML='';
   var list=visible();
-  elCap.textContent='SHOWING // '+curCat+' · '+list.length+' 种 · 选中 '+(curIdx+1>list.length?'—':String(curIdx+1).padStart(2,'0'));
+  elCap.textContent='SHOWING // '+curCat+' · '+list.length+' 种 · 选中 '+(curIdx+1>list.length?'—':String(curIdx+1).padStart(2,'0'))+(kw?' · 关键词「'+kw+'」':'');
   if(!list.length){
     var e=document.createElement('div');
     e.className='emptycat'; e.style.gridColumn='1/-1';
-    e.textContent='这一格还空着';
+    e.textContent=kw?'无匹配物品':'这一格还空着';
     elGrid.appendChild(e); return;
   }
   if(curIdx>=list.length)curIdx=0;
@@ -423,6 +440,7 @@ function renderDetail(){
 /* ── 选中 / 分类切换 ── */
 function pick(i){
   curIdx=i;
+  if(window.SFX)try{SFX.play('zheng');}catch(e){}
   var cells=elGrid.children;
   for(var j=0;j<cells.length;j++)cells[j].classList.remove('on');
   if(cells[i])cells[i].classList.add('on');
@@ -433,6 +451,7 @@ function pick(i){
 }
 function setCat(cat){
   curCat=cat; curIdx=0;
+  if(window.SFX)try{SFX.play('da');}catch(e){}
   renderCats(); renderGrid(); renderDetail();
   if(isMobile())closeDrawer();
 }
@@ -469,16 +488,21 @@ var menuBtn=document.getElementById('menuBtn'),mside=document.getElementById('ms
 function toggleMenu(on){
   mside.classList.toggle('open',on);movl.classList.toggle('on',on);
 }
-menuBtn.onclick=function(e){e.stopPropagation();toggleMenu(!mside.classList.contains('open'));};
+menuBtn.onclick=function(e){e.stopPropagation();if(window.SFX)try{SFX.play('pa');}catch(e2){}toggleMenu(!mside.classList.contains('open'));};
 movl.onclick=closeMenu;
 function closeMenu(){toggleMenu(false);}
 document.addEventListener('click',function(e){if(mside.classList.contains('open')&&!mside.contains(e.target)&&e.target!==menuBtn)closeMenu();});
 document.getElementById('miNight').onclick=function(){
   var dark=!document.body.classList.contains('night');
+  if(window.SFX)try{SFX.play('pa');}catch(e){}
   try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
   document.body.classList.toggle('night',dark);closeMenu();
 };
 document.getElementById('miBack').onclick=function(){location.href='./系统备份.html';};
+
+/* ═══ 查找物品（照 资料.html 同款接线） ═══ */
+document.getElementById('findBox').addEventListener('input',function(){ kw=this.value.trim(); renderGrid(); renderDetail(); });
+document.getElementById('findGo').onclick=function(){ kw=document.getElementById('findBox').value.trim(); renderGrid(); renderDetail(); closeMenu(); };
 
 /* ═══ 启动 ═══ */
 renderCats(); renderGrid(); renderDetail();
