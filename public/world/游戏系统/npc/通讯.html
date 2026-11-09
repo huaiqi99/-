@@ -249,6 +249,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   </div>
 </div>
  
+<script src="./sfx.js"></script>
 <script src="./通讯AI.js"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
@@ -371,7 +372,7 @@ function renderContacts(){
     d.className='contact'+(n===cur?' on':'')+(cared?' care':''); d.dataset.name=n;
     var info=INFO[n], preview=lastPreview(n);
     d.innerHTML='<div class="seal">'+n[0]+'</div><div class="cinfo"><div class="n">'+n+(pinned?'<span class="pinchip">置顶</span>':'')+'<span>'+info.pin+'</span></div><div class="p">'+esc(preview)+'</div></div>'+(n==='瑞秋'?'<div class="dot"></div>':'');
-    d.onclick=function(){ cur=n; renderContacts(); openChat(n); if(window.innerWidth<=760) document.getElementById('chat').classList.add('open'); };
+    d.onclick=function(){ if(window.SFX)try{SFX.play('da');}catch(e){} cur=n; renderContacts(); openChat(n); if(window.innerWidth<=760) document.getElementById('chat').classList.add('open'); };
     listEl.appendChild(d);
   });
 }
@@ -537,6 +538,7 @@ function regen(el,m){
     g.remove();
     var newM={t:'in',x:reply};
     DATA[cur].push(newM);
+    if(window.SFX)try{SFX.play('ding');}catch(e){}
     var ne=addMsgEl(newM,true); bindOps(ne,newM);
     msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
@@ -579,6 +581,7 @@ document.getElementById('sendBtn').onclick=function(){
   var i=document.getElementById('msgInput'), t=i.value.trim(); if(!t) return;
   i.value='';
   var m={t:'out',x:t}; DATA[cur].push(m);
+  if(window.SFX)try{SFX.play('bo');}catch(e){}
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
   /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/1a/1ad1e15d51.js） */
@@ -587,6 +590,7 @@ document.getElementById('sendBtn').onclick=function(){
   MAIL_AI.reply(cur,t).then(function(reply){
     g.remove();
     var rm={t:'in',x:reply}; DATA[cur].push(rm);
+    if(window.SFX)try{SFX.play('ding');}catch(e){}
     var re=addMsgEl(rm,true); bindOps(re,rm);
     msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
@@ -622,13 +626,13 @@ function askConfirm(msg, onYes){
   bar.appendChild(no); bar.appendChild(yes); c.appendChild(bar); ov.appendChild(c); document.body.appendChild(ov);
   ov.onclick=function(e){ if(e.target===ov){ ov.remove(); } };
   no.onclick=function(){ ov.remove(); };
-  yes.onclick=function(){ ov.remove(); onYes(); };
+  yes.onclick=function(){ if(window.SFX)try{SFX.play('pa');}catch(e){} ov.remove(); onYes(); };
 }
  
 /* ═══ 菜单侧栏 ═══ */
 var mside=document.getElementById('mside');
 var movl=document.getElementById('movl');
-document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); mside.classList.toggle('open'); movl.classList.toggle('on', mside.classList.contains('open')); renderPending(); };
+document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); if(window.SFX)try{SFX.play('pa');}catch(e){} mside.classList.toggle('open'); movl.classList.toggle('on', mside.classList.contains('open')); renderPending(); };
 movl.onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
 document.getElementById('sideBack').onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
 /* 点空白处收起侧栏（菜单按钮自身除外）+ 收起B案浮出条 */
@@ -743,6 +747,7 @@ function renderPending(){
 }
 /* ═══ 人物简介浮层 ═══ */
 document.getElementById('avatarBtn').onclick=function(){
+  if(window.SFX)try{SFX.play('pa');}catch(e){}
   var info=INFO[cur];
   setSeal(document.getElementById('pfSeal'),cur);
   document.getElementById('pfName').innerHTML=cur+'<span>'+info.pin+'</span>';
