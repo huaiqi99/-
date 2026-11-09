@@ -1,6 +1,6 @@
 'use strict';
 /* ============================================================
-   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/81/81edc07d36.js v1.0（2026-11-09 定案）
+   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/95/9537ce094c.js v1.0（2026-11-09 定案）
    ============================================================
    架构（罗修.html 同源验证 + 当日连点实测）：
    ① 出声只走 Web Audio，不走 <audio> 标签
@@ -13,7 +13,7 @@
       无声循环 audio + 首次触摸 resume + 切回前台自动重播
 
    接入（每页两步）：
-   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/81/81edc07d36.js"></script>
+   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/95/9537ce094c.js"></script>
    2a. 静态元素加属性即自动绑定（按下即响，触屏零延迟）：
        <button data-sfx="叮">…</button>
        也可写拼音：data-sfx="ding"
@@ -39,7 +39,7 @@
    ============================================================ */
 (function(){
  var LS_KEY='gzd_sfx_mute';
- var SFX=window.SFX={version:'1.1',muted:false};
+ var SFX=window.SFX={version:'1.2',muted:false};
  var AC=null,MG=null,BUF={};
 
  /* ---------- 合成基元（离线/在线 ctx 通用）---------- */
@@ -160,16 +160,20 @@
  });
 
  /* ---------- 播放 ---------- */
+ /* 响度补偿：以「铮」为基准，把各音拉到听感一致
+    （哒/啪原始能量仅为铮的1/3~1/5 且高频短音人耳吃亏，v1.2 补齐） */
+ var LOUD={ding:1.4,zheng:1,da:3.2,pa:3,kacha:2.6,shua:2.2,bo:1.8};
  function play(name){
   var n=norm(name);
   if(!n||SFX.muted)return;
   try{
    var ac=ctx(),buf=BUF[n];
+   var g=ac.createGain();g.gain.value=LOUD[n]||1;g.connect(MG);
    if(buf){
     var s=ac.createBufferSource();
-    s.buffer=buf;s.connect(MG);s.start(0);
+    s.buffer=buf;s.connect(g);s.start(0);
    }else{
-    RECIPES[n](ac,MG);   /* 离线渲染不可用的退路：主ctx直接合成 */
+    RECIPES[n](ac,g);   /* 离线渲染不可用的退路：主ctx直接合成 */
    }
   }catch(e){}
  }
@@ -178,7 +182,7 @@
  try{SFX.muted=localStorage.getItem(LS_KEY)==='1';}catch(e){}
  SFX.toggleMute=function(){
   SFX.muted=!SFX.muted;
-  if(MG)MG.gain.value=SFX.muted?0:.9;
+  if(MG)MG.gain.value=SFX.muted?0:3.5;
   try{localStorage.setItem(LS_KEY,SFX.muted?'1':'0');}catch(e){}
   return SFX.muted;
  };
