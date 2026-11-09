@@ -1,19 +1,20 @@
 'use strict';
 /* ============================================================
-   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/95/9537ce094c.js v1.0（2026-11-09 定案）
+   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/ac/acb54ec006.js v1.3（2026-11-09 定案）
    ============================================================
    架构（罗修.html 同源验证 + 当日连点实测）：
-   ① 出声只走 Web Audio，不走 <audio> 标签
-      → iOS 静音拨片管不到，手势触发的音全绕
+   ① 桌面端出声走 Web Audio；iOS 走「WAV blob + audio 池」
+      → v1.2 实测：iOS 的 Web Audio 会被静音拨片压住，
+        手势触发的 HTMLAudio（老背包页方案）拨片管不到
    ② 每次播放新建 BufferSource → 声音天然重叠
-      → 连点无阻碍，无需音频池
+      → 连点无阻碍，无需音频池（iOS 池深 4，同样无吞声）
    ③ 七音进页面即离线预渲染成 AudioBuffer（零网络、零等待感）
    ④ 主链挂限幅器 → 无论怎么叠都不爆音
    ⑤ iOS 解锁三件套（罗修.html 原样）：
       无声循环 audio + 首次触摸 resume + 切回前台自动重播
 
    接入（每页两步）：
-   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/95/9537ce094c.js"></script>
+   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/ac/acb54ec006.js"></script>
    2a. 静态元素加属性即自动绑定（按下即响，触屏零延迟）：
        <button data-sfx="叮">…</button>
        也可写拼音：data-sfx="ding"
@@ -39,7 +40,7 @@
    ============================================================ */
 (function(){
  var LS_KEY='gzd_sfx_mute';
- var SFX=window.SFX={version:'1.2',muted:false};
+ var SFX=window.SFX={version:'1.3',muted:false};
  var AC=null,MG=null,BUF={};
 
  /* ---------- 合成基元（离线/在线 ctx 通用）---------- */
@@ -122,8 +123,8 @@
    try{
     RECIPES[name](OC,OC.destination);
     var p=OC.startRendering();
-    if(p&&p.then){p.then(function(ab){BUF[name]=ab;res();},function(){res();});}
-    else{OC.oncomplete=function(e){BUF[name]=e.renderedBuffer;res();};}
+    if(p&&p.then){p.then(function(ab){BUF[name]=ab;wavReady(name);res();},function(){res();});}
+    else{OC.oncomplete=function(e){BUF[name]=e.renderedBuffer;wavReady(name);res();};}
    }catch(e){res();}
   });
  }
@@ -159,6 +160,44 @@
   }
  });
 
+ /* ---------- v1.3 iOS 拨片绕过：WAV blob + audio 池 ----------
+    老背包页实测方案：手势触发的 HTMLAudio 播离线 WAV，
+    静音拨片管不到。池深 4 → 连点重叠不吞声。
+    手机端觉得过响/过轻只动 POOL_VOL 一个数 */
+ var POOL_VOL=0.75,POOL_DEEP=4;
+ var POOL={},POOL_IDX={};
+ function bufToWavURL(ab){
+  var sr=ab.sampleRate,d=ab.getChannelData(0),n=d.length;
+  var m=n*2,buf=new ArrayBuffer(44+m),v=new DataView(buf),i;
+  var W=function(o,s){for(i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  W(0,'RIFF');v.setUint32(4,36+m,true);W(8,'WAVEfmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);
+  v.setUint16(34,16,true);W(36,'data');v.setUint32(40,m,true);
+  for(i=0;i<n;i++){var s=Math.max(-1,Math.min(1,d[i]));
+   v.setInt16(44+i*2,s<0?s*32768:s*32767,true);}
+  return URL.createObjectURL(new Blob([buf],{type:'audio/wav'}));
+ }
+ function wavReady(name){
+  if(!IS_IOS||!BUF[name]||POOL[name])return;
+  try{
+   var url=bufToWavURL(BUF[name]),arr=[],k;
+   for(k=0;k<POOL_DEEP;k++){
+    var a=new Audio(url);a.preload='auto';a.volume=POOL_VOL;
+    arr.push(a);
+   }
+   POOL[name]=arr;POOL_IDX[name]=0;
+  }catch(e){}
+ }
+ function poolPlay(n){
+  var arr=POOL[n];if(!arr)return false;
+  var a=arr[POOL_IDX[n]=(POOL_IDX[n]+1)%arr.length];
+  try{a.currentTime=0;}catch(e){}
+  var p=a.play();
+  if(p&&p.catch)p.catch(function(){});
+  return true;
+ }
+
  /* ---------- 播放 ---------- */
  /* 响度补偿：以「铮」为基准，把各音拉到听感一致
     （哒/啪原始能量仅为铮的1/3~1/5 且高频短音人耳吃亏，v1.2 补齐） */
@@ -167,6 +206,8 @@
   var n=norm(name);
   if(!n||SFX.muted)return;
   try{
+   /* iOS：优先 audio 池（绕拨片），池未就绪退回 Web Audio */
+   if(IS_IOS&&poolPlay(n))return;
    var ac=ctx(),buf=BUF[n];
    var g=ac.createGain();g.gain.value=LOUD[n]||1;g.connect(MG);
    if(buf){
