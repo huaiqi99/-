@@ -253,7 +253,6 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
  
 <script src="./通讯AI.js"></script>
 <script src="./sfx.js"></script>
-<script src="./核心.js" data-bgm="音乐1.mp3"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -579,7 +578,7 @@ function lsDetail(){
     ['gzd_qlz_mail_cap150','上限标记'],
     ['gzd_ai_config','AI 接口配置']
   ];
-  var rows=[], other=0, i;
+  var rows=[], other=0, others=[], i;
   try{
     for(i=0;i<KEYS.length;i++){
       var v=localStorage.getItem(KEYS[i][0]);
@@ -588,10 +587,12 @@ function lsDetail(){
     var known={}; KEYS.forEach(function(x){ known[x[0]]=1; });
     for(i=0;i<localStorage.length;i++){
       var k=localStorage.key(i);
-      if(!known[k]) other+=(k.length+(localStorage.getItem(k)||'').length)*2;
+      var b=(k.length+(localStorage.getItem(k)||'').length)*2;
+      if(!known[k]){ other+=b; others.push({key:k,bytes:b}); }
     }
+    others.sort(function(a,b){ return b.bytes-a.bytes; });
   }catch(e){}
-  return { rows:rows, other:other };
+  return { rows:rows, other:other, others:others };
 }
  
 /* ═══ 记忆上限150条（引渡人同款）：超出自动删最旧的活跃讯息（in/out，
@@ -770,8 +771,12 @@ function renderStorageBox(){
   d.rows.forEach(function(r){
     html+='<div style="display:flex;justify-content:space-between"><span>'+r.name+'</span><span>'+(r.exist?kb(r.bytes):'—')+'</span></div>';
   });
-  html+='<div style="display:flex;justify-content:space-between"><span>其他键</span><span>'+kb(d.other)+'</span></div>'
-    +'<button id="lsRefresh" style="margin-top:6px;width:100%;padding:6px 0;background:none;border:1px dashed var(--line);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.15em;cursor:pointer">刷 新</button></div>';
+  /* 其他键按大小降序，展开前5名（千律州之外的页面存档/残留键都能看到） */
+  html+='<div style="display:flex;justify-content:space-between"><span>其他键（'+d.others.length+'个）</span><span>'+kb(d.other)+'</span></div>';
+  d.others.slice(0,5).forEach(function(o){
+    html+='<div style="display:flex;justify-content:space-between;padding-left:10px;opacity:.85"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70%">'+o.key+'</span><span>'+kb(o.bytes)+'</span></div>';
+  });
+  html+='<button id="lsRefresh" style="margin-top:6px;width:100%;padding:6px 0;background:none;border:1px dashed var(--line);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.15em;cursor:pointer">刷 新</button></div>';
   box.innerHTML=html;
   document.getElementById('lsRefresh').onclick=function(e){ e.stopPropagation(); renderStorageBox(); };
 }
