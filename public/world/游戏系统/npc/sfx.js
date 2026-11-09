@@ -1,6 +1,6 @@
 'use strict';
 /* ============================================================
-   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/7e/7e1779f119.js v1.0（2026-11-09 定案）
+   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/81/81edc07d36.js v1.0（2026-11-09 定案）
    ============================================================
    架构（罗修.html 同源验证 + 当日连点实测）：
    ① 出声只走 Web Audio，不走 <audio> 标签
@@ -13,7 +13,7 @@
       无声循环 audio + 首次触摸 resume + 切回前台自动重播
 
    接入（每页两步）：
-   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/7e/7e1779f119.js"></script>
+   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/81/81edc07d36.js"></script>
    2a. 静态元素加属性即自动绑定（按下即响，触屏零延迟）：
        <button data-sfx="叮">…</button>
        也可写拼音：data-sfx="ding"
@@ -39,7 +39,7 @@
    ============================================================ */
 (function(){
  var LS_KEY='gzd_sfx_mute';
- var SFX=window.SFX={version:'1.0',muted:false};
+ var SFX=window.SFX={version:'1.1',muted:false};
  var AC=null,MG=null,BUF={};
 
  /* ---------- 合成基元（离线/在线 ctx 通用）---------- */
@@ -106,7 +106,7 @@
    var cmp=AC.createDynamicsCompressor();
    cmp.threshold.value=-8;cmp.knee.value=4;cmp.ratio.value=4;
    cmp.attack.value=.001;cmp.release.value=.08;
-   MG=AC.createGain();MG.gain.value=SFX.muted?0:.9;
+   MG=AC.createGain();MG.gain.value=SFX.muted?0:3.5;
    MG.connect(cmp);cmp.connect(AC.destination);
   }
   if(AC.state==='suspended')AC.resume();
