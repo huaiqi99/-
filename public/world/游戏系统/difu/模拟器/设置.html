@@ -276,6 +276,35 @@ body{font-family:var(--font-serif);background:var(--bg-body);color:var(--text-pr
     <li>自定义背景图对首页同样生效</li>
   </ul>
 </div>
+
+<!-- ===== 角色头像管理 ===== -->
+<div class="card">
+  <div class="card-title"><span class="sym">◈</span> 角色头像管理</div>
+
+  <div class="status-box info">
+    <span class="status-icon">👤</span>
+    <span class="status-text">
+      <strong>头像状态:</strong><br>
+      <span id="avatarStatus">读取中...</span>
+    </span>
+  </div>
+
+  <div style="margin-top:14px;">
+    <div class="field-label" style="margin-bottom:6px;">林栖梧头像</div>
+    <button class="btn btn-danger" id="avatarClearLin" style="font-size:.75rem;padding:6px 12px;">清除自定义(用默认)</button>
+  </div>
+
+  <div style="margin-top:14px;">
+    <div class="field-label" style="margin-bottom:6px;">罗烬头像</div>
+    <button class="btn btn-danger" id="avatarClearLuo" style="font-size:.75rem;padding:6px 12px;">清除自定义(用默认)</button>
+  </div>
+
+  <ul class="info-list" style="margin-top:14px;">
+    <li>自定义头像在「归终殿·档案」页上传,这里负责清除</li>
+    <li>清除后,档案页头像恢复默认立绘</li>
+    <li>头像原图保存在本地浏览器,清除可释放存储空间</li>
+  </ul>
+</div>
  
 <!-- ===== 传讯符记录管理 ===== -->
 <div class="card">
@@ -486,6 +515,25 @@ document.getElementById('bgClearMobile')?.addEventListener('click',function(){
   localStorage.removeItem('gzd_custom_bg_mobile');
   updateBgStatus();
 });
+
+// ===== 角色头像清除（头像在档案页上传，键名 gzd_avatar_linxiwu / gzd_avatar_luojin） =====
+function updateAvatarStatus(){
+  var lin=localStorage.getItem('gzd_avatar_linxiwu')?'有自定义':'默认';
+  var luo=localStorage.getItem('gzd_avatar_luojin')?'有自定义':'默认';
+  var el=document.getElementById('avatarStatus');
+  if(el) el.innerHTML='林栖梧:'+lin+'<br>罗烬:'+luo;
+}
+function handleAvatarClear(key){
+  localStorage.removeItem(key);
+  updateAvatarStatus();
+}
+document.getElementById('avatarClearLin')?.addEventListener('click',function(){
+  handleAvatarClear('gzd_avatar_linxiwu');
+});
+document.getElementById('avatarClearLuo')?.addEventListener('click',function(){
+  handleAvatarClear('gzd_avatar_luojin');
+});
+updateAvatarStatus();
  
 // ===== 卡片透明度滑块 =====
 (function(){
