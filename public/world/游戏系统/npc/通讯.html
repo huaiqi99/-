@@ -230,6 +230,8 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   <input id="findBox" placeholder="输入关键词，回车查找…">
   <div class="sitem" id="miFind"><span>查找对话</span><span class="arr" id="findArr">—</span></div>
   <div class="sitem" id="miExport"><span>导出聊天记录</span><span class="arr">.md 留档</span></div>
+  <div class="sitem" id="miStorage"><span>本地存储用量</span><span class="arr" id="storageArr">查看</span></div>
+  <div id="storageBox" style="display:none"></div>
   <div class="hint" style="line-height:1.8">◇ 每讯道保留最近 150 条，更早的自动消失（写死的演示对话不计）。想留底请先导出。</div>
   <div class="hint">◇ 来自资料页 · 待添加（联动预留）</div>
   <div id="pendBox"></div>
@@ -249,8 +251,9 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   </div>
 </div>
  
-<script src="./sfx.js"></script>
 <script src="./通讯AI.js"></script>
+<script src="./sfx.js"></script>
+<script src="./核心.js" data-bgm="音乐1.mp3"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -548,7 +551,48 @@ function removeMsg(el,m){
   el.style.transition='.25s'; el.style.opacity='0'; el.style.transform='translateX(14px)';
   setTimeout(function(){ el.remove(); },240); persist(); refreshHint();
 }
-function persist(){ try{ localStorage.setItem('gzd_qlz_mail_data',JSON.stringify(DATA)); }catch(e){} }
+/* 写入失败提示：同一会话只弹一次（__lsWarned 闭包节流，刷新页面重置） */
+var __lsWarned=false;
+function persist(){ try{ localStorage.setItem('gzd_qlz_mail_data',JSON.stringify(DATA)); }catch(e){
+  if(!__lsWarned){ __lsWarned=true;
+    window.toast && window.toast('本地存储写入失败，讯息可能未能保存 —— 可在 ☰ 菜单「本地存储用量」查看明细');
+    var a=document.getElementById('storageArr'); if(a) a.textContent='异常';
+  }
+} }
+
+/* ═══ 本地存储用量（第12项）：lsUsage 总览 / lsDetail 明细，只读不写 ═══ */
+function lsUsage(){
+  var used=0;
+  try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); used+=(k.length+(localStorage.getItem(k)||'').length)*2; } }catch(e){}
+  /* 主流浏览器配额 5MB（UTF-16 双字节计） */
+  var quota=5*1024*1024, pct=Math.min(100,Math.round(used/quota*100));
+  return { used:used, quota:quota, pct:pct,
+    usedKB:(used/1024).toFixed(1), quotaMB:(quota/1048576).toFixed(0),
+    state:(used>=quota?'满':(pct>=90?'高':(pct>=60?'中':'低'))) };
+}
+function lsDetail(){
+  /* 千律州相关键逐项计量，其余键合并为「其他」 */
+  var KEYS=[
+    ['gzd_qlz_mail_data','讯匣聊天记录'],
+    ['gzd_qlz_mail_summary','记忆区摘要'],
+    ['gzd_qlz_mail_roster','名册（置顶/关心/备注）'],
+    ['gzd_qlz_mail_cap150','上限标记'],
+    ['gzd_ai_config','AI 接口配置']
+  ];
+  var rows=[], other=0, i;
+  try{
+    for(i=0;i<KEYS.length;i++){
+      var v=localStorage.getItem(KEYS[i][0]);
+      rows.push({ key:KEYS[i][0], name:KEYS[i][1], bytes:v===null?0:(KEYS[i][0].length+v.length)*2, exist:v!==null });
+    }
+    var known={}; KEYS.forEach(function(x){ known[x[0]]=1; });
+    for(i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(!known[k]) other+=(k.length+(localStorage.getItem(k)||'').length)*2;
+    }
+  }catch(e){}
+  return { rows:rows, other:other };
+}
  
 /* ═══ 记忆上限150条（引渡人同款）：超出自动删最旧的活跃讯息（in/out，
    写死演示对话d:1与note/day不占额、永不被删）。到达上限弹一次朱砂提示 ═══ */
@@ -713,6 +757,29 @@ document.getElementById('miExport').onclick=function(){
   a.download='信匣_'+cur+'_'+new Date().toISOString().slice(0,10)+'.md';
   document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },300);
+};
+/* 本地存储用量：点击展开/收起明细，含刷新按钮（只读，不写任何键） */
+function renderStorageBox(){
+  var box=document.getElementById('storageBox');
+  var u=lsUsage(), d=lsDetail();
+  var kb=function(b){ return b>=1048576?(b/1048576).toFixed(2)+' MB':(b/1024).toFixed(1)+' KB'; };
+  var html='<div style="margin:4px 2px 10px;padding:10px 12px;border:1px dashed var(--line);font-family:var(--mono);font-size:10px;line-height:2;color:var(--dim)">'
+    +'<div style="display:flex;justify-content:space-between"><span>占用 '+u.usedKB+' KB / '+u.quotaMB+' MB</span><span>'+(u.pct>=90?'⚠ ':'')+u.pct+'%</span></div>'
+    +'<div style="height:5px;margin:4px 0 8px;border:1px solid var(--line);position:relative;overflow:hidden">'
+    +'<div style="position:absolute;left:0;top:0;bottom:0;width:'+Math.min(100,u.pct)+'%;background:'+(u.pct>=90?'var(--zhu)':'var(--accent,#9a8c5a)')+'"></div></div>';
+  d.rows.forEach(function(r){
+    html+='<div style="display:flex;justify-content:space-between"><span>'+r.name+'</span><span>'+(r.exist?kb(r.bytes):'—')+'</span></div>';
+  });
+  html+='<div style="display:flex;justify-content:space-between"><span>其他键</span><span>'+kb(d.other)+'</span></div>'
+    +'<button id="lsRefresh" style="margin-top:6px;width:100%;padding:6px 0;background:none;border:1px dashed var(--line);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.15em;cursor:pointer">刷 新</button></div>';
+  box.innerHTML=html;
+  document.getElementById('lsRefresh').onclick=function(e){ e.stopPropagation(); renderStorageBox(); };
+}
+document.getElementById('miStorage').onclick=function(){
+  var box=document.getElementById('storageBox'), arr=document.getElementById('storageArr');
+  var open=box.style.display!=='none';
+  if(open){ box.style.display='none'; arr.textContent='查看'; }
+  else{ renderStorageBox(); box.style.display='block'; arr.textContent='收起'; }
 };
 /* 查找对话：当前讯道关键词过滤 */
 function doFind(){

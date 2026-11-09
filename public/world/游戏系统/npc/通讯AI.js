@@ -573,8 +573,16 @@
   }
   
   /* ── 记忆存取（localStorage，与DATA完全独立）── */
+  var __memWarned=false;  /* 写入失败提示节流：同一会话只弹一次，刷新重置 */
   function loadMemory(){ try{ return JSON.parse(localStorage.getItem(MEM_KEY)||'{}'); }catch(e){ return {}; } }
-  function saveMemory(obj){ try{ localStorage.setItem(MEM_KEY, JSON.stringify(obj)); }catch(e){} }
+  function saveMemory(obj){
+    try{ localStorage.setItem(MEM_KEY, JSON.stringify(obj)); }
+    catch(e){
+      if(!__memWarned){ __memWarned=true;
+        try{ window.toast && window.toast('记忆区写入失败，摘要可能未能保存 —— 建议在 ☰ 菜单查看本地存储用量'); }catch(e2){}
+      }
+    }
+  }
   function getMem(contact){
     var all=loadMemory(), m=all[contact];
     if(!m || typeof m!=='object') return { s:'', n:[], pm:[] };
