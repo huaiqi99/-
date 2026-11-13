@@ -1,6 +1,6 @@
 'use strict';
 /* ============================================================
-   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/4d/4d8af6215f.js v1.4（2026-11-09 定案）
+   千律州 · 全站音效底座 https://sfile.chatglm.cn/workspace/file/05/0511c60b5e.js v1.5（2026-11-13 出声主路切 Web Audio 低延迟）
    ============================================================
    架构（老背包页同源验证 + 当日连点实测）：
    ① 全平台出声走「WAV blob + audio 池」（池深 4，连点不吞声）
@@ -13,7 +13,7 @@
       无声循环 audio + 首次触摸 resume + 切回前台自动重播
 
    接入（每页两步）：
-   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/4d/4d8af6215f.js"></script>
+   1. 页底加一行：<script src="https://sfile.chatglm.cn/workspace/file/05/0511c60b5e.js"></script>
    2a. 静态元素加属性即自动绑定（按下即响，触屏零延迟）：
        <button data-sfx="叮">…</button>
        也可写拼音：data-sfx="ding"
@@ -39,7 +39,7 @@
    ============================================================ */
 (function(){
  var LS_KEY='gzd_sfx_mute';
- var SFX=window.SFX={version:'1.4',muted:false};
+ var SFX=window.SFX={version:'1.5',muted:false};
  var AC=null,MG=null,BUF={};
 
  /* ---------- 合成基元（离线/在线 ctx 通用）---------- */
@@ -99,12 +99,15 @@
   return RECIPES[n]?n:(ALIAS[n]||null);
  }
 
- /* ---------- 主 ctx（含限幅器）---------- */
+ /* ---------- 主 ctx（含限幅器）----------
+    v1.5：限幅器放宽（threshold -8→-2，ratio 4→1.5，knee 4→8）
+    —— v1.2/v1.3「又小又闷」的根因是旧参数把音头瞬态压扁了，
+    出声主路切回 Web Audio（低延迟）后必须保住音头，参数放宽到此 */
  function ctx(){
   if(!AC){
    AC=new (window.AudioContext||window.webkitAudioContext)();
    var cmp=AC.createDynamicsCompressor();
-   cmp.threshold.value=-8;cmp.knee.value=4;cmp.ratio.value=4;
+   cmp.threshold.value=-2;cmp.knee.value=8;cmp.ratio.value=1.5;
    cmp.attack.value=.001;cmp.release.value=.08;
    MG=AC.createGain();MG.gain.value=SFX.muted?0:3.5;
    MG.connect(cmp);cmp.connect(AC.destination);
@@ -217,18 +220,33 @@
  function play(name){
   var n=norm(name);
   if(!n||SFX.muted)return;
-  if(!POOL[n])DIAG.fallback++;   /* 诊断：掉退路计数 */
   try{
-   /* 全平台优先 audio 池（无限幅器压制、零启动延迟），
-      池未就绪才退回 Web Audio */
-   if(poolPlay(n))return;
-   var ac=ctx(),buf=BUF[n];
-   var g=ac.createGain();g.gain.value=LOUD[n]||1;g.connect(MG);
-   if(buf){
-    var s=ac.createBufferSource();
-    s.buffer=buf;s.connect(g);s.start(0);
-   }else{
+   /* v1.5 主路：Web Audio BufferSource（系统级低延迟）
+      池（Audio 元素）降为兜底：仅当主 ctx 尚未解锁时用
+      —— Audio 元素 play() 的启动延迟是系统行为，代码绕不开 */
+   var ac=null;
+   try{ac=ctx();}catch(e){}
+   if(ac&&ac.state==='running'){
+    var g=ac.createGain();g.gain.value=LOUD[n]||1;g.connect(MG);
+    var buf=BUF[n];
+    if(buf){
+     var s=ac.createBufferSource();
+     s.buffer=buf;s.connect(g);s.start(0);
+     return;
+    }
     RECIPES[n](ac,g);   /* 离线渲染不可用的退路：主ctx直接合成 */
+    return;
+   }
+   /* 主路不可用（ctx 未解锁/被禁）→ 走 audio 池兜底 */
+   if(poolPlay(n))return;
+   if(!ac)return;   /* ctx 起不来且池也没有：这声放弃，不报错 */
+   var g2=ac.createGain();g2.gain.value=LOUD[n]||1;g2.connect(MG);
+   var buf2=BUF[n];
+   if(buf2){
+    var s2=ac.createBufferSource();
+    s2.buffer=buf2;s2.connect(g2);s2.start(0);
+   }else{
+    RECIPES[n](ac,g2);   /* 离线渲染不可用的退路：主ctx直接合成 */
    }
   }catch(e){}
  }
@@ -274,17 +292,4 @@
  /* ---------- 启动：七音预渲染 ---------- */
  var NAMES=['ding','zheng','da','pa','kacha','shua','bo'];
  for(var k=0;k<NAMES.length;k++)render(NAMES[k]);
-
- /* ---------- 诊断角标（临时版专用，定位池为何没建成）---------- */
- var DIAG={renderFail:0,bufOK:0,poolOK:0,fallback:0,t0:Date.now()};
- SFX.diag=DIAG;
- setTimeout(function(){
-  NAMES.forEach(function(n){if(BUF[n])DIAG.bufOK++;if(POOL[n])DIAG.poolOK++;});
-  var d=document.createElement('div');
-  d.style.cssText='position:fixed;right:6px;bottom:6px;z-index:99999;font:11px monospace;'
-   +'padding:4px 8px;border-radius:6px;color:#fff;pointer-events:none;max-width:46vw;line-height:1.5;'
-   +'background:'+(DIAG.poolOK===7?'rgba(46,139,60,.9)':'rgba(180,40,40,.95)');
-  d.textContent='SFX池 '+DIAG.poolOK+'/7 · BUF'+DIAG.bufOK+'/7 · 退路'+DIAG.fallback+'次';
-  document.body.appendChild(d);
- },3500);
 })();
