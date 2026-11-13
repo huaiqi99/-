@@ -217,6 +217,7 @@
  function play(name){
   var n=norm(name);
   if(!n||SFX.muted)return;
+  if(!POOL[n])DIAG.fallback++;   /* 诊断：掉退路计数 */
   try{
    /* 全平台优先 audio 池（无限幅器压制、零启动延迟），
       池未就绪才退回 Web Audio */
@@ -273,4 +274,17 @@
  /* ---------- 启动：七音预渲染 ---------- */
  var NAMES=['ding','zheng','da','pa','kacha','shua','bo'];
  for(var k=0;k<NAMES.length;k++)render(NAMES[k]);
+
+ /* ---------- 诊断角标（临时版专用，定位池为何没建成）---------- */
+ var DIAG={renderFail:0,bufOK:0,poolOK:0,fallback:0,t0:Date.now()};
+ SFX.diag=DIAG;
+ setTimeout(function(){
+  NAMES.forEach(function(n){if(BUF[n])DIAG.bufOK++;if(POOL[n])DIAG.poolOK++;});
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;right:6px;bottom:6px;z-index:99999;font:11px monospace;'
+   +'padding:4px 8px;border-radius:6px;color:#fff;pointer-events:none;max-width:46vw;line-height:1.5;'
+   +'background:'+(DIAG.poolOK===7?'rgba(46,139,60,.9)':'rgba(180,40,40,.95)');
+  d.textContent='SFX池 '+DIAG.poolOK+'/7 · BUF'+DIAG.bufOK+'/7 · 退路'+DIAG.fallback+'次';
+  document.body.appendChild(d);
+ },3500);
 })();
