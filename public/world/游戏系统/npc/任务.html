@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>千律州 · 任务归档</title>
 <style>
-/* ═══ 任务归档 任务.html —— C行军线版（定稿）
-   骨架：国家组夹实线 → 章节点线压缩段（默认收起）→ 任务挂主干，虚线岔支线，红断头标失败。
-   表头照资料.html；配色资料.html 同款日/夜双档；尺寸基准：框架1200px、外框2px、内线1.5px、页距14px。 ═══ */
+/* ═══ 任务归档 任务.html —— 单列 · 章节点开即全部展开
+   去红底，只用细虚线/文字色/节点形撑层次；字号整体加大。
+   配色日/夜双档同全站。 ═══ */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -23,20 +23,18 @@ body.night{
   --shadow:6px 6px 0 rgba(10,20,35,.45);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;}   /* 严禁横向滑出主页 */
+html,body{overflow-x:hidden;}
 body{font-family:var(--serif);color:var(--ink);min-height:100vh;background:var(--bg);transition:background .4s;}
-/* 最底层：135°红蓝渐变垫全页（资料页同款） */
 body::before{content:'';position:fixed;inset:0;z-index:0;
   background:linear-gradient(135deg,rgba(85,15,16,.13) 0%,rgba(85,15,16,.05) 30%,rgba(34,44,110,.05) 65%,rgba(34,44,110,.15) 100%);}
-body.night::before{background:linear-gradient(135deg,rgba(185,74,68,.12) 0%,rgba(10,20,35,.0) 40%,rgba(11,63,107,.45) 100%);}
-/* 格子层叠在渐变上（通讯页同款配方） */
+body.night::before{background:linear-gradient(135deg,rgba(185,74,68,.12) 0%,rgba(10,20,35,0) 40%,rgba(11,63,107,.45) 100%);}
 body::after{content:'';position:fixed;inset:0;z-index:0;
   background-image:linear-gradient(var(--gc) 1px,transparent 1px),linear-gradient(90deg,var(--gc) 1px,transparent 1px),
     linear-gradient(var(--gc2) 1px,transparent 1px),linear-gradient(90deg,var(--gc2) 1px,transparent 1px);
   background-size:117px 117px,117px 117px,26px 26px,26px 26px;}
 .page{position:relative;z-index:2;padding:14px;height:100vh;height:100dvh;display:flex;flex-direction:column;}
 
-/* ── 主卡（全页唯一2px框） ── */
+/* ── 主卡 ── */
 .frame{max-width:1200px;width:100%;margin:0 auto;background:var(--card);border:2px solid var(--klein);box-shadow:var(--shadow);
   flex:1;min-height:0;display:flex;flex-direction:column;}
 .topbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px dashed var(--burg);flex:none;}
@@ -46,81 +44,84 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 .menubtn{flex:none;width:32px;height:32px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:13px;cursor:pointer;padding:0;line-height:1;}
 .menubtn:hover{border-color:var(--burg);color:var(--burg);}
 
-/* ── 主体：行军线列（单列直排，内部滚动） ── */
-.show{flex:1;min-width:0;min-height:0;overflow-y:auto;padding:14px 18px 18px;scrollbar-width:thin;}
-.showcap{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);margin-bottom:10px;}
-.note{border-left:3px solid var(--klein);padding:3px 10px;font-size:11px;color:var(--mut);margin-bottom:6px;}
+/* ── 主体：单列行军线 ── */
+.show{flex:1;min-width:0;min-height:0;overflow-y:auto;padding:16px 22px 20px;scrollbar-width:thin;}
+.showcap{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--mut);margin-bottom:10px;}
+.note{border-left:3px solid var(--klein);padding:4px 12px;font-size:12px;color:var(--mut);margin-bottom:10px;}
 
-/* 国家组：名字夹实线 */
-.ngt{display:flex;align-items:center;gap:12px;margin:16px 0 6px;}
-.ngt::before,.ngt::after{content:'';flex:1;border-top:2px solid var(--klein);}
-.ngt b{font-size:14px;letter-spacing:5px;color:var(--ink);white-space:nowrap;}
-.ngt:first-of-type{margin-top:8px;}
+/* 国家组签 */
+.ngt{display:flex;align-items:center;gap:10px;margin:24px 0 14px;}
+.ngt:first-of-type{margin-top:6px;}
+.ngt::before{content:'';width:8px;height:8px;background:var(--zhu);flex:none;transform:rotate(45deg);}
+.ngt b{font-size:16px;letter-spacing:5px;color:var(--ink);white-space:nowrap;}
+.ngt::after{content:'';flex:1;border-top:1.5px solid var(--hair);}
 
-/* 章头：点线压缩段（整行热区，默认收起） */
-.ch{margin-bottom:4px;}
-.chhead{position:relative;display:flex;align-items:baseline;gap:12px;padding:14px 6px 12px;cursor:pointer;user-select:none;-webkit-user-select:none;}
-.chhead::after{content:'';position:absolute;left:0;right:0;top:60%;border-top:4px dashed var(--hair);transition:border-color .2s;}
-.chhead .cn{position:relative;z-index:1;background:var(--card);font-size:14px;letter-spacing:1px;font-weight:bold;padding-right:8px;white-space:nowrap;}
-.chhead .meta{position:relative;z-index:1;background:var(--card);font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--mut);padding-right:8px;white-space:nowrap;}
-.chhead .curled{position:relative;z-index:1;background:var(--card);width:8px;height:8px;flex:none;align-self:center;background:var(--burg);border-radius:50%;animation:breath 2.4s ease-in-out infinite;margin-right:-4px;}
+/* 章节卡：细边框，无底色 */
+.ch{margin:0 0 12px;border:1.5px solid var(--hair);background:var(--card);transition:border-color .2s;}
+.ch.cur{border-color:var(--zhu);}
+.chhead{position:relative;display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+.ch.open .chhead{border-bottom:1.5px dashed var(--hair);}
+.chhead .cn{font-size:16px;letter-spacing:1px;font-weight:bold;white-space:nowrap;transition:color .15s;}
+.chhead .meta{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--mut);white-space:nowrap;}
+.chhead .curled{width:9px;height:9px;flex:none;background:var(--zhu);border-radius:50%;animation:breath 2.4s ease-in-out infinite;}
 @keyframes breath{0%,100%{opacity:.3}50%{opacity:1}}
-.chhead .ar{position:relative;z-index:1;background:var(--card);margin-left:auto;font-size:12px;color:var(--klein);transition:transform .25s;padding-left:8px;flex:none;}
-.chhead:hover::after{border-color:var(--burg);}
+.chhead .ar{margin-left:auto;font-size:14px;color:var(--klein);transition:transform .25s,color .15s;flex:none;padding-left:8px;}
+.chhead:hover .cn{color:var(--burg);}
 .chhead:hover .ar{color:var(--burg);}
 .ch.open .chhead .ar{transform:rotate(90deg);}
 
-/* 章展开体：任务行挂主干 */
-.chbody{display:none;padding:0 0 8px;}
+/* 章展开体 */
+.chbody{display:none;padding:4px 0 8px;}
 .ch.open .chbody{display:block;}
 
-.qrow{display:flex;opacity:0;transform:translateY(6px);}
+.qrow{display:flex;opacity:0;transform:translateY(6px);padding:0 16px;}
 .ch.on .qrow{opacity:1;transform:none;transition:opacity .4s ease,transform .4s ease;}
-.qrow .rail{width:26px;flex:none;display:flex;flex-direction:column;align-items:center;align-self:stretch;}
-.qrow .stem{flex:1;width:3px;background:var(--klein);}
-.qrow .nd{width:10px;height:10px;border:3px solid var(--klein);border-radius:50%;background:var(--card);flex:none;margin:2px 0;}
-.qrow .rail-l{flex:1;width:3px;background:var(--klein);}
+.qrow .rail{width:22px;flex:none;display:flex;flex-direction:column;align-items:center;align-self:stretch;}
+.qrow .stem{flex:1;width:2px;background:var(--hair);}
+.qrow .nd{width:10px;height:10px;border:2.5px solid var(--klein);border-radius:50%;background:var(--card);flex:none;margin:5px 0;}
 
 /* 类型节点形 */
-.qforce .nd{width:14px;height:14px;background:var(--klein);border:none;margin:0;}
-.qside .nd{width:8px;height:8px;background:var(--klein);border:none;}
-.qtrig .nd{width:9px;height:9px;border-radius:0;transform:rotate(45deg);margin:1px 0;}
-.qurgent .nd{width:0;height:0;border:7px solid transparent;border-bottom:13px solid var(--burg);border-top:none;margin:1px 0;}
-.qfail .nd{width:8px;height:8px;background:var(--burg);border:none;}
-.qtrans .nd{width:10px;height:10px;border:2.5px dashed var(--klein);background:transparent;border-radius:50%;}
+.qforce .nd{width:14px;height:14px;background:var(--burg);border:none;margin:4px 0;}
+.qside .nd{width:9px;height:9px;background:var(--mut);border:none;margin:6px 0;}
+.qtrig .nd{width:10px;height:10px;border:2.5px solid var(--zhu);border-radius:0;transform:rotate(45deg);background:var(--card);margin:5px 0;}
+.qurgent .nd{width:0;height:0;border:7px solid transparent;border-bottom:12px solid var(--burg);border-top:none;margin:3px 0;background:none;}
+.qfail .nd{width:10px;height:10px;background:var(--burg);border:none;margin:6px 0;}
+.qtrans .nd{width:12px;height:12px;border:2px dashed var(--klein);background:transparent;border-radius:50%;margin:5px 0;}
 
-/* 岔线：支线虚线右岔 / 失败红粗断头岔出 */
-.fork{width:14px;flex:none;align-self:flex-start;margin-top:8px;}
-.qside .fork,.qtransfork{border-top:2px dashed var(--klein);}
+/* 岔线 */
+.fork{width:14px;flex:none;align-self:flex-start;margin-top:13px;}
+.qside .fork{border-top:2px dashed var(--mut);}
 .qfail .fork{border-top:3px solid var(--burg);}
 
 /* 任务内容列 */
-.qwrap{flex:1;min-width:0;padding:0 0 12px 10px;}
-.qside .qwrap{margin-left:-1px;border-left:2px dashed var(--klein);padding-left:9px;}
-.qfail .qwrap{margin-left:-1px;border-left:3px solid var(--burg);padding-left:9px;}
-.qtrans .qwrap{border:1.5px dashed var(--klein);padding:8px 12px 10px;margin:0 0 12px;}
-.qline{cursor:pointer;padding:2px 0;user-select:none;-webkit-user-select:none;}
-.qline b{font-size:13px;transition:color .15s;}
-.qline:hover b{color:var(--burg);}
-.qline .tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);margin-left:8px;white-space:nowrap;}
-.qline .miss{font-size:10px;color:var(--mut);font-style:italic;}
-.qline .unk{font-size:10px;color:var(--burg);border-bottom:1px dotted var(--burg);}
+.qwrap{flex:1;min-width:0;padding:11px 0 14px 12px;border-bottom:1.5px dashed var(--hair);}
+.chbody .qrow:last-child .qwrap{border-bottom:none;}
+.qside .qwrap{border-left:2px dashed var(--mut);padding-left:12px;}
+.qtrans .qwrap{border:1.5px dashed var(--klein);padding:11px 14px 13px;margin:4px 0 10px;}
+.qline{padding:1px 0;display:flex;align-items:baseline;flex-wrap:wrap;gap:8px;}
+.qline b{font-size:15px;}
+.qline .tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--mut);white-space:nowrap;padding:1px 7px;border:1px solid currentColor;}
+.qforce .tag,.qurgent .tag{color:var(--burg);}
+.qmain .tag{color:var(--klein);}
+.qside .tag{color:var(--mut);}
+.qtrig .tag{color:var(--zhu);}
+.qfail .tag{color:var(--burg);}
+.qtrans .tag{color:var(--klein);}
+.qline .miss{font-size:11px;color:var(--mut);font-style:italic;}
+.qline .unk{font-size:11px;color:var(--burg);border-bottom:1px dotted var(--burg);}
 .qfail .qline b{text-decoration:line-through;color:var(--burg);}
-.fstamp{display:inline-block;border:2px solid var(--burg);color:var(--burg);font-size:9px;letter-spacing:2px;padding:0 5px;transform:rotate(-5deg);margin-left:7px;background:var(--card);white-space:nowrap;}
-.timer{font-family:var(--mono);font-size:10px;background:var(--burg);color:#F0EFEB;padding:1px 7px;letter-spacing:1px;margin-left:8px;white-space:nowrap;}
-.timer i{font-style:normal;font-size:8px;opacity:.85;margin-left:4px;}
-.brk{font-family:var(--mono);font-size:9px;color:var(--burg);letter-spacing:1px;margin-top:10px;}
-.brk::before{content:'';display:block;width:52%;border-top:3px solid var(--burg);margin-bottom:6px;}
+.fstamp{display:inline-block;border:1.5px solid var(--burg);color:var(--burg);font-size:10px;letter-spacing:2px;padding:0 6px;transform:rotate(-5deg);white-space:nowrap;}
+.timer{font-family:var(--mono);font-size:11px;background:var(--burg);color:#F0EFEB;padding:1px 8px;letter-spacing:1px;white-space:nowrap;}
+.timer i{font-style:normal;font-size:9px;opacity:.85;margin-left:4px;}
 
-/* 任务详情：原文全引（手风琴） */
-.qdetail{max-height:0;overflow:hidden;transition:max-height .45s ease;}
-.qrow.opx .qdetail{max-height:1200px;}
-.qdetail .box{border-left:2px solid var(--hair);margin:9px 0 4px;padding:6px 0 6px 12px;}
-.qdetail p{font-size:13.5px;line-height:2.0;color:var(--ink);}
-.qdetail p em{font-style:normal;font-family:var(--mono);font-size:11.5px;letter-spacing:2px;color:var(--zhu);display:block;margin-bottom:2px;}
-.qdetail p.nolabel{color:var(--mut);}
+/* 任务详情：直接展开，无底色，上下虚线夹 */
+.qdetail{margin:10px 0 2px;}
+.qdetail p{font-size:14.5px;line-height:2.0;color:var(--ink);padding:9px 0;border-bottom:1px dashed var(--hair);}
+.qdetail p:first-child{border-top:1px dashed var(--hair);}
+.qdetail p em{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;color:var(--zhu);display:block;margin-bottom:3px;}
+.brk{font-family:var(--mono);font-size:10px;color:var(--burg);letter-spacing:1px;margin-top:12px;padding-top:10px;border-top:1.5px solid var(--burg);}
 
-/* 失败任务首次展开：红闪一帧+抖动一次 */
+/* 失败任务首次展开：红闪+抖动一次 */
 @keyframes qshake{0%{background:rgba(85,15,16,.14)}
   15%{background:rgba(85,15,16,.07);transform:translateX(-3px)}
   35%{transform:translateX(3px)}55%{transform:translateX(-2px)}
@@ -133,18 +134,18 @@ body.night .qrow.boom{animation-name:qshaken;}
 .qrow.boom{animation:qshake .55s ease 1;}
 
 /* 图例 + 尾线 */
-.legend{margin-top:14px;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);line-height:2.2;border-top:1.5px dashed var(--hair);padding-top:10px;}
+.legend{margin-top:18px;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--mut);line-height:2.2;border-top:1.5px dashed var(--hair);padding-top:12px;}
 .legend b{color:var(--ink);font-weight:normal;}
-.archline{display:flex;align-items:center;gap:10px;margin-top:14px;
-  font-family:var(--mono);font-size:8px;letter-spacing:3px;color:var(--mut);white-space:nowrap;}
+.archline{display:flex;align-items:center;gap:10px;margin-top:16px;
+  font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--mut);white-space:nowrap;}
 .archline::before,.archline::after{content:'';flex:1;border-top:1.5px dashed var(--hair);}
 
-/* ── ☰ 菜单侧栏（资料页同款） ── */
+/* ── ☰ 菜单侧栏 ── */
 .movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;display:none;}
 .movl.on{display:block;}
 .mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;background:var(--card);
   height:100vh;height:100dvh;z-index:41;transition:right .28s ease;
-  padding:16px 16px 20px;overflow-y:auto;}
+  padding:16px 16px 20px;overflow-y:auto;border-left:2px solid var(--klein);}
 .mside.open{right:0;}
 .mbox{padding:0 0 6px;}
 .sitem{display:flex;justify-content:space-between;align-items:center;padding:11px 2px;border-bottom:1.5px dashed var(--hair);
@@ -158,28 +159,34 @@ body.night .qrow.boom{animation-name:qshaken;}
 .sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--mut);}
 .sortrow{display:flex;gap:8px;margin-top:8px;}
 .sortbtn{flex:1;border:1.5px solid var(--klein);background:transparent;color:var(--ink);
-  font-family:var(--serif);font-size:12px;padding:7px 0;cursor:pointer;}
-.sortbtn.on{border-color:var(--burg);background:var(--gc);color:var(--burg);font-weight:bold;}
+  font-family:var(--serif);font-size:12px;padding:8px 0;cursor:pointer;}
+.sortbtn:hover{border-color:var(--burg);color:var(--burg);}
 .sortnote{font-size:9px;color:var(--mut);margin-top:6px;line-height:1.8;}
 
 /* ── 手机端 ── */
 @media(max-width:760px){
   .page{padding:0;height:auto;min-height:100dvh;}
   .frame{border-left:none;border-right:none;box-shadow:none;flex:none;min-height:100dvh;height:auto;}
-  .show{overflow:visible;flex:none;padding:12px 12px 16px;}
+  .show{overflow:visible;flex:none;padding:12px 10px 16px;}
   .topbar{gap:8px;padding:10px 12px;}
   .title{font-size:13px;letter-spacing:1px;}
   .chip{font-size:8px;padding:3px 6px;letter-spacing:1px;}
   .menubtn{width:28px;height:28px;font-size:11px;}
-  .qwrap{padding-bottom:10px;}
-  .qdetail p{font-size:13px;line-height:1.9;}
-  .qdetail p em{font-size:11px;}
+  .ngt{margin:20px 0 12px;}
+  .ngt b{font-size:15px;letter-spacing:4px;}
+  .chhead{padding:12px 12px;flex-wrap:wrap;gap:6px 10px;}
+  .chhead .cn{font-size:15px;}
+  .chhead .meta{font-size:9px;}
+  .qrow{padding:0 12px;}
+  .qwrap{padding:10px 0 12px 10px;}
+  .qline b{font-size:14.5px;}
+  .qdetail p{font-size:14px;line-height:1.95;}
+  .qdetail p em{font-size:10.5px;}
 }
 @media (prefers-reduced-motion:reduce){
   .chhead .curled{animation:none;}
   .qrow.boom{animation:none;}
   .ch.on .qrow{transition:none;}
-  .qdetail{transition:none;}
 }
 </style>
 </head>
@@ -212,11 +219,12 @@ body.night .qrow.boom{animation-name:qshaken;}
     <button class="sortbtn" id="exAll" type="button">全部展开</button>
     <button class="sortbtn" id="coAll" type="button">全部收起</button>
   </div>
-  <div class="sortnote">默认全部收起。点击章节行名展开该章行军线；点击任务行展开原文全引。</div>
+  <div class="sortnote">默认全部收起。点章节行展开该章——任务与原文全引一并直接展开，无需逐条点。</div>
  </div>
 </aside>
 
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
+<script src="./sfx.js"></script>
 <script>
 (function(){
 'use strict';
@@ -347,9 +355,11 @@ var QUESTS=[
 var K_THEME='theme';
 var listEl=document.getElementById('questList');
 
-/* ── 渲染 ── */
+/* ── 单条任务 DOM ── */
 function buildTask(q){
-  var cls='qrow q'+q.t;
+  var el=document.createElement('div');
+  el.className='qrow q'+q.t;
+  if(q.t==='fail') el.setAttribute('data-fail','1');
   var fork=(q.t==='side'||q.t==='fail')?'<i class="fork"></i>':'';
   var line='<div class="qline"><b>'+q.n+'</b><span class="tag">'+q.tag+'</span>';
   if(q.t==='fail'){line+='<span class="fstamp">失败</span>';}
@@ -357,37 +367,42 @@ function buildTask(q){
   if(q.miss){line+='<span class="miss">　※ 内容栏缺失</span>';}
   if(q.unk){line+='<span class="unk"> 奖励：未知</span>';}
   line+='</div>';
-  var det='<div class="qdetail"><div class="box">';
+  /* 详情直接展开：不再手风琴，章节打开即全部显示 */
+  var det='<div class="qdetail">';
   q.d.forEach(function(p){
     det+='<p><em>［'+(p[0]||'发布')+'］</em>'+p[1]+'</p>';
   });
-  det+='</div></div>';
+  det+='</div>';
   if(q.t==='fail'){det+='<div class="brk">╳ 岔路至此断裂 · 主线不可逆偏转</div>';}
-  return '<div class="'+cls+'" data-fail="'+(q.t==='fail'?'1':'')+'">'
-    +'<div class="rail"><i class="stem"></i><span class="nd"></span><i class="stem"></i></div>'
-    +fork+'<div class="qwrap">'+line+det+'</div></div>';
+  el.innerHTML='<div class="rail"><i class="stem"></i><span class="nd"></span><i class="stem"></i></div>'
+    +fork+'<div class="qwrap">'+line+det+'</div>';
+  return el;
 }
+
 function build(){
-  var h='';
+  listEl.innerHTML='';
   QUESTS.forEach(function(nat){
-    h+='<div class="ngt"><b>'+nat.nation.split('').join(' ')+'</b></div>';
+    var ng=document.createElement('div');
+    ng.className='ngt';
+    ng.innerHTML='<b>'+nat.nation.split('').join(' ')+'</b>';
+    listEl.appendChild(ng);
     nat.chapters.forEach(function(ch){
-      h+='<div class="ch'+(ch.cur?' cur':'')+'" id="ch-'+ch.no+'">'
-        +'<div class="chhead" role="button" tabindex="0" aria-expanded="false">'
+      var chEl=document.createElement('div');
+      chEl.className='ch'+(ch.cur?' cur':'');
+      chEl.id='ch-'+ch.no;
+      chEl.innerHTML='<div class="chhead" role="button" tabindex="0" aria-expanded="false">'
         +(ch.cur?'<span class="curled"></span>':'')
         +'<span class="cn">'+ch.title+'</span>'
         +'<span class="meta">'+ch.no+' · '+ch.meta+'</span>'
-        +'<span class="ar">▸</span></div><div class="chbody">';
-      ch.tasks.forEach(function(q){h+=buildTask(q);});
-      h+='</div></div>';
+        +'<span class="ar">▸</span></div><div class="chbody"></div>';
+      var body=chEl.querySelector('.chbody');
+      ch.tasks.forEach(function(q){ body.appendChild(buildTask(q)); });
+      listEl.appendChild(chEl);
     });
   });
-  listEl.innerHTML=h;
-  /* 逐行入场延迟（行军线生长感） */
-  listEl.querySelectorAll('.chbody .qrow').forEach(function(r){});
 }
 
-/* ── 章节展开/收起：点线立起，主干生长 ── */
+/* ── 章节展开/收起：点开即全部展开（任务+详情一次到位） ── */
 function toggleCh(ch){
   var body=ch.querySelector('.chbody');
   var head=ch.querySelector('.chhead');
@@ -395,40 +410,42 @@ function toggleCh(ch){
   if(ch.classList.contains('open')){
     ch.classList.remove('open','on');
     head.setAttribute('aria-expanded','false');
-    body.querySelectorAll('.qrow').forEach(function(r){r.style.transitionDelay='';r.classList.remove('opx');});
+    body.querySelectorAll('.qrow').forEach(function(r){
+      r.style.transitionDelay='';
+    });
   }else{
     ch.classList.add('open');
     head.setAttribute('aria-expanded','true');
-    /* 任务详情默认全展开：不用逐条点 */
     body.querySelectorAll('.qrow').forEach(function(r,i){
       r.style.transitionDelay=(60+i*55)+'ms';
-      r.classList.add('opx');
     });
     requestAnimationFrame(function(){requestAnimationFrame(function(){
       ch.classList.add('on');
-      /* 失败任务首次展开：红闪+抖动一次 */
       body.querySelectorAll('.qrow[data-fail="1"]').forEach(function(r){
         if(!r.classList.contains('boom')){setTimeout(function(){r.classList.add('boom');},380);}
       });
     });});
   }
 }
-/* ── 任务详情展开/收起（原文全引） ── */
-function toggleQ(row){
-  row.classList.toggle('opx');
-}
 
+/* ── 初始化 ── */
 build();
+
+/* ── 点击事件：只有章节头可点（任务行不再需要点） ── */
 listEl.addEventListener('click',function(e){
   var head=e.target.closest('.chhead');
-  if(head){toggleCh(head.parentElement);return;}
-  var line=e.target.closest('.qline');
-  if(line){toggleQ(line.closest('.qrow'));}
+  if(head){
+    if(window.SFX)try{SFX.play('da');}catch(err){}
+    toggleCh(head.parentElement);
+  }
 });
 listEl.addEventListener('keydown',function(e){
   if(e.key!=='Enter'&&e.key!==' ')return;
   var head=e.target.closest('.chhead');
-  if(head){e.preventDefault();toggleCh(head.parentElement);}
+  if(head){ e.preventDefault();
+    if(window.SFX)try{SFX.play('da');}catch(err){}
+    toggleCh(head.parentElement);
+  }
 });
 
 /* ── ☰ 菜单 ── */
@@ -439,10 +456,9 @@ function toggleMenu(on){
   mSide.classList.toggle('open',on);
   mOvl.classList.toggle('on',on);
 }
-if(mBtn)mBtn.onclick=function(){toggleMenu();};
-if(mOvl)mOvl.onclick=function(){toggleMenu(false);};
+if(mBtn)mBtn.onclick=function(){ if(window.SFX)try{SFX.play('pa');}catch(e){} toggleMenu(); };
+if(mOvl)mOvl.onclick=function(){ toggleMenu(false); };
 
-/* 展开/收起全部（菜单） */
 document.getElementById('exAll').onclick=function(){
   listEl.querySelectorAll('.ch').forEach(function(ch){
     if(!ch.classList.contains('open'))toggleCh(ch);
@@ -451,14 +467,13 @@ document.getElementById('exAll').onclick=function(){
 };
 document.getElementById('coAll').onclick=function(){
   listEl.querySelectorAll('.ch.open').forEach(function(ch){toggleCh(ch);});
-  listEl.querySelectorAll('.qrow.opx').forEach(function(r){r.classList.remove('opx');});
   toggleMenu(false);
 };
 
-/* 返回系统页（照资料页） */
+/* 返回系统页（背包页无音效，保持一致） */
 document.getElementById('miBack').onclick=function(){location.href='./系统备份.html';};
 
-/* ── 日夜：公共键 theme（{value:'light'|'dark'}），与全站一致 ── */
+/* ── 日夜：公共键 theme；音效照背包页用 pa ── */
 function applyTheme(){
   var dark=false;
   try{var r=localStorage.getItem(K_THEME); if(r){var p=JSON.parse(r); if(p&&p.value==='dark')dark=true;}}catch(e){}
@@ -466,6 +481,7 @@ function applyTheme(){
   return dark;
 }
 document.getElementById('miNight').onclick=function(){
+  if(window.SFX)try{SFX.play('pa');}catch(e){}
   var dark=!document.body.classList.contains('night');
   try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
   applyTheme();
