@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/1a/1ad1e15d51.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./通讯AI.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -76,7 +76,8 @@ body.night .contact.on{background:rgba(42,44,63,.08)}
 /* ── 讯道 ── */
 #chat{flex:1;min-width:0}
 .chead{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:2.5px dashed var(--hair)}
-.chead .back{border:none;background:none;font-size:13px;letter-spacing:.1em;color:var(--klein);cursor:pointer;padding:4px 6px;white-space:nowrap}
+/* 顶栏返回：桌面隐藏（名册与讯道并排，此按钮冗余）；手机端由 media query 放回 */
+.chead .back{display:none;border:none;background:none;font-size:13px;letter-spacing:.1em;color:var(--klein);cursor:pointer;padding:4px 6px;white-space:nowrap}
 .chead .seal{cursor:pointer;width:40px;height:40px;font-size:17px}
 .chead .seal:hover{background:rgba(168,68,62,.08)}
 .who{flex:1;min-width:0}
@@ -105,7 +106,6 @@ body.night .contact.on{background:rgba(42,44,63,.08)}
 .mu .bub .bl{margin:0 0 4px}
 .mu .bub .bl:last-child{margin-bottom:0}
 .mu.in .bub{border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12)}
-.mu.night-in{}
 body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
 .mu.out .bub{background:var(--klein);color:#F0EFEB;border-color:var(--klein);box-shadow:3px 3px 0 rgba(85,15,16,.18)}
 .mu.out .bub::after{content:"";position:absolute;left:0;top:0;border-style:solid;border-width:13px 13px 0 0;border-color:var(--zhu) transparent transparent transparent}
@@ -153,6 +153,9 @@ textarea#msgInput{height:37px}
 .sitem:hover{color:var(--klein)}
 .sitem .arr{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mut)}
 .sitem.danger{color:var(--zhu)}
+/* 菜单内返回系统页：背包页同款描边按钮 */
+.sitem.miBack{border:1.5px solid var(--klein);margin:8px 0 4px;padding:9px 12px;color:var(--klein);background:transparent;width:100%;font-family:inherit;font-size:13px;letter-spacing:.08em;cursor:pointer}
+.sitem.miBack:hover{background:var(--klein);color:#F0EFEB}
 #findBox{margin:8px 0;padding:8px 10px;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-family:inherit;font-size:12px;width:100%}
 #mside .hint{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:var(--mut);margin:8px 0 2px}
 .sitem .plus{border:1.5px solid var(--klein);background:transparent;color:var(--klein);font-size:11px;padding:2px 9px;cursor:pointer}
@@ -220,6 +223,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
 <aside id="mside">
   <div class="st">信 匣 · MENU</div>
   <div class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></div>
+  <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
   <div class="sitem" id="miPin"><span>置顶</span><span class="arr" id="pinArr">—</span></div>
   <div class="sitem" id="miCare"><span>特别关心</span><span class="arr" id="careArr">—</span></div>
   <div class="sitem" id="miNote"><span>备注</span><span class="arr" id="noteArr">编辑</span></div>
@@ -235,7 +239,6 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
   <div class="hint" style="line-height:1.8">◇ 每讯道保留最近 150 条，更早的自动消失（写死的演示对话不计）。想留底请先导出。</div>
   <div class="hint">◇ 来自资料页 · 待添加（联动预留）</div>
   <div id="pendBox"></div>
-  <button class="backbtn" id="sideBack">◂ 收起</button>
 </aside>
  
 <!-- 侧栏暗罩 -->
@@ -501,12 +504,6 @@ function bindOps(el,m){
   el.querySelectorAll('.r').forEach(function(b){ b.onclick=function(ev){ ev.stopPropagation(); regen(el,m); }; });
   el.querySelectorAll('.del').forEach(function(b){ b.onclick=function(ev){ ev.stopPropagation(); removeMsg(el,m); refreshHint(); }; });
 }
-function msgIndex(el){ /* 该消息在 DATA[cur] 中的位置（按DOM顺序） */
-  var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu');});
-  var i=kids.indexOf(el); var c=0;
-  for(var k=0;k<(DATA[cur]||[]).length;k++){ var m=DATA[cur][k]; if(m.t==='in'||m.t==='out'){ if(c===i) return k; c++; } }
-  return -1;
-}
 function startEdit(el,m){
   if(el.dataset.editing) return; el.dataset.editing='1';
   var bub=el.querySelector('.bub'), old=m.x;
@@ -629,7 +626,7 @@ document.getElementById('sendBtn').onclick=function(){
   if(window.SFX)try{SFX.play('bo');}catch(e){}
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/1a/1ad1e15d51.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 通讯AI.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t).then(function(reply){
@@ -679,7 +676,6 @@ var mside=document.getElementById('mside');
 var movl=document.getElementById('movl');
 document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); if(window.SFX)try{SFX.play('pa');}catch(e){} mside.classList.toggle('open'); movl.classList.toggle('on', mside.classList.contains('open')); renderPending(); };
 movl.onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
-document.getElementById('sideBack').onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
 /* 点空白处收起侧栏（菜单按钮自身除外）+ 收起B案浮出条 */
 document.addEventListener('click',function(ev){
   if(mside.classList.contains('open') && !mside.contains(ev.target) && ev.target!==document.getElementById('menuBtn') && !document.getElementById('menuBtn').contains(ev.target)){
@@ -839,6 +835,8 @@ function applyTheme(t){
 }
 applyTheme(getTheme());   /* 开机延续 */
 document.getElementById('miNight').onclick=function(){ applyTheme(document.body.classList.contains('night')?'light':'dark'); };
+/* 菜单内返回系统页：背包页同款入口 */
+document.getElementById('miBack').onclick=function(){ location.href='./系统备份.html'; };
 /* 置顶：写进名单存档，名册排序置顶+小签 */
 function syncPinMenu(){
   var on=roster.pin.indexOf(cur)>=0;
@@ -860,13 +858,11 @@ document.getElementById('miCare').onclick=function(){
   saveRoster(roster); syncCareMenu(); renderContacts();
 };
 document.getElementById('backBtn').onclick=function(){
-  /* 手机端：关聊天层回名册；桌面端：这个◂是收起/导航用，回系统走右上sysBack */
+  /* 手机端：关聊天层回名册；桌面端：此按钮已由 CSS 隐藏（名册讯道并排，无需返回） */
   if(window.innerWidth<=760) document.getElementById('chat').classList.remove('open');
 };
 /* 返回系统页面（信匣标题右侧，全端可见） */
 document.getElementById('sysBack').onclick=function(){ location.href='./系统备份.html'; };
- 
-/* 临时切换器：特别关心视觉三案（选型用，选定后删除） */
  
 /* 启动 */
 renderContacts(); openChat(cur);
