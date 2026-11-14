@@ -236,6 +236,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 </aside>
  
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
+<script src="./sfx.js"></script>
 <script>
 (function(){
   'use strict';
@@ -265,6 +266,9 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
   /* ── 状态 ── */
   var curNat='全部', curSort='def', kw='';
  
+  /* ── 音效助手：背包页同款接线，SFX 缺失/静音时不报错 ── */
+  function sfx(n){ if(window.SFX)try{SFX.play(n);}catch(e){} }
+ 
   /* ── 日夜：公共键 theme（{value:'light'|'dark'}），与全站一致 ── */
   function applyTheme(){
     var dark=false;
@@ -278,6 +282,11 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
   /* ── 索引轨 + 药丸 ── */
   var rail=document.getElementById('rail'),pills=document.getElementById('pills');
   function countOf(nat){ return nat==='全部'?CHARS.length:CHARS.filter(function(c){return c.nat===nat;}).length; }
+  function setNat(nat){
+    if(nat===curNat) return;   /* 同项不重复响 */
+    sfx('da');                  /* 对照背包 .cat 分类切换 */
+    curNat=nat; buildNav(); render();
+  }
   function buildNav(){
     var list=['全部'].concat(NATIONS);
     rail.innerHTML='<div class="cap">INDEX</div>';
@@ -285,11 +294,11 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
     list.forEach(function(nat){
       var b=document.createElement('button'); b.className='ritem'+(curNat===nat?' on':'');
       b.innerHTML='<div class="cn">'+(nat==='全部'?'全 部':nat)+'</div><div class="en">'+countOf(nat)+' ENTR'+(countOf(nat)===1?'Y':'IES')+'</div>';
-      b.onclick=function(){ curNat=nat; buildNav(); render(); };
+      b.onclick=function(){ setNat(nat); };
       rail.appendChild(b);
       var p=document.createElement('button'); p.className='pill'+(curNat===nat?' on':'');
       p.textContent=nat==='全部'?'全部':nat;
-      p.onclick=function(){ curNat=nat; buildNav(); render(); };
+      p.onclick=function(){ setNat(nat); };
       pills.appendChild(p);
     });
   }
@@ -333,22 +342,42 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
     mside.classList.toggle('open',open);
     movl.classList.toggle('on',open);
   }
-  document.getElementById('menuBtn').onclick=function(e){ e.stopPropagation(); toggleMenu(!mside.classList.contains('open')); };
+  document.getElementById('menuBtn').onclick=function(e){
+    e.stopPropagation();
+    sfx('pa');                                  /* 菜单按钮，同背包 #menuBtn */
+    toggleMenu(!mside.classList.contains('open'));
+  };
   movl.onclick=function(){ toggleMenu(false); };
   document.getElementById('findBox').addEventListener('input',function(){ kw=this.value.trim(); render(); });
-  document.getElementById('findGo').onclick=function(){ kw=document.getElementById('findBox').value.trim(); render(); toggleMenu(false); };
-  document.getElementById('sortDef').onclick=function(){ curSort='def'; syncSort(); render(); };
-  document.getElementById('sortLv').onclick=function(){ curSort='lv'; syncSort(); render(); };
+  document.getElementById('findGo').onclick=function(){
+    sfx('pa');                                  /* 菜单栏按钮统一 pa */
+    kw=document.getElementById('findBox').value.trim();
+    render(); toggleMenu(false);
+  };
+  document.getElementById('sortDef').onclick=function(){
+    if(curSort==='def'){ toggleMenu(false); return; }   /* 同项不重复响 */
+    sfx('pa');                                  /* 菜单栏按钮统一 pa */
+    curSort='def'; syncSort(); render();
+  };
+  document.getElementById('sortLv').onclick=function(){
+    if(curSort==='lv'){ toggleMenu(false); return; }
+    sfx('pa');                                  /* 菜单栏按钮统一 pa */
+    curSort='lv'; syncSort(); render();
+  };
   function syncSort(){
     document.getElementById('sortDef').classList.toggle('on',curSort==='def');
     document.getElementById('sortLv').classList.toggle('on',curSort==='lv');
   }
   document.getElementById('miNight').onclick=function(){
+    sfx('pa');                                  /* 菜单栏按钮统一 pa */
     var dark=!document.body.classList.contains('night');
     try{localStorage.setItem(K_THEME,JSON.stringify({value:dark?'dark':'light'}));}catch(e){}
     applyTheme();
   };
-  document.getElementById('miBack').onclick=function(){ location.href='./系统备份.html'; };
+  document.getElementById('miBack').onclick=function(){
+    sfx('pa');                                  /* 菜单栏按钮统一 pa，返回也响 */
+    location.href='./系统备份.html';
+  };
  
   /* ── 启动 ── */
   applyTheme(); buildNav(); render();
