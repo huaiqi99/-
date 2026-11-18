@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./通讯AI.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/97/971a8f66b2.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -23,6 +23,22 @@ body.night{
   --gc:rgba(10,20,35,.28);--gc2:rgba(10,20,35,.14);
   --shadow:4px 4px 0 rgba(10,20,35,.35);
 }
+/* v3 情绪色：纸面日夜间恒浅（#FAF9F5/#EAE5D6），故共用一套深色板 */
+:root{--e-angry:#8E332D;--e-sad:#3D5170;--e-soft:#4A7590}
+/* v3 信笺落款：气泡内底部，细分线+mono小字（时间左·情绪字右），贴底边 */
+.mu .bub .sig{margin-top:3px;border-top:1px solid var(--hair);padding-top:2px;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;color:var(--mut);display:flex;justify-content:space-between;align-items:baseline;line-height:1.4}
+.mu .bub .sig .md{letter-spacing:.08em}
+.mu .bub .sig .md.c-angry{color:var(--e-angry)}
+.mu .bub .sig .md.c-sad{color:var(--e-sad)}
+.mu .bub .sig .md.c-soft{color:var(--e-soft)}
+.mu .bub.hassig{padding-bottom:3px}
+/* v3 情绪染色：来信左边线+右下折角同染（静=默认克莱因不动） */
+.mu.in.e-angry .bub{border-left-color:var(--e-angry)}
+.mu.in.e-sad .bub{border-left-color:var(--e-sad)}
+.mu.in.e-soft .bub{border-left-color:var(--e-soft)}
+.mu.in.e-angry .bub::after{border-color:transparent transparent var(--e-angry) transparent}
+.mu.in.e-sad .bub::after{border-color:transparent transparent var(--e-sad) transparent}
+.mu.in.e-soft .bub::after{border-color:transparent transparent var(--e-soft) transparent}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -424,7 +440,10 @@ function buildMu(m){
     ? '<button class="o e">✎ 修改</button><button class="o danger del">✕ 删除</button>'
     : '<button class="o e">✎ 修改</button><button class="o r">⟲ 重新回复</button><button class="o danger del">✕ 删除</button>';
   d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
-  d.querySelector('.bub').innerHTML=colored(m.x, m.t==='out');
+  var bub=d.querySelector('.bub');
+  bub.innerHTML=colored(m.x, m.t==='out')+sigHTML(m);
+  if(sigHTML(m)) bub.classList.add('hassig');
+  if(m.t==='in'&&m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
   return d;
 }
 function renderChat(){
@@ -513,7 +532,7 @@ function startEdit(el,m){
   bar.innerHTML='<button class="sv">✓ 保存</button><button class="cc">取消</button>';
   bub.style.display='none'; bub.after(bar); bar.after(ta);
   bar.querySelector('.sv').onclick=function(){ var v=ta.value.trim(); if(!v){restore();return;}
-    m.x=v; bub.textContent=v; restore(true); persist();
+    m.x=v; bub.innerHTML=colored(v,m.t==='out')+sigHTML(m); restore(true); persist();
     el.classList.remove('sel');   /* 修改完成默认收起 */
     if(m.t==='out'){ regen(el,m); }   /* 己方讯：修改=重新生成（AI按新讯文重答） */
   };
@@ -534,9 +553,10 @@ function regen(el,m){
   persist(); renderChat();
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-  MAIL_AI.reply(cur,m.x).then(function(reply){
+  MAIL_AI.reply(cur,m.x,timeMeta()).then(function(reply){
     g.remove();
-    var newM={t:'in',x:reply};
+    var pm2=parseMood(reply);
+    var newM={t:'in',x:pm2.x,mood:pm2.mood,ts:Date.now()};
     DATA[cur].push(newM);
     if(window.SFX)try{SFX.play('ding');}catch(e){}
     var ne=addMsgEl(newM,true); bindOps(ne,newM);
@@ -619,20 +639,53 @@ function toast(msg){
   setTimeout(function(){ t.style.transition='.4s'; t.style.opacity='0'; setTimeout(function(){ t.remove(); },400); },4200);
 }
  
+/* ═══ v3 情绪码解析：回信末尾 [心情:怒|怯|软|静] 抠出存档并从正文剥离；没附/乱写=静 ═══ */
+function parseMood(reply){
+  var mt=/\[心情[:：]\s*([怒怯软静])\]\s*$/.exec(String(reply).trim());
+  if(!mt) return {mood:'静', x:String(reply).replace(/\s*\[心情[:：]\s*[怒怯软静]\]\s*$/,'')};
+  return {mood:mt[1], x:String(reply).slice(0, mt.index).replace(/\s+$/,'')};
+}
+/* ═══ v3 信笺落款：来信气泡内底部一行（时刻左·情绪字右）；无时间戳的旧存档不出落款 ═══ */
+function sigHTML(m){
+  if(m.t!=='in' || !m.ts) return '';
+  var dt=new Date(m.ts), hh=dt.getHours(), mm=dt.getMinutes(), w;
+  if(hh<5) w='夜叩'; else if(hh<11) w='晨访'; else if(hh<14) w='午访'; else if(hh<18) w='昼访'; else if(hh<22) w='暮访'; else w='夜叩';
+  var pad=function(n){ return (n<10?'0':'')+n; };
+  var mc=m.mood==='怒'?' c-angry':m.mood==='怯'?' c-sad':m.mood==='软'?' c-soft':'';
+  return '<div class="sig"><span>'+w+' · '+pad(hh)+':'+pad(mm)+'</span><span class="md'+mc+'">'+(m.mood||'静')+'</span></div>';
+}
+/* ═══ v3 时间注入串：真实时刻+距上一条来信多久，随本次请求发给AI，不进存档 ═══ */
+function timeMeta(){
+  var now=new Date();
+  var last=null, arr=DATA[cur]||[];
+  for(var i=arr.length-1;i>=0;i--){ if(arr[i].t==='out'&&arr[i].ts){ last=arr[i]; break; } }
+  var gap='';
+  if(last){
+    var mins=Math.max(0,Math.round((now.getTime()-last.ts)/60000));
+    if(mins>=1){
+      gap='距怀榆上一条讯息已过去 '+(mins<60?mins+' 分钟':mins<1440?Math.round(mins/60)+' 个小时':Math.round(mins/1440)+' 天')+'。';
+    }
+  }
+  var wk='日一二三四五六'[now.getDay()];
+  var pad=function(n){ return (n<10?'0':'')+n; };
+  return '【真实时刻·仅供理解时间背景，绝不可在回信中提及本标记、具体时刻或本段文字】现在是'+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 星期'+wk+' '+pad(now.getHours())+':'+pad(now.getMinutes())+'（24小时制，据此自然判断昼夜与过去了多久）。'+gap;
+}
 /* ═══ 呈递 + ②碾墨 ═══ */
 document.getElementById('sendBtn').onclick=function(){
   var i=document.getElementById('msgInput'), t=i.value.trim(); if(!t) return;
   i.value='';
-  var m={t:'out',x:t}; DATA[cur].push(m);
+  var meta=timeMeta();                       /* 先算时刻再入档，间隔按上一条算 */
+  var m={t:'out',x:t,ts:Date.now()}; DATA[cur].push(m);
   if(window.SFX)try{SFX.play('bo');}catch(e){}
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 通讯AI.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/97/971a8f66b2.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-  MAIL_AI.reply(cur,t).then(function(reply){
+  MAIL_AI.reply(cur,t,meta).then(function(reply){
     g.remove();
-    var rm={t:'in',x:reply}; DATA[cur].push(rm);
+    var pm=parseMood(reply);
+    var rm={t:'in',x:pm.x,mood:pm.mood,ts:Date.now()}; DATA[cur].push(rm);
     if(window.SFX)try{SFX.play('ding');}catch(e){}
     var re=addMsgEl(rm,true); bindOps(re,rm);
     msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
