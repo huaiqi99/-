@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/97/971a8f66b2.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./https://sfile.chatglm.cn/workspace/file/10/1083606a94.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -591,18 +591,15 @@ function regen(el,m){
   var g=document.createElement('div'); g.className='grind';
   g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   function done(){ g.remove(); }
-  function ask(text, then){
-    msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-    MAIL_AI.reply(cur,text,timeMeta()).then(function(reply){
-      done(); then(parseMood(reply));
-    });
-  }
   if(m.t==='out'){
     /* 己方讯修改重答：其后作废（原语义不动），新回信作为新消息追加 */
     var oi2=DATA[cur].indexOf(m);
     DATA[cur].splice(oi2+1);
     persist(); renderChat();
-    ask(m.x, function(pm){
+    msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
+    MAIL_AI.reply(cur,m.x,timeMeta(),oi2).then(function(reply){
+      g.remove();
+      var pm2=parseMood(reply); var pm=pm2;
       var nm={t:'in',x:pm.x,mood:pm.mood,ts:Date.now()};
       DATA[cur].push(nm);
       if(window.SFX)try{SFX.play('ding');}catch(e){}
@@ -611,15 +608,21 @@ function regen(el,m){
     });
     return;
   }
-  /* B案 swipe：来信重答=同一条信上叠新版本——不删信、不删其后消息；
-     锚点=这条信之前最近的己方讯（它本来就是在回那一条） */
+  /* 酒馆式重答：选历史来信→其后消息作废删除（与App一致）；
+     AI上下文截到锚点己方讯为止，旧版回信不进记忆——AI「记不得」这是重新生成；
+     新版仍叠进版本栈（B案细线 2/2 可切回） */
   ensureVers(m);
   var oi=DATA[cur].indexOf(m); if(oi<0) return;
-  var ax=null;
-  for(var k=oi-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ ax=DATA[cur][k].x; break; } }
-  if(ax===null) return;                       /* 没有可回的己方讯：不动 */
+  var ai=-1;
+  for(var k=oi-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ ai=k; break; } }
+  if(ai<0) return;                            /* 没有可回的己方讯：不动 */
+  DATA[cur].splice(oi+1);                     /* 其后作废 */
+  persist(); renderChat();
   m.vers[m.v]={x:m.x,mood:m.mood,ts:m.ts};    /* 当前版入栈存好 */
-  ask(ax, function(pm){
+  msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
+  MAIL_AI.reply(cur,DATA[cur][ai].x,timeMeta(),ai).then(function(reply){
+    g.remove();
+    var pm=parseMood(reply);
     m.vers.push({x:pm.x,mood:pm.mood,ts:Date.now()});   /* 新版追加到栈顶 */
     m.v=m.vers.length-1;
     m.x=m.vers[m.v].x; m.mood=m.vers[m.v].mood; m.ts=m.vers[m.v].ts;
@@ -746,7 +749,7 @@ document.getElementById('sendBtn').onclick=function(){
   if(window.SFX)try{SFX.play('bo');}catch(e){}
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/97/971a8f66b2.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/10/1083606a94.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t,meta).then(function(reply){

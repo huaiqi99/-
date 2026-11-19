@@ -617,13 +617,15 @@
      修Bug1：slice后去掉开头assistant，第一条必为user（Claude要求）
      修Bug3：notes不再无限堆积，AI锚点独立存储、可沉降
      修Bug4：window.DATA被IIFE化时的兜底 */
-  function buildHistory(contact){
+  function buildHistory(contact, upto){
     var hist=[], sysNotes=[];
     try{
       var arr = (window.DATA && window.DATA[contact])
              || (typeof DATA !== 'undefined' && DATA && DATA[contact])
              || [];
       for(var i=0;i<arr.length;i++){
+      if(typeof upto==='number') arr=arr.slice(0,upto);   /* 重答截断：只取该条之前的上下文（酒馆式，旧版不进记忆） */
+
         var m=arr[i];
         if(m.d===1) continue;   /* 写死演示对话不进AI记忆（引渡人同款：开场白不影响AI） */
         if(m.t==='note'){ sysNotes.push(m.x); continue; }  /* 系统事件note永久pinned */
@@ -811,9 +813,9 @@
   }
   
   window.MAIL_AI = {
-    reply: function(contact, text, timeMeta){
+    reply: function(contact, text, timeMeta, upto){
       var cfg = loadAIConfig();
-      var ctx = buildHistory(contact);   /* { hist, sysNotes, aiNotes, summary, pendingMerge, rawLen } */
+      var ctx = buildHistory(contact, upto);   /* { hist, sysNotes, aiNotes, summary, pendingMerge, rawLen } */
       /* 原文>80 且未在摘要中 → 后台静默触发，不阻塞本次回复，下次请求才生效 */
       if(ctx.rawLen > SUM_TRIGGER && !__summarizing[contact]){
         try{ maybeSummarize(contact, cfg); }catch(e){}
