@@ -272,7 +272,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
  
 <script src="./通讯AI.js"></script>
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
-<script src="./sfx.js"></script>
+<script src="./sxf.js"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -544,8 +544,10 @@ function regen(el,m){
      旧回信、玩家后续消息都从存档清除，AI记忆绝不含过期对话。 */
   if(m.t!=='out'){
     var oi=DATA[cur].indexOf(m); if(oi>=0) DATA[cur].splice(oi,1);
+    /* 锚点=这条来信之前最近的己方讯（它本来就是在回那一条），
+       而非全数组最后一条——历史消息重答错锚到最新消息的修复 */
     m=null;
-    for(var k=DATA[cur].length-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ m=DATA[cur][k]; break; } }
+    for(var k=(oi>0?oi:DATA[cur].length)-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ m=DATA[cur][k]; break; } }
   }
   if(!m){ persist(); renderChat(); return; }
   var oi2=DATA[cur].indexOf(m);
