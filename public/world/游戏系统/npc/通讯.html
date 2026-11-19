@@ -171,14 +171,16 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .inputbar input:focus,.inputbar textarea:focus{outline:none;border-color:var(--zhu)}
 /* 讯文框：可换行的textarea，外观尺寸与旧版输入框完全一致（单行高，多行时内部滚动） */
 .inputbar textarea{resize:none;height:37px;line-height:1.5;overflow-y:auto;display:block}
-/* v4 气泡内表情：AI文字末尾=64px小图；纯表情消息=微信式大图占格 */
+/* v4 表情渲染：来信文字+表情=表情独立裸图块（气泡外下方）；纯表情=裸图 */
+.emoSolo{margin-top:6px}
+.emoSolo .emo{width:96px;height:96px;object-fit:contain;display:block}
 .bub .emo{width:64px;height:64px;object-fit:contain;display:block;margin-top:6px}
 /* 纯表情消息=裸图：无框无底无阴影无折角，透明底直接贴在聊天纸面上 */
 .mu .bub.emoOnly{padding:0;border:none;background:none;box-shadow:none}
 .mu .bub.emoOnly::after{display:none}
 .mu.in .bub.emoOnly{border-left:none}
 .mu .bub.emoOnly .emo{width:104px;height:104px;margin-top:0}
-@media (max-width:760px){ .bub .emo{width:56px;height:56px} .bub.emoOnly .emo{width:92px;height:92px} }
+@media (max-width:760px){ .bub .emo{width:56px;height:56px} .bub.emoOnly .emo{width:92px;height:92px} .emoSolo .emo{width:84px;height:84px} }
 .emoBtn{flex:0 0 auto;height:37px;min-width:37px;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-size:17px;line-height:1;cursor:pointer;border-radius:0;letter-spacing:0;padding:0 6px}
 .emoBtn:active{background:var(--zhu);color:#fff}
 .emoBtn.on{background:var(--zhu);color:#fff;border-color:var(--zhu)}
@@ -318,7 +320,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
 <script src="./通讯AI.js"></script>
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
 <script src="./sfx.js"></script>
-<div id="desk-pet"><img src="头像/怀榆点赞.png" class="char-img" alt=""></div>
+<div id="desk-pet"><img src="贴纸.png" class="char-img" alt=""></div>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -489,9 +491,15 @@ function buildMu(m){
   d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
   var bub=d.querySelector('.bub');
   var txt=(m.x&&String(m.x).trim())?colored(m.x, m.t==='out'):'';
-  bub.innerHTML=txt+STICKER_HTML(m.emo)+sigHTML(m);
-  if(!txt && m.emo) bub.classList.add('emoOnly');   /* 纯表情：微信式大图占格 */
+  var soloIn = m.t==='in' && m.emo && txt;   /* 来信=文字一条+表情独立一条（微信式两连发） */
+  bub.innerHTML=txt+(soloIn?'':STICKER_HTML(m.emo))+sigHTML(m);
+  if(!txt && m.emo) bub.classList.add('emoOnly');   /* 纯表情：裸图无框 */
   if(sigHTML(m)) bub.classList.add('hassig');
+  if(soloIn){
+    var so=document.createElement('div'); so.className='emoSolo';
+    so.innerHTML=STICKER_HTML(m.emo);
+    bub.after(so);
+  }
   if(m.t==='in'&&m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
   if(m.t==='in'){
     ensureVers(m);
@@ -519,9 +527,16 @@ function swMu(m,d,delta){
   persist();
   var bub=d.querySelector('.bub');
   var txt2=(m.x&&String(m.x).trim())?colored(m.x,m.t==='out'):'';
-  bub.innerHTML=txt2+STICKER_HTML(m.emo)+sigHTML(m);
+  var solo2 = m.t==='in' && m.emo && txt2;
+  bub.innerHTML=txt2+(solo2?'':STICKER_HTML(m.emo))+sigHTML(m);
   bub.classList.toggle('emoOnly', !txt2 && !!m.emo);
   if(sigHTML(m)) bub.classList.add('hassig');
+  var oldSo=bub.parentElement.querySelector('.emoSolo'); if(oldSo) oldSo.remove();
+  if(solo2){
+    var so2=document.createElement('div'); so2.className='emoSolo';
+    so2.innerHTML=STICKER_HTML(m.emo);
+    bub.after(so2);
+  }
   ['e-angry','e-sad','e-soft'].forEach(function(c){ d.classList.remove(c); });
   if(m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
   var ce=d.querySelector('.swB .cur'); if(ce) ce.textContent=(m.v+1)+' / '+n;
