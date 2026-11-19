@@ -39,6 +39,11 @@ body.night{
 .mu.in.e-angry .bub::after{border-color:transparent transparent var(--e-angry) transparent}
 .mu.in.e-sad .bub::after{border-color:transparent transparent var(--e-sad) transparent}
 .mu.in.e-soft .bub::after{border-color:transparent transparent var(--e-soft) transparent}
+/* swipe 多版本细线（B案小样原样）：仅多版本时渲染，单版本零占位 */
+.swB{margin-top:4px;border-top:1px solid var(--hair);padding-top:3px;display:flex;justify-content:center;align-items:center;gap:12px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mut)}
+.swB .ar{cursor:pointer;user-select:none;padding:0 4px}
+.swB .ar:hover{color:var(--klein)}
+.swB .cur{color:var(--klein)}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -272,7 +277,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
  
 <script src="./通讯AI.js"></script>
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
-<script src="./sxf.js"></script>
+<script src="./sfx.js"></script>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -444,7 +449,36 @@ function buildMu(m){
   bub.innerHTML=colored(m.x, m.t==='out')+sigHTML(m);
   if(sigHTML(m)) bub.classList.add('hassig');
   if(m.t==='in'&&m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
+  if(m.t==='in'){
+    ensureVers(m);
+    if(m.vers.length>1){
+      var sw=document.createElement('div'); sw.className='swB';
+      sw.innerHTML='<span class="ar">◂</span><span class="cur">'+(m.v+1)+' / '+m.vers.length+'</span><span class="ar">▸</span>';
+      bub.after(sw);
+      sw.children[0].onclick=function(ev){ev.stopPropagation(); swMu(m,d,-1);};
+      sw.children[2].onclick=function(ev){ev.stopPropagation(); swMu(m,d,1);};
+    }
+  }
   return d;
+}
+/* ═══ swipe 多版本：vers=版本栈，v=当前版下标；m.x/mood/ts 恒等于当前版，
+   存档/AI记忆/落款/导出全部无感——旧数据零迁移（首次用到时才建栈） ═══ */
+function ensureVers(m){
+  if(!m.vers){ m.vers=[{x:m.x,mood:m.mood,ts:m.ts}]; m.v=0; }
+}
+function swMu(m,d,delta){
+  ensureVers(m);
+  var n=m.vers.length; if(n<2) return;
+  m.vers[m.v]={x:m.x,mood:m.mood,ts:m.ts};
+  m.v=(m.v+delta+n)%n;
+  var t=m.vers[m.v]; m.x=t.x; m.mood=t.mood; m.ts=t.ts;
+  persist();
+  var bub=d.querySelector('.bub');
+  bub.innerHTML=colored(m.x,m.t==='out')+sigHTML(m);
+  if(sigHTML(m)) bub.classList.add('hassig');
+  ['e-angry','e-sad','e-soft'].forEach(function(c){ d.classList.remove(c); });
+  if(m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
+  var ce=d.querySelector('.swB .cur'); if(ce) ce.textContent=(m.v+1)+' / '+n;
 }
 function renderChat(){
   msgsEl.innerHTML='';
@@ -532,7 +566,7 @@ function startEdit(el,m){
   bar.innerHTML='<button class="sv">✓ 保存</button><button class="cc">取消</button>';
   bub.style.display='none'; bub.after(bar); bar.after(ta);
   bar.querySelector('.sv').onclick=function(){ var v=ta.value.trim(); if(!v){restore();return;}
-    m.x=v; bub.innerHTML=colored(v,m.t==='out')+sigHTML(m); restore(true); persist();
+    m.x=v; if(m.vers) m.vers[m.v].x=v; bub.innerHTML=colored(v,m.t==='out')+sigHTML(m); restore(true); persist();
     el.classList.remove('sel');   /* 修改完成默认收起 */
     if(m.t==='out'){ regen(el,m); }   /* 己方讯：修改=重新生成（AI按新讯文重答） */
   };
@@ -540,29 +574,43 @@ function startEdit(el,m){
   function restore(keep){ bub.style.display=''; ta.remove(); bar.remove(); if(!keep) delete el.dataset.editing; }
 }
 function regen(el,m){
-  /* 引渡人同款语义：从被修改/被重答的那条重开，其后的一切全部作废删除——
-     旧回信、玩家后续消息都从存档清除，AI记忆绝不含过期对话。 */
-  if(m.t!=='out'){
-    var oi=DATA[cur].indexOf(m); if(oi>=0) DATA[cur].splice(oi,1);
-    /* 锚点=这条来信之前最近的己方讯（它本来就是在回那一条），
-       而非全数组最后一条——历史消息重答错锚到最新消息的修复 */
-    m=null;
-    for(var k=(oi>0?oi:DATA[cur].length)-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ m=DATA[cur][k]; break; } }
+  var g=document.createElement('div'); g.className='grind';
+  g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
+  function done(){ g.remove(); }
+  function ask(text, then){
+    msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
+    MAIL_AI.reply(cur,text,timeMeta()).then(function(reply){
+      done(); then(parseMood(reply));
+    });
   }
-  if(!m){ persist(); renderChat(); return; }
-  var oi2=DATA[cur].indexOf(m);
-  DATA[cur].splice(oi2+1);   /* 后面所有消息（无论谁发的）全删 */
-  persist(); renderChat();
-  var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
-  msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-  MAIL_AI.reply(cur,m.x,timeMeta()).then(function(reply){
-    g.remove();
-    var pm2=parseMood(reply);
-    var newM={t:'in',x:pm2.x,mood:pm2.mood,ts:Date.now()};
-    DATA[cur].push(newM);
+  if(m.t==='out'){
+    /* 己方讯修改重答：其后作废（原语义不动），新回信作为新消息追加 */
+    var oi2=DATA[cur].indexOf(m);
+    DATA[cur].splice(oi2+1);
+    persist(); renderChat();
+    ask(m.x, function(pm){
+      var nm={t:'in',x:pm.x,mood:pm.mood,ts:Date.now()};
+      DATA[cur].push(nm);
+      if(window.SFX)try{SFX.play('ding');}catch(e){}
+      var ne=addMsgEl(nm,true); bindOps(ne,nm);
+      msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
+    });
+    return;
+  }
+  /* B案 swipe：来信重答=同一条信上叠新版本——不删信、不删其后消息；
+     锚点=这条信之前最近的己方讯（它本来就是在回那一条） */
+  ensureVers(m);
+  var oi=DATA[cur].indexOf(m); if(oi<0) return;
+  var ax=null;
+  for(var k=oi-1;k>=0;k--){ if(DATA[cur][k].t==='out'){ ax=DATA[cur][k].x; break; } }
+  if(ax===null) return;                       /* 没有可回的己方讯：不动 */
+  m.vers[m.v]={x:m.x,mood:m.mood,ts:m.ts};    /* 当前版入栈存好 */
+  ask(ax, function(pm){
+    m.vers.push({x:pm.x,mood:pm.mood,ts:Date.now()});   /* 新版追加到栈顶 */
+    m.v=m.vers.length-1;
+    m.x=m.vers[m.v].x; m.mood=m.vers[m.v].mood; m.ts=m.vers[m.v].ts;
+    persist(); renderChat();
     if(window.SFX)try{SFX.play('ding');}catch(e){}
-    var ne=addMsgEl(newM,true); bindOps(ne,newM);
-    msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
 }
 function removeMsg(el,m){
@@ -643,9 +691,12 @@ function toast(msg){
  
 /* ═══ v3 情绪码解析：回信末尾 [心情:怒|怯|软|静] 抠出存档并从正文剥离；没附/乱写=静 ═══ */
 function parseMood(reply){
-  var mt=/\[心情[:：]\s*([怒怯软静])\]\s*$/.exec(String(reply).trim());
-  if(!mt) return {mood:'静', x:String(reply).replace(/\s*\[心情[:：]\s*[怒怯软静]\]\s*$/,'')};
-  return {mood:mt[1], x:String(reply).slice(0, mt.index).replace(/\s+$/,'')};
+  /* 兼容全角/半角括号与冒号（【心情：怒】/[心情:怒]/［心情：怯］），
+     码后允许尾随空白或多余字符——不因格式抖动丢情绪 */
+  var s=String(reply);
+  var mt=/[［\[【]\s*心情\s*[:：]\s*([怒怯软静])\s*[］\]】]/.exec(s);
+  if(!mt) return {mood:'静', x:s};
+  return {mood:mt[1], x:(s.slice(0,mt.index)+' '+s.slice(mt.index+mt[0].length)).replace(/\s+$/,'')};
 }
 /* ═══ v3 信笺落款：来信气泡内底部一行（时刻左·情绪字右）；无时间戳的旧存档不出落款 ═══ */
 function sigHTML(m){
