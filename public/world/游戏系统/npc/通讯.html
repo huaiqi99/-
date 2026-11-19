@@ -39,6 +39,18 @@ body.night{
 .mu.in.e-angry .bub::after{border-color:transparent transparent var(--e-angry) transparent}
 .mu.in.e-sad .bub::after{border-color:transparent transparent var(--e-sad) transparent}
 .mu.in.e-soft .bub::after{border-color:transparent transparent var(--e-soft) transparent}
+
+/* ═══ 桌边小像（罗修桌宠移植）：可点击可拖动，位置记忆，侧栏可关 ═══ */
+#desk-pet{position:fixed;bottom:0;right:8px;z-index:50;width:120px;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transform-origin:bottom center;-webkit-tap-highlight-color:transparent;touch-action:none;will-change:transform;--drag-x:0px;--drag-y:0px;transform:translate3d(var(--drag-x),var(--drag-y),0)}
+body.night #desk-pet{filter:brightness(.9)}
+#desk-pet .char-img{width:100%;display:block;pointer-events:none;transition:filter .25s ease}
+#desk-pet.dragging{cursor:grabbing;transform:translate3d(var(--drag-x),var(--drag-y),0) scale(1.04)}
+#desk-pet.dragging .char-img{filter:drop-shadow(0 10px 12px rgba(0,0,0,.3))}
+#desk-pet.q-squash{animation:qSquash .32s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes qSquash{0%{transform:translate3d(var(--drag-x),var(--drag-y),0) scale(1,1) translateY(0)}30%{transform:translate3d(var(--drag-x),var(--drag-y),0) scale(.96,.9) translateY(3px)}100%{transform:translate3d(var(--drag-x),var(--drag-y),0) scale(1,1) translateY(0)}}
+#desk-pet.hidden{display:none!important}
+@media (max-width:760px){#desk-pet{width:88px}}
+
 /* swipe 多版本细线（B案小样原样）：仅多版本时渲染，单版本零占位 */
 .swB{margin-top:4px;border-top:1px solid var(--hair);padding-top:3px;display:flex;justify-content:center;align-items:center;gap:12px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mut)}
 .swB .ar{cursor:pointer;user-select:none;padding:0 4px}
@@ -244,6 +256,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
 <aside id="mside">
   <div class="st">信 匣 · MENU</div>
   <div class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></div>
+  <div class="sitem" id="miPet"><span>桌边小像</span><span class="arr" id="petArr">—</span></div>
   <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
   <div class="sitem" id="miPin"><span>置顶</span><span class="arr" id="pinArr">—</span></div>
   <div class="sitem" id="miCare"><span>特别关心</span><span class="arr" id="careArr">—</span></div>
@@ -278,6 +291,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
 <script src="./通讯AI.js"></script>
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
 <script src="./sfx.js"></script>
+<div id="desk-pet"><img src="头像/怀榆点赞.png" class="char-img" alt=""></div>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -971,6 +985,90 @@ document.getElementById('backBtn').onclick=function(){
 /* 返回系统页面（信匣标题右侧，全端可见） */
 document.getElementById('sysBack').onclick=function(){ location.href='./系统备份.html'; };
  
+
+/* ═══ 桌边小像：罗修桌宠移植（可点击可拖动，位置记忆，侧栏开关） ═══ */
+(function(){
+  var pet=document.getElementById('desk-pet');
+  if(!pet) return;
+  var K_ON='gzd_qlz_pet_on', K_POS='gzd_qlz_pet_pos';
+  /* 开关：存档读入 + 侧栏同步 */
+  var on;
+  try{ on=localStorage.getItem(K_ON)!=='0'; }catch(e){ on=true; }
+  function syncOn(){ pet.classList.toggle('hidden',!on); var a=document.getElementById('petArr'); if(a) a.textContent=on?'显示':'隐藏'; }
+  document.getElementById('miPet').onclick=function(){
+    on=!on; try{ localStorage.setItem(K_ON,on?'1':'0'); }catch(e){}
+    syncOn(); if(window.SFX)try{SFX.play('tap');}catch(e){}
+  };
+  syncOn();
+  var activeId=null, startX=0, startY=0, baseX=0, baseY=0, dragging=false, freed=false;
+  var THRESHOLD=8;
+  function toFree(){
+    if(freed) return; freed=true;
+    pet.style.left='0px'; pet.style.top='0px'; pet.style.right='auto'; pet.style.bottom='auto';
+  }
+  function clamp(x,y){
+    var w=pet.offsetWidth||120, h=pet.offsetHeight||120, vw=window.innerWidth, vh=window.innerHeight;
+    return [Math.max(-w/2,Math.min(vw-w/2,x)), Math.max(-h/2,Math.min(vh-h/2,y))];
+  }
+  function setPos(x,y){ var p=clamp(x,y); pet.style.setProperty('--drag-x',p[0]+'px'); pet.style.setProperty('--drag-y',p[1]+'px'); }
+  function getPos(){ return [parseFloat(pet.style.getPropertyValue('--drag-x'))||0, parseFloat(pet.style.getPropertyValue('--drag-y'))||0]; }
+  function savePos(){ try{ var p=getPos(); localStorage.setItem(K_POS,JSON.stringify({x:p[0],y:p[1]})); }catch(e){} }
+  function squash(){ pet.classList.remove('q-squash'); void pet.offsetWidth; pet.classList.add('q-squash'); }
+  function onDown(e){
+    if(activeId!==null) return;
+    activeId=e.pointerId;
+    try{ pet.setPointerCapture(e.pointerId); }catch(err){}
+    pet.classList.remove('q-squash');
+    var r=pet.getBoundingClientRect(); baseX=r.left; baseY=r.top;
+    startX=e.clientX; startY=e.clientY; dragging=false;
+    squash();                                  /* 按下即小蹲一下 */
+    if(window.SFX)try{SFX.play('ding');}catch(e){}
+  }
+  function onMove(e){
+    if(activeId===null||e.pointerId!==activeId) return;
+    var dx=e.clientX-startX, dy=e.clientY-startY;
+    if(!dragging){
+      if(dx*dx+dy*dy<THRESHOLD*THRESHOLD) return;
+      dragging=true; toFree();
+      pet.classList.remove('q-squash'); pet.classList.add('dragging');
+    }
+    setPos(baseX+dx,baseY+dy);
+  }
+  function onUp(e){
+    if(e.pointerId!==activeId) return;
+    activeId=null;
+    if(dragging){ pet.classList.remove('dragging'); squash(); savePos(); }
+    dragging=false;
+  }
+  function onCancel(e){
+    if(e.pointerId!==activeId) return;
+    activeId=null;
+    if(dragging){ pet.classList.remove('dragging'); savePos(); }
+    dragging=false;
+  }
+  pet.addEventListener('pointerdown',onDown);
+  pet.addEventListener('pointermove',onMove);
+  pet.addEventListener('pointerup',onUp);
+  pet.addEventListener('pointercancel',onCancel);
+  pet.addEventListener('dragstart',function(e){ e.preventDefault(); });
+  pet.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+  /* 位置记忆：图片加载完再恢复+钳边（转屏/换设备不跑丢） */
+  var img=pet.querySelector('.char-img');
+  function tryRestore(){
+    if(img&&!img.complete) return;
+    var raw=null; try{ raw=localStorage.getItem(K_POS); }catch(e){}
+    if(!raw) return;
+    try{ var pos=JSON.parse(raw); if(pos&&isFinite(pos.x)&&isFinite(pos.y)){ toFree(); setPos(pos.x,pos.y); } }catch(e){}
+  }
+  if(img){ if(img.complete) tryRestore(); else img.addEventListener('load',tryRestore,{once:true}); }
+  window.addEventListener('load',tryRestore);
+  var rz=null;
+  window.addEventListener('resize',function(){
+    clearTimeout(rz);
+    rz=setTimeout(function(){ if(freed){ var p=getPos(); setPos(p[0],p[1]); } },150);
+  });
+})();
+
 /* 启动 */
 renderContacts(); openChat(cur);
 </script>
