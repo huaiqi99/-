@@ -990,6 +990,98 @@ document.getElementById('sysBack').onclick=function(){ location.href='./系统�
 (function(){
   var pet=document.getElementById('desk-pet');
   if(!pet) return;
+  /* ---------- 音频：罗修桌宠同款（音效.wav 移进「音效/」文件夹，仅路径前缀改动） ---------- */
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var audioCtx = null;
+  var audioBuffer = null;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { initFallback(); }
+  if (audioCtx) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '音效/音效.wav', true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function () {
+      if (xhr.status === 200 || xhr.status === 0) {
+        audioCtx.decodeAudioData(xhr.response,
+          function (buf) { audioBuffer = buf; },
+          function ()    { initFallback(); });
+      } else { initFallback(); }
+    };
+    xhr.onerror = function () { initFallback(); };
+    xhr.send();
+  }
+  function makeSilentWavURL() {
+    var sampleRate = 8000, duration = 1, freq = 55, amp = 0.002;
+    var n = sampleRate * duration;
+    var buf = new ArrayBuffer(44 + n * 2);
+    var v = new DataView(buf);
+    function str(off, s) { for (var i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); }
+    str(0, 'RIFF');  v.setUint32(4, 36 + n * 2, true);  str(8, 'WAVE');
+    str(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sampleRate, true); v.setUint16(28, sampleRate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    str(36, 'data'); v.setUint32(40, n * 2, true);
+    for (var i = 0; i < n; i++) {
+      v.setInt16(44 + i * 2, Math.round(Math.sin(2 * Math.PI * freq * i / sampleRate) * amp * 32767), true);
+    }
+    return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+  }
+  var unlockAudio = null;
+  if (isIOS) {
+    try {
+      unlockAudio = new Audio(makeSilentWavURL());
+      unlockAudio.loop = true;
+      unlockAudio.preload = 'auto';
+    } catch (e) { unlockAudio = null; }
+  }
+  function ensureMediaSession() {
+    if (!isIOS || !unlockAudio) return;
+    if (unlockAudio.paused) {
+      try { var p = unlockAudio.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+    }
+  }
+  if (isIOS) {
+    var earlyUnlock = function () {
+      ensureMediaSession();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    };
+    document.addEventListener('touchstart', earlyUnlock, { once: true, passive: true });
+    document.addEventListener('click', earlyUnlock, { once: true });
+  }
+  var fallbackAudio = null;
+  function initFallback() {
+    if (fallbackAudio) return;
+    fallbackAudio = new Audio();
+    fallbackAudio.preload = 'auto';
+    var x = new XMLHttpRequest();
+    x.open('GET', '音效/音效.wav', true);
+    x.responseType = 'blob';
+    x.onload = function () {
+      if (x.status === 200 || x.status === 0) {
+        fallbackAudio.src = URL.createObjectURL(x.response);
+      }
+    };
+    x.send();
+  }
+  function playFallback() {
+    if (!fallbackAudio) { initFallback(); return; }
+    try { fallbackAudio.currentTime = 0; } catch (e) {}
+    var p = fallbackAudio.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+  function playSound() {
+    ensureMediaSession();
+    if (audioBuffer && audioCtx) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      try {
+        var src = audioCtx.createBufferSource();
+        src.buffer = audioBuffer;
+        src.connect(audioCtx.destination);
+        src.start(0);
+        return;
+      } catch (e) {}
+    }
+    playFallback();
+  }
   var K_ON='gzd_qlz_pet_on', K_POS='gzd_qlz_pet_pos';
   /* 开关：存档读入 + 侧栏同步 */
   var on;
@@ -997,7 +1089,7 @@ document.getElementById('sysBack').onclick=function(){ location.href='./系统�
   function syncOn(){ pet.classList.toggle('hidden',!on); var a=document.getElementById('petArr'); if(a) a.textContent=on?'显示':'隐藏'; }
   document.getElementById('miPet').onclick=function(){
     on=!on; try{ localStorage.setItem(K_ON,on?'1':'0'); }catch(e){}
-    syncOn(); if(window.SFX)try{SFX.play('tap');}catch(e){}
+    syncOn(); playSound();
   };
   syncOn();
   var activeId=null, startX=0, startY=0, baseX=0, baseY=0, dragging=false, freed=false;
@@ -1022,7 +1114,7 @@ document.getElementById('sysBack').onclick=function(){ location.href='./系统�
     var r=pet.getBoundingClientRect(); baseX=r.left; baseY=r.top;
     startX=e.clientX; startY=e.clientY; dragging=false;
     squash();                                  /* 按下即小蹲一下 */
-    if(window.SFX)try{SFX.play('ding');}catch(e){}
+    playSound();                                /* 罗修桌宠同款音效 */
   }
   function onMove(e){
     if(activeId===null||e.pointerId!==activeId) return;
