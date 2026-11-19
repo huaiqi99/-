@@ -8,7 +8,7 @@
 /* ═══ 千律州 · 信匣 V4 ═══
    B 信笺折角气泡 / 动效①折角入场②碾墨③呈阅印 / 操作钮三案(临时切换器)
    右上角 ☰ 菜单侧栏：日夜/备注/删除好友/查找对话/资料页联动预留
-   AI 接线：./https://sfile.chatglm.cn/workspace/file/10/1083606a94.js（MAIL_AI.reply，本页只调这一个口子） */
+   AI 接线：./通讯AI.js（MAIL_AI.reply，本页只调这一个口子） */
 :root{
   --bg:#F0EFEB;--card:#FAF9F5;--ink:#23243B;--burg:#550F10;--klein:#222C6E;
   --zhu:#A8443E;--mut:#5D6B80;--hair:rgba(34,44,110,.35);
@@ -171,8 +171,30 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .inputbar input:focus,.inputbar textarea:focus{outline:none;border-color:var(--zhu)}
 /* 讯文框：可换行的textarea，外观尺寸与旧版输入框完全一致（单行高，多行时内部滚动） */
 .inputbar textarea{resize:none;height:37px;line-height:1.5;overflow-y:auto;display:block}
+/* v4 气泡内表情：AI文字末尾=64px小图；纯表情消息=微信式大图占格 */
+.bub .emo{width:64px;height:64px;object-fit:contain;display:block;margin-top:6px}
+/* 纯表情消息=裸图：无框无底无阴影无折角，透明底直接贴在聊天纸面上 */
+.mu .bub.emoOnly{padding:0;border:none;background:none;box-shadow:none}
+.mu .bub.emoOnly::after{display:none}
+.mu.in .bub.emoOnly{border-left:none}
+.mu .bub.emoOnly .emo{width:104px;height:104px;margin-top:0}
+@media (max-width:760px){ .bub .emo{width:56px;height:56px} .bub.emoOnly .emo{width:92px;height:92px} }
+.emoBtn{flex:0 0 auto;height:37px;min-width:37px;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-size:17px;line-height:1;cursor:pointer;border-radius:0;letter-spacing:0;padding:0 6px}
+.emoBtn:active{background:var(--zhu);color:#fff}
+.emoBtn.on{background:var(--zhu);color:#fff;border-color:var(--zhu)}
+#emoPanel{position:fixed;right:12px;bottom:74px;z-index:60;border:1.5px solid var(--klein);background:var(--card);box-shadow:6px 6px 0 rgba(0,0,0,.35);padding:10px 12px 12px;max-width:246px}
+#emoPanel.hidden{display:none}
+#emoPanel .epTit{font-size:10px;letter-spacing:.18em;color:var(--mut);margin-bottom:8px;font-family:var(--mono)}
+#emoPanel .epGrid{display:grid;grid-template-columns:repeat(3,64px);gap:8px}
+#emoPanel .epGrid img{width:64px;height:64px;object-fit:contain;cursor:pointer;background:rgba(0,0,0,.05);transition:transform .12s ease}
+#emoPanel .epGrid img:active{transform:scale(.92)}
+@media (max-width:760px){
+  #emoPanel{left:0;right:0;bottom:62px;max-width:none;border-left:none;border-right:none;padding:12px 14px 14px}
+  #emoPanel .epGrid{grid-template-columns:repeat(3,1fr);gap:10px}
+  #emoPanel .epGrid img{width:100%;max-width:96px;height:auto;aspect-ratio:1;margin:0 auto}
+}
 textarea#msgInput{height:37px}
-.send{border:none;background:var(--klein);color:#F0EFEB;font-family:var(--mono);font-size:11px;letter-spacing:.3em;padding:10px 18px 10px 21px;cursor:pointer}
+.send{border:none;background:var(--klein);color:#F0EFEB;font-family:var(--mono);font-size:10px;letter-spacing:.18em;padding:10px 11px 10px 14px;cursor:pointer}
 .send:hover{background:var(--zhu)}
 /* ── 右上角菜单侧栏（同模拟页） ── */
 #menuBtn{flex:none}
@@ -247,7 +269,12 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
     <div id="msgs"></div>
     <div class="inputbar">
       <textarea id="msgInput" rows="1" placeholder="呈递讯文…（Enter发送 · Shift+Enter换行）"></textarea>
+      <button class="emoBtn" id="emoBtn" title="表情包">☺</button>
       <button class="send" id="sendBtn">呈 递</button>
+    </div>
+    <div id="emoPanel" class="hidden">
+      <div class="epTit">怀榆自制 · 表情包</div>
+      <div class="epGrid" id="epGrid"></div>
     </div>
   </main>
 </div>
@@ -455,12 +482,15 @@ function buildMu(m){
   /* 操作钮按消息归属区分：
      己方(out)=「修改」＋「删除」（修改保存后自动重答，重答含旧回信作废）；
      对方(in)=「修改」＋「重新回复」＋「删除」 */
+  var isStk = m.t==='out' && m.emo && !(m.x && String(m.x).trim());   /* 己方纯表情：无字可改 */
   var btns = m.t==='out'
-    ? '<button class="o e">✎ 修改</button><button class="o danger del">✕ 删除</button>'
+    ? (isStk?'<button class="o r">⟲ 重新回复</button>':'<button class="o e">✎ 修改</button>')+'<button class="o danger del">✕ 删除</button>'
     : '<button class="o e">✎ 修改</button><button class="o r">⟲ 重新回复</button><button class="o danger del">✕ 删除</button>';
   d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
   var bub=d.querySelector('.bub');
-  bub.innerHTML=colored(m.x, m.t==='out')+sigHTML(m);
+  var txt=(m.x&&String(m.x).trim())?colored(m.x, m.t==='out'):'';
+  bub.innerHTML=txt+STICKER_HTML(m.emo)+sigHTML(m);
+  if(!txt && m.emo) bub.classList.add('emoOnly');   /* 纯表情：微信式大图占格 */
   if(sigHTML(m)) bub.classList.add('hassig');
   if(m.t==='in'&&m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
   if(m.t==='in'){
@@ -478,17 +508,19 @@ function buildMu(m){
 /* ═══ swipe 多版本：vers=版本栈，v=当前版下标；m.x/mood/ts 恒等于当前版，
    存档/AI记忆/落款/导出全部无感——旧数据零迁移（首次用到时才建栈） ═══ */
 function ensureVers(m){
-  if(!m.vers){ m.vers=[{x:m.x,mood:m.mood,ts:m.ts}]; m.v=0; }
+  if(!m.vers){ m.vers=[{x:m.x,mood:m.mood,emo:m.emo||null,ts:m.ts}]; m.v=0; }
 }
 function swMu(m,d,delta){
   ensureVers(m);
   var n=m.vers.length; if(n<2) return;
-  m.vers[m.v]={x:m.x,mood:m.mood,ts:m.ts};
+  m.vers[m.v]={x:m.x,mood:m.mood,emo:m.emo||null,ts:m.ts};
   m.v=(m.v+delta+n)%n;
-  var t=m.vers[m.v]; m.x=t.x; m.mood=t.mood; m.ts=t.ts;
+  var t=m.vers[m.v]; m.x=t.x; m.mood=t.mood; m.emo=t.emo; m.ts=t.ts;
   persist();
   var bub=d.querySelector('.bub');
-  bub.innerHTML=colored(m.x,m.t==='out')+sigHTML(m);
+  var txt2=(m.x&&String(m.x).trim())?colored(m.x,m.t==='out'):'';
+  bub.innerHTML=txt2+STICKER_HTML(m.emo)+sigHTML(m);
+  bub.classList.toggle('emoOnly', !txt2 && !!m.emo);
   if(sigHTML(m)) bub.classList.add('hassig');
   ['e-angry','e-sad','e-soft'].forEach(function(c){ d.classList.remove(c); });
   if(m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
@@ -597,10 +629,11 @@ function regen(el,m){
     DATA[cur].splice(oi2+1);
     persist(); renderChat();
     msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-    MAIL_AI.reply(cur,m.x,timeMeta(),oi2).then(function(reply){
+    var rq=(m.emo && !(m.x && String(m.x).trim())) ? '[表情:'+m.emo+']' : m.x;   /* 纯表情消息→标签文字 */
+    MAIL_AI.reply(cur,rq,timeMeta(),oi2).then(function(reply){
       g.remove();
       var pm2=parseMood(reply); var pm=pm2;
-      var nm={t:'in',x:pm.x,mood:pm.mood,ts:Date.now()};
+      var nm={t:'in',x:pm.x,mood:pm.mood,emo:pm.emo||null,ts:Date.now()};
       DATA[cur].push(nm);
       if(window.SFX)try{SFX.play('ding');}catch(e){}
       var ne=addMsgEl(nm,true); bindOps(ne,nm);
@@ -618,12 +651,12 @@ function regen(el,m){
   if(ai<0) return;                            /* 没有可回的己方讯：不动 */
   DATA[cur].splice(oi+1);                     /* 其后作废 */
   persist(); renderChat();
-  m.vers[m.v]={x:m.x,mood:m.mood,ts:m.ts};    /* 当前版入栈存好 */
+  m.vers[m.v]={x:m.x,mood:m.mood,emo:m.emo||null,ts:m.ts};    /* 当前版入栈存好 */
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,DATA[cur][ai].x,timeMeta(),ai).then(function(reply){
     g.remove();
     var pm=parseMood(reply);
-    m.vers.push({x:pm.x,mood:pm.mood,ts:Date.now()});   /* 新版追加到栈顶 */
+    m.vers.push({x:pm.x,mood:pm.mood,emo:pm.emo||null,ts:Date.now()});   /* 新版追加到栈顶 */
     m.v=m.vers.length-1;
     m.x=m.vers[m.v].x; m.mood=m.vers[m.v].mood; m.ts=m.vers[m.v].ts;
     persist(); renderChat();
@@ -707,13 +740,24 @@ function toast(msg){
 }
  
 /* ═══ v3 情绪码解析：回信末尾 [心情:怒|怯|软|静] 抠出存档并从正文剥离；没附/乱写=静 ═══ */
+/* v4 表情包白名单：只认这五个名，AI乱写/路径注入一律不渲染 */
+var EMO_NAMES=['无语','星星眼','暴怒','嚎哭','害羞'];
+function STICKER_HTML(name){
+  if(!name || EMO_NAMES.indexOf(name)<0) return '';
+  return '<img class="emo" src="表情/'+name+'.png" alt="[表情:'+name+']">';
+}
 function parseMood(reply){
-  /* 兼容全角/半角括号与冒号（【心情：怒】/[心情:怒]/［心情：怯］），
-     码后允许尾随空白或多余字符——不因格式抖动丢情绪 */
+  /* 兼容全角/半角括号与冒号；v4 同时抠表情标签（每条至多一个，多的忽略） */
   var s=String(reply);
+  var emo=null;
+  var me=/[［\[【]\s*表情\s*[:：]\s*([^］\]】]{1,8})\s*[］\]】]/.exec(s);
+  if(me){
+    if(EMO_NAMES.indexOf(me[1])>=0) emo=me[1];
+    s=(s.slice(0,me.index)+' '+s.slice(me.index+me[0].length)).replace(/\s+$/,'');   /* 未知名也剥离：不暴露标记规则 */
+  }
   var mt=/[［\[【]\s*心情\s*[:：]\s*([怒怯软静])\s*[］\]】]/.exec(s);
-  if(!mt) return {mood:'静', x:s};
-  return {mood:mt[1], x:(s.slice(0,mt.index)+' '+s.slice(mt.index+mt[0].length)).replace(/\s+$/,'')};
+  if(!mt) return {mood:'静', x:s, emo:emo};
+  return {mood:mt[1], x:(s.slice(0,mt.index)+' '+s.slice(mt.index+mt[0].length)).replace(/\s+$/,''), emo:emo};
 }
 /* ═══ v3 信笺落款：来信气泡内底部一行（时刻左·情绪字右）；无时间戳的旧存档不出落款 ═══ */
 function sigHTML(m){
@@ -749,18 +793,60 @@ document.getElementById('sendBtn').onclick=function(){
   if(window.SFX)try{SFX.play('bo');}catch(e){}
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 https://sfile.chatglm.cn/workspace/file/10/1083606a94.js） */
+  /* ②碾墨 → AI回信（MAIL_AI.reply 为预留接口，见 通讯AI.js） */
   var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
   msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
   MAIL_AI.reply(cur,t,meta).then(function(reply){
     g.remove();
     var pm=parseMood(reply);
-    var rm={t:'in',x:pm.x,mood:pm.mood,ts:Date.now()}; DATA[cur].push(rm);
+    var rm={t:'in',x:pm.x,mood:pm.mood,emo:pm.emo||null,ts:Date.now()}; DATA[cur].push(rm);
     if(window.SFX)try{SFX.play('ding');}catch(e){}
     var re=addMsgEl(rm,true); bindOps(re,rm);
     msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
   });
 };
+/* ═══ v4 表情包面板：点选即发送（微信式），AI会接话 ═══ */
+var emoBtn=document.getElementById('emoBtn'), emoPanel=document.getElementById('emoPanel');
+(function(){
+  var grid=document.getElementById('epGrid');
+  EMO_NAMES.forEach(function(name){
+    var im=document.createElement('img');
+    im.src='表情/'+name+'.png'; im.alt='[表情:'+name+']'; im.title=name;
+    im.onclick=function(ev){ ev.stopPropagation(); sendSticker(name); };
+    grid.appendChild(im);
+  });
+})();
+function toggleEmoPanel(ev){
+  if(ev) ev.stopPropagation();
+  emoPanel.classList.toggle('hidden');
+  emoBtn.classList.toggle('on', !emoPanel.classList.contains('hidden'));
+}
+function closeEmoPanel(){
+  emoPanel.classList.add('hidden'); emoBtn.classList.remove('on');
+}
+emoBtn.onclick=toggleEmoPanel;
+document.addEventListener('click',function(e){
+  if(!emoPanel.classList.contains('hidden') && !emoPanel.contains(e.target) && e.target!==emoBtn) closeEmoPanel();
+});
+function sendSticker(name){
+  closeEmoPanel();
+  var meta=timeMeta();
+  var m={t:'out',x:'',emo:name,ts:Date.now()}; DATA[cur].push(m);
+  if(window.SFX)try{SFX.play('bo');}catch(e){}
+  var el=addMsgEl(m,true); bindOps(el,m);
+  msgsEl.scrollTop=msgsEl.scrollHeight; persist();
+  var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
+  msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
+  /* upto=本条下标：标签只经text发一次，不重复进hist */
+  MAIL_AI.reply(cur,'[表情:'+name+']',meta,DATA[cur].length-1).then(function(reply){
+    g.remove();
+    var pm=parseMood(reply);
+    var rm={t:'in',x:pm.x,mood:pm.mood,emo:pm.emo||null,ts:Date.now()}; DATA[cur].push(rm);
+    if(window.SFX)try{SFX.play('ding');}catch(e){}
+    var re=addMsgEl(rm,true); bindOps(re,rm);
+    msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
+  });
+}
 /* 讯文框回车规则：电脑端 Enter=发送 / Shift+Enter=换行；
    手机端（无精确Shift）Enter=换行，发送按呈递钮 —— 靠 pointer 类型判端 */
 var msgInput=document.getElementById('msgInput');
