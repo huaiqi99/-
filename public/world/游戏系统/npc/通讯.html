@@ -202,8 +202,8 @@ textarea#msgInput{height:37px}
 .send:hover{background:var(--zhu)}
 /* ── 右上角菜单侧栏（同模拟页） ── */
 #menuBtn{flex:none}
-#mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;height:100vh;height:100dvh;background:var(--card);border-left:1.5px solid var(--klein);z-index:31;transition:right .28s ease;display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto}
-#mside.open{right:0}
+#mside{position:fixed;top:0;right:0;width:280px;max-width:82vw;height:100vh;height:100dvh;background:var(--card);border-left:1.5px solid var(--klein);z-index:31;transform:translateX(105%);transition:transform .28s ease;display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto}
+#mside.open{transform:none}
 /* 侧栏暗罩：开菜单时主内容压暗一层（引渡人同款），点罩收起 */
 #movl{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(20,24,40,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity .28s ease}
 #movl.on{opacity:1;pointer-events:auto}

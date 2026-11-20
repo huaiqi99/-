@@ -105,10 +105,10 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 /* ── ☰ 菜单侧栏（方框包住内容，同系统/通讯菜单） ── */
 .movl{position:fixed;inset:0;background:rgba(20,24,40,.35);z-index:40;display:none;}
 .movl.on{display:block;}
-.mside{position:fixed;top:0;right:-300px;width:280px;max-width:82vw;background:var(--card);
-  height:100vh;height:100dvh;z-index:41;transition:right .28s ease;
+.mside{position:fixed;top:0;right:0;width:280px;max-width:82vw;background:var(--card);
+  height:100vh;height:100dvh;z-index:41;transform:translateX(105%);transition:transform .28s ease;
   padding:16px 16px 20px;overflow-y:auto;}
-.mside.open{right:0;}
+.mside.open{transform:none;}
 .mbox{padding:0 0 6px;}
 .srow{display:flex;gap:8px;}
 .srow input{flex:1;min-width:0;border:1.5px solid var(--klein);background:var(--bg);color:var(--ink);
