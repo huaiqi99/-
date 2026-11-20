@@ -187,12 +187,14 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 #emoPanel{position:fixed;right:12px;bottom:74px;z-index:60;border:1.5px solid var(--klein);background:var(--card);box-shadow:6px 6px 0 rgba(0,0,0,.35);padding:10px 12px 12px;max-width:246px}
 #emoPanel.hidden{display:none}
 #emoPanel .epTit{font-size:10px;letter-spacing:.18em;color:var(--mut);margin-bottom:8px;font-family:var(--mono)}
-#emoPanel .epGrid{display:grid;grid-template-columns:repeat(3,64px);gap:8px}
+#emoPanel .epGrid{display:grid;grid-template-columns:repeat(3,64px);gap:8px;max-height:220px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+#emoPanel .epGrid::-webkit-scrollbar{width:3px}
+#emoPanel .epGrid::-webkit-scrollbar-thumb{background:var(--hair)}
 #emoPanel .epGrid img{width:64px;height:64px;object-fit:contain;cursor:pointer;background:rgba(0,0,0,.05);transition:transform .12s ease}
 #emoPanel .epGrid img:active{transform:scale(.92)}
 @media (max-width:760px){
   #emoPanel{left:0;right:0;bottom:62px;max-width:none;border-left:none;border-right:none;padding:12px 14px 14px}
-  #emoPanel .epGrid{grid-template-columns:repeat(3,1fr);gap:10px}
+  #emoPanel .epGrid{grid-template-columns:repeat(3,1fr);gap:10px;max-height:216px}
   #emoPanel .epGrid img{width:100%;max-width:96px;height:auto;aspect-ratio:1;margin:0 auto}
 }
 textarea#msgInput{height:37px}
@@ -320,7 +322,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
 <script src="./通讯AI.js"></script>
 <script src="./核心.js" data-bgm="音乐1.mp3"></script>
 <script src="./sfx.js"></script>
-<div id="desk-pet"><img src="头像/怀榆点赞.png" class="char-img" alt=""></div>
+<div id="desk-pet"><img src="贴纸.png" class="char-img" alt=""></div>
 <script>
 /* ═══ 名册数据：added=已入信匣；pending=待资料页联动添加；
    pin=置顶名单；care=特别关心名单（菜单里切换） ═══ */
@@ -756,7 +758,8 @@ function toast(msg){
  
 /* ═══ v3 情绪码解析：回信末尾 [心情:怒|怯|软|静] 抠出存档并从正文剥离；没附/乱写=静 ═══ */
 /* v4 表情包白名单：只认这五个名，AI乱写/路径注入一律不渲染 */
-var EMO_NAMES=['无语','星星眼','暴怒','嚎哭','害羞'];
+/* 表情名单=AI.js注册表EMO_DEFS派生（加表情不用改这里） */
+var EMO_NAMES=EMO_DEFS.map(function(d){return d.n});
 function STICKER_HTML(name){
   if(!name || EMO_NAMES.indexOf(name)<0) return '';
   return '<img class="emo" src="表情/'+name+'.png" alt="[表情:'+name+']">';
