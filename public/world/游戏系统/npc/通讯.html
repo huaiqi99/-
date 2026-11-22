@@ -231,6 +231,21 @@ textarea#msgInput{height:37px}
 .sitem .plus:hover{background:var(--klein);color:#F0EFEB}
 .backbtn{margin-top:14px;border:1.5px solid var(--klein);background:transparent;color:var(--klein);width:100%;padding:8px;font-size:12px;letter-spacing:.3em;cursor:pointer}
 .backbtn:hover{background:var(--klein);color:#F0EFEB}
+/* ── 使用说明弹窗（纸条，至高图层可盖侧栏） ── */
+#manualOv{position:fixed;inset:0;background:rgba(20,28,48,.45);z-index:70;display:none;align-items:center;justify-content:center;padding:16px}
+#manualCard{background:var(--card);border:1.5px solid var(--klein);box-shadow:6px 6px 0 rgba(0,0,0,.35);width:min(420px,100%);max-height:78vh;max-height:78dvh;display:flex;flex-direction:column}
+#manualHead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:2.5px dashed var(--hair);font-family:var(--mono);letter-spacing:.3em;color:var(--klein)}
+#manualHead b{font-size:12px}
+#manualX{background:none;border:1.5px solid var(--hair);color:var(--mut);font-family:var(--mono);font-size:11px;padding:2px 8px;cursor:pointer}
+#manualX:hover{border-color:var(--zhu);color:var(--zhu)}
+#manualBody{overflow-y:auto;padding:4px 16px 16px;font-size:13px;line-height:2.05;letter-spacing:.03em;color:var(--ink)}
+#manualBody h4{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--klein);border-bottom:1.5px dashed var(--hair);padding:11px 0 4px;margin:6px 0 4px}
+#manualBody p{margin:5px 0}
+#manualBody p b{color:var(--klein)}
+#manualBody .warn{color:var(--zhu)}
+#manualBody::-webkit-scrollbar{width:4px}
+#manualBody::-webkit-scrollbar-thumb{background:var(--hair)}
+.sysnote .mhLink{color:var(--zhu);border-bottom:1px dashed var(--zhu);cursor:pointer;font-weight:bold}
 /* ── 人物简介浮层 ── */
 #pfile{position:fixed;inset:0;background:rgba(20,28,48,.45);z-index:40;display:none;align-items:center;justify-content:center;padding:16px}
 #pfile.open{display:flex}
@@ -295,11 +310,34 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
 </div>
  
 <!-- 菜单侧栏 -->
+<div id="manualOv">
+  <div id="manualCard">
+    <div id="manualHead"><b>▣ 使用说明 · 讯匣</b><button id="manualX">✕ 关闭</button></div>
+    <div id="manualBody">
+      <h4>MESSAGE · 消息操作（双击气泡呼出）</h4>
+      <p><b>修改</b> —— 改动会正式保存，AI 按修改后的内容继续往下聊。想修正自己说过的话、或给 AI 的回信抠细节，都用这个。</p>
+      <p><b>重新回复</b> —— 对 AI 这封回信不满意时，让它换个写法重说一遍。剧情走向不变，只是措辞换版；气泡下方 ◂ ▸ 可在几个版本之间翻，用哪版点哪版。</p>
+      <p><b>删除</b> —— 只删掉这条消息本身。AI 的上下文直接取自聊天记录，删掉后它就看不到这条原文了；较早的对话若已沉淀进记忆摘要，大意仍会保留。</p>
+      <h4>STICKER · 表情包</h4>
+      <p>点 ☺ 打开表情面板，点选表情会挂在输入栏上方（✕ 可收起），随文字一起发送；也可以一个字不打、只发表情。</p>
+      <h4>BATCH · 连发（攒着一起呈递）</h4>
+      <p><b>双击 ☺</b> 开启攒发模式——之后每条消息只排队、不发送，输入栏上方出现「待呈递」条，排队消息可逐条 ✕ 撤回；再双击 ☺ 整队一起呈递给对方。像真人聊天那样连着轰几条，就是这个用法。</p>
+      <h4>MODE · 两种聊天模式（自动切换，无需设置）</h4>
+      <p>对方回信里<b>带（动作）</b>时，是一整段剧情演绎的信；<b>纯对话</b>时，会自动拆成几条短气泡，像微信一样一条条发来。模式由对方写的内容决定，你不用管。</p>
+      <h4>MISC · 其他</h4>
+      <p>◇ 点左侧头像可查看人物简介。</p>
+      <p>◇ 讯道可置顶、备注、特别关心（都在侧边栏菜单里）。</p>
+      <p>◇ 双击红色虚线提示框可删掉它。</p>
+      <p>◇ 侧边栏的<b class="warn">「删档重来」</b>会清空全部聊天记录回初始档，<b class="warn">不可撤销</b>，慎用。</p>
+    </div>
+  </div>
+</div>
 <aside id="mside">
   <div class="st">信 匣 · MENU</div>
   <div class="sitem" id="miNight"><span>日间 / 夜间</span><span class="arr">切换</span></div>
   <div class="sitem" id="miPet"><span>桌边小像</span><span class="arr" id="petArr">—</span></div>
   <button class="sitem miBack" id="miBack"><span>◂ 返回系统页面</span><span class="arr">EXIT</span></button>
+  <div class="sitem" id="miManual"><span>使用说明</span><span class="arr">MANUAL</span></div>
   <div class="sitem" id="miPin"><span>置顶</span><span class="arr" id="pinArr">—</span></div>
   <div class="sitem" id="miCare"><span>特别关心</span><span class="arr" id="careArr">—</span></div>
   <div class="sitem" id="miNote"><span>备注</span><span class="arr" id="noteArr">编辑</span></div>
@@ -576,7 +614,12 @@ function attachHint(){
   var arr=DATA[cur]||[];
   if(!arr.some(function(m){return m.d;})) return;
   var hint=document.createElement('span'); hint.className='sysnote'; hint.id='demoHint';
-  hint.textContent='上述为写死的演示对话 —— 双击可修改 / 重新生成 · 双击虚线提示框亦可删除';
+  hint.innerHTML='演示对话可双击改写 · 更多功能请查看 <span class="mhLink" id="hintManual">〔使用说明〕</span>';
+  var hl=hint.querySelector('.mhLink');
+  if(hl){
+    hl.onclick=function(ev){ ev.stopPropagation(); openManual(); };
+    hl.ondblclick=function(ev){ ev.stopPropagation(); };   /* 防连点误触红框删除 */
+  }
   /* 插到最后一条死对话的DOM后面 */
   var kids=[...msgsEl.children].filter(function(x){return x.classList.contains('mu')||x.classList.contains('sysnote');});
   var arr2=arr.filter(function(m){return m.t==='in'||m.t==='out'||m.t==='note';});
@@ -917,6 +960,13 @@ var mside=document.getElementById('mside');
 var movl=document.getElementById('movl');
 document.getElementById('menuBtn').onclick=function(ev){ ev.stopPropagation(); if(window.SFX)try{SFX.play('pa');}catch(e){} mside.classList.toggle('open'); movl.classList.toggle('on', mside.classList.contains('open')); renderPending(); };
 movl.onclick=function(){ mside.classList.remove('open'); movl.classList.remove('on'); };
+/* ═══ v4.3 使用说明弹窗 ═══ */
+var manualOv=document.getElementById('manualOv');
+function openManual(){ manualOv.style.display='flex'; if(window.SFX)try{SFX.play('pa');}catch(e){} }
+function closeManual(){ manualOv.style.display='none'; }
+document.getElementById('miManual').onclick=openManual;
+document.getElementById('manualX').onclick=closeManual;
+manualOv.addEventListener('click',function(ev){ if(ev.target===manualOv) closeManual(); });
 /* 点空白处收起侧栏（菜单按钮自身除外）+ 收起B案浮出条 */
 document.addEventListener('click',function(ev){
   if(mside.classList.contains('open') && !mside.contains(ev.target) && ev.target!==document.getElementById('menuBtn') && !document.getElementById('menuBtn').contains(ev.target)){
