@@ -198,6 +198,7 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .mu.segwrap .bub .seg{position:relative;background:var(--card);border:1.5px solid var(--hair);border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12);padding:8px 13px;max-width:100%;width:fit-content;font-size:13.5px;line-height:1.95;letter-spacing:.02em;word-break:break-word;white-space:pre-wrap;color:var(--ink)}
 .mu.segwrap .bub .seg::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
 body.night .mu.segwrap .bub .seg{box-shadow:3px 3px 0 rgba(10,20,35,.35)}
+.mu.segwrap .bub .sig{width:fit-content;max-width:100%}
 .mu.segwrap.fresh .bub .seg{animation:segIn .32s ease both}
 @keyframes segIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .mu.out .emoSolo{margin-left:auto}   /* v4.5 玩家表情挂件跟随气泡右缘 */
@@ -606,21 +607,12 @@ function swMu(m,d,delta){
   m.v=(m.v+delta+n)%n;
   var t=m.vers[m.v]; m.x=t.x; m.mood=t.mood; m.emo=t.emo; m.ts=t.ts;
   persist();
-  var bub=d.querySelector('.bub');
-  var txt2=(m.x&&String(m.x).trim())?colored(m.x,m.t==='out'):'';
-  var solo2 = m.t==='in' && m.emo && txt2;
-  bub.innerHTML=txt2+(solo2?'':STICKER_HTML(m.emo))+sigHTML(m);
-  bub.classList.toggle('emoOnly', !txt2 && !!m.emo);
-  if(sigHTML(m)) bub.classList.add('hassig');
-  var oldSo=bub.parentElement.querySelector('.emoSolo'); if(oldSo) oldSo.remove();
-  if(solo2){
-    var so2=document.createElement('div'); so2.className='emoSolo';
-    so2.innerHTML=STICKER_HTML(m.emo);
-    bub.after(so2);
-  }
-  ['e-angry','e-sad','e-soft'].forEach(function(c){ d.classList.remove(c); });
-  if(m.mood&&m.mood!=='静') d.classList.add('e-'+({怒:'angry',怯:'sad',软:'soft'}[m.mood]||''));
-  var ce=d.querySelector('.swB .cur'); if(ce) ce.textContent=(m.v+1)+' / '+n;
+    /* v4.6 拆条时代：换版=整条消息重建（buildMu 按新内容自选拆条/信框/表情路径），杜绝半旧markup白板 */
+  var sc=msgsEl.scrollTop;
+  var nd=addMsgEl(m,false);
+  d.parentNode.insertBefore(nd,d); d.remove();
+  bindOps(nd,m);
+  msgsEl.scrollTop=sc;
 }
 function renderChat(){
   msgsEl.innerHTML='';
@@ -714,8 +706,15 @@ function startEdit(el,m){
   bar.innerHTML='<button class="sv">✓ 保存</button><button class="cc">取消</button>';
   bub.style.display='none'; bub.after(bar); bar.after(ta);
   bar.querySelector('.sv').onclick=function(){ var v=ta.value.trim(); if(!v){restore();return;}
-    m.x=v; if(m.vers) m.vers[m.v].x=v; bub.innerHTML=colored(v,m.t==='out')+sigHTML(m); restore(true); persist();
+    m.x=v; if(m.vers) m.vers[m.v].x=v; persist();
+    restore(true);
     el.classList.remove('sel');   /* 修改完成默认收起 */
+    if(el.classList.contains('segwrap')){   /* v4.6 拆条讯改后整条重建，防白板 */
+      var sc=msgsEl.scrollTop, nd=addMsgEl(m,false);
+      el.parentNode.insertBefore(nd,el); el.remove(); bindOps(nd,m); msgsEl.scrollTop=sc;
+    } else {
+      bub.innerHTML=colored(v,m.t==='out')+sigHTML(m);
+    }
     if(m.t==='out'){ regen(el,m); }   /* 己方讯：修改=重新生成（AI按新讯文重答） */
   };
   bar.querySelector('.cc').onclick=restore;
