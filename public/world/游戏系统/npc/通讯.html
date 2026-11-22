@@ -39,6 +39,14 @@ body.night{
 .mu.in.e-angry .bub::after{border-color:transparent transparent var(--e-angry) transparent}
 .mu.in.e-sad .bub::after{border-color:transparent transparent var(--e-sad) transparent}
 .mu.in.e-soft .bub::after{border-color:transparent transparent var(--e-soft) transparent}
+/* v4.6.3 心情色覆盖拆条seg的左线与折角；壳本体折角关闭（防孤儿角标悬在组尾） */
+.mu.in.e-angry.segwrap .seg{border-left-color:var(--e-angry)}
+.mu.in.e-sad.segwrap .seg{border-left-color:var(--e-sad)}
+.mu.in.e-soft.segwrap .seg{border-left-color:var(--e-soft)}
+.mu.in.e-angry.segwrap .seg::after{border-color:transparent transparent var(--e-angry) transparent}
+.mu.in.e-sad.segwrap .seg::after{border-color:transparent transparent var(--e-sad) transparent}
+.mu.in.e-soft.segwrap .seg::after{border-color:transparent transparent var(--e-soft) transparent}
+.mu.segwrap .bub::after{display:none}
 
 /* ═══ 桌边小像（罗修桌宠移植）：可点击可拖动，位置记忆，侧栏可关 ═══ */
 #desk-pet{position:fixed;bottom:0;right:8px;z-index:28;width:120px;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transform-origin:bottom center;-webkit-tap-highlight-color:transparent;touch-action:none;will-change:transform;--drag-x:0px;--drag-y:0px;transform:translate3d(var(--drag-x),var(--drag-y),0)}
