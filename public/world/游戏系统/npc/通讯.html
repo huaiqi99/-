@@ -193,8 +193,11 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 #emoPanel .epGrid img{width:64px;height:64px;object-fit:contain;cursor:pointer;background:rgba(0,0,0,.05);transition:transform .12s ease}
 #emoPanel .epGrid img:active{transform:scale(.92)}
 /* ═══ v4.2 叙事拆气泡：无括号纯对话来信自动拆条（有括号=信框不变）；fresh=首达才逐条渐显 ═══ */
-.mu.segwrap .bub{background:none;border:none;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
-.mu.segwrap .bub .seg{background:var(--card);border:1px solid var(--hair);border-radius:10px 10px 10px 2px;padding:7px 12px;max-width:100%;box-shadow:2px 2px 0 rgba(34,44,110,.08)}
+/* v4.6 拆条=一条条独立消息的观感：样式逐项对齐 .mu.in .bub 本体，只是排队陈列 */
+.mu.segwrap .bub{background:none;border:none;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:13px;align-items:flex-start}
+.mu.segwrap .bub .seg{position:relative;background:var(--card);border:1.5px solid var(--hair);border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12);padding:8px 13px;max-width:100%;width:fit-content;font-size:13.5px;line-height:1.95;letter-spacing:.02em;word-break:break-word;white-space:pre-wrap;color:var(--ink)}
+.mu.segwrap .bub .seg::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
+body.night .mu.segwrap .bub .seg{box-shadow:3px 3px 0 rgba(10,20,35,.35)}
 .mu.segwrap.fresh .bub .seg{animation:segIn .32s ease both}
 @keyframes segIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .mu.out .emoSolo{margin-left:auto}   /* v4.5 玩家表情挂件跟随气泡右缘 */
@@ -557,7 +560,13 @@ function buildMu(m,anim){
   /* v4.2 叙事拆气泡：来信无括号动作且2~4自然段→拆条渐显；有括号或超4段→信框（原样） */
   var ACT = m.t==='in' && /[（(][^（）()]*[）)]/.test(m.x||'');
   var lines = (m.x||'').split(/\n+/).map(function(s){return s.trim();}).filter(Boolean);
-  if(m.t==='in' && !ACT && lines.length>=2 && lines.length<=4){
+  if(m.t==='in' && !ACT){
+    if(lines.length===1 && /[。！？!?…]["」』）)]?]?$/.test(lines[0]) && lines[0].length>=24){
+      /* v4.6 兜底：AI偷懒连写一段时按句号拆，一句话一个气泡 */
+      lines=lines[0].split(/(?<=[。！？!?…])/).map(function(s){return s.trim();}).filter(Boolean);
+    }
+  }
+  if(m.t==='in' && !ACT && lines.length>=2){
     d.classList.add('segwrap'); if(anim) d.classList.add('fresh');
     txt = lines.map(function(s,i){
       return '<div class="seg"'+(anim&&i>0?' style="animation-delay:'+(i*0.55).toFixed(2)+'s"':'')+'>'+colored(s,false)+'</div>';
