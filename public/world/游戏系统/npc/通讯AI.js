@@ -830,10 +830,28 @@ var EMO_DEFS=[
     return pool[IDX[contact]];
   }
   
+  /* ═══ v4.5 镜像模式定义 ═══ */
+  var MODE_CHAT = '【当前模式：纯聊天·硬性规则】玩家此刻把讯匣当即时聊天工具用，只发短对白、不带任何（动作）括号。你的回信同样禁止出现任何括号动作、任何场景描写、任何心理描写、任何（讯匣那头如何如何）之类的垫场描述——只写对白本身，一到三句，像微信聊天那样直接说话。违反此条即答错模式。';
+  var MODE_STORY = '【当前模式：剧情演绎】玩家带了（动作），按剧情信格式正常写整段信。但括号动作只用于推动剧情或人物关系的必要动作，禁止无意义的垫场动作（如"（讯匣那头静了片刻）""（写完停住，盯着那行字看了看）"这类对剧情毫无影响的描述一律不写）。';
+  function detectMode(contact){
+    var arr = (typeof DATA!=='undefined' && DATA[contact]) || [];
+    var outs = [];
+    for(var i=arr.length-1; i>=0 && outs.length<3; i--){
+      if(arr[i].t==='out') outs.push(String(arr[i].x||''));
+    }
+    for(var j=0; j<outs.length; j++){
+      if(/[（(][^（）()]*[）)]/.test(outs[j])) return 'story';
+    }
+    return 'chat';
+  }
+
   window.MAIL_AI = {
     reply: function(contact, text, timeMeta, upto){
       var cfg = loadAIConfig();
       var ctx = buildHistory(contact, upto);   /* { hist, sysNotes, aiNotes, summary, pendingMerge, rawLen } */
+      /* ═══ v4.5 镜像模式：看最近3条玩家消息有无（）括号，动态注入当次模式硬指令（不进存档） ═══ */
+      var __mode = detectMode(contact);
+      ctx.sysNotes = ctx.sysNotes.concat([__mode==='chat' ? MODE_CHAT : MODE_STORY]);
       /* 原文>80 且未在摘要中 → 后台静默触发，不阻塞本次回复，下次请求才生效 */
       if(ctx.rawLen > SUM_TRIGGER && !__summarizing[contact]){
         try{ maybeSummarize(contact, cfg); }catch(e){}
@@ -849,6 +867,7 @@ var EMO_DEFS=[
       return p.catch(function(err){ return '【讯匣故障】'+err.message; });
     },
     buildSystem: buildSystem,   /* 调试用：可在此看每人的完整提示词 */
+    detectMode: detectMode,     /* 调试用：看当前判定的聊天/剧情模式 */
     findChar: findChar,
     PLAYER: PLAYER,             /* 玩家档案（资料页等地方要用可直接取） */
     WORLD: WORLD                /* 世界观底牌全文 */

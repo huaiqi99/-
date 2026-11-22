@@ -197,8 +197,7 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .mu.segwrap .bub .seg{background:var(--card);border:1px solid var(--hair);border-radius:10px 10px 10px 2px;padding:7px 12px;max-width:100%;box-shadow:2px 2px 0 rgba(34,44,110,.08)}
 .mu.segwrap.fresh .bub .seg{animation:segIn .32s ease both}
 @keyframes segIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.mu.out.segwrap .bub{align-items:flex-end}
-.mu.out.segwrap .bub .seg{background:var(--klein);color:#F0EFEB;border-color:var(--klein);border-radius:10px 10px 2px 10px}
+.mu.out .emoSolo{margin-left:auto}   /* v4.5 玩家表情挂件跟随气泡右缘 */
 /* 表情附件条：点选表情挂输入栏，随文字一起呈递 */
 #stkChip{display:none;align-items:center;gap:9px;padding:6px 14px;border-top:1.5px dashed var(--hair);background:var(--card)}
 #stkChip.on{display:flex}
@@ -332,7 +331,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
       <p><b>重新回复</b> —— 对 AI 这封回信不满意时，让它换个写法重说一遍。剧情走向不变，只是措辞换版；气泡下方 ◂ ▸ 可在几个版本之间翻，用哪版点哪版。</p>
       <p><b>删除</b> —— 只删掉这条消息本身。AI 的上下文直接取自聊天记录，删掉后它就看不到这条原文了；较早的对话若已沉淀进记忆摘要，大意仍会保留。</p>
       <h4>STICKER · 表情包</h4>
-      <p>点 ☺ 打开表情面板，点选表情会挂在输入栏上方（✕ 可收起），随文字一起发送；也可以一个字不打、只发表情。</p>
+      <p>点 ☺ 打开表情面板，点选表情会挂在输入栏上方（✕ 可收起），随文字一起发送；也可以一个字不打、只发表情。<b>攒发模式中</b>点选表情则直接进入待呈递队列。</p>
       <h4>BATCH · 连发（攒着一起呈递）</h4>
       <p><b>双击 ☺</b> 开启攒发模式——之后每条消息只排队、不发送，输入栏上方出现「待呈递」条，排队消息可逐条 ✕ 撤回；再双击 ☺ 整队一起呈递给对方。像真人聊天那样连着轰几条，就是这个用法。</p>
       <h4>MODE · 两种聊天模式（自动切换，无需设置）</h4>
@@ -563,12 +562,7 @@ function buildMu(m,anim){
     txt = lines.map(function(s,i){
       return '<div class="seg"'+(anim&&i>0?' style="animation-delay:'+(i*0.55).toFixed(2)+'s"':'')+'>'+colored(s,false)+'</div>';
     }).join('');
-  } else if(m.t==='out' && lines.length>=2){   /* v4.4 玩家多行输入→拆条连发（右对齐，无上限） */
-    d.classList.add('segwrap'); if(anim) d.classList.add('fresh');
-    txt = lines.map(function(s,i){
-      return '<div class="seg"'+(anim&&i>0?' style="animation-delay:'+(i*0.35).toFixed(2)+'s"':'')+'>'+colored(s,false)+'</div>';
-    }).join('');
-  }
+  }   /* v4.5 裁定：玩家侧不拆条，多行=一条气泡内换行；拆条只属于AI侧 */
   var soloAny = m.emo && txt;   /* 文字+表情两连发（来信/呈递通用） */
   bub.innerHTML=txt+(soloAny?'':STICKER_HTML(m.emo))+sigHTML(m);
   if(!txt && m.emo) bub.classList.add('emoOnly');   /* 纯表情：裸图无框 */
@@ -960,6 +954,7 @@ function toggleBatch(){
   if(!batchOn && !batchQ.length){
     batchOn=true; emoBtn.classList.add('bat');
     emoPanel.classList.add('hidden'); emoBtn.classList.remove('on');
+    if(stkPend){ batchQ.push({x:'',emo:stkPend}); stkPend=null; document.getElementById('stkChip').classList.remove('on'); renderBatchBar(); }
     if(window.SFX)try{SFX.play('pa');}catch(e){}
     toast('攒发模式：消息先排队，再双击☺整队呈递');
   } else {
@@ -997,6 +992,11 @@ document.addEventListener('click',function(e){
 var stkPend=null;   /* v4.2 待发附件表情：空=无，填名字=挂输入栏随文字一起呈递 */
 function sendSticker(name){
   closeEmoPanel();
+  if(batchOn){   /* v4.5 攒发中：表情直接进待呈递队列，不再挂输入栏 */
+    batchQ.push({x:'',emo:name});
+    renderBatchBar();
+    return;
+  }
   stkPend=name;
   document.getElementById('stkChipImg').src='表情/'+name+'.png';
   document.getElementById('stkChip').classList.add('on');
