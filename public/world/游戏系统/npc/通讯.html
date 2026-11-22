@@ -41,7 +41,7 @@ body.night{
 .mu.in.e-soft .bub::after{border-color:transparent transparent var(--e-soft) transparent}
 
 /* ═══ 桌边小像（罗修桌宠移植）：可点击可拖动，位置记忆，侧栏可关 ═══ */
-#desk-pet{position:fixed;bottom:0;right:8px;z-index:50;width:120px;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transform-origin:bottom center;-webkit-tap-highlight-color:transparent;touch-action:none;will-change:transform;--drag-x:0px;--drag-y:0px;transform:translate3d(var(--drag-x),var(--drag-y),0)}
+#desk-pet{position:fixed;bottom:0;right:8px;z-index:28;width:120px;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transform-origin:bottom center;-webkit-tap-highlight-color:transparent;touch-action:none;will-change:transform;--drag-x:0px;--drag-y:0px;transform:translate3d(var(--drag-x),var(--drag-y),0)}
 body.night #desk-pet{filter:brightness(.9)}
 #desk-pet .char-img{width:100%;display:block;pointer-events:none;transition:filter .25s ease}
 #desk-pet.dragging{cursor:grabbing;transform:translate3d(var(--drag-x),var(--drag-y),0) scale(1.04)}
@@ -184,7 +184,7 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .emoBtn{flex:0 0 auto;height:37px;min-width:37px;border:1.5px solid var(--klein);background:var(--card);color:var(--ink);font-size:17px;line-height:1;cursor:pointer;border-radius:0;letter-spacing:0;padding:0 6px}
 .emoBtn:active{background:var(--zhu);color:#fff}
 .emoBtn.on{background:var(--zhu);color:#fff;border-color:var(--zhu)}
-#emoPanel{position:fixed;right:12px;bottom:74px;z-index:60;border:1.5px solid var(--klein);background:var(--card);box-shadow:6px 6px 0 rgba(0,0,0,.35);padding:10px 12px 12px;max-width:246px}
+#emoPanel{position:fixed;right:12px;bottom:74px;z-index:29;border:1.5px solid var(--klein);background:var(--card);box-shadow:6px 6px 0 rgba(0,0,0,.35);padding:10px 12px 12px;max-width:246px}
 #emoPanel.hidden{display:none}
 #emoPanel .epTit{font-size:10px;letter-spacing:.18em;color:var(--mut);margin-bottom:8px;font-family:var(--mono)}
 #emoPanel .epGrid{display:grid;grid-template-columns:repeat(3,64px);gap:8px;max-height:220px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
@@ -192,6 +192,16 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 #emoPanel .epGrid::-webkit-scrollbar-thumb{background:var(--hair)}
 #emoPanel .epGrid img{width:64px;height:64px;object-fit:contain;cursor:pointer;background:rgba(0,0,0,.05);transition:transform .12s ease}
 #emoPanel .epGrid img:active{transform:scale(.92)}
+/* ═══ v4.2 叙事拆气泡：无括号纯对话来信自动拆条（有括号=信框不变）；fresh=首达才逐条渐显 ═══ */
+.mu.segwrap .bub{background:none;border:none;box-shadow:none;padding:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.mu.segwrap .bub .seg{background:var(--card);border:1px solid var(--hair);border-radius:10px 10px 10px 2px;padding:7px 12px;max-width:100%;box-shadow:2px 2px 0 rgba(34,44,110,.08)}
+.mu.segwrap.fresh .bub .seg{animation:segIn .32s ease both}
+@keyframes segIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+/* 表情附件条：点选表情挂输入栏，随文字一起呈递 */
+#stkChip{display:none;align-items:center;gap:9px;padding:6px 14px;border-top:1.5px dashed var(--hair);background:var(--card)}
+#stkChip.on{display:flex}
+#stkChip img{width:42px;height:42px;object-fit:contain;background:rgba(0,0,0,.05);border:1px solid var(--hair)}
+#stkChip .scx{background:none;border:none;color:var(--mut);font-family:var(--mono);font-size:11px;cursor:pointer;padding:4px}
 @media (max-width:760px){
   #emoPanel{left:0;right:0;bottom:62px;max-width:none;border-left:none;border-right:none;padding:12px 14px 14px}
   #emoPanel .epGrid{grid-template-columns:repeat(3,1fr);gap:10px;max-height:216px}
@@ -271,6 +281,7 @@ body.night #pfile .pf .quote{background:rgba(42,44,63,.08)}
       <button class="ico" id="menuBtn" title="菜单">☰</button>
     </div>
     <div id="msgs"></div>
+    <div id="stkChip"><img id="stkChipImg" alt=""><button class="scx" id="stkChipX">✕ 收起</button></div>
     <div class="inputbar">
       <textarea id="msgInput" rows="1" placeholder="呈递讯文…（Enter发送 · Shift+Enter换行）"></textarea>
       <button class="emoBtn" id="emoBtn" title="表情包">☺</button>
@@ -479,7 +490,7 @@ function setSeal(el,name){
     img.src=AVATAR_DIR+encodeURIComponent(name)+'.'+exts[i];
   })();
 }
-function buildMu(m){
+function buildMu(m,anim){
   var d=document.createElement('div');
   d.className='mu '+(m.t==='out'?'out':'in');
   var who=m.t==='out'?'怀榆 · HUAIYU':cur+' · '+(INFO[cur]?INFO[cur].pin:'');
@@ -493,11 +504,20 @@ function buildMu(m){
   d.innerHTML='<div class="lbl">'+who+'</div><div class="bub"></div><div class="ops">'+btns+'</div>';
   var bub=d.querySelector('.bub');
   var txt=(m.x&&String(m.x).trim())?colored(m.x, m.t==='out'):'';
-  var soloIn = m.t==='in' && m.emo && txt;   /* 来信=文字一条+表情独立一条（微信式两连发） */
-  bub.innerHTML=txt+(soloIn?'':STICKER_HTML(m.emo))+sigHTML(m);
+  /* v4.2 叙事拆气泡：来信无括号动作且2~4自然段→拆条渐显；有括号或超4段→信框（原样） */
+  var ACT = m.t==='in' && /[（(][^（）()]*[）)]/.test(m.x||'');
+  var lines = (m.x||'').split(/\n+/).map(function(s){return s.trim();}).filter(Boolean);
+  if(m.t==='in' && !ACT && lines.length>=2 && lines.length<=4){
+    d.classList.add('segwrap'); if(anim) d.classList.add('fresh');
+    txt = lines.map(function(s,i){
+      return '<div class="seg"'+(anim&&i>0?' style="animation-delay:'+(i*0.55).toFixed(2)+'s"':'')+'>'+colored(s,false)+'</div>';
+    }).join('');
+  }
+  var soloAny = m.emo && txt;   /* 文字+表情两连发（来信/呈递通用） */
+  bub.innerHTML=txt+(soloAny?'':STICKER_HTML(m.emo))+sigHTML(m);
   if(!txt && m.emo) bub.classList.add('emoOnly');   /* 纯表情：裸图无框 */
   if(sigHTML(m)) bub.classList.add('hassig');
-  if(soloIn){
+  if(soloAny){
     var so=document.createElement('div'); so.className='emoSolo';
     so.innerHTML=STICKER_HTML(m.emo);
     bub.after(so);
@@ -548,6 +568,7 @@ function renderChat(){
   (DATA[cur]||[]).forEach(function(m){ addMsgEl(m,false); });
   attachHint();
   msgsEl.scrollTop=msgsEl.scrollHeight;
+  requestAnimationFrame(function(){ msgsEl.scrollTop=msgsEl.scrollHeight; });   /* v4.2 手机端：openChat先滚后开容器，首帧scrollHeight=0空滚，补一帧 */
 }
 /* 提示条：只要还有写死对话(d:1)就挂在最后一条死对话下面；删光自动消失 */
 function attachHint(){
@@ -581,7 +602,7 @@ function addMsgEl(m,anim){
       persist(); refreshHint();
     });
   }
-  else { el=buildMu(m); bindOps(el,m); }
+  else { el=buildMu(m,anim); bindOps(el,m); }
   if(!anim) el.style.animation='none';
   msgsEl.appendChild(el);
   return el;
@@ -646,7 +667,8 @@ function regen(el,m){
     DATA[cur].splice(oi2+1);
     persist(); renderChat();
     msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-    var rq=(m.emo && !(m.x && String(m.x).trim())) ? '[表情:'+m.emo+']' : m.x;   /* 纯表情消息→标签文字 */
+    /* v4.2 纯表情→标签文字；文字+表情→正文附带标签（AI知道你发了什么表情） */
+    var rq=(m.emo ? (m.x&&String(m.x).trim()? String(m.x)+'\n[表情:'+m.emo+']' : '[表情:'+m.emo+']') : m.x);
     MAIL_AI.reply(cur,rq,timeMeta(),oi2).then(function(reply){
       g.remove();
       var pm2=parseMood(reply); var pm=pm2;
@@ -804,10 +826,12 @@ function timeMeta(){
 }
 /* ═══ 呈递 + ②碾墨 ═══ */
 document.getElementById('sendBtn').onclick=function(){
-  var i=document.getElementById('msgInput'), t=i.value.trim(); if(!t) return;
+  var i=document.getElementById('msgInput'), t=i.value.trim();
+  if(!t && !stkPend) return;
   i.value='';
+  var sp=stkPend; stkPend=null; document.getElementById('stkChip').classList.remove('on');
   var meta=timeMeta();                       /* 先算时刻再入档，间隔按上一条算 */
-  var m={t:'out',x:t,ts:Date.now()}; DATA[cur].push(m);
+  var m={t:'out',x:t,emo:sp||null,ts:Date.now()}; DATA[cur].push(m);
   if(window.SFX)try{SFX.play('bo');}catch(e){}
   var el=addMsgEl(m,true); bindOps(el,m);
   msgsEl.scrollTop=msgsEl.scrollHeight; persist();
@@ -825,6 +849,7 @@ document.getElementById('sendBtn').onclick=function(){
 };
 /* ═══ v4 表情包面板：点选即发送（微信式），AI会接话 ═══ */
 var emoBtn=document.getElementById('emoBtn'), emoPanel=document.getElementById('emoPanel');
+document.getElementById('stkChipX').onclick=function(){ stkPend=null; document.getElementById('stkChip').classList.remove('on'); };
 (function(){
   var grid=document.getElementById('epGrid');
   EMO_NAMES.forEach(function(name){
@@ -846,24 +871,12 @@ emoBtn.onclick=toggleEmoPanel;
 document.addEventListener('click',function(e){
   if(!emoPanel.classList.contains('hidden') && !emoPanel.contains(e.target) && e.target!==emoBtn) closeEmoPanel();
 });
+var stkPend=null;   /* v4.2 待发附件表情：空=无，填名字=挂输入栏随文字一起呈递 */
 function sendSticker(name){
   closeEmoPanel();
-  var meta=timeMeta();
-  var m={t:'out',x:'',emo:name,ts:Date.now()}; DATA[cur].push(m);
-  if(window.SFX)try{SFX.play('bo');}catch(e){}
-  var el=addMsgEl(m,true); bindOps(el,m);
-  msgsEl.scrollTop=msgsEl.scrollHeight; persist();
-  var g=document.createElement('div'); g.className='grind'; g.innerHTML=cur==='段深泉'?'对方正在碾墨 <i>·</i><i>·</i><i>·</i>':'GENERATING <i>·</i><i>·</i><i>·</i>';
-  msgsEl.appendChild(g); msgsEl.scrollTop=msgsEl.scrollHeight;
-  /* upto=本条下标：标签只经text发一次，不重复进hist */
-  MAIL_AI.reply(cur,'[表情:'+name+']',meta,DATA[cur].length-1).then(function(reply){
-    g.remove();
-    var pm=parseMood(reply);
-    var rm={t:'in',x:pm.x,mood:pm.mood,emo:pm.emo||null,ts:Date.now()}; DATA[cur].push(rm);
-    if(window.SFX)try{SFX.play('ding');}catch(e){}
-    var re=addMsgEl(rm,true); bindOps(re,rm);
-    msgsEl.scrollTop=msgsEl.scrollHeight; capChat(cur); persist();
-  });
+  stkPend=name;
+  document.getElementById('stkChipImg').src='表情/'+name+'.png';
+  document.getElementById('stkChip').classList.add('on');
 }
 /* 讯文框回车规则：电脑端 Enter=发送 / Shift+Enter=换行；
    手机端（无精确Shift）Enter=换行，发送按呈递钮 —— 靠 pointer 类型判端 */
