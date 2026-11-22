@@ -198,7 +198,6 @@ body.night .mu.in .bub{box-shadow:3px 3px 0 rgba(10,20,35,.35)}.mu.in .bub::afte
 .mu.segwrap .bub .seg{position:relative;background:var(--card);border:1.5px solid var(--hair);border-left:3px solid var(--klein);box-shadow:3px 3px 0 rgba(34,44,110,.12);padding:8px 13px;max-width:100%;width:fit-content;font-size:13.5px;line-height:1.95;letter-spacing:.02em;word-break:break-word;white-space:pre-wrap;color:var(--ink)}
 .mu.segwrap .bub .seg::after{content:"";position:absolute;right:0;bottom:0;border-style:solid;border-width:0 0 13px 13px;border-color:transparent transparent var(--klein) transparent;opacity:.85}
 body.night .mu.segwrap .bub .seg{box-shadow:3px 3px 0 rgba(10,20,35,.35)}
-.mu.segwrap .bub .sig{width:fit-content;max-width:100%}
 .mu.segwrap.fresh .bub .seg{animation:segIn .32s ease both}
 @keyframes segIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .mu.out .emoSolo{margin-left:auto}   /* v4.5 玩家表情挂件跟随气泡右缘 */
@@ -567,14 +566,17 @@ function buildMu(m,anim){
       lines=lines[0].split(/(?<=[。！？!?…])/).map(function(s){return s.trim();}).filter(Boolean);
     }
   }
+  var sigInSeg=false;   /* v4.6.2 拆条时时间签嵌进最后一条气泡内部 */
   if(m.t==='in' && !ACT && lines.length>=2){
     d.classList.add('segwrap'); if(anim) d.classList.add('fresh');
-    txt = lines.map(function(s,i){
+    var segs=lines.map(function(s,i){
       return '<div class="seg"'+(anim&&i>0?' style="animation-delay:'+(i*0.55).toFixed(2)+'s"':'')+'>'+colored(s,false)+'</div>';
-    }).join('');
+    });
+    sigInSeg=true;
+    txt=segs.slice(0,-1).join('')+segs[segs.length-1].replace('</div>', sigHTML(m)+'</div>');
   }   /* v4.5 裁定：玩家侧不拆条，多行=一条气泡内换行；拆条只属于AI侧 */
   var soloAny = m.emo && txt;   /* 文字+表情两连发（来信/呈递通用） */
-  bub.innerHTML=txt+(soloAny?'':STICKER_HTML(m.emo))+sigHTML(m);
+  bub.innerHTML=txt+(soloAny?'':STICKER_HTML(m.emo))+(sigInSeg?'':sigHTML(m));
   if(!txt && m.emo) bub.classList.add('emoOnly');   /* 纯表情：裸图无框 */
   if(sigHTML(m)) bub.classList.add('hassig');
   if(soloAny){
